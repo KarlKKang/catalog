@@ -1,0 +1,110 @@
+@charset "utf-8";
+/* CSS Document */
+
+#title {
+	text-align: center;
+	margin: 2em auto 0px auto;
+	font-size: x-large;
+	font-weight: bold;
+}
+
+#ep-selector {
+	display: flex;
+  	flex-wrap: wrap;
+	justify-content: center;
+	margin: 0px;
+	padding: 2em 5%;
+}
+
+#ep-selector > div {
+	height: auto;
+	background-color: rgba(255,255,255,1);
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+	padding: 0.5em 1em;
+	margin: min(2%, 12px);
+	cursor: pointer;
+}
+
+#ep-selector > div:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+#ep-selector > div > * {
+	margin: 0px;
+	padding: 0px;
+}
+
+hr {
+	margin: 0px auto;
+	height: 1px;
+	width: 80%;
+	max-width: 1000px;
+	border-width: 0;
+	background-color: rgba(32,52,76,.15);
+}
+
+#media-holder {
+	margin: 2em auto;
+	padding: 0px;
+	width: 80%;
+	max-width: 1000px;
+}
+
+select {
+	border: none;
+    font-size: 0.9em;
+    margin: 0px;
+    max-width: 150px;
+    width: 50%;
+    padding: 5px 35px 5px 5px;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 34px;
+	line-height: 22px;
+    background: url('../image/arrow_3.png') 96% / 15% no-repeat #FFF;
+    background-color: #fff;
+    box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+}
+select:hover{
+    box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+select::-ms-expand {
+    display: none; /* Hide the default arrow in Internet Explorer 10 and Internet Explorer 11 */
+}
+/* Target Internet Explorer 9 to undo the custom arrow */
+@media screen and (min-width:0\0) {
+    select {
+        background: none\9;
+        padding: 5px\9;
+    }
+}
+
+#media-holder > video {
+	width: 100%;
+	margin: 2em 0px 0px 0px;
+	background-color: #000;
+}
+
+#media-holder > audio, #media-holder > img {
+	width: 100%;
+	margin: 1em 0px;
+}
+
+#media-holder > img {
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+}
+
+#media-holder > img:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.45);
+}
+
+.sub-title {
+	font-size: large;
+	font-weight: bold;
+	width: 100%;
+	margin: 2em 0px 1em 0px;
+}

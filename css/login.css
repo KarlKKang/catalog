@@ -1,0 +1,152 @@
+@charset "utf-8";
+/* CSS Document */
+
+#login-form {
+	width: min(300px, 90%);
+	margin: 0px;
+	padding: 0px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#title {
+	text-align: center;
+	margin: 0px;
+	padding: 1em 0px;
+	font-size: x-large;
+	font-weight: bold;
+}
+
+#warning {
+	margin: 0px;
+	padding: 1em 0px;
+	color: red;
+}
+
+.input-field, #login-button {
+	margin: 1em 0px;
+	padding: 0px;
+	height: 40px;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+	background: #fff;
+	border: none;
+}
+
+#login-button {
+	width: 50%;
+	text-align: center;
+	position: relative;
+	left: 50%;
+  	transform: translate(-50%, 0%);
+	cursor: pointer;
+	font-size: medium;
+}
+
+.input-field {
+	width: 100%;
+}
+
+.input-field > input {
+	width: 100%;
+	height: 100%;
+	border: none;
+	background-color: transparent;
+	margin: 0px;
+	padding: 0px 5%;
+	box-sizing: border-box;
+	font-family: "Arial";
+	font-size: medium;
+}
+
+.input-field:hover, #login-button:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+/*///////////////////////////////////Custom Checkbox///////////////////////////////////*/
+#remember-me {
+	position: relative;
+	display: flex;
+  	flex-wrap: wrap;
+	justify-content: center;
+	margin: 0px;
+	padding: 1em 0px;
+	font-size: small;
+}
+
+/* The container */
+.container {
+	/* display: block; */
+	position: relative;
+	padding-left: 2.5em;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.container > p {
+	margin: 0px;
+	padding: 0px;
+	height: 1.5em;
+	line-height: 1.5em;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	height: 0;
+	width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 1.5em;
+	width: 1.5em;
+	background-color: #fff;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+	transition: box-shadow .4s ease-out;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+	background-color: #fff;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+	content: "";
+	position: absolute;
+	display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+	display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+	left: 0.5em;
+	top: 0.3em;
+	width: 0.3em;
+	height: 0.6em;
+	border: solid black;
+	border-width: 0 2px 2px 0;
+	-webkit-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg);
+}

@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ど〜ん〜！ば〜ん〜！！</title>
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<link rel="stylesheet" type="text/css" href="css/bangumi.css">
+<script src="script/authentication.js"></script> 
+<script src="script/main.js"></script> 
+<script src="script/bangumi.js"></script> 
+<script src="script/sha256.js"></script>
+<script src="script/aes.js"></script>
+</head>
+
+<body>
+	<div id="header">
+		<p><span onClick="goHome ()">ど〜ん〜！ば〜ん〜！！</span></p>
+		<img src="image/logout.png" alt="logout" onClick="logout ()">
+	</div>
+	
+	<div id="main">
+		<p id="title"></p>
+		<div id="ep-selector"></div>
+		<hr>
+		<div id="media-holder"></div>
+	</div>
+	
+	<script>
+		start ('bangumi');
+	</script>
+</body>
+</html>

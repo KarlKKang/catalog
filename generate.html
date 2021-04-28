@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ど〜ん〜！ば〜ん〜！！</title>
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<script src="script/generate.js"></script> 
+<script src="script/main.js"></script> 
+<script src="script/sha256.js"></script>
+<script src="script/aes.js"></script>
+</head>
+
+<body>
+	<button onClick="generateEP ()">EPを生成する</button>
+	<p id="ep-output">EP: </p>
+	
+	<br>
+	
+	<input id="username" type="text" placeholder="アカウントID">
+	<input id="password" type="text" placeholder="パスワード">
+	<input id="url" type="text" placeholder="URL">
+	<button onClick="generateUser ()">アカウントを生成する</button>
+	<p id="id-output">ID: </p>
+	<p id="url-output">URL: </p>
+	
+</body>
+</html>
