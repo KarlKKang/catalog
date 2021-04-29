@@ -37,6 +37,7 @@ function updatePage () {
 	var type = idNode.tagName;
 	
 	document.getElementById('title').innerHTML =  series.getAttribute("title") + ' [' + idNode.getAttribute('tag') + '] ';
+	document.title = series.getAttribute("title") + ' [' + idNode.getAttribute('tag') + ']｜ど〜ん〜！ば〜ん〜！！';
 	
 	var eps = filterEP ();
 	

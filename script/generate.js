@@ -62,6 +62,6 @@ function checkUser (xml) {
 		}
 	}
 	
-	document.getElementById('id-output').innerHTML = 'USER ID: ' + usrID;
+	document.getElementById('id-output').innerHTML = 'ID: ' + usrID;
 	document.getElementById('url-output').innerHTML = 'URL: ' + url;
 }
