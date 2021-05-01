@@ -67,7 +67,7 @@ function updatePage () {
 			}
 		}
 	};
-	xhttp.open('GET', 'xml/' + id + '.xml', true);
+	xhttp.open('GET', 'xml/ep/' + id + '.xml', true);
 	xhttp.send();
 }
 
