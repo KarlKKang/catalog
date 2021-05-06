@@ -122,7 +122,7 @@ function updateAudio () {
 		audioNode.setAttribute('controls', true);
 		//audioNode.setAttribute('preload', 'metadata');
 		subtitle.setAttribute('class', 'sub-title');
-		subtitle.innerHTML = files[i].childNodes[0].nodeValue;
+		subtitle.innerHTML = files[i].getAttribute("tag");
 		document.getElementById('media-holder').appendChild(subtitle);
 		document.getElementById('media-holder').appendChild(audioNode);
 	}
