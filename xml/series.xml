@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <catalog>
 	
+	<series title="ゾンビランドサガ" thumbnail="zombielandsaga_1.webp">
+		<video tag="01">LKrr2Gynx9l</video>
+		<video tag="02">1Mo5WWNYAWj</video>
+		<video tag="03">004hBP2wKOv</video>
+		<video tag="04">XM0WnufMB6H</video>
+		<video tag="05">082HgFGHYQ7</video>
+		<video tag="06">djNA0VPMmGi</video>
+		<video tag="07">lk2aYjZknXQ</video>
+		<video tag="08">dR1klYjzFxQ</video>
+		<video tag="09">Ag0TSuHfx0X</video>
+		<video tag="10">ob5RxZtggSW</video>
+		<video tag="11">S7wzB2gwrjL</video>
+		<video tag="12">jw88wTr1p6y</video>
+		<video tag="NCOP">2nsJ5Ecz9D8</video>
+		<video tag="NCED">9jgxexXfHXN</video>
+		<video tag="SP 01">HsEaFRdDSZR</video>
+		<video tag="SP 02">thqRXkENhZE</video>
+		<video tag="SP 03">0FlBErGz6eI</video>
+		<video tag="SP 04">odF3xdMArBz</video>
+		<video tag="SP 05">HLLXzxPDdr5</video>
+		<image tag="Menu 01">5VzrGQgpkNr</image>
+		<image tag="Menu 02">dIEKKb5W4Vc</image>
+		<image tag="Menu 03">QquqgRT3n0c</image>
+	</series>
+	
 	<series title="魔女の旅々" thumbnail="majotabi_1.webp">
 		<video tag="01">rEEFCysWB6z</video>
 		<video tag="02">SzE1JkjFldE</video>

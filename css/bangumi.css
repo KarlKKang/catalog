@@ -93,12 +93,12 @@ select::-ms-expand {
 	margin: 1em 0px;
 }
 
-#media-holder > img {
+#media-holder > img, #media-holder > video {
 	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
     transition: box-shadow .4s ease-out;
 }
 
-#media-holder > img:hover {
+#media-holder > img:hover , #media-holder > video:hover {
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.45);
 }
 
