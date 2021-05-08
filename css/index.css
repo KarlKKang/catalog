@@ -5,8 +5,9 @@
 	display: flex;
   	flex-wrap: wrap;
 	justify-content: center;
-	margin: 0px;
-	padding: 2em 5%;
+	padding: 0px;
+	margin: 5vh 5%;
+	transition: opacity .4s ease-out;
 }
 
 #container > div {
@@ -21,7 +22,7 @@
 }
 
 #container > div:hover {
-	box-shadow: 0 2px 30px 2px rgba(32,52,76,.45);
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.35);
 }
 
 #container > div > * {
@@ -44,4 +45,58 @@
 	word-break: normal;
 	text-overflow: ellipsis;
 	overflow: hidden;
+}
+
+.keyword {
+	display: none;
+}
+
+#search-bar {
+    background: #fff;
+    display: flex;
+    align-items: stretch;
+    height: 50px;
+    box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+    margin: 5vh auto 0px auto;
+	width: 75%;
+	max-width: 1000px;
+}
+#search-bar:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.35);
+}
+#search-bar .icon {
+	margin: 0px;
+    padding: 0 10px;
+    height: 50px;
+    width: 24px;
+    display: flex;
+    align-items: center;
+}
+#search-bar .icon:hover {
+	cursor: pointer;
+}
+#search-bar .icon svg {
+    display: block;
+    fill: #9AA0A6;
+    height: 24px;
+    width: 24px;
+}
+#search-bar .input {
+    flex: 1;
+    background-color: transparent;
+	height: 100%;
+	margin: 0px;
+}
+#search-bar .input input {
+    width: 100%;
+    height: 100%;
+    color: rgba(0,0,0,.87);
+    word-wrap: break-word;
+    font-size: 1em;
+    display: block;
+	border: none;
+	margin: 0px;
+	padding: 0px 1%;
+	box-sizing: border-box;
 }

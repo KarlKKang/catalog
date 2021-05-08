@@ -24,7 +24,7 @@
 			<label class="container">
 				<p>ログインしたままにする</p>
 				<input type="checkbox" id="remember-me-checkbox">
-				<span class="checkmark"></span>
+				<div class="checkmark"></div>
 			</label>
 		</div>
 		<button id="login-button" onClick="login ()">ログイン</button>
@@ -36,7 +36,7 @@
 		document.getElementById('username').addEventListener('keyup', function () {
 			if (event.key === "Enter") {
 				login ();
-    		}
+			}
 		});
 		document.getElementById('password').addEventListener('keyup', function () {
 			if (event.key === "Enter") {

@@ -17,10 +17,21 @@
 <body>
 	<div id="header">
 		<p><span onClick="goHome ()">ど〜ん〜！ば〜ん〜！！</span></p>
-		<img src="image/logout.webp" alt="logout" onClick="logout ()">
+		<div alt="logout" onClick="logout ()">&#xF3B1;</div>
 	</div>
 	
 	<div id="main">
+		<div id="search-bar">
+			<div class="icon">
+				<svg focusable="false" viewbox="0 0 24 24">
+					<path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+				</svg>
+			</div>
+			<div class="input">
+				<input type="text" autocapitalize="off" autocomplete="off">
+			</div>
+		</div>
+		
 		<div id="container"></div>
 	</div>
 	<script>start ('index');</script>

@@ -61,7 +61,7 @@ function updatePage () {
 	if (document.getElementById('ep-button-wrapper').clientHeight/window.innerHeight > 0.50) {
 		var showMoreButton = document.createElement('p');
 		showMoreButton.id = 'show-more-button';
-		showMoreButton.innerHTML = 'すべてを見る';
+		showMoreButton.innerHTML = 'すべてを見る &#xE972;';
 		showMoreButton.onclick = function () {toggleEpSelector ();};
 		
 		document.getElementById('ep-selector').appendChild(showMoreButton);
@@ -200,7 +200,7 @@ function toggleEpSelector () {
 	let expanded = document.getElementById('ep-button-wrapper').style.maxHeight=='none';
 	document.getElementById('ep-button-wrapper').style.maxHeight = expanded ? '50vh' : 'none';
 	document.getElementById('ep-button-wrapper').style.overflowY = expanded ? 'hidden' : 'visible';
-	document.getElementById('show-more-button').innerHTML = expanded ? 'すべてを見る' : '非表示にする';
+	document.getElementById('show-more-button').innerHTML = expanded ? 'すべてを見る &#xE972;' : '非表示にする &#xE971;';
 	document.getElementById('show-more-button').style.margin = expanded ? 'calc(-4em - 34px) 0px 0px' : '-34px 0px 0px 0px';
 	document.getElementById('show-more-button').style.padding = expanded ? '2em 0px 34px' : '0px 0px 34px';
 	document.getElementById('show-more-button').style.background = expanded ? 'linear-gradient(to bottom, rgba(253,253,253,0) 0%,rgba(253,253,253,1) 2em)' : 'none';
