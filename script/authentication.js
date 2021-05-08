@@ -1,8 +1,7 @@
 // JavaScript Document
 
-var permittedType = '';
-var permittedID = [];
 var resourceURL = '';
+var permittedEPs = [];
 
 function getCookie(cname) {
 	var name = cname + "=";
@@ -49,32 +48,62 @@ function checkUser (xml, currentPage) {
 	} else {
 		if (currentPage == 'login')
 			window.location.href = generateURL('index.html');
-		else 
-			setPermission (xml, index);
+		else {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					setPermission (xml, index, this.responseXML);
+				}
+			};
+			xhttp.open("GET", "xml/series.xml", true);
+			xhttp.send();
+		}
 	}
 }
 
-function setPermission (xml, index) {
-	var userNode = xml.getElementsByTagName('user')[index];
-	var types = userNode.getElementsByTagName('permission')[0].getElementsByTagName('type');
-	var ids = userNode.getElementsByTagName('permission')[0].getElementsByTagName('id');
+function setPermission (usrXML, usrIndex, seriesXML) {
+	var usrNode = usrXML.getElementsByTagName('user')[usrIndex];
+	var usrPermission = usrNode.getElementsByTagName('permission')[0];
+	var includeTypes = usrPermission.getElementsByTagName('include')[0].getElementsByTagName('type');
+	var includeEPs = usrPermission.getElementsByTagName('include')[0].getElementsByTagName('ep');
+	var excludeEPs = usrPermission.getElementsByTagName('exclude')[0].getElementsByTagName('ep');
+
+	var permittedTypes='';
+	var permittedEPs_temp;
+	var i = 0;
 	
-	if (types[0].childNodes[0].nodeValue == 'all') {
-		permittedType = 'video, image, audio';
+	if (includeTypes.length != 0) {
+		for (i = 0; i < includeTypes.length; i++) {
+			permittedTypes += includeTypes[i].childNodes[0].nodeValue + ', ';
+		}
+		permittedTypes = permittedTypes.substring(0, permittedTypes.length - 2);
 	} else {
-		for (var i = 0; i < types.length; i++) {
-			permittedType += types[i].childNodes[0].nodeValue + ', ';
-		}
-		permittedType = permittedType.substring(0, permittedType.length - 2);
+		permittedTypes = 'video, image, audio';
 	}
 	
-	if (ids.length != 0) {
-		for (i = 0; i < ids.length; i++) {
-			permittedID.push(ids[i].childNodes[0].nodeValue);
+	permittedEPs_temp = seriesXML.querySelectorAll(permittedTypes);
+	for (i = 0; i < permittedEPs_temp.length; i++) {
+		permittedEPs.push (permittedEPs_temp[i].childNodes[0].nodeValue);
+	}
+	
+	
+	if (includeEPs.length != 0) {
+		for (i = 0; i < includeEPs.length; i++) {
+			if (!permittedEPs.includes(includeEPs[i].childNodes[0].nodeValue))
+				permittedEPs.push (includeEPs[i].childNodes[0].nodeValue);
+		}
+	} 
+	
+	
+	if (excludeEPs.length != 0) {
+		for (i = 0; i < excludeEPs.length; i++) {
+			if (permittedEPs.includes(excludeEPs[i].childNodes[0].nodeValue))
+				permittedEPs.splice(permittedEPs.indexOf(excludeEPs[i].childNodes[0].nodeValue), 1);
 		}
 	}
 	
-	resourceURL = userNode.getElementsByTagName('url')[0].childNodes[0].nodeValue;
+	
+	resourceURL = usrNode.getElementsByTagName('url')[0].childNodes[0].nodeValue;
 	resourceURL = decryptAES (resourceURL, SHA256 (getCookie('username') + getCookie('password') + getCookie('usrID')));
 	resourceURL = CryptoJS.enc.Utf8.stringify(resourceURL);
 	initialize ();

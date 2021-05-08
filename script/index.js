@@ -45,39 +45,21 @@ function goToSeries (index) {
 }
 
 function filterSeries (xml) {
-	var eps = xml.querySelectorAll(permittedType);
-	var resultEP = [];
+	var EPs = xml.querySelectorAll('video, image, audio');
 	var result = [];
-	if (permittedID.length == 0) {
-		resultEP = eps;
-	} else {
-		for (var i = 0; i < eps.length; i++) {
-			if (permittedID.includes(eps[i].childNodes[0].nodeValue))
-				resultEP.push(eps[i]);
-		}
-	}
 	
-	if (resultEP.length == 0)
-		alert('Error: no item is permitted for this account.');
-
-	result.push(resultEP[0].parentNode);
-	
-	for (i = 0; i < eps.length; i++) {
-		if (eps[i].parentNode!=result[result.length-1]) {
-			result.push(eps[i].parentNode);
-		}
+	for (var i = 0; i < EPs.length; i++) {
+		if (permittedEPs.includes(EPs[i].childNodes[0].nodeValue) && !result.includes(EPs[i].parentNode))
+			result.push(EPs[i].parentNode);
 	}
 	return result;
 }
 
 function firstAvailableID (index) {
-	var ids = series[index].querySelectorAll(permittedType);
-	if (permittedID.length != 0){
-		for (var i = 0; i < ids.length; i++) {
-			if (permittedID.includes(ids[i].childNodes[0].nodeValue)) {
-				return ids[i].childNodes[0].nodeValue;
-			}
+	var EPs = series[index].querySelectorAll('video, image, audio');
+	for (var i = 0; i < EPs.length; i++) {
+		if (permittedEPs.includes(EPs[i].childNodes[0].nodeValue)) {
+			return EPs[i].childNodes[0].nodeValue;
 		}
 	}
-	return ids[0].childNodes[0].nodeValue;
 }

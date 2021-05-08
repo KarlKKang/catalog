@@ -5,7 +5,18 @@
 		<id>NWWOvLUHrdzMJLdBOkgZqTOUwnHxtpuFVrGWpZJC3Xo=</id>
 		<url>U2FsdGVkX1/2C27Aled/CIlj90LdABGttIk08KKCc5IP6Ieju3wjNRpQ5JSImMTi2jrhL8tijgDPOQsgG5Uk4g==</url>
 		<permission>
-			<type>all</type>
+			<include>
+				<!--
+				<type>audio</type>
+				<type>image</type>
+				<ep>LKrr2Gynx9l</ep>
+				-->
+			</include>
+			<exclude>
+				<!--
+				<ep>JdiUcsdZudv</ep>
+				-->
+			</exclude>
 		</permission>
 	</user>
 	

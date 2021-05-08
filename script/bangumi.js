@@ -1,12 +1,12 @@
 // JavaScript Document
-var id;
+var EP;
 var series;
-var idNode;
+var EPNode;
 var fileNode;
 
 function initialize () {
-	id = getURLParam ('ep');
-	if (id == null) {
+	EP = getURLParam ('ep');
+	if (EP == null) {
 		window.location.href = 'index.html';
 		return 0;
 	}
@@ -23,32 +23,32 @@ function initialize () {
 }
 
 function getSeries (xml) {
-	var ids = xml.querySelectorAll('video, image, audio');
-	for (var i = 0; i < ids.length; i++) {
-		if (ids[i].childNodes[0].nodeValue == id){
-			series = ids[i].parentNode;
-			idNode = ids[i];
+	var EPs = xml.querySelectorAll('video, image, audio');
+	for (var i = 0; i < EPs.length; i++) {
+		if (EPs[i].childNodes[0].nodeValue == EP){
+			series = EPs[i].parentNode;
+			EPNode = EPs[i];
 			break;
 		}
 	}
 }
 
 function updatePage () {
-	var type = idNode.tagName;
+	var type = EPNode.tagName;
 	
-	document.getElementById('title').innerHTML =  series.getAttribute("title") + ' [' + idNode.getAttribute('tag') + '] ';
-	document.title = series.getAttribute("title") + ' [' + idNode.getAttribute('tag') + '] | ど〜ん〜！ば〜ん〜！！';
+	document.getElementById('title').innerHTML =  series.getAttribute("title") + ' [' + EPNode.getAttribute('tag') + '] ';
+	document.title = series.getAttribute("title") + ' [' + EPNode.getAttribute('tag') + '] | ど〜ん〜！ば〜ん〜！！';
 	
-	var eps = filterEP ();
+	var EPs = filterEP ();
 	
 	var epButtonWrapper = document.createElement('div');
 	epButtonWrapper.id = 'ep-button-wrapper';
-	for (var i = 0; i < eps.length; i++) {
+	for (var i = 0; i < EPs.length; i++) {
 		var epButton = document.createElement('div');
 		var epText = document.createElement('p');
 		
-		let tempID = eps[i].childNodes[0].nodeValue;
-		epText.innerHTML = eps[i].getAttribute('tag');
+		let tempID = EPs[i].childNodes[0].nodeValue;
+		epText.innerHTML = EPs[i].getAttribute('tag');
 		
 		epButton.appendChild(epText);
 		epButton.addEventListener('click', function () {goToID(tempID);});
@@ -81,7 +81,7 @@ function updatePage () {
 			}
 		}
 	};
-	xhttp.open('GET', 'xml/ep/' + id + '.xml', true);
+	xhttp.open('GET', 'xml/ep/' + EP + '.xml', true);
 	xhttp.send();
 }
 
@@ -117,7 +117,7 @@ function updateVideo () {
 	videoNode.setAttribute('controls', true);
 	//videoNode.setAttribute('preload', 'metadata');
 	
-	videoSrc.setAttribute('src', resourceURL + id + '/' + encodeURI(fileName + '[' + formats[0].childNodes[0].nodeValue + '].mp4'));
+	videoSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(fileName + '[' + formats[0].childNodes[0].nodeValue + '].mp4'));
 	videoSrc.setAttribute('type', "video/mp4");
 	videoNode.appendChild(videoSrc);
 	document.getElementById('media-holder').appendChild(videoNode);
@@ -130,7 +130,7 @@ function updateAudio () {
 		var audioNode = document.createElement('audio');
 		var audioSrc = document.createElement('source');
 		var subtitle = document.createElement('p');
-		audioSrc.setAttribute('src', resourceURL + id + '/' + encodeURI(files[i].childNodes[0].nodeValue));
+		audioSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(files[i].childNodes[0].nodeValue));
 		audioSrc.setAttribute('type', 'audio/mp4');
 		audioNode.appendChild(audioSrc);
 		audioNode.setAttribute('controls', true);
@@ -154,9 +154,9 @@ function updateImage () {
 		for (var j = 0; j < files.length; j++) {
 			var imageNode = document.createElement('img');
 			let file = files[j];
-			imageNode.setAttribute('src', resourceURL + id + '/' + encodeURI(file.childNodes[0].nodeValue));
+			imageNode.setAttribute('src', resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue));
 			imageNode.setAttribute('alt', files[j].childNodes[0].nodeValue);
-			imageNode.onclick = function () {window.location.href = resourceURL + id + '/' + encodeURI(file.childNodes[0].nodeValue)};
+			imageNode.onclick = function () {window.location.href = resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue)};
 			document.getElementById('media-holder').appendChild(imageNode);
 		}
 	}
@@ -180,23 +180,15 @@ function goToID (id) {
 }
 
 function filterEP () {
-	var eps = series.querySelectorAll(permittedType);
+	var EPs = series.querySelectorAll('video, image, audio');
 	var result = [];
-	var i = 0;
 	
-	if (permittedID.length == 0) {
-		for (i = 0; i < eps.length; i++){
-			result.push(eps[i]);
-		}
-	} else {
-		for (i = 0; i < eps.length; i++){
-			if (permittedID.includes(eps[i].childNodes[0].nodeValue)) {
-				result.push(eps[i]);
-			}
-		}
+	for (var i = 0; i < EPs.length; i++) {
+		if (permittedEPs.includes(EPs[i].childNodes[0].nodeValue))
+			result.push (EPs[i]);
 	}
 	
-	if (!result.includes(idNode)) {
+	if (!result.includes(EPNode)) {
 		alert ("You do not have permission to access this page.");
 		window.location.href = 'index.html';
 		return 0;
