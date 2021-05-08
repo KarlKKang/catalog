@@ -9,14 +9,21 @@
 }
 
 #ep-selector {
+	position: relative;
+	margin: 0px;
+	padding: 0px 5%;
+}
+
+#ep-button-wrapper {
 	display: flex;
   	flex-wrap: wrap;
 	justify-content: center;
 	margin: 0px;
-	padding: 2em 5%;
+	padding: 34px 0px;
+	overflow-y: hidden;
 }
 
-#ep-selector > div {
+#ep-button-wrapper > div {
 	height: auto;
 	background-color: rgba(255,255,255,1);
 	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
@@ -26,13 +33,28 @@
 	cursor: pointer;
 }
 
-#ep-selector > div:hover {
+#ep-button-wrapper > div:hover {
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
 }
 
-#ep-selector > div > * {
+#ep-button-wrapper > div > * {
 	margin: 0px;
 	padding: 0px;
+}
+
+#show-more-button {
+	background: linear-gradient(to bottom, rgba(253,253,253,0) 0%,rgba(253,253,253,1) 2em);
+	width: 100%;
+	margin: calc(-4em - 34px) 0px 0px;
+	padding: 2em 0px 34px;
+	text-align: center;
+	position: relative;
+	color: #1069c9;
+	text-decoration: none;
+}
+
+#show-more-button:hover{
+	cursor: pointer;
 }
 
 hr {
@@ -63,7 +85,7 @@ select {
     appearance: none;
     height: 34px;
 	line-height: 22px;
-    background: url('../image/arrow_3.png') 96% / 15% no-repeat #FFF;
+    background: url('../image/arrow_3.webp') 96% / 15% no-repeat #FFF;
     background-color: #fff;
     box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
     transition: box-shadow .4s ease-out;
@@ -100,6 +122,10 @@ select::-ms-expand {
 
 #media-holder > img:hover , #media-holder > video:hover {
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.45);
+}
+
+#media-holder > img:hover {
+	cursor: pointer;
 }
 
 .sub-title {

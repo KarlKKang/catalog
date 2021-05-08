@@ -17,6 +17,7 @@
     transition: box-shadow .4s ease-out;
 	margin: min(2%, 12px);
 	cursor: pointer;
+	align-self: flex-start;
 }
 
 #container > div:hover {
@@ -34,10 +35,13 @@
 }
 
 #container > div > p {
-	box-sizing: border-box;
-	padding: 10% 5%;
-	margin: 0px;
-	word-break: keep-all;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	width: 90%;
+	margin: 10% 5%;
+	padding: 0px;
+	word-break: normal;
 	text-overflow: ellipsis;
 	overflow: hidden;
 }

@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <catalog>
 	
+	<series title="ゾンビランドサガLIVE～フランシュシュみんなでおらぼう！～" thumbnail="zombielandsaga_3.webp">
+		<video tag="LIVE">EQ7CRK8Na0G</video>
+		<image tag="Menu">JdiUcsdZudv</image>
+	</series>
+	
+	<series title="ゾンビランドサガ　フランシュシュ　The Best" thumbnail="zombielandsaga_2.webp">
+		<audio tag="CD">7aKIyewgJ6c</audio>
+		<video tag="MV">JU6Ad9D2Yva</video>
+		<image tag="Menu">3HnQWPpzp4w</image>
+	</series>
+	
 	<series title="ゾンビランドサガ" thumbnail="zombielandsaga_1.webp">
 		<video tag="01">LKrr2Gynx9l</video>
 		<video tag="02">1Mo5WWNYAWj</video>

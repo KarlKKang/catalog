@@ -41,6 +41,8 @@ function updatePage () {
 	
 	var eps = filterEP ();
 	
+	var epButtonWrapper = document.createElement('div');
+	epButtonWrapper.id = 'ep-button-wrapper';
 	for (var i = 0; i < eps.length; i++) {
 		var epButton = document.createElement('div');
 		var epText = document.createElement('p');
@@ -51,7 +53,19 @@ function updatePage () {
 		epButton.appendChild(epText);
 		epButton.addEventListener('click', function () {goToID(tempID);});
 		
-		document.getElementById('ep-selector').appendChild(epButton);
+		epButtonWrapper.appendChild(epButton);
+	}
+	
+	document.getElementById('ep-selector').appendChild(epButtonWrapper);
+	
+	if (document.getElementById('ep-button-wrapper').clientHeight/window.innerHeight > 0.50) {
+		var showMoreButton = document.createElement('p');
+		showMoreButton.id = 'show-more-button';
+		showMoreButton.innerHTML = 'すべてを見る';
+		showMoreButton.onclick = function () {toggleEpSelector ();};
+		
+		document.getElementById('ep-selector').appendChild(showMoreButton);
+		document.getElementById('ep-button-wrapper').style.maxHeight = '50vh';
 	}
 	
 	var xhttp = new XMLHttpRequest();
@@ -139,8 +153,10 @@ function updateImage () {
 		var files = groups[i].getElementsByTagName('fileName');
 		for (var j = 0; j < files.length; j++) {
 			var imageNode = document.createElement('img');
-			imageNode.setAttribute('src', resourceURL + id + '/' + encodeURI(files[j].childNodes[0].nodeValue));
+			let file = files[j];
+			imageNode.setAttribute('src', resourceURL + id + '/' + encodeURI(file.childNodes[0].nodeValue));
 			imageNode.setAttribute('alt', files[j].childNodes[0].nodeValue);
+			imageNode.onclick = function () {window.location.href = resourceURL + id + '/' + encodeURI(file.childNodes[0].nodeValue)};
 			document.getElementById('media-holder').appendChild(imageNode);
 		}
 	}
@@ -186,4 +202,14 @@ function filterEP () {
 		return 0;
 	}
 	return result;
+}
+
+function toggleEpSelector () {
+	let expanded = document.getElementById('ep-button-wrapper').style.maxHeight=='none';
+	document.getElementById('ep-button-wrapper').style.maxHeight = expanded ? '50vh' : 'none';
+	document.getElementById('ep-button-wrapper').style.overflowY = expanded ? 'hidden' : 'visible';
+	document.getElementById('show-more-button').innerHTML = expanded ? 'すべてを見る' : '非表示にする';
+	document.getElementById('show-more-button').style.margin = expanded ? 'calc(-4em - 34px) 0px 0px' : '-34px 0px 0px 0px';
+	document.getElementById('show-more-button').style.padding = expanded ? '2em 0px 34px' : '0px 0px 34px';
+	document.getElementById('show-more-button').style.background = expanded ? 'linear-gradient(to bottom, rgba(253,253,253,0) 0%,rgba(253,253,253,1) 2em)' : 'none';
 }
