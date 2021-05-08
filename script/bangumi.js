@@ -47,11 +47,11 @@ function updatePage () {
 		var epButton = document.createElement('div');
 		var epText = document.createElement('p');
 		
-		let tempID = EPs[i].childNodes[0].nodeValue;
+		let tempEP = EPs[i].childNodes[0].nodeValue;
 		epText.innerHTML = EPs[i].getAttribute('tag');
 		
 		epButton.appendChild(epText);
-		epButton.addEventListener('click', function () {goToID(tempID);});
+		epButton.addEventListener('click', function () {goToEP(tempEP);});
 		
 		epButtonWrapper.appendChild(epButton);
 	}
@@ -167,15 +167,15 @@ function formatSwitch () {
 	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
 	var videoSrc = document.createElement('source');
 	
-	videoSrc.setAttribute('src', resourceURL + id + '/' + encodeURI(fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue + '[' + format + '].mp4'));
+	videoSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue + '[' + format + '].mp4'));
 	videoSrc.setAttribute('type', "video/mp4");
 	videoNode.innerHTML='';
 	videoNode.appendChild(videoSrc);
 	videoNode.load();
 }
 
-function goToID (id) {
-	var url = 'bangumi.html?ep=' + id;
+function goToEP (dest_ep) {
+	var url = 'bangumi.html?ep=' + dest_ep;
 	window.location.href = url;
 }
 
