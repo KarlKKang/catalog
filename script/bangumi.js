@@ -3,6 +3,8 @@ var EP;
 var series;
 var EPNode;
 var fileNode;
+var timeout = 0;
+var validDuration = 5*60*60*1000;
 
 function initialize () {
 	EP = getURLParam ('ep');
@@ -117,7 +119,10 @@ function updateVideo () {
 	videoNode.setAttribute('controls', true);
 	//videoNode.setAttribute('preload', 'metadata');
 	
-	videoSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(fileName + '[' + formats[0].childNodes[0].nodeValue + '].mp4'));
+	var url = generateURL (resourceURL + EP + '/' + encodeURI(fileName + '[' + formats[0].childNodes[0].nodeValue + '].mp4'));
+		
+	//videoSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(fileName + '[' + formats[0].childNodes[0].nodeValue + '].mp4'));
+	videoSrc.setAttribute('src', url);
 	videoSrc.setAttribute('type', "video/mp4");
 	videoNode.appendChild(videoSrc);
 	document.getElementById('media-holder').appendChild(videoNode);
@@ -130,7 +135,11 @@ function updateAudio () {
 		var audioNode = document.createElement('audio');
 		var audioSrc = document.createElement('source');
 		var subtitle = document.createElement('p');
-		audioSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(files[i].childNodes[0].nodeValue));
+		
+		let url = generateURL (resourceURL + EP + '/' + encodeURI(files[i].childNodes[0].nodeValue));
+		
+		//audioSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(files[i].childNodes[0].nodeValue));
+		audioSrc.setAttribute('src', url);
 		audioSrc.setAttribute('type', 'audio/mp4');
 		audioNode.appendChild(audioSrc);
 		audioNode.setAttribute('controls', true);
@@ -154,9 +163,13 @@ function updateImage () {
 		for (var j = 0; j < files.length; j++) {
 			var imageNode = document.createElement('img');
 			let file = files[j];
-			imageNode.setAttribute('src', resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue));
+			
+			let url = generateURL (resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue));
+			
+			//imageNode.setAttribute('src', resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue));
+			imageNode.setAttribute('src', url);
 			imageNode.setAttribute('alt', files[j].childNodes[0].nodeValue);
-			imageNode.onclick = function () {window.location.href = resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue)};
+			imageNode.onclick = function () {window.location.href = url};
 			document.getElementById('media-holder').appendChild(imageNode);
 		}
 	}
@@ -167,7 +180,9 @@ function formatSwitch () {
 	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
 	var videoSrc = document.createElement('source');
 	
-	videoSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue + '[' + format + '].mp4'));
+	var url = generateURL (resourceURL + EP + '/' + encodeURI(fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue + '[' + format + '].mp4'));
+	
+	videoSrc.setAttribute('src', url);
 	videoSrc.setAttribute('type', "video/mp4");
 	videoNode.innerHTML='';
 	videoNode.appendChild(videoSrc);
@@ -204,4 +219,41 @@ function toggleEpSelector () {
 	document.getElementById('show-more-button').style.margin = expanded ? 'calc(-4em - 34px) 0px 0px' : '-34px 0px 0px 0px';
 	document.getElementById('show-more-button').style.padding = expanded ? '2em 0px 34px' : '0px 0px 34px';
 	document.getElementById('show-more-button').style.background = expanded ? 'linear-gradient(to bottom, rgba(253,253,253,0) 0%,rgba(253,253,253,1) 2em)' : 'none';
+}
+
+function createSignature (url, time) {
+	var policy = '{"Statement":[{"Resource":"' + url + '","Condition":{"DateLessThan":{"AWS:EpochTime":' + time + '}}}]}';
+	
+	var signature = new KJUR.crypto.Signature({"alg": "SHA1withRSA"});
+	signature.init(key);
+	signature.updateString(policy);
+	signature = signature.sign();
+	signature = CryptoJS.enc.Hex.parse (signature);
+	signature = CryptoJS.enc.Base64.stringify(signature);
+	signature = signature.replace(/\+/g, '-');
+	signature = signature.replace(/=/g, '_');
+	signature = signature.replace(/\//g, '~');
+	return signature;
+}
+
+function generateURL (url) {
+	var time = new Date();
+	time.setTime(time.getTime() + (validDuration));
+	setAlert ();
+	time = Math.round(time.getTime() / 1000);
+	
+	url = url + '?Expires=' + time + '&Signature=' + createSignature(url, time) + '&Key-Pair-Id=' + keyPairId;
+	
+	return url;
+}
+
+function setAlert () {
+	if (timeout != 0) {
+		clearTimeout(timeout);
+	}
+	
+	timeout = setTimeout (function () {
+		alert('Session expired. Returning to home page.');
+		window.location.href = 'index.html';
+	}, validDuration);
 }

@@ -11,7 +11,7 @@ function getURLParam (param) {
 	return param;
 }
 
-function generateURL (url) {
+function redirect (url) {
 	var param = getURLParam ('ep');
 	if (param == null) {
 		return url;

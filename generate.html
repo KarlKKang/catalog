@@ -10,6 +10,7 @@
 <script src="script/main.js"></script> 
 <script src="script/sha256.js"></script>
 <script src="script/aes.js"></script>
+<script src="script/jsrsasign-all-min.js"></script>
 </head>
 
 <body>
@@ -19,11 +20,20 @@
 	<br>
 	
 	<input id="username" type="text" placeholder="アカウントID">
+	<br>
 	<input id="password" type="text" placeholder="パスワード">
+	<br>
 	<input id="url" type="text" placeholder="URL">
+	<br>
+	<textarea id="key" placeholder="Key"></textarea>
+	<br>
+	<input id="key-pair-id" type="text" placeholder="Key Pair Id">
+	<br>
 	<button onClick="generateUser ()">アカウントを生成する</button>
 	<p id="id-output">ID: </p>
 	<p id="url-output">URL: </p>
+	<p id="key-output">Key: </p>
+	<p id="key-pair-id-output">Key Pair Id: </p>
 	
 </body>
 </html>

@@ -3,7 +3,7 @@ var series;
 
 function initialize () {
 	if (getURLParam ('ep') != null) {
-		window.location.href = generateURL('bangumi.html');
+		window.location.href = redirect('bangumi.html');
 		return 0;
 	}
 	

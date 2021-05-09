@@ -49,12 +49,20 @@ function checkUser (xml) {
 	var username = SHA256 (document.getElementById('username').value);
 	var password = SHA256 (document.getElementById('password').value);
 	var url = document.getElementById('url').value;
+	var key = document.getElementById('key').value;
+	var keyPairId = document.getElementById('key-pair-id').value;
 	
 	var ids = xml.getElementsByTagName('id');
 	
 	var usrID = generateID (username, password);
 	url = encryptAES (url, SHA256 (username + password + usrID));
 	url = url.toString();
+	
+	key = encryptAES (key, SHA256 (username + password + usrID));
+	key = key.toString();
+	
+	keyPairId = encryptAES (keyPairId, SHA256 (username + password + usrID));
+	keyPairId = keyPairId.toString();
 	
 	for (var i = 0; i < ids.length; i++) {
 		if (ids[i].childNodes[0].nodeValue == usrID){
@@ -64,4 +72,6 @@ function checkUser (xml) {
 	
 	document.getElementById('id-output').innerHTML = 'ID: ' + usrID;
 	document.getElementById('url-output').innerHTML = 'URL: ' + url;
+	document.getElementById('key-output').innerHTML = 'Key: ' + key;
+	document.getElementById('key-pair-id-output').innerHTML = 'Key Pair Id: ' + keyPairId;
 }

@@ -1,6 +1,8 @@
 // JavaScript Document
 
 var resourceURL = '';
+var key = '';
+var keyPairId = '';
 var permittedEPs = [];
 
 function getCookie(cname) {
@@ -44,10 +46,10 @@ function checkUser (xml, currentPage) {
 	
 	if (index == null) {
 		if (currentPage != 'login')
-			window.location.href = generateURL('login.html');
+			window.location.href = redirect('login.html');
 	} else {
 		if (currentPage == 'login')
-			window.location.href = generateURL('index.html');
+			window.location.href = redirect('index.html');
 		else {
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function() {
@@ -102,10 +104,20 @@ function setPermission (usrXML, usrIndex, seriesXML) {
 		}
 	}
 	
+	var AESKey = SHA256 (getCookie('username') + getCookie('password') + getCookie('usrID'));
 	
 	resourceURL = usrNode.getElementsByTagName('url')[0].childNodes[0].nodeValue;
-	resourceURL = decryptAES (resourceURL, SHA256 (getCookie('username') + getCookie('password') + getCookie('usrID')));
+	resourceURL = decryptAES (resourceURL, AESKey);
 	resourceURL = CryptoJS.enc.Utf8.stringify(resourceURL);
+	
+	key = usrNode.getElementsByTagName('key')[0].childNodes[0].nodeValue;
+	key = decryptAES (key, AESKey);
+	key = CryptoJS.enc.Utf8.stringify(key);
+	
+	keyPairId = usrNode.getElementsByTagName('keyPairId')[0].childNodes[0].nodeValue;
+	keyPairId = decryptAES (keyPairId, AESKey);
+	keyPairId = CryptoJS.enc.Utf8.stringify(keyPairId);
+	
 	initialize ();
 }
 

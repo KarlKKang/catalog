@@ -41,6 +41,6 @@ function checkLogin (xml, user) {
 			document.cookie = 'password=' + user.password + '; path=/';
 			document.cookie = 'usrID=' + user.usrID + '; path=/';
 		}
-		window.location.href = generateURL ('index.html');
+		window.location.href = redirect ('index.html');
 	}
 }
