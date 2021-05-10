@@ -66,41 +66,73 @@ function checkUser (xml, currentPage) {
 function setPermission (usrXML, usrIndex, seriesXML) {
 	var usrNode = usrXML.getElementsByTagName('user')[usrIndex];
 	var usrPermission = usrNode.getElementsByTagName('permission')[0];
-	var includeTypes = usrPermission.getElementsByTagName('include')[0].getElementsByTagName('type');
 	var includeEPs = usrPermission.getElementsByTagName('include')[0].getElementsByTagName('ep');
-	var excludeEPs = usrPermission.getElementsByTagName('exclude')[0].getElementsByTagName('ep');
+	var includeTags = usrPermission.getElementsByTagName('include')[0].getElementsByTagName('tag');
+	var includeSeries = usrPermission.getElementsByTagName('include')[0].getElementsByTagName('series');
+	var excludeSeries = usrPermission.getElementsByTagName('exclude')[0].getElementsByTagName('series');
 
-	var permittedTypes='';
-	var permittedEPs_temp;
 	var i = 0;
+	var allEPs = seriesXML.querySelectorAll('video, image, audio');
 	
-	if (includeTypes.length != 0) {
-		for (i = 0; i < includeTypes.length; i++) {
-			permittedTypes += includeTypes[i].childNodes[0].nodeValue + ', ';
+	if (includeEPs.length == 0 && includeTags == 0 && includeSeries == 0) {
+		for (i = 0; i < allEPs.length; i++) {
+			permittedEPs.push (allEPs[i].childNodes[0].nodeValue);
 		}
-		permittedTypes = permittedTypes.substring(0, permittedTypes.length - 2);
-	} else {
-		permittedTypes = 'video, image, audio';
 	}
-	
-	permittedEPs_temp = seriesXML.querySelectorAll(permittedTypes);
-	for (i = 0; i < permittedEPs_temp.length; i++) {
-		permittedEPs.push (permittedEPs_temp[i].childNodes[0].nodeValue);
-	}
-	
 	
 	if (includeEPs.length != 0) {
 		for (i = 0; i < includeEPs.length; i++) {
 			if (!permittedEPs.includes(includeEPs[i].childNodes[0].nodeValue))
 				permittedEPs.push (includeEPs[i].childNodes[0].nodeValue);
 		}
-	} 
+	}
 	
+	if (includeTags != 0) {
+		let includeTags_string = [];
+		for (i = 0; i < includeTags.length; i++) {
+			includeTags_string.push(includeTags[i].childNodes[0].nodeValue);
+		}
+		for (i = 0; i < allEPs.length; i++) {
+			if (includeTags_string.includes(allEPs[i].getAttribute('tag').split(' ')[0]) && !permittedEPs.includes(allEPs[i].childNodes[0].nodeValue))
+				permittedEPs.push(allEPs[i].childNodes[0].nodeValue);
+		}
+	}
 	
-	if (excludeEPs.length != 0) {
-		for (i = 0; i < excludeEPs.length; i++) {
-			if (permittedEPs.includes(excludeEPs[i].childNodes[0].nodeValue))
-				permittedEPs.splice(permittedEPs.indexOf(excludeEPs[i].childNodes[0].nodeValue), 1);
+	if (includeSeries.length != 0) {
+		let parentNodes = [];
+		let includeSeries_string = [];
+		for (i = 0; i < includeSeries.length; i++) {
+			includeSeries_string.push(includeSeries[i].childNodes[0].nodeValue);
+		}
+		for (i = 0; i < allEPs.length; i++) {
+			if (includeSeries_string.includes(allEPs[i].childNodes[0].nodeValue) && !parentNodes.includes(allEPs[i].parentNode))
+				parentNodes.push(allEPs[i].parentNode);
+		}
+		for (i = 0; i < parentNodes.length; i++) {
+			let childNodes = parentNodes[i].querySelectorAll('video, image, audio');
+			for (let j = 0; j < childNodes.length; j++) {
+				if (!permittedEPs.includes(childNodes[j].childNodes[0].nodeValue))
+					permittedEPs.push (childNodes[j].childNodes[0].nodeValue);
+			}
+		}
+	}
+	
+	if (excludeSeries.length != 0) {
+		let parentNodes = [];
+		let excludeSeries_string = [];
+		for (i = 0; i < excludeSeries.length; i++) {
+			excludeSeries_string.push(excludeSeries[i].childNodes[0].nodeValue);
+		}
+		for (i = 0; i < allEPs.length; i++) {
+			if (excludeSeries_string.includes(allEPs[i].childNodes[0].nodeValue) && !parentNodes.includes(allEPs[i].parentNode))
+				parentNodes.push(allEPs[i].parentNode);
+		}
+		for (i = 0; i < parentNodes.length; i++) {
+			let childNodes = parentNodes[i].querySelectorAll('video, image, audio');
+			for (let j = 0; j < childNodes.length; j++) {
+				if (permittedEPs.includes(childNodes[j].childNodes[0].nodeValue))
+					permittedEPs.splice(permittedEPs.indexOf(childNodes[j].childNodes[0].nodeValue), 1);
+			}
 		}
 	}
 	

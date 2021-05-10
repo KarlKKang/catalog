@@ -9,14 +9,14 @@
 		<permission>
 			<include>
 				<!--
-				<type>audio</type>
-				<type>image</type>
-				<ep>LKrr2Gynx9l</ep>
+				<series></series>
+				<tag></tag>
+				<ep></ep>
 				-->
 			</include>
 			<exclude>
 				<!--
-				<ep>JdiUcsdZudv</ep>
+				<series></series>
 				-->
 			</exclude>
 		</permission>
@@ -29,13 +29,12 @@
 		<keyPairId>U2FsdGVkX18omBkY+ubfE4HYCWrPgC5CSU2SE4PH5+c=</keyPairId>
 		<permission>
 			<include>
-				<type>image</type>
-				<ep>2nsJ5Ecz9D8</ep>
-				<ep>zSbr0kuXQxh</ep>
-				<ep>atRKCyHtz0T</ep>
-				<ep>rEEFCysWB6z</ep>
+				<tag>PV</tag>
+				<tag>Menu</tag>
+				<tag>01</tag>
 			</include>
 			<exclude>
+				<!--<series>koRxB0FcCeE</series>-->
 			</exclude>
 		</permission>
 	</user>
