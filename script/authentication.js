@@ -74,7 +74,7 @@ function setPermission (usrXML, usrIndex, seriesXML) {
 	var i = 0;
 	var allEPs = seriesXML.querySelectorAll('video, image, audio');
 	
-	if (includeEPs.length == 0 && includeTags == 0 && includeSeries == 0) {
+	if (includeEPs.length == 0 && includeTags.length == 0 && includeSeries.length == 0) {
 		for (i = 0; i < allEPs.length; i++) {
 			permittedEPs.push (allEPs[i].childNodes[0].nodeValue);
 		}
