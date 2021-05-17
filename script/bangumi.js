@@ -124,7 +124,8 @@ function updateVideo () {
 	loadingText.style.display = 'none';
 	document.getElementById('media-holder').appendChild(loadingText);
 	
-	addVideoNode (fileName, formats[0].childNodes[0].nodeValue);
+	var videoNode = addVideoNode (fileName, formats[0].childNodes[0].nodeValue);
+	videoNode.load();
 }
 
 function updateAudio () {
@@ -187,6 +188,7 @@ function formatSwitch () {
 		videoNode.removeEventListener ('loadeddata', resume);
 	};
 	
+	videoNode.load();
 	videoNode.addEventListener ('loadeddata', resume);
 }
 
@@ -229,7 +231,6 @@ function addVideoNode (fileName, format) {
 			chapterTrack.setAttribute('default', 'true');
 			videoNode.setAttribute('crossorigin', 'anonymous');
 			videoNode.appendChild(chapterTrack);
-			//videoNode.load();
 			chapterTrack.onload = function () {displayChapters (videoNode);};
 		}
 	}
@@ -318,7 +319,6 @@ function setHLS (player, url) {
 	} else if (player.canPlayType('application/vnd.apple.mpegurl')) {
 		url = generateURL (url, '?ios=true', 5000);
 		player.src = url;
-		player.load();
 	}
 }
 
