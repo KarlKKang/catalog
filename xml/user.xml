@@ -35,7 +35,7 @@
 				<ep>zSbr0kuXQxh</ep>
 			</include>
 			<exclude>
-				<!--<series>koRxB0FcCeE</series>-->
+				<series>koRxB0FcCeE</series>
 			</exclude>
 		</permission>
 	</user>

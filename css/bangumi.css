@@ -67,7 +67,7 @@ hr {
 }
 
 #media-holder {
-	margin: 2em auto;
+	margin: 2em auto 6em auto;
 	padding: 0px;
 	width: 80%;
 	max-width: 1000px;
@@ -93,20 +93,10 @@ select {
 select:hover{
     box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
 }
-select::-ms-expand {
-    display: none; /* Hide the default arrow in Internet Explorer 10 and Internet Explorer 11 */
-}
-/* Target Internet Explorer 9 to undo the custom arrow */
-@media screen and (min-width:0\0) {
-    select {
-        background: none\9;
-        padding: 5px\9;
-    }
-}
 
 #media-holder > video {
 	width: 100%;
-	margin: 2em 0px 0px 0px;
+	margin: 2em 0px;
 	background-color: #000;
 }
 
@@ -133,4 +123,77 @@ select::-ms-expand {
 	font-weight: bold;
 	width: 100%;
 	margin: 2em 0px 1em 0px;
+}
+
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+	background-color: white;
+	font-size: medium;
+	cursor: pointer;
+	padding: 18px;
+	margin: 0px;
+	width: 100%;
+	text-align: left;
+	border: none;
+	outline: none;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+	transition: box-shadow .4s ease-out;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.accordion:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.45);
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+	padding: 0 18px;
+	margin: 0px;
+	background-color: white;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.2s ease-out, box-shadow .4s ease-out;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+}
+
+.panel > p {
+	transition: .4s;
+}
+
+.panel > p > span {
+	cursor: pointer;
+	color: #1069c9;
+	font-weight: normal;
+}
+
+.current-chapter {
+	color: #000;
+	font-weight: bold;
+}
+
+.inactive-chapter {
+	color: #adadb5;
+	font-weight: normal;
+}
+
+.accordion:after {
+	content: '\002B'; /* Unicode character for "plus" sign (+) */
+	font-size: 1em;
+	color: #777;
+	float: right;
+	margin-left: 5px;
+}
+
+.active:after {
+	content: "\2212"; /* Unicode character for "minus" sign (-) */
+}
+
+.panel:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+#loading-text {
+	color: #adadb5;
+	text-align: center;
+	margin: 1em 0px -1em 0px;
 }

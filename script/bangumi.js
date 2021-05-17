@@ -4,7 +4,8 @@ var series;
 var EPNode;
 var fileNode;
 var timeout = 0;
-var validDuration = 5*60*60*1000;
+
+var XHROpen;
 
 function initialize () {
 	EP = getURLParam ('ep');
@@ -17,6 +18,8 @@ function initialize () {
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			getSeries(this.responseXML);
+			XHROpen = XMLHttpRequest.prototype.open;
+			XMLHttpRequest.prototype.open = XHROverride;
 			updatePage ();
 		}
 	};
@@ -37,9 +40,10 @@ function getSeries (xml) {
 
 function updatePage () {
 	var type = EPNode.tagName;
+	var title = series.getAttribute('title') + ' [' + EPNode.getAttribute('tag') + ']' + ((EPNode.getAttribute('title')==null)?'':(' - ' + EPNode.getAttribute('title')));
 	
-	document.getElementById('title').innerHTML =  series.getAttribute("title") + ' [' + EPNode.getAttribute('tag') + '] ';
-	document.title = series.getAttribute("title") + ' [' + EPNode.getAttribute('tag') + '] | ど〜ん〜！ば〜ん〜！！';
+	document.getElementById('title').innerHTML =  title;
+	document.title = title + ' | ど〜ん〜！ば〜ん〜！！';
 	
 	var EPs = filterEP ();
 	
@@ -114,18 +118,13 @@ function updateVideo () {
 	formatSelector.appendChild(selectMenu);
 	document.getElementById('media-holder').appendChild(formatSelector);
 	
-	var videoNode = document.createElement('video');
-	var videoSrc = document.createElement('source');
-	videoNode.setAttribute('controls', true);
-	//videoNode.setAttribute('preload', 'metadata');
+	var loadingText = document.createElement('p');
+	loadingText.setAttribute('id', 'loading-text');
+	loadingText.innerHTML = '動画を読み込んでいます。しばらくお待ちください。';
+	loadingText.style.display = 'none';
+	document.getElementById('media-holder').appendChild(loadingText);
 	
-	var url = generateURL (resourceURL + EP + '/' + encodeURI(fileName + '[' + formats[0].childNodes[0].nodeValue + '].mp4'));
-		
-	//videoSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(fileName + '[' + formats[0].childNodes[0].nodeValue + '].mp4'));
-	videoSrc.setAttribute('src', url);
-	videoSrc.setAttribute('type', "video/mp4");
-	videoNode.appendChild(videoSrc);
-	document.getElementById('media-holder').appendChild(videoNode);
+	addVideoNode (fileName, formats[0].childNodes[0].nodeValue);
 }
 
 function updateAudio () {
@@ -133,19 +132,17 @@ function updateAudio () {
 	
 	for (var i = 0; i < files.length; i++) {
 		var audioNode = document.createElement('audio');
-		var audioSrc = document.createElement('source');
 		var subtitle = document.createElement('p');
 		
-		let url = generateURL (resourceURL + EP + '/' + encodeURI(files[i].childNodes[0].nodeValue));
+		let url = resourceURL + EP + '/' + encodeURI('_MASTER_' + files[i].childNodes[0].nodeValue + '.m3u8');
 		
-		//audioSrc.setAttribute('src', resourceURL + EP + '/' + encodeURI(files[i].childNodes[0].nodeValue));
-		audioSrc.setAttribute('src', url);
-		audioSrc.setAttribute('type', 'audio/mp4');
-		audioNode.appendChild(audioSrc);
+		setHLS (audioNode, url);
+		
 		audioNode.setAttribute('controls', true);
-		//audioNode.setAttribute('preload', 'metadata');
+		audioNode.setAttribute('controlsList', 'nodownload');
 		subtitle.setAttribute('class', 'sub-title');
 		subtitle.innerHTML = files[i].getAttribute("tag");
+		audioNode.addEventListener('contextmenu', event => event.preventDefault());
 		document.getElementById('media-holder').appendChild(subtitle);
 		document.getElementById('media-holder').appendChild(audioNode);
 	}
@@ -164,12 +161,12 @@ function updateImage () {
 			var imageNode = document.createElement('img');
 			let file = files[j];
 			
-			let url = generateURL (resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue));
+			let url = generateURL (resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue), '', 5000);
 			
-			//imageNode.setAttribute('src', resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue));
 			imageNode.setAttribute('src', url);
 			imageNode.setAttribute('alt', files[j].childNodes[0].nodeValue);
-			imageNode.onclick = function () {window.location.href = url};
+			imageNode.onclick = function () {window.location.href = generateURL (resourceURL + EP + '/' + encodeURI(file.childNodes[0].nodeValue), '', 5000);};
+			imageNode.addEventListener('contextmenu', event => event.preventDefault());
 			document.getElementById('media-holder').appendChild(imageNode);
 		}
 	}
@@ -178,15 +175,66 @@ function updateImage () {
 function formatSwitch () {
 	var format = document.getElementById('format-selector').getElementsByTagName('select')[0].value;
 	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
-	var videoSrc = document.createElement('source');
+	var currentTime = videoNode.currentTime;
+	var paused = videoNode.paused;
 	
-	var url = generateURL (resourceURL + EP + '/' + encodeURI(fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue + '[' + format + '].mp4'));
+	videoNode = addVideoNode (fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue, format);
 	
-	videoSrc.setAttribute('src', url);
-	videoSrc.setAttribute('type', "video/mp4");
-	videoNode.innerHTML='';
-	videoNode.appendChild(videoSrc);
-	videoNode.load();
+	var resume = function () {
+		videoNode.currentTime = currentTime;
+		if (!paused)
+			videoNode.play();
+		videoNode.removeEventListener ('loadeddata', resume);
+	};
+	
+	videoNode.addEventListener ('loadeddata', resume);
+}
+
+function addVideoNode (fileName, format) {
+	if (document.getElementById('media-holder').getElementsByTagName('video').length != 0) {
+		document.getElementById('media-holder').getElementsByTagName('video')[0].remove();
+	}
+	if (document.getElementById('media-holder').getElementsByClassName('chapters').length != 0) {
+		document.getElementById('media-holder').getElementsByClassName('chapters')[0].remove();
+	}
+	
+	var videoNode = document.createElement('video');
+	videoNode.setAttribute('controls', true);
+	videoNode.setAttribute('controlsList', 'nodownload');
+	videoNode.setAttribute('preload', 'auto');
+	
+	if (Hls.isSupported()) {
+		videoNode.addEventListener ('play', buffering);
+		videoNode.addEventListener ('seeked', function () {
+			var paused = videoNode.paused;
+			videoNode.pause();
+			if (!paused)
+				videoNode.play();
+		});
+	}
+	
+	var url = resourceURL + EP + '/' + encodeURI('_MASTER_' + fileName + '[' + format + '].m3u8');
+	
+	setHLS (videoNode, url);
+	
+	videoNode.addEventListener('contextmenu', event => event.preventDefault());
+	document.getElementById('media-holder').appendChild(videoNode);
+	
+	if (fileNode.getElementsByTagName('chapters').length != 0) {
+		if (fileNode.getElementsByTagName('chapters')[0].childNodes[0].nodeValue == 'true') {
+			var chapterTrack = document.createElement('track');
+			chapterTrack.setAttribute('kind', 'chapters');
+			chapterTrack.setAttribute('srclang', 'ja');
+			chapterTrack.setAttribute('src', generateURL (resourceURL + EP + '/chapters.vtt', '', 5000));
+			chapterTrack.setAttribute('default', 'true');
+			videoNode.setAttribute('crossorigin', 'anonymous');
+			videoNode.appendChild(chapterTrack);
+			//videoNode.load();
+			chapterTrack.onload = function () {displayChapters (videoNode);};
+		}
+	}
+	
+	return videoNode;
 }
 
 function goToEP (dest_ep) {
@@ -204,7 +252,7 @@ function filterEP () {
 	}
 	
 	if (!result.includes(EPNode)) {
-		alert ("You do not have permission to access this page.");
+		alert ('You do not have permission to access this page.');
 		window.location.href = 'index.html';
 		return 0;
 	}
@@ -236,24 +284,177 @@ function createSignature (url, time) {
 	return signature;
 }
 
-function generateURL (url) {
+function generateURL (url, query, validDuration) {
 	var time = new Date();
-	time.setTime(time.getTime() + (validDuration));
-	setAlert ();
+	time.setTime(time.getTime() + validDuration);
 	time = Math.round(time.getTime() / 1000);
 	
-	url = url + '?Expires=' + time + '&Signature=' + createSignature(url, time) + '&Key-Pair-Id=' + keyPairId;
+	url = url + query;
+	
+	url = url + ((query=='')?'?':'&') + 'Expires=' + time + '&Signature=' + createSignature(url, time) + '&Key-Pair-Id=' + keyPairId;
 	
 	return url;
 }
 
-function setAlert () {
-	if (timeout != 0) {
-		clearTimeout(timeout);
+function XHROverride () {
+	if (arguments[1].endsWith('.ts') || arguments[1].endsWith('.key') || arguments[1].endsWith('.m3u8')){
+		arguments[1] = generateURL (arguments[1], '', 5000);
+	}
+	XHROpen.apply(this, arguments);
+}
+
+function setHLS (player, url) {
+	var config = {
+		maxBufferLength: 1800,
+		maxMaxBufferLength: 7200,
+		maxBufferSize: 1000 * 1000 * 1000
+	};
+	
+	if (Hls.isSupported()) {
+		url = generateURL (url, '', 5000);
+		var hls = new Hls(config);
+		hls.loadSource(url);
+		hls.attachMedia(player);
+	} else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+		url = generateURL (url, '?ios=true', 5000);
+		player.src = url;
+		player.load();
+	}
+}
+
+function addAccordionEvent () {
+	var acc = document.getElementsByClassName("accordion");
+	var i;
+
+	for (i = 0; i < acc.length; i++) {
+		acc[i].addEventListener("click", function() {
+			this.classList.toggle("active");
+			var panel = this.nextElementSibling;
+			if (panel.style.maxHeight) {
+				panel.style.maxHeight = null;
+			} else {
+				panel.style.maxHeight = panel.scrollHeight + "px";
+			}
+		});
+	}
+}
+
+function displayChapters (player) {
+	var accordion = document.createElement('button');
+	accordion.classList.add('accordion');
+	accordion.innerHTML = 'CHAPTERS';
+	
+	var accordionPanel = document.createElement('div');
+	accordionPanel.classList.add('panel');
+	
+	var cues = player.textTracks[0].cues;
+	
+	for (var i = 0; i < cues.length; i++) {
+		let chapter = document.createElement('p');
+		let timestamp = document.createElement('span');
+		let cueText = document.createTextNode('\xa0\xa0' + cues[i].text);
+		let startTime = cues[i].startTime
+		timestamp.innerHTML = secToTimestamp (startTime);
+		timestamp.onclick = function () {
+			player.currentTime = startTime;
+			player.play();
+		};
+		chapter.appendChild(timestamp);
+		chapter.appendChild(cueText);
+		chapter.className = 'inactive-chapter';
+		accordionPanel.appendChild(chapter);
 	}
 	
-	timeout = setTimeout (function () {
-		alert('Session expired. Returning to home page.');
-		window.location.href = 'index.html';
-	}, validDuration);
+	var chaptersNode = document.createElement('div');
+	chaptersNode.classList.add('chapters');
+	chaptersNode.appendChild(accordion);
+	chaptersNode.appendChild(accordionPanel);
+	document.getElementById('media-holder').appendChild(chaptersNode);
+	addAccordionEvent ();
+	
+	var updateChapterDisplay = function () {
+		var chapters = accordionPanel.getElementsByTagName('p');
+		var currentTime = player.currentTime;
+		if (cues.length != 0) {
+			for (var i = 0; i < chapters.length; i++) {
+				if (currentTime >= cues[i].startTime  && currentTime < cues[i].endTime) {
+					chapters[i].className = 'current-chapter';
+				} else {
+					chapters[i].className = 'inactive-chapter';
+				}
+			}
+		}
+	};
+	
+	player.textTracks[0].oncuechange = updateChapterDisplay;
+	
+	player.addEventListener ('play', updateChapterDisplay);
+	player.addEventListener ('pause', updateChapterDisplay);
+	player.addEventListener ('seeking', updateChapterDisplay);
+}
+
+function secToTimestamp (sec) {
+	var hour = Math.floor(sec/60/60);
+	sec = sec - hour*60*60;
+	var min = Math.floor(sec/60);
+	sec = sec - min*60;
+
+	sec = Math.round(sec);
+	if (sec < 10) {
+		sec = '0' + sec;
+	}
+	
+	if (hour > 0 && min < 10) {
+		min = '0' + min;
+	}
+	
+	return ((hour==0)?'':(hour + ':')) + min + ':' + sec;
+}
+
+function buffering () {
+	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
+	
+	function addCheckBuffer () {
+		videoNode.pause();
+		document.getElementById('loading-text').style.display = 'block';
+		videoNode.removeEventListener ('play', buffering);
+		videoNode.addEventListener ('play', checkBuffer);
+		videoNode.addEventListener ('progress', checkBuffer);
+	}
+	
+	if (videoNode.buffered.length == 0) {
+		document.getElementById('loading-text').innerHTML = '動画を読み込んでいます。しばらくお待ちください。(0%)';
+		addCheckBuffer ();
+	} else {
+		for (var i = 0; i < videoNode.buffered.length; i++) {
+			if (videoNode.buffered.start(videoNode.buffered.length - 1 - i) - 0.25 <= videoNode.currentTime) {
+				if (videoNode.buffered.end(videoNode.buffered.length - 1 - i) < Math.min(videoNode.currentTime+15, videoNode.duration)) {
+					let loadingPercent = Math.round(Math.max(Math.min (videoNode.buffered.end(videoNode.buffered.length - 1 - i) - videoNode.currentTime, Math.min(15, videoNode.duration-videoNode.currentTime)), 0) / Math.min(15, videoNode.duration-videoNode.currentTime) * 1000) / 10;
+					document.getElementById('loading-text').innerHTML = '動画を読み込んでいます。しばらくお待ちください。(' + loadingPercent + '%)';
+					addCheckBuffer ();
+				}
+				break;
+			}
+		}
+	}
+}
+
+function checkBuffer () {
+	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
+	videoNode.pause();
+	
+	for (var i = 0; i < videoNode.buffered.length; i++) {
+		if (videoNode.buffered.start(videoNode.buffered.length - 1 - i) - 0.25 <= videoNode.currentTime && videoNode.buffered.end(videoNode.buffered.length - 1 - i) >= videoNode.currentTime) {
+			let loadingPercent = Math.round(Math.max(Math.min (videoNode.buffered.end(videoNode.buffered.length - 1 - i) - videoNode.currentTime, Math.min(15, videoNode.duration-videoNode.currentTime)), 0) / Math.min(15, videoNode.duration-videoNode.currentTime) * 1000) / 10;
+			document.getElementById('loading-text').innerHTML = '動画を読み込んでいます。しばらくお待ちください。(' + loadingPercent + '%)';
+			if (videoNode.buffered.end(videoNode.buffered.length - 1 - i) >= Math.min(videoNode.currentTime+15, videoNode.duration)) {
+				document.getElementById('loading-text').style.display = 'none';
+				videoNode.play();
+				videoNode.removeEventListener ('play', checkBuffer);
+				videoNode.removeEventListener ('progress', checkBuffer);
+				videoNode.addEventListener ('play', buffering);
+				break;	
+			}
+		}
+	}
 }
