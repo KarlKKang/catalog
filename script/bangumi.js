@@ -228,7 +228,7 @@ function addVideoNode (fileName, format) {
 			chapterTrack.setAttribute('kind', 'chapters');
 			chapterTrack.setAttribute('srclang', 'ja');
 			chapterTrack.setAttribute('src', generateURL (resourceURL + EP + '/chapters.vtt', '', 5000));
-			chapterTrack.setAttribute('default', 'true');
+			chapterTrack.setAttribute('default', true);
 			videoNode.setAttribute('crossorigin', 'anonymous');
 			videoNode.appendChild(chapterTrack);
 			chapterTrack.onload = function () {displayChapters (videoNode);};
@@ -237,6 +237,56 @@ function addVideoNode (fileName, format) {
 	
 	return videoNode;
 }
+
+/*
+function addVideoJSNode (fileName, format) {
+	if (document.getElementById('media-holder').getElementsByTagName('video').length != 0) {
+		document.getElementById('media-holder').getElementsByTagName('video')[0].remove();
+	}
+	if (document.getElementById('media-holder').getElementsByClassName('chapters').length != 0) {
+		document.getElementById('media-holder').getElementsByClassName('chapters')[0].remove();
+	}
+	
+	var videoNode = document.createElement('video-js');
+	videoNode.classList.add('vjs-big-play-centered');
+	
+	var url = resourceURL + EP + '/' + encodeURI('_MASTER_' + fileName + '[' + format + '].m3u8');
+	
+	videoNode.addEventListener('contextmenu', event => event.preventDefault());
+	document.getElementById('media-holder').appendChild(videoNode);
+	
+	var config = {
+		controls: true,
+		autoplay: false,
+		preload: 'auto',
+		fluid: true,
+		html5: {
+			vhs: {
+				overrideNative: true
+			},
+			nativeAudioTracks: false,
+			nativeVideoTracks: false
+		}
+	};
+	videoNode = videojs(videoNode, config);
+	videoNode.src({
+		src: url,
+		type: 'application/x-mpegURL'
+	});
+	videoNode.ready(function() {
+		this.hotkeys({
+			volumeStep: 0.1,
+			seekStep: 5,
+			enableModifiersForNumbers: false
+		});
+	});
+	//videojs.Vhs.GOAL_BUFFER_LENGTH = 30*60;
+	//videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 2*60*60;
+	//videojs.Vhs.GOAL_BUFFER_LENGTH_RATE = 1,
+
+	return videoNode;
+}
+*/
 
 function goToEP (dest_ep) {
 	var url = 'bangumi.html?ep=' + dest_ep;
@@ -305,17 +355,41 @@ function XHROverride () {
 }
 
 function setHLS (player, url) {
+	/*
 	var config = {
-		maxBufferLength: 1800,
-		maxMaxBufferLength: 7200,
-		maxBufferSize: 1000 * 1000 * 1000
+		maxBufferLength: 120,
+		maxMaxBufferLength: 900,
+		maxBufferSize: 200*1000*1000
 	};
+	*/
 	
 	if (Hls.isSupported()) {
 		url = generateURL (url, '', 5000);
-		var hls = new Hls(config);
-		hls.loadSource(url);
+		var hls = new Hls();
 		hls.attachMedia(player);
+		hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+			hls.loadSource(url);
+		});
+		
+		hls.on(Hls.Events.ERROR, function (event, data) {
+			if (data.fatal) {
+				switch (data.type) {
+					case Hls.ErrorTypes.NETWORK_ERROR:
+						// try to recover network error
+						console.log('fatal network error encountered, try to recover');
+						hls.startLoad();
+						break;
+					case Hls.ErrorTypes.MEDIA_ERROR:
+						console.log('fatal media error encountered, try to recover');
+						hls.recoverMediaError();
+						break;
+					default:
+						// cannot recover
+						hls.destroy();
+						break;
+				}
+			}
+		});
 	} else if (player.canPlayType('application/vnd.apple.mpegurl')) {
 		url = generateURL (url, '?ios=true', 5000);
 		player.src = url;

@@ -94,7 +94,7 @@ select:hover{
     box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
 }
 
-#media-holder > video {
+#media-holder > video, #media-holder > video-js {
 	width: 100%;
 	margin: 2em 0px;
 	background-color: #000;
@@ -105,12 +105,12 @@ select:hover{
 	margin: 1em 0px;
 }
 
-#media-holder > img, #media-holder > video {
+#media-holder > img, #media-holder > video, #media-holder > video-js {
 	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
     transition: box-shadow .4s ease-out;
 }
 
-#media-holder > img:hover , #media-holder > video:hover {
+#media-holder > img:hover , #media-holder > video:hover , #media-holder > video-js:hover {
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.45);
 }
 
