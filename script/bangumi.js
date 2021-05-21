@@ -20,7 +20,7 @@ function initialize () {
 			getSeries(this.responseXML);
 			XHROpen = XMLHttpRequest.prototype.open;
 			XMLHttpRequest.prototype.open = XHROverride;
-			updatePage ();
+			updatePage (this.responseXML);
 		}
 	};
 	xhttp.open("GET", "xml/series.xml", true);
@@ -38,7 +38,27 @@ function getSeries (xml) {
 	}
 }
 
-function updatePage () {
+function filterSeries (xml) {
+	var EPs = xml.querySelectorAll('video, image, audio');
+	var result = [];
+	
+	for (var i = 0; i < EPs.length; i++) {
+		if (permittedEPs.includes(EPs[i].childNodes[0].nodeValue) && !result.includes(EPs[i].parentNode))
+			result.push(EPs[i].parentNode);
+	}
+	return result;
+}
+
+function firstAvailableEP (targetSeries) {
+	var EPs = targetSeries.querySelectorAll('video, image, audio');
+	for (var i = 0; i < EPs.length; i++) {
+		if (permittedEPs.includes(EPs[i].childNodes[0].nodeValue)) {
+			return EPs[i].childNodes[0].nodeValue;
+		}
+	}
+}
+
+function updatePage (xml) {
 	var type = EPNode.tagName;
 	var title = series.getAttribute('title') + ' [' + EPNode.getAttribute('tag') + ']' + ((EPNode.getAttribute('title')==null)?'':(' - ' + EPNode.getAttribute('title')));
 	
@@ -47,17 +67,18 @@ function updatePage () {
 	
 	var EPs = filterEP ();
 	
+	/////////////////////////////////////////////EP Selector/////////////////////////////////////////////
 	var epButtonWrapper = document.createElement('div');
 	epButtonWrapper.id = 'ep-button-wrapper';
 	for (var i = 0; i < EPs.length; i++) {
-		var epButton = document.createElement('div');
-		var epText = document.createElement('p');
+		let epButton = document.createElement('div');
+		let epText = document.createElement('p');
 		
-		let tempEP = EPs[i].childNodes[0].nodeValue;
+		let targetEP = EPs[i].childNodes[0].nodeValue;
 		epText.innerHTML = EPs[i].getAttribute('tag');
 		
 		epButton.appendChild(epText);
-		epButton.addEventListener('click', function () {goToEP(tempEP);});
+		epButton.addEventListener('click', function () {goToEP(targetEP);});
 		
 		epButtonWrapper.appendChild(epButton);
 	}
@@ -74,6 +95,48 @@ function updatePage () {
 		document.getElementById('ep-button-wrapper').style.maxHeight = '50vh';
 	}
 	
+	/////////////////////////////////////////////Season Selector/////////////////////////////////////////////
+	var seasonButtonWrapper = document.createElement('div');
+	seasonButtonWrapper.id = 'season-button-wrapper';
+	
+	var group = series.getAttribute('group');
+	var groupOrder = series.getAttribute('group-order');
+	var allSeasons = [];
+	var seasonOrders = [];
+	var allSeries = filterSeries (xml);
+	
+	for (i = 0; i < allSeries.length; i++) {
+		if (allSeries[i].getAttribute('group') == group && allSeries[i].getAttribute('group-order') != groupOrder) {
+			allSeasons.push (allSeries[i]);
+			seasonOrders.push (parseInt(allSeries[i].getAttribute('group-order')));
+		}
+	}
+	
+	if (allSeasons.length != 0) {
+		for (i = 0; i <= allSeasons.length; i++) {
+			let index = seasonOrders.indexOf(i+1);
+			
+			let seasonButton = document.createElement('div');
+			let seasonText = document.createElement('p');
+			
+			if (index != -1) {
+				seasonText.innerHTML = allSeasons[index].getAttribute('season-name');
+				seasonButton.appendChild (seasonText);
+				let targetEP = firstAvailableEP (allSeasons[index]);
+				seasonButton.addEventListener('click', function () {goToEP(targetEP);});
+			} else {
+				seasonText.innerHTML = series.getAttribute('season-name');
+				seasonButton.appendChild (seasonText);
+				seasonButton.classList.add ('current-season');
+			}
+			seasonButtonWrapper.appendChild (seasonButton);
+		}
+		document.getElementById('season-selector').appendChild(seasonButtonWrapper);
+	} else {
+		document.getElementById('season-selector').style.display = 'none';
+	}
+	
+	/////////////////////////////////////////////Add Media/////////////////////////////////////////////
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {

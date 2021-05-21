@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <catalog>
 	
-	<series title="小林さんちのメイドラゴン" thumbnail="maidragon_1.webp">
+	<series title="小林さんちのメイドラゴン" thumbnail="maidragon_1.webp" group="小林さんちのメイドラゴン" group-order="1">
 		<video tag="01">koRxB0FcCeE</video>
 		<video tag="02">IMu1lgcz5U7</video>
 		<video tag="03">6O6ciiBPkPg</video>
@@ -40,20 +40,20 @@
 		<keyword>小林さんちのメイドラゴン 小林家的龍女僕 小林家的龙女仆 小林家的妹抖龙 Miss Kobayashi's Dragon Maid Kobayashi-san Chi no Meidoragon 京都アニメーション 京アニ Kyoto Animation Kyoani 京都動畫 京都动画 京阿尼 2017</keyword>
 	</series>
 	
-	<series title="ゾンビランドサガLIVE～フランシュシュみんなでおらぼう！～" thumbnail="zombielandsaga_3.webp">
+	<series title="ゾンビランドサガLIVE～フランシュシュみんなでおらぼう！～" thumbnail="zombielandsaga_3.webp" group="ゾンビランドサガ" group-order="3" season-name="LIVE 1">
 		<video tag="LIVE">EQ7CRK8Na0G</video>
 		<image tag="Menu">JdiUcsdZudv</image>
 		<keyword>ゾンビランドサガ LIVE ～フランシュシュみんなでおらぼう！～ 佐賀偶像是傳奇 佐贺偶像是传奇 僵尸之地佐贺 Zombie Land Saga MAPPA フランシュシュ 法蘭秀秀 芙兰秀秀 Franchouchou 2019</keyword>
 	</series>
 	
-	<series title="ゾンビランドサガ　フランシュシュ　The Best" thumbnail="zombielandsaga_2.webp">
+	<series title="ゾンビランドサガ　フランシュシュ　The Best" thumbnail="zombielandsaga_2.webp" group="ゾンビランドサガ" group-order="2" season-name="MUSIC 1">
 		<audio tag="CD">7aKIyewgJ6c</audio>
 		<video tag="MV" title="佐賀事変">JU6Ad9D2Yva</video>
 		<image tag="Menu">3HnQWPpzp4w</image>
 		<keyword>ゾンビランドサガ フランシュシュ The Best 佐賀偶像是傳奇 佐贺偶像是传奇 僵尸之地佐贺 Zombie Land Saga MAPPA 法蘭秀秀 芙兰秀秀 Franchouchou 2019 佐賀事変</keyword>
 	</series>
 	
-	<series title="ゾンビランドサガ" thumbnail="zombielandsaga_1.webp">
+	<series title="ゾンビランドサガ" thumbnail="zombielandsaga_1.webp" group="ゾンビランドサガ" group-order="1" season-name="TV S1">
 		<video tag="01">LKrr2Gynx9l</video>
 		<video tag="02">1Mo5WWNYAWj</video>
 		<video tag="03">004hBP2wKOv</video>
@@ -82,7 +82,7 @@
 		<keyword>ゾンビランドサガ 佐賀偶像是傳奇 佐贺偶像是传奇 僵尸之地佐贺 Zombie Land Saga MAPPA フランシュシュ 法蘭秀秀 芙兰秀秀 Franchouchou 2018</keyword>
 	</series>
 	
-	<series title="魔女の旅々" thumbnail="majotabi_1.webp">
+	<series title="魔女の旅々" thumbnail="majotabi_1.webp" group="魔女の旅々" group-order="1">
 		<video tag="01">rEEFCysWB6z</video>
 		<video tag="02">SzE1JkjFldE</video>
 		<video tag="03">Mf8oC5xTgcm</video>

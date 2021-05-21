@@ -8,10 +8,49 @@
 	font-weight: bold;
 }
 
-#ep-selector {
+#ep-selector, #season-selector {
 	position: relative;
 	margin: 0px;
 	padding: 0px 5%;
+}
+
+#season-button-wrapper {
+	display: flex;
+  	flex-wrap: wrap;
+	justify-content: center;
+	margin: 0px 0px -10px;
+	padding: 34px 0px 0px;
+}
+
+#season-button-wrapper > div > p {
+	padding: 0px;
+	margin: 0.5em 0px;
+}
+
+#season-button-wrapper > div {
+	height: auto;
+    transition: .4s ease-out;
+	margin: 0px min(2em, 25px);
+	cursor: pointer;
+	color: #adadb5;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: rgba(0,0,0,0.0);
+}
+
+#season-button-wrapper > div:hover {
+	color: black;
+	font-weight: bold;
+	border-bottom-color: rgba(0,0,0,1.0);
+}
+
+#season-button-wrapper > div.current-season {
+	cursor: auto;
+	color: black;
+	font-weight: bold;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: rgba(0,0,0,1.0);
 }
 
 #ep-button-wrapper {

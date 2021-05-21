@@ -30,9 +30,11 @@
 }
 
 #container > div > div {
-	background-size: cover;
+	/*background-size: cover;*/
+	background-size: contain;
+	background-repeat: no-repeat;
 	background-position:center;
-	padding-bottom: 141.42%;
+	padding-bottom: 141.4213562%;
 }
 
 #container > div > p {

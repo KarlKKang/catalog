@@ -52,7 +52,7 @@ function showSeries (xml) {
 }
 
 function goToSeries (index) {
-	var url = 'bangumi.html?ep=' + firstAvailableID (index);
+	var url = 'bangumi.html?ep=' + firstAvailableEP (index);
 	window.location.href = url;
 }
 
@@ -67,7 +67,7 @@ function filterSeries (xml) {
 	return result;
 }
 
-function firstAvailableID (index) {
+function firstAvailableEP (index) {
 	var EPs = series[index].querySelectorAll('video, image, audio');
 	for (var i = 0; i < EPs.length; i++) {
 		if (permittedEPs.includes(EPs[i].childNodes[0].nodeValue)) {
