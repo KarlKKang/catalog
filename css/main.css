@@ -10,7 +10,13 @@
 @font-face {
 	font-family: KozGoPr6N;
 	src: url("../font/KozGoPr6N-Medium.otf");
-	font-weight: bold;
+	font-weight: 500;
+}
+
+@font-face {
+	font-family: KozGoPr6N;
+	src: url("../font/KozGoPr6N-Bold.otf");
+	font-weight: 700;
 }
 
 @font-face {
@@ -57,7 +63,7 @@ body {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-weight: bold;
+	font-weight: 500;
 	padding: 0px;
 }
 

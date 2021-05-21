@@ -60,7 +60,7 @@ function firstAvailableEP (targetSeries) {
 
 function updatePage (xml) {
 	var type = EPNode.tagName;
-	var title = series.getAttribute('title') + ' [' + EPNode.getAttribute('tag') + ']' + ((EPNode.getAttribute('title')==null)?'':(' - ' + EPNode.getAttribute('title')));
+	var title =  ((EPNode.getAttribute('title')==null)?series.getAttribute('title'):EPNode.getAttribute('title'));
 	
 	document.getElementById('title').innerHTML =  title;
 	document.title = title + ' | ど〜ん〜！ば〜ん〜！！';
@@ -76,6 +76,11 @@ function updatePage (xml) {
 		
 		let targetEP = EPs[i].childNodes[0].nodeValue;
 		epText.innerHTML = EPs[i].getAttribute('tag');
+		
+		if (EPs[i].getAttribute('tag') == EPNode.getAttribute('tag')) {
+			epButton.style.fontWeight = 'bolder';
+			epButton.style.textDecoration = 'underline';
+		}
 		
 		epButton.appendChild(epText);
 		epButton.addEventListener('click', function () {goToEP(targetEP);});

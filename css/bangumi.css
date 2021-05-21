@@ -5,13 +5,14 @@
 	text-align: center;
 	margin: 2em auto 0px auto;
 	font-size: x-large;
-	font-weight: bold;
+	font-weight: 500;
 }
 
 #ep-selector, #season-selector {
 	position: relative;
 	margin: 0px;
-	padding: 0px 5%;
+	padding: 0px;
+	width: 100%;
 }
 
 #season-button-wrapper {
@@ -19,7 +20,7 @@
   	flex-wrap: wrap;
 	justify-content: center;
 	margin: 0px 0px -10px;
-	padding: 34px 0px 0px;
+	padding: 34px 2% 0px 2%;
 }
 
 #season-button-wrapper > div > p {
@@ -58,11 +59,12 @@
   	flex-wrap: wrap;
 	justify-content: center;
 	margin: 0px;
-	padding: 34px 0px;
+	padding: 34px 5%;
 	overflow-y: hidden;
 }
 
 #ep-button-wrapper > div {
+	position: relative;
 	height: auto;
 	background-color: rgba(255,255,255,1);
 	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
@@ -73,7 +75,8 @@
 }
 
 #ep-button-wrapper > div:hover {
-	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.30);
+	z-index: 0;
 }
 
 #ep-button-wrapper > div > * {
@@ -159,7 +162,7 @@ select:hover{
 
 .sub-title {
 	font-size: large;
-	font-weight: bold;
+	font-weight: 500;
 	width: 100%;
 	margin: 2em 0px 1em 0px;
 }
@@ -181,7 +184,7 @@ select:hover{
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .accordion:hover {
-	box-shadow: 0 2px 30px 2px rgba(32,52,76,.45);
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
 }
 
 /* Style the accordion panel. Note: hidden by default */
@@ -207,7 +210,7 @@ select:hover{
 
 .current-chapter {
 	color: #000;
-	font-weight: bold;
+	font-weight: 500;
 }
 
 .inactive-chapter {
