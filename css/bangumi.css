@@ -103,7 +103,7 @@ hr {
 	margin: 0px auto;
 	height: 1px;
 	width: 80%;
-	max-width: 1000px;
+	max-width: 1280px;
 	border-width: 0;
 	background-color: rgba(32,52,76,.15);
 }
@@ -112,7 +112,7 @@ hr {
 	margin: 2em auto 6em auto;
 	padding: 0px;
 	width: 80%;
-	max-width: 1000px;
+	max-width: 1280px;
 }
 
 select {
@@ -144,7 +144,7 @@ select:hover{
 
 #media-holder > audio, #media-holder > img {
 	width: 100%;
-	margin: 1em 0px;
+	margin: 0px 0px 1em 0px;
 }
 
 #media-holder > img, #media-holder > video, #media-holder > video-js {
@@ -165,6 +165,17 @@ select:hover{
 	font-weight: 500;
 	width: 100%;
 	margin: 2em 0px 1em 0px;
+}
+
+.artist {
+	color: #adadb5;
+	font-size: medium;
+	font-weight: normal;
+}
+
+p.artist {
+	width: 100%;
+	margin: -1em 0px 1em 0px;
 }
 
 /* Style the buttons that are used to open and close the accordion panel */
@@ -234,8 +245,49 @@ select:hover{
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
 }
 
-#loading-text {
-	color: #adadb5;
-	text-align: center;
-	margin: 1em 0px -1em 0px;
+
+.video-js .vjs-current-time, .video-js .vjs-duration, .video-js .vjs-time-divider {
+    display: block !important;
+	padding: 0px 0.3em !important;
+	min-width: 0em !important;
+}
+.video-js .vjs-remaining-time, .video-js .vjs-volume-panel, .video-js .vjs-subs-caps-button {
+    display: none !important;
+}
+
+.video-js.vjs-audio {
+	background-color: white;
+	color: black;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+	transition: box-shadow .4s ease-out;
+}
+.video-js.vjs-audio:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.30);
+}
+.video-js.vjs-audio .vjs-control-bar{
+  background-color: rgba(0,0,0,0.00);
+}
+.video-js.vjs-audio .vjs-slider{
+  background-color: rgba(0,0,0,0.15);
+}
+.video-js.vjs-audio .vjs-load-progress, .video-js.vjs-audio .vjs-load-progress div{
+  background: rgba(0,0,0,0.10);
+}
+.video-js.vjs-audio .vjs-play-progress,.video-js.vjs-audio .vjs-volume-level{
+  background-color: black;
+}
+/* Audio: Remove big play button (leave only the button in controls). */
+.video-js.vjs-audio .vjs-big-play-button, .video-js.vjs-audio .vjs-loading-spinner {
+  display: none;
+}
+/* Audio: Make the controlbar visible by default */
+.video-js.vjs-audio .vjs-control-bar {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+/* Make player height minimum to the controls height so when we hide video/poster area the controls are displayed correctly. */
+.video-js.vjs-audio {
+  min-height: 3em;
 }

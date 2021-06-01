@@ -5,8 +5,8 @@
 	<format>1080p RAW</format>
 	<format>1080p JPN</format>
 	<format>1080p CHT</format>
-	<format>キャストオーディオコメンタリー 1080p RAW</format>
-	<format>スタッフオーディオコメンタリー 1080p RAW</format>
+	<format>1080p RAW キャストオーディオコメンタリー</format>
+	<format>1080p RAW スタッフオーディオコメンタリー</format>
 	<chapters>true</chapters>
 	
 </file>

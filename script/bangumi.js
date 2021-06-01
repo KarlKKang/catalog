@@ -3,7 +3,7 @@ var EP;
 var series;
 var EPNode;
 var fileNode;
-var timeout = 0;
+var chapters = {name: [], startTime: []};
 
 var XHROpen;
 
@@ -149,7 +149,7 @@ function updatePage (xml) {
 			if (type == 'video') {
 				updateVideo ();
 			} else if (type == 'audio') {
-				updateAudio ();
+				updateAudio_videojs ();
 			} else {
 				updateImage ();
 			}
@@ -186,34 +186,100 @@ function updateVideo () {
 	formatSelector.appendChild(selectMenu);
 	document.getElementById('media-holder').appendChild(formatSelector);
 	
-	var loadingText = document.createElement('p');
-	loadingText.setAttribute('id', 'loading-text');
-	loadingText.innerHTML = '動画を読み込んでいます。しばらくお待ちください。';
-	loadingText.style.display = 'none';
-	document.getElementById('media-holder').appendChild(loadingText);
-	
-	var videoNode = addVideoNode (fileName, formats[0].childNodes[0].nodeValue);
+	//var videoNode = addVideoNode (fileName, formats[0].childNodes[0].nodeValue);
+	var videoNode = addVideoJSNode (fileName, formats[0].childNodes[0].nodeValue);
 	videoNode.load();
 }
 
-function updateAudio () {
+function updateAudio_videojs () {
 	var files = fileNode.getElementsByTagName('fileName');
 	
+	if (fileNode.getElementsByTagName('album-title').length!=0) {
+		let albumTitle = document.createElement('p');
+		albumTitle.setAttribute('class', 'sub-title');
+		albumTitle.style.textAlign = 'center';
+		albumTitle.innerHTML = fileNode.getElementsByTagName('album-title')[0].childNodes[0].nodeValue;
+		document.getElementById('media-holder').appendChild(albumTitle);
+		if (fileNode.getElementsByTagName('album-artist').length!=0) {
+			let albumArtist = document.createElement('p');
+			albumArtist.setAttribute('class', 'artist');
+			albumArtist.style.textAlign = 'center';
+			albumArtist.innerHTML = fileNode.getElementsByTagName('album-artist')[0].childNodes[0].nodeValue;
+			document.getElementById('media-holder').appendChild(albumArtist);
+		}
+	}
+	
+	var config = {
+		controls: true,
+		autoplay: false,
+		preload: 'auto',
+		fluid: true,
+		aspectRatio: "1:0",
+		controlBar: {
+			fullscreenToggle: false,
+			pictureInPictureToggle: false
+		},
+		html5: {
+			vhs: {
+				overrideNative: true
+			},
+			nativeAudioTracks: false,
+			nativeVideoTracks: false
+		}
+	};
+	
 	for (var i = 0; i < files.length; i++) {
-		var audioNode = document.createElement('audio');
-		var subtitle = document.createElement('p');
+		let audioNode = document.createElement('audio');
+		let subtitle = document.createElement('p');
+		
+		audioNode.id = "track"+i;
+		
+		document.getElementById('media-holder').appendChild(subtitle);
+		document.getElementById('media-holder').appendChild(audioNode);
 		
 		let url = resourceURL + EP + '/' + encodeURI('_MASTER_' + files[i].childNodes[0].nodeValue + '.m3u8');
 		
-		setHLS (audioNode, url);
+		audioNode.classList.add("vjs-default-skin");
+		audioNode.classList.add("video-js");
+		let audio = videojs(audioNode, config, function () {
+			if (Hls.isSupported()) {
+				audio.src({
+					src: generateURL (url, '', 5000),
+					type: 'application/x-mpegURL'
+				});
+			} else {
+				audio.src({
+					src: generateURL (url, '?ios=true', 5000),
+					type: 'application/x-mpegURL'
+				});
+			}
+		});
 		
-		audioNode.setAttribute('controls', true);
-		audioNode.setAttribute('controlsList', 'nodownload');
 		subtitle.setAttribute('class', 'sub-title');
-		subtitle.innerHTML = files[i].getAttribute("tag");
-		audioNode.addEventListener('contextmenu', event => event.preventDefault());
-		document.getElementById('media-holder').appendChild(subtitle);
-		document.getElementById('media-holder').appendChild(audioNode);
+		subtitle.innerHTML = files[i].getAttribute('tag');
+		
+		audioNode.addEventListener("play", function () {
+			var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
+			for (var i = 0; i < tracks.length; i++) {
+				if (this.parentElement.id != tracks[i].id) {
+					tracks[i].getElementsByTagName('audio')[0].pause();
+				}
+			}
+		});
+		audioNode.addEventListener("ended", function () {
+			var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
+			if (this.parentElement.id != "track"+(tracks.length-1)) {
+				document.getElementById("track"+(parseInt(this.parentElement.id.slice(5))+1)).getElementsByTagName('audio')[0].play();
+			}
+		});
+		audioNode.parentElement.addEventListener('contextmenu', event => event.preventDefault());
+		
+		if (files[i].getAttribute('artist')!=null) {
+			let artist = document.createElement('span');
+			artist.setAttribute('class', 'artist');
+			artist.innerHTML = '／' + files[i].getAttribute('artist');
+			subtitle.appendChild(artist);
+		}
 	}
 }
 
@@ -243,11 +309,12 @@ function updateImage () {
 
 function formatSwitch () {
 	var format = document.getElementById('format-selector').getElementsByTagName('select')[0].value;
-	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
+	//var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
+	var videoNode = document.getElementById('media-holder').getElementsByTagName('video-js')[0].getElementsByTagName('video')[0];
 	var currentTime = videoNode.currentTime;
 	var paused = videoNode.paused;
 	
-	videoNode = addVideoNode (fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue, format);
+	videoNode = addVideoJSNode (fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue, format);
 	
 	var resume = function () {
 		videoNode.currentTime = currentTime;
@@ -260,56 +327,9 @@ function formatSwitch () {
 	videoNode.addEventListener ('loadeddata', resume);
 }
 
-function addVideoNode (fileName, format) {
-	if (document.getElementById('media-holder').getElementsByTagName('video').length != 0) {
-		document.getElementById('media-holder').getElementsByTagName('video')[0].remove();
-	}
-	if (document.getElementById('media-holder').getElementsByClassName('chapters').length != 0) {
-		document.getElementById('media-holder').getElementsByClassName('chapters')[0].remove();
-	}
-	
-	var videoNode = document.createElement('video');
-	videoNode.setAttribute('controls', true);
-	videoNode.setAttribute('controlsList', 'nodownload');
-	videoNode.setAttribute('preload', 'auto');
-	
-	if (Hls.isSupported()) {
-		videoNode.addEventListener ('play', buffering);
-		videoNode.addEventListener ('seeked', function () {
-			var paused = videoNode.paused;
-			videoNode.pause();
-			if (!paused)
-				videoNode.play();
-		});
-	}
-	
-	var url = resourceURL + EP + '/' + encodeURI('_MASTER_' + fileName + '[' + format + '].m3u8');
-	
-	setHLS (videoNode, url);
-	
-	videoNode.addEventListener('contextmenu', event => event.preventDefault());
-	document.getElementById('media-holder').appendChild(videoNode);
-	
-	if (fileNode.getElementsByTagName('chapters').length != 0) {
-		if (fileNode.getElementsByTagName('chapters')[0].childNodes[0].nodeValue == 'true') {
-			var chapterTrack = document.createElement('track');
-			chapterTrack.setAttribute('kind', 'chapters');
-			chapterTrack.setAttribute('srclang', 'ja');
-			chapterTrack.setAttribute('src', generateURL (resourceURL + EP + '/chapters.vtt', '', 5000));
-			chapterTrack.setAttribute('default', true);
-			videoNode.setAttribute('crossorigin', 'anonymous');
-			videoNode.appendChild(chapterTrack);
-			chapterTrack.onload = function () {displayChapters (videoNode);};
-		}
-	}
-	
-	return videoNode;
-}
-
-/*
 function addVideoJSNode (fileName, format) {
-	if (document.getElementById('media-holder').getElementsByTagName('video').length != 0) {
-		document.getElementById('media-holder').getElementsByTagName('video')[0].remove();
+	if (document.getElementById('media-holder').getElementsByTagName('video-js').length != 0) {
+		document.getElementById('media-holder').getElementsByTagName('video-js')[0].remove();
 	}
 	if (document.getElementById('media-holder').getElementsByClassName('chapters').length != 0) {
 		document.getElementById('media-holder').getElementsByClassName('chapters')[0].remove();
@@ -328,6 +348,7 @@ function addVideoJSNode (fileName, format) {
 		autoplay: false,
 		preload: 'auto',
 		fluid: true,
+		playsinline: true,
 		html5: {
 			vhs: {
 				overrideNative: true
@@ -336,25 +357,57 @@ function addVideoJSNode (fileName, format) {
 			nativeVideoTracks: false
 		}
 	};
-	videoNode = videojs(videoNode, config);
-	videoNode.src({
-		src: url,
-		type: 'application/x-mpegURL'
-	});
-	videoNode.ready(function() {
+	var video = videojs(videoNode, config);
+	if (Hls.isSupported()) {
+		video.src({
+			src: generateURL (url, '', 5000),
+			type: 'application/x-mpegURL'
+		});
+	} else {
+		video.src({
+			src: generateURL (url, '?ios=true', 5000),
+			type: 'application/x-mpegURL'
+		});
+	}
+	
+	video.volume(1);
+	
+	video.ready(function() {
 		this.hotkeys({
-			volumeStep: 0.1,
+			volumeUpKey: function(event, player) {
+				return false;
+			},
+			volumeDownKey: function(event, player) {
+				return false;
+			},
 			seekStep: 5,
+			enableVolumeScroll: false,
 			enableModifiersForNumbers: false
 		});
 	});
 	//videojs.Vhs.GOAL_BUFFER_LENGTH = 30*60;
 	//videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 2*60*60;
 	//videojs.Vhs.GOAL_BUFFER_LENGTH_RATE = 1,
+	
+	videoNode = videoNode.getElementsByTagName('video')[0];
+	if (Hls.isSupported()) {
+		videoNode.addEventListener ('play', buffering);
+		videoNode.addEventListener ('seeked', function () {
+			var paused = videoNode.paused;
+			videoNode.pause();
+			if (!paused)
+				videoNode.play();
+		});
+	}
+	
+	if (fileNode.getElementsByTagName('chapters').length != 0) {
+		if (fileNode.getElementsByTagName('chapters')[0].childNodes[0].nodeValue == 'true') {
+			getChapters (videoNode);
+		}
+	}
 
 	return videoNode;
 }
-*/
 
 function goToEP (dest_ep) {
 	var url = 'bangumi.html?ep=' + dest_ep;
@@ -422,48 +475,6 @@ function XHROverride () {
 	XHROpen.apply(this, arguments);
 }
 
-function setHLS (player, url) {
-	/*
-	var config = {
-		maxBufferLength: 120,
-		maxMaxBufferLength: 900,
-		maxBufferSize: 200*1000*1000
-	};
-	*/
-	
-	if (Hls.isSupported()) {
-		url = generateURL (url, '', 5000);
-		var hls = new Hls();
-		hls.attachMedia(player);
-		hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-			hls.loadSource(url);
-		});
-		
-		hls.on(Hls.Events.ERROR, function (event, data) {
-			if (data.fatal) {
-				switch (data.type) {
-					case Hls.ErrorTypes.NETWORK_ERROR:
-						// try to recover network error
-						console.log('fatal network error encountered, try to recover');
-						hls.startLoad();
-						break;
-					case Hls.ErrorTypes.MEDIA_ERROR:
-						console.log('fatal media error encountered, try to recover');
-						hls.recoverMediaError();
-						break;
-					default:
-						// cannot recover
-						hls.destroy();
-						break;
-				}
-			}
-		});
-	} else if (player.canPlayType('application/vnd.apple.mpegurl')) {
-		url = generateURL (url, '?ios=true', 5000);
-		player.src = url;
-	}
-}
-
 function addAccordionEvent () {
 	var acc = document.getElementsByClassName("accordion");
 	var i;
@@ -481,7 +492,32 @@ function addAccordionEvent () {
 	}
 }
 
+function getChapters (player) {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			let xml = this.responseXML;
+			let ChapterString = xml.querySelectorAll('ChapterString');
+			let ChapterTimeStart = xml.querySelectorAll('ChapterTimeStart');
+			
+			chapters = {name: [], startTime: []};
+			for (var i = 0; i < ChapterString.length; i++) {
+				chapters.name.push(ChapterString[i].childNodes[0].nodeValue);
+				let timestamp = ChapterTimeStart[i].childNodes[0].nodeValue.split(":");
+				let startTime = parseInt (timestamp[0]) * 60 * 60 + parseInt (timestamp[1]) * 60 + parseFloat (timestamp[2]);
+				//startTime = Math.round(startTime*1000)/1000;
+				chapters.startTime.push(startTime);
+			}
+			displayChapters (player);
+		}
+	};
+	xhttp.open("GET", generateURL(resourceURL + EP + '/chapters.xml', '', 5000), true);
+	xhttp.send();
+}
+
 function displayChapters (player) {
+	var chapterLength = chapters.name.length;
+	
 	var accordion = document.createElement('button');
 	accordion.classList.add('accordion');
 	accordion.innerHTML = 'CHAPTERS';
@@ -489,13 +525,11 @@ function displayChapters (player) {
 	var accordionPanel = document.createElement('div');
 	accordionPanel.classList.add('panel');
 	
-	var cues = player.textTracks[0].cues;
-	
-	for (var i = 0; i < cues.length; i++) {
+	for (var i = 0; i < chapterLength; i++) {
 		let chapter = document.createElement('p');
 		let timestamp = document.createElement('span');
-		let cueText = document.createTextNode('\xa0\xa0' + cues[i].text);
-		let startTime = cues[i].startTime
+		let cueText = document.createTextNode('\xa0\xa0' + chapters.name[i]);
+		let startTime = chapters.startTime[i];
 		timestamp.innerHTML = secToTimestamp (startTime);
 		timestamp.onclick = function () {
 			player.currentTime = startTime;
@@ -515,21 +549,24 @@ function displayChapters (player) {
 	addAccordionEvent ();
 	
 	var updateChapterDisplay = function () {
-		var chapters = accordionPanel.getElementsByTagName('p');
+		var chapterElements = accordionPanel.getElementsByTagName('p');
 		var currentTime = player.currentTime;
-		if (cues.length != 0) {
-			for (var i = 0; i < chapters.length; i++) {
-				if (currentTime >= cues[i].startTime  && currentTime < cues[i].endTime) {
-					chapters[i].className = 'current-chapter';
+		for (var i = 0; i < chapterLength; i++) {
+			if (currentTime >= chapters.startTime[i]) {
+				if (i == chapterLength-1) {
+					chapterElements[i].className = 'current-chapter';
+				} else if (currentTime < chapters.startTime[i+1]) {
+					chapterElements[i].className = 'current-chapter';  
 				} else {
-					chapters[i].className = 'inactive-chapter';
+					chapterElements[i].className = 'inactive-chapter';
 				}
+			} else {
+				chapterElements[i].className = 'inactive-chapter';
 			}
 		}
 	};
 	
-	player.textTracks[0].oncuechange = updateChapterDisplay;
-	
+	player.addEventListener ('timeupdate', updateChapterDisplay);
 	player.addEventListener ('play', updateChapterDisplay);
 	player.addEventListener ('pause', updateChapterDisplay);
 	player.addEventListener ('seeking', updateChapterDisplay);
@@ -557,22 +594,22 @@ function buffering () {
 	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
 	
 	function addCheckBuffer () {
-		videoNode.pause();
-		document.getElementById('loading-text').style.display = 'block';
+		if (videoNode.currentTime > 0 && !videoNode.paused && !videoNode.ended && videoNode.readyState > videoNode.HAVE_CURRENT_DATA) {
+			videoNode.pause();
+		}
+		document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.add('vjs-seeking');
 		videoNode.removeEventListener ('play', buffering);
 		videoNode.addEventListener ('play', checkBuffer);
 		videoNode.addEventListener ('progress', checkBuffer);
+		videoNode.addEventListener ('timeupdate', checkBuffer);
 	}
 	
 	if (videoNode.buffered.length == 0) {
-		document.getElementById('loading-text').innerHTML = '動画を読み込んでいます。しばらくお待ちください。(0%)';
 		addCheckBuffer ();
 	} else {
 		for (var i = 0; i < videoNode.buffered.length; i++) {
 			if (videoNode.buffered.start(videoNode.buffered.length - 1 - i) - 0.25 <= videoNode.currentTime) {
 				if (videoNode.buffered.end(videoNode.buffered.length - 1 - i) < Math.min(videoNode.currentTime+15, videoNode.duration)) {
-					let loadingPercent = Math.round(Math.max(Math.min (videoNode.buffered.end(videoNode.buffered.length - 1 - i) - videoNode.currentTime, Math.min(15, videoNode.duration-videoNode.currentTime)), 0) / Math.min(15, videoNode.duration-videoNode.currentTime) * 1000) / 10;
-					document.getElementById('loading-text').innerHTML = '動画を読み込んでいます。しばらくお待ちください。(' + loadingPercent + '%)';
 					addCheckBuffer ();
 				}
 				break;
@@ -583,18 +620,25 @@ function buffering () {
 
 function checkBuffer () {
 	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
-	videoNode.pause();
+	if (videoNode.currentTime > 0 && !videoNode.paused && !videoNode.ended && videoNode.readyState > videoNode.HAVE_CURRENT_DATA) {
+		videoNode.pause();
+	}
+	document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.add('vjs-seeking');
 	
 	for (var i = 0; i < videoNode.buffered.length; i++) {
 		if (videoNode.buffered.start(videoNode.buffered.length - 1 - i) - 0.25 <= videoNode.currentTime && videoNode.buffered.end(videoNode.buffered.length - 1 - i) >= videoNode.currentTime) {
-			let loadingPercent = Math.round(Math.max(Math.min (videoNode.buffered.end(videoNode.buffered.length - 1 - i) - videoNode.currentTime, Math.min(15, videoNode.duration-videoNode.currentTime)), 0) / Math.min(15, videoNode.duration-videoNode.currentTime) * 1000) / 10;
-			document.getElementById('loading-text').innerHTML = '動画を読み込んでいます。しばらくお待ちください。(' + loadingPercent + '%)';
 			if (videoNode.buffered.end(videoNode.buffered.length - 1 - i) >= Math.min(videoNode.currentTime+15, videoNode.duration)) {
-				document.getElementById('loading-text').style.display = 'none';
-				videoNode.play();
+				document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.remove('vjs-seeking');
 				videoNode.removeEventListener ('play', checkBuffer);
 				videoNode.removeEventListener ('progress', checkBuffer);
-				videoNode.addEventListener ('play', buffering);
+				videoNode.removeEventListener ('timeupdate', checkBuffer);
+				let playPromise = videoNode.play();
+				if (playPromise !== undefined) {
+					playPromise.then(_ => {
+						videoNode.addEventListener ('play', buffering);
+					});
+				}
+				
 				break;	
 			}
 		}

@@ -1,6 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <catalog>
 	
+	<series title="ダーリン・イン・ザ・フランキス" thumbnail="darli-fra_1.webp" group="ダーリン・イン・ザ・フランキス" group-order="1">
+		<video tag="01">xogEv2qoa6a</video>
+		<video tag="02">QkCd3boSzOL</video>
+		<video tag="03">kUQ5qOkJhRW</video>
+		<video tag="04">ULvzTCksUIZ</video>
+		<video tag="05">y95FQDK4VHP</video>
+		<video tag="06">wVGnHxblo4A</video>
+		<video tag="07">KH9Ijsqju7c</video>
+		<video tag="08">4eKhT3LpBsG</video>
+		<video tag="09">2IjOsTD1zmE</video>
+		<video tag="10">EBt0nwdC50C</video>
+		<video tag="11">TkrCDxoa6QD</video>
+		<video tag="12">TSxRy4tqLPL</video>
+		<video tag="13">Wu8ZEph9pFd</video>
+		<video tag="14">QnkySg4Zy4e</video>
+		<video tag="15">NZdUjrM8LtE</video>
+		<video tag="16">RI1psM6AdSh</video>
+		<video tag="17">8R9hqsWeFWb</video>
+		<video tag="18">q5HA8k3ZWpr</video>
+		<video tag="19">FPLkRZAcmel</video>
+		<video tag="20">hI7u5UAm8W4</video>
+		<video tag="21">ODzBBTU9HH3</video>
+		<video tag="22">VcfxuNgUxzO</video>
+		<video tag="23">6C3J7V5aMtn</video>
+		<video tag="24">732U4eiZibE</video>
+		<video tag="Web Preview 01">Gcoz4wsgvAI</video>
+		<video tag="Web Preview 02">GPltTi8Zj4d</video>
+		<video tag="Web Preview 03">XBz6Nwj4pRR</video>
+		<video tag="Web Preview 04">IIhf4UtGWcL</video>
+		<video tag="Web Preview 05">DE1j8sqtXDL</video>
+		<video tag="Web Preview 06">y4Ebfd27DqQ</video>
+		<video tag="Web Preview 07">3ezJi49CRsl</video>
+		<video tag="Web Preview 08">zB8r1HTh9l4</video>
+		<video tag="Web Preview 09">HWI40eoChua</video>
+		<video tag="Web Preview 10">oxjSeUYjKtR</video>
+		<video tag="Web Preview 11">RR7BHmY8q1v</video>
+		<video tag="Web Preview 12">wlx6omfYhVO</video>
+		<video tag="Web Preview 13">vTY9QTAowuQ</video>
+		<video tag="Web Preview 14">5RwIrINjriJ</video>
+		<video tag="Web Preview 15">vHIDMTf22Jf</video>
+		<video tag="Web Preview 16">CwjT4fSALV4</video>
+		<video tag="Web Preview 17">TdBgVRfWQZy</video>
+		<video tag="Web Preview 18">qqbB5kUuTDu</video>
+		<video tag="Web Preview 19">DVXy6SYiKM0</video>
+		<video tag="Web Preview 20">qHYAnxcHd55</video>
+		<video tag="Web Preview 21">PZf11mKPRVk</video>
+		<video tag="Web Preview 22">F4sNH8Uf0hJ</video>
+		<video tag="Web Preview 23">JUEhluKjg1K</video>
+		<video tag="Web Preview 24">r5D9GKhEFsA</video>
+		<video tag="SP 01">uafQ7ljaCVp</video>
+		<video tag="SP 02">7TGZ53IsNy3</video>
+		<video tag="SP 03">Rp5ypYCWzJ2</video>
+		<video tag="SP 04">o1QwSNwFM62</video>
+		<video tag="SP 05">TFNU1v19uHH</video>
+		<audio tag="SPCD 01">tmaNg92Ut9Y</audio>
+		<audio tag="SPCD 02">5EU0s4FOa6S</audio>
+		<audio tag="SPCD 03">auYSpFLqFyL</audio>
+		<audio tag="SPCD 04">9wyOF41dRTY</audio>
+		<audio tag="SPCD 05">MF4QeZCeKmD</audio>
+		<audio tag="SPCD 06">2SfOdCBNpoa</audio>
+		<video tag="Menu 01">4qQnO3pfUI9</video>
+		<video tag="Menu 02">UaPENvKYgK0</video>
+		<video tag="Menu 03">1Ti1x4rC5I9</video>
+		<video tag="Menu 04">0DqOpGBU1GB</video>
+		<video tag="Menu 05">LwzWP3JjkrM</video>
+		<video tag="Menu 06">5iF7ZQiYTHT</video>
+		<video tag="Menu 07">HtPP3T84aVq</video>
+		<video tag="Menu 08">lpHsI7wr0ih</video>
+		<keyword>ダーリン・イン・ザ・フランキス DARLING in the FRANXX 比翼之吻 TRIGGER CloverWorks A-1 Pictures A1 2018</keyword>
+	</series>
+	
 	<series title="小林さんちのメイドラゴン" thumbnail="maidragon_1.webp" group="小林さんちのメイドラゴン" group-order="1">
 		<video tag="01">koRxB0FcCeE</video>
 		<video tag="02">IMu1lgcz5U7</video>
