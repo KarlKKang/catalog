@@ -4,6 +4,7 @@ var series;
 var EPNode;
 var fileNode;
 var chapters = {name: [], startTime: []};
+var videoJSInstances = [];
 
 var XHROpen;
 
@@ -187,8 +188,8 @@ function updateVideo () {
 	document.getElementById('media-holder').appendChild(formatSelector);
 	
 	//var videoNode = addVideoNode (fileName, formats[0].childNodes[0].nodeValue);
-	var videoNode = addVideoJSNode (fileName, formats[0].childNodes[0].nodeValue);
-	videoNode.load();
+	addVideoJSNode (fileName, formats[0].childNodes[0].nodeValue);
+	videoJSInstances.load();
 }
 
 function updateAudio_videojs () {
@@ -241,35 +242,37 @@ function updateAudio_videojs () {
 		
 		audioNode.classList.add("vjs-default-skin");
 		audioNode.classList.add("video-js");
-		let audio = videojs(audioNode, config, function () {
-			if (Hls.isSupported()) {
-				audio.src({
-					src: generateURL (url, '', 5000),
-					type: 'application/x-mpegURL'
-				});
-			} else {
-				audio.src({
-					src: generateURL (url, '?ios=true', 5000),
-					type: 'application/x-mpegURL'
-				});
-			}
-		});
+		let audio = videojs(audioNode, config);
+		videoJSInstances.push(audio);
+		
+		if (Hls.isSupported()) {
+			audio.src({
+				src: generateURL (url, '', 5000),
+				type: 'application/x-mpegURL'
+			});
+		} else {
+			audio.src({
+				src: generateURL (url, '?ios=true', 5000),
+				type: 'application/x-mpegURL'
+			});
+		}
+		
+		audio.volume(1);
 		
 		subtitle.setAttribute('class', 'sub-title');
 		subtitle.innerHTML = files[i].getAttribute('tag');
 		
-		audioNode.addEventListener("play", function () {
-			var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
-			for (var i = 0; i < tracks.length; i++) {
-				if (this.parentElement.id != tracks[i].id) {
-					tracks[i].getElementsByTagName('audio')[0].pause();
+		audio.on("play", function () {
+			for (var i = 0; i < videoJSInstances.length; i++) {
+				if (this.id() != videoJSInstances[i].id()) {
+					videoJSInstances[i].pause();
 				}
 			}
 		});
-		audioNode.addEventListener("ended", function () {
-			var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
-			if (this.parentElement.id != "track"+(tracks.length-1)) {
-				document.getElementById("track"+(parseInt(this.parentElement.id.slice(5))+1)).getElementsByTagName('audio')[0].play();
+		audio.on("ended", function () {
+			//var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
+			if (this.id() != "track"+(videoJSInstances.length-1)) {
+				videoJSInstances[parseInt(this.id().slice(5))+1].play();
 			}
 		});
 		audioNode.parentElement.addEventListener('contextmenu', event => event.preventDefault());
@@ -310,21 +313,20 @@ function updateImage () {
 function formatSwitch () {
 	var format = document.getElementById('format-selector').getElementsByTagName('select')[0].value;
 	//var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
-	var videoNode = document.getElementById('media-holder').getElementsByTagName('video-js')[0].getElementsByTagName('video')[0];
-	var currentTime = videoNode.currentTime;
-	var paused = videoNode.paused;
+	var currentTime = videoJSInstances.currentTime();
+	var paused = videoJSInstances.paused();
 	
-	videoNode = addVideoJSNode (fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue, format);
+	addVideoJSNode (fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue, format);
 	
 	var resume = function () {
-		videoNode.currentTime = currentTime;
+		videoJSInstances.currentTime(currentTime);
 		if (!paused)
-			videoNode.play();
-		videoNode.removeEventListener ('loadeddata', resume);
+			videoJSInstances.play();
+		videoJSInstances.off ('loadeddata', resume);
 	};
 	
-	videoNode.load();
-	videoNode.addEventListener ('loadeddata', resume);
+	videoJSInstances.load();
+	videoJSInstances.on ('loadeddata', resume);
 }
 
 function addVideoJSNode (fileName, format) {
@@ -358,6 +360,7 @@ function addVideoJSNode (fileName, format) {
 		}
 	};
 	var video = videojs(videoNode, config);
+	videoJSInstances = video;
 	if (Hls.isSupported()) {
 		video.src({
 			src: generateURL (url, '', 5000),
@@ -389,24 +392,22 @@ function addVideoJSNode (fileName, format) {
 	//videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 2*60*60;
 	//videojs.Vhs.GOAL_BUFFER_LENGTH_RATE = 1,
 	
-	videoNode = videoNode.getElementsByTagName('video')[0];
+	videoNode.getElementsByTagName('video')[0];
 	if (Hls.isSupported()) {
-		videoNode.addEventListener ('play', buffering);
-		videoNode.addEventListener ('seeked', function () {
-			var paused = videoNode.paused;
-			videoNode.pause();
+		videoJSInstances.on ('play', buffering);
+		videoJSInstances.on ('seeked', function () {
+			var paused = video.paused();
+			video.pause();
 			if (!paused)
-				videoNode.play();
+				video.play();
 		});
 	}
 	
 	if (fileNode.getElementsByTagName('chapters').length != 0) {
 		if (fileNode.getElementsByTagName('chapters')[0].childNodes[0].nodeValue == 'true') {
-			getChapters (videoNode);
+			getChapters ();
 		}
 	}
-
-	return videoNode;
 }
 
 function goToEP (dest_ep) {
@@ -492,7 +493,7 @@ function addAccordionEvent () {
 	}
 }
 
-function getChapters (player) {
+function getChapters () {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
@@ -508,14 +509,14 @@ function getChapters (player) {
 				//startTime = Math.round(startTime*1000)/1000;
 				chapters.startTime.push(startTime);
 			}
-			displayChapters (player);
+			displayChapters ();
 		}
 	};
 	xhttp.open("GET", generateURL(resourceURL + EP + '/chapters.xml', '', 5000), true);
 	xhttp.send();
 }
 
-function displayChapters (player) {
+function displayChapters () {
 	var chapterLength = chapters.name.length;
 	
 	var accordion = document.createElement('button');
@@ -532,8 +533,8 @@ function displayChapters (player) {
 		let startTime = chapters.startTime[i];
 		timestamp.innerHTML = secToTimestamp (startTime);
 		timestamp.onclick = function () {
-			player.currentTime = startTime;
-			player.play();
+			videoJSInstances.currentTime(startTime);
+			videoJSInstances.play();
 		};
 		chapter.appendChild(timestamp);
 		chapter.appendChild(cueText);
@@ -550,7 +551,7 @@ function displayChapters (player) {
 	
 	var updateChapterDisplay = function () {
 		var chapterElements = accordionPanel.getElementsByTagName('p');
-		var currentTime = player.currentTime;
+		var currentTime = videoJSInstances.currentTime();
 		for (var i = 0; i < chapterLength; i++) {
 			if (currentTime >= chapters.startTime[i]) {
 				if (i == chapterLength-1) {
@@ -566,10 +567,10 @@ function displayChapters (player) {
 		}
 	};
 	
-	player.addEventListener ('timeupdate', updateChapterDisplay);
-	player.addEventListener ('play', updateChapterDisplay);
-	player.addEventListener ('pause', updateChapterDisplay);
-	player.addEventListener ('seeking', updateChapterDisplay);
+	videoJSInstances.on ('timeupdate', updateChapterDisplay);
+	videoJSInstances.on ('play', updateChapterDisplay);
+	videoJSInstances.on ('pause', updateChapterDisplay);
+	videoJSInstances.on ('seeking', updateChapterDisplay);
 }
 
 function secToTimestamp (sec) {
@@ -591,25 +592,23 @@ function secToTimestamp (sec) {
 }
 
 function buffering () {
-	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
-	
 	function addCheckBuffer () {
-		if (videoNode.currentTime > 0 && !videoNode.paused && !videoNode.ended && videoNode.readyState > videoNode.HAVE_CURRENT_DATA) {
-			videoNode.pause();
+		if (videoJSInstances.currentTime() > 0 && !videoJSInstances.paused() && !videoJSInstances.ended() && videoJSInstances.readyState() > 2) {
+			videoJSInstances.pause();
 		}
 		document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.add('vjs-seeking');
-		videoNode.removeEventListener ('play', buffering);
-		videoNode.addEventListener ('play', checkBuffer);
-		videoNode.addEventListener ('progress', checkBuffer);
-		videoNode.addEventListener ('timeupdate', checkBuffer);
+		videoJSInstances.off ('play', buffering);
+		videoJSInstances.on ('play', checkBuffer);
+		videoJSInstances.on ('progress', checkBuffer);
+		videoJSInstances.on ('timeupdate', checkBuffer);
 	}
 	
-	if (videoNode.buffered.length == 0) {
+	if (videoJSInstances.buffered().length == 0) {
 		addCheckBuffer ();
 	} else {
-		for (var i = 0; i < videoNode.buffered.length; i++) {
-			if (videoNode.buffered.start(videoNode.buffered.length - 1 - i) - 0.25 <= videoNode.currentTime) {
-				if (videoNode.buffered.end(videoNode.buffered.length - 1 - i) < Math.min(videoNode.currentTime+15, videoNode.duration)) {
+		for (var i = 0; i < videoJSInstances.buffered().length; i++) {
+			if (videoJSInstances.buffered().start(videoJSInstances.buffered().length - 1 - i) - 0.25 <= videoJSInstances.currentTime()) {
+				if (videoJSInstances.buffered().end(videoJSInstances.buffered().length - 1 - i) < Math.min(videoJSInstances.currentTime()+15, videoJSInstances.duration())) {
 					addCheckBuffer ();
 				}
 				break;
@@ -619,23 +618,22 @@ function buffering () {
 }
 
 function checkBuffer () {
-	var videoNode = document.getElementById('media-holder').getElementsByTagName('video')[0];
-	if (videoNode.currentTime > 0 && !videoNode.paused && !videoNode.ended && videoNode.readyState > videoNode.HAVE_CURRENT_DATA) {
-		videoNode.pause();
+	if (videoJSInstances.currentTime() > 0 && !videoJSInstances.paused() && !videoJSInstances.ended() && videoJSInstances.readyState() > 2) {
+		videoJSInstances.pause();
 	}
 	document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.add('vjs-seeking');
 	
-	for (var i = 0; i < videoNode.buffered.length; i++) {
-		if (videoNode.buffered.start(videoNode.buffered.length - 1 - i) - 0.25 <= videoNode.currentTime && videoNode.buffered.end(videoNode.buffered.length - 1 - i) >= videoNode.currentTime) {
-			if (videoNode.buffered.end(videoNode.buffered.length - 1 - i) >= Math.min(videoNode.currentTime+15, videoNode.duration)) {
+	for (var i = 0; i < videoJSInstances.buffered().length; i++) {
+		if (videoJSInstances.buffered().start(videoJSInstances.buffered().length - 1 - i) - 0.25 <= videoJSInstances.currentTime() && videoJSInstances.buffered().end(videoJSInstances.buffered().length - 1 - i) >= videoJSInstances.currentTime()) {
+			if (videoJSInstances.buffered().end(videoJSInstances.buffered().length - 1 - i) >= Math.min(videoJSInstances.currentTime()+15, videoJSInstances.duration())) {
 				document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.remove('vjs-seeking');
-				videoNode.removeEventListener ('play', checkBuffer);
-				videoNode.removeEventListener ('progress', checkBuffer);
-				videoNode.removeEventListener ('timeupdate', checkBuffer);
-				let playPromise = videoNode.play();
+				videoJSInstances.off ('play', checkBuffer);
+				videoJSInstances.off ('progress', checkBuffer);
+				videoJSInstances.off ('timeupdate', checkBuffer);
+				let playPromise = videoJSInstances.play();
 				if (playPromise !== undefined) {
 					playPromise.then(_ => {
-						videoNode.addEventListener ('play', buffering);
+						videoJSInstances.on ('play', buffering);
 					});
 				}
 				
