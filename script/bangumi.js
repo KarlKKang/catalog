@@ -1,4 +1,3 @@
-// JavaScript Document
 var EP;
 var series;
 var EPNode;
@@ -275,7 +274,7 @@ function updateAudio_videojs () {
 				videoJSInstances[parseInt(this.id().slice(5))+1].play();
 			}
 		});
-		audioNode.parentElement.addEventListener('contextmenu', event => event.preventDefault());
+		document.getElementById('track' + i).parentElement.addEventListener('contextmenu', event => event.preventDefault());
 		
 		if (files[i].getAttribute('artist')!=null) {
 			let artist = document.createElement('span');
@@ -319,14 +318,15 @@ function formatSwitch () {
 	addVideoJSNode (fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue, format);
 	
 	var resume = function () {
+		console.log ('loaded');
 		videoJSInstances.currentTime(currentTime);
 		if (!paused)
 			videoJSInstances.play();
-		videoJSInstances.off ('loadeddata', resume);
+		videoJSInstances.off ('loadedmetadata', resume);
 	};
 	
 	videoJSInstances.load();
-	videoJSInstances.on ('loadeddata', resume);
+	videoJSInstances.on('loadedmetadata', resume);
 }
 
 function addVideoJSNode (fileName, format) {
