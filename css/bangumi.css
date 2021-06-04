@@ -251,7 +251,7 @@ p.artist {
 	padding: 0px 0.3em !important;
 	min-width: 0em !important;
 }
-.video-js .vjs-remaining-time, .video-js .vjs-volume-panel, .video-js .vjs-subs-caps-button {
+.video-js .vjs-remaining-time, .video-js .vjs-volume-panel, .video-js .vjs-subs-caps-button, .video-js .vjs-play-progress .vjs-time-tooltip {
     display: none !important;
 }
 

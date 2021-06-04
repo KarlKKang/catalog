@@ -157,6 +157,24 @@ function updatePage (xml) {
 	};
 	xhttp.open('GET', 'xml/ep/' + EP + '.xml', true);
 	xhttp.send();
+	
+	//smooth progress bar scrubbing https://github.com/videojs/video.js/issues/4460
+	const SeekBar = videojs.getComponent('SeekBar');
+	
+	SeekBar.prototype.getPercent = function getPercent() {
+		const time = this.player_.currentTime();
+		const percent = time / this.player_.duration();
+		return percent >= 1 ? 1 : percent;
+	}
+
+	SeekBar.prototype.handleMouseMove = function handleMouseMove(event) {
+		let newTime = this.calculateDistance(event) * this.player_.duration();
+		if (newTime === this.player_.duration()) {
+			newTime = newTime - 0.1;
+		}
+		this.player_.currentTime(newTime);
+		this.update();
+	}
 }
 
 function updateVideo () {
@@ -232,7 +250,7 @@ function updateAudio_videojs () {
 		let audioNode = document.createElement('audio');
 		let subtitle = document.createElement('p');
 		
-		audioNode.id = "track"+i;
+		audioNode.id = 'track'+i;
 		
 		document.getElementById('media-holder').appendChild(subtitle);
 		document.getElementById('media-holder').appendChild(audioNode);
@@ -261,20 +279,20 @@ function updateAudio_videojs () {
 		subtitle.setAttribute('class', 'sub-title');
 		subtitle.innerHTML = files[i].getAttribute('tag');
 		
-		audio.on("play", function () {
+		audio.on('play', function () {
 			for (var i = 0; i < videoJSInstances.length; i++) {
 				if (this.id() != videoJSInstances[i].id()) {
 					videoJSInstances[i].pause();
 				}
 			}
 		});
-		audio.on("ended", function () {
+		audio.on('ended', function () {
 			//var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
 			if (this.id() != "track"+(videoJSInstances.length-1)) {
 				videoJSInstances[parseInt(this.id().slice(5))+1].play();
 			}
 		});
-		document.getElementById('track' + i).parentElement.addEventListener('contextmenu', event => event.preventDefault());
+		document.getElementById('track' + i).addEventListener('contextmenu', event => event.preventDefault());
 		
 		if (files[i].getAttribute('artist')!=null) {
 			let artist = document.createElement('span');
@@ -282,6 +300,15 @@ function updateAudio_videojs () {
 			artist.innerHTML = '／' + files[i].getAttribute('artist');
 			subtitle.appendChild(artist);
 		}
+		
+		let initialSeek = function () {
+			this.off('play', initialSeek);
+			this.pause();
+			this.muted(false);
+		};
+		audio.muted(true);
+		audio.play();
+		audio.on('loadeddata', initialSeek);
 	}
 }
 
