@@ -33,12 +33,12 @@
 	<script>
 		start ('login');
 		
-		document.getElementById('username').addEventListener('keyup', function () {
+		document.getElementById('username').addEventListener('keydown', function () {
 			if (event.key === "Enter") {
 				login ();
 			}
 		});
-		document.getElementById('password').addEventListener('keyup', function () {
+		document.getElementById('password').addEventListener('keydown', function () {
 			if (event.key === "Enter") {
 				login ();
     		}
