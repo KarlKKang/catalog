@@ -205,8 +205,8 @@ function updateVideo () {
 	document.getElementById('media-holder').appendChild(formatSelector);
 	
 	//var videoNode = addVideoNode (fileName, formats[0].childNodes[0].nodeValue);
-	addVideoJSNode (fileName, formats[0].childNodes[0].nodeValue);
-	videoJSInstances[0].load();
+	addVideoJSNode (fileName, {format: formats[0].childNodes[0].nodeValue});
+	//videoJSInstances[0].load();
 }
 
 function updateAudio_videojs () {
@@ -259,39 +259,51 @@ function updateAudio_videojs () {
 		
 		audioNode.classList.add("vjs-default-skin");
 		audioNode.classList.add("video-js");
-		let audio = videojs(audioNode, config);
-		videoJSInstances.push(audio);
+		let audio = videojs(audioNode, config, function () {
+			videoJSInstances.push(audio);
 		
-		if (Hls.isSupported()) {
-			audio.src({
-				src: generateURL (url, '', 5000),
-				type: 'application/x-mpegURL'
+			if (Hls.isSupported()) {
+				audio.src({
+					src: generateURL (url, '', 5000),
+					type: 'application/x-mpegURL'
+				});
+			} else {
+				audio.src({
+					src: generateURL (url, '?ios=true', 5000),
+					type: 'application/x-mpegURL'
+				});
+			}
+
+			audio.volume(1);
+			
+			audio.on('play', function () {
+				for (var j = 0; j < files.length; j++) {
+					if (this.id() != videoJSInstances[j].id()) {
+						videoJSInstances[j].pause();
+					}
+				}
 			});
-		} else {
-			audio.src({
-				src: generateURL (url, '?ios=true', 5000),
-				type: 'application/x-mpegURL'
+			audio.on('ended', function () {
+				//var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
+				if (this.id() != "track"+(files.length-1)) {
+					videoJSInstances[parseInt(this.id().slice(5))+1].play();
+				}
 			});
-		}
-		
-		audio.volume(1);
+			
+			let initialSeek = function () {
+				this.off('play', initialSeek);
+				this.pause();
+				this.currentTime(0);
+				this.muted(false);
+			};
+			audio.muted(true);
+			audio.play();
+			audio.on('play', initialSeek);
+		});
 		
 		subtitle.setAttribute('class', 'sub-title');
 		subtitle.innerHTML = files[i].getAttribute('tag');
 		
-		audio.on('play', function () {
-			for (var i = 0; i < videoJSInstances.length; i++) {
-				if (this.id() != videoJSInstances[i].id()) {
-					videoJSInstances[i].pause();
-				}
-			}
-		});
-		audio.on('ended', function () {
-			//var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
-			if (this.id() != "track"+(videoJSInstances.length-1)) {
-				videoJSInstances[parseInt(this.id().slice(5))+1].play();
-			}
-		});
 		document.getElementById('track' + i).addEventListener('contextmenu', event => event.preventDefault());
 		
 		if (files[i].getAttribute('artist')!=null) {
@@ -300,15 +312,6 @@ function updateAudio_videojs () {
 			artist.innerHTML = '／' + files[i].getAttribute('artist');
 			subtitle.appendChild(artist);
 		}
-		
-		let initialSeek = function () {
-			this.off('play', initialSeek);
-			this.pause();
-			this.muted(false);
-		};
-		audio.muted(true);
-		audio.play();
-		audio.on('loadeddata', initialSeek);
 	}
 }
 
@@ -342,8 +345,9 @@ function formatSwitch () {
 	var currentTime = videoJSInstances[0].currentTime();
 	var paused = videoJSInstances[0].paused();
 	
-	addVideoJSNode (fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue, format);
+	addVideoJSNode (fileNode.getElementsByTagName('fileName')[0].childNodes[0].nodeValue, {format: format, currentTime: currentTime, play: !paused});
 	
+	/*
 	var resume = function () {
 		videoJSInstances[0].currentTime(currentTime);
 		if (!paused)
@@ -352,10 +356,10 @@ function formatSwitch () {
 	};
 	
 	videoJSInstances[0].load();
-	videoJSInstances[0].on('loadedmetadata', resume);
+	videoJSInstances[0].on('loadedmetadata', resume);*/
 }
 
-function addVideoJSNode (fileName, format) {
+function addVideoJSNode (fileName, options) {
 	if (videoJSInstances.length != 0) {
 		videojs(document.getElementById('media-holder').getElementsByTagName('video-js')[0]).dispose();
 	}
@@ -366,7 +370,7 @@ function addVideoJSNode (fileName, format) {
 	var videoNode = document.createElement('video-js');
 	videoNode.classList.add('vjs-big-play-centered');
 	
-	var url = resourceURL + EP + '/' + encodeURI('_MASTER_' + fileName + '[' + format + '].m3u8');
+	var url = resourceURL + EP + '/' + encodeURI('_MASTER_' + fileName + '[' + options.format + '].m3u8');
 	
 	videoNode.addEventListener('contextmenu', event => event.preventDefault());
 	document.getElementById('media-holder').appendChild(videoNode);
@@ -408,24 +412,63 @@ function addVideoJSNode (fileName, format) {
 			}
 		}
 	};
-	var video = videojs(videoNode, config);
-	videoJSInstances=[video];
-	if (Hls.isSupported()) {
-		video.src({
-			src: generateURL (url, '', 5000),
-			type: 'application/x-mpegURL'
-		});
-	} else {
-		video.src({
-			src: generateURL (url, '?ios=true', 5000),
-			type: 'application/x-mpegURL'
-		});
-	}
+	var video = videojs(videoNode, config, function () {
+		videoJSInstances=[video];
 	
-	video.volume(1);
-	
-	videoNode.getElementsByClassName('vjs-fullscreen-control')[0].addEventListener('click', function () {
-		videoNode.focus();
+		if (Hls.isSupported()) {
+			video.on ('play', buffering);
+			video.on ('seeked', function () {
+				var paused = video.paused();
+				video.pause();
+				if (!paused)
+					video.play();
+			});
+			
+			var initialPause = function () {
+				var paused = video.paused();
+				video.pause();
+				if (!paused)
+					video.play();
+				video.off ('loadeddata', initialPause);
+			};
+			video.on ('loadeddata', initialPause);
+		}
+
+		if (Hls.isSupported()) {
+			video.src({
+				src: generateURL (url, '', 5000),
+				type: 'application/x-mpegURL'
+			});
+		} else {
+			video.src({
+				src: generateURL (url, '?ios=true', 5000),
+				type: 'application/x-mpegURL'
+			});
+		}
+
+		video.volume(1);
+		
+		if (options.play==true) {
+			video.play();
+		} else {
+			video.load();
+			if (!video.paused()){
+				video.pause();
+			}
+		}
+		if (options.currentTime!=undefined) {
+			video.currentTime(options.currentTime);
+		}
+		
+		videoNode.getElementsByClassName('vjs-fullscreen-control')[0].addEventListener('click', function () {
+			videoNode.focus();
+		});
+		
+		if (fileNode.getElementsByTagName('chapters').length != 0) {
+			if (fileNode.getElementsByTagName('chapters')[0].childNodes[0].nodeValue == 'true') {
+				getChapters ();
+			}
+		}
 	});
 	
 	/*
@@ -448,22 +491,6 @@ function addVideoJSNode (fileName, format) {
 	//videojs.Vhs.GOAL_BUFFER_LENGTH = 30*60;
 	//videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 2*60*60;
 	//videojs.Vhs.GOAL_BUFFER_LENGTH_RATE = 1,
-	
-	if (Hls.isSupported()) {
-		videoJSInstances[0].on ('play', buffering);
-		videoJSInstances[0].on ('seeked', function () {
-			var paused = video.paused();
-			video.pause();
-			if (!paused)
-				video.play();
-		});
-	}
-	
-	if (fileNode.getElementsByTagName('chapters').length != 0) {
-		if (fileNode.getElementsByTagName('chapters')[0].childNodes[0].nodeValue == 'true') {
-			getChapters ();
-		}
-	}
 }
 
 function goToEP (dest_ep) {
@@ -663,7 +690,7 @@ function buffering () {
 		addCheckBuffer ();
 	} else {
 		for (var i = 0; i < videoJSInstances[0].buffered().length; i++) {
-			if (videoJSInstances[0].buffered().start(videoJSInstances[0].buffered().length - 1 - i) - 0.25 <= videoJSInstances[0].currentTime()) {
+			if (videoJSInstances[0].buffered().start(videoJSInstances[0].buffered().length - 1 - i) - 0.1 <= videoJSInstances[0].currentTime()) {
 				if (videoJSInstances[0].buffered().end(videoJSInstances[0].buffered().length - 1 - i) < Math.min(videoJSInstances[0].currentTime()+15, videoJSInstances[0].duration())) {
 					addCheckBuffer ();
 				}
@@ -680,7 +707,7 @@ function checkBuffer () {
 	document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.add('vjs-seeking');
 	
 	for (var i = 0; i < videoJSInstances[0].buffered().length; i++) {
-		if (videoJSInstances[0].buffered().start(videoJSInstances[0].buffered().length - 1 - i) - 0.25 <= videoJSInstances[0].currentTime() && videoJSInstances[0].buffered().end(videoJSInstances[0].buffered().length - 1 - i) >= videoJSInstances[0].currentTime()) {
+		if (videoJSInstances[0].buffered().start(videoJSInstances[0].buffered().length - 1 - i) - 0.1 <= videoJSInstances[0].currentTime() && videoJSInstances[0].buffered().end(videoJSInstances[0].buffered().length - 1 - i) >= videoJSInstances[0].currentTime()) {
 			if (videoJSInstances[0].buffered().end(videoJSInstances[0].buffered().length - 1 - i) >= Math.min(videoJSInstances[0].currentTime()+15, videoJSInstances[0].duration())) {
 				document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.remove('vjs-seeking');
 				videoJSInstances[0].off ('play', checkBuffer);
