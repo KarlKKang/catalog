@@ -1,31 +1,35 @@
+// JavaScript Document
+
+function initialize () {
+
 var EP;
 var series;
 var EPNode;
 var fileNode;
 var chapters = {name: [], startTime: []};
 var videoJSInstances = [];
+var seekTime = null;
 
 var XHROpen;
 
-function initialize () {
-	EP = getURLParam ('ep');
-	if (EP == null) {
-		window.location.href = 'index.html';
-		return 0;
-	}
-	
-	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			getSeries(this.responseXML);
-			XHROpen = XMLHttpRequest.prototype.open;
-			XMLHttpRequest.prototype.open = XHROverride;
-			updatePage (this.responseXML);
-		}
-	};
-	xhttp.open("GET", "xml/series.xml", true);
-	xhttp.send();
+EP = getURLParam ('ep');
+if (EP == null) {
+	window.location.href = 'index.html';
+	return 0;
 }
+	
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+		getSeries(this.responseXML);
+		XHROpen = XMLHttpRequest.prototype.open;
+		XMLHttpRequest.prototype.open = XHROverride;
+		updatePage (this.responseXML);
+	}
+};
+xhttp.open("GET", "xml/series.xml", true);
+xhttp.send();
+
 
 function getSeries (xml) {
 	var EPs = xml.querySelectorAll('video, image, audio');
@@ -149,7 +153,7 @@ function updatePage (xml) {
 			if (type == 'video') {
 				updateVideo ();
 			} else if (type == 'audio') {
-				updateAudio_videojs ();
+				updateAudio ();
 			} else {
 				updateImage ();
 			}
@@ -209,7 +213,7 @@ function updateVideo () {
 	//videoJSInstances[0].load();
 }
 
-function updateAudio_videojs () {
+function updateAudio () {
 	var files = fileNode.getElementsByTagName('fileName');
 	
 	if (fileNode.getElementsByTagName('album-title').length!=0) {
@@ -276,29 +280,50 @@ function updateAudio_videojs () {
 
 			audio.volume(1);
 			
-			audio.on('play', function () {
-				for (var j = 0; j < files.length; j++) {
-					if (this.id() != videoJSInstances[j].id()) {
-						videoJSInstances[j].pause();
-					}
-				}
-			});
-			audio.on('ended', function () {
-				//var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
-				if (this.id() != "track"+(files.length-1)) {
-					videoJSInstances[parseInt(this.id().slice(5))+1].play();
-				}
-			});
-			
 			let initialSeek = function () {
-				this.off('play', initialSeek);
-				this.pause();
-				this.currentTime(0);
-				this.muted(false);
+				//this.off('play', initialSeek);
+				audio.pause();
+				audio.currentTime(0);
+				audio.muted(false);
+				
+				audio.on('play', function () {
+					for (var j = 0; j < files.length; j++) {
+						if (this.id() != videoJSInstances[j].id()) {
+							videoJSInstances[j].pause();
+						}
+					}
+				});
+				audio.on('ended', function () {
+					//var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
+					if (this.id() != "track"+(files.length-1)) {
+						videoJSInstances[parseInt(this.id().slice(5))+1].play();
+					}
+				});
 			};
+			
 			audio.muted(true);
-			audio.play();
-			audio.on('play', initialSeek);
+			let playPromise = audio.play();
+			if (playPromise !== undefined) {
+				playPromise.then(_ => {
+					audio.pause();
+					audio.currentTime(0);
+					audio.muted(false);
+
+					audio.on('play', function () {
+						for (var j = 0; j < files.length; j++) {
+							if (this.id() != videoJSInstances[j].id()) {
+								videoJSInstances[j].pause();
+							}
+						}
+					});
+					audio.on('ended', function () {
+						//var tracks = document.getElementById('media-holder').getElementsByClassName('video-js');
+						if (this.id() != "track"+(files.length-1)) {
+							videoJSInstances[parseInt(this.id().slice(5))+1].play();
+						}
+					});
+				});
+			}
 		});
 		
 		subtitle.setAttribute('class', 'sub-title');
@@ -675,8 +700,9 @@ function secToTimestamp (sec) {
 }
 
 function buffering () {
+	seekTime = videoJSInstances[0].currentTime();
 	function addCheckBuffer () {
-		if (videoJSInstances[0].currentTime() > 0 && !videoJSInstances[0].paused() && !videoJSInstances[0].ended() && videoJSInstances[0].readyState() > 2) {
+		if (!videoJSInstances[0].paused() && videoJSInstances[0].readyState() > 2) {
 			videoJSInstances[0].pause();
 		}
 		document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.add('vjs-seeking');
@@ -700,8 +726,8 @@ function buffering () {
 	}
 }
 
-function checkBuffer () {
-	if (videoJSInstances[0].currentTime() > 0 && !videoJSInstances[0].paused() && !videoJSInstances[0].ended() && videoJSInstances[0].readyState() > 2) {
+function checkBuffer (currentTime) {
+	if (!videoJSInstances[0].paused() && videoJSInstances[0].readyState() > 2) {
 		videoJSInstances[0].pause();
 	}
 	document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.add('vjs-seeking');
@@ -713,15 +739,16 @@ function checkBuffer () {
 				videoJSInstances[0].off ('play', checkBuffer);
 				videoJSInstances[0].off ('progress', checkBuffer);
 				videoJSInstances[0].off ('timeupdate', checkBuffer);
+				videoJSInstances[0].currentTime (seekTime);
 				let playPromise = videoJSInstances[0].play();
 				if (playPromise !== undefined) {
 					playPromise.then(_ => {
 						videoJSInstances[0].on ('play', buffering);
 					});
 				}
-				
 				break;	
 			}
 		}
 	}
+}
 }

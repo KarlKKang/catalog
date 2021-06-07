@@ -1,21 +1,21 @@
 // JavaScript Document
+function initialize () {
+
 var series;
 
-function initialize () {
-	if (getURLParam ('ep') != null) {
-		window.location.href = redirect('bangumi.html');
-		return 0;
-	}
-	
-	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			showSeries(this.responseXML);
-		}
-	};
-	xhttp.open("GET", "xml/series.xml", true);
-	xhttp.send();
+if (getURLParam ('ep') != null) {
+	window.location.href = redirect('bangumi.html');
+	return 0;
 }
+	
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+		showSeries(this.responseXML);
+	}
+};
+xhttp.open("GET", "xml/series.xml", true);
+xhttp.send();
 
 function showSeries (xml) {
 	series = filterSeries (xml);
@@ -106,4 +106,5 @@ function search () {
 		}
 		document.getElementById('container').style.opacity = 1;
 	}, 400);
+}
 }

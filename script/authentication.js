@@ -5,6 +5,17 @@ var key = '';
 var keyPairId = '';
 var permittedEPs = [];
 
+function start (currentPage) {
+	
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+		checkUser(this.responseXML);
+	}
+};
+xhttp.open("GET", "xml/user.xml", true);
+xhttp.send();
+
 function getCookie(cname) {
 	var name = cname + "=";
 	var decodedCookie = decodeURIComponent(document.cookie);
@@ -21,18 +32,7 @@ function getCookie(cname) {
 	return "";
 }
 
-function start (currentPage) {
-	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			checkUser(this.responseXML, currentPage);
-		}
-	};
-	xhttp.open("GET", "xml/user.xml", true);
-	xhttp.send();
-}
-
-function checkUser (xml, currentPage) {
+function checkUser (xml) {
 	var usrID = getCookie('usrID');
 	var usrIDs = xml.getElementsByTagName('id');
 	var index = null;
@@ -156,4 +156,5 @@ function setPermission (usrXML, usrIndex, seriesXML) {
 function logout () {
 	document.cookie = "usrID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 	window.location.href = 'login.html';
+}
 }
