@@ -443,6 +443,7 @@ function addVideoJSNode (fileName, options) {
 		if (Hls.isSupported()) {
 			video.on ('play', buffering);
 			video.on ('seeked', function () {
+				seekTime = video.currentTime();
 				var paused = video.paused();
 				video.pause();
 				if (!paused)
@@ -450,16 +451,14 @@ function addVideoJSNode (fileName, options) {
 			});
 			
 			var initialPause = function () {
+				video.off ('loadeddata', initialPause);
 				var paused = video.paused();
 				video.pause();
 				if (!paused)
 					video.play();
-				video.off ('loadeddata', initialPause);
 			};
 			video.on ('loadeddata', initialPause);
-		}
-
-		if (Hls.isSupported()) {
+			
 			video.src({
 				src: generateURL (url, '', 5000),
 				type: 'application/x-mpegURL'
@@ -702,9 +701,6 @@ function secToTimestamp (sec) {
 function buffering () {
 	seekTime = videoJSInstances[0].currentTime();
 	function addCheckBuffer () {
-		if (!videoJSInstances[0].paused() && videoJSInstances[0].readyState() > 2) {
-			videoJSInstances[0].pause();
-		}
 		document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.add('vjs-seeking');
 		videoJSInstances[0].off ('play', buffering);
 		videoJSInstances[0].on ('play', checkBuffer);
