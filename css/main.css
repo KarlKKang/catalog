@@ -1,35 +1,9 @@
 @charset "utf-8";
 /* CSS Document */
 
-@font-face {
-	font-family: KozGoPr6N;
-	src: url("../font/KozGoPr6N-Regular.woff2");
-	font-weight: normal;
-}
-
-@font-face {
-	font-family: KozGoPr6N;
-	src: url("../font/KozGoPr6N-Medium.woff2");
-	font-weight: 500;
-}
-
-@font-face {
-	font-family: KozGoPr6N;
-	src: url("../font/KozGoPr6N-Bold.woff2");
-	font-weight: 700;
-}
-
-@font-face {
-	font-family: SEGUISYM;
-	src: url("../font/SEGMDL2.woff2");
-	font-weight: normal;
-}
-
 *{
-	font-family: "KozGoPr6N", "Arial", "SEGUISYM";
-}
-.symbol {
-	font-family: "SEGUISYM", "Arial";
+	font-family: 'Noto Sans JP','游ゴシック体','游ゴシック','Yu Gothic','メイリオ',Meiryo,sans-serif;
+	font-weight: 300;
 }
 
 html {
@@ -50,43 +24,119 @@ body {
 	left: 0;
 	background: #fff;
 	border-bottom: .5px solid rgba(0,0,0,0.2);
-	z-index: 100;
-}
-
-#header > p {
-	width: 100%;
-	height: 24px;
-	line-height: 24px;
-	margin: 0px;
-	text-align: center;
-	position: relative;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	font-weight: 500;
-	padding: 0px;
-}
-
-#header > p > span {
-	cursor: pointer;
-}
-
-#header > div {
-	height: 42px;
-	width: 46px;
-	position: fixed;
-	top: 0;
-	right: 1%;
-	cursor: pointer;
-	margin: 0px;
-	padding: 4px 0px 0px;
-	text-align: center;
-	font-size: 23px;
-	line-height: 46px;
+	z-index: 98;
 }
 
 #main {
 	margin: 0px;
 	padding: 46px 0px 0px 0px;
 	width: 100%;
+}
+
+#main-note {
+	margin: 0px 0px 2em;
+	padding: 0px;
+}
+
+.password-font {
+	font-family: 'arial';
+}
+
+.link {
+	cursor: pointer;
+	color: #1069c9;
+}
+
+/*////////////////////////////////////////////////////////Navigation button////////////////////////////////////////////////////////*/
+#nav-btn{
+    position: fixed;
+    top: 10.5px;
+    left: 5%;
+    display: block;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    z-index: 100;
+}
+#nav-btn span{
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 2px;
+    background: #000;
+    margin: -1px 0 0 -9px;
+    border-radius: 1px;
+    -webkit-transform-origin: right top;
+    transform-origin: right top;
+}
+#nav-btn span:before, #nav-btn span:after{
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 18px;
+    height: 2px;
+    background: #000;
+    content: "";
+    transition: .3s;
+}
+#nav-btn span:before{
+    margin-top: -8px;
+}
+#nav-btn span:after{
+    margin-top: 6px;
+    width: 12px;
+}
+/*
+#nav-btn.active{
+    pointer-events: none;
+}
+*/
+#nav-btn.active span{
+    background: transparent;
+}
+#nav-btn.active span:before, #nav-btn.active span:after{
+    margin-top: 0;
+}
+#nav-btn.active span:before{
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+#nav-btn.active span:after{
+    width: 18px;
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
+
+/*////////////////////////////////////////////////////////Navigation menu////////////////////////////////////////////////////////*/
+
+#nav-menu {
+	background-color: white;
+	z-index: 99;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100vw;
+	height: 100vh;
+	transition: opacity .3s ease-out;
+}
+
+#nav-menu-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 100%;
+}
+
+#nav-menu-content > p {
+	text-align: center;
+	margin: 2em;
+	font-size: large;
+}
+
+#nav-menu-content > p > span {
+	cursor: pointer;
 }

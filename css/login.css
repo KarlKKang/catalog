@@ -57,12 +57,21 @@
 	margin: 0px;
 	padding: 0px 5%;
 	box-sizing: border-box;
-	font-family: "Arial";
 	font-size: medium;
 }
 
 .input-field:hover, #login-button:hover {
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+#forgot-password {
+	text-align: center;
+	/*font-size: small;*/
+	color: #1069c9;
+}
+
+#forgot-password > span {
+	cursor: pointer;
 }
 
 /*///////////////////////////////////Custom Checkbox///////////////////////////////////*/
@@ -73,7 +82,7 @@
 	justify-content: center;
 	margin: 0px;
 	padding: 1em 0px;
-	font-size: small;
+	/*font-size: small;*/
 }
 
 /* The container */

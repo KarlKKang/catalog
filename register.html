@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>新規登録 | featherine</title>
+<link rel="icon" type="image/webp" href="image/favicon.webp"/>
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<link rel="stylesheet" type="text/css" href="css/register.css">
+<script src="script/main.js"></script>
+<script src="script/register.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://www.apple.com.cn/global-cn/styles/sfpro-cn.css" rel="stylesheet">
+</head>
+
+<body>
+	<div id="form">
+		<p id="title">会員情報登録</p>
+		<div id="main-note">
+			<p>登録する前に、<span class="link" onclick="openWindow('info');">ご利用ガイド</span>をお読みください。</p>
+			<p lang="en">Before you register, please read the <span class="link" onclick="openWindow('info');">User's Guide</span>.</p>
+			<p lang="zh-Hans">请在注册前阅读<span class="link" onclick="openWindow('info');">规则指南</span>。</p>
+		</div>
+		<p id="warning" style="display: none;"></p>
+		<p id="email"></p>
+		<div class="input-field"><input id="username" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off"></div>
+		<div class="input-field"><input id="password" type="password" placeholder="パスワード" oninput="passwordStyling(this);"></div>
+		<div class="input-field"><input id="password-confirm" type="password" placeholder="パスワード(確認)" oninput="passwordStyling(this);"></div>
+		<button id="submit-button" onClick="register ()">登録する</button>
+		<div id="note">
+			<ul>
+				<li>ユーザー名に使用できる文字に制限はありません。</li>
+				<li>パスワードに使用出来る文字は、半角英大文字、半角英小文字、数字、記号+_!@#$%^&amp;*.,?-です。</li>
+				<li>パスワードには8文字以上を含めてください 。</li>
+				<li>パスワードには大文字、小文字、数字を含めてください。</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+@charset "utf-8";
+/* CSS Document */
+
+#container {
+	width: min(1000px, 90%);
+	margin: 0px;
+	padding: 1em 0px 5vh 0px;
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%, 0%);
+}
+
+#title {
+	text-align: center;
+	margin: 0px;
+	padding: 1em 0px;
+	font-size: x-large;
+	font-weight: 500;
+}
+
+.sub-title {
+	margin: 0px;
+	padding: 1em 0px;
+	font-size: large;
+	font-weight: 500;
+}
+
+hr {
+	margin: 2em 0px 1.5em 0px;
+	height: 1px;
+	border-width: 0;
+	background-color: rgba(32,52,76,.15);
+}
+
+.warning {
+	margin: 0px;
+	padding: 1em 0px;
+	color: red;
+}
+
+.input-field, .button {
+	margin: 1em 0px;
+	padding: 0px;
+	height: 40px;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+	background: #fff;
+	border: none;
+}
+
+.button {
+	width: 150px;
+	text-align: center;
+	position: relative;
+	cursor: pointer;
+	font-size: medium;
+}
+
+.input-field {
+	width: 300px;
+}
+
+.input-field > input {
+	width: 100%;
+	height: 100%;
+	border: none;
+	background-color: transparent;
+	margin: 0px;
+	padding: 0px 5%;
+	box-sizing: border-box;
+	font-size: medium;
+}
+
+.input-field:hover, .button:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+button:disabled {
+	cursor: default;
+}
+
+button:disabled:hover {
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+}
+
+.note > ul {
+	font-size: small;
+	color: #adadb5;
+	padding: 0px 0px 0px 1em;
+}
+
+#invite-count-text {
+	padding: 1em 0px;
+	margin: 0px;
+}

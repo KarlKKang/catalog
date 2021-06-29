@@ -1,45 +1,55 @@
 // JavaScript Document
-function initialize () {
+window.addEventListener("load", function(){
+	if (!window.location.href.startsWith('https://featherine.com') && !debug) {
+		window.location.href = redirect ('https://featherine.com');
+	}
+	
+    start ('index');
+});
 
-var series;
+function initialize () {
 
 if (getURLParam ('ep') != null) {
 	window.location.href = redirect('bangumi.html');
 	return 0;
 }
-	
-var xhttp = new XMLHttpRequest();
-xhttp.onreadystatechange = function() {
-	if (this.readyState == 4 && this.status == 200) {
-		showSeries(this.responseXML);
+
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+	if (this.readyState == 4) {
+		if (checkXHRResponse (this)) {
+			showSeries (JSON.parse(this.responseText));
+		}
 	}
 };
-xhttp.open("GET", "xml/series.xml", true);
-xhttp.send();
+xmlhttp.open("POST", serverURL + "/request_series.php",true);
+xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature));
+	
+document.getElementById('search-bar').getElementsByClassName('icon')[0].onclick = search;
+document.getElementById('search-bar').getElementsByTagName('input')[0].addEventListener('keyup', function () {
+	if (event.key === "Enter") {
+		search ();
+	}
+});
 
-function showSeries (xml) {
-	series = filterSeries (xml);
+function showSeries (series) {
+	document.getElementById('container').innerHTML='';
 	
 	for (var i=0; i<series.length; i++) {
-		let index = i;
-		
 		var seriesNode = document.createElement('div');
 		var thumbnailNode = document.createElement('div');
 		var titleNode = document.createElement('p');
-		var keywordNode = document.createElement('div');
 		
 		seriesNode.appendChild(thumbnailNode);
 		seriesNode.appendChild(titleNode);
-		seriesNode.appendChild(keywordNode);
 		
-		//thumbnailNode.style.backgroundImage = 'url(' + resourceURL + 'thumbnail/' + encodeURI(series[i].getAttribute("thumbnail")) + ')';
 		thumbnailNode.classList.add('lazy');
-		thumbnailNode.dataset.bg = resourceURL + 'thumbnail/' + encodeURI(series[i].getAttribute("thumbnail"));
-		titleNode.innerHTML = series[i].getAttribute("title");
-		keywordNode.classList.add('keyword');
-		keywordNode.innerHTML = series[i].getElementsByTagName('keyword')[0].childNodes[0].nodeValue;
+		thumbnailNode.dataset.bg = series[i].thumbnail;
+		titleNode.innerHTML = series[i].title;
 		
-		seriesNode.addEventListener("click", function(){goToSeries (index);});
+		let index = i;
+		seriesNode.addEventListener("click", function(){goToSeries (series[index].id);});
 		seriesNode.classList.add('series');
 		
 		document.getElementById('container').appendChild(seriesNode);
@@ -47,64 +57,34 @@ function showSeries (xml) {
 	
 	var lazyLoadInstance = new LazyLoad();
 	//lazyLoadInstance.update();
-	
-	document.getElementById('search-bar').getElementsByClassName('icon')[0].onclick = search;
-	document.getElementById('search-bar').getElementsByTagName('input')[0].addEventListener('keyup', function () {
-		if (event.key === "Enter") {
-			search ();
-		}
-	});
 }
 
-function goToSeries (index) {
-	var url = 'bangumi.html?ep=' + firstAvailableEP (index);
+function goToSeries (id) {
+	var url = 'bangumi.html?series='+id+'&ep=1';
 	window.location.href = url;
 }
 
-function filterSeries (xml) {
-	var EPs = xml.querySelectorAll('video, image, audio');
-	var result = [];
-	
-	for (var i = 0; i < EPs.length; i++) {
-		if (permittedEPs.includes(EPs[i].childNodes[0].nodeValue) && !result.includes(EPs[i].parentNode))
-			result.push(EPs[i].parentNode);
-	}
-	return result;
-}
-
-function firstAvailableEP (index) {
-	var EPs = series[index].querySelectorAll('video, image, audio');
-	for (var i = 0; i < EPs.length; i++) {
-		if (permittedEPs.includes(EPs[i].childNodes[0].nodeValue)) {
-			return EPs[i].childNodes[0].nodeValue;
-		}
-	}
-}
-
 function search () {
-	var seriesNodes = document.getElementsByClassName('series');
-	var keywords = '';
-	var searchWords = document.getElementById('search-bar').getElementsByTagName('input')[0].value.toLowerCase().split(' ');
-	
 	document.getElementById('container').style.opacity = 0;
-	setTimeout (function () {
-		if (searchWords[0] == '') {
-			for (var i = 0; i < seriesNodes.length; i++)
-				seriesNodes[i].style.display = 'initial';
-		} else {
-			for (var i = 0; i < seriesNodes.length; i++) {
-				keywords = seriesNodes[i].getElementsByClassName('keyword')[0].innerHTML.toLowerCase().split(' ');
-				seriesNodes[i].style.display = 'initial';
-				innerLoop:
-				for (var j = 0; j < searchWords.length; j++) {
-					if (!keywords.includes(searchWords[j]) && !keywords.join('').includes(searchWords[j])){
-						seriesNodes[i].style.display = 'none';
-						break innerLoop;
-					}
-				}
+	var keywords = document.getElementById('search-bar').getElementsByTagName('input')[0].value;
+	
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4) {
+			if (checkXHRResponse (this)) {
+				showSeries (JSON.parse(this.responseText));
+				document.getElementById('container').style.opacity = 1;
 			}
 		}
-		document.getElementById('container').style.opacity = 1;
+	};
+	setTimeout (function () {
+		xmlhttp.open("POST", serverURL + "/request_series.php",true);
+		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		if (keywords == '') {
+			xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature));
+		} else {
+			xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&keywords="+encodeURIComponent(keywords));
+		}		
 	}, 400);
 }
 }

@@ -1,0 +1,120 @@
+@charset "utf-8";
+/* CSS Document */
+
+:lang(en) {
+	font-family: roboto,'Noto Sans Myanmar UI',arial,sans-serif;
+	font-weight: 300;
+}
+:lang(zh-Hans) {
+	font-family: "SF Pro SC","SF Pro Display","SF Pro Icons","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif;
+	font-weight: 300;
+}
+
+#container {
+	width: min(1000px, 90%);
+	margin: 5vh 0px;
+	padding: 1em 0px;
+	position: relative;
+	left: 50%;
+	transform: translate(-50%, 0%);
+	background-color: white;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+}
+
+#container:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+#content {
+	margin: 0px 2em;
+}
+
+#title {
+	text-align: center;
+	margin: 0px;
+	padding: 1em 0px;
+	font-size: x-large;
+	font-weight: 500;
+}
+
+#date {
+	font-size: small;
+	color: #adadb5;
+	text-align: center;
+}
+
+.sub-title {
+	font-size: large;
+	font-weight: 400;
+}
+
+a {
+	color: #1069c9;
+	text-decoration: none;
+}
+
+hr {
+	margin: 2em 0px;
+	height: 1px;
+	border-width: 0;
+	background-color: rgba(32,52,76,.15);
+}
+
+.line-break {
+  	margin: 2em;
+}
+
+.warning {
+	margin: 0px;
+	padding: 1em 0px;
+	color: red;
+}
+
+.input-field, .button {
+	margin: 1em 0px;
+	padding: 0px;
+	height: 40px;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+	background: #fff;
+	border: none;
+}
+
+.button {
+	width: 150px;
+	text-align: center;
+	position: relative;
+	cursor: pointer;
+	font-size: medium;
+}
+
+.input-field {
+	width: 300px;
+}
+
+.input-field > input {
+	width: 100%;
+	height: 100%;
+	border: none;
+	background-color: transparent;
+	margin: 0px;
+	padding: 0px 5%;
+	box-sizing: border-box;
+	font-size: medium;
+}
+
+.input-field:hover, .button:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+.note > ul {
+	font-size: small;
+	color: #adadb5;
+	padding: 0px 0px 0px 1em;
+}
+
+#invite-count-text {
+	padding: 1em 0px;
+	margin: 0px;
+}

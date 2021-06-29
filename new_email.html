@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>メールアドレス変更 | featherine</title>
+<link rel="icon" type="image/webp" href="image/favicon.webp"/>
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<link rel="stylesheet" type="text/css" href="css/new_email.css">
+<script src="script/main.js"></script>
+<script src="script/new_email.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<div id="form">
+		<p id="title">メールアドレス変更</p>
+		<p id="warning" style="display: none;"></p>
+		<div class="input-field"><input id="new-email" type="text" placeholder="新しいメールアドレス" autocapitalize="off" autocomplete="off"></div>
+		<button id="submit-button" onClick="submitRequest ()">送信する</button>
+	</div>
+</body>
+</html>

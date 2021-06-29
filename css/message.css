@@ -1,0 +1,46 @@
+@charset "utf-8";
+/* CSS Document */
+
+#container {
+	width: min(1000px, 90%);
+	margin: 5% 0px;
+	padding: 2em;
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%, 0%);
+	background-color: white;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+	box-sizing: border-box;
+}
+
+#title {
+	text-align: center;
+	margin: 0px 0px 1em 0px;
+	padding: 0px;
+	font-size: x-large;
+	font-weight: 500;
+}
+
+#message {
+	margin: 1em 0px;
+	padding: 0px;
+}
+
+button {
+	padding: 0px;
+	height: 40px;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+	background: #fff;
+	border: none;
+	width: min(150px, 100%);
+	text-align: center;
+	position: relative;
+	cursor: pointer;
+	font-size: medium;
+}
+
+#container:hover, button:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
