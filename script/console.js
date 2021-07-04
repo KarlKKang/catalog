@@ -20,9 +20,11 @@ function initialize () {
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
-			if (checkXHRResponse (response)) {
+			if (checkXHRStatus (this.status)) {
 				if (!this.responseText.includes ('APPROVED')) {
-					logout(true);
+					window.location.href = loginURL;
+				} else {
+					document.getElementsByTagName("body")[0].style.display = "block";
 				}
 			}
 		}
@@ -339,7 +341,9 @@ function addAccount (button) {
 		}
 	}
 	
-	var param = parseAccountRecord (email, username, password, user_group, status);
+	var available_invite = record.getElementsByClassName('available-invite')[0].value;
+	
+	var param = parseAccountRecord (email, username, password, user_group, status, available_invite);
 	if (!param) {
 		return 0;
 	}
@@ -401,7 +405,9 @@ function modifyAccount (button, originalEmail) {
 		}
 	}
 	
-	var param = parseAccountRecord (email, username, password, user_group, status);
+	var available_invite = record.getElementsByClassName('available-invite')[0].value;
+	
+	var param = parseAccountRecord (email, username, password, user_group, status, available_invite);
 	if (!param) {
 		return 0;
 	}
@@ -434,7 +440,7 @@ function modifyAccount (button, originalEmail) {
 	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
 }
 
-function parseAccountRecord (email, username, password, user_group, status) {
+function parseAccountRecord (email, username, password, user_group, status, available_invite) {
 	if (email=='') {
 		alert ("ERROR: 'email' is required");
 		return false;
@@ -476,12 +482,26 @@ function parseAccountRecord (email, username, password, user_group, status) {
 		return false;
 	}
 	
+	if (available_invite=='') {
+		alert ("ERROR: 'available_invite' is required");
+		return false;
+	} 
+	available_invite = parseInt(available_invite);
+	if (isNaN(available_invite)) {
+		alert ("ERROR: Invalid value for 'available_invite'");
+		return false;
+	} else if (available_invite>255 || available_invite<0) {
+		alert ("ERROR: 'available_invite' should be in range 0-255");
+		return false;
+	}
+	
 	return {
 		'email': email, 
 		'username': username, 
 		'password': password, 
 		'user_group': user_group, 
-		'status': status
+		'status': status,
+		'available_invite': available_invite
 	};
 }
 

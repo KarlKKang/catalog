@@ -11,7 +11,6 @@ var user = getURLParam ('user');
 var signature = getURLParam ('signature');
 
 function initialize () {
-	handshake ();
 	if (user == null || user.match(/^[a-zA-Z0-9~_-]+$/)===null) {
 		window.location.href = topURL;
 		return 0;
@@ -21,6 +20,8 @@ function initialize () {
 		window.location.href = topURL;
 		return 0;
 	}
+	
+	handshake ();
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -32,7 +33,7 @@ function initialize () {
 					showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
 				} else if (this.responseText.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', this.responseText, loginURL);
-				} else if (this.responseText.includes('/var/www/html/') || !this.responseText.includes('DONE')) {
+				} else if (this.responseText.includes('/var/www') || !this.responseText.includes('DONE')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				} else {
 					showMessage ('完了しました', 'green', 'アカウントが登録されました。', loginURL);

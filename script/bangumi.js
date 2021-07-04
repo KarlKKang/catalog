@@ -296,18 +296,19 @@ function updateImage (file) {
 	
 	for (var i = 0; i < file.length; i++) {
 		if (file[i].tag != '') {
-			var subtitle = document.createElement('p');
+			let subtitle = document.createElement('p');
 			subtitle.setAttribute('class', 'sub-title');
 			subtitle.innerHTML = file[i].tag;
 			document.getElementById('media-holder').appendChild(subtitle);
 		}
 		
 		for (var j = 0; j < file.length; j++) {
-			var imageNode = document.createElement('img');
+			let imageNode = document.createElement('img');
+			let url = file[i].url;
 		
-			imageNode.setAttribute('src', file[i].url);
-			imageNode.setAttribute('alt', file[i].url);
-			imageNode.onclick = function () {window.location.href = file[i].url;};
+			imageNode.setAttribute('src', url);
+			imageNode.setAttribute('alt', url);
+			imageNode.onclick = function () {window.open (url);};
 			imageNode.addEventListener('contextmenu', event => event.preventDefault());
 			document.getElementById('media-holder').appendChild(imageNode);
 		}

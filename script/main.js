@@ -12,34 +12,40 @@ var signature = getCookie('signature');
 var expires = getCookie('expires');
 
 function start (currentPage) {
-	handshake ();
-	
 	var email = getCookie('email');
 	var password = getCookie('password');
 
 	if (email == '' || password=='' || signature=='' || expires=='') {
-		if (currentPage != 'login' && currentPage != 'request_password_reset') {
+		if (currentPage != 'login' && currentPage != 'request_password_reset' && currentPage != 'special_register') {
 			logout ();
+		} else {
+			document.getElementsByTagName("body")[0].style.display = "block";
 		}
 		return 0;
 	}
 
 	if (parseInt(expires)*1000<Date.now() || password.match(/^[a-f0-9]{64}$/)===null) {
-		if (currentPage != 'login') {
+		if (currentPage != 'login' && currentPage != 'request_password_reset' && currentPage != 'special_register') {
 			logout ();
+		} else {
+			document.getElementsByTagName("body")[0].style.display = "block";
 		}
 		return 0;
 	}
+	
+	handshake ();
 
 	user = {
 		email: email,
 		password: password
 	};
 
-	if (currentPage == 'login' || currentPage == 'request_password_reset')
+	if (currentPage == 'login' || currentPage == 'request_password_reset' || currentPage == 'special_register') {
 		window.location.href = redirect(topURL);
-	else
+	} else {
+		document.getElementsByTagName("body")[0].style.display = "block";
 		initialize ();
+	}
 }
 
 function getURLParam (param) {
@@ -96,7 +102,7 @@ function checkXHRResponseText (responseText) {
 		logout(false);
 		showMessage ('エラーが発生しました', 'red', responseText, topURL);
 		return false;
-	} else if (responseText.includes('/var/www/html/')) {
+	} else if (responseText.includes('/var/www')) {
 		logout(false);
 		showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
 		return false;

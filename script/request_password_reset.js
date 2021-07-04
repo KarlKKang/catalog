@@ -37,7 +37,7 @@ function submitRequest () {
 					document.cookie = 'allow-password-reset=false; max-age=86400; path=/' + (debug?'':'; Domain=.featherine.com');
 				} else if (this.responseText.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', this.responseText, loginURL);
-				} else if (this.responseText.includes('/var/www/html/')) {
+				} else if (this.responseText.includes('/var/www')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				} else if (this.responseText.includes('DONE')) {
 					showMessage ('送信されました', 'green', '入力したメールアドレスが正しければ、パスワードを再設定するためのメールを送信されました。届くまでに時間がかかる場合があります。', loginURL);

@@ -80,7 +80,7 @@ function login () {
 		} else if (token.includes('SERVER ERROR:')) {
 			showMessage ('エラーが発生しました', 'red', token, topURL);
 			return 0;
-		} else if (token.includes('/var/www/html/')) {
+		} else if (token.includes('/var/www')) {
 			showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
 			return 0;
 		} 

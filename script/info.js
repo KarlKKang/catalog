@@ -5,9 +5,9 @@ window.addEventListener("load", function(){
 		window.location.href = 'https://featherine.com/info.html';
 	}
     handshake ();
-	if (getURLParam ('disable-nav') == 'true') {
-		document.getElementById('header').style.display = 'none';
-		document.getElementById('nav-btn').style.display = 'none';
-		document.getElementById('main').style.padding = '0px';
+	if (getURLParam ('disable-nav') != 'true') {
+		document.getElementById('header').removeAttribute ('style');
+		document.getElementById('nav-btn').removeAttribute ('style');
+		document.getElementById('main').removeAttribute ('style');
 	}
 });

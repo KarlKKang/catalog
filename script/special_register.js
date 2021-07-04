@@ -5,7 +5,7 @@ window.addEventListener("load", function(){
 		window.location.href = 'https://featherine.com/special_register.html';
 	}
 	
-    initialize ();
+    start ('special_register');
 	
 	document.getElementById('email').addEventListener('keydown', function () {
 		if (event.key === "Enter") {
@@ -30,7 +30,21 @@ window.addEventListener("load", function(){
 });
 
 function initialize () {
-	handshake ();
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4) {
+			if (checkXHRStatus (this.status)) {
+				if (this.responseText.includes('REJECTED')) {
+					window.location.href = loginURL;
+				} else if (this.responseText.includes('APPROVED')) {
+					document.getElementsByTagName("body")[0].style.display = "block";
+				}
+			}
+		}
+	};
+	xmlhttp.open("POST", serverURL + "/special_register.php", true);
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xmlhttp.send("status_only=true");
 }
 
 function register () {
@@ -77,7 +91,7 @@ function register () {
 			if (checkXHRStatus (this.status)) {
 				document.getElementById('submit-button').disabled = false;
 				if (this.responseText.includes('REJECTED')) {
-					window.location.href = loginURL;
+					showMessage ('リクエストは拒否されました', 'red', '現在、このページでの新規登録は受け付けておりません。', loginURL);
 				} else if (this.responseText.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', this.responseText, loginURL);
 				} else if (this.responseText.includes('ALREADY REGISTERED')) {
@@ -86,7 +100,7 @@ function register () {
 				} else if (this.responseText.includes('USERNAME DUPLICATED')) {
 					document.getElementById('warning').innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
 					document.getElementById('warning').setAttribute('style', 'display: initial;');
-				} else if (this.responseText.includes('/var/www/html/')) {
+				} else if (this.responseText.includes('/var/www')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				} else if (this.responseText.includes('DONE')) {
 					showMessage ('送信されました', 'green', '確認メールが送信されました。届くまでに時間がかかる場合があります。', loginURL);

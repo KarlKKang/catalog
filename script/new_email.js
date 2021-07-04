@@ -16,7 +16,6 @@ var param = getURLParam ('p');
 var signature = getURLParam ('signature');
 
 function initialize () {
-	handshake ();
 	if (param == null || param.match(/^[a-zA-Z0-9~_-]+$/)===null) {
 		window.location.href = topURL;
 		return 0;
@@ -27,6 +26,9 @@ function initialize () {
 		return 0;
 	}
 	
+	handshake ();
+	document.getElementsByTagName("body")[0].style.display = "block";
+	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
@@ -35,7 +37,7 @@ function initialize () {
 					showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', topURL);
 				} else if (this.responseText.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', this.responseText, topURL);
-				} else if (this.responseText.includes('/var/www/html/') || !this.responseText.includes('APPROVED')) {
+				} else if (this.responseText.includes('/var/www') || !this.responseText.includes('APPROVED')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
 				}
 			}
@@ -67,7 +69,7 @@ function submitRequest () {
 					document.getElementById('warning').setAttribute('style', 'display: initial;');
 				} else if (this.responseText.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', this.responseText, loginURL);
-				} else if (this.responseText.includes('/var/www/html/') || !this.responseText.includes('DONE')) {
+				} else if (this.responseText.includes('/var/www') || !this.responseText.includes('DONE')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				} else if (this.responseText.includes('DONE')) {
 					showMessage ('送信されました', 'green', '変更を確認するメールが送信されました。届くまでに時間がかかる場合があります。', loginURL);

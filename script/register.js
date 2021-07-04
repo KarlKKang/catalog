@@ -28,7 +28,6 @@ var param = getURLParam ('p');
 var signature = getURLParam ('signature');
 
 function initialize () {
-	handshake ();
 	if (param == null || param.match(/^[a-zA-Z0-9~_-]+$/)===null) {
 		window.location.href = topURL;
 		return 0;
@@ -38,6 +37,9 @@ function initialize () {
 		window.location.href = topURL;
 		return 0;
 	}
+	
+	handshake ();
+	document.getElementsByTagName("body")[0].style.display = "block";
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -49,7 +51,7 @@ function initialize () {
 					showMessage ('リクエストは拒否されました', 'red', '現在、一般登録を受け付けています。ボタンをクリックして登録ページに移動してください。', rootURL + 'special_register.html');
 				} else if (this.responseText.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', this.responseText, topURL);
-				} else if (this.responseText.includes('/var/www/html/') || !this.responseText.includes('APPROVED')) {
+				} else if (this.responseText.includes('/var/www') || !this.responseText.includes('APPROVED')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				}
 			}
@@ -102,7 +104,7 @@ function register () {
 				} else if (this.responseText.includes('USERNAME DUPLICATED')) {
 					document.getElementById('warning').innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
 					document.getElementById('warning').setAttribute('style', 'display: initial;');
-				} else if (this.responseText.includes('/var/www/html/')) {
+				} else if (this.responseText.includes('/var/www')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				} else if (this.responseText.includes('DONE')) {
 					showMessage ('完了しました', 'green', 'アカウントが登録されました。', loginURL);
