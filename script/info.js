@@ -5,9 +5,10 @@ window.addEventListener("load", function(){
 		window.location.href = 'https://featherine.com/info.html';
 	}
     handshake ();
-	if (getURLParam ('disable-nav') != 'true') {
+	if (getURLParam ('nav') == 'true') {
 		document.getElementById('header').removeAttribute ('style');
 		document.getElementById('nav-btn').removeAttribute ('style');
 		document.getElementById('main').removeAttribute ('style');
 	}
+	document.getElementsByTagName("body")[0].style.display = "block";
 });

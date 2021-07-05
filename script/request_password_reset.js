@@ -13,9 +13,11 @@ window.addEventListener("load", function(){
 });
 
 function submitRequest () {
+	document.getElementById('submit-button').disabled = true;
 	if (getCookie('allow-password-reset')=='false' || getCookie('allow-login')=='false') {
 		document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
 		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('submit-button').disabled = false;
 		return 0;
 	}
 	
@@ -23,6 +25,7 @@ function submitRequest () {
 	if (email=='' || email.match(/^[^\s@]+@[^\s@]+$/)===null) {
 		document.getElementById('warning').innerHTML="有効なメールアドレスを入力してください。";
 		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('submit-button').disabled = false;
 		return 0;
 	}
 	
@@ -30,11 +33,11 @@ function submitRequest () {
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRStatus (this.status)) {
-				document.getElementById('submit-button').disabled = false;
 				if (this.responseText.includes('REJECTED')) {
 					document.getElementById('warning').innerHTML="しばらくしてからもう一度お試しください。";
 					document.getElementById('warning').setAttribute('style', 'display: initial;');
 					document.cookie = 'allow-password-reset=false; max-age=86400; path=/' + (debug?'':'; Domain=.featherine.com');
+					document.getElementById('submit-button').disabled = false;
 				} else if (this.responseText.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', this.responseText, loginURL);
 				} else if (this.responseText.includes('/var/www')) {
@@ -50,7 +53,6 @@ function submitRequest () {
 	xmlhttp.open("POST", serverURL + "/send_password_reset.php", true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("email="+email);
-	document.getElementById('submit-button').disabled = true;
 }
 
 function goBack () {

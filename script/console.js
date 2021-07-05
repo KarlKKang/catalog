@@ -22,7 +22,7 @@ function initialize () {
 		if (this.readyState == 4) {
 			if (checkXHRStatus (this.status)) {
 				if (!this.responseText.includes ('APPROVED')) {
-					window.location.href = loginURL;
+					window.location.href = 'https://featherine.com/404.html';
 				} else {
 					document.getElementsByTagName("body")[0].style.display = "block";
 				}

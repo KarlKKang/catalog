@@ -7,6 +7,8 @@ window.addEventListener("load", function(){
     start ('account');
 });
 
+var currentUsername;
+
 function initialize (){
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -29,13 +31,16 @@ function showUser (userInfo) {
 		document.getElementById('invite-button').style.display = 'none';
 	}
 	document.getElementById('new-username').value = userInfo.username;
+	currentUsername = userInfo.username;
 }
 
 function invite () {
+	document.getElementById('invite-button').disabled = true;
 	var receiver = document.getElementById('receiver-email').value;
 	if (receiver == '' || receiver.match(/^[^\s@]+@[^\s@]+$/)===null) {
 		document.getElementById('invite-warning').innerHTML="有効なメールアドレスを入力してください。";
 		document.getElementById('invite-warning').setAttribute('style', 'display: initial; color: red;');
+		document.getElementById('invite-button').disabled = false;
 		return 0;
 	}
 	
@@ -43,7 +48,6 @@ function invite () {
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRResponse (this)) {
-				document.getElementById('invite-button').disabled = false;
 				if (this.responseText.includes('NOT QUALIFIED')) {
 					document.getElementById('invite-warning').innerHTML = '招待状を送信する資格がありません。';
 					document.getElementById('invite-warning').setAttribute('style', 'display: initial; color: red;');
@@ -70,28 +74,31 @@ function invite () {
 					document.getElementById('invite-warning').setAttribute('style', 'display: initial; color: green;');
 				} else {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
-					logout(false);
+					return 0;
 				}
+				document.getElementById('invite-button').disabled = false;
 			}
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/send_invite.php", true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&receiver="+encodeURIComponent(receiver));
-	document.getElementById('invite-button').disabled = true;
 }
 
 function changePassword () {
+	document.getElementById('password-change-button').disabled=true;
 	var newPassword = document.getElementById('new-password').value;
 	var newPasswordConfirm = document.getElementById('new-password-confirm').value;
 	
 	if (newPassword=='' || newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
 		document.getElementById('password-warning').innerHTML="パスワードが要件を満たしていません。";
 		document.getElementById('password-warning').setAttribute('style', 'display: initial; color: red;');
+		document.getElementById('password-change-button').disabled=false;
 		return 0;
 	} else if (newPassword!=newPasswordConfirm) {
 		document.getElementById('password-warning').innerHTML = '確認再入力が一致しません。';
 		document.getElementById('password-warning').setAttribute('style', 'display: initial; color: red;');
+		document.getElementById('password-change-button').disabled=false;
 		return 0;
 	} else {
 		var hash = forge.md.sha512.sha256.create();
@@ -102,6 +109,7 @@ function changePassword () {
 	if (newPassword == user.password) {
 		document.getElementById('password-warning').innerHTML = '新しいパスワードは元のパスワードと同じです。';
 		document.getElementById('password-warning').setAttribute('style', 'display: initial; color: red;');
+		document.getElementById('password-change-button').disabled=false;
 		return 0;
 	}
 	
@@ -109,13 +117,11 @@ function changePassword () {
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRResponse (this)) {
-				document.getElementById('password-change-button').disabled=false;
 				if (this.responseText.includes('DONE')) {
-					showMessage ('完了しました', 'green', 'パスワードが変更されました。もう一度ログインしてください。', loginURL);
 					logout (false);
+					showMessage ('完了しました', 'green', 'パスワードが変更されました。もう一度ログインしてください。', loginURL);
 				} else {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
-					logout(false);
 				}
 			}
 		}
@@ -123,15 +129,14 @@ function changePassword () {
 	xmlhttp.open("POST", serverURL + "/password_change.php", true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&new="+newPassword);
-	document.getElementById('password-change-button').disabled=true;
 }
 
 function changeEmail () {
+	document.getElementById('email-change-button').disabled = true;
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRResponse (this)) {
-				document.getElementById('email-change-button').disabled = false;
 				if (this.responseText.includes('DUPLICATED')) {
 					document.getElementById('email-warning').innerHTML = '同じリクエストがまだ進行中です。 別のリクエストを提出する前にそれを完了してください。';
 					document.getElementById('email-warning').setAttribute('style', 'display: initial; color: red;');
@@ -140,30 +145,36 @@ function changeEmail () {
 					document.getElementById('email-warning').setAttribute('style', 'display: initial; color: green;');
 				} else {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
-					logout(false);
+					return 0;
 				}
+				document.getElementById('email-change-button').disabled = false;
 			}
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/send_email_change.php", true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature));
-	document.getElementById('email-change-button').disabled = true;
 }
 
 function changeUsername () {
+	document.getElementById('username-change-button').disabled=true;
 	var newUsername = document.getElementById('new-username').value;
 	
 	if (newUsername=='') {
 		document.getElementById('username-warning').innerHTML="新しいユーザー名を入力してください。";
 		document.getElementById('username-warning').setAttribute('style', 'display: initial;');
+		document.getElementById('username-change-button').disabled=false;
+		return 0;
+	} else if (newUsername == currentUsername) {
+		document.getElementById('username-warning').innerHTML = '新しいユーザー名は元のユーザー名と同じです。';
+		document.getElementById('username-warning').setAttribute('style', 'display: initial; color: red;');
+		document.getElementById('username-change-button').disabled=false;
 		return 0;
 	} 
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
-			document.getElementById('username-change-button').disabled=false;
 			if (checkXHRResponse (this)) {
 				if (this.responseText.includes('DONE')) {
 					document.getElementById('username-warning').innerHTML = '完了しました。';
@@ -173,13 +184,13 @@ function changeUsername () {
 					document.getElementById('username-warning').setAttribute('style', 'display: initial; color: red;');
 				} else {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
-					logout(false);
+					return 0;
 				}
+				document.getElementById('username-change-button').disabled=false;
 			}
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/username_change.php", true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&new="+newUsername);
-	document.getElementById('username-change-button').disabled=true;
 }

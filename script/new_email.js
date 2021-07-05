@@ -27,7 +27,6 @@ function initialize () {
 	}
 	
 	handshake ();
-	document.getElementsByTagName("body")[0].style.display = "block";
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -39,6 +38,8 @@ function initialize () {
 					showMessage ('エラーが発生しました', 'red', this.responseText, topURL);
 				} else if (this.responseText.includes('/var/www') || !this.responseText.includes('APPROVED')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
+				} else {
+					document.getElementsByTagName("body")[0].style.display = "block";
 				}
 			}
 		}
@@ -49,11 +50,13 @@ function initialize () {
 }
 
 function submitRequest () {
+	document.getElementById('submit-button').disabled = true;
 	var newEmail = document.getElementById('new-email').value;
 	
 	if (newEmail == '' || newEmail.match(/^[^\s@]+@[^\s@]+$/)===null) {
 		document.getElementById('warning').innerHTML = '有効なメールアドレスを入力してください。';
 		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('submit-button').disabled = false;
 		return 0;
 	}
 	
@@ -61,12 +64,12 @@ function submitRequest () {
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRStatus (this.status)) {
-				document.getElementById('submit-button').disabled = false;
 				if (this.responseText.includes('EXPIRED')) {
 					showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
 				} else if (this.responseText.includes('DUPLICATED')) {
 					document.getElementById('warning').innerHTML = 'このメールアドレスは登録済み、または招待されています。';
 					document.getElementById('warning').setAttribute('style', 'display: initial;');
+					document.getElementById('submit-button').disabled = false;
 				} else if (this.responseText.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', this.responseText, loginURL);
 				} else if (this.responseText.includes('/var/www') || !this.responseText.includes('DONE')) {
@@ -82,5 +85,4 @@ function submitRequest () {
 	xmlhttp.open("POST", serverURL + "/verify_email_change.php", true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("p="+param+"&signature="+signature+"&new="+newEmail);
-	document.getElementById('submit-button').disabled = true;
 }

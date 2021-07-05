@@ -33,7 +33,6 @@ function initialize () {
 	}
 	
 	handshake ();
-	document.getElementsByTagName("body")[0].style.display = "block";
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -47,7 +46,9 @@ function initialize () {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				} else if (!this.responseText.includes('APPROVED')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
-				} 
+				} else {
+					document.getElementsByTagName("body")[0].style.display = "block";
+				}
 			}
 		}
 	};
@@ -57,16 +58,20 @@ function initialize () {
 }
 
 function submitRequest () {
+	document.getElementById('submit-button').disabled=true;
+	
 	var newPassword = document.getElementById('new-password').value;
 	var newPasswordConfirm = document.getElementById('new-password-confirm').value;
 	
 	if (newPassword=='' || newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
 		document.getElementById('warning').innerHTML = 'パスワードが要件を満たしていません。';
 		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('submit-button').disabled=false;
 		return 0;
 	} else if (newPassword!=newPasswordConfirm) {
 		document.getElementById('warning').innerHTML = '確認再入力が一致しません。';
 		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('submit-button').disabled=false;
 		return 0;
 	} else {
 		var hash = forge.md.sha512.sha256.create();

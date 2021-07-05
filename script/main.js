@@ -1,11 +1,11 @@
 // JavaScript Document
 var topURL = 'https://featherine.com';
-//topURL = 'index.html';
+topURL = 'index.html';
 var rootURL = '';
 var loginURL = 'https://login.featherine.com';
-//loginURL = 'login.html';
+loginURL = 'login.html';
 var serverURL = 'https://server.featherine.com';
-var debug = false;
+var debug = true;
 
 var user;
 var signature = getCookie('signature');
@@ -162,7 +162,7 @@ function goTo (page) {
 	} else if (page == 'account') {
 		window.location.href = rootURL + 'account.html';
 	} else if (page == 'info') {
-		window.location.href = rootURL + 'info.html';
+		window.location.href = rootURL + 'info.html?nav=true';
 	} else if (page == 'special_register') {
 		window.location.href = rootURL + 'special_register.html';
 	}
@@ -174,7 +174,7 @@ function openWindow (page) {
 	} else if (page == 'account') {
 		window.open (rootURL + 'account.html');
 	} else if (page == 'info') {
-		window.open (rootURL + 'info.html?disable-nav=true');
+		window.open (rootURL + 'info.html');
 	}
 }
 

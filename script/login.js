@@ -21,10 +21,12 @@ window.addEventListener("load", function(){
 });
 
 function login () {
+	document.getElementById('login-button').disabled = true;
 	
 	if (getCookie('allow-login')=='false') {
 		document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
 		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('login-button').disabled = false;
 		return 0;
 	}
 
@@ -33,11 +35,13 @@ function login () {
 
 	if (email=='' || email.match(/^[^\s@]+@[^\s@]+$/)===null) {
 		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('login-button').disabled = false;
 		return 0;
 	}
 
 	if (password=='' || password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
 		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('login-button').disabled = false;
 		return 0;
 	} else {
 		var hash = forge.md.sha512.sha256.create();
@@ -57,15 +61,14 @@ function login () {
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRStatus (this.status)) {
-				document.getElementById('login-button').disabled = false;
 				checkLogin (this.responseText);
+				document.getElementById('login-button').disabled = false;
 			}
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/login.php",true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("p="+encodeURIComponent(param));
-	document.getElementById('login-button').disabled = true;
 
 	function checkLogin (token) {
 		if (token.includes('AUTHENTICATION FAILED') || token.includes('NOT ACTIVATED')) {
@@ -78,10 +81,10 @@ function login () {
 			document.cookie = 'allow-login=false; max-age=86400; path=/' + (debug?'':'; Domain=.featherine.com');
 			return 0;
 		} else if (token.includes('SERVER ERROR:')) {
-			showMessage ('エラーが発生しました', 'red', token, topURL);
+			showMessage ('エラーが発生しました', 'red', token, loginURL);
 			return 0;
 		} else if (token.includes('/var/www')) {
-			showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
+			showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 			return 0;
 		} 
 
