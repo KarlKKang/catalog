@@ -1,11 +1,11 @@
 // JavaScript Document
 var topURL = 'https://featherine.com';
-topURL = 'index.html';
+//topURL = 'index.html';
 var rootURL = '';
 var loginURL = 'https://login.featherine.com';
-loginURL = 'login.html';
+//loginURL = 'login.html';
 var serverURL = 'https://server.featherine.com';
-var debug = true;
+var debug = false;
 
 var user;
 var signature = getCookie('signature');
