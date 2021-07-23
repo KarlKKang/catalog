@@ -3,23 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>console | featherine</title>
 <link rel="icon" type="image/webp" href="image/favicon.webp"/>
+<link rel="stylesheet" type="text/css" href="css/main.css">
 <link rel="stylesheet" type="text/css" href="css/console.css">
 <script src="script/main.js"></script>
 <script src="script/console.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
+<script src="script_ext/forge.min.js"></script>
 </head>
 
-<body style="display: none;">
-	<button onClick="getSeriesTable ()">Get Series Table</button>
-	<button onClick="getAccountTable ()">Get Account Table</button>
-	<button onClick="getInviteTable ()">Get Invite Table</button>
-	<button onClick="getLogTable ()">Get Log Table</button>
+<body class="hidden">
+	<button id="get-series-table">Get Series Table</button>
+	<button id="get-account-table">Get Account Table</button>
+	<button id="get-invite-table">Get Invite Table</button>
+	<button id="get-log-table">Get Log Table</button>
 	<br>
 	<br>
-	<button onClick="generate ('id')">Generate id</button>
-	<button onClick="generate ('series-id')">Generate series-id</button>
+	<button id="generate-id">Generate id</button>
+	<button id="generate-series-id">Generate series-id</button>
 	<p id="id-output"></p>
 	<br>
 	<br>

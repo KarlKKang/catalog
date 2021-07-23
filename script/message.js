@@ -1,28 +1,39 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
-    initialize ();
-});
-
-var param = getURLParam ('p');
-var url;
-function initialize () {
+	var param = getURLParam ('p');
+	var url;
+	
 	if (param == null) {
 		window.location.href = topURL;
 		return 0;
 	}
 	param = JSON.parse(param);
 	
-	document.title = param.htmlTitle;
-	document.getElementById('title').innerHTML = param.title;
-	document.getElementById('title').style.color = param.titleColor;
-	document.getElementById('message').innerHTML = param.message;
-	url = param.url;
-	if (param.url == null) {
-		document.getElementById('button').style.display = 'none';
-	}
-}
+	var callback = function () {
+		document.title = param.htmlTitle;
+		document.getElementById('title').innerHTML = param.title;
+		document.getElementById('title').style.color = param.titleColor;
+		document.getElementById('message').innerHTML = param.message;
+		url = param.url;
+		if (param.url == null) {
+			document.getElementById('button').classList.add('hidden');
+		} else {
+			document.getElementById('button').addEventListener('click', function () {
+				window.location.href = url;
+			});
+		}
+		
+		document.getElementsByTagName("body")[0].classList.remove("hidden");
+	};
 
-function goToNext () {
-	window.location.href = url;
-}
+	if ('logout' in param) {
+		if (param.logout === true) {
+			logout (callback);
+			return 0;
+		}
+	}
+	
+	callback ();
+
+});

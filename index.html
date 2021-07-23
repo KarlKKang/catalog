@@ -3,27 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>トップ | featherine</title>
 <link rel="icon" type="image/webp" href="image/favicon.webp"/>
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <link rel="stylesheet" type="text/css" href="css/index.css">
 <script src="script/main.js"></script>
 <script src="script/index.js"></script> 
-<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.4.0/dist/lazyload.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&display=swap" rel="stylesheet">
+<script src="script/lazyload.js"></script>
 </head>
 
-<body style="display: none;">
+<body class="hidden">
 	<div id="header"></div>
-	<div id="nav-btn" onclick="navUpdate ()"><span></span></div>
-	<div id="nav-menu" style="visibility: hidden; opacity: 0;">
+	<div id="nav-btn"><span></span></div>
+	<div id="nav-menu" class="invisible transparent">
         <div id="nav-menu-content">
-			<p><span onclick="goTo('top');">トップ／LIBRARY</span></p>
-			<p><span onclick="goTo('account');">マイページ／ACCOUNT SETTINGS</span></p>
-			<p><span onclick="goTo('info');">ご利用ガイド／INFO</span></p>
-			<p><span onclick="logout();">ログアウト／LOG OUT</span></p>
+			<p><span id="nav-menu-content-1">トップ／LIBRARY</span></p>
+			<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>
+			<p><span id="nav-menu-content-3">ご利用ガイド／INFO</span></p>
+			<p><span id="nav-menu-content-4">ログアウト／LOG OUT</span></p>
         </div>
     </div>
 	
@@ -40,6 +38,7 @@
 		</div>
 		
 		<div id="container"></div>
+		<div id="position-detector" class="loading"></div>
 	</div>
 </body>
 </html>

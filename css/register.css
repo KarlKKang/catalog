@@ -1,23 +1,47 @@
 @charset "utf-8";
 /* CSS Document */
 
+@font-face {
+	font-family: "Noto Sans JP";
+	src: url("../font/NotoSansJP/NotoSansJP-Medium.woff2") format("woff2"),
+		url("../font/NotoSansJP/NotoSansJP-Medium.otf") format("opentype");
+	font-weight: 500;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "roboto";
+	src: url("../font/Roboto/Roboto-Light.woff2") format("woff2"),
+		url("../font/Roboto/Roboto-Light.ttf") format("truetype");
+	font-weight: 300;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Noto Sans SC";
+	src: url("../font/NotoSansSC/NotoSansSC-Light.woff2") format("woff2"),
+		url("../font/NotoSansSC/NotoSansSC-Light.otf") format("opentype");
+	font-weight: 300;
+	font-display: swap;
+}
+
 :lang(en) {
 	font-family: roboto,'Noto Sans Myanmar UI',arial,sans-serif;
 	font-weight: 300;
 }
 :lang(zh-Hans) {
-	font-family: "SF Pro SC","SF Pro Display","SF Pro Icons","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif;
+	font-family: 'Noto Sans SC','PingFang SC','Helvetica Neue','Helvetica','Arial',sans-serif;
 	font-weight: 300;
 }
 
 #form {
-	width: min(300px, 90%);
+	max-width: 90%;
 	margin: 0px;
-	padding: 0px;
+	padding: 5vh 0px;
 	position: absolute;
-	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	transform: translate(-50%, 0%);
+	text-align: center;
 }
 
 #title {
@@ -45,17 +69,19 @@
 }
 
 #submit-button {
-	width: 50%;
+	width: 150px;
+	max-width: 80%;
 	text-align: center;
-	position: relative;
-	left: 50%;
-  	transform: translate(-50%, 0%);
 	cursor: pointer;
 	font-size: medium;
 }
 
 .input-field {
-	width: 100%;
+	width: 300px;
+	max-width: 100%;
+	position: relative;
+	left: 50%;
+  	transform: translate(-50%, 0%);
 }
 
 .input-field > input {
@@ -73,8 +99,12 @@
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
 }
 
+#note {
+	margin-bottom: 2em;
+}
+
 #note > ul {
 	font-size: small;
 	color: #adadb5;
-	padding: 0px 0px 0px 1em;
+	text-align: left;
 }

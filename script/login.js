@@ -4,9 +4,8 @@ window.addEventListener("load", function(){
 	
 	if (!window.location.href.startsWith('https://login.featherine.com') && !debug) {
 		window.location.href = redirect ('https://login.featherine.com');
+		return 0;
 	}
-	
-    start ('login');
 		
 	document.getElementById('username').addEventListener('keydown', function () {
 		if (event.key === "Enter") {
@@ -18,14 +17,26 @@ window.addEventListener("load", function(){
 			login ();
 		}
 	});
-});
+	
+	document.getElementById('login-button').addEventListener('click', function () {
+		login ();
+	});
+	document.getElementById('forgot-password').getElementsByTagName('span')[0].addEventListener('click', function () {
+		passwordReset ();
+	});
+	
+	document.getElementById('password').addEventListener('input', function () {
+		passwordStyling(this);
+	});
+	
+	start ('login', function () {document.getElementsByTagName("body")[0].classList.remove("hidden");});
 
 function login () {
 	document.getElementById('login-button').disabled = true;
 	
 	if (getCookie('allow-login')=='false') {
 		document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
-		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('warning').classList.remove('hidden');
 		document.getElementById('login-button').disabled = false;
 		return 0;
 	}
@@ -34,13 +45,15 @@ function login () {
 	var password = document.getElementById('password').value;
 
 	if (email=='' || email.match(/^[^\s@]+@[^\s@]+$/)===null) {
-		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
+		document.getElementById('warning').classList.remove('hidden');
 		document.getElementById('login-button').disabled = false;
 		return 0;
 	}
 
 	if (password=='' || password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
-		document.getElementById('warning').setAttribute('style', 'display: initial;');
+		document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
+		document.getElementById('warning').classList.remove('hidden');
 		document.getElementById('login-button').disabled = false;
 		return 0;
 	} else {
@@ -61,51 +74,35 @@ function login () {
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRStatus (this.status)) {
-				checkLogin (this.responseText);
-				document.getElementById('login-button').disabled = false;
+				let response = this.responseText
+				if (response.includes('/var/www')) {
+					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
+				}  else if (response.includes('SERVER ERROR:')) {
+					showMessage ('エラーが発生しました', 'red', response, loginURL);
+				} else if (response.includes('AUTHENTICATION FAILED') || response.includes('NOT ACTIVATED')) {
+					document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
+					document.getElementById('warning').classList.remove('hidden');
+					document.getElementById('login-button').disabled = false;
+				} else if (response.includes('REJECTED')) {
+					document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
+					document.getElementById('warning').classList.remove('hidden');
+					document.cookie = 'allow-login=false; max-age=86400; path=/' + (debug?'':'; Domain=.featherine.com');
+					document.getElementById('login-button').disabled = false;
+				} else if (response == 'APPROVED') {
+					window.location.href = redirect (topURL);
+				} else {
+					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
+				}
 			}
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/login.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("p="+encodeURIComponent(param));
-
-	function checkLogin (token) {
-		if (token.includes('AUTHENTICATION FAILED') || token.includes('NOT ACTIVATED')) {
-			document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
-			document.getElementById('warning').setAttribute('style', 'display: initial;');
-			return 0;
-		} else if (token.includes('REJECTED')) {
-			document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
-			document.getElementById('warning').setAttribute('style', 'display: initial;');
-			document.cookie = 'allow-login=false; max-age=86400; path=/' + (debug?'':'; Domain=.featherine.com');
-			return 0;
-		} else if (token.includes('SERVER ERROR:')) {
-			showMessage ('エラーが発生しました', 'red', token, loginURL);
-			return 0;
-		} else if (token.includes('/var/www')) {
-			showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
-			return 0;
-		} 
-
-		token = JSON.parse (token);
-
-		if (document.getElementById('remember-me-checkbox').checked) {
-			var date = new Date (token.expires*1000);
-			document.cookie = 'email=' + email + '; expires=' + date.toUTCString() + '; path=/' + (debug?'':'; Domain=.featherine.com');
-			document.cookie = 'password=' + password + '; expires=' + date.toUTCString() + '; path=/' + (debug?'':'; Domain=.featherine.com');
-			document.cookie = 'signature=' + token.signature + '; expires=' + date.toUTCString() + '; path=/' + (debug?'':'; Domain=.featherine.com');
-			document.cookie = 'expires=' + token.expires + '; expires=' + date.toUTCString() + '; path=/' + (debug?'':'; Domain=.featherine.com');
-		} else {
-			document.cookie = 'email=' + email + '; path=/' + (debug?'':'; Domain=.featherine.com');
-			document.cookie = 'password=' + password + '; path=/' + (debug?'':'; Domain=.featherine.com');
-			document.cookie = 'signature=' + token.signature + '; path=/' + (debug?'':'; Domain=.featherine.com');
-			document.cookie = 'expires=' + token.expires + '; path=/' + (debug?'':'; Domain=.featherine.com');
-		}
-		window.location.href = redirect (topURL);
-	}
 }
 
 function passwordReset () {
-	window.location.href = loginURL+'/request_password_reset.html';
+	window.location.href = 'request_password_reset'+(debug?'.html':'');
 }
+});

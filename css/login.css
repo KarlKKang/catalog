@@ -1,18 +1,25 @@
 @charset "utf-8";
 /* CSS Document */
 
+@font-face {
+	font-family: "Noto Sans JP";
+	src: url("../font/NotoSansJP/NotoSansJP-Medium.woff2") format("woff2"),
+		url("../font/NotoSansJP/NotoSansJP-Medium.otf") format("opentype");
+	font-weight: 500;
+	font-display: swap;
+}
+
 #login-form {
-	width: min(300px, 90%);
+	max-width: 90%;
 	margin: 0px;
-	padding: 0px;
+	padding: 5vh 0px;
 	position: absolute;
-	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	transform: translate(-50%, 0%);
+	text-align: center;
 }
 
 #title {
-	text-align: center;
 	margin: 0px;
 	padding: 1em 0px;
 	font-size: x-large;
@@ -23,6 +30,7 @@
 	margin: 0px;
 	padding: 1em 0px;
 	color: red;
+
 }
 
 .input-field, #login-button {
@@ -36,17 +44,20 @@
 }
 
 #login-button {
-	width: 50%;
+	width: 150px;
+	max-width: 80%;
 	text-align: center;
 	position: relative;
-	left: 50%;
-  	transform: translate(-50%, 0%);
 	cursor: pointer;
 	font-size: medium;
 }
 
 .input-field {
-	width: 100%;
+	width: 300px;
+	max-width: 100%;
+	position: relative;
+	left: 50%;
+	transform: translate(-50%, 0%);
 }
 
 .input-field > input {
@@ -68,6 +79,7 @@
 	text-align: center;
 	/*font-size: small;*/
 	color: #1069c9;
+	margin-bottom: 2em;
 }
 
 #forgot-password > span {
@@ -100,8 +112,7 @@
 .container > p {
 	margin: 0px;
 	padding: 0px;
-	height: 1.5em;
-	line-height: 1.5em;
+	line-height: 1.2em;
 }
 
 /* Hide the browser's default checkbox */
@@ -118,8 +129,8 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	height: 1.5em;
-	width: 1.5em;
+	height: 1.2em;
+	width: 1.2em;
 	background-color: #fff;
 	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
 	transition: box-shadow .4s ease-out;
@@ -128,11 +139,6 @@
 /* On mouse-over, add a grey background color */
 .container:hover input ~ .checkmark {
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
-}
-
-/* When the checkbox is checked, add a blue background */
-.container input:checked ~ .checkmark {
-	background-color: #fff;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
@@ -149,8 +155,8 @@
 
 /* Style the checkmark/indicator */
 .container .checkmark:after {
-	left: 0.5em;
-	top: 0.3em;
+	left: 0.4em;
+	top: 0.15em;
 	width: 0.3em;
 	height: 0.6em;
 	border: solid black;

@@ -3,3 +3,7 @@
 textarea {
 	background: transparent;
 }
+
+.changed {
+	background-color: yellow;
+}

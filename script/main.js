@@ -1,51 +1,39 @@
 // JavaScript Document
 var topURL = 'https://featherine.com';
-//topURL = 'index.html';
-var rootURL = '';
+topURL = 'index.html';
 var loginURL = 'https://login.featherine.com';
-//loginURL = 'login.html';
+loginURL = 'login.html';
 var serverURL = 'https://server.featherine.com';
-var debug = false;
+var debug = true;
 
-var user;
-var signature = getCookie('signature');
-var expires = getCookie('expires');
-
-function start (currentPage) {
-	var email = getCookie('email');
-	var password = getCookie('password');
-
-	if (email == '' || password=='' || signature=='' || expires=='') {
-		if (currentPage != 'login' && currentPage != 'request_password_reset' && currentPage != 'special_register') {
-			logout ();
-		} else {
-			document.getElementsByTagName("body")[0].style.display = "block";
-		}
-		return 0;
-	}
-
-	if (parseInt(expires)*1000<Date.now() || password.match(/^[a-f0-9]{64}$/)===null) {
-		if (currentPage != 'login' && currentPage != 'request_password_reset' && currentPage != 'special_register') {
-			logout ();
-		} else {
-			document.getElementsByTagName("body")[0].style.display = "block";
-		}
-		return 0;
+function start (currentPage, callback) {
+	if (callback === undefined) {
+		callback = function () {return 0;};
 	}
 	
-	handshake ();
-
-	user = {
-		email: email,
-		password: password
-	};
-
-	if (currentPage == 'login' || currentPage == 'request_password_reset' || currentPage == 'special_register') {
-		window.location.href = redirect(topURL);
-	} else {
-		document.getElementsByTagName("body")[0].style.display = "block";
-		initialize ();
-	}
+	handshake (function () {
+		if (currentPage == 'login' || currentPage == 'request_password_reset' || currentPage == 'special_register') {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4) {
+					if (checkXHRStatus (this.status)) {
+						if (this.responseText == "PASSED") {
+							window.location.href = redirect(topURL);
+						} else if (this.responseText == "AUTHENTICATION FAILED") {
+							callback ();
+						} else {
+							showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, false);
+						}
+					}
+				}
+			};
+			xmlhttp.open("POST", serverURL + "/check_cookies.php",true);
+			xmlhttp.withCredentials = true;
+			xmlhttp.send();
+		} else {
+			callback ();
+		}
+	});
 }
 
 function getURLParam (param) {
@@ -81,30 +69,46 @@ function getCookie(cname) {
 	return "";
 }
 
-function logout (goToLogin) {
-	if (goToLogin === undefined) {
-		goToLogin = true;
+function logout (callback) {
+	if (callback === undefined) {
+		callback = function () {return 0;};
 	}
 	
-	document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/" + (debug?"":"; Domain=.featherine.com");
-	document.cookie = "password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/" + (debug?"":"; Domain=.featherine.com");
-	document.cookie = "signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/" + (debug?"":"; Domain=.featherine.com");
-	document.cookie = "expires=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/" + (debug?"":"; Domain=.featherine.com");
-	if (goToLogin)
-		window.location.href = redirect (loginURL);
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4) {
+			if (checkXHRResponse (this)) {
+				if (this.responseText=='DONE') {
+					callback ();
+				} else {
+					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, false);
+					return false;
+				}
+			}
+		}
+	};
+	xmlhttp.open("POST", serverURL + "/logout.php",true);
+	xmlhttp.withCredentials = true;
+	xmlhttp.send();
+}
+
+function checkXHRResponse (response) {
+	if (checkXHRStatus (response.status)) {
+		if (checkXHRResponseText (response.responseText))
+			return true;
+	}
+	return false;
 }
 
 function checkXHRResponseText (responseText) {
-	if (responseText.includes('AUTHENTICATION FAILED')) {
-		logout(true);
+	if (responseText.includes('/var/www')) {
+		showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, true);
 		return false;
 	} else if (responseText.includes('SERVER ERROR:')) {
-		logout(false);
-		showMessage ('エラーが発生しました', 'red', responseText, topURL);
+		showMessage ('エラーが発生しました', 'red', responseText, topURL, true);
 		return false;
-	} else if (responseText.includes('/var/www')) {
-		logout(false);
-		showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
+	} else if (responseText.includes('AUTHENTICATION FAILED')) {
+		logout(function () {window.location.href = redirect (loginURL);});
 		return false;
 	} else if (responseText.includes('NOT FOUND')) {
 		window.location.href = topURL;
@@ -133,25 +137,17 @@ function passwordStyling (element) {
 	}
 }
 
-function checkXHRResponse (response) {
-	if (checkXHRStatus (response.status)) {
-		if (checkXHRResponseText (response.responseText))
-			return true;
-	}
-	return false;
-}
-
 function navUpdate () {
 	document.getElementById('nav-btn').classList.toggle('active');
 	var menu = document.getElementById('nav-menu');
 	
 	if (document.getElementById('nav-btn').classList.contains('active')) {
-		menu.style.visibility = "visible";
-		menu.style.opacity = 1;
+		menu.classList.remove('invisible');
+		menu.classList.remove('transparent');
 	} else {
-		menu.style.opacity = 0;
+		menu.classList.add('transparent');
 		setTimeout (function () {
-			menu.style.visibility = "hidden";
+			menu.classList.add('invisible');
 		}, 300);
 	}
 }
@@ -160,50 +156,48 @@ function goTo (page) {
 	if (page == 'top') {
 		window.location.href = topURL;
 	} else if (page == 'account') {
-		window.location.href = rootURL + 'account.html';
+		window.location.href = 'account'+(debug?'.html':'');
 	} else if (page == 'info') {
-		window.location.href = rootURL + 'info.html?nav=true';
+		window.location.href = 'info'+(debug?'.html':'')+'?nav=true';
 	} else if (page == 'special_register') {
-		window.location.href = rootURL + 'special_register.html';
+		window.location.href = 'special_register'+(debug?'.html':'');
 	}
 }
 
-function openWindow (page) {
-	if (page == 'top') {
-		window.open (topURL);
-	} else if (page == 'account') {
-		window.open (rootURL + 'account.html');
-	} else if (page == 'info') {
-		window.open (rootURL + 'info.html');
+function showMessage (title, color, message, url, logout) {
+	if (logout === undefined) {
+		logout = false;
 	}
-}
-
-function showMessage (title, color, message, url) {
 	var param = {
 		title: title,
 		titleColor: color,
 		message: message,
 		url: url,
-		htmlTitle: document.title
+		htmlTitle: document.title,
+		logout: logout
 	};
 	
-	window.location.href = rootURL + 'message.html?p=' + encodeURIComponent(JSON.stringify(param));
+	window.location.href = 'message'+(debug?'.html':'')+'?p=' + encodeURIComponent(JSON.stringify(param));
 }
 
-function handshake () {
+function handshake (callback) {
+	if (callback === undefined) {
+		callback = function () {return 0;};
+	}
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRStatus (this.status)) {
 				if (this.responseText == "IN MAINTENANCE") {
 					showMessage ("メンテナンス中", "red", "後でもう一度やり直してください。", null);
-				} else if (!this.responseText.includes("OK")) {
-					showMessage ("サーバーでエラーが発生しました", "red", "後でもう一度やり直してください。", null);   
+				} else if (this.responseText == "OK") {
+					callback();
+				} else {
+					showMessage ("サーバーでエラーが発生しました", "red", "後でもう一度やり直してください。", null);
 				}
 			}
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/handshake.php",true);
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send();
 }

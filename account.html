@@ -3,27 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>マイページ | featherine</title>
 <link rel="icon" type="image/webp" href="image/favicon.webp"/>
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <link rel="stylesheet" type="text/css" href="css/account.css">
 <script src="script/main.js"></script>
 <script src="script/account.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500&display=swap" rel="stylesheet">
+<script src="script_ext/forge.min.js"></script>
 </head>
 
-<body style="display: none;">
+<body class="hidden">
 	<div id="header"></div>
-	<div id="nav-btn" onclick="navUpdate ()"><span></span></div>
-	<div id="nav-menu" style="visibility: hidden; opacity: 0;">
+	<div id="nav-btn"><span></span></div>
+	<div id="nav-menu" class="invisible transparent">
         <div id="nav-menu-content">
-			<p><span onclick="goTo('top');">トップ／LIBRARY</span></p>
-			<p><span onclick="goTo('account');">マイページ／ACCOUNT SETTINGS</span></p>
-			<p><span onclick="goTo('info');">ご利用ガイド／INFO</span></p>
-			<p><span onclick="logout();">ログアウト／LOG OUT</span></p>
+			<p><span id="nav-menu-content-1">トップ／LIBRARY</span></p>
+			<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>
+			<p><span id="nav-menu-content-3">ご利用ガイド／INFO</span></p>
+			<p><span id="nav-menu-content-4">ログアウト／LOG OUT</span></p>
         </div>
     </div>
 	
@@ -32,16 +30,16 @@
 			<p id="title">マイページ</p>
 
 			<p class="sub-title">メールアドレス</p>
-			<p class="warning" id="email-warning" style="display: none;"></p>
+			<p class="warning hidden" id="email-warning"></p>
 			<p id="email"></p>
-			<button class="button" id="email-change-button" onClick="changeEmail ()">変更する</button>
+			<button class="button" id="email-change-button">変更する</button>
 
 			<hr>
 
 			<p class="sub-title">ユーザー名</p>
-			<p class="warning" id="username-warning" style="display: none;"></p>
+			<p class="warning hidden" id="username-warning"></p>
 			<div class="input-field"><input id="new-username" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off"></div>
-			<button class="button" id="username-change-button" onClick="changeUsername ()">変更する</button>
+			<button class="button" id="username-change-button">変更する</button>
 			<div class="note">
 				<ul>
 					<li>現在、ユーザー名は使用されていません。 新しい機能が実装されたときに使用できるように準備されています。</li>
@@ -51,10 +49,10 @@
 			<hr>
 
 			<p class="sub-title">パスワード</p>
-			<p class="warning" id="password-warning" style="display: none;"></p>
-			<div class="input-field"><input id="new-password" type="password" placeholder="新しいパスワード" autocapitalize="off" autocomplete="off" oninput="passwordStyling(this);"></div>
-			<div class="input-field"><input id="new-password-confirm" type="password" placeholder="確認再入力" autocapitalize="off" autocomplete="off" oninput="passwordStyling(this);"></div>
-			<button class="button" id="password-change-button" onClick="changePassword ()">変更する</button>
+			<p class="warning hidden" id="password-warning"></p>
+			<div class="input-field"><input id="new-password" type="password" placeholder="新しいパスワード" autocapitalize="off" autocomplete="off"></div>
+			<div class="input-field"><input id="new-password-confirm" type="password" placeholder="確認再入力" autocapitalize="off" autocomplete="off"></div>
+			<button class="button" id="password-change-button">変更する</button>
 			<div class="note">
 				<ul>
 					<li>使用出来る文字は、半角英大文字、半角英小文字、数字、記号+_!@#$%^&amp;*.,?-です。</li>
@@ -67,9 +65,9 @@
 
 			<p class="sub-title">ご招待</p>
 			<p id="invite-count-text">送信できる招待状の数：<span id="invite-count"></span></p>
-			<p class="warning" id="invite-warning" style="display: none;"></p>
+			<p class="warning hidden" id="invite-warning"></p>
 			<div class="input-field" id="invite-input"><input id="receiver-email" type="text" placeholder="メールアドレス" autocapitalize="off" autocomplete="off"></div>
-			<button class="button" id="invite-button" onClick="invite ()">送信する</button>
+			<button class="button" id="invite-button">送信する</button>
 			<div class="note">
 				<ul>
 					<li>受け入れなかった招待を含めて、1年に最大5人までしか招待できません。</li>

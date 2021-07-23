@@ -1,15 +1,32 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
-	if (!window.location.href.startsWith('https://featherine.com/console.html') && !debug) {
-		window.location.href = window.location.href = 'https://featherine.com/console.html';
+	if (!window.location.href.startsWith('https://featherine.com/console') && !debug) {
+		window.location.href = 'https://featherine.com/console';
+		return 0;
 	}
 	
-    start ('console');
-});
-
-/*------------------------------------------------------------------------------------Series Functions------------------------------------------------------------------------------------*/
-
+	document.getElementById('get-series-table').addEventListener('click', function () {
+		getSeriesTable ();
+	});
+	document.getElementById('get-account-table').addEventListener('click', function () {
+		getAccountTable ();
+	});
+	document.getElementById('get-invite-table').addEventListener('click', function () {
+		getInviteTable ();
+	});
+	document.getElementById('get-log-table').addEventListener('click', function () {
+		getLogTable ();
+	});
+	document.getElementById('generate-id').addEventListener('click', function () {
+		generate ('id');
+	});
+	document.getElementById('generate-series-id').addEventListener('click', function () {
+		generate ('series-id');
+	});
+	
+	start ('console', function () {initialize();});
+	
 function initialize () {
 	
 	var param = {
@@ -21,19 +38,22 @@ function initialize () {
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRStatus (this.status)) {
-				if (!this.responseText.includes ('APPROVED')) {
-					window.location.href = 'https://featherine.com/404.html';
+				if (this.responseText!='APPROVED') {
+					window.location.href = 'https://featherine.com/404';
 				} else {
-					document.getElementsByTagName("body")[0].style.display = "block";
+					document.getElementsByTagName("body")[0].classList.remove("hidden");
 				}
 			}
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 	
 }
+
+/*------------------------------------------------------------------------------------Series Functions------------------------------------------------------------------------------------*/
 
 function getSeriesTable () {
 	var param = {
@@ -51,8 +71,9 @@ function getSeriesTable () {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 function modifySeries (button) {
@@ -77,8 +98,8 @@ function modifySeries (button) {
 
 	var confirm;
 	do {
-		confirm = prompt('Type "modify" to confirm');
-		if (confirm == null) {
+		confirm = prompt('Type "modify" to confirm.');
+		if (confirm === null) {
 			return 0;
 		}
 	} while (confirm != "modify");
@@ -94,16 +115,17 @@ function modifySeries (button) {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 function deleteSeries (id) {
 	
 	var confirm;
 	do {
-		confirm = prompt('Type "delete" to confirm. This operation will also delete the EP table for this series');
-		if (confirm == null) {
+		confirm = prompt('Type "delete" to confirm.');
+		if (confirm === null) {
 			return 0;
 		}
 	} while (confirm != "delete");
@@ -111,7 +133,7 @@ function deleteSeries (id) {
 	var param = {
 		'command': 'delete',
 		'table': 'series',
-		'id': id
+		'id': parseInt(id)
 	};
 	param = JSON.stringify (param);
 
@@ -126,8 +148,9 @@ function deleteSeries (id) {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 function addSeries (button) {
@@ -152,8 +175,8 @@ function addSeries (button) {
 	
 	var confirm;
 	do {
-		confirm = prompt('Type "insert" to confirm. This operation will also create the EP table for this series');
-		if (confirm == null) {
+		confirm = prompt('Type "insert" to confirm.');
+		if (confirm === null) {
 			return 0;
 		}
 	} while (confirm != "insert");
@@ -169,8 +192,9 @@ function addSeries (button) {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 function parseSeriesRecord (id, title, thumbnail, isPublic, series_id, season_name, season_order, keywords) {
@@ -267,15 +291,16 @@ function generate (type) {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 
 function updateTime (id) {
 	var param = {
 		'command': 'updatetime',
-		'id': id
+		'id': parseInt(id)
 	};
 	param = JSON.stringify (param);
 	
@@ -290,8 +315,9 @@ function updateTime (id) {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 /*------------------------------------------------------------------------------------Account Functions------------------------------------------------------------------------------------*/
@@ -312,8 +338,9 @@ function getAccountTable () {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 function addAccount (button) {
@@ -360,7 +387,7 @@ function addAccount (button) {
 	var confirm;
 	do {
 		confirm = prompt('Type "insert" to confirm.');
-		if (confirm == null) {
+		if (confirm === null) {
 			return 0;
 		}
 	} while (confirm != "insert");
@@ -376,8 +403,9 @@ function addAccount (button) {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 function modifyAccount (button, originalEmail) {
@@ -419,8 +447,8 @@ function modifyAccount (button, originalEmail) {
 
 	var confirm;
 	do {
-		confirm = prompt('Type "modify" to confirm');
-		if (confirm == null) {
+		confirm = prompt('Type "modify" to confirm.');
+		if (confirm === null) {
 			return 0;
 		}
 	} while (confirm != "modify");
@@ -436,8 +464,9 @@ function modifyAccount (button, originalEmail) {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 function parseAccountRecord (email, username, password, user_group, status, available_invite) {
@@ -509,7 +538,7 @@ function deleteAccount (email) {
 	var confirm;
 	do {
 		confirm = prompt('Type "delete" to confirm. Deleting an account is NOT recommended. Use "status" option instead.');
-		if (confirm == null) {
+		if (confirm === null) {
 			return 0;
 		}
 	} while (confirm != "delete");
@@ -532,8 +561,9 @@ function deleteAccount (email) {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 /*------------------------------------------------------------------------------------Invite Functions------------------------------------------------------------------------------------*/
@@ -554,8 +584,9 @@ function getInviteTable () {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 /*------------------------------------------------------------------------------------Log Functions------------------------------------------------------------------------------------*/
@@ -576,8 +607,9 @@ function getLogTable () {
 		}
 	};
 	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user))+"&expires="+expires+"&signature="+encodeURIComponent(signature)+"&p="+encodeURIComponent(param));
+	xmlhttp.send("p="+encodeURIComponent(param));
 }
 
 /*------------------------------------------------------------------------------------Utility Functions------------------------------------------------------------------------------------*/
@@ -591,10 +623,87 @@ function setOutput (response, outputElementID) {
 		alert (response);
 	} else {
 		document.getElementById(outputElementID).innerHTML = response;
+		updateEventHandlers ();
 	}
 	return !error;
 }
 
 function changed (textarea) {
-	textarea.parentNode.style.backgroundColor = "yellow";
+	textarea.parentNode.classList.add('changed');
 }
+
+function updateEventHandlers () {
+	var buttons = document.getElementsByClassName('add-series');
+	var i;
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].classList.remove('add-series');
+		buttons[i].addEventListener('click', function() {
+			addSeries(this);
+		});
+	}
+	
+	buttons = document.getElementsByClassName('update-time');
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].classList.remove('update-time');
+		buttons[i].addEventListener('click', function() {
+			updateTime(this.dataset.id);
+		});
+	}
+	
+	buttons = document.getElementsByClassName('delete-series');
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].classList.remove('delete-series');
+		buttons[i].addEventListener('click', function() {
+			deleteSeries(this.dataset.id);
+		});
+	}
+	
+	buttons = document.getElementsByClassName('add-account');
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].classList.remove('add-account');
+		buttons[i].addEventListener('click', function() {
+			addAccount(this);
+		});
+	}
+	
+	buttons = document.getElementsByClassName('modify-series');
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].classList.remove('modify-series');
+		buttons[i].addEventListener('click', function() {
+			modifySeries(this);
+		});
+	}
+	
+	buttons = document.getElementsByClassName('modify-account');
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].classList.remove('modify-account');
+		buttons[i].addEventListener('click', function() {
+			modifyAccount(this, this.dataset.email);
+		});
+	}
+	
+	buttons = document.getElementsByClassName('delete-account');
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].classList.remove('delete-account');
+		buttons[i].addEventListener('click', function() {
+			deleteAccount(this.dataset.email);
+		});
+	}
+	
+	var elem = document.getElementsByClassName('onchange');
+	for (i=0; i<elem.length; i++) {
+		elem[i].classList.remove('onchange');
+		elem[i].addEventListener('change', function() {
+			changed(this);
+		});
+	}
+	
+	elem = document.getElementsByClassName('oninput');
+	for (i=0; i<elem.length; i++) {
+		elem[i].classList.remove('oninput');
+		elem[i].addEventListener('input', function() {
+			changed(this);
+		});
+	}
+}
+});

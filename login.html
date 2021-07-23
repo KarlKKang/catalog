@@ -3,24 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>ログイン | featherine</title>
 <link rel="icon" type="image/webp" href="image/favicon.webp"/>
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <link rel="stylesheet" type="text/css" href="css/login.css">
 <script src="script/main.js"></script>
 <script src="script/login.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500&display=swap" rel="stylesheet">
+<script src="script_ext/forge.min.js"></script>
 </head>
 
-<body style="display: none;">
+<body class="hidden">
 	<div id="login-form">
 		<p id="title">ようこそ</p>
-		<p id="warning" style="display: none;"></p>
+		<p id="warning" class="hidden"></p>
 		<div class="input-field"><input id="username" type="text" placeholder="アカウントID" autocapitalize="off" autocomplete="off"></div>
-		<div class="input-field"><input id="password" type="password" placeholder="パスワード" oninput="passwordStyling(this);"></div>
+		<div class="input-field"><input id="password" type="password" placeholder="パスワード"></div>
 		<div id="remember-me">
 			<label class="container">
 				<p>ログインしたままにする</p>
@@ -29,8 +27,8 @@
 			</label>
 		</div>
 		
-		<button id="login-button" onClick="login ()">ログイン</button>
-		<p id="forgot-password"><span onClick="passwordReset ();">パスワードを忘れた方はこちら</span></p>
+		<button id="login-button">ログイン</button>
+		<p id="forgot-password"><span>パスワードを忘れた方はこちら</span></p>
 	</div>
 </body>
 </html>

@@ -1,6 +1,14 @@
 @charset "utf-8";
 /* CSS Document */
 
+@font-face {
+	font-family: "Noto Sans JP";
+	src: url("../font/NotoSansJP/NotoSansJP-Light.woff2") format("woff2"),
+		url("../font/NotoSansJP/NotoSansJP-Light.otf") format("opentype");
+	font-weight: 300;
+	font-display: swap;
+}
+
 *{
 	font-family: 'Noto Sans JP','游ゴシック体','游ゴシック','Yu Gothic','メイリオ',Meiryo,sans-serif;
 	font-weight: 300;
@@ -33,9 +41,23 @@ body {
 	width: 100%;
 }
 
+#main.no-padding {
+	padding: 0px;
+}
+
 #main-note {
 	margin: 0px 0px 2em;
 	padding: 0px;
+}
+
+.lazyload.complete {
+	padding-bottom: 0px!important;
+}
+.lazyload img {
+	display: block;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
 }
 
 .password-font {
@@ -45,6 +67,27 @@ body {
 .link {
 	cursor: pointer;
 	color: #1069c9;
+}
+
+.hidden {
+	display: none!important;
+}
+
+.invisible {
+	visibility: hidden;
+}
+
+.transparent {
+	opacity: 0;
+}
+
+
+.color-red {
+	color: red!important;
+}
+
+.color-green {
+	color: green!important;
 }
 
 /*////////////////////////////////////////////////////////Navigation button////////////////////////////////////////////////////////*/
