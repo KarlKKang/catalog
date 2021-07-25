@@ -37,10 +37,16 @@ window.addEventListener("load", function(){
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4) {
 				if (checkXHRResponse (this)) {
+					try {
+						var series = JSON.parse(this.responseText);
+					} catch (e) {
+						showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL, true);
+						return 0;
+					}
 					document.getElementsByTagName("body")[0].classList.remove("hidden");
 					document.addEventListener('scroll', infiniteScrolling);
 					window.addEventListener("resize", infiniteScrolling);
-					showSeries (JSON.parse(this.responseText));
+					showSeries (series);
 				}
 			}
 		};
@@ -68,15 +74,19 @@ window.addEventListener("load", function(){
 			}
 
 			for (var i=0; i<series.length; i++) {
-				var seriesNode = document.createElement('div');
-				var thumbnailNode = document.createElement('div');
-				var titleNode = document.createElement('p');
+				let seriesNode = document.createElement('div');
+				let thumbnailNode = document.createElement('div');
+				let overlay = document.createElement('div');
+				let titleNode = document.createElement('p');
 
 				seriesNode.appendChild(thumbnailNode);
 				seriesNode.appendChild(titleNode);
-
+				
+				overlay.classList.add('overlay');
+				thumbnailNode.appendChild(overlay);
 				thumbnailNode.classList.add('lazyload');
 				thumbnailNode.dataset.src = series[i].thumbnail;
+				thumbnailNode.dataset.alt = 'thumbnail: ' + series[i].thumbnail;
 				titleNode.innerHTML = series[i].title;
 
 				let index = i;
@@ -107,9 +117,15 @@ window.addEventListener("load", function(){
 			xmlhttp.onreadystatechange = function() {
 				if (this.readyState == 4) {
 					if (checkXHRResponse (this)) {
+						try {
+							var series = JSON.parse(this.responseText);
+						} catch (e) {
+							showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL, true);
+							return 0;
+						}
 						document.getElementById('container').innerHTML='';
 						offset = 0;
-						showSeries (JSON.parse(this.responseText));
+						showSeries (series);
 						document.getElementById('container').classList.remove('transparent');
 					}
 				}
@@ -139,7 +155,13 @@ window.addEventListener("load", function(){
 					xmlhttp.onreadystatechange = function() {
 						if (this.readyState == 4) {
 							if (checkXHRResponse (this)) {
-								showSeries (JSON.parse(this.responseText));
+								try {
+									var series = JSON.parse(this.responseText);
+								} catch (e) {
+									showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL, true);
+									return 0;
+								}
+								showSeries (series);
 							}
 						}
 					};

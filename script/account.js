@@ -51,7 +51,13 @@ function initialize (){
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRResponse (this)) {
-				showUser (JSON.parse(this.responseText));
+				try {
+					var userInfo = JSON.parse(this.responseText);
+				} catch (e) {
+					showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL);
+					return 0;
+				}
+				showUser (userInfo);
 			}
 		}
 	};

@@ -53,11 +53,18 @@ body {
 .lazyload.complete {
 	padding-bottom: 0px!important;
 }
-.lazyload img {
+.lazyload > img {
 	display: block;
 	margin: 0px;
 	padding: 0px;
 	width: 100%;
+}
+.lazyload > .overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
 
 .password-font {

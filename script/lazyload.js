@@ -21,8 +21,12 @@ function lazyloadInitialize () {
 						if ('crossorigin' in target.dataset) {
 							imageNode.setAttribute('crossorigin', target.dataset.crossorigin);
 						}
+						if ('alt' in target.dataset) {
+							imageNode.alt = target.dataset.alt;
+						} else {
+							imageNode.alt = 'image placeholder';
+						}
 						imageNode.src = target.dataset.src;
-						imageNode.alt = 'image placeholder';
 						target.appendChild(imageNode);
 					}
 				}

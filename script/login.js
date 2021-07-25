@@ -79,6 +79,10 @@ function login () {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				}  else if (response.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', response, loginURL);
+				} else if (response.includes('NOT SUPPORTED')) {
+					document.getElementById('warning').innerHTML = 'ブラウザーはサポート対象外です。';
+					document.getElementById('warning').classList.remove('hidden');
+					document.getElementById('login-button').disabled = false;
 				} else if (response.includes('AUTHENTICATION FAILED') || response.includes('NOT ACTIVATED')) {
 					document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
 					document.getElementById('warning').classList.remove('hidden');

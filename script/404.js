@@ -13,14 +13,30 @@ window.addEventListener("load", function(){
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4) {
 				if (checkXHRResponse (this)) {
-					var image = document.createElement('img');
+					let container = document.createElement('div');
+					let image = document.createElement('img');
+					let overlay = document.createElement('div');
+					
+					container.classList.add('image-container');
+					overlay.classList.add('overlay');
+					
+					container.appendChild(overlay);
+					
 					let url = this.responseText;
 					image.src = url;
-					image.alt = url;
-					image.addEventListener ('click', function () {
-						window.open (url);
+					image.alt = '404 image: ' + url;
+					container.addEventListener ('click', function () {
+						let param = {
+							url: url,
+							title: '404',
+							withCredentials: false
+						};
+						window.localStorage.setItem('image-param', JSON.stringify(param));
+						window.open ('image'+(debug?'.html':''));
 					});
-					document.getElementById('container').appendChild (image);
+					
+					container.appendChild(image);
+					document.getElementById('container').appendChild (container);
 				}
 			}
 		};

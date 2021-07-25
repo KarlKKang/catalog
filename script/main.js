@@ -1,10 +1,10 @@
 // JavaScript Document
 var topURL = 'https://featherine.com';
-topURL = 'index.html';
+//topURL = 'index.html';
 var loginURL = 'https://login.featherine.com';
-loginURL = 'login.html';
+//loginURL = 'login.html';
 var serverURL = 'https://server.featherine.com';
-var debug = true;
+var debug = false;
 
 function start (currentPage, callback) {
 	if (callback === undefined) {
@@ -177,7 +177,8 @@ function showMessage (title, color, message, url, logout) {
 		logout: logout
 	};
 	
-	window.location.href = 'message'+(debug?'.html':'')+'?p=' + encodeURIComponent(JSON.stringify(param));
+	window.localStorage.setItem('message-param', JSON.stringify(param));
+	window.location.href = 'message'+(debug?'.html':'');
 }
 
 function handshake (callback) {

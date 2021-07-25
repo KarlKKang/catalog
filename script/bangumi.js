@@ -50,7 +50,13 @@ window.addEventListener("load", function(){
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4) {
 				if (checkXHRResponse (this)) {
-					updatePage (JSON.parse(this.responseText));
+					try {
+						var ep = JSON.parse(this.responseText);
+					} catch (e) {
+						showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL);
+						return 0;
+					}
+					updatePage (ep);
 				}
 			}
 		};
@@ -193,6 +199,14 @@ window.addEventListener("load", function(){
 		}
 
 		function updateVideo (file) {
+			if (file.title!='') {
+				let title = document.createElement('p');
+				title.setAttribute('class', 'sub-title');
+				title.classList.add('center-align');
+				title.innerHTML = file.title;
+				document.getElementById('media-holder').appendChild(title);
+			}
+			
 			var formats = file.formats;
 
 			var formatSelector = document.createElement('div');
@@ -351,13 +365,24 @@ window.addEventListener("load", function(){
 				}
 
 				let imageNode = document.createElement('div');
+				let overlay = document.createElement('div');
 				let url = file[i].url;
+				
+				overlay.classList.add('overlay');
+				imageNode.appendChild(overlay);
 
 				imageNode.classList.add('lazyload');
 				imageNode.dataset.crossorigin = 'use-credentials';
 				imageNode.dataset.src = url;
+				imageNode.dataset.alt = document.getElementById('title').innerHTML;
 				imageNode.addEventListener('click', function() {
-					window.open (url);
+					let param = {
+						url: url,
+						title: document.getElementById('title').innerHTML,
+						withCredentials: true
+					};
+					window.localStorage.setItem('image-param', JSON.stringify(param));
+					window.open ('image'+(debug?'.html':''));
 				});
 				imageNode.addEventListener('contextmenu', event => event.preventDefault());
 				document.getElementById('media-holder').appendChild(imageNode);

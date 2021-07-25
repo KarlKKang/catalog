@@ -1,14 +1,21 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
-	var param = getURLParam ('p');
+	var param = localStorage.getItem("message-param");
 	var url;
 	
-	if (param == null) {
+	if (param === null) {
 		window.location.href = topURL;
 		return 0;
 	}
-	param = JSON.parse(param);
+	
+	try {
+		param = JSON.parse(param);
+	} catch (e) {
+		window.location.href = topURL;
+		return 0;
+	}
+	
 	
 	var callback = function () {
 		document.title = param.htmlTitle;
@@ -20,6 +27,7 @@ window.addEventListener("load", function(){
 			document.getElementById('button').classList.add('hidden');
 		} else {
 			document.getElementById('button').addEventListener('click', function () {
+				localStorage.removeItem("message-param");
 				window.location.href = url;
 			});
 		}
