@@ -636,74 +636,92 @@ function updateEventHandlers () {
 	var buttons = document.getElementsByClassName('add-series');
 	var i;
 	for (i=0; i<buttons.length; i++) {
-		buttons[i].classList.remove('add-series');
-		buttons[i].addEventListener('click', function() {
-			addSeries(this);
-		});
+		if (!buttons[i].classList.contains('initialized')) {
+			buttons[i].classList.add('initialized');
+			buttons[i].addEventListener('click', function() {
+				addSeries(this);
+			});
+		}
 	}
 	
 	buttons = document.getElementsByClassName('update-time');
 	for (i=0; i<buttons.length; i++) {
-		buttons[i].classList.remove('update-time');
-		buttons[i].addEventListener('click', function() {
-			updateTime(this.dataset.id);
-		});
+		if (!buttons[i].classList.contains('initialized')) {
+			buttons[i].classList.add('initialized');
+			buttons[i].addEventListener('click', function() {
+				updateTime(this.dataset.id);
+			});
+		}
 	}
 	
 	buttons = document.getElementsByClassName('delete-series');
 	for (i=0; i<buttons.length; i++) {
-		buttons[i].classList.remove('delete-series');
-		buttons[i].addEventListener('click', function() {
-			deleteSeries(this.dataset.id);
-		});
+		if (!buttons[i].classList.contains('initialized')) {
+			buttons[i].classList.add('initialized');
+			buttons[i].addEventListener('click', function() {
+				deleteSeries(this.dataset.id);
+			});
+		}
 	}
 	
 	buttons = document.getElementsByClassName('add-account');
 	for (i=0; i<buttons.length; i++) {
-		buttons[i].classList.remove('add-account');
-		buttons[i].addEventListener('click', function() {
-			addAccount(this);
-		});
+		if (!buttons[i].classList.contains('initialized')) {
+			buttons[i].classList.add('initialized');
+			buttons[i].addEventListener('click', function() {
+				addAccount(this);
+			});
+		}
 	}
 	
 	buttons = document.getElementsByClassName('modify-series');
 	for (i=0; i<buttons.length; i++) {
-		buttons[i].classList.remove('modify-series');
-		buttons[i].addEventListener('click', function() {
-			modifySeries(this);
-		});
+		if (!buttons[i].classList.contains('initialized')) {
+			buttons[i].classList.add('initialized');
+			buttons[i].addEventListener('click', function() {
+				modifySeries(this);
+			});
+		}
 	}
 	
 	buttons = document.getElementsByClassName('modify-account');
 	for (i=0; i<buttons.length; i++) {
-		buttons[i].classList.remove('modify-account');
-		buttons[i].addEventListener('click', function() {
-			modifyAccount(this, this.dataset.email);
-		});
+		if (!buttons[i].classList.contains('initialized')) {
+			buttons[i].classList.add('initialized');
+			buttons[i].addEventListener('click', function() {
+				modifyAccount(this, this.dataset.email);
+			});
+		}
 	}
 	
 	buttons = document.getElementsByClassName('delete-account');
 	for (i=0; i<buttons.length; i++) {
-		buttons[i].classList.remove('delete-account');
-		buttons[i].addEventListener('click', function() {
-			deleteAccount(this.dataset.email);
-		});
+		if (!buttons[i].classList.contains('initialized')) {
+			buttons[i].classList.add('initialized');
+			buttons[i].addEventListener('click', function() {
+				deleteAccount(this.dataset.email);
+			});
+		}
 	}
 	
 	var elem = document.getElementsByClassName('onchange');
 	for (i=0; i<elem.length; i++) {
-		elem[i].classList.remove('onchange');
-		elem[i].addEventListener('change', function() {
-			changed(this);
-		});
+		if (!elem[i].classList.contains('initialized')) {
+			elem[i].classList.add('initialized');
+			elem[i].addEventListener('change', function() {
+				changed(this);
+			});
+		}
 	}
 	
 	elem = document.getElementsByClassName('oninput');
 	for (i=0; i<elem.length; i++) {
-		elem[i].classList.remove('oninput');
-		elem[i].addEventListener('input', function() {
-			changed(this);
-		});
+		if (!elem[i].classList.contains('initialized')) {
+			elem[i].classList.add('initialized');
+			elem[i].addEventListener('input', function() {
+				changed(this);
+			});
+		}
 	}
 }
 });
