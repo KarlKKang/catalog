@@ -28,13 +28,13 @@ window.addEventListener("load", function(){
 	});
 	
 	document.getElementsByClassName('link')[0].addEventListener('click', function () {
-		window.open ('info');
+		window.open ('policy');
 	});
 	document.getElementsByClassName('link')[1].addEventListener('click', function () {
-		window.open ('info#en');
+		window.open ('policy#en');
 	});
 	document.getElementsByClassName('link')[2].addEventListener('click', function () {
-		window.open ('info#zh-Hans');
+		window.open ('policy#zh-Hans');
 	});
 	
 	document.getElementById('submit-button').addEventListener('click', function () {

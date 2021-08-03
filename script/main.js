@@ -1,10 +1,10 @@
 // JavaScript Document
 var topURL = 'https://featherine.com';
-//topURL = 'index.html';
+topURL = 'index.html';
 var loginURL = 'https://login.featherine.com';
-//loginURL = 'login.html';
+loginURL = 'login.html';
 var serverURL = 'https://server.featherine.com';
-var debug = false;
+var debug = true;
 
 function start (currentPage, callback) {
 	if (callback === undefined) {
@@ -46,10 +46,12 @@ function getURLParam (param) {
 function redirect (url) {
 	var ep = getURLParam ('ep');
 	var series = getURLParam ('series');
+	var format = getURLParam ('format');
+	var timestamp = getURLParam ('timestamp');
 	if (series == null) {
 		return url;
 	} else {
-		return url + '?series=' + series + '&ep=' + ((ep==null)?'1':ep);
+		return url+'?series='+series+'&ep='+((ep==null)?'1':ep)+((format==null)?'':('&format='+format))+((timestamp==null)?'':('&timestamp='+timestamp));
 	}
 }
 
@@ -102,15 +104,15 @@ function checkXHRResponse (response) {
 
 function checkXHRResponseText (responseText) {
 	if (responseText.includes('/var/www')) {
-		showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, true);
+		showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, true);
 		return false;
 	} else if (responseText.includes('SERVER ERROR:')) {
-		showMessage ('エラーが発生しました', 'red', responseText, topURL, true);
+		showMessage ('エラーが発生しました', 'red', responseText, loginURL, true);
 		return false;
-	} else if (responseText.includes('AUTHENTICATION FAILED')) {
+	} else if (responseText=='AUTHENTICATION FAILED') {
 		logout(function () {window.location.href = redirect (loginURL);});
 		return false;
-	} else if (responseText.includes('NOT FOUND')) {
+	} else if (responseText=='NOT FOUND' || responseText=='SESSION ENDED') {
 		window.location.href = topURL;
 		return false;
 	} else {
@@ -155,12 +157,8 @@ function navUpdate () {
 function goTo (page) {
 	if (page == 'top') {
 		window.location.href = topURL;
-	} else if (page == 'account') {
-		window.location.href = 'account'+(debug?'.html':'');
-	} else if (page == 'info') {
-		window.location.href = 'info'+(debug?'.html':'')+'?nav=true';
-	} else if (page == 'special_register') {
-		window.location.href = 'special_register'+(debug?'.html':'');
+	} else {
+		window.location.href = page+(debug?'.html':'');
 	}
 }
 

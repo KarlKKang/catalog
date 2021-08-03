@@ -13,8 +13,8 @@
 </head>
 
 <body class="hidden">
-	<div id="header" class="hidden"></div>
-	<div id="nav-btn" class="hidden"><span></span></div>
+	<div id="header"></div>
+	<div id="nav-btn"><span></span></div>
 	<div id="nav-menu" class="invisible transparent">
         <div id="nav-menu-content">
 			<p><span id="nav-menu-content-1">トップ／LIBRARY</span></p>
@@ -24,11 +24,11 @@
         </div>
     </div>
 	
-	<div id="main" class="no-padding">
+	<div id="main">
 		<div id="container">
 			<div id="content">
 				<p id="title">ご利用ガイド</p>
-				<p id="date">最終編集：2021年7月14日</p>
+				<p id="date">最終編集：2021年8月3日</p>
 				<hr>
 				<div lang="ja">
 					<p class="sub-title">アカウントについて</p>
@@ -37,12 +37,12 @@
 						<li><p>送信できる招待状の数は、6か月に1ずつ増加します。最大3つの招待状を持つことができます。</p></li>
 						<li><p>未定の招待がある場合、これ以上招待を送信することはできません。</p></li>
 						<li><p>招待記録がデータベースに保持されるので、管理者は不適切な招待を追跡できます。</p></li>
-						<li><p>3年間ログインしていないアカウントは無効になります。</p></li>
+						<li><p>1年間ログインしていないアカウントは無効になります。</p></li>
 						<li><p>無効になったアカウントは、ログインまたは再登録できません。アカウントの再開をご希望の場合は、管理者にご連絡ください。</p></li>
 						<li><p>メールアカウントを紛失した場合は、管理者に連絡してメールアドレスを変更してください。</p></li>
 						<li><p>現在、ユーザー名は使用されていません。 新しい機能が実装されたときに使用できるように準備されています。</p></li>
 						<li><p>1つのアカウントで同時にログインできる端末数は1台のみです。複数の端末で同時に視聴することはできません。</p></li>
-						<li><p>アカウントや招待状の取引は固く禁じられています。</p></li>
+						<li class="important"><p>アカウントや招待状の取引は固く禁じられています。</p></li>
 						<li><p>不適切な使用が発見する場合、管理者はアカウントを無効化または削除する権利を留保します。</p></li>
 					</ul>
 					<div class="line-break"></div>
@@ -64,6 +64,7 @@
 					<p class="sub-title">その他</p>
 					<ul>
 						<li class="important"><p>このウェブサイトには、年齢制限のあるコンテンツが含まれています。対象外の方のアクセスは固くお断りしております。</p></li>
+						<li><p>トップページの番組は、追加日（新しい順）に並べられています。</p></li>
 						<li><p>タイトル、アニメーションスタジオ、発表年で検索できます。</p></li>
 						<li><p>日本語、英語、簡体字中国語、繁体字中国語で検索できます。</p></li>
 						<li><p>空の文字列を検索すると、すべての内容が表示されます。</p></li>
@@ -83,12 +84,12 @@
 						<li><p>The number of invitations you can send increases by 1 every 6 months. You can hold up to 3 invitations.</p></li>
 						<li><p>If you have an ongoing invitation, you cannot send another one.</p></li>
 						<li><p>The full invitation record is kept in the database, so administrators can trace back any malicious invitation.</p></li>
-						<li><p>Accounts that have not been logged in for 3 years will be deactivated.</p></li>
+						<li><p>Accounts that have not been logged in for 1 year will be deactivated.</p></li>
 						<li><p>Deactivated accounts cannot be signed in, or registered again. If you want to reactivate your account, please contact the administrator.</p></li>
 						<li><p>If you lost your email account, please contact the administrator to change the email address.</p></li>
 						<li><p>Usernames are not being used right now, but it is reserved for new features that are going to be implemented in the future.</p></li>
 						<li><p>One account can be logged into one device at a time.</p></li>
-						<li><p>Tradings of accounts or invitations are strictly prohibited.</p></li>
+						<li class="important"><p>Tradings of accounts or invitations are strictly prohibited.</p></li>
 						<li><p>If any improper behavior is observed, the administrators have the right to deactivate, or delete your account.</p></li>
 					</ul>
 					<div class="line-break"></div>
@@ -99,7 +100,6 @@
 					<li><p>All discs and contents are purchased by ourselves. Asking for the publishing schedule or requesting any specific content will not be acceptable.</p></li>
 					<li><p>The contents are processed and encoded with high-quality standards before publishing.</p></li>
 					<li><p>Currently, videos are encoded with H.264, and audios are encoded with AAC-LC TVBR q127. All distributed in HLS.</p></li>
-					<li><p>Do not even bother downloading the contents to disks, ffmpeg is pretty bad at parsing HLS.</p></li>
 					<li><p>DVD contents are upscaled to 1080p with high-quality algorithms.</p></li>
 					<li><p>Minimum network bandwidth requirement:</p>
 					<ul>
@@ -111,6 +111,7 @@
 					<p class="sub-title">Other</p>
 					<ul>
 						<li class="important"><p>This website contains age-restricted contents. Those who are not eligible are strictly forbidden to access. </p></li>
+						<li><p>The contents in the library are sorted in the order of date added (newest).</p></li>
 						<li><p>You can search by title, animation studio, or release year.</p></li>
 						<li><p>You can search by Japanese, English, Simplified Chinese, or Traditional Chinese.</p></li>
 						<li><p>Search for an empty string will show all contents.</p></li>
@@ -121,7 +122,7 @@
 						<li><p>If there are any bugs,  or if you have any suggestions, please contact the administrator.</p></li>
 					</ul>
 					<div class="line-break"></div>
-					<p>Contact the administrator at: <a href="mailto:admin@featherine.com">admin@featherine.com</a></p>
+					<p>Contact the administrator at: <a href="mailto:admin@featherine.com">admin@featherine.com</a> (English available)</p>
 				</div>
 				<hr id="zh-Hans">
 				<div lang="zh-Hans">
@@ -131,12 +132,12 @@
 						<li><p>一个帐号可以发送的邀请数量每6个月增加1个。最多可持有3个邀请。</p></li>
 						<li><p>如果有未完成的邀请，则不能发送另一个邀请。</p></li>
 						<li><p>完整的邀请记录会保存在数据库中，管理员可以追溯任何恶意邀请。</p></li>
-						<li><p>连续3年未登录的帐号将被停用。</p></li>
+						<li><p>1年间未登录的帐号将被停用。</p></li>
 						<li><p>已停用的帐号无法登录或重新注册。如果想重新激活帐号，请联系管理员。</p></li>
 						<li><p>如果丢失了邮箱帐号，请联系管理员更改电子邮件地址。</p></li>
 						<li><p>用户名目前并没有被使用，但将来加入的功能中可能会使用用户名。</p></li>
 						<li><p>一个帐号只能同时登录一台设备。</p></li>
-						<li><p>严禁任何帐号、邀请的交易。</p></li>
+						<li class="important"><p>严禁任何帐号、邀请的交易。</p></li>
 						<li><p>如果发现任何违规行为，管理员有权停用或删除您的帐户。</p></li>
 					</ul>
 					<div class="line-break"></div>
@@ -147,7 +148,6 @@
 					<li><p>所有原盘均为自购，恕不接受任何催番，或强行推番。</p></li>
 					<li><p>发布前，视频和音频会进行高质量的处理和编码。</p></li>
 					<li><p>目前，视频采用H.264编码，音频使用AAC-LC TVBR q127编码，均以HLS格式配送。</p></li>
-					<li><p>不要尝试下载视频或音频，ffmpeg在解析HLS方面很糟糕。</p></li>
 					<li><p>DVD视频通过高质量算法拉伸到1080p。</p></li>
 					<li><p>最小网络带宽要求：</p>
 					<ul>
@@ -159,6 +159,7 @@
 					<p class="sub-title">其他</p>
 					<ul>
 						<li class="important"><p>本网站包含有年龄限制的内容，不符合条件者严禁访问。</p></li>
+						<li><p>主页内容按最新添加顺序排序。</p></li>
 						<li><p>可以按标题、动画工作室或播放年份进行搜索。</p></li>
 						<li><p>可以用日语、英语、简体中文或繁体中文进行搜索。</p></li>
 						<li><p>搜索空字符时将显示所有内容。</p></li>
@@ -169,8 +170,64 @@
 						<li><p>如果有任何Bug，或有任何建议，请联系管理员。</p></li>
 					</ul>
 					<div class="line-break"></div>
-					<p>联系管理员：<a href="mailto:admin@featherine.com">admin@featherine.com</a></p>
+					<p>联系管理员（可使用中文）：<a href="mailto:admin@featherine.com">admin@featherine.com</a></p>
 				</div>
+				<hr>
+				<p lang="ja">以下のオンラインショップでグッズや円盤を購入して、作品をサポートすることが可能です。ぜひチェックしてください。</p>
+				<p lang="en">You can support the original works by purchasing goods and discs from the online shops listed below. Thank you.</p>
+				<p lang="zh-Hans">从以下购物网站可以购买原作的原盘、周边等商品。对于原作的支持就是对于本站最大的支持。</p>
+				<div class="line-break"></div>
+				<ul lang="ja">
+					<li><p class="link"><a href="https://www.animate-onlineshop.jp/" target="_blank" rel="noopener noreferrer">アニメイト</a></p></li>
+					<li><p class="link"><a href="https://www.amazon.co.jp/" target="_blank" rel="noopener noreferrer">Amazon.co.jp</a></p></li>
+					<li><p class="link"><a href="https://www.gamers.co.jp/" target="_blank" rel="noopener noreferrer">ゲーマーズ</a></p></li>
+					<li><p class="link"><a href="https://www.melonbooks.co.jp/" target="_blank" rel="noopener noreferrer">メロンブックス</a></p></li>
+					<li><p class="link"><a href="https://www.amiami.jp/" target="_blank" rel="noopener noreferrer">あみあみ</a></p></li>
+					<li><p class="link"><a href="https://www.hmv.co.jp/" target="_blank" rel="noopener noreferrer">HMV&amp;BOOKS online</a></p></li>
+					<li><p class="link"><a href="http://www.getchu.com/" target="_blank" rel="noopener noreferrer">げっちゅ屋</a></p></li>
+					<li><p class="link"><a href="https://ecs.toranoana.jp/" target="_blank" rel="noopener noreferrer">とらのあな</a></p></li>
+					<li><p class="link"><a href="https://a.sofmap.com/" target="_blank" rel="noopener noreferrer">ソフマップ・アニメガ</a></p></li>
+					<li><p class="link"><a href="https://tower.jp/" target="_blank" rel="noopener noreferrer">タワーレコード</a></p></li>
+					<li><p class="link"><a href="https://7net.omni7.jp/" target="_blank" rel="noopener noreferrer">セブンネットショッピング</a></p></li>
+					<li><p class="link"><a href="https://shop.tsutaya.co.jp/" target="_blank" rel="noopener noreferrer">TSUTAYAオンライン</a></p></li>
+					<li><p class="link"><a href="https://joshinweb.jp/dp/" target="_blank" rel="noopener noreferrer">Joshinディスクピア</a></p></li>
+					<li><p class="link"><a href="https://books.rakuten.co.jp/" target="_blank" rel="noopener noreferrer">楽天ブックス</a></p></li>
+					<li><p class="link"><a href="https://www.rakuten.ne.jp/gold/wondergoo/" target="_blank" rel="noopener noreferrer">WonderGOO/新星堂</a></p></li>
+					<li><p class="link"><a href="https://www.chara-ani.com/" target="_blank" rel="noopener noreferrer">キャラアニ.com</a></p></li>
+					<li><p class="link"><a href="https://www.biccamera.com/bc/category/001/210/" target="_blank" rel="noopener noreferrer">ビックカメラ</a></p></li>
+					<li><p class="link"><a href="https://www.yodobashi.com/category/91003/" target="_blank" rel="noopener noreferrer">ヨドバシカメラ</a></p></li>
+					<div class="line-break"></div>
+					<li><p class="link"><a href="https://www.aniplexplus.com/" target="_blank" rel="noopener noreferrer">ANIPLEX+</a></p></li>
+					<li><p class="link"><a href="https://store.kadokawa.co.jp/" target="_blank" rel="noopener noreferrer">カドカワストア</a></p></li>
+					<li><p class="link"><a href="https://canime.jp/" target="_blank" rel="noopener noreferrer">きゃにめ</a></p></li>
+					<div class="line-break"></div>
+					<li><p class="link"><a href="https://kyoanishop.com/" target="_blank" rel="noopener noreferrer">京アニショップ！</a></p></li>
+					<li><p class="link"><a href="https://kyoani.shop-pro.jp/" target="_blank" rel="noopener noreferrer">プレミアム名場面DP - 京アニショップ！</a></p></li>
+					<li><p class="link"><a href="https://shaften.shop/" target="_blank" rel="noopener noreferrer">シャフト公式オンラインショップ </a></p></li>
+					<li><p class="link"><a href="https://mappa-onlineshop.com/" target="_blank" rel="noopener noreferrer">MAPPA online shop</a></p></li>
+					<li><p class="link"><a href="https://shop.witstudio.app/" target="_blank" rel="noopener noreferrer">WIT STUDIO Online Shop</a></p></li>
+					<li><p class="link"><a href="https://trigger.ecq.sc/" target="_blank" rel="noopener noreferrer">TRIGGERオンラインショップ</a></p></li>
+					<li><p class="link"><a href="https://ufotablewebshop.shop-pro.jp/" target="_blank" rel="noopener noreferrer">ufotableWEBSHOP</a></p></li>
+					<li><p class="link"><a href="https://www.madhouse-ideacreate.net/" target="_blank" rel="noopener noreferrer">MADHOUSE × IDEACREATE 公式アニメグッズ販売サイト</a></p></li>
+					<li><p class="link"><a href="https://ig-store-onlineshop.jp/" target="_blank" rel="noopener noreferrer">I.Gストアonlineshop</a></p></li>
+					<li><p class="link"><a href="https://8bitshop.jp/" target="_blank" rel="noopener noreferrer">エイトビットショップ</a></p></li>
+					<li><p class="link"><a href="https://hibari-lerche.booth.pm/" target="_blank" rel="noopener noreferrer">スタジオ雲雀/Lerche（ラルケ）公式通販</a></p></li>
+					<li><p class="link"><a href="https://doko-shop.booth.pm/" target="_blank" rel="noopener noreferrer">株式会社 動画工房 版権事業部</a></p></li>
+					<li><p class="link"><a href="https://shopping.toei-anim.co.jp/" target="_blank" rel="noopener noreferrer">東映アニメーション Online Shop</a></p></li>
+					<div class="line-break"></div>
+					<li><p class="link"><a href="https://booth.pm/" target="_blank" rel="noopener noreferrer">BOOTH</a></p></li>
+				</ul>
+				<div class="line-break"></div>
+				<p lang="en">Oversea shipping and proxy services: </p>
+				<p lang="zh-Hans">海外转送、代购服务：</p>
+				<div class="line-break"></div>
+				<ul>
+					<li><p class="link"><a href="https://www.tenso.com/" target="_blank" rel="noopener noreferrer">tenso.com</a></p></li>
+					<li><p class="link"><a href="https://buyee.jp/" target="_blank" rel="noopener noreferrer">Buyee</a></p></li>
+					<li><p class="link"><a href="https://www.worldshopping.global/" target="_blank" rel="noopener noreferrer">WorldShopping</a></p></li>
+					<li><p class="link"><a href="https://www.leyifan.com/" target="_blank" rel="noopener noreferrer">楽一番</a></p></li>
+				</ul>
+				<div class="line-break"></div>
 			</div>
 		</div>
 	</div>

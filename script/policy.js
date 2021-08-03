@@ -1,34 +1,26 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
-	if (!window.location.href.startsWith('https://featherine.com/info') && !debug) {
-		window.location.href = 'https://featherine.com/info';
+	if (!window.location.href.startsWith('https://featherine.com/policy') && !debug) {
+		window.location.href = 'https://featherine.com/policy';
 		return 0;
 	}
-	
-	document.getElementById('nav-btn').addEventListener('click', function () {
-		navUpdate ();
-	});
-
-	document.getElementById('nav-menu-content-1').addEventListener('click', function () {
-		goTo('top');
-	});
-	document.getElementById('nav-menu-content-2').addEventListener('click', function () {
-		goTo('account');
-	});
-	document.getElementById('nav-menu-content-3').addEventListener('click', function () {
-		goTo('info');
-	});
-	document.getElementById('nav-menu-content-4').addEventListener('click', function () {
-		logout(function () {window.location.href = redirect (loginURL);});
-	});
 	
 	handshake (function (){
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4) {
-				if (checkXHRResponse (this)) {
-					if (this.responseText == 'APPROVED') {
+				if (checkXHRStatus (this.status)) {
+					var responseText = this.responseText;
+					if (responseText.includes('/var/www')) {
+						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, true);
+						return false;
+					} else if (responseText.includes('SERVER ERROR:')) {
+						showMessage ('エラーが発生しました', 'red', responseText, loginURL, true);
+						return false;
+					} else if (responseText == 'APPROVED') {
+						goTo ('info');
+					} else if (responseText == 'AUTHENTICATION FAILED') {
 						document.getElementsByTagName("body")[0].classList.remove("hidden");
 						var scrollID = window.location.hash;
 						if (scrollID != '') {
@@ -41,7 +33,6 @@ window.addEventListener("load", function(){
 						}
 					} else {
 						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, true);
-						return false;
 					}
 				}
 			}
@@ -50,4 +41,5 @@ window.addEventListener("load", function(){
 		xmlhttp.withCredentials = true;
 		xmlhttp.send();
 	});
+	
 });

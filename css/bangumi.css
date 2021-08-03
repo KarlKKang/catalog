@@ -236,6 +236,10 @@ select:hover{
 	font-size: medium;
 }
 
+#title > .artist {
+	font-size: large;
+}
+
 .sub-title.center-align, .artist.center-align {
 	text-align: center;
 }

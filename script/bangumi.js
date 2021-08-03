@@ -30,11 +30,22 @@ window.addEventListener("load", function(){
 		var chapters = {name: [], startTime: []};
 		var videoJSInstances = [];
 		var seekTime = null;
+		var ep;
 
 		var seriesID = getURLParam ('series');
 		if (seriesID == null) {
 			window.location.href = topURL;
 			return 0;
+		} else {
+			seriesID = parseInt(seriesID);
+			if (isNaN(seriesID)) {
+				window.location.href = topURL;
+				return 0;   
+			}
+			if (seriesID < 0 || seriesID > 4294967295) {
+				window.location.href = topURL;
+				return 0; 
+			}
 		}
 
 		var epIndex = getURLParam ('ep');
@@ -43,15 +54,36 @@ window.addEventListener("load", function(){
 			window.location.href = url;
 			return 0;
 		} else {
-			epIndex = parseInt (epIndex)-1;
+			epIndex = parseInt (epIndex);
+			if (isNaN(epIndex)) {
+				var url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+'&ep=1';
+				window.location.href = url;
+				return 0;
+			} else if (epIndex<1) {
+				var url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+'&ep=1';
+				window.location.href = url;
+				return 0; 
+			}
+			epIndex--;
 		}
+		
+		var formatIndex = getURLParam ('format');
+		if (formatIndex != null) {
+			formatIndex = parseInt (formatIndex);
+			if (isNaN(formatIndex)) {
+				formatIndex = 1;
+			} else if (formatIndex<1) {
+				formatIndex = 1;
+			}
+			formatIndex--;
+		} 
 
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4) {
 				if (checkXHRResponse (this)) {
 					try {
-						var ep = JSON.parse(this.responseText);
+						ep = JSON.parse(this.responseText);
 					} catch (e) {
 						showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL);
 						return 0;
@@ -63,25 +95,7 @@ window.addEventListener("load", function(){
 		xmlhttp.open("POST", serverURL + "/request_ep.php", true);
 		xmlhttp.withCredentials = true;
 		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xmlhttp.send("series="+seriesID+"&ep="+epIndex);
-
-
-		setInterval (function () {
-			let xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange = function() {
-				if (this.readyState == 4) {
-					if (checkXHRResponse (this)) {
-						if (this.responseText!='APPROVED') {
-							showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, true);
-							return false;
-						}
-					}
-				}
-			};
-			xmlhttp.open("POST", serverURL + "/device_authenticate.php", true);
-			xmlhttp.withCredentials = true;
-			xmlhttp.send();
-		}, 60*1000);
+		xmlhttp.send("series="+seriesID+"&ep="+epIndex+((formatIndex==null)?'':('&format='+formatIndex)));
 
 
 		function updatePage (ep) {
@@ -106,6 +120,25 @@ window.addEventListener("load", function(){
 					window.location.href = topURL;
 				});
 			}
+			
+			/////////////////////////////////////////////device_authenticate/////////////////////////////////////////////
+			setInterval (function () {
+				let xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function() {
+					if (this.readyState == 4) {
+						if (checkXHRResponse (this)) {
+							if (this.responseText!='APPROVED') {
+								showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, true);
+								return false;
+							}
+						}
+					}
+				};
+				xmlhttp.open("POST", serverURL + "/device_authenticate.php", true);
+				xmlhttp.withCredentials = true;
+				xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				xmlhttp.send("token="+ep.token);
+			}, 60*1000);
 
 			/////////////////////////////////////////////Add Media/////////////////////////////////////////////
 			var type = ep.type;
@@ -216,6 +249,13 @@ window.addEventListener("load", function(){
 			selectMenu.addEventListener("change", function () {
 				formatSwitch (file);
 			});
+			
+			if (formatIndex == null)
+				formatIndex = 0;
+			else if (formatIndex >= formats.length) {
+				formatIndex = 0;
+				updateURLParam ('format', 1);
+			}
 
 			for (var i = 0; i < formats.length; i++) {
 				var format = formats[i];
@@ -224,7 +264,7 @@ window.addEventListener("load", function(){
 				option.setAttribute('value', format);
 				option.innerHTML = format;
 
-				if (i == 0) {
+				if (i == formatIndex) {
 					option.setAttribute('selected', true);
 				}
 
@@ -233,10 +273,28 @@ window.addEventListener("load", function(){
 
 			formatSelector.appendChild(selectMenu);
 			document.getElementById('media-holder').appendChild(formatSelector);
+			
+			var timestampParam = getURLParam ('timestamp');
+			if (timestampParam != null) {
+				timestampParam = parseFloat (timestampParam);
+				if (!isNaN(timestampParam)) {
+					if (timestampParam<0) {
+						timestampParam = 0;
+					}
+				}
+			} else {
+				timestampParam = 0;
+			}
 
 			//var videoNode = addVideoNode (fileName, formats[0].childNodes[0].nodeValue);
-			addVideoJSNode (file.url, {chapters: file.chapters});
+			addVideoJSNode (file.url, {chapters: file.chapters, currentTime: timestampParam});
 			//videoJSInstances[0].load();
+			
+			setInterval (function () {
+				if (videoJSInstances.length > 0) {
+					updateURLParam ('timestamp', videoJSInstances[0].currentTime());
+				}
+			}, 3*1000);
 		}
 
 		function updateAudio (file) {
@@ -257,6 +315,12 @@ window.addEventListener("load", function(){
 					albumArtist.innerHTML = file.info.album_artist;
 					document.getElementById('media-holder').appendChild(albumArtist);
 				}
+			} else if (file.info.album_artist!='') {
+				let titleElem = document.getElementById('title');
+				let artistElem = document.createElement('span');
+				artistElem.setAttribute('class', 'artist');
+				artistElem.innerHTML = '<br/>' + file.info.album_artist;
+				titleElem.appendChild(artistElem);
 			}
 
 			var config = {
@@ -302,12 +366,23 @@ window.addEventListener("load", function(){
 					});
 
 					audio.volume(1);
-
 					audio.muted(true);
+					
 					let playPromise = audio.play();
 					if (playPromise !== undefined) {
 						playPromise.then(_ => {
+							let initialUnmute = function () {
+								audio.off('pause', initialUnmute);
+								audio.currentTime(0);
+								audio.muted(false);
+								counter ++;
+								if (counter == file.list.length) {
+									audioReady ();
+								}
+							};
+							audio.on('pause', initialUnmute);
 							audio.pause();
+						}).catch(error => {
 							audio.currentTime(0);
 							audio.muted(false);
 
@@ -357,6 +432,8 @@ window.addEventListener("load", function(){
 		function updateImage (file) {
 
 			for (var i = 0; i < file.length; i++) {
+				let index = i;
+				
 				if (file[i].tag != '') {
 					let subtitle = document.createElement('p');
 					subtitle.setAttribute('class', 'sub-title');
@@ -379,10 +456,14 @@ window.addEventListener("load", function(){
 					let param = {
 						url: url,
 						title: document.getElementById('title').innerHTML,
-						withCredentials: true
+						token: ep.token
 					};
 					window.localStorage.setItem('image-param', JSON.stringify(param));
-					window.open ('image'+(debug?'.html':''));
+					if (debug) {
+						window.location.href = 'image.html';
+					} else {
+						window.open ('image');
+					}
 				});
 				imageNode.addEventListener('contextmenu', event => event.preventDefault());
 				document.getElementById('media-holder').appendChild(imageNode);
@@ -392,7 +473,7 @@ window.addEventListener("load", function(){
 		}
 
 		function formatSwitch (file) {
-			var formatIndex = document.getElementById('format-selector').getElementsByTagName('select')[0].selectedIndex;
+			var selectedFormat = document.getElementById('format-selector').getElementsByTagName('select')[0].selectedIndex;
 
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
@@ -400,7 +481,8 @@ window.addEventListener("load", function(){
 					if (checkXHRResponse (this)) {
 						var currentTime = videoJSInstances[0].currentTime();
 						var paused = videoJSInstances[0].paused();
-
+						
+						updateURLParam ('format', selectedFormat+1);
 						addVideoJSNode (this.responseText, {chapters: file.chapters, currentTime: currentTime, play: !paused});
 					}
 				}
@@ -408,7 +490,7 @@ window.addEventListener("load", function(){
 			xmlhttp.open("POST", serverURL + "/format_switch.php", true);
 			xmlhttp.withCredentials = true;
 			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-			xmlhttp.send("file="+encodeURIComponent(JSON.stringify(file))+"&format="+formatIndex);
+			xmlhttp.send("file="+encodeURIComponent(JSON.stringify(file))+"&format="+selectedFormat);
 
 			/*
 			var resume = function () {
@@ -424,10 +506,11 @@ window.addEventListener("load", function(){
 
 		function addVideoJSNode (url, options) {
 			if (videoJSInstances.length != 0) {
+				videoJSInstances=[];
+				if (document.getElementById('media-holder').getElementsByClassName('chapters').length != 0) {
+					document.getElementById('media-holder').getElementsByClassName('chapters')[0].remove();
+				}
 				videojs(document.getElementById('media-holder').getElementsByTagName('video-js')[0]).dispose();
-			}
-			if (document.getElementById('media-holder').getElementsByClassName('chapters').length != 0) {
-				document.getElementById('media-holder').getElementsByClassName('chapters')[0].remove();
 			}
 
 			var videoNode = document.createElement('video-js');
@@ -530,6 +613,10 @@ window.addEventListener("load", function(){
 				if (options.chapters != '') {
 					displayChapters (options.chapters);
 				}
+				
+				video.on ('pause', function () {
+					updateURLParam ('timestamp', video.currentTime());
+				});
 			});
 
 			/*
@@ -727,6 +814,20 @@ window.addEventListener("load", function(){
 					}
 				}
 			}
+		}
+		
+		
+		function updateURLParam (key, value) {
+			var url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+'&ep='+(epIndex+1);
+			var currentFormat = getURLParam ('format');
+			var currentTimestamp = getURLParam ('timestamp');
+			if (key == 'format') {
+				url += '&format='+value+((currentTimestamp==null)?'':('&timestamp='+currentTimestamp));
+			} else if (key == 'timestamp') {
+				url += ((currentFormat==null)?'':('&format='+currentFormat))+'&timestamp='+value;
+			}
+			
+			history.replaceState(null, '', url);
 		}
 	}
 });

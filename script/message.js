@@ -24,6 +24,7 @@ window.addEventListener("load", function(){
 		document.getElementById('message').innerHTML = param.message;
 		url = param.url;
 		if (param.url == null) {
+			localStorage.removeItem("message-param");
 			document.getElementById('button').classList.add('hidden');
 		} else {
 			document.getElementById('button').addEventListener('click', function () {

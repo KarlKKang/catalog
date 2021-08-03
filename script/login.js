@@ -80,7 +80,7 @@ function login () {
 				}  else if (response.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', response, loginURL);
 				} else if (response.includes('NOT SUPPORTED')) {
-					document.getElementById('warning').innerHTML = 'ブラウザーはサポート対象外です。';
+					document.getElementById('warning').innerHTML = 'ブラウザーはサポート対象外です。または、IPアドレスからのアクセスが拒否されました。';
 					document.getElementById('warning').classList.remove('hidden');
 					document.getElementById('login-button').disabled = false;
 				} else if (response.includes('AUTHENTICATION FAILED') || response.includes('NOT ACTIVATED')) {

@@ -71,9 +71,10 @@ body {
 	font-family: 'arial';
 }
 
-.link {
+.link, .link:link, .link:visited, .link:hover, .link:active {
 	cursor: pointer;
 	color: #1069c9;
+	text-decoration: none;
 }
 
 .hidden {

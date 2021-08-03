@@ -28,11 +28,14 @@ window.addEventListener("load", function(){
 					container.addEventListener ('click', function () {
 						let param = {
 							url: url,
-							title: '404',
-							withCredentials: false
+							title: '404'
 						};
 						window.localStorage.setItem('image-param', JSON.stringify(param));
-						window.open ('image'+(debug?'.html':''));
+						if (debug) {
+							window.location.href = 'image.html';
+						} else {
+							window.open ('image');
+						}
 					});
 					
 					container.appendChild(image);
