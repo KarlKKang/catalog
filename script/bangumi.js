@@ -357,6 +357,7 @@ window.addEventListener("load", function(){
 
 				audioNode.classList.add("vjs-default-skin");
 				audioNode.classList.add("video-js");
+				audioNode.setAttribute('lang', 'en');
 				let audio = videojs(audioNode, config, function () {
 					videoJSInstances.push(audio);
 

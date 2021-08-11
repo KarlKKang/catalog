@@ -1,10 +1,10 @@
 // JavaScript Document
 var topURL = 'https://featherine.com';
-//topURL = 'index.html';
+topURL = 'index.html';
 var loginURL = 'https://login.featherine.com';
-//loginURL = 'login.html';
+loginURL = 'login.html';
 var serverURL = 'https://server.featherine.com';
-var debug = false;
+var debug = true;
 
 function start (currentPage, callback) {
 	if (callback === undefined) {

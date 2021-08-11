@@ -1,5 +1,5 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
-	getImage (false);
+	getImage (true);
 });
