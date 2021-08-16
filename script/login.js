@@ -93,7 +93,9 @@ function login () {
 					document.cookie = 'allow-login=false; max-age=86400; path=/' + (debug?'':'; Domain=.featherine.com');
 					document.getElementById('login-button').disabled = false;
 				} else if (response == 'APPROVED') {
-					window.location.href = redirect (topURL);
+					setTimeout (function () {
+						window.location.href = redirect (topURL);
+					}, 500);
 				} else {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				}
