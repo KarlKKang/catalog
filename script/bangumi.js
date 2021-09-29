@@ -337,7 +337,7 @@ window.addEventListener("load", function(){
 				html5: {
 					vhs: {
 						withCredentials: true,
-						overrideNative: true
+						overrideNative: !videojs.browser.IS_SAFARI
 					},
 					nativeAudioTracks: false,
 					nativeVideoTracks: false
@@ -531,7 +531,7 @@ window.addEventListener("load", function(){
 				html5: {
 					vhs: {
 						withCredentials: true,
-						overrideNative: true
+						overrideNative: !videojs.browser.IS_SAFARI
 					},
 					nativeAudioTracks: false,
 					nativeVideoTracks: false
@@ -563,7 +563,7 @@ window.addEventListener("load", function(){
 			var video = videojs(videoNode, config, function () {
 				videoJSInstances=[video];
 
-				if (Hls.isSupported()) {
+				if (!videojs.browser.IS_SAFARI) {//Hls.isSupported()
 					video.on ('play', buffering);
 					video.on ('seeked', function () {
 						seekTime = video.currentTime();
