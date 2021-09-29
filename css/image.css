@@ -9,10 +9,12 @@ body {
 #image-container {
 	position: relative;
 	padding: 0px;
+	max-width: 100%;
 }
 
 #image-container > img {
 	display: block;
+	width: 100%
 }
 
 #image-container > .overlay {

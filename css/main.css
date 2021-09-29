@@ -24,6 +24,14 @@ body {
 	padding: 0px;
 }
 
+button {
+	color: black;
+}
+
+select {
+	color: black;
+}
+
 #header {
 	width: 100%;
 	height: 46px;
