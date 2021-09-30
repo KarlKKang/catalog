@@ -198,13 +198,20 @@ select:hover{
 	margin: 0px 0px 1em 0px;
 }
 
-#media-holder > .lazyload, #media-holder > video, #media-holder > video-js {
+#media-holder > .lazyload, #media-holder > video-js {
 	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
     transition: box-shadow .4s ease-out;
 }
 
-#media-holder > .lazyload:hover , #media-holder > video:hover , #media-holder > video-js:hover {
+#media-holder > .lazyload:hover , #media-holder > video-js:hover {
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.45);
+}
+
+#media-holder > video-js.vjs-fullscreen {
+	box-shadow: none;
+}
+#media-holder > video-js.vjs-fullscreen:hover {
+	box-shadow: none;
 }
 
 #media-holder > .lazyload {
@@ -302,7 +309,7 @@ p.artist {
 	justify-content: center;
 }
 
-#loader {
+/*#loader {
 	border: 5px solid #f3f3f3;
 	-webkit-animation: spin 1s linear infinite;
 	animation: spin 1s linear infinite;
@@ -322,7 +329,7 @@ p.artist {
 @keyframes spin {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
-}
+}*/
 
 /* Style the buttons that are used to open and close the accordion panel */
 .accordion {
