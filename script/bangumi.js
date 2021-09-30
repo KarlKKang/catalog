@@ -336,13 +336,18 @@ window.addEventListener("load", function(){
 				},
 				html5: {
 					vhs: {
-						withCredentials: true,
-						overrideNative: !videojs.browser.IS_SAFARI
-					},
-					nativeAudioTracks: false,
-					nativeVideoTracks: false
+						withCredentials: true
+					}
 				}
 			};
+			
+			if (videojs.browser.IS_SAFARI) {
+				config.html5.vhs.overrideNative = false;
+			} else {
+				config.html5.vhs.overrideNative = true;
+				config.html5.nativeAudioTracks = false;
+				config.html5.nativeVideoTracks = false;
+			}
 
 			for (var i = 0; i < file.list.length; i++) {
 				let index = i;
@@ -530,11 +535,8 @@ window.addEventListener("load", function(){
 				crossOrigin: "use-credentials",
 				html5: {
 					vhs: {
-						withCredentials: true,
-						overrideNative: !videojs.browser.IS_SAFARI
-					},
-					nativeAudioTracks: false,
-					nativeVideoTracks: false
+						withCredentials: true
+					}
 				},
 				userActions: {
 					hotkeys: function(event) {
@@ -560,6 +562,15 @@ window.addEventListener("load", function(){
 					}
 				}
 			};
+			
+			if (videojs.browser.IS_SAFARI) {
+				config.html5.vhs.overrideNative = false;
+			} else {
+				config.html5.vhs.overrideNative = true;
+				config.html5.nativeAudioTracks = false;
+				config.html5.nativeVideoTracks = false;
+			}
+			
 			var video = videojs(videoNode, config, function () {
 				videoJSInstances=[video];
 
