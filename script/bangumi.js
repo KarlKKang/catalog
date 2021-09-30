@@ -629,6 +629,8 @@ window.addEventListener("load", function(){
 				video.on ('pause', function () {
 					updateURLParam ('timestamp', video.currentTime());
 				});
+				
+				videoNode.focus();
 			});
 
 			/*

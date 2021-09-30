@@ -28,6 +28,11 @@ button {
 	color: black;
 }
 
+button:disabled {
+	color: #adadb5;
+	pointer-events: none;
+}
+
 select {
 	color: black;
 }
