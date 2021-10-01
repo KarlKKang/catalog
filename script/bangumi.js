@@ -541,7 +541,8 @@ window.addEventListener("load", function(){
 				html5: {
 					vhs: {
 						withCredentials: true
-					}
+					},
+					nativeControlsForTouch: true
 				},
 				userActions: {
 					hotkeys: function(event) {
