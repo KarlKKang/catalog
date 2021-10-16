@@ -200,3 +200,21 @@ function handshake (callback) {
 	xmlhttp.open("POST", serverURL + "/handshake.php",true);
 	xmlhttp.send();
 }
+
+function secToTimestamp (sec) {
+	var hour = Math.floor(sec/60/60);
+	sec = sec - hour*60*60;
+	var min = Math.floor(sec/60);
+	sec = sec - min*60;
+
+	sec = Math.round(sec);
+	if (sec < 10) {
+		sec = '0' + sec;
+	}
+
+	if (hour > 0 && min < 10) {
+		min = '0' + min;
+	}
+	
+	return ((hour==0)?'':(hour + ':')) + min + ':' + sec;
+}

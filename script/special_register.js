@@ -34,6 +34,9 @@ window.addEventListener("load", function(){
 		window.open ('policy#en');
 	});
 	document.getElementsByClassName('link')[2].addEventListener('click', function () {
+		window.open ('policy#zh-Hant');
+	});
+	document.getElementsByClassName('link')[3].addEventListener('click', function () {
 		window.open ('policy#zh-Hans');
 	});
 	

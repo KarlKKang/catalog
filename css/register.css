@@ -25,12 +25,24 @@
 	font-display: swap;
 }
 
+@font-face {
+	font-family: "Noto Sans TC";
+	src: url("../font/NotoSansTC/NotoSansTC-Light.woff2") format("woff2"),
+		url("../font/NotoSansTC/NotoSansTC-Light.otf") format("opentype");
+	font-weight: 300;
+	font-display: swap;
+}
+
 :lang(en) {
 	font-family: roboto,'Noto Sans Myanmar UI',arial,sans-serif;
 	font-weight: 300;
 }
 :lang(zh-Hans) {
 	font-family: 'Noto Sans SC','PingFang SC','Helvetica Neue','Helvetica','Arial',sans-serif;
+	font-weight: 300;
+}
+:lang(zh-Hant) {
+	font-family: 'Noto Sans TC','PingFang TC','Helvetica Neue','Helvetica','Arial',sans-serif;
 	font-weight: 300;
 }
 
