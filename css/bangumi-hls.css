@@ -1,0 +1,397 @@
+@charset "utf-8";
+/* CSS Document */
+
+@font-face {
+	font-family: "Noto Sans JP";
+	src: url("../font/NotoSansJP/NotoSansJP-Medium.woff2") format("woff2"),
+		url("../font/NotoSansJP/NotoSansJP-Medium.otf") format("opentype");
+	font-weight: 500;
+	font-display: swap;
+}
+
+@font-face {
+  font-family: SegMDL2;
+  src: url("../font/Segoe/SegMDL2.woff2") format("woff2"),
+	  url("../font/Segoe/SegMDL2.ttf") format("truetype");
+}
+
+.symbol {
+	font-family: SegMDL2;
+}
+
+#title {
+	text-align: center;
+	margin: 2em auto 0px auto;
+	font-size: x-large;
+	font-weight: 500;
+}
+
+#ep-selector, #season-selector {
+	position: relative;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+}
+
+#season-button-wrapper {
+	display: flex;
+  	flex-wrap: wrap;
+	justify-content: center;
+	margin: 0px 0px -10px;
+	padding: 34px 2% 0px 2%;
+}
+
+#season-button-wrapper > div > p {
+	padding: 0px;
+	margin: 0.5em 0px;
+}
+
+#season-button-wrapper > div {
+	height: auto;
+    transition: .4s ease-out;
+	margin: 0px min(2em, 25px);
+	cursor: pointer;
+	color: #adadb5;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: rgba(0,0,0,0.0);
+}
+
+#season-button-wrapper > div:hover {
+	color: black;
+	border-bottom-color: rgba(0,0,0,1.0);
+}
+
+#season-button-wrapper > div:hover > p {
+	font-weight: 500;
+}
+
+#season-button-wrapper > div.current-season {
+	cursor: auto;
+	color: black;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: rgba(0,0,0,1.0);
+}
+
+#season-button-wrapper > div.current-season > p {
+	font-weight: 500;
+}
+
+#ep-button-wrapper {
+	display: flex;
+  	flex-wrap: wrap;
+	justify-content: center;
+	margin: 0px;
+	padding: 34px 5%;
+	transition: .4s ease-out;
+	overflow-y: hidden;
+}
+
+#ep-button-wrapper > div {
+	position: relative;
+	height: auto;
+	background-color: rgba(255,255,255,1);
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+	padding: 0.6em 1em;
+	margin: min(2%, 12px);
+	cursor: pointer;
+}
+
+#ep-button-wrapper > div:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.30);
+	z-index: 0;
+}
+
+#ep-button-wrapper > div.current-ep > p {
+	font-weight: 500;
+	text-decoration: underline;
+}
+
+#ep-button-wrapper > div > * {
+	margin: 0px;
+	padding: 0px;
+}
+
+#show-more-button {
+	background: linear-gradient(to bottom, rgba(253,253,253,0) 0%,rgba(253,253,253,1) 2em);
+	width: 100%;
+	margin: -34px 0px 0px 0px;
+	padding: 0px 0px 34px;
+	text-align: center;
+	position: relative;
+	color: #1069c9;
+	text-decoration: none;
+	transition: .4s ease-out;
+}
+
+#show-more-button.clipped {
+	margin: calc(-3.5em - 34px) 0px 0px;
+	padding: 2em 0px 34px;
+}
+
+#show-more-button:hover{
+	cursor: pointer;
+}
+
+hr {
+	margin: 0px auto;
+	height: 1px;
+	width: 80%;
+	max-width: 1280px;
+	border-width: 0;
+	background-color: rgba(32,52,76,.15);
+}
+
+#media-holder {
+	margin: 2em auto 10vh auto;
+	padding: 0px;
+	width: 80%;
+	max-width: 1280px;
+}
+
+#format-selector {
+	max-width: 200px;
+    width: 70%;
+	position: relative;
+}
+
+#format-selector:after {
+	content: '\E70D';
+	font-family: SegMDL2;
+	font-size: 0.9em;
+	color: #777;
+	top: 10px;
+	right: 11px;
+	position: absolute;
+	pointer-events: none;
+}
+
+select {
+	border: none;
+    font-size: 0.9em;
+    margin: 0px;
+    width: 100%;
+    padding: 5px 35px 5px 5px;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 34px;
+	line-height: 22px;
+    background-color: #fff;
+    box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+}
+select:hover{
+    box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+#media-holder > video, #media-holder > video-js {
+	width: 100%;
+	margin: 2em 0px;
+	background-color: #000;
+}
+
+#media-holder > audio, #media-holder > .lazyload {
+	width: 100%;
+	margin: 0px 0px 1em 0px;
+}
+
+#media-holder > .lazyload, #media-holder > video-js {
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+}
+
+#media-holder > .lazyload:hover , #media-holder > video-js:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.45);
+}
+
+#media-holder > video-js.vjs-fullscreen {
+	box-shadow: none;
+}
+#media-holder > video-js.vjs-fullscreen:hover {
+	box-shadow: none;
+}
+
+#media-holder > .lazyload {
+	position: relative;
+	padding-bottom: 56.25%;
+}
+
+#media-holder > .lazyload:hover {
+	cursor: pointer;
+}
+
+#media-holder > .lazyload > .overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.sub-title {
+	font-size: large;
+	font-weight: 500;
+	width: 100%;
+	margin: 2em 0px 1em 0px;
+}
+
+.artist {
+	color: #adadb5;
+	font-size: medium;
+}
+
+#title > .artist {
+	font-size: large;
+}
+
+.sub-title.center-align, .artist.center-align {
+	text-align: center;
+}
+
+p.artist {
+	width: 100%;
+	margin: -1em 0px 1em 0px;
+}
+
+#warning {
+	width: min(1000px, 90%);
+	margin: 2em 0px 10vh 0px;
+	padding: 2em;
+	position: relative;
+	left: 50%;
+	transform: translate(-50%, 0%);
+	background-color: white;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+	box-sizing: border-box;
+}
+
+#warning-title {
+	text-align: center;
+	margin: 0px 0px 1em 0px;
+	padding: 0px;
+	font-size: x-large;
+	font-weight: 500;
+	color: red;
+}
+
+#warning-message {
+	text-align: center;
+	margin: 1em 0px;
+	padding: 0px;
+}
+
+#warning-button-yes, #warning-button-no {
+	padding: 0px;
+	margin: 1em 3% 0px;
+	height: 40px;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+    transition: box-shadow .4s ease-out;
+	background: #fff;
+	border: none;
+	width: min(150px, 100%);
+	text-align: center;
+	position: relative;
+	cursor: pointer;
+	font-size: medium;
+}
+
+#warning:hover, #warning-button-yes:hover, #warning-button-no:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+#warning-button-group {
+	display: flex;
+  	flex-wrap: wrap;
+	justify-content: center;
+}
+
+/*#loader {
+	border: 5px solid #f3f3f3;
+	-webkit-animation: spin 1s linear infinite;
+	animation: spin 1s linear infinite;
+	border-top: 5px solid #555;
+	border-radius: 50%;
+	position: relative;
+	width: 50px;
+	height: 50px;
+	margin: 2em auto 10vh auto;
+}
+
+@-webkit-keyframes spin {
+	0% { -webkit-transform: rotate(0deg); }
+	100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}*/
+
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+	background-color: white;
+	font-size: medium;
+	cursor: pointer;
+	padding: 18px;
+	margin: 0px;
+	width: 100%;
+	text-align: left;
+	border: none;
+	outline: none;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+	transition: box-shadow .4s ease-out;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.accordion:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+	padding: 0 18px;
+	margin: 0px;
+	background-color: white;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.2s ease-out, box-shadow .4s ease-out;
+	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+}
+
+.panel > p {
+	transition: .4s ease-out;
+}
+
+.panel > p > span {
+	cursor: pointer;
+	color: #1069c9;
+}
+
+.current-chapter {
+	color: #000;
+	font-weight: 500;
+}
+
+.inactive-chapter {
+	color: #adadb5;
+}
+
+.accordion:after {
+	content: '\002B'; /* Unicode character for "plus" sign (+) */
+	font-size: 1em;
+	color: #777;
+	float: right;
+	margin-left: 5px;
+}
+
+.accordion.active:after {
+	content: "\2212"; /* Unicode character for "minus" sign (-) */
+}
+
+.panel:hover {
+	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+}
