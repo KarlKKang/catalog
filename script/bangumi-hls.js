@@ -326,7 +326,7 @@ window.addEventListener("load", function(){
 				var video = document.createElement('video');
 				video.setAttribute('lang', 'en');
 				video.controls = true;
-				video.playsinline = true;
+				video.setAttribute('playsinline', 'playsinline');
 				video.id = 'video-node';
 				video.addEventListener('contextmenu', event => event.preventDefault());
 				document.getElementById('media-holder').appendChild(video);
