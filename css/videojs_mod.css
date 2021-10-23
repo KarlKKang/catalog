@@ -14,7 +14,49 @@
     display: none !important;
 }
 
-.video-js.vjs-audio {
+.video-js .vjs-big-play-button {
+	font-size: 4.0em;
+	width: 1.63332em;
+	border-radius: 50%;
+	background-color: white;
+	color: black;
+	border: 0px;
+	margin-top:-.81666em;
+	margin-left: -.81666em;
+	line-height: 1.6em;
+}
+.video-js .vjs-big-play-button:focus, .video-js:hover .vjs-big-play-button {
+	background-color: white;
+}
+.vjs-loading-spinner {
+	border: 6px solid rgba(50,50,50,.7);
+}
+
+.vjs-seeking .vjs-loading-spinner:before,
+.vjs-seeking .vjs-loading-spinner:after,
+.vjs-waiting .vjs-loading-spinner:before,
+.vjs-waiting .vjs-loading-spinner:after {
+	-webkit-animation: vjs-spinner-spin 1.1s cubic-bezier(.6,.2,0,.8) infinite;
+	animation: vjs-spinner-spin 1.1s cubic-bezier(.6,.2,0,.8) infinite;
+}
+
+.vjs-seeking .vjs-loading-spinner:after,
+.vjs-waiting .vjs-loading-spinner:after {
+	-webkit-animation-delay: .44s;
+	animation-delay: .44s;
+}
+
+.video-js .vjs-control:focus:before,
+.video-js .vjs-control:hover:before,
+.video-js .vjs-control:focus,
+.video-js.vjs-audio .vjs-control:focus:before,
+.video-js.vjs-audio .vjs-control:hover:before,
+.video-js.vjs-audio .vjs-control:focus {
+	text-shadow: none;
+}
+
+
+.video-js, .video-js.vjs-audio {
 	background-color: white;
 	color: black;
 	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
@@ -23,16 +65,16 @@
 .video-js.vjs-audio:hover {
 	box-shadow: 0 2px 30px 2px rgba(32,52,76,.30);
 }
-.video-js.vjs-audio .vjs-control-bar{
-  background-color: rgba(0,0,0,0.00);
+.video-js .vjs-control-bar, .video-js.vjs-audio .vjs-control-bar{
+  background-color: white;
 }
-.video-js.vjs-audio .vjs-slider{
+.video-js .vjs-slider, .video-js.vjs-audio .vjs-slider{
   background-color: rgba(0,0,0,0.15);
 }
-.video-js.vjs-audio .vjs-load-progress, .video-js.vjs-audio .vjs-load-progress div{
+.video-js .vjs-load-progress, .video-js .vjs-load-progress div, .video-js.vjs-audio .vjs-load-progress, .video-js.vjs-audio .vjs-load-progress div{
   background: rgba(0,0,0,0.10);
 }
-.video-js.vjs-audio .vjs-play-progress,.video-js.vjs-audio .vjs-volume-level{
+.video-js .vjs-play-progress,.video-js .vjs-volume-level, .video-js.vjs-audio .vjs-play-progress,.video-js.vjs-audio .vjs-volume-level{
   background-color: black;
 }
 /* Audio: Remove big play button (leave only the button in controls). */

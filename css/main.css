@@ -172,7 +172,6 @@ select {
 /*////////////////////////////////////////////////////////Navigation menu////////////////////////////////////////////////////////*/
 
 #nav-menu {
-	background-color: white;
 	z-index: 99;
 	position: fixed;
 	top: 0px;
@@ -180,6 +179,20 @@ select {
 	width: 100vw;
 	height: 100vh;
 	transition: opacity .3s ease-out;
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+	#nav-menu {
+		background-color: rgba(255, 255, 255, 0.55);
+		-webkit-backdrop-filter: blur(10px);
+		backdrop-filter: blur(10px);
+	}
+}
+
+@supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+	#nav-menu {
+		background-color: rgba(255, 255, 255, 1);
+	}
 }
 
 #nav-menu-content {

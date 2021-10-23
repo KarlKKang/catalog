@@ -28,7 +28,7 @@ window.addEventListener("load", function(){
 	function initialize () {
 
 		var chapters = {name: [], startTime: []};
-		var mediaInstances = [], hlsInstances = [];
+		var mediaInstances = [];
 		var ep;
 
 		var seriesID = getURLParam ('series');
@@ -308,12 +308,12 @@ window.addEventListener("load", function(){
 			
 			function updateURLTimestamp() {
 				function update () {
-					var video = mediaInstances[0].media;
+					var video = document.getElementById('video-node');
 					if (video) {
 						updateURLParam ('timestamp', video.currentTime);
 					}
 				}
-				var video = mediaInstances[0].media;
+				var video = document.getElementById('video-node');
 				video.addEventListener ('pause', function () {
 					update ();
 				});
@@ -322,66 +322,24 @@ window.addEventListener("load", function(){
 				}, 3*1000);
 			}
 			
-			/*if (USE_NATIVE) {
+			if (USE_NATIVE) {
 				var video = document.createElement('video');
 				video.setAttribute('lang', 'en');
 				video.controls = true;
 				video.setAttribute('playsinline', 'playsinline');
+				video.id = 'video-node';
 				video.addEventListener('contextmenu', event => event.preventDefault());
 				document.getElementById('media-holder').appendChild(video);
-				mediaInstances.push({media: video});
 				addVideoNode (file.url, {chapters: file.chapters, currentTime: timestampParam});
 				updateURLTimestamp();
 			} else {
 				var videoJS = document.createElement('video-js');
-				
-				videoJS.classList.add('vjs-big-play-centered');
-				videoJS.setAttribute('lang', 'en');
-				document.getElementById('media-holder').appendChild(videoJS);
-
-				var config = {
-					controls: true,
-					autoplay: false,
-					preload: 'auto',
-					fluid: true,
-					playsinline: true,
-				};
-
-				videojs(videoJS, config, function () {
-					videoJS.style.paddingTop = 9/16*100 + '%';
-					videoJS = videoJS.cloneNode(true);
-					this.dispose();
-					mediaInstances.push(new videojs_mod (videoJS));
-					document.getElementById('media-holder').appendChild(videoJS);
-
+				videojs_mod (videoJS, function () {
 					addVideoNode (file.url, {chapters: file.chapters, currentTime: timestampParam});
 					updateURLTimestamp();
 				});
-			}*/
-			var videoJS = document.createElement('video-js');
-				
-			videoJS.classList.add('vjs-big-play-centered');
-			videoJS.setAttribute('lang', 'en');
-			document.getElementById('media-holder').appendChild(videoJS);
-
-			var config = {
-				controls: true,
-				autoplay: false,
-				preload: 'auto',
-				fluid: true,
-				playsinline: true,
-			};
-
-			videojs(videoJS, config, function () {
-				videoJS.style.paddingTop = 9/16*100 + '%';
-				videoJS = videoJS.cloneNode(true);
-				this.dispose();
-				mediaInstances.push(new videojs_mod (videoJS, {useNative: USE_NATIVE}));
-				document.getElementById('media-holder').appendChild(videoJS);
-
-				addVideoNode (file.url, {chapters: file.chapters, currentTime: timestampParam});
-				updateURLTimestamp();
-			});
+			}
+			
 		}
 
 		function updateAudio (file) {
@@ -408,17 +366,49 @@ window.addEventListener("load", function(){
 				titleElem.appendChild(artistElem);
 			}
 			
+			//smooth progress bar scrubbing https://github.com/videojs/video.js/issues/4460
+			const SeekBar = videojs.getComponent('SeekBar');
+
+			SeekBar.prototype.getPercent = function getPercent() {
+				const time = this.player_.currentTime();
+				const percent = time / this.player_.duration();
+				return percent >= 1 ? 1 : percent;
+			};
+
+			SeekBar.prototype.handleMouseMove = function handleMouseMove(event) {
+				let newTime = this.calculateDistance(event) * this.player_.duration();
+				if (newTime === this.player_.duration()) {
+					newTime = newTime - 0.1;
+				}
+				this.player_.currentTime(newTime);
+				this.update();
+			};
+
 			var config = {
 				controls: true,
 				autoplay: false,
 				preload: 'auto',
 				fluid: true,
 				aspectRatio: "1:0",
+				crossOrigin: "use-credentials",
 				controlBar: {
 					fullscreenToggle: false,
 					pictureInPictureToggle: false
+				},
+				html5: {
+					vhs: {
+						withCredentials: true
+					}
 				}
 			};
+			
+			if (videojs.browser.IS_SAFARI) {
+				config.html5.vhs.overrideNative = false;
+			} else {
+				config.html5.vhs.overrideNative = true;
+				config.html5.nativeAudioTracks = false;
+				config.html5.nativeVideoTracks = false;
+			}
 			
 			var i;
 
@@ -427,62 +417,60 @@ window.addEventListener("load", function(){
 
 				let audioNode = document.createElement('audio');
 				let subtitle = document.createElement('p');
-				
+
 				audioNode.id = 'track'+index;
-				
+
+				document.getElementById('media-holder').appendChild(subtitle);
+				document.getElementById('media-holder').appendChild(audioNode);
+
 				audioNode.classList.add("vjs-default-skin");
 				audioNode.classList.add("video-js");
 				audioNode.setAttribute('lang', 'en');
+				let audio = videojs(audioNode, config, function () {
+					mediaInstances.push(audio);
 
-				document.getElementById('media-holder').appendChild(audioNode);
+					audio.src({
+						src: file.list[index].url,
+						type: 'application/x-mpegURL'
+					});
 
-				videojs(audioNode, config, function () {
-					audioNode = document.getElementById('track' + index).cloneNode(true);
-					this.dispose();
-					mediaInstances.push(new videojs_mod (audioNode, {audio: true}));
-					document.getElementById('media-holder').appendChild(subtitle);
-					document.getElementById('media-holder').appendChild(audioNode);
-					let audio = mediaInstances[index].media;
-					audio.volume = 1;
-
-					if (!USE_NATIVE) {
-						var config = {
-							enableWebVTT: false,
-							enableIMSC1: false,
-							enableCEA708Captions: false,
-							lowLatencyMode: false,
-							enableWorker: false,
-							maxFragLookUpTolerance: 0,
-							debug: false,
-							xhrSetup: function(xhr, url) {
-								xhr.withCredentials = true;
-							}
-						}
-
-						let hls = new Hls(config);
-
-						hls.on(Hls.Events.MANIFEST_PARSED, function () {
-							hlsInstances.push=hls;
-							counter ++;
-							if (counter == file.list.length) {
-								audioReady ();
-							}
-						});
-						hls.loadSource(file.list[index].url);
-						hls.attachMedia(audio);
-					} else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-						audio.setAttribute ('crossorigin', 'use-credentials');
-						audio.addEventListener('loadedmetadata', function () {
-							counter ++;
-							if (counter == file.list.length) {
-								audioReady ();
-							}
-						});
-						audio.src = file.list[index].url;
-						audio.load();
+					audio.volume(1);
+					
+					counter ++;
+					if (counter == file.list.length) {
+						audioReady ();
 					}
+					/*
+					audio.muted(true);
+					
+					let playPromise = audio.play();
+					if (playPromise !== undefined) {
+						playPromise.then(_ => {
+							let initialUnmute = function () {
+								audio.off('pause', initialUnmute);
+								audio.currentTime(0);
+								audio.muted(false);
+								counter ++;
+								if (counter == file.list.length) {
+									audioReady ();
+								}
+							};
+							audio.on('pause', initialUnmute);
+							audio.pause();
+						}).catch(error => {
+							audio.currentTime(0);
+							audio.muted(false);
+
+							counter ++;
+							if (counter == file.list.length) {
+								audioReady ();
+							}
+						});
+					}
+					*/
 				});
-				
+				document.getElementById('track' + i).addEventListener('contextmenu', event => event.preventDefault());
+
 				if (file.list[i].title != '') {
 					subtitle.setAttribute('class', 'sub-title');
 					subtitle.innerHTML = file.list[i].title;
@@ -493,20 +481,20 @@ window.addEventListener("load", function(){
 						artist.innerHTML = '／' + file.list[i].artist;
 						subtitle.appendChild(artist);
 					}
-				}
+				} 
 			}
 			
 			function audioReady () {
 				for (var i = 0; i < mediaInstances.length; i++) {
 					let index = i;
-					mediaInstances[index].media.addEventListener('play', function () {
+					mediaInstances[index].on('play', function () {
 						for (var j = 0; j < mediaInstances.length; j++) {
 							if (j != index) {
 								mediaInstances[j].pause();
 							}
 						}
 					});
-					mediaInstances[index].media.addEventListener('ended', function () {
+					mediaInstances[index].on('ended', function () {
 						if (index != mediaInstances.length-1) {
 							mediaInstances[index+1].play();
 						}
@@ -560,7 +548,7 @@ window.addEventListener("load", function(){
 
 		function formatSwitch (file) {
 			var selectedFormat = document.getElementById('format-selector').getElementsByTagName('select')[0].selectedIndex;
-			var video = mediaInstances[0].media;
+			var video = document.getElementById('video-node');
 
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
@@ -592,12 +580,12 @@ window.addEventListener("load", function(){
 		}
 
 		function addVideoNode (url, options) {
-			if (hlsInstances.length != 0) {
-				hlsInstances[0].destroy();
-				hlsInstances=[];
+			if (mediaInstances.length != 0) {
+				mediaInstances[0].destroy();
+				mediaInstances=[];
 			}
 
-			var video = mediaInstances[0].media;
+			var video = document.getElementById('video-node');
 			
 			function videoReady () {
 				video.volume = 1;
@@ -610,15 +598,12 @@ window.addEventListener("load", function(){
 					displayChapters (options.chapters);
 				}
 
-				if (options.play) {
-					mediaInstances[0].play();
-				} else {
-					mediaInstances[0].pause();
-				}
+				
 			}
 			
 			if (!USE_NATIVE) {
 				var config = {
+					autoStartLoad: true,
 					enableWebVTT: false,
 					enableIMSC1: false,
 					enableCEA708Captions: false,
@@ -634,9 +619,14 @@ window.addEventListener("load", function(){
 				var hls = new Hls(config);
 				
 				hls.on(Hls.Events.MANIFEST_PARSED, function () {
-					hlsInstances=[hls];
+					mediaInstances=[hls];
 					videoReady ();
-					
+					/*
+					if (USE_NATIVE) {
+						video.focus();
+					} else {
+						document.getElementById('media-holder').getElementsByTagName('video-js')[0].focus();
+					}*/
 				});
 				hls.loadSource(url);
 				hls.attachMedia(video);
@@ -644,12 +634,11 @@ window.addEventListener("load", function(){
 				video.setAttribute ('crossorigin', 'use-credentials');
 				video.addEventListener('loadedmetadata', function () {
 					videoReady ();
-					/*
 					if (options.play) {
 						video.play();
 					} else {
 						video.pause();
-					}*/
+					}
 				});
 				video.src = url;
 				video.load();
@@ -714,7 +703,7 @@ window.addEventListener("load", function(){
 			var accordionPanel = document.createElement('div');
 			accordionPanel.classList.add('panel');
 			
-			var video = mediaInstances[0].media;
+			var video = document.getElementById('video-node');
 
 			for (i = 0; i < chapterLength; i++) {
 				let chapter = document.createElement('p');
