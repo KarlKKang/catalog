@@ -238,6 +238,11 @@ select:hover{
 	margin: 2em 0px 1em 0px;
 }
 
+.sub-title * {
+	font-size: large;
+	font-weight: 500;
+}
+
 .artist {
 	color: #adadb5;
 	font-size: medium;
