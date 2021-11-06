@@ -90,7 +90,7 @@ function login () {
 				} else if (response.includes('REJECTED')) {
 					document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
 					document.getElementById('warning').classList.remove('hidden');
-					document.cookie = 'allow-login=false; max-age=86400; path=/' + (debug?'':'; Domain=.featherine.com');
+					document.cookie = 'allow-login=false;max-age=86400;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
 					document.getElementById('login-button').disabled = false;
 				} else if (response == 'APPROVED') {
 					setTimeout (function () {

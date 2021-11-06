@@ -22,7 +22,8 @@ function getImage (nsfw) {
 							url: url,
 							title: '404'
 						};
-						window.localStorage.setItem('image-param', JSON.stringify(param));
+						document.cookie = 'image-param='+encodeURIComponent(JSON.stringify(param))+';max-age=30;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+						//window.localStorage.setItem('image-param', JSON.stringify(param));
 						if (debug) {
 							window.location.href = 'image.html';
 						} else {

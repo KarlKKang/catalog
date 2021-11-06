@@ -129,7 +129,7 @@ function videojs_mod (controls, config) {
         if (!t.dragging && t.media.duration)
             t.elem.progressBar.style.width = t.media.currentTime/t.media.duration*100 + '%';
 		if (t.isVideo) {
-			if (t.event.countdown != 0) {
+			if (t.event.countdown > 0) {
 				t.event.countdown -= 300;
 				if (t.event.countdown == 0) {
 					t.controls.classList.remove('vjs-user-active');
@@ -230,12 +230,12 @@ function videojs_mod (controls, config) {
 		this.requestFullscreen = function () {
 			if (t.controls.requestFullscreen) {
 				t.controls.requestFullscreen();
-			} else if (t.controls.webkitRequestFullscreen) { /* Safari */
-				t.controls.webkitRequestFullscreen();
 			} else if (t.controls.mozRequestFullScreen) { /* Firefox */
 				t.controls.mozRequestFullScreen();
 			} else if (t.controls.msRequestFullscreen) { /* IE11 */
 				t.controls.msRequestFullscreen();	
+			} else if (t.controls.webkitRequestFullscreen && !IS_IPAD) { /* Safari */
+				t.controls.webkitRequestFullscreen();
 			} else if (t.media.webkitEnterFullscreen) { /* iPhone */
 				t.media.webkitEnterFullscreen();
 			}
@@ -363,7 +363,7 @@ function videojs_mod (controls, config) {
 				event.preventDefault();
 			}
 		};
-		this.controls.addEventListener('keydown', event => this.event.hotkeys(event));
+		this.controls.addEventListener('keydown', event => this.event.hotkeys(event), true);
 	}
 	
 

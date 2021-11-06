@@ -6,15 +6,17 @@ window.addEventListener("load", function(){
 		return 0;
 	}
 	
-	var param = localStorage.getItem("image-param");
-	localStorage.removeItem("image-param");
+	var param = getCookie('image-param');
 	
-	if (param === null) {
+	if (param == '') {
 		window.location.href = topURL;
 		return 0;
 	}
 	
+	document.cookie = 'image-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+	
 	try {
+		param = decodeURIComponent(param);
 		param = JSON.parse(param);
 	} catch (e) {
 		window.location.href = topURL;

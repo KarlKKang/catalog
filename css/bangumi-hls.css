@@ -246,6 +246,7 @@ select:hover{
 .artist {
 	color: #adadb5;
 	font-size: medium;
+	font-weight: 300;
 }
 
 #title > .artist {
