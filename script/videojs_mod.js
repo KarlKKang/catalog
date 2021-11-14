@@ -1,170 +1,145 @@
 // JavaScript Document
 
-function videojs_mod (controls, config) {
+var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 	if (!config) {
 		config = {};
 	}
-	this.controls = controls;
-	this.isVideo = !(config.audio);
-	this.useNative = config.useNative;
-	this.elem = {};
-	this.event = {};
-	let t = this;
+	const isVideo = !(config.audio);
+	const useNative = config.useNative;
 	
-	if (this.isVideo) {
-		this.media = this.controls.getElementsByTagName('video')[0];
-	} else {
-		this.media = this.controls.getElementsByTagName('audio')[0];
-	}
+	var media = isVideo ? controls.getElementsByTagName('video')[0] : controls.getElementsByTagName('audio')[0];
 
-    this.controls.addEventListener('contextmenu', event => event.preventDefault());
-
-    //State variables
-    this.playing = false;
-    this.buffering = false;
-    this.dragging = false;
-
+    controls.addEventListener('contextmenu', event => event.preventDefault());
+	
     //Elements
-    this.elem.controlBar = this.controls.getElementsByClassName('vjs-control-bar')[0];
-    this.elem.playButton = this.elem.controlBar.getElementsByClassName('vjs-play-control')[0];
-    this.elem.durationDisplay = this.elem.controlBar.getElementsByClassName('vjs-duration')[0].getElementsByClassName('vjs-duration-display')[0];
-    this.elem.currentTimeDisplay = this.elem.controlBar.getElementsByClassName('vjs-current-time')[0].getElementsByClassName('vjs-current-time-display')[0];
-    this.elem.progressControl = this.elem.controlBar.getElementsByClassName('vjs-progress-control')[0];
-    this.elem.progressHolder = this.elem.progressControl.getElementsByClassName('vjs-progress-holder')[0];
-    this.elem.progressBar = this.elem.progressHolder.getElementsByClassName('vjs-play-progress')[0];
-    this.elem.progressMouseDisplay = this.elem.progressHolder.getElementsByClassName('vjs-mouse-display')[0];
-    if (this.elem.progressMouseDisplay) {
-        this.elem.progressTooltip = this.elem.progressMouseDisplay.getElementsByClassName('vjs-time-tooltip')[0];
+    var controlBar = controls.getElementsByClassName('vjs-control-bar')[0];
+    var playButton = controlBar.getElementsByClassName('vjs-play-control')[0];
+    var durationDisplay = controlBar.getElementsByClassName('vjs-duration')[0].getElementsByClassName('vjs-duration-display')[0];
+    var currentTimeDisplay = controlBar.getElementsByClassName('vjs-current-time')[0].getElementsByClassName('vjs-current-time-display')[0];
+    var progressControl = controlBar.getElementsByClassName('vjs-progress-control')[0];
+    var progressHolder = progressControl.getElementsByClassName('vjs-progress-holder')[0];
+    var progressBar = progressHolder.getElementsByClassName('vjs-play-progress')[0];
+    var progressMouseDisplay = progressHolder.getElementsByClassName('vjs-mouse-display')[0];
+    if (progressMouseDisplay) {
+        var progressTooltip = progressMouseDisplay.getElementsByClassName('vjs-time-tooltip')[0];
 	}
-	if (this.isVideo) {
-		this.elem.loadProgress = this.elem.progressHolder.getElementsByClassName('vjs-load-progress')[0];
-		this.elem.fullscreenButton = this.elem.controlBar.getElementsByClassName('vjs-fullscreen-control')[0];
-		this.elem.PIPButton = this.elem.controlBar.getElementsByClassName('vjs-picture-in-picture-control')[0];
+	if (isVideo) {
+		var loadProgress = progressHolder.getElementsByClassName('vjs-load-progress')[0];
+		var fullscreenButton = controlBar.getElementsByClassName('vjs-fullscreen-control')[0];
+		var PIPButton = controlBar.getElementsByClassName('vjs-picture-in-picture-control')[0];
 	}
     
 
     //Fluid resize and duration
-	this.event.initialize = function () {
-		if (t.isVideo) {
-			if (!t.useNative) {
-				t.media.pause();
-				t.startBuffer ();
+    media.addEventListener('loadedmetadata', function () {
+		if (isVideo) {
+			if (!useNative) {
+				media.pause();
+				startBuffer ();
 			}
-			let width = t.media.videoWidth, height = t.media.videoHeight;
-			t.controls.style.paddingTop = height/width*100 + '%';
+			let width = media.videoWidth, height = media.videoHeight;
+			controls.style.paddingTop = height/width*100 + '%';
 		}
-		t.elem.durationDisplay.innerHTML = secToTimestamp (t.media.duration);
-	};
-    this.media.addEventListener('loadedmetadata', event => this.event.initialize(event));
+		durationDisplay.innerHTML = secToTimestamp (media.duration);
+	});
 
     //Load progress
-	if (this.isVideo) {
-		this.event.showLoadProgress = function () {
+	if (isVideo) {
+		media.addEventListener('progress', function () {
 			let bufferEnd = 0;
-			for (var i = t.media.buffered.length - 1; i >= 0; i--) {
-				if (t.media.buffered.start(i) <= t.media.currentTime) {
-					bufferEnd = t.media.buffered.end(i);
+			for (var i = media.buffered.length - 1; i >= 0; i--) {
+				if (media.buffered.start(i) <= media.currentTime) {
+					bufferEnd = media.buffered.end(i);
 					break;
 				}
 			}
-			t.elem.loadProgress.style.width = bufferEnd / t.media.duration * 100 + '%';
-		};
-		this.media.addEventListener('progress', event => this.event.showLoadProgress(event));
+			loadProgress.style.width = bufferEnd / media.duration * 100 + '%';
+		});
 	}
 	
 
     //Loading
-	if (this.isVideo) {
-		this.event.showLoading = function () {
-			t.controls.classList.add('vjs-seeking');
-			if (!t.useNative)
-				t.media.pause();
-		};
-		this.media.addEventListener('waiting', event => this.event.showLoading(event));
+	if (isVideo) {
+		media.addEventListener('waiting', function () {
+			controls.classList.add('vjs-seeking');
+			if (!useNative)
+				media.pause();
+		});
 
-		this.event.loadingFinished = function () {
-			if (t.useNative) {
-				t.controls.classList.remove('vjs-seeking');
+		media.addEventListener('canplaythrough', function () {
+			if (useNative) {
+				controls.classList.remove('vjs-seeking');
 			} else {
-				if (!t.buffering)
-					t.controls.classList.remove('vjs-seeking');
-				if (t.playing)
-					t.play();
+				if (!that.buffering)
+					controls.classList.remove('vjs-seeking');
+				if (that.playing)
+					play();
 			}
-		};
-		this.media.addEventListener('canplaythrough', event => this.event.loadingFinished(event));
+		});
 	}
 
     //Big play button
-	if (this.isVideo) {
-		this.elem.bigPlayButton = this.controls.getElementsByClassName('vjs-big-play-button')[0];
-		this.event.initialStart = function (event) {
+	if (isVideo) {
+		var bigPlayButton = controls.getElementsByClassName('vjs-big-play-button')[0];
+		bigPlayButton.addEventListener('click', function (event) {
 			event.stopPropagation();
-			t.controls.classList.add('vjs-has-started');
-			t.play ();
-			t.controls.focus();
-		};
-		this.elem.bigPlayButton.addEventListener('click', event => this.event.initialStart(event), true);
+			controls.classList.add('vjs-has-started');
+			play();
+			controls.focus();
+		}, true);
 	}
 
     //Play button
-	this.event.playButtonClicked = function (event) {
+    playButton.addEventListener('click', function (event) {
 		event.stopPropagation();
-        if (t.controls.classList.contains('vjs-ended')) {
-            t.controls.classList.remove('vjs-ended');
-            t.elem.playButton.classList.remove('vjs-ended');
-            t.media.currentTime = 0;
-            t.play();
+        if (controls.classList.contains('vjs-ended')) {
+            controls.classList.remove('vjs-ended');
+            playButton.classList.remove('vjs-ended');
+            media.currentTime = 0;
+            play();
         } else {
-            t.togglePlayback ();
+            togglePlayback ();
         }
-        t.controls.focus();
-	};
-    this.elem.playButton.addEventListener('click', event => this.event.playButtonClicked(event), true);
+        controls.focus();
+	}, true);
 
     //Progress bar 
-    this.event.countdown = 3000;
-	this.event.progressBarUpdate = function () {
-		t.elem.currentTimeDisplay.innerHTML = secToTimestamp (t.media.currentTime);
-        if (!t.dragging && t.media.duration)
-            t.elem.progressBar.style.width = t.media.currentTime/t.media.duration*100 + '%';
-		if (t.isVideo) {
-			if (t.event.countdown > 0) {
-				t.event.countdown -= 300;
-				if (t.event.countdown == 0) {
-					t.controls.classList.remove('vjs-user-active');
-					t.controls.classList.add('vjs-user-inactive');
+    setInterval (function () {
+		currentTimeDisplay.innerHTML = secToTimestamp (media.currentTime);
+        if (!that.dragging && media.duration)
+            progressBar.style.width = media.currentTime/media.duration*100 + '%';
+		if (isVideo) {
+			if (that.inactiveCountdown > 0) {
+				that.inactiveCountdown -= 300;
+				if (that.inactiveCountdown == 0) {
+					controls.classList.remove('vjs-user-active');
+					controls.classList.add('vjs-user-inactive');
 				}
 			}
 		}
-	};
-    setInterval (function () {
-		t.event.progressBarUpdate();
 	}, 300);
 	
-	if (this.isVideo) {
-		this.event.userActivity = function () {
-			t.controls.classList.remove('vjs-user-inactive');
-			t.controls.classList.add('vjs-user-active');
-			t.event.countdown = 3000;
-		};
-		addMultipleEventListeners (this.controls, ['mousemove', 'click', 'touchend'], this.event.userActivity, false);
+	if (isVideo) {
+		addMultipleEventListeners (controls, ['mousemove', 'click', 'touchend'], function () {
+			controls.classList.remove('vjs-user-inactive');
+			controls.classList.add('vjs-user-active');
+			that.inactiveCountdown = 3000;
+		}, false);
 	}
     
 
     //Progress bar drag
-	this.event.progressBarDragStart = function () {
-		t.dragging = true;
-        if (t.controls.classList.contains('vjs-ended')) {
-            t.controls.classList.remove('vjs-ended');
-            t.elem.playButton.classList.remove('vjs-ended');
+    addMultipleEventListeners (progressControl, ['mousedown', 'touchstart'], function () {
+		that.dragging = true;
+        if (controls.classList.contains('vjs-ended')) {
+            controls.classList.remove('vjs-ended');
+            playButton.classList.remove('vjs-ended');
         }
-	};
-    addMultipleEventListeners (this.elem.progressControl, ['mousedown', 'touchstart'], this.event.progressBarDragStart);
+	});
 	
-	this.event.progressBarDragEnd = function (event) {
-		if (t.dragging) {
-            t.dragging = false;
+    addMultipleEventListeners (document, ['mouseup', 'touchend'], function (event) {
+		if (that.dragging) {
+            that.dragging = false;
 
             let mouseX;
             if (event.type == 'touchend') {
@@ -173,27 +148,26 @@ function videojs_mod (controls, config) {
             } else {
                 mouseX = event.clientX;
             }
-            let position = t.elem.progressHolder.getBoundingClientRect();
+            let position = progressHolder.getBoundingClientRect();
             let totalLength = position.right-position.left;
             let leftPadding = Math.min(Math.max(mouseX-position.left, 0), totalLength);
             let percentage = leftPadding/totalLength;
-            let currentTime = t.media.duration*percentage;
+            let currentTime = media.duration*percentage;
 
-            if (currentTime == t.media.duration) {
-                t.controls.classList.add('vjs-ended');
-                t.elem.playButton.classList.add('vjs-ended');
+            if (currentTime == media.duration) {
+                controls.classList.add('vjs-ended');
+                playButton.classList.add('vjs-ended');
             }
 
-            t.media.currentTime = currentTime;
-            t.controls.focus();
+            media.currentTime = currentTime;
+            controls.focus();
         }
-	};
-    addMultipleEventListeners (document, ['mouseup', 'touchend'], this.event.progressBarDragEnd);
+	});
 	
 
 
     //Progress bar mouse display
-	this.event.progressBarMouseDisplay = function (event) {  
+    addMultipleEventListeners (progressControl, ['mousemove', 'touchmove'], function (event) {  
         let mouseX;
         if (event.type == 'touchmove') {
 			event.preventDefault();
@@ -202,290 +176,272 @@ function videojs_mod (controls, config) {
         } else {
             mouseX = event.clientX;
         }
-        let position = t.elem.progressHolder.getBoundingClientRect();
+        let position = progressHolder.getBoundingClientRect();
         let totalLength = position.right-position.left;
         let leftPadding = Math.min(Math.max(mouseX-position.left, 0), totalLength);
         let percentage = leftPadding/totalLength;
-        let currentTime = t.media.duration*percentage;
-        if (t.elem.progressMouseDisplay) {
-            t.elem.progressMouseDisplay.style.left = leftPadding + 'px';
-            t.elem.progressTooltip.innerHTML = secToTimestamp(currentTime);
-            t.elem.progressTooltip.style.right = -t.elem.progressTooltip.offsetWidth/2 + 'px';
-			if (currentTime > t.media.currentTime) {
-				t.elem.progressMouseDisplay.style.backgroundColor = 'black';
+        let currentTime = media.duration*percentage;
+        if (progressMouseDisplay) {
+            progressMouseDisplay.style.left = leftPadding + 'px';
+            progressTooltip.innerHTML = secToTimestamp(currentTime);
+            progressTooltip.style.right = -progressTooltip.offsetWidth/2 + 'px';
+			if (currentTime > media.currentTime) {
+				progressMouseDisplay.style.backgroundColor = 'black';
 			} else {
-				t.elem.progressMouseDisplay.style.backgroundColor = 'white';
+				progressMouseDisplay.style.backgroundColor = 'white';
 			}
         }
-        if (t.dragging) {
-            t.media.currentTime = currentTime;
-            t.elem.progressBar.style.width = percentage*100 + '%';
+        if (that.dragging) {
+            media.currentTime = currentTime;
+            progressBar.style.width = percentage*100 + '%';
         }
-	};
-    addMultipleEventListeners (this.elem.progressControl, ['mousemove', 'touchmove'], this.event.progressBarMouseDisplay);
+	});
 	
 
     //Fullscreen
-	if (this.isVideo) {
-		this.requestFullscreen = function () {
-			if (t.controls.requestFullscreen) {
-				t.controls.requestFullscreen();
-			} else if (t.controls.mozRequestFullScreen) { /* Firefox */
-				t.controls.mozRequestFullScreen();
-			} else if (t.controls.msRequestFullscreen) { /* IE11 */
-				t.controls.msRequestFullscreen();	
-			} else if (t.controls.webkitRequestFullscreen && !IS_IPAD) { /* Safari */
-				t.controls.webkitRequestFullscreen();
-			} else if (t.media.webkitEnterFullscreen) { /* iPhone */
-				t.media.webkitEnterFullscreen();
-			}
-			t.controls.focus();
-		};
-		this.exitFullscreen = function () {
-			if (document.exitFullscreen) {
-				document.exitFullscreen();
-			} else if (document.webkitExitFullscreen) { /* Safari */
-				document.webkitExitFullscreen();
-			} else if (document.mozCancelFullScreen) { /* Firefox */
-				document.mozCancelFullScreen();
-			} else if (document.msExitFullscreen) { /* IE11 */
-				document.msExitFullscreen();	
-			}
-			t.controls.focus();
-		};
-		this.toggleFullscreen = function () {
-			if (t.controls.classList.contains('vjs-fullscreen')) {
-				t.exitFullscreen ();	
-			} else {
-				t.requestFullscreen ();
-			}
-		};
-
-		this.event.fullscreenButtonClick = function (event) {
+	function requestFullscreen () {
+		if (controls.requestFullscreen) {
+			controls.requestFullscreen();
+		} else if (controls.mozRequestFullScreen) { /* Firefox */
+			controls.mozRequestFullScreen();
+		} else if (controls.msRequestFullscreen) { /* IE11 */
+			controls.msRequestFullscreen();	
+		} else if (controls.webkitRequestFullscreen && !IS_IPAD) { /* Safari */
+			controls.webkitRequestFullscreen();
+		} else if (media.webkitEnterFullscreen) { /* iPhone and iPad */
+			media.webkitEnterFullscreen();
+		}
+		controls.focus();
+	}
+	function exitFullscreen () {
+		if (document.exitFullscreen) {
+			document.exitFullscreen();
+		} else if (document.webkitExitFullscreen) { /* Safari */
+			document.webkitExitFullscreen();
+		} else if (document.mozCancelFullScreen) { /* Firefox */
+			document.mozCancelFullScreen();
+		} else if (document.msExitFullscreen) { /* IE11 */
+			document.msExitFullscreen();	
+		}
+		controls.focus();
+	}
+	function toggleFullscreen () {
+		if (controls.classList.contains('vjs-fullscreen')) {
+			exitFullscreen ();	
+		} else {
+			requestFullscreen ();
+		}
+	}
+	if (isVideo) {
+		fullscreenButton.addEventListener('click', function (event) {
 			event.stopPropagation();
-			t.toggleFullscreen ();
-		};
-		this.elem.fullscreenButton.addEventListener('click', event => this.event.fullscreenButtonClick(event), true);
+			toggleFullscreen ();
+		}, true);
 
-		this.event.fullscreenChange = function () {
+		var fullscreenChange = function () {
 			if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-				t.controls.classList.add('vjs-fullscreen');
-				t.elem.fullscreenButton.title = 'Exit Fullscreen';
+				controls.classList.add('vjs-fullscreen');
+				fullscreenButton.title = 'Exit Fullscreen';
 			} else {
-				t.controls.classList.remove('vjs-fullscreen');
-				t.elem.fullscreenButton.title = 'Fullscreen';
+				controls.classList.remove('vjs-fullscreen');
+				fullscreenButton.title = 'Fullscreen';
 			}
 		};
-		document.addEventListener('fullscreenchange', event => this.event.fullscreenChange(event));
-		document.addEventListener('mozfullscreenchange', event => this.event.fullscreenChange(event));
-		document.addEventListener('MSFullscreenChange', event => this.event.fullscreenChange(event));
-		document.addEventListener('webkitfullscreenchange', event => this.event.fullscreenChange(event));
+		document.addEventListener('fullscreenchange', event => fullscreenChange(event));
+		document.addEventListener('mozfullscreenchange', event => fullscreenChange(event));
+		document.addEventListener('MSFullscreenChange', event => fullscreenChange(event));
+		document.addEventListener('webkitfullscreenchange', event => fullscreenChange(event));
 	}
 
     //Picture in picture
-    if (this.isVideo && this.elem.PIPButton) {
+    if (isVideo && PIPButton) {
         if ('pictureInPictureEnabled' in document) {
-            t.elem.PIPButton.classList.remove('vjs-disabled');
-            t.elem.PIPButton.disabled = false;
+            PIPButton.classList.remove('vjs-disabled');
+            PIPButton.disabled = false;
         } else {
-            t.elem.PIPButton.classList.add('vjs-disabled');
-            t.elem.PIPButton.disabled = true;
+            PIPButton.classList.add('vjs-disabled');
+			PIPButton.disabled = true;
         }
 		
-		this.event.PIPButtonClicked = function (event) {
+        PIPButton.addEventListener('click', function (event) {
 			event.stopPropagation();
-            if (t.controls.classList.contains('vjs-picture-in-picture')) {
+            if (controls.classList.contains('vjs-picture-in-picture')) {
                 document.exitPictureInPicture();
             } else {
-                t.media.requestPictureInPicture();
+                media.requestPictureInPicture();
             }
-            t.controls.focus();
-		};
-        this.elem.PIPButton.addEventListener('click', event => this.event.PIPButtonClicked(event), true);
+            controls.focus();
+		}, true);
 		
-		this.event.enterPIP = function () {
-			t.controls.classList.add('vjs-picture-in-picture');
-            t.elem.PIPButton.title = 'Exit Picture-in-Picture';
-		};
-        this.media.addEventListener('enterpictureinpicture', event => this.event.enterPIP(event));
+        media.addEventListener('enterpictureinpicture', function () {
+			controls.classList.add('vjs-picture-in-picture');
+            PIPButton.title = 'Exit Picture-in-Picture';
+		});
 		
-		this.event.leavePIP = function () {
-			t.controls.classList.remove('vjs-picture-in-picture');
-            t.elem.PIPButton.title = 'Picture-in-Picture';
-		};
-        this.media.addEventListener('leavepictureinpicture', event => this.event.leavePIP(event));
+        media.addEventListener('leavepictureinpicture', function () {
+			controls.classList.remove('vjs-picture-in-picture');
+            PIPButton.title = 'Picture-in-Picture';
+		});
     }
 
     //Hotkeys
-	if (this.isVideo) {
-		/*controls.addEventListener('touchend',function (event) {
-			//event.preventDefault();
+	if (isVideo) {
+		controls.addEventListener('click', function () {
 			if (!controls.classList.contains('vjs-has-started')){
 				controls.classList.add('vjs-has-started');
-				play ();
+				play();
 			}
-		}, false);*/
-		this.event.clickedToStart = function () {
-			if (!t.controls.classList.contains('vjs-has-started')){
-				t.controls.classList.add('vjs-has-started');
-				t.play();
-			} /*else {
-				togglePlayback ();
-			}*/
-		};
-		this.controls.addEventListener('click', event => this.event.clickedToStart(event), false);
-		/*
-		this.elem.progressHolder.addEventListener('click', function (event) {
-			event.stopPropagation();
-		}, true);*/
+		});
 	}
 	
-	if (this.isVideo) {
-		this.event.hotkeys = function () {
+	if (isVideo) {
+		controls.addEventListener('keydown', function () {
 			let keyCode = event.which || event.keyCode;
 			if (keyCode == 32) {
-				t.togglePlayback ();
+				togglePlayback ();
 				event.preventDefault();
 			} else if (keyCode == 70) {
-				t.toggleFullscreen ();
+				toggleFullscreen ();
 				event.preventDefault();
 			} else if (keyCode == 37) {
-				t.media.currentTime = t.media.currentTime - 5;
+				media.currentTime = media.currentTime - 5;
 				event.preventDefault();
 			} else if (keyCode == 39) {
-				t.media.currentTime = t.media.currentTime + 5;
+				media.currentTime = media.currentTime + 5;
 				event.preventDefault();
 			} else if (keyCode == 38) {
-				t.media.currentTime = t.media.currentTime + 15;
+				media.currentTime = media.currentTime + 15;
 				event.preventDefault();
 			} else if (keyCode == 40) {
-				t.media.currentTime = t.media.currentTime - 15;
+				media.currentTime = media.currentTime - 15;
 				event.preventDefault();
 			}
-		};
-		this.controls.addEventListener('keydown', event => this.event.hotkeys(event), true);
+		}, true);
 	}
 	
 
     //Helper Functions
-	this.play = function () {
-		if (t.isVideo && !t.useNative) {
-			t.playing = true;
-			t.startBuffer();
+	function play() {
+		if (isVideo && !useNative) {
+			that.playing = true;
+			startBuffer();
 		} else {
-			t.media.play();
+			media.play();
 		}
-	};
+	}
 	
-	this.pause = function () {
-		if (t.isVideo && !t.useNative) {
-			t.playing = false;
+	function pause() {
+		if (isVideo && !useNative) {
+			that.playing = false;
 		}
-		t.media.pause();
-	};
+		media.pause();
+	}
 	
-	this.event.onPlay = function () {
-        t.elem.playButton.classList.remove('vjs-paused');
-        t.elem.playButton.classList.add('vjs-playing');
-        t.controls.classList.remove('vjs-paused');
-        t.controls.classList.add('vjs-playing');
-        if (t.controls.classList.contains('vjs-ended')) {
-            t.controls.classList.remove('vjs-ended');
-            t.elem.playButton.classList.remove('vjs-ended');
+    media.addEventListener('play', function () {
+        playButton.classList.remove('vjs-paused');
+        playButton.classList.add('vjs-playing');
+        controls.classList.remove('vjs-paused');
+        controls.classList.add('vjs-playing');
+        if (controls.classList.contains('vjs-ended')) {
+            controls.classList.remove('vjs-ended');
+            playButton.classList.remove('vjs-ended');
         }
-		if (t.isVideo && !t.useNative) {
-			t.playing = true;
-			t.startBuffer ();
+		if (isVideo && !useNative) {
+			that.playing = true;
+			startBuffer ();
 		}
-	};
-    this.media.addEventListener('play', event => this.event.onPlay(event));
+	});
 
-	this.event.onPause = function () {
-		t.elem.playButton.classList.remove('vjs-playing');
-        t.elem.playButton.classList.add('vjs-paused');
-        t.controls.classList.remove('vjs-playing');
-        t.controls.classList.add('vjs-paused');
-        if (t.media.currentTime == t.media.duration) {
-            t.controls.classList.add('vjs-ended');
-            t.elem.playButton.classList.add('vjs-ended');
+    media.addEventListener('pause', function () {
+		playButton.classList.remove('vjs-playing');
+        playButton.classList.add('vjs-paused');
+        controls.classList.remove('vjs-playing');
+        controls.classList.add('vjs-paused');
+        if (media.currentTime == media.duration) {
+            controls.classList.add('vjs-ended');
+            playButton.classList.add('vjs-ended');
         }
-	};
-    this.media.addEventListener('pause', event => this.event.onPause(event));
+	});
 	
-	this.event.onEnded = function () {
-        t.controls.classList.add('vjs-ended');
-        t.elem.playButton.classList.add('vjs-ended');
-	};
-    this.media.addEventListener('ended', event => this.event.onEnded(event));
+    media.addEventListener('ended', function () {
+        controls.classList.add('vjs-ended');
+        playButton.classList.add('vjs-ended');
+	});
 
-    this.togglePlayback = function () {
-        if (t.controls.classList.contains('vjs-playing')) {
-            t.pause();
+    function togglePlayback() {
+        if (controls.classList.contains('vjs-playing')) {
+            pause();
         } else {
-            t.play();
+            play();
         }
-    };
+    }
 	
-	this.checkBuffer = function (event) {
+	function checkBuffer(event) {
         if (event.type == 'play' || event.type == 'timeupdate') {
-            t.media.pause();
+            media.pause();
         }
-        for (var i = t.media.buffered.length - 1; i >= 0; i--) {
-            if (t.media.buffered.start(i) <= t.media.currentTime) {
-                if (t.media.buffered.end(i) >= Math.min(t.media.currentTime+15, t.media.duration)) {
-                    t.media.removeEventListener ('progress', t.checkBufferEventHandler);
-                    t.media.removeEventListener ('play', t.checkBufferEventHandler);
-                    t.media.removeEventListener ('timeupdate', t.checkBufferEventHandler);
-                    t.controls.classList.remove('vjs-seeking');
-                    t.buffering = false;
-                    if (t.playing)
-                        t.media.play();
+        for (var i = media.buffered.length - 1; i >= 0; i--) {
+            if (media.buffered.start(i) <= media.currentTime) {
+                if (media.buffered.end(i) >= Math.min(media.currentTime+15, media.duration)) {
+                    media.removeEventListener ('progress', checkBuffer);
+                    media.removeEventListener ('play', checkBuffer);
+                    media.removeEventListener ('timeupdate', checkBuffer);
+                    controls.classList.remove('vjs-seeking');
+                    that.buffering = false;
+                    if (that.playing)
+                        media.play();
                 }
                 break;
             }
         }
-    };
-	this.checkBufferEventHandler = function (event) {
-		t.checkBuffer(event);
-	};
+    }
 	
-    this.startBuffer = function () {
+    function startBuffer() {
         function addCheckBuffer () {
-			if (!t.media.paused && t.media.readyState>2) {
-				t.media.pause();
-			}
-            t.buffering = true;
-            t.controls.classList.add('vjs-seeking');
-            t.media.addEventListener ('progress', t.checkBufferEventHandler);
-            t.media.addEventListener ('play', t.checkBufferEventHandler);
-            t.media.addEventListener ('timeupdate', t.checkBufferEventHandler);
+			/*if (!media.paused && media.readyState>2) {
+				media.pause();
+			}*/
+            that.buffering = true;
+            controls.classList.add('vjs-seeking');
+            media.addEventListener ('progress', checkBuffer);
+            media.addEventListener ('play', checkBuffer);
+            media.addEventListener ('timeupdate', checkBuffer);
         }
-        if (!t.buffering) {
-            if (t.media.buffered.length == 0) {
+        if (!that.buffering) {
+            if (media.buffered.length == 0) {
                 addCheckBuffer ();
             } else {
-                for (var i = t.media.buffered.length - 1; i >= 0; i--) {
-                    if (t.media.buffered.start(i) <= t.media.currentTime) {
-                        if (t.media.buffered.end(i) < Math.min(t.media.currentTime+14.9, t.media.duration)) {
+                for (var i = media.buffered.length - 1; i >= 0; i--) {
+                    if (media.buffered.start(i) <= media.currentTime) {
+                        if (media.buffered.end(i) < Math.min(media.currentTime+14.9, media.duration)) {
                             addCheckBuffer ();
                         } else {
-                            if (t.playing)
-                                t.media.play();
+                            if (that.playing)
+                                media.play();
                         }
                         break;
                     }
                 }
             }
         }
-    };
-	
-	this.currentTime = function (time) {
-		this.media.currentTime = time;
-	};
+    }
 
     function addMultipleEventListeners (elem, types, callback, useCapture) {
         for (var i = 0; i < types.length; i++) {
             elem.addEventListener (types[i], event => callback(event), useCapture===undefined?false:useCapture);
         }
     }
-}
+	
+	var that = {
+		//State variables
+		media: media,
+		playing: false,
+		buffering: false,
+		dragging: false,
+		inactiveCountdown: 3000,
+		play: play,
+		pause: pause
+	};
+	
+	return that;
+})(controls_ext, config_ext);

@@ -343,7 +343,7 @@ window.addEventListener("load", function(){
 				videoJS.style.paddingTop = 9/16*100 + '%';
 				videoJS = videoJS.cloneNode(true);
 				this.dispose();
-				mediaInstances.push(new videojs_mod (videoJS, {useNative: USE_NATIVE}));
+				mediaInstances.push(videojs_mod (videoJS, {useNative: USE_NATIVE}));
 				document.getElementById('media-holder').appendChild(videoJS);
 
 				addVideoNode (file.url, {chapters: file.chapters, currentTime: timestampParam});
@@ -406,7 +406,7 @@ window.addEventListener("load", function(){
 				videojs(audioNode, config, function () {
 					audioNode = document.getElementById('track' + index).cloneNode(true);
 					this.dispose();
-					mediaInstances.push(new videojs_mod (audioNode, {audio: true}));
+					mediaInstances.push(videojs_mod (audioNode, {audio: true}));
 					document.getElementById('media-holder').appendChild(subtitle);
 					document.getElementById('media-holder').appendChild(audioNode);
 					let audio = mediaInstances[index].media;
