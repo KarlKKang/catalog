@@ -97,7 +97,7 @@ window.addEventListener("load", function(){
 		xmlhttp.send("series="+seriesID+"&ep="+epIndex+((formatIndex==null)?'':('&format='+formatIndex)));
 	
 		//var USE_NATIVE = TOUCH_ENABLED || IS_IPHONE || IS_NATIVE_ANDROID || IS_SAFARI;
-		var USE_NATIVE = !Hls.isSupported() || IS_SAFARI;
+		var USE_MSE = Hls.isSupported() && !IS_SAFARI;
 		//var USE_NATIVE = true;
 
 
@@ -343,7 +343,7 @@ window.addEventListener("load", function(){
 				videoJS.style.paddingTop = 9/16*100 + '%';
 				videoJS = videoJS.cloneNode(true);
 				this.dispose();
-				mediaInstances.push(videojs_mod (videoJS, {useNative: USE_NATIVE}));
+				mediaInstances.push(videojs_mod (videoJS, {useNative: !USE_MSE}));
 				document.getElementById('media-holder').appendChild(videoJS);
 
 				addVideoNode (file.url, {chapters: file.chapters, currentTime: timestampParam});
@@ -412,7 +412,7 @@ window.addEventListener("load", function(){
 					let audio = mediaInstances[index].media;
 					audio.volume = 1;
 
-					if (!USE_NATIVE) {
+					if (USE_MSE) {
 						var config = {
 							enableWebVTT: false,
 							enableIMSC1: false,
@@ -427,7 +427,11 @@ window.addEventListener("load", function(){
 						}
 
 						let hls = new Hls(config);
-
+						hls.on(Hls.Events.ERROR, function (event, data) {
+							if (data.fatal) {
+								showPlaybackError();
+							}
+						});
 						hls.on(Hls.Events.MANIFEST_PARSED, function () {
 							hlsInstances.push=hls;
 							counter ++;
@@ -438,6 +442,7 @@ window.addEventListener("load", function(){
 						hls.loadSource(file.list[index].url);
 						hls.attachMedia(audio);
 					} else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+						audio.addEventListener('error', function () {showPlaybackError ();});
 						audio.setAttribute ('crossorigin', 'use-credentials');
 						audio.addEventListener('loadedmetadata', function () {
 							counter ++;
@@ -447,6 +452,8 @@ window.addEventListener("load", function(){
 						});
 						audio.src = file.list[index].url;
 						audio.load();
+					} else {
+						showCompatibilityError ();
 					}
 				});
 				
@@ -584,7 +591,7 @@ window.addEventListener("load", function(){
 				}
 			}
 			
-			if (!USE_NATIVE) {
+			if (USE_MSE) {
 				var config = {
 					enableWebVTT: false,
 					enableIMSC1: false,
@@ -600,6 +607,11 @@ window.addEventListener("load", function(){
 				
 				var hls = new Hls(config);
 				
+				hls.on(Hls.Events.ERROR, function (event, data) {
+					if (data.fatal) {
+						showPlaybackError();
+					}
+				});
 				hls.on(Hls.Events.MANIFEST_PARSED, function () {
 					hlsInstances=[hls];
 					videoReady ();
@@ -608,6 +620,7 @@ window.addEventListener("load", function(){
 				hls.loadSource(url);
 				hls.attachMedia(video);
 			} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+				video.addEventListener('error', function () {showPlaybackError ();});
 				video.setAttribute ('crossorigin', 'use-credentials');
 				video.addEventListener('loadedmetadata', function () {
 					videoReady ();
@@ -620,7 +633,29 @@ window.addEventListener("load", function(){
 				});
 				video.src = url;
 				video.load();
+			} else {
+				showCompatibilityError ();
 			}
+		}
+		
+		function showPlaybackError () {
+			document.getElementById('media-holder').classList.add('hidden');
+			document.getElementById('message-body').innerHTML = '<p>再生中にエラーが発生しました。後ほどもう一度お試しいただくか、それでも問題が解決しない場合は管理者にお問い合わせください。</p>';
+			document.getElementById('message').classList.remove('hidden');
+		}
+		
+		function showCompatibilityError () {
+			document.getElementById('media-holder').classList.add('hidden');
+			document.getElementById('message-body').innerHTML = '<p>お使いのブラウザやデバイスはHLSに対応していません。HLSに対応している一般的なブラウザを以下に示します。</p>\
+			<ul>\
+				<li><p>Chrome 39+ for Android</p></li>\
+				<li><p>Chrome 39+ for Desktop</p></li>\
+				<li><p>Firefox 41+ for Android</p></li>\
+				<li><p>Firefox 42+ for Desktop</p></li>\
+				<li><p>Edge for Windows 10+</p></li>\
+				<li><p>Safari 6.0+ for macOS, iOS and iPadOS</p></li>\
+			</ul>';
+			document.getElementById('message').classList.remove('hidden');
 		}
 
 		function goToEP (dest_series, dest_ep) {
