@@ -289,6 +289,42 @@ window.addEventListener("load", function(){
 				}, 3*1000);
 			}
 			
+			/*if (USE_NATIVE) {
+				var video = document.createElement('video');
+				video.setAttribute('lang', 'en');
+				video.controls = true;
+				video.setAttribute('playsinline', 'playsinline');
+				video.addEventListener('contextmenu', event => event.preventDefault());
+				document.getElementById('media-holder').appendChild(video);
+				mediaInstances.push({media: video});
+				addVideoNode (file.url, {chapters: file.chapters, currentTime: timestampParam});
+				updateURLTimestamp();
+			} else {
+				var videoJS = document.createElement('video-js');
+				
+				videoJS.classList.add('vjs-big-play-centered');
+				videoJS.setAttribute('lang', 'en');
+				document.getElementById('media-holder').appendChild(videoJS);
+
+				var config = {
+					controls: true,
+					autoplay: false,
+					preload: 'auto',
+					fluid: true,
+					playsinline: true,
+				};
+
+				videojs(videoJS, config, function () {
+					videoJS.style.paddingTop = 9/16*100 + '%';
+					videoJS = videoJS.cloneNode(true);
+					this.dispose();
+					mediaInstances.push(new videojs_mod (videoJS));
+					document.getElementById('media-holder').appendChild(videoJS);
+
+					addVideoNode (file.url, {chapters: file.chapters, currentTime: timestampParam});
+					updateURLTimestamp();
+				});
+			}*/
 			var videoJS = document.createElement('video-js');
 				
 			videoJS.classList.add('vjs-big-play-centered');
@@ -314,7 +350,7 @@ window.addEventListener("load", function(){
 				updateURLTimestamp();
 			});
 		}
-		
+
 		function updateAudio (file) {
 			var counter = 0;
 
@@ -339,25 +375,6 @@ window.addEventListener("load", function(){
 				titleElem.appendChild(artistElem);
 			}
 			
-			//smooth progress bar scrubbing https://github.com/videojs/video.js/issues/4460
-			const SeekBar = videojs.getComponent('SeekBar');
-
-			SeekBar.prototype.getPercent = function getPercent() {
-				const time = this.player_.currentTime();
-				const percent = time / this.player_.duration();
-				return percent >= 1 ? 1 : percent;
-			};
-
-			SeekBar.prototype.handleMouseMove = function handleMouseMove(event) {
-				let newTime = this.calculateDistance(event) * this.player_.duration();
-				if (newTime === this.player_.duration()) {
-					newTime = newTime - 0.1;
-				}
-				this.player_.currentTime(newTime);
-				this.update();
-			};
-			//
-			
 			var config = {
 				controls: true,
 				autoplay: false,
@@ -377,98 +394,23 @@ window.addEventListener("load", function(){
 
 				let audioNode = document.createElement('audio');
 				let subtitle = document.createElement('p');
-				subtitle.setAttribute('class', 'sub-title');
-				let format = document.createElement('span');
 				
 				audioNode.id = 'track'+index;
 				
 				audioNode.classList.add("vjs-default-skin");
 				audioNode.classList.add("video-js");
 				audioNode.setAttribute('lang', 'en');
-				
-				//subtitle
-				if (file.list[i].title != '') {
-					subtitle.innerHTML = file.list[i].title;
 
-					if (file.list[i].artist != '') {
-						let artist = document.createElement('span');
-						artist.setAttribute('class', 'artist');
-						artist.innerHTML = '／' + file.list[i].artist;
-						subtitle.appendChild(artist);
-					}
-				}
-				
-				//format
-				if (file.list[i].format != '') {
-					if (subtitle.innerHTML != '')
-						subtitle.innerHTML += '<br />';
-					
-					format.setAttribute('class', 'format');
-					format.innerHTML = file.list[i].format;
-					
-					let samplerate = file.list[i].samplerate;
-					if (samplerate != '') {
-						let samplerateText = samplerate;
-						switch (samplerate) {
-							case '44100':
-								samplerateText = '44.1kHz';
-								break;
-							case '48000':
-								samplerateText = '48.0kHz';
-								break;
-							case '96000':
-								samplerateText = '96.0kHz';
-								break;
-							case '88200':
-								samplerateText = '88.2kHz';
-								break;
-							case '192000':
-								samplerateText = '192.0kHz';
-								break;
-						}
-						format.innerHTML += ' ' + samplerateText;
-						
-						let bitdepth = file.list[i].bitdepth;
-						if (bitdepth != '') {
-							let bitdepthText = bitdepth;
-							switch (bitdepth) {
-								case '16':
-									bitdepthText = '16bit';
-									break;
-								case '24':
-									bitdepthText = '24bit';
-									break;
-								case '32':
-									bitdepthText = '32bit';
-									break;	
-							}
-							format.innerHTML += '/' + bitdepthText;
-						}
-					}
-					subtitle.appendChild(format);
-				}
-				
-				document.getElementById('media-holder').appendChild(subtitle);
 				document.getElementById('media-holder').appendChild(audioNode);
 
 				videojs(audioNode, config, function () {
-					let oldAudioNode = document.getElementById('track' + index);
-					audioNode = oldAudioNode.cloneNode(true);
-					mediaInstances[index] = videojs_mod (audioNode, {audio: true});
-					
-					oldAudioNode.parentNode.insertBefore(audioNode, oldAudioNode.nextSibling);
+					audioNode = document.getElementById('track' + index).cloneNode(true);
 					this.dispose();
-					
+					mediaInstances.push(videojs_mod (audioNode, {audio: true}));
+					document.getElementById('media-holder').appendChild(subtitle);
+					document.getElementById('media-holder').appendChild(audioNode);
 					let audio = mediaInstances[index].media;
 					audio.volume = 1;
-					
-					let url = file.list[index].url;
-					
-					if (file.list[index].flac_fallback_url != '' && !audio.canPlayType('video/mp4; codecs="alac"')) {
-						url = file.list[index].flac_fallback_url;
-						format.innerHTML = format.innerHTML.replace('ALAC', 'FLAC');
-						format.innerHTML = format.innerHTML.replace('32bit', '24bit');
-					}
 
 					if (USE_MSE) {
 						var config = {
@@ -478,7 +420,6 @@ window.addEventListener("load", function(){
 							lowLatencyMode: false,
 							enableWorker: false,
 							maxFragLookUpTolerance: 0,
-							appendErrorMaxRetry: 0,
 							debug: false,
 							xhrSetup: function(xhr, url) {
 								xhr.withCredentials = true;
@@ -486,29 +427,22 @@ window.addEventListener("load", function(){
 						}
 
 						let hls = new Hls(config);
-						hlsInstances[index]=hls;
 						hls.on(Hls.Events.ERROR, function (event, data) {
 							if (data.fatal) {
-								hls.destroy();
-								if (data.type == Hls.ErrorTypes.MEDIA_ERROR) {
-									updateAudioVJS(index, url);
-									if (debug)
-										console.log('hls.js failed to handle the audio source for index: ' + index + ', switching to video.js');
-								}
-								else
-									showPlaybackError('Index ' + index + ': ' + data.detail);
+								showPlaybackError();
 							}
 						});
 						hls.on(Hls.Events.MANIFEST_PARSED, function () {
+							hlsInstances.push=hls;
 							counter ++;
 							if (counter == file.list.length) {
 								audioReady ();
 							}
 						});
-						hls.loadSource(url);
+						hls.loadSource(file.list[index].url);
 						hls.attachMedia(audio);
 					} else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-						audio.addEventListener('error', function () {showPlaybackError();});
+						audio.addEventListener('error', function () {showPlaybackError ();});
 						audio.setAttribute ('crossorigin', 'use-credentials');
 						audio.addEventListener('loadedmetadata', function () {
 							counter ++;
@@ -516,13 +450,24 @@ window.addEventListener("load", function(){
 								audioReady ();
 							}
 						});
-						audio.src = url;
+						audio.src = file.list[index].url;
 						audio.load();
 					} else {
 						showCompatibilityError ();
 					}
 				});
-			
+				
+				if (file.list[i].title != '') {
+					subtitle.setAttribute('class', 'sub-title');
+					subtitle.innerHTML = file.list[i].title;
+
+					if (file.list[i].artist != '') {
+						let artist = document.createElement('span');
+						artist.setAttribute('class', 'artist');
+						artist.innerHTML = '／' + file.list[i].artist;
+						subtitle.appendChild(artist);
+					}
+				}
 			}
 			
 			function audioReady () {
@@ -541,74 +486,6 @@ window.addEventListener("load", function(){
 						}
 					});
 				}
-			}
-		}
-		
-		function updateAudioVJS (index, url) {
-			var config = {
-				controls: true,
-				autoplay: false,
-				preload: 'auto',
-				fluid: true,
-				aspectRatio: "1:0",
-				crossOrigin: "use-credentials",
-				controlBar: {
-					fullscreenToggle: false,
-					pictureInPictureToggle: false
-				},
-				html5: {
-					vhs: {
-						withCredentials: true
-					}
-				}
-			};
-			
-			if (!USE_MSE) {
-				config.html5.vhs.overrideNative = false;
-			} else {
-				config.html5.vhs.overrideNative = true;
-				config.html5.nativeAudioTracks = false;
-				config.html5.nativeVideoTracks = false;
-			}
-			
-			let audioNode = document.createElement('audio');
-			document.getElementById('track'+index).replaceWith(audioNode);
-			audioNode.id = 'track'+index;
-
-			audioNode.classList.add("vjs-default-skin");
-			audioNode.classList.add("video-js");
-			audioNode.setAttribute('lang', 'en');
-			let audio = videojs(audioNode, config, function () {
-				mediaInstances[index] = audio;
-				
-				audio.on('error', function() {
-					showPlaybackError('Index ' + index + ': ' + 'videojs: '+JSON.stringify(audio.error()));
-				});
-
-				audio.src({
-					src: url,
-					type: 'application/x-mpegURL'
-				});
-
-				audio.volume(1);
-					
-				audioReady ();
-			});
-			document.getElementById('track'+index).addEventListener('contextmenu', event => event.preventDefault());
-			
-			function audioReady () {
-				mediaInstances[index].on('play', function () {
-					for (var j = 0; j < mediaInstances.length; j++) {
-						if (j != index) {
-							mediaInstances[j].pause();
-						}
-					}
-				});
-				mediaInstances[index].on('ended', function () {
-					if (index != mediaInstances.length-1) {
-						mediaInstances[index+1].play();
-					}
-				});
 			}
 		}
 
@@ -732,7 +609,7 @@ window.addEventListener("load", function(){
 				
 				hls.on(Hls.Events.ERROR, function (event, data) {
 					if (data.fatal) {
-						showPlaybackError(data.detail);
+						showPlaybackError();
 					}
 				});
 				hls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -761,9 +638,9 @@ window.addEventListener("load", function(){
 			}
 		}
 		
-		function showPlaybackError (detail) {
+		function showPlaybackError () {
 			document.getElementById('media-holder').classList.add('hidden');
-			document.getElementById('message-body').innerHTML = '<p>再生中にエラーが発生しました。後ほどもう一度お試しいただくか、それでも問題が解決しない場合は管理者にお問い合わせください。</p>'+(detail?('<p>Error detail: '+detail+'</p>'):'');
+			document.getElementById('message-body').innerHTML = '<p>再生中にエラーが発生しました。後ほどもう一度お試しいただくか、それでも問題が解決しない場合は管理者にお問い合わせください。</p>';
 			document.getElementById('message').classList.remove('hidden');
 		}
 		

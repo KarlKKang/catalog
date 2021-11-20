@@ -92,3 +92,7 @@
 .video-js.vjs-audio {
   min-height: 3em;
 }
+/* Hide audio buffer progress. */
+.video-js.vjs-audio .vjs-load-progress {
+	display: none;
+}

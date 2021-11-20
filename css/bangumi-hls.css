@@ -249,6 +249,12 @@ select:hover{
 	font-weight: 300;
 }
 
+.sub-title > .format {
+	color: #adadb5;
+	font-size: small;
+	font-weight: 300;
+}
+
 #title > .artist {
 	font-size: large;
 }

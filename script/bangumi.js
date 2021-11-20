@@ -540,6 +540,7 @@ window.addEventListener("load", function(){
 				crossOrigin: "use-credentials",
 				html5: {
 					vhs: {
+						parse708captions: false,
 						withCredentials: true
 					},
 					nativeControlsForTouch: true
@@ -598,17 +599,12 @@ window.addEventListener("load", function(){
 							video.play();
 					};
 					video.on ('loadeddata', initialPause);
-
-					video.src({
-						src: url,
-						type: 'application/x-mpegURL'
-					});
-				} else {
-					video.src({
-						src: url,
-						type: 'application/x-mpegURL'
-					});
-				}
+				} 
+				
+				video.src({
+					src: url,
+					type: 'application/x-mpegURL'
+				});
 
 				video.volume(1);
 
@@ -797,11 +793,19 @@ window.addEventListener("load", function(){
 
 			if (videoJSInstances[0].buffered().length == 0) {
 				addCheckBuffer ();
+				if (debug)
+					console.log('No buffer detected. Buffering started.');
 			} else {
-				for (var i = 0; i < videoJSInstances[0].buffered().length; i++) {
-					if (videoJSInstances[0].buffered().start(videoJSInstances[0].buffered().length - 1 - i) - 0.1 <= videoJSInstances[0].currentTime()) {
-						if (videoJSInstances[0].buffered().end(videoJSInstances[0].buffered().length - 1 - i) < Math.min(videoJSInstances[0].currentTime()+15, videoJSInstances[0].duration())) {
+				for (var i = videoJSInstances[0].buffered().length - 1; i >= 0; i--) {
+					if (videoJSInstances[0].buffered().start(i) - 0.1 <= videoJSInstances[0].currentTime()) {
+						if (debug)
+							console.log('Start buffer check: ' + videoJSInstances[0].buffered().start(i) + '-' + videoJSInstances[0].buffered().end(i) + '. Current time: ' + videoJSInstances[0].currentTime());
+						if (videoJSInstances[0].buffered().end(i) < Math.min(videoJSInstances[0].currentTime()+14.9, videoJSInstances[0].duration())) {
 							addCheckBuffer ();
+							if (debug)
+								console.log('Not buffered! Start buffering.');
+						} else if (debug) {
+							console.log('No buffer needed. Playback started.');
 						}
 						break;
 					}
@@ -810,14 +814,21 @@ window.addEventListener("load", function(){
 		}
 
 		function checkBuffer () {
-			if (!videoJSInstances[0].paused() && videoJSInstances[0].readyState() > 2) {
+			/*if (!videoJSInstances[0].paused() && videoJSInstances[0].readyState() > 2) {
 				videoJSInstances[0].pause();
+			}*/
+			if (event.type == 'play' || (event.type == 'timeupdate' && !videoJSInstances[0].paused())) {
+				videoJSInstances[0].pause();
+				if (debug)
+					console.log('Play request during buffering detected! Event type: ' + event.type);
 			}
 			document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.add('vjs-seeking');
 
-			for (var i = 0; i < videoJSInstances[0].buffered().length; i++) {
-				if (videoJSInstances[0].buffered().start(videoJSInstances[0].buffered().length - 1 - i) - 0.1 <= videoJSInstances[0].currentTime() && videoJSInstances[0].buffered().end(videoJSInstances[0].buffered().length - 1 - i) >= videoJSInstances[0].currentTime()) {
-					if (videoJSInstances[0].buffered().end(videoJSInstances[0].buffered().length - 1 - i) >= Math.min(videoJSInstances[0].currentTime()+15, videoJSInstances[0].duration())) {
+			for (var i = videoJSInstances[0].buffered().length - 1; i >= 0; i--) {
+				if (videoJSInstances[0].buffered().start(i) - 0.1 <= videoJSInstances[0].currentTime()) {
+					if (debug)
+						console.log('Buffering: ' + videoJSInstances[0].buffered().start(i) + '-' + videoJSInstances[0].buffered().end(i) + '. Current time: ' + videoJSInstances[0].currentTime());
+					if (videoJSInstances[0].buffered().end(i) >= Math.min(videoJSInstances[0].currentTime()+15, videoJSInstances[0].duration())) {
 						document.getElementById('media-holder').getElementsByClassName('video-js')[0].classList.remove('vjs-seeking');
 						videoJSInstances[0].off ('play', checkBuffer);
 						videoJSInstances[0].off ('progress', checkBuffer);
@@ -830,6 +841,8 @@ window.addEventListener("load", function(){
 								videoJSInstances[0].on ('play', buffering);
 							});
 						}
+						if (debug)
+							console.log('Buffering finished. Playback started.');
 						break;	
 					}
 				}
