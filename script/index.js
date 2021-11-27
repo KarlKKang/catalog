@@ -66,14 +66,12 @@ window.addEventListener("load", function(){
 
 		function showSeries (series) {
 			offset ++;
-			if (series.length<15) {
-				offset='EOF';
-				if (series.length==0) {
-					return 0;
-				}
-			}
-
 			for (var i=0; i<series.length; i++) {
+				if (series[i] == 'EOF') {
+					offset='EOF';
+					break;
+				}
+				
 				let seriesNode = document.createElement('div');
 				let thumbnailNode = document.createElement('div');
 				let overlay = document.createElement('div');
@@ -149,7 +147,7 @@ window.addEventListener("load", function(){
 			var boundingRect = detector.getBoundingClientRect();
 			var viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
-			if (boundingRect.top<=viewportHeight*1.1 && offset != 'EOF' && !detector.classList.contains('loading')) {
+			if (boundingRect.top-256-24<=viewportHeight*1.5 && offset != 'EOF' && !detector.classList.contains('loading')) {
 					detector.classList.add('loading');
 					let xmlhttp = new XMLHttpRequest();
 					xmlhttp.onreadystatechange = function() {

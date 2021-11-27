@@ -24,6 +24,12 @@ window.addEventListener("load", function(){
 	document.getElementById('generate-series-id').addEventListener('click', function () {
 		generate ('series-id');
 	});
+	document.getElementById('clear-cache').addEventListener('click', function () {
+		clearCache();
+	});
+	document.getElementById('rebuild-index').addEventListener('click', function () {
+		rebuildIndex();
+	});
 	
 	start ('console', function () {initialize();});
 	
@@ -603,6 +609,69 @@ function getLogTable () {
 		if (this.readyState == 4) {
 			if (checkXHRStatus (this.status)) {
 				setOutput (this.responseText);
+			}
+		}
+	};
+	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xmlhttp.send("p="+encodeURIComponent(param));
+}
+	
+/*------------------------------------------------------------------------------------Cache Functions------------------------------------------------------------------------------------*/
+function clearCache () {
+	var dir = document.getElementById('clear-cache-dir').value;
+	if (!dir.startsWith('/') || dir.includes('..')) {
+		alert('ERROR: Invalid format for dir');
+	}
+	
+	var confirm;
+	do {
+		confirm = prompt('Type "clear" to confirm deleting cache for the following directory: ' + dir);
+		if (confirm === null) {
+			return 0;
+		}
+	} while (confirm != "clear");
+	
+	var param = {
+		'command': 'clear-cache',
+		'dir': dir
+	};
+	param = JSON.stringify (param);
+	
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4) {
+			if (checkXHRStatus (this.status)) {
+				alert(this.responseText);
+			}
+		}
+	};
+	xmlhttp.open("POST", serverURL + "/console.php",true);
+	xmlhttp.withCredentials = true;
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xmlhttp.send("p="+encodeURIComponent(param));
+}
+	
+function rebuildIndex () {
+	var confirm;
+	do {
+		confirm = prompt('Type "rebuild" to confirm rebuilding the index.');
+		if (confirm === null) {
+			return 0;
+		}
+	} while (confirm != "rebuild");
+	
+	var param = {
+		'command': 'rebuild-index'
+	};
+	param = JSON.stringify (param);
+	
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4) {
+			if (checkXHRStatus (this.status)) {
+				alert(this.responseText);
 			}
 		}
 	};

@@ -26,23 +26,23 @@ window.addEventListener("load", function(){
 	
 	var image = document.createElement('img');
 	
-	if (!('url' in param)) {
+	if (!('url' in param) || !('title' in param)) {
 		window.location.href = topURL;
 		return 0;
 	}
 	
-	if (!('token' in param)) {
-		if (!param.url.startsWith('https://cdn.featherine.com/') || !('title' in param)) {
-			window.location.href = topURL;
-			return 0;
-		}
-		showImage ();
-	} else {
+	if ('token' in param) {
 		deviceAuthentication (function () {
 			setInterval (function () {deviceAuthentication ();}, 60*1000);
 			image.setAttribute('crossorigin', 'use-credentials');
 			showImage ();
 		});
+	} else {
+		if (!param.url.startsWith('https://cdn.featherine.com/')) {
+			window.location.href = topURL;
+			return 0;
+		}
+		showImage ();
 	}
 	
 	

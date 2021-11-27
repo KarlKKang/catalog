@@ -29,7 +29,7 @@ window.addEventListener("load", function(){
 
 		var chapters = {name: [], startTime: []};
 		var mediaInstances = [], hlsInstances = [];
-		var ep;
+		var token;
 
 		var seriesID = getURLParam ('series');
 		if (seriesID == null) {
@@ -103,6 +103,8 @@ window.addEventListener("load", function(){
 
 		function updatePage (ep) {
 			document.getElementsByTagName("body")[0].classList.remove("hidden");
+			
+			token = ep.token;
 
 			var title =  ep.title;
 
@@ -639,7 +641,7 @@ window.addEventListener("load", function(){
 					let param = {
 						url: url,
 						title: document.getElementById('title').innerHTML,
-						token: ep.token
+						token: token
 					};
 					document.cookie = 'image-param='+encodeURIComponent(JSON.stringify(param))+';max-age=30;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
 					if (debug) {
@@ -674,7 +676,7 @@ window.addEventListener("load", function(){
 			xmlhttp.open("POST", serverURL + "/format_switch.php", true);
 			xmlhttp.withCredentials = true;
 			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-			xmlhttp.send("file="+encodeURIComponent(JSON.stringify(file))+"&format="+selectedFormat);
+			xmlhttp.send("token="+token+"&format="+selectedFormat);
 
 			/*
 			var resume = function () {
