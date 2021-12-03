@@ -115,6 +115,11 @@ window.addEventListener("load", function(){
 			updateSeasonSelector (ep.seasons);
 
 			if (ep.age_restricted) {
+				if (ep.age_restricted.toLowerCase() == 'r15+') {
+					document.getElementById('warning-title').innerHTML = '「R15+指定」<br>年齢認証';
+				} else if (ep.age_restricted.toLowerCase() == 'r18+') {
+					document.getElementById('warning-title').innerHTML = '「R18+指定」<br>年齢認証';
+				}
 				document.getElementById('content').classList.add('hidden');
 				document.getElementById('warning').classList.remove('hidden');
 				document.getElementById('warning-button-yes').addEventListener('click', function () {
@@ -723,14 +728,15 @@ window.addEventListener("load", function(){
 					enableCEA708Captions: false,
 					lowLatencyMode: false,
 					enableWorker: false,
-					maxFragLookUpTolerance: 0,
+					maxFragLookUpTolerance: 0.0,
+					testBandwidth: false,
 					debug: false,
 					xhrSetup: function(xhr, url) {
 						xhr.withCredentials = true;
 					}
 				}
 				
-				var hls = new Hls(config);
+				let hls = new Hls(config);
 				
 				hls.on(Hls.Events.ERROR, function (event, data) {
 					if (data.fatal) {
@@ -742,6 +748,16 @@ window.addEventListener("load", function(){
 					videoReady ();
 					
 				});
+				video.addEventListener('seeking', function () {
+					hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: video.duration }); 
+				});
+				//hls.on(Hls.Events.FRAG_CHANGED, (e, data) => { 
+				//	console.log ('Buffer flush start');
+				//	hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: data.frag.startDTS }); 
+				//	console.log('Buffer flushed: 0-' + data.frag.startDTS);
+					//hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: data.frag.endDTS+0.01, endOffset: video.duration }); 
+					//console.log('Buffer flushed: '+data.frag.endDTS+'-' + video.duration);
+				//});
 				hls.loadSource(url);
 				hls.attachMedia(video);
 			} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
