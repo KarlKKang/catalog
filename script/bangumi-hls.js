@@ -872,10 +872,8 @@ window.addEventListener("load", function(){
 				timestamp.addEventListener ('click', function () {
 					if (video.currentTime <= startTime) {
 						mediaInstances[0].seekingForward = true;
-						video.currentTime = startTime;
-					} else {
-						video.currentTime = startTime;
 					}
+					video.currentTime = startTime;
 					mediaInstances[0].controls.focus();
 				});
 				chapter.appendChild(timestamp);
