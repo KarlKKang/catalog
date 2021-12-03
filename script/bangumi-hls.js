@@ -749,7 +749,11 @@ window.addEventListener("load", function(){
 					
 				});
 				video.addEventListener('seeking', function () {
-					hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: video.duration }); 
+					if (!mediaInstances[0].seekingForward) {
+						hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: video.duration });
+					} else {
+						mediaInstances[0].seekingForward = false;
+					}
 				});
 				//hls.on(Hls.Events.FRAG_CHANGED, (e, data) => { 
 				//	console.log ('Buffer flush start');
@@ -866,7 +870,13 @@ window.addEventListener("load", function(){
 				let startTime = chapters.startTime[i];
 				timestamp.innerHTML = secToTimestamp (startTime);
 				timestamp.addEventListener ('click', function () {
-					video.currentTime = startTime;
+					if (video.currentTime <= startTime) {
+						mediaInstances[0].seekingForward = true;
+						video.currentTime = startTime;
+					} else {
+						video.currentTime = startTime;
+					}
+					mediaInstances[0].controls.focus();
 				});
 				chapter.appendChild(timestamp);
 				chapter.appendChild(cueText);

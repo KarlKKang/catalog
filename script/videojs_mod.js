@@ -307,9 +307,11 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 				media.currentTime = media.currentTime - 5;
 				event.preventDefault();
 			} else if (keyCode == 39) {
+				that.seekingForward = true;
 				media.currentTime = media.currentTime + 5;
 				event.preventDefault();
 			} else if (keyCode == 38) {
+				that.seekingForward = true;
 				media.currentTime = media.currentTime + 15;
 				event.preventDefault();
 			} else if (keyCode == 40) {
@@ -435,9 +437,11 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 	var that = {
 		//State variables
 		media: media,
+		controls: controls,
 		playing: false,
 		buffering: false,
 		dragging: false,
+		seekingForward: false,
 		inactiveCountdown: 3000,
 		play: play,
 		pause: pause
