@@ -379,19 +379,29 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
     }
 	
 	function checkBuffer(event) {
-        if (event.type == 'play' || event.type == 'timeupdate') {
+        if (event && (event.type == 'play' || event.type == 'timeupdate')) {
             media.pause();
         }
         for (var i = media.buffered.length - 1; i >= 0; i--) {
             if (media.buffered.start(i) <= media.currentTime) {
+				if (debug) {
+					console.log ('Checking buffer range :' + media.buffered.start(i) + '-' + media.buffered.end(i) + '. Current time: ' + media.currentTime);
+				}
                 if (media.buffered.end(i) >= Math.min(media.currentTime+15, media.duration)) {
                     media.removeEventListener ('progress', checkBuffer);
                     media.removeEventListener ('play', checkBuffer);
                     media.removeEventListener ('timeupdate', checkBuffer);
                     controls.classList.remove('vjs-seeking');
                     that.buffering = false;
-                    if (that.playing)
-                        media.play();
+					if (debug) {
+						console.log ('Buffer complete!');
+					}
+                    if (that.playing) {
+						media.play();
+						if (debug) {
+							console.log ('Playback started.');
+						}
+					}  
                 }
                 break;
             }
@@ -408,18 +418,32 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
             media.addEventListener ('progress', checkBuffer);
             media.addEventListener ('play', checkBuffer);
             media.addEventListener ('timeupdate', checkBuffer);
+			checkBuffer();
         }
         if (!that.buffering) {
             if (media.buffered.length == 0) {
                 addCheckBuffer ();
+				if (debug) {
+					console.log ('Buffer empty, start buffering.');
+				}
             } else {
                 for (var i = media.buffered.length - 1; i >= 0; i--) {
                     if (media.buffered.start(i) <= media.currentTime) {
                         if (media.buffered.end(i) < Math.min(media.currentTime+14.9, media.duration)) {
                             addCheckBuffer ();
+							if (debug) {
+								console.log ('Buffer under threshold, start buffering.');
+							}
                         } else {
-                            if (that.playing)
-                                media.play();
+							if (debug) {
+								console.log ('Buffer above threshold.');
+							}
+                            if (that.playing && media.paused) {
+								media.play();
+								if (debug) {
+									console.log ('Playback started.');
+								}
+							}
                         }
                         break;
                     }

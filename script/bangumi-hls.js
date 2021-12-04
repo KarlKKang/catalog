@@ -750,7 +750,11 @@ window.addEventListener("load", function(){
 				});
 				video.addEventListener('seeking', function () {
 					if (!mediaInstances[0].seekingForward) {
+						hls.once(Hls.Events.BUFFER_FLUSHED, function () {
+							hls.startLoad(video.currentTime);
+						});
 						hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: video.duration });
+						//hls.trigger(Hls.Events.BUFFER_RESET, {});
 					} else {
 						mediaInstances[0].seekingForward = false;
 					}
