@@ -730,6 +730,11 @@ window.addEventListener("load", function(){
 					enableWorker: false,
 					maxFragLookUpTolerance: 0.0,
 					testBandwidth: false,
+					backBufferLength: 0,
+					maxBufferLength: 30,
+					maxMaxBufferLength: 60,
+					maxBufferSize: 0,
+					maxBufferHole: 0,
 					debug: false,
 					xhrSetup: function(xhr, url) {
 						xhr.withCredentials = true;
@@ -748,7 +753,7 @@ window.addEventListener("load", function(){
 					videoReady ();
 					
 				});
-				
+
 				video.addEventListener('seeking', function () {
 					if (!mediaInstances[0].seekingForward) {
 						hls.once(Hls.Events.BUFFER_FLUSHED, function () {
@@ -763,13 +768,6 @@ window.addEventListener("load", function(){
 						}
 					} else {
 						mediaInstances[0].seekingForward = false;
-					}
-				});
-				hls.on(Hls.Events.FRAG_CHANGED, (e, data) => { 
-					const range = { startOffset: 0, endOffset: data.frag.startDTS }; 
-					hls.trigger(Hls.Events.BUFFER_FLUSHING, range); 
-					if (debug) {
-						console.log('Back buffer flushed.');
 					}
 				});
 				hls.loadSource(url);
