@@ -748,24 +748,30 @@ window.addEventListener("load", function(){
 					videoReady ();
 					
 				});
+				
 				video.addEventListener('seeking', function () {
 					if (!mediaInstances[0].seekingForward) {
 						hls.once(Hls.Events.BUFFER_FLUSHED, function () {
 							hls.startLoad(video.currentTime);
+							if (debug) {
+								console.log('Buffer reloaded.');
+							}
 						});
-						hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: video.duration });
-						//hls.trigger(Hls.Events.BUFFER_RESET, {});
+						hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: video.duration});
+						if (debug) {
+							console.log('Buffer flushed.');
+						}
 					} else {
 						mediaInstances[0].seekingForward = false;
 					}
 				});
-				//hls.on(Hls.Events.FRAG_CHANGED, (e, data) => { 
-				//	console.log ('Buffer flush start');
-				//	hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: data.frag.startDTS }); 
-				//	console.log('Buffer flushed: 0-' + data.frag.startDTS);
-					//hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: data.frag.endDTS+0.01, endOffset: video.duration }); 
-					//console.log('Buffer flushed: '+data.frag.endDTS+'-' + video.duration);
-				//});
+				hls.on(Hls.Events.FRAG_CHANGED, (e, data) => { 
+					const range = { startOffset: 0, endOffset: data.frag.startDTS }; 
+					hls.trigger(Hls.Events.BUFFER_FLUSHING, range); 
+					if (debug) {
+						console.log('Back buffer flushed.');
+					}
+				});
 				hls.loadSource(url);
 				hls.attachMedia(video);
 			} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
