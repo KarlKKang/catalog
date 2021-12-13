@@ -266,7 +266,7 @@ window.addEventListener("load", function(){
 			formatSelector.appendChild(selectMenu);
 			document.getElementById('media-holder').appendChild(formatSelector);
 			
-			var timestampParam = getURLParam ('timestamp');
+			/*var timestampParam = getURLParam ('timestamp');
 			if (timestampParam != null) {
 				timestampParam = parseFloat (timestampParam);
 				if (!isNaN(timestampParam)) {
@@ -276,11 +276,11 @@ window.addEventListener("load", function(){
 				}
 			} else {
 				timestampParam = 0;
-			}
+			}*/
 			////////////////////////////////////////////////////////////////////////////////
 			
 			
-			function updateURLTimestamp() {
+			/*function updateURLTimestamp() {
 				function update () {
 					var video = mediaInstances[0].media;
 					if (video) {
@@ -294,7 +294,7 @@ window.addEventListener("load", function(){
 				setInterval (function () {
 					update ();
 				}, 3*1000);
-			}
+			}*/
 			
 			var videoJS = document.createElement('video-js');
 				
@@ -317,8 +317,8 @@ window.addEventListener("load", function(){
 				mediaInstances.push(videojs_mod (videoJS, {useNative: !USE_MSE}));
 				document.getElementById('media-holder').appendChild(videoJS);
 
-				addVideoNode (file.url, {chapters: file.chapters, currentTime: timestampParam});
-				updateURLTimestamp();
+				addVideoNode (file.url, {chapters: file.chapters/*, currentTime: timestampParam*/});
+				//updateURLTimestamp();
 			});
 		}
 		
@@ -915,7 +915,8 @@ window.addEventListener("load", function(){
 				}
 			};
 			
-			video.addEventListener ('timeupdate', updateChapterDisplay);
+			//video.addEventListener ('timeupdate', updateChapterDisplay);
+			setInterval (updateChapterDisplay, 500);
 			video.addEventListener ('play', updateChapterDisplay);
 			video.addEventListener ('pause', updateChapterDisplay);
 			video.addEventListener ('seeking', updateChapterDisplay);
