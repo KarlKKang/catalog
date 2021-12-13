@@ -80,7 +80,7 @@ function login () {
 				}  else if (response.includes('SERVER ERROR:')) {
 					showMessage ('エラーが発生しました', 'red', response, loginURL);
 				} else if (response.includes('NOT SUPPORTED')) {
-					document.getElementById('warning').innerHTML = 'ブラウザーはサポート対象外です。または、IPアドレスからのアクセスが拒否されました。';
+					document.getElementById('warning').innerHTML = 'お使いのブラウザはサポートされていません。または、IPアドレスの情報を取得できません。';
 					document.getElementById('warning').classList.remove('hidden');
 					document.getElementById('login-button').disabled = false;
 				} else if (response.includes('AUTHENTICATION FAILED') || response.includes('NOT ACTIVATED')) {
@@ -92,6 +92,10 @@ function login () {
 					document.getElementById('warning').classList.remove('hidden');
 					document.cookie = 'allow-login=false;max-age=86400;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
 					document.getElementById('login-button').disabled = false;
+				} else if (response == 'NOT RECOMMENDED') {
+					setTimeout (function () {
+						showMessage ('お使いのブラウザは推奨されませ', 'orange', '一部のコンテンツが正常に再生されない場合は、Safariをお使いください。', topURL);
+					}, 500);
 				} else if (response == 'APPROVED') {
 					setTimeout (function () {
 						window.location.href = redirect (topURL);
