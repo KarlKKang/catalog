@@ -672,7 +672,6 @@ window.addEventListener("load", function(){
 					if (checkXHRResponse (this)) {
 						var currentTime = video.currentTime;
 						var paused = video.paused;
-						
 						updateURLParam ('format', selectedFormat+1);
 						addVideoNode (this.responseText, {chapters: file.chapters, currentTime: currentTime, play: !paused});
 					}
@@ -701,11 +700,11 @@ window.addEventListener("load", function(){
 				hlsInstances=[];
 			}
 
-			var video = mediaInstances[0].media;
+			let video = mediaInstances[0].media;
 			
 			function videoReady () {
 				video.volume = 1;
-					
+				
 				if (options.currentTime!=undefined) {
 					video.currentTime = options.currentTime;
 				}
@@ -722,6 +721,13 @@ window.addEventListener("load", function(){
 			}
 			
 			if (USE_MSE) {
+				if (mediaInstances[0].bufferFlushHandler) {
+					video.removeEventListener('seeking', mediaInstances[0].bufferFlushHandler);
+					if (debug) {
+						console.log('Existing bufferFlushHandler removed.');
+					}
+				}
+				
 				var config = {
 					enableWebVTT: false,
 					enableIMSC1: false,
@@ -754,22 +760,38 @@ window.addEventListener("load", function(){
 					
 				});
 
-				video.addEventListener('seeking', function () {
-					if (!mediaInstances[0].seekingForward) {
-						hls.once(Hls.Events.BUFFER_FLUSHED, function () {
-							hls.startLoad(video.currentTime);
+				let scheduleBufferFlush = function () {
+					let bufferFlushHandler = function () {
+						if (!mediaInstances[0].seekingForward) {
+							hls.once(Hls.Events.BUFFER_FLUSHED, function () {
+								hls.startLoad(video.currentTime);
+								if (debug) {
+									console.log('Buffer reloaded.');
+								}
+							});
+							hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: video.duration});
 							if (debug) {
-								console.log('Buffer reloaded.');
+								console.log('Buffer flushed.');
 							}
-						});
-						hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: video.duration});
-						if (debug) {
-							console.log('Buffer flushed.');
+						} else {
+							mediaInstances[0].seekingForward = false;
+							if (debug) {
+								console.log('Skipped buffer flushing.');
+							}
 						}
-					} else {
-						mediaInstances[0].seekingForward = false;
+					};
+					mediaInstances[0].bufferFlushHandler = bufferFlushHandler;
+					video.addEventListener('seeking', bufferFlushHandler);
+					if (debug) {
+						console.log('scheduleBufferFlush added.');
 					}
-				});
+				};
+				if (options.currentTime==undefined) {
+					scheduleBufferFlush();
+				} else {
+					video.addEventListener('seeked', scheduleBufferFlush, {once: true});
+				}
+				
 				hls.loadSource(url);
 				hls.attachMedia(video);
 			} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
@@ -777,12 +799,6 @@ window.addEventListener("load", function(){
 				video.setAttribute ('crossorigin', 'use-credentials');
 				video.addEventListener('loadedmetadata', function () {
 					videoReady ();
-					/*
-					if (options.play) {
-						video.play();
-					} else {
-						video.pause();
-					}*/
 				});
 				video.src = url;
 				video.load();

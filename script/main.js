@@ -83,7 +83,7 @@ function logout (callback) {
 				if (this.responseText=='DONE') {
 					callback ();
 				} else {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, false);
+					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, false);
 					return false;
 				}
 			}
