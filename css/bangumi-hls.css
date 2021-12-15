@@ -322,6 +322,11 @@ p.artist {
 	justify-content: center;
 }
 
+#on-screen-console {
+	margin: 0px 0px 10% 0px;
+	width: 100%;
+}
+
 /*#loader {
 	border: 5px solid #f3f3f3;
 	-webkit-animation: spin 1s linear infinite;

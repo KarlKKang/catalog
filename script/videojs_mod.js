@@ -1,6 +1,8 @@
 // JavaScript Document
 
 var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
+	var that = {};
+	
 	if (!config) {
 		config = {};
 	}
@@ -61,12 +63,14 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
     //Loading
 	if (isVideo) {
 		media.addEventListener('waiting', function () {
+			onScreenConsoleOutput ('Playback entered waiting state.');
 			controls.classList.add('vjs-seeking');
 			if (!useNative)
 				media.pause();
 		});
 
 		media.addEventListener('canplaythrough', function () {
+			onScreenConsoleOutput ('Playback can play through.');
 			if (useNative) {
 				controls.classList.remove('vjs-seeking');
 			} else {
@@ -103,7 +107,10 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         controls.focus();
 	}, true);
 
-    //Progress bar 
+    //Progress bar & frame drop monitor
+	that.inactiveCountdown = 3000;
+	that.droppedFrames = 0;
+	that.corruptedFrames = 0;
     setInterval (function () {
 		currentTimeDisplay.innerHTML = secToTimestamp (media.currentTime);
         if (!that.dragging && media.duration)
@@ -115,6 +122,17 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 					controls.classList.remove('vjs-user-active');
 					controls.classList.add('vjs-user-inactive');
 				}
+			}
+		}
+		if (isVideo && typeof media.getVideoPlaybackQuality === "function") {
+			var quality = media.getVideoPlaybackQuality();
+			if (quality.droppedVideoFrames && quality.droppedVideoFrames != that.droppedFrames) {
+				onScreenConsoleOutput ('Frame drop detected. Total dropped: ' + quality.droppedVideoFrames);
+				that.droppedFrames = quality.droppedVideoFrames;
+			}
+			if (quality.corruptedVideoFrames && quality.corruptedVideoFrames != that.corruptedFrames) {
+				onScreenConsoleOutput ('Frame corruption detected. Total corrupted: ' + quality.corruptedVideoFrames);
+				that.corruptedFrames = quality.corruptedVideoFrames;
 			}
 		}
 	}, 300);
@@ -321,6 +339,13 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 		}, true);
 	}
 	
+	//Redundent
+	media.addEventListener ('seeking', function () {
+		onScreenConsoleOutput ('Seeking: ' + media.currentTime);
+	});
+	media.addEventListener ('seeked', function () {
+		onScreenConsoleOutput ('Seeked: ' + media.currentTime);
+	});
 
     //Helper Functions
 	function play() {
@@ -340,6 +365,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 	}
 	
     media.addEventListener('play', function () {
+		onScreenConsoleOutput ('Playback started.');
         playButton.classList.remove('vjs-paused');
         playButton.classList.add('vjs-playing');
         controls.classList.remove('vjs-paused');
@@ -355,6 +381,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 	});
 
     media.addEventListener('pause', function () {
+		onScreenConsoleOutput ('Playback paused.');
 		playButton.classList.remove('vjs-playing');
         playButton.classList.add('vjs-paused');
         controls.classList.remove('vjs-playing');
@@ -384,23 +411,16 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         }
         for (var i = media.buffered.length - 1; i >= 0; i--) {
             if (media.buffered.start(i) <= media.currentTime) {
-				if (debug) {
-					console.log ('Checking buffer range :' + media.buffered.start(i) + '-' + media.buffered.end(i) + '. Current time: ' + media.currentTime);
-				}
+				onScreenConsoleOutput ('Checking buffer range :' + media.buffered.start(i) + '-' + media.buffered.end(i) + '. Current time: ' + media.currentTime);
                 if (media.buffered.end(i) >= Math.min(media.currentTime+15, media.duration)) {
                     media.removeEventListener ('progress', checkBuffer);
                     media.removeEventListener ('play', checkBuffer);
                     media.removeEventListener ('timeupdate', checkBuffer);
                     controls.classList.remove('vjs-seeking');
                     that.buffering = false;
-					if (debug) {
-						console.log ('Buffer complete!');
-					}
+					onScreenConsoleOutput ('Buffer complete!');
                     if (that.playing) {
 						media.play();
-						if (debug) {
-							console.log ('Playback started.');
-						}
 					}  
                 }
                 break;
@@ -423,26 +443,17 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         if (!that.buffering) {
             if (media.buffered.length == 0) {
                 addCheckBuffer ();
-				if (debug) {
-					console.log ('Buffer empty, start buffering.');
-				}
+				onScreenConsoleOutput ('Buffer empty, start buffering.');
             } else {
                 for (var i = media.buffered.length - 1; i >= 0; i--) {
                     if (media.buffered.start(i) <= media.currentTime) {
                         if (media.buffered.end(i) < Math.min(media.currentTime+14.9, media.duration)) {
                             addCheckBuffer ();
-							if (debug) {
-								console.log ('Buffer under threshold, start buffering.');
-							}
+							onScreenConsoleOutput ('Buffer under threshold, start buffering.');
                         } else {
-							if (debug) {
-								console.log ('Buffer above threshold.');
-							}
+							onScreenConsoleOutput ('Buffer above threshold.');
                             if (that.playing && media.paused) {
 								media.play();
-								if (debug) {
-									console.log ('Playback started.');
-								}
 							}
                         }
                         break;
@@ -458,18 +469,14 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         }
     }
 	
-	var that = {
-		//State variables
-		media: media,
-		controls: controls,
-		playing: false,
-		buffering: false,
-		dragging: false,
-		seekingForward: false,
-		inactiveCountdown: 3000,
-		play: play,
-		pause: pause
-	};
+	that.media = media;
+	that.controls = controls;
+	that.playing = false;
+	that.buffering = false;
+	that.dragging = false;
+	that.seekingForward = false;
+	that.play = play;
+	that.pause = pause;
 	
 	return that;
 })(controls_ext, config_ext);

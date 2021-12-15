@@ -218,3 +218,11 @@ function secToTimestamp (sec) {
 	
 	return ((hour==0)?'':(hour + ':')) + min + ':' + sec;
 }
+
+function onScreenConsoleOutput (message) {
+	var onScreenConsole = document.getElementById('on-screen-console');
+	if (onScreenConsole) {
+		var date = new Date();
+		onScreenConsole.value += (date.getHours()<10 ? '0'+date.getHours() : date.getHours()) + ':' + (date.getMinutes()<10 ? '0'+date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds()<10 ? '0'+date.getSeconds() : date.getSeconds()) + '   ' + message + '\r\n';
+	}
+}

@@ -30,6 +30,7 @@ window.addEventListener("load", function(){
 		var chapters = {name: [], startTime: []};
 		var mediaInstances = [], hlsInstances = [];
 		var token;
+		var onScreenConsole = false;
 
 		var seriesID = getURLParam ('series');
 		if (seriesID == null) {
@@ -107,8 +108,26 @@ window.addEventListener("load", function(){
 			token = ep.token;
 
 			var title =  ep.title;
-
-			document.getElementById('title').innerHTML =  title;
+			var titleElem = document.getElementById('title');
+			titleElem.innerHTML =  title;
+			
+			function addOnScreenConsole () {
+				onScreenConsole = document.createElement('textarea');
+				onScreenConsole.id = 'on-screen-console';
+				onScreenConsole.readOnly = true;
+				onScreenConsole.rows = 20;
+				document.getElementById('main').appendChild(onScreenConsole);
+			};
+			if (debug) {
+				addOnScreenConsole();
+			} else {
+				addConsecutiveEventListener (titleElem, 'click', function () {
+					if (!onScreenConsole) {
+						addOnScreenConsole();
+					}
+				}, 10, 3*1000);
+			}
+			
 			document.title = title + ' | featherine';
 
 			updateEPSelector (ep.series);
@@ -499,8 +518,7 @@ window.addEventListener("load", function(){
 								hls.destroy();
 								if (data.type == Hls.ErrorTypes.MEDIA_ERROR) {
 									updateAudioVJS(index, url);
-									if (debug)
-										console.log('hls.js failed to handle the audio source for index: ' + index + ', switching to video.js');
+									onScreenConsoleOutput ('hls.js failed to handle the audio source for index: ' + index + ', switching to video.js');
 								}
 								else
 									showPlaybackError('Index ' + index + ': ' + data.detail);
@@ -723,9 +741,7 @@ window.addEventListener("load", function(){
 			if (USE_MSE) {
 				if (mediaInstances[0].bufferFlushHandler) {
 					video.removeEventListener('seeking', mediaInstances[0].bufferFlushHandler);
-					if (debug) {
-						console.log('Existing bufferFlushHandler removed.');
-					}
+					onScreenConsoleOutput ('Existing bufferFlushHandler removed.');
 				}
 				
 				var config = {
@@ -757,7 +773,6 @@ window.addEventListener("load", function(){
 				hls.on(Hls.Events.MANIFEST_PARSED, function () {
 					hlsInstances=[hls];
 					videoReady ();
-					
 				});
 
 				let scheduleBufferFlush = function () {
@@ -765,26 +780,18 @@ window.addEventListener("load", function(){
 						if (!mediaInstances[0].seekingForward) {
 							hls.once(Hls.Events.BUFFER_FLUSHED, function () {
 								hls.startLoad(video.currentTime);
-								if (debug) {
-									console.log('Buffer reloaded.');
-								}
+								onScreenConsoleOutput ('Buffer reloaded.');
 							});
 							hls.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: video.duration});
-							if (debug) {
-								console.log('Buffer flushed.');
-							}
+							onScreenConsoleOutput ('Buffer flushed.');
 						} else {
 							mediaInstances[0].seekingForward = false;
-							if (debug) {
-								console.log('Skipped buffer flushing.');
-							}
+							onScreenConsoleOutput ('Skipped buffer flushing.');
 						}
 					};
 					mediaInstances[0].bufferFlushHandler = bufferFlushHandler;
 					video.addEventListener('seeking', bufferFlushHandler);
-					if (debug) {
-						console.log('scheduleBufferFlush added.');
-					}
+					onScreenConsoleOutput ('scheduleBufferFlush added.');
 				};
 				if (options.currentTime==undefined) {
 					scheduleBufferFlush();
@@ -951,6 +958,30 @@ window.addEventListener("load", function(){
 			}
 			
 			history.replaceState(null, '', url);
+		}
+		
+		function addConsecutiveEventListener (elem, event, callback, count, timeInterval) {
+			if (count < 2) {
+				throw 'addConsecutiveEventListener must listen for more than 1 consecutive events.';
+			}
+			var currentCount = 0;
+			var allowed = false;
+			elem.addEventListener (event, function () {
+				if (currentCount+1 == count && allowed) {
+					currentCount = 0;
+					allowed = false;
+					callback();
+				} else if (!allowed) {
+					allowed = true;
+					currentCount = 1;
+					setTimeout (function () {
+						allowed = false;
+						currentCount = 0;
+					}, timeInterval);
+				} else if (allowed) {
+					currentCount ++;
+				}
+			});
 		}
 	}
 });
