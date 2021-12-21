@@ -120,10 +120,14 @@ window.addEventListener("load", function(){
 			};
 			if (debug) {
 				addOnScreenConsole();
+				addDownloadAccordion();
+				addAccordionEvent();
 			} else {
 				addConsecutiveEventListener (titleElem, 'click', function () {
 					if (!onScreenConsole) {
 						addOnScreenConsole();
+						addDownloadAccordion();
+						addAccordionEvent();
 					}
 				}, 10, 3*1000);
 			}
@@ -337,6 +341,11 @@ window.addEventListener("load", function(){
 				document.getElementById('media-holder').appendChild(videoJS);
 
 				addVideoNode (file.url, {chapters: file.chapters/*, currentTime: timestampParam*/});
+				if (file.chapters != '') {
+					displayChapters (file.chapters);
+				}
+				//addDownloadAccordion();
+				//addAccordionEvent();
 				//updateURLTimestamp();
 			});
 		}
@@ -550,6 +559,9 @@ window.addEventListener("load", function(){
 			
 			}
 			
+			//addDownloadAccordion();
+			//addAccordionEvent();
+			
 			function audioReady () {
 				for (var i = 0; i < mediaInstances.length; i++) {
 					let index = i;
@@ -680,9 +692,10 @@ window.addEventListener("load", function(){
 			lazyloadInitialize ();
 		}
 
-		function formatSwitch (file) {
+		function formatSwitch (s) {
 			var selectedFormat = document.getElementById('format-selector').getElementsByTagName('select')[0].selectedIndex;
 			var video = mediaInstances[0].media;
+			formatIndex = selectedFormat;
 
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
@@ -691,7 +704,7 @@ window.addEventListener("load", function(){
 						var currentTime = video.currentTime;
 						var paused = video.paused;
 						updateURLParam ('format', selectedFormat+1);
-						addVideoNode (this.responseText, {chapters: file.chapters, currentTime: currentTime, play: !paused});
+						addVideoNode (this.responseText, {currentTime: currentTime, play: !paused});
 					}
 				}
 			};
@@ -725,10 +738,6 @@ window.addEventListener("load", function(){
 				
 				if (options.currentTime!=undefined) {
 					video.currentTime = options.currentTime;
-				}
-					
-				if (options.chapters != '' && document.getElementById('media-holder').getElementsByClassName('chapters').length == 0) {
-					displayChapters (options.chapters);
 				}
 
 				if (options.play) {
@@ -918,7 +927,6 @@ window.addEventListener("load", function(){
 			chaptersNode.appendChild(accordion);
 			chaptersNode.appendChild(accordionPanel);
 			document.getElementById('media-holder').appendChild(chaptersNode);
-			addAccordionEvent ();
 
 			var updateChapterDisplay = function () {
 				var chapterElements = accordionPanel.getElementsByTagName('p');
@@ -944,6 +952,40 @@ window.addEventListener("load", function(){
 			video.addEventListener ('pause', updateChapterDisplay);
 			video.addEventListener ('seeking', updateChapterDisplay);
 			video.addEventListener ('seeked', updateChapterDisplay);
+		}
+		
+		function addDownloadAccordion () {
+			var accordion = document.createElement('button');
+			accordion.classList.add('accordion');
+			accordion.innerHTML = 'DOWNLOAD';
+
+			var accordionPanel = document.createElement('div');
+			accordionPanel.classList.add('panel');
+			
+			var downloadButton = document.createElement('button');
+			downloadButton.id = 'download-button';
+			downloadButton.innerHTML = 'ダウンロード';
+			downloadButton.addEventListener('click', function () {
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function() {
+					if (this.readyState == 4) {
+						if (checkXHRResponse (this)) {
+							window.location.href = this.responseText;
+						}
+					}
+				};
+				xmlhttp.open("POST", serverURL + "/start_download.php", true);
+				xmlhttp.withCredentials = true;
+				xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				xmlhttp.send("token="+token+((formatIndex==null)?'':('&format='+formatIndex)));
+			});
+			accordionPanel.appendChild(downloadButton);
+			
+			var downloadElem = document.createElement('div');
+			downloadElem.classList.add('download');
+			downloadElem.appendChild(accordion);
+			downloadElem.appendChild(accordionPanel);
+			document.getElementById('media-holder').appendChild(downloadElem);
 		}
 		
 		
