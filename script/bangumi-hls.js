@@ -296,6 +296,7 @@ window.addEventListener("load", function(){
 			
 			var mediaHolder = document.createElement('div');
 			mediaHolder.id = 'media-holder';
+			mediaHolder.classList.add('video');
 			contentContainer.appendChild(mediaHolder);
 			
 			/*var timestampParam = getURLParam ('timestamp');

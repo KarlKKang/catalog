@@ -233,14 +233,16 @@ function appearanceSwitching () {
 			document.body.classList.add('dark-mode');
 		}
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-			document.body.classList.add('appearance-switching');
+			document.documentElement.classList.add('appearance-switching');
 			if (e.matches) {
+				document.documentElement.style.background = 'var(--background-color-dark)';
 				document.body.classList.add('dark-mode');
 			} else {
+				document.documentElement.style.background = 'var(--background-color)';
 				document.body.classList.remove('dark-mode');
 			}
 			setInterval(function () {
-				document.body.classList.remove('appearance-switching');
+				document.documentElement.classList.remove('appearance-switching');
 			}, 400);
 		});
 	}
