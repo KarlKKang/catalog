@@ -7,6 +7,8 @@ window.addEventListener("load", function(){
 		return 0;
 	}
 	
+	appearanceSwitching();
+	
 	document.getElementById('nav-btn').addEventListener('click', function () {
 		navUpdate ();
 	});
@@ -82,7 +84,7 @@ function invite () {
 	document.getElementById('invite-button').disabled = true;
 	var receiver = document.getElementById('receiver-email').value;
 	var warningElem = document.getElementById('invite-warning');
-	warningElem.classList.remove('color-green');
+	changeColor (warningElem, 'red');
 	if (receiver == '' || receiver.match(/^[^\s@]+@[^\s@]+$/)===null) {
 		warningElem.innerHTML="有効なメールアドレスを入力してください。";
 		warningElem.classList.remove('hidden');
@@ -117,7 +119,7 @@ function invite () {
 					warningElem.classList.remove('hidden');
 				} else if (this.responseText == 'DONE') {
 					warningElem.innerHTML = 'メールが送信されました。届くまでに時間がかかる場合があります。';
-					warningElem.classList.add('color-green');
+					changeColor (warningElem, 'green');
 					warningElem.classList.remove('hidden');
 				} else {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
@@ -140,7 +142,7 @@ function changePassword () {
 	var newPassword = document.getElementById('new-password').value;
 	var newPasswordConfirm = document.getElementById('new-password-confirm').value;
 	
-	warningElem.classList.remove('color-green');
+	changeColor (warningElem, 'red');
 	
 	if (newPassword=='' || newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
 		warningElem.innerHTML="パスワードが要件を満たしていません。";
@@ -165,7 +167,7 @@ function changePassword () {
 				if (this.responseText == 'DONE') {
 					warningElem.innerHTML = '完了しました。';
 					warningElem.classList.remove('hidden');
-					warningElem.classList.add('color-green');
+					changeColor (warningElem, 'green');
 					document.getElementById('password-change-button').disabled=false;
 				} else {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
@@ -182,7 +184,7 @@ function changePassword () {
 function changeEmail () {
 	document.getElementById('email-change-button').disabled = true;
 	var warningElem = document.getElementById('email-warning');
-	warningElem.classList.remove('color-green');
+	changeColor (warningElem, 'red');
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -194,7 +196,7 @@ function changeEmail () {
 				} else if (this.responseText == 'DONE') {
 					warningElem.innerHTML = 'メールが送信されました。届くまでに時間がかかる場合があります。';
 					warningElem.classList.remove('hidden');
-					warningElem.classList.add('color-green');
+					changeColor (warningElem, 'green');
 				} else {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
 					return 0;
@@ -212,7 +214,7 @@ function changeUsername () {
 	document.getElementById('username-change-button').disabled=true;
 	var warningElem = document.getElementById('username-warning');
 	var newUsername = document.getElementById('new-username').value;
-	warningElem.classList.remove('color-green');
+	changeColor (warningElem, 'red');
 	
 	if (newUsername=='') {
 		warningElem.innerHTML="新しいユーザー名を入力してください。";
@@ -233,7 +235,7 @@ function changeUsername () {
 				if (this.responseText == 'DONE') {
 					warningElem.innerHTML = '完了しました。';
 					warningElem.classList.remove('hidden');
-					warningElem.classList.add('color-green');
+					changeColor (warningElem, 'green');
 				} else if (this.responseText.includes('DUPLICATED')) {
 					warningElem.innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
 					warningElem.classList.remove('hidden');

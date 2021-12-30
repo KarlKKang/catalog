@@ -6,6 +6,8 @@ window.addEventListener("load", function(){
 		return 0;
 	}
 	
+	appearanceSwitching();
+	
 	document.getElementById('nav-btn').addEventListener('click', function () {
 		navUpdate ();
 	});
@@ -120,14 +122,10 @@ window.addEventListener("load", function(){
 			};
 			if (debug) {
 				addOnScreenConsole();
-				addDownloadAccordion();
-				addAccordionEvent();
 			} else {
 				addConsecutiveEventListener (titleElem, 'click', function () {
 					if (!onScreenConsole) {
 						addOnScreenConsole();
-						addDownloadAccordion();
-						addAccordionEvent();
 					}
 				}, 10, 3*1000);
 			}
@@ -136,22 +134,28 @@ window.addEventListener("load", function(){
 
 			updateEPSelector (ep.series);
 			updateSeasonSelector (ep.seasons);
-
+			
+			var warningTitle = document.getElementById('warning-title');
+			var warningBody = document.getElementById('warning');
+			
 			if (ep.age_restricted) {
+				changeColor (warningTitle, 'red');
 				if (ep.age_restricted.toLowerCase() == 'r15+') {
-					document.getElementById('warning-title').innerHTML = '「R15+指定」<br>年齢認証';
+					warningTitle.innerHTML = '「R15+指定」<br>年齢認証';
 				} else if (ep.age_restricted.toLowerCase() == 'r18+') {
-					document.getElementById('warning-title').innerHTML = '「R18+指定」<br>年齢認証';
+					warningTitle.innerHTML = '「R18+指定」<br>年齢認証';
 				}
 				document.getElementById('content').classList.add('hidden');
-				document.getElementById('warning').classList.remove('hidden');
+				warningBody.classList.remove('hidden');
 				document.getElementById('warning-button-yes').addEventListener('click', function () {
-					document.getElementById('warning').classList.add('hidden');
+					warningBody.classList.add('hidden');
 					document.getElementById('content').classList.remove('hidden');
 				});
 				document.getElementById('warning-button-no').addEventListener('click', function () {
 					window.location.href = topURL;
 				});
+			} else {
+				warningBody.remove();
 			}
 			
 			/////////////////////////////////////////////device_authenticate/////////////////////////////////////////////
@@ -252,7 +256,7 @@ window.addEventListener("load", function(){
 				title.setAttribute('class', 'sub-title');
 				title.classList.add('center-align');
 				title.innerHTML = file.title;
-				document.getElementById('media-holder').appendChild(title);
+				document.getElementById('content').appendChild(title);
 			}
 			
 			var formats = file.formats;
@@ -287,7 +291,11 @@ window.addEventListener("load", function(){
 			}
 
 			formatSelector.appendChild(selectMenu);
-			document.getElementById('media-holder').appendChild(formatSelector);
+			document.getElementById('content').insertBefore(formatSelector, document.getElementById('message'));
+			
+			var mediaHolder = document.createElement('div');
+			mediaHolder.id = 'media-holder';
+			document.getElementById('content').appendChild(mediaHolder);
 			
 			/*var timestampParam = getURLParam ('timestamp');
 			if (timestampParam != null) {
@@ -323,7 +331,7 @@ window.addEventListener("load", function(){
 				
 			videoJS.classList.add('vjs-big-play-centered');
 			videoJS.setAttribute('lang', 'en');
-			document.getElementById('media-holder').appendChild(videoJS);
+			mediaHolder.appendChild(videoJS);
 
 			var config = {
 				controls: true,
@@ -338,19 +346,20 @@ window.addEventListener("load", function(){
 				videoJS = videoJS.cloneNode(true);
 				this.dispose();
 				mediaInstances.push(videojs_mod (videoJS, {useNative: !USE_MSE}));
-				document.getElementById('media-holder').appendChild(videoJS);
+				mediaHolder.appendChild(videoJS);
 
 				addVideoNode (file.url, {chapters: file.chapters/*, currentTime: timestampParam*/});
 				if (file.chapters != '') {
 					displayChapters (file.chapters);
 				}
-				//addDownloadAccordion();
-				//addAccordionEvent();
+				addDownloadAccordion();
+				addAccordionEvent();
 				//updateURLTimestamp();
 			});
 		}
 		
 		function updateAudio (file) {
+			
 			var counter = 0;
 
 			if (file.info.album_title!='') {
@@ -358,13 +367,13 @@ window.addEventListener("load", function(){
 				albumTitle.setAttribute('class', 'sub-title');
 				albumTitle.classList.add('center-align');
 				albumTitle.innerHTML = file.info.album_title;
-				document.getElementById('media-holder').appendChild(albumTitle);
+				document.getElementById('content').appendChild(albumTitle);
 				if (file.info.album_artist!='') {
 					let albumArtist = document.createElement('p');
 					albumArtist.setAttribute('class', 'artist');
 					albumArtist.classList.add('center-align');
 					albumArtist.innerHTML = file.info.album_artist;
-					document.getElementById('media-holder').appendChild(albumArtist);
+					document.getElementById('content').appendChild(albumArtist);
 				}
 			} else if (file.info.album_artist!='') {
 				let titleElem = document.getElementById('title');
@@ -404,6 +413,10 @@ window.addEventListener("load", function(){
 					pictureInPictureToggle: false
 				}
 			};
+			
+			var mediaHolder = document.createElement('div');
+			mediaHolder.id = 'media-holder';
+			document.getElementById('content').appendChild(mediaHolder);
 			
 			var i;
 
@@ -483,8 +496,8 @@ window.addEventListener("load", function(){
 					subtitle.appendChild(format);
 				}
 				
-				document.getElementById('media-holder').appendChild(subtitle);
-				document.getElementById('media-holder').appendChild(audioNode);
+				mediaHolder.appendChild(subtitle);
+				mediaHolder.appendChild(audioNode);
 
 				videojs(audioNode, config, function () {
 					let oldAudioNode = document.getElementById('track' + index);
@@ -506,7 +519,7 @@ window.addEventListener("load", function(){
 					}
 
 					if (USE_MSE) {
-						var config = {
+						var config_hls = {
 							enableWebVTT: false,
 							enableIMSC1: false,
 							enableCEA708Captions: false,
@@ -520,7 +533,7 @@ window.addEventListener("load", function(){
 							}
 						}
 
-						let hls = new Hls(config);
+						let hls = new Hls(config_hls);
 						hlsInstances[index]=hls;
 						hls.on(Hls.Events.ERROR, function (event, data) {
 							if (data.fatal) {
@@ -559,9 +572,6 @@ window.addEventListener("load", function(){
 			
 			}
 			
-			//addDownloadAccordion();
-			//addAccordionEvent();
-			
 			function audioReady () {
 				for (var i = 0; i < mediaInstances.length; i++) {
 					let index = i;
@@ -578,6 +588,8 @@ window.addEventListener("load", function(){
 						}
 					});
 				}
+				addDownloadAccordion();
+				addAccordionEvent();
 			}
 		}
 		
@@ -650,15 +662,17 @@ window.addEventListener("load", function(){
 		}
 
 		function updateImage (file) {
+			var mediaHolder = document.createElement('div');
+			mediaHolder.id = 'media-holder';
+			document.getElementById('content').appendChild(mediaHolder);
 
 			for (var i = 0; i < file.length; i++) {
-				let index = i;
 				
 				if (file[i].tag != '') {
 					let subtitle = document.createElement('p');
 					subtitle.setAttribute('class', 'sub-title');
 					subtitle.innerHTML = file[i].tag;
-					document.getElementById('media-holder').appendChild(subtitle);
+					mediaHolder.appendChild(subtitle);
 				}
 
 				let imageNode = document.createElement('div');
@@ -686,7 +700,7 @@ window.addEventListener("load", function(){
 					}
 				});
 				imageNode.addEventListener('contextmenu', event => event.preventDefault());
-				document.getElementById('media-holder').appendChild(imageNode);
+				mediaHolder.appendChild(imageNode);
 			}
 
 			lazyloadInitialize ();
@@ -824,12 +838,14 @@ window.addEventListener("load", function(){
 		}
 		
 		function showPlaybackError (detail) {
+			changeColor (document.getElementById('message-title'), 'red');
 			document.getElementById('media-holder').classList.add('hidden');
 			document.getElementById('message-body').innerHTML = '<p>再生中にエラーが発生しました。後ほどもう一度お試しいただくか、それでも問題が解決しない場合は管理者にお問い合わせください。</p>'+(detail?('<p>Error detail: '+detail+'</p>'):'');
 			document.getElementById('message').classList.remove('hidden');
 		}
 		
 		function showCompatibilityError () {
+			changeColor (document.getElementById('message-title'), 'red');
 			document.getElementById('media-holder').classList.add('hidden');
 			document.getElementById('message-body').innerHTML = '<p>お使いのブラウザやデバイスはHLSに対応していません。HLSに対応している一般的なブラウザを以下に示します。</p>\
 			<ul>\
@@ -869,8 +885,10 @@ window.addEventListener("load", function(){
 					var panel = this.nextElementSibling;
 					if (panel.style.maxHeight) {
 						panel.style.maxHeight = null;
+						panel.style.padding = '0px 1em';
 					} else {
 						panel.style.maxHeight = panel.scrollHeight + "px";
+						panel.style.padding = '1em';
 					}
 				});
 			}
@@ -955,6 +973,10 @@ window.addEventListener("load", function(){
 		}
 		
 		function addDownloadAccordion () {
+			if (!DOWNLOAD_SUPPORTED) {
+				return 0;
+			}
+			
 			var accordion = document.createElement('button');
 			accordion.classList.add('accordion');
 			accordion.innerHTML = 'DOWNLOAD';
@@ -962,8 +984,16 @@ window.addEventListener("load", function(){
 			var accordionPanel = document.createElement('div');
 			accordionPanel.classList.add('panel');
 			
+			accordionPanel.innerHTML = "<ul>\
+				<li>まず、下の「ダウンロード」ボタンをクリックして、必要なツールやスクリプトが入ったZIPファイルをダウンロードしてください。</li>\
+				<li>このZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順に従ってください。</li>\
+				<li>ZIPファイルをダウンロード後、5分以内にスクリプトを起動してください。また、24時間以内にすべてのコンテンツのダウンロードを終了してください。</li>\
+				<li>インターネット接続が良好であることを確認してください。</li>\
+			</ul>";
+			
 			var downloadButton = document.createElement('button');
 			downloadButton.id = 'download-button';
+			downloadButton.classList.add('button');
 			downloadButton.innerHTML = 'ダウンロード';
 			downloadButton.addEventListener('click', function () {
 				var xmlhttp = new XMLHttpRequest();
@@ -985,7 +1015,7 @@ window.addEventListener("load", function(){
 			downloadElem.classList.add('download');
 			downloadElem.appendChild(accordion);
 			downloadElem.appendChild(accordionPanel);
-			document.getElementById('media-holder').appendChild(downloadElem);
+			document.getElementById('content').appendChild(downloadElem);
 		}
 		
 		

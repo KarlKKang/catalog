@@ -109,13 +109,13 @@
 	position: relative;
 	left: 50%;
 	transform: translate(-50%, 0%);
-	background-color: white;
-	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+	background-color: var(--foreground-color);
+	box-shadow: 0 0 17px 0 var(--shadow-color);
     transition: box-shadow .4s ease-out;
 }
 
 #container:hover {
-	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
 }
 
 #content {
@@ -132,7 +132,7 @@
 
 #date {
 	font-size: small;
-	color: #adadb5;
+	color: var(--alt-text-color);
 	text-align: center;
 }
 
@@ -141,26 +141,21 @@
 	font-weight: 400;
 }
 
-a {
-	color: #1069c9;
-	text-decoration: none;
-}
-
 hr {
 	margin: 2em 0px;
 	height: 1px;
 	border-width: 0;
-	background-color: rgba(32,52,76,.15);
+	background-color: var(--horizontal-line-foreground-color);
 }
 
 .line-break {
   	margin: 2em;
 }
 
-.important {
-	color: red;
+.important, .important > p {
+	color: var(--red-color);
 }
 
-.important p {
+.important > p {
 	font-weight: 500;
 }

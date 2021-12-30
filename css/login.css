@@ -9,83 +9,6 @@
 	font-display: swap;
 }
 
-#login-form {
-	max-width: 90%;
-	margin: 0px;
-	padding: 5vh 0px;
-	position: absolute;
-	left: 50%;
-	transform: translate(-50%, 0%);
-	text-align: center;
-}
-
-#title {
-	margin: 0px;
-	padding: 1em 0px;
-	font-size: x-large;
-	font-weight: 500;
-}
-
-#warning {
-	padding: 0px;
-	margin: 1em 0px;
-	color: red;
-
-}
-
-.input-field, #login-button {
-	margin: 1em 0px;
-	padding: 0px;
-	height: 40px;
-	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
-    transition: box-shadow .4s ease-out;
-	background: #fff;
-	border: none;
-}
-
-#login-button {
-	width: 150px;
-	max-width: 80%;
-	text-align: center;
-	position: relative;
-	cursor: pointer;
-	font-size: medium;
-}
-
-.input-field {
-	width: 300px;
-	max-width: 100%;
-	position: relative;
-	left: 50%;
-	transform: translate(-50%, 0%);
-}
-
-.input-field > input {
-	width: 100%;
-	height: 100%;
-	border: none;
-	background-color: transparent;
-	margin: 0px;
-	padding: 0px 5%;
-	box-sizing: border-box;
-	font-size: medium;
-}
-
-.input-field:hover, #login-button:hover {
-	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
-}
-
-#forgot-password {
-	text-align: center;
-	/*font-size: small;*/
-	color: #1069c9;
-	margin-bottom: 2em;
-}
-
-#forgot-password > span {
-	cursor: pointer;
-}
-
 /*///////////////////////////////////Custom Checkbox///////////////////////////////////*/
 #remember-me {
 	position: relative;
@@ -122,6 +45,8 @@
 	cursor: pointer;
 	height: 0;
 	width: 0;
+	margin: 0px;
+	padding: 0px;
 }
 
 /* Create a custom checkbox */
@@ -131,14 +56,14 @@
 	left: 0;
 	height: 1.2em;
 	width: 1.2em;
-	background-color: #fff;
-	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+	background-color: var(--foreground-color);
+	box-shadow: 0 0 17px 0 var(--shadow-color);
 	transition: box-shadow .4s ease-out;
 }
 
 /* On mouse-over, add a grey background color */
 .container:hover input ~ .checkmark {
-	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
@@ -155,12 +80,12 @@
 
 /* Style the checkmark/indicator */
 .container .checkmark:after {
-	left: 0.4em;
-	top: 0.15em;
-	width: 0.3em;
-	height: 0.6em;
-	border: solid black;
-	border-width: 0 2px 2px 0;
+	left: 0.3em;
+	top: 0.03em;
+	width: 0.35em;
+	height: 0.7em;
+	border: solid var(--text-color);
+	border-width: 0 3px 3px 0;
 	-webkit-transform: rotate(45deg);
 	-ms-transform: rotate(45deg);
 	transform: rotate(45deg);

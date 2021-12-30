@@ -6,6 +6,8 @@ window.addEventListener("load", function(){
 		return 0;
 	}
 	
+	appearanceSwitching();
+	
 	document.getElementById('nav-btn').addEventListener('click', function () {
 		navUpdate ();
 	});

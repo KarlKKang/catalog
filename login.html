@@ -7,14 +7,18 @@
 <title>ログイン | featherine</title>
 <link rel="icon" type="image/webp" href="image/favicon.webp"/>
 <link rel="stylesheet" type="text/css" href="css/main.css">
+<link rel="stylesheet" type="text/css" href="css_dark/main.css">
 <link rel="stylesheet" type="text/css" href="css/login.css">
+<link rel="stylesheet" type="text/css" href="css_dark/login.css">
+<link rel="stylesheet" type="text/css" href="css/portal_form.css">
+<link rel="stylesheet" type="text/css" href="css_dark/portal_form.css">
 <script src="script/main.js"></script>
 <script src="script/login.js"></script>
 <script src="script_ext/forge.min.js"></script>
 </head>
 
-<body class="hidden">
-	<div id="login-form">
+<body class="hidden document-loading">
+	<div id="form">
 		<p id="title">ようこそ</p>
 		<p id="warning" class="hidden"></p>
 		<div class="input-field"><input id="username" type="email" placeholder="メールアドレス" autocapitalize="off" autocomplete="off"></div>
@@ -27,8 +31,8 @@
 			</label>
 		</div>
 		
-		<button id="login-button">ログイン</button>
-		<p id="forgot-password"><span>パスワードを忘れた方はこちら</span></p>
+		<button id="submit-button">ログイン</button>
+		<p id="forgot-password"><span class="link">パスワードを忘れた方はこちら</span></p>
 	</div>
 </body>
 </html>

@@ -6,6 +6,8 @@ window.addEventListener("load", function(){
 		window.location.href = redirect ('https://login.featherine.com');
 		return 0;
 	}
+	
+	appearanceSwitching();
 		
 	document.getElementById('username').addEventListener('keydown', function () {
 		if (event.key === "Enter") {
@@ -18,7 +20,7 @@ window.addEventListener("load", function(){
 		}
 	});
 	
-	document.getElementById('login-button').addEventListener('click', function () {
+	document.getElementById('submit-button').addEventListener('click', function () {
 		login ();
 	});
 	document.getElementById('forgot-password').getElementsByTagName('span')[0].addEventListener('click', function () {
@@ -32,12 +34,12 @@ window.addEventListener("load", function(){
 	start ('login', function () {document.getElementsByTagName("body")[0].classList.remove("hidden");});
 
 function login () {
-	document.getElementById('login-button').disabled = true;
+	document.getElementById('submit-button').disabled = true;
 	
 	if (getCookie('allow-login')=='false') {
 		document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
 		document.getElementById('warning').classList.remove('hidden');
-		document.getElementById('login-button').disabled = false;
+		document.getElementById('submit-button').disabled = false;
 		return 0;
 	}
 
@@ -47,14 +49,14 @@ function login () {
 	if (email=='' || email.match(/^[^\s@]+@[^\s@]+$/)===null) {
 		document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
 		document.getElementById('warning').classList.remove('hidden');
-		document.getElementById('login-button').disabled = false;
+		document.getElementById('submit-button').disabled = false;
 		return 0;
 	}
 
 	if (password=='' || password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
 		document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
 		document.getElementById('warning').classList.remove('hidden');
-		document.getElementById('login-button').disabled = false;
+		document.getElementById('submit-button').disabled = false;
 		return 0;
 	} else {
 		var hash = forge.md.sha512.sha256.create();
@@ -82,16 +84,16 @@ function login () {
 				} else if (response.includes('NOT SUPPORTED')) {
 					document.getElementById('warning').innerHTML = 'お使いのブラウザはサポートされていません。または、IPアドレスの情報を取得できません。';
 					document.getElementById('warning').classList.remove('hidden');
-					document.getElementById('login-button').disabled = false;
+					document.getElementById('submit-button').disabled = false;
 				} else if (response.includes('AUTHENTICATION FAILED') || response.includes('NOT ACTIVATED')) {
 					document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
 					document.getElementById('warning').classList.remove('hidden');
-					document.getElementById('login-button').disabled = false;
+					document.getElementById('submit-button').disabled = false;
 				} else if (response.includes('REJECTED')) {
 					document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
 					document.getElementById('warning').classList.remove('hidden');
 					document.cookie = 'allow-login=false;max-age=86400;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
-					document.getElementById('login-button').disabled = false;
+					document.getElementById('submit-button').disabled = false;
 				} else if (response == 'NOT RECOMMENDED') {
 					setTimeout (function () {
 						showMessage ('お使いのブラウザは推奨されませ', 'orange', '一部のコンテンツが正常に再生されない場合は、Safariをお使いください。', topURL);

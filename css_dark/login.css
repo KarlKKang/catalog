@@ -1,0 +1,20 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*///////////////////////////////////Custom Checkbox///////////////////////////////////*/
+
+/* Create a custom checkbox */
+.dark-mode .checkmark {
+	background-color: var(--foreground-color-dark);
+	box-shadow: 0 0 17px 0 var(--shadow-color-dark);
+}
+
+/* On mouse-over, add a grey background color */
+.dark-mode .container:hover input ~ .checkmark {
+	box-shadow: 0 2px 30px 2px var(--shadow-color-hover-dark);
+}
+
+/* Style the checkmark/indicator */
+.dark-mode .container .checkmark:after {
+	border-color: var(--text-color-dark);
+}

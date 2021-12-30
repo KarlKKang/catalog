@@ -1,0 +1,48 @@
+@charset "utf-8";
+/* CSS Document */
+
+.dark-mode .video-js .vjs-big-play-button {
+	background-color: var(--foreground-color-dark);
+	color: var(--text-color-dark);
+}
+.dark-mode .video-js .vjs-big-play-button:focus, .dark-mode .video-js:hover .vjs-big-play-button {
+	background-color: var(--foreground-color-dark);
+}
+.dark-mode .vjs-loading-spinner {
+	border: 6px solid rgba(45,48,57,.6);
+}
+
+.dark-mode .vjs-seeking .vjs-loading-spinner:before,
+.dark-mode .vjs-seeking .vjs-loading-spinner:after,
+.dark-mode .vjs-waiting .vjs-loading-spinner:before,
+.dark-mode .vjs-waiting .vjs-loading-spinner:after {
+	border-top-color: var(--text-color-dark);
+}
+
+.dark-mode .video-js, .dark-mode .video-js.vjs-audio {
+	background-color: var(--foreground-color-dark);
+	color: var(--text-color-dark);
+}
+.dark-mode .video-js .vjs-control-bar, .dark-mode .video-js.vjs-audio .vjs-control-bar{
+	background-color: var(--foreground-color-dark);
+}
+.dark-mode .video-js .vjs-slider, .dark-mode .video-js.vjs-audio .vjs-slider{
+	background-color: var(--background-color-dark);
+}
+.dark-mode .video-js .vjs-load-progress, 
+.dark-mode .video-js .vjs-load-progress div, 
+.dark-mode .video-js.vjs-audio .vjs-load-progress, 
+.dark-mode .video-js.vjs-audio .vjs-load-progress div{
+	background: var(--text-color-dark);
+	opacity: 0.15;
+}
+.dark-mode .video-js .vjs-play-progress,
+.dark-mode .video-js .vjs-volume-level, 
+.dark-mode .video-js.vjs-audio .vjs-play-progress,
+.dark-mode .video-js.vjs-audio .vjs-volume-level{
+	background-color: var(--text-color-dark);
+}
+
+.dark-mode .vjs-mouse-display .vjs-time-tooltip {
+	color: var(--text-color-dark);
+}

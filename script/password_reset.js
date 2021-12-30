@@ -5,6 +5,9 @@ window.addEventListener("load", function(){
 		window.location.href = 'https://featherine.com';
 		return 0;
 	}
+	
+	appearanceSwitching();
+	
 	document.getElementById('new-password').addEventListener('keydown', function () {
 		if (event.key === "Enter") {
 			submitRequest ();
@@ -31,7 +34,11 @@ window.addEventListener("load", function(){
 	var expires = getURLParam ('expires');
 
 	if (user == null || user.match(/^[a-zA-Z0-9~_-]+$/)===null) {
-		window.location.href = loginURL;
+		if (debug) {
+			document.getElementsByTagName("body")[0].classList.remove("hidden");
+		} else {
+			window.location.href = loginURL;
+		}
 		return 0;
 	}
 	

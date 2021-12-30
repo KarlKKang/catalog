@@ -6,6 +6,8 @@ window.addEventListener("load", function(){
 		return 0;
 	}
 	
+	appearanceSwitching();
+	
 	document.getElementById('username').addEventListener('keydown', function () {
 		if (event.key === "Enter") {
 			register ();
@@ -50,7 +52,11 @@ window.addEventListener("load", function(){
 	var signature = getURLParam ('signature');
 
 	if (param == null || param.match(/^[a-zA-Z0-9~_-]+$/)===null) {
-		window.location.href = loginURL;
+		if (debug) {
+			document.getElementsByTagName("body")[0].classList.remove("hidden");
+		} else {
+			window.location.href = loginURL;
+		}
 		return 0;
 	}
 

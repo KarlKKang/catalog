@@ -6,6 +6,8 @@ window.addEventListener("load", function(){
 		return 0;
 	}
 	
+	appearanceSwitching();
+	
 	document.getElementById('email').addEventListener('keydown', function () {
 		if (event.key === "Enter") {
 			register ();
@@ -58,10 +60,10 @@ function initialize () {
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			if (checkXHRStatus (this.status)) {
-				if (this.responseText.includes('REJECTED')) {
-					window.location.href = loginURL;
-				} else if (this.responseText == 'APPROVED') {
+				if (this.responseText == 'APPROVED' || debug) {
 					document.getElementsByTagName("body")[0].classList.remove("hidden");
+				} else if (this.responseText.includes('REJECTED')) {
+					window.location.href = loginURL;
 				} else {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				}

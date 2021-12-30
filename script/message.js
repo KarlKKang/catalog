@@ -1,11 +1,20 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
+	appearanceSwitching();
+	
 	var param = localStorage.getItem("message-param");
 	var url;
 	
 	if (param === null) {
-		window.location.href = topURL;
+		if (debug) {
+			document.getElementById('title').classList.add('color-orange');
+			document.getElementById('title').innerHTML = 'タイトルTitle';
+			document.getElementById('message').innerHTML = 'メッセージMessageメッセージMessageメッセージMessageメッセージMessageメッセージMessage';
+			document.getElementsByTagName("body")[0].classList.remove("hidden");		
+		} else {
+			window.location.href = topURL;
+		}
 		return 0;
 	}
 	
@@ -16,11 +25,10 @@ window.addEventListener("load", function(){
 		return 0;
 	}
 	
-	
 	var callback = function () {
 		document.title = param.htmlTitle;
 		document.getElementById('title').innerHTML = param.title;
-		document.getElementById('title').style.color = param.titleColor;
+		document.getElementById('title').classList.add('color-'+param.titleColor);
 		document.getElementById('message').innerHTML = param.message;
 		url = param.url;
 		if (param.url == null) {

@@ -6,6 +6,8 @@ window.addEventListener("load", function(){
 		return 0;
 	}
 	
+	appearanceSwitching();
+	
 	handshake (function (){
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {

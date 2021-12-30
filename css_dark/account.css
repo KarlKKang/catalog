@@ -1,0 +1,23 @@
+@charset "utf-8";
+/* CSS Document */
+
+.dark-mode hr {
+	background-color: var(--horizontal-line-background-color-dark);
+}
+
+.dark-mode .input-field, .dark-mode .button {
+	box-shadow: 0 0 17px 0 var(--shadow-color-dark);
+	background: var(--foreground-color-dark);
+}
+
+.dark-mode .input-field:hover, .dark-mode .button:hover {
+	box-shadow: 0 2px 30px 2px var(--shadow-color-hover-dark);
+}
+
+.dark-mode button:disabled:hover {
+	box-shadow: 0 0 17px 0 var(--shadow-color-dark);
+}
+
+.dark-mode .note > ul > li {
+	color: var(--alt-text-color-dark);
+}

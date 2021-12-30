@@ -1,0 +1,98 @@
+@charset "utf-8";
+/* CSS Document */
+
+:root {
+	--foreground-color-dark: rgba(48,50,60,1);
+	--background-color-dark: rgba(35,37,46,1);
+	--background-color-transparent-dark: rgba(38,40,49,0);
+	--text-color-dark: rgba(210,213,220,1);
+	--text-color-transparent-dark: rgba(210,213,220,0);
+	--alt-text-color-dark: rgba(87,89,100,1);
+	--link-text-color-dark: rgba(28,98,221,1);
+	--shadow-color-dark: rgba(7,8,12,.55);
+	--shadow-color-hover-dark: rgba(7,8,12,.7);
+	--horizontal-line-background-color-dark: rgba(48,55,75,1);
+	--horizontal-line-foreground-color-dark: rgba(58,65,85,1);
+	--red-color-dark: rgba(193,3,53,1);
+	--green-color-dark: rgba(17,246,83,1);
+	--orange-color-dark: rgba(243,146,12,1);
+}
+
+body.dark-mode {
+    background: var(--background-color-dark);
+}
+
+.dark-mode * {
+	color: var(--text-color-dark);
+}
+
+.dark-mode button {
+	color: var(--text-color-dark);
+}
+
+.dark-mode button:disabled {
+	color: var(--alt-text-color-dark);
+}
+
+.dark-mode select {
+	color: var(--text-color-dark);
+}
+
+.dark-mode #header {
+	background: var(--foreground-color-dark);
+	border-bottom: 0px;
+	box-shadow: 0 0 17px 0 var(--shadow-color-dark);
+}
+
+.dark-mode .link, .dark-mode .link:link, .dark-mode .link:visited, .dark-mode .link:hover, .dark-mode .link:active {
+	color: var(--link-text-color-dark);
+}
+
+.dark-mode .color-green {
+	color: var(--green-color-dark);
+}
+.dark-mode .color-red {
+	color: var(--red-color-dark);
+}
+.dark-mode .color-orange {
+	color: var(--orange-color-dark);
+}
+
+.dark-mode ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--alt-text-color-dark);
+}
+
+.dark-mode :-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: var(--alt-text-color-dark);
+}
+
+.dark-mode ::-ms-input-placeholder { /* Microsoft Edge */
+  color: var(--alt-text-color-dark);
+}
+
+/*////////////////////////////////////////////////////////Navigation button////////////////////////////////////////////////////////*/
+.dark-mode #nav-btn span{
+    background: var(--text-color-dark);
+}
+.dark-mode #nav-btn span:before, .dark-mode #nav-btn span:after{
+    background: var(--text-color-dark);
+}
+.dark-mode #nav-btn.active span{
+    background: transparent;
+}
+
+/*////////////////////////////////////////////////////////Navigation menu////////////////////////////////////////////////////////*/
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+	.dark-mode #nav-menu {
+		background-color: rgba(0, 0, 0, 0.55);
+		-webkit-backdrop-filter: blur(10px);
+		backdrop-filter: blur(10px);
+	}
+}
+
+@supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+	.dark-mode #nav-menu {
+		background-color: var(--foreground-color-dark);
+	}
+}

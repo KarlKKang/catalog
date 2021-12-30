@@ -1,6 +1,23 @@
 @charset "utf-8";
 /* CSS Document */
 
+:root {
+	--foreground-color: rgba(255,255,255,1);
+	--background-color: rgba(252,252,252,1);
+	--background-color-transparent: rgba(251,251,251,0);
+	--text-color: rgba(0,0,0,1);
+	--text-color-transparent: rgba(0,0,0,0);
+	--alt-text-color: rgba(173,173,181,1);
+	--link-text-color: rgba(16,105,201,1);
+	--shadow-color: rgba(32,52,76,.15);
+	--shadow-color-hover: rgba(32,52,76,.25);
+	--horizontal-line-background-color: rgba(220,222,226,1);
+	--horizontal-line-foreground-color: rgba(225,227,231,1);
+	--red-color: rgba(255,0,0,1);
+	--green-color: rgba(0,255,0,1);
+	--orange-color: rgba(255,170,16,1);
+}
+
 @font-face {
 	font-family: "Noto Sans JP";
 	src: url("../font/NotoSansJP/NotoSansJP-Light.woff2") format("woff2"),
@@ -12,29 +29,39 @@
 *{
 	font-family: 'Noto Sans JP','游ゴシック体','游ゴシック','Yu Gothic','メイリオ',Meiryo,sans-serif;
 	font-weight: 300;
+	outline: none;
+	color: var(--text-color);
+}
+
+.document-loading, .document-loading * {
+	transition: all 0s ease 0s !important;
+}
+
+.appearance-switching, .appearance-switching * {
+	transition: all .4s ease-out !important;
 }
 
 html {
-  scroll-behavior: smooth;
+	scroll-behavior: smooth;
 }
 
 body {
-    background: #fdfdfd;
+    background: var(--background-color);
 	margin: 0px;
 	padding: 0px;
 }
 
 button {
-	color: black;
+	color: var(--text-color);
 }
 
 button:disabled {
-	color: #adadb5;
+	color: var(--alt-text-color);
 	pointer-events: none;
 }
 
 select {
-	color: black;
+	color: var(--text-color);
 }
 
 #header {
@@ -43,8 +70,8 @@ select {
 	position: fixed;
 	top: 0;
 	left: 0;
-	background: #fff;
-	border-bottom: .5px solid rgba(0,0,0,0.2);
+	background: var(--foreground-color);
+	border-bottom: 1px solid var(--horizontal-line-background-color);
 	z-index: 98;
 }
 
@@ -86,7 +113,7 @@ select {
 
 .link, .link:link, .link:visited, .link:hover, .link:active {
 	cursor: pointer;
-	color: #1069c9;
+	color: var(--link-text-color);
 	text-decoration: none;
 }
 
@@ -103,11 +130,31 @@ select {
 }
 
 .color-green {
-	color: green!important;
+	color: var(--green-color);
 }
+.color-red {
+	color: var(--red-color);
+}
+.color-orange {
+	color: var(--orange-color);
+}
+
 
 .break-all {
 	word-break: break-all;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--alt-text-color);
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: var(--alt-text-color);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: var(--alt-text-color);
 }
 
 /*////////////////////////////////////////////////////////Navigation button////////////////////////////////////////////////////////*/
@@ -128,11 +175,11 @@ select {
     left: 50%;
     width: 18px;
     height: 2px;
-    background: #000;
+    background: var(--text-color);
     margin: -1px 0 0 -9px;
-    border-radius: 1px;
     -webkit-transform-origin: right top;
     transform-origin: right top;
+	transition: .3s;
 }
 #nav-btn span:before, #nav-btn span:after{
     display: block;
@@ -141,7 +188,7 @@ select {
     left: 0;
     width: 18px;
     height: 2px;
-    background: #000;
+    background: var(--text-color);
     content: "";
     transition: .3s;
 }
@@ -195,7 +242,7 @@ select {
 
 @supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
 	#nav-menu {
-		background-color: rgba(255, 255, 255, 1);
+		background-color: var(--foreground-color);
 	}
 }
 

@@ -1,0 +1,19 @@
+@charset "utf-8";
+/* CSS Document */
+
+.dark-mode #warning {
+	color: var(--red-color-dark);
+}
+
+.dark-mode .input-field, .dark-mode #submit-button {
+	box-shadow: 0 0 17px 0 var(--shadow-color-dark);
+	background: var(--foreground-color-dark);
+}
+
+.dark-mode .input-field:hover, .dark-mode #submit-button:hover {
+	box-shadow: 0 2px 30px 2px var(--shadow-color-hover-dark);
+}
+
+.dark-mode #note > ul > li {
+	color: var(--alt-text-color-dark);
+}

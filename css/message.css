@@ -16,8 +16,8 @@
 	position: relative;
 	left: 50%;
 	transform: translate(-50%, 0%);
-	background-color: white;
-	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+	background-color: var(--foreground-color);
+	box-shadow: 0 0 17px 0 var(--shadow-color);
     transition: box-shadow .4s ease-out;
 	box-sizing: border-box;
 	text-align: center;
@@ -38,9 +38,9 @@
 button {
 	padding: 0px;
 	height: 40px;
-	box-shadow: 0 0 17px 0 rgba(32,52,76,.15);
+	box-shadow: 0 0 17px 0 var(--shadow-color);
     transition: box-shadow .4s ease-out;
-	background: #fff;
+	background: var(--foreground-color);
 	border: none;
 	width: min(150px, 100%);
 	text-align: center;
@@ -50,5 +50,5 @@ button {
 }
 
 #container:hover, button:hover {
-	box-shadow: 0 2px 30px 2px rgba(32,52,76,.25);
+	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
 }

@@ -5,6 +5,9 @@ window.addEventListener("load", function(){
 		window.location.href = 'https://featherine.com';
 		return 0;
 	}
+	
+	appearanceSwitching();
+	
 	document.getElementById('new-email').addEventListener('keydown', function () {
 		if (event.key === "Enter") {
 			submitRequest ();
@@ -20,7 +23,11 @@ window.addEventListener("load", function(){
 
 	
 	if (param == null || param.match(/^[a-zA-Z0-9~_-]+$/)===null) {
-		window.location.href = topURL;
+		if (debug) {
+			document.getElementsByTagName("body")[0].classList.remove("hidden");
+		} else {
+			window.location.href = topURL;
+		}
 		return 0;
 	}
 	if (signature == null || signature.match(/^[a-zA-Z0-9~_-]+$/)===null) {

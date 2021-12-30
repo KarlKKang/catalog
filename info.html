@@ -7,12 +7,14 @@
 <title>ご利用ガイド | featherine</title>
 <link rel="icon" type="image/webp" href="image/favicon.webp"/>
 <link rel="stylesheet" type="text/css" href="css/main.css">
+<link rel="stylesheet" type="text/css" href="css_dark/main.css">
 <link rel="stylesheet" type="text/css" href="css/info.css">
+<link rel="stylesheet" type="text/css" href="css_dark/info.css">
 <script src="script/main.js"></script>
 <script src="script/info.js"></script>
 </head>
 
-<body class="hidden">
+<body class="hidden document-loading">
 	<div id="header"></div>
 	<div id="nav-btn"><span></span></div>
 	<div id="nav-menu" class="invisible transparent">
@@ -28,7 +30,7 @@
 		<div id="container">
 			<div id="content">
 				<p id="title">ご利用ガイド（フルバージョン）</p>
-				<p id="date">最終編集：2021年11月20日</p>
+				<p id="date">最終編集：2021年12月30日</p>
 				<hr>
 				<div lang="ja">
 					<p class="sub-title">アカウントについて</p>
@@ -61,7 +63,16 @@
 							<li><p>1080p：20Mbps</p></li>
 							<li><p>4K：未定</p></li>
 						</ul></li>
-						</ul>	
+						<li><p>Windows、macOS、Linuxのデバイスでは、ダウンロードのオプションが表示されます。所定の手順でダウンロードしてください。</p></li>
+						<li><p>一部のデフォルトプレーヤーでは、ダウンロードしたコンテンツを再生できないことがあります。以下のビデオプレーヤーを推奨します：</p>
+						<ul>
+							<li><p><a class="link" href="https://mpv.io/" target="_blank" rel="noopener noreferrer">mpv</a>（Windows、macOS、Linux）</p></li>
+							<li><p><a class="link" href="https://apps.apple.com/app/nplayer-lite/id1078835991" target="_blank" rel="noopener noreferrer">nPlayer</a>（iOSとiPadOS）</p></li>
+							<li><p><a class="link" href="https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad" target="_blank" rel="noopener noreferrer">MX Player</a>（Androidのみ）</p></li>
+							<li><p><a class="link" href="https://iina.io/" target="_blank" rel="noopener noreferrer">IINA</a>（macOSのみ）</p></li>
+							<li><p><a class="link" href="https://sourceforge.net/projects/mpcbe/" target="_blank" rel="noopener noreferrer">MPC-BE</a>（Windowsのみ）</p></li>
+						</ul></li>
+					</ul>	
 					<div class="line-break"></div>
 					<p class="sub-title">推奨動作環境</p>
 					<ul>
@@ -86,7 +97,7 @@
 						<li><p>バグがある場合、またはご意見がある場合は、管理者までご連絡ください。</p></li>
 					</ul>
 					<div class="line-break"></div>
-					<p>お問い合わせ：<a href="mailto:admin@featherine.com">admin@featherine.com</a></p>
+					<p>お問い合わせ：<a class="link" href="mailto:admin@featherine.com">admin@featherine.com</a></p>
 				</div>
 				<hr id="en">
 				<div lang="en">
@@ -120,6 +131,15 @@
 							<li><p>1080p: 20Mbps</p></li>
 							<li><p>4K: undetermined</p></li>
 						</ul></li>
+						<li><p>The option to download will be shown on Windows, macOS, and Linux devices. Please follow the given instructions to download.</p></li>
+						<li><p>Most default players aren't able to play the contents properly. The following video players are recommended:</p>
+						<ul>
+							<li><p><a class="link" href="https://mpv.io/" target="_blank" rel="noopener noreferrer">mpv</a> (Windows, macOS, and Linux)</p></li>
+							<li><p><a class="link" href="https://apps.apple.com/app/nplayer-lite/id1078835991" target="_blank" rel="noopener noreferrer">nPlayer</a> (iOS and iPadOS)</p></li>
+							<li><p><a class="link" href="https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad" target="_blank" rel="noopener noreferrer">MX Player</a> (Android)</p></li>
+							<li><p><a class="link" href="https://iina.io/" target="_blank" rel="noopener noreferrer">IINA</a> (macOS)</p></li>
+							<li><p><a class="link" href="https://sourceforge.net/projects/mpcbe/" target="_blank" rel="noopener noreferrer">MPC-BE</a> (Windows)</p></li>
+						</ul></li>
 					</ul>	
 					<div class="line-break"></div>
 					<p class="sub-title">Recommended Devices</p>
@@ -143,10 +163,10 @@
 						<li><p>There is no multi-language support for some pages on this website currently. Please use any translators you like if necessary.</p></li>
 						<li><p>The server is located in the United States. If you experience severe latency outside of North America, please contact the administrator. We may try to deploy a cross region solution.</p></li>
 						<li><p>This website is not for profit.</p></li>
-						<li><p>If there are any bugs,  or if you have any suggestions, please contact the administrator.</p></li>
+						<li><p>If there are any bugs, or if you have any suggestions, please contact the administrator.</p></li>
 					</ul>
 					<div class="line-break"></div>
-					<p>Contact the administrator at: <a href="mailto:admin@featherine.com">admin@featherine.com</a> (English available)</p>
+					<p>Contact the administrator at: <a class="link" href="mailto:admin@featherine.com">admin@featherine.com</a> (English available)</p>
 				</div>
 				<hr id="zh-Hant">
 				<div lang="zh-Hant">
@@ -180,6 +200,15 @@
 							<li><p>1080p：20Mbps</p></li>
 							<li><p>4K：未定</p></li>
 						</ul></li>
+						<li><p>下載選項將顯示在Windows、macOS、和Linux設備上。請按照給定的指示進行下載。</p></li>
+						<li><p>大多數默認播放器無法正常播放下載的內容。推薦使用以下播放軟體：</p>
+						<ul>
+							<li><p><a class="link" href="https://mpv.io/" target="_blank" rel="noopener noreferrer">mpv</a>（Windows、macOS、Linux）</p></li>
+							<li><p><a class="link" href="https://apps.apple.com/app/nplayer-lite/id1078835991" target="_blank" rel="noopener noreferrer">nPlayer</a>（iOS和iPadOS）</p></li>
+							<li><p><a class="link" href="https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad" target="_blank" rel="noopener noreferrer">MX Player</a>（Android）</p></li>
+							<li><p><a class="link" href="https://iina.io/" target="_blank" rel="noopener noreferrer">IINA</a>（macOS）</p></li>
+							<li><p><a class="link" href="https://sourceforge.net/projects/mpcbe/" target="_blank" rel="noopener noreferrer">MPC-BE</a>（Windows）</p></li>
+						</ul></li>
 					</ul>	
 					<div class="line-break"></div>
 					<p class="sub-title">推薦使用裝置</p>
@@ -206,7 +235,7 @@
 						<li><p>如果有任何Bug，或有任何建議，請聯絡管理員。</p></li>
 					</ul>
 					<div class="line-break"></div>
-					<p>聯絡管理員（可使用中文）：<a href="mailto:admin@featherine.com">admin@featherine.com</a></p>
+					<p>聯絡管理員（可使用中文）：<a class="link" href="mailto:admin@featherine.com">admin@featherine.com</a></p>
 				</div>
 				<hr id="zh-Hans">
 				<div lang="zh-Hans">
@@ -240,6 +269,15 @@
 							<li><p>1080p：20Mbps</p></li>
 							<li><p>4K：未定</p></li>
 						</ul></li>
+						<li><p>下载选项将显示在 Windows、macOS、和Linux设备上。请按照给定的指示进行下载。</p></li>
+						<li><p>大多数默认播放器无法正常播放下载的内容。推荐使用以下视频播放器：</p>
+						<ul>
+							<li><p><a class="link" href="https://mpv.io/" target="_blank" rel="noopener noreferrer">mpv</a>（Windows、macOS、Linux）</p></li>
+							<li><p><a class="link" href="https://apps.apple.com/app/nplayer-lite/id1078835991" target="_blank" rel="noopener noreferrer">nPlayer</a>（iOS和iPadOS）</p></li>
+							<li><p><a class="link" href="https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad" target="_blank" rel="noopener noreferrer">MX Player</a>（安卓）</p></li>
+							<li><p><a class="link" href="https://iina.io/" target="_blank" rel="noopener noreferrer">IINA</a>（macOS）</p></li>
+							<li><p><a class="link" href="https://sourceforge.net/projects/mpcbe/" target="_blank" rel="noopener noreferrer">MPC-BE</a>（Windows）</p></li>
+						</ul></li>
 					</ul>	
 					<div class="line-break"></div>
 					<p class="sub-title">推荐使用设备</p>
@@ -266,7 +304,7 @@
 						<li><p>如果有任何Bug，或有任何建议，请联系管理员。</p></li>
 					</ul>
 					<div class="line-break"></div>
-					<p>联系管理员（可使用中文）：<a href="mailto:admin@featherine.com">admin@featherine.com</a></p>
+					<p>联系管理员（可使用中文）：<a class="link" href="mailto:admin@featherine.com">admin@featherine.com</a></p>
 				</div>
 				<hr>
 				<p lang="ja">下記のオンラインショップでグッズや円盤を購入して、原作を応援することができます。ぜひチェックしてください。</p>
@@ -275,52 +313,52 @@
 				<p lang="zh-Hans">从以下购物网站可以购买原作的原盘、周边等商品。对于原作的支持就是对于本站最大的支持。</p>
 				<div class="line-break"></div>
 				<ul lang="ja">
-					<li><p class="link"><a href="https://www.animate-onlineshop.jp/" target="_blank" rel="noopener noreferrer">アニメイト</a></p></li>
-					<li><p class="link"><a href="https://www.amazon.co.jp/" target="_blank" rel="noopener noreferrer">Amazon.co.jp</a></p></li>
-					<li><p class="link"><a href="https://www.gamers.co.jp/" target="_blank" rel="noopener noreferrer">ゲーマーズ</a></p></li>
-					<li><p class="link"><a href="https://www.melonbooks.co.jp/" target="_blank" rel="noopener noreferrer">メロンブックス</a></p></li>
-					<li><p class="link"><a href="https://www.amiami.jp/" target="_blank" rel="noopener noreferrer">あみあみ</a></p></li>
-					<li><p class="link"><a href="https://www.hmv.co.jp/" target="_blank" rel="noopener noreferrer">HMV&amp;BOOKS online</a></p></li>
-					<li><p class="link"><a href="http://www.getchu.com/" target="_blank" rel="noopener noreferrer">げっちゅ屋</a></p></li>
-					<li><p class="link"><a href="https://ecs.toranoana.jp/" target="_blank" rel="noopener noreferrer">とらのあな</a></p></li>
-					<li><p class="link"><a href="https://a.sofmap.com/" target="_blank" rel="noopener noreferrer">ソフマップ・アニメガ</a></p></li>
-					<li><p class="link"><a href="https://tower.jp/" target="_blank" rel="noopener noreferrer">タワーレコード</a></p></li>
-					<li><p class="link"><a href="https://7net.omni7.jp/" target="_blank" rel="noopener noreferrer">セブンネットショッピング</a></p></li>
-					<li><p class="link"><a href="https://shop.tsutaya.co.jp/" target="_blank" rel="noopener noreferrer">TSUTAYAオンライン</a></p></li>
-					<li><p class="link"><a href="https://joshinweb.jp/dp/" target="_blank" rel="noopener noreferrer">Joshinディスクピア</a></p></li>
-					<li><p class="link"><a href="https://books.rakuten.co.jp/" target="_blank" rel="noopener noreferrer">楽天ブックス</a></p></li>
-					<li><p class="link"><a href="https://www.rakuten.ne.jp/gold/wondergoo/" target="_blank" rel="noopener noreferrer">WonderGOO/新星堂</a></p></li>
-					<li><p class="link"><a href="https://www.chara-ani.com/" target="_blank" rel="noopener noreferrer">キャラアニ.com</a></p></li>
-					<li><p class="link"><a href="https://www.biccamera.com/bc/category/001/210/" target="_blank" rel="noopener noreferrer">ビックカメラ</a></p></li>
-					<li><p class="link"><a href="https://www.yodobashi.com/category/91003/" target="_blank" rel="noopener noreferrer">ヨドバシカメラ</a></p></li>
+					<li><p><a class="link" href="https://www.animate-onlineshop.jp/" target="_blank" rel="noopener noreferrer">アニメイト</a></p></li>
+					<li><p><a class="link" href="https://www.amazon.co.jp/" target="_blank" rel="noopener noreferrer">Amazon.co.jp</a></p></li>
+					<li><p><a class="link" href="https://www.gamers.co.jp/" target="_blank" rel="noopener noreferrer">ゲーマーズ</a></p></li>
+					<li><p><a class="link" href="https://www.melonbooks.co.jp/" target="_blank" rel="noopener noreferrer">メロンブックス</a></p></li>
+					<li><p><a class="link" href="https://www.amiami.jp/" target="_blank" rel="noopener noreferrer">あみあみ</a></p></li>
+					<li><p><a class="link" href="https://www.hmv.co.jp/" target="_blank" rel="noopener noreferrer">HMV&amp;BOOKS online</a></p></li>
+					<li><p><a class="link" href="http://www.getchu.com/" target="_blank" rel="noopener noreferrer">げっちゅ屋</a></p></li>
+					<li><p><a class="link" href="https://ecs.toranoana.jp/" target="_blank" rel="noopener noreferrer">とらのあな</a></p></li>
+					<li><p><a class="link" href="https://a.sofmap.com/" target="_blank" rel="noopener noreferrer">ソフマップ・アニメガ</a></p></li>
+					<li><p><a class="link" href="https://tower.jp/" target="_blank" rel="noopener noreferrer">タワーレコード</a></p></li>
+					<li><p><a class="link" href="https://7net.omni7.jp/" target="_blank" rel="noopener noreferrer">セブンネットショッピング</a></p></li>
+					<li><p><a class="link" href="https://shop.tsutaya.co.jp/" target="_blank" rel="noopener noreferrer">TSUTAYAオンライン</a></p></li>
+					<li><p><a class="link" href="https://joshinweb.jp/dp/" target="_blank" rel="noopener noreferrer">Joshinディスクピア</a></p></li>
+					<li><p><a class="link" href="https://books.rakuten.co.jp/" target="_blank" rel="noopener noreferrer">楽天ブックス</a></p></li>
+					<li><p><a class="link" href="https://www.rakuten.ne.jp/gold/wondergoo/" target="_blank" rel="noopener noreferrer">WonderGOO/新星堂</a></p></li>
+					<li><p><a class="link" href="https://www.chara-ani.com/" target="_blank" rel="noopener noreferrer">キャラアニ.com</a></p></li>
+					<li><p><a class="link" href="https://www.biccamera.com/bc/category/001/210/" target="_blank" rel="noopener noreferrer">ビックカメラ</a></p></li>
+					<li><p><a class="link" href="https://www.yodobashi.com/category/91003/" target="_blank" rel="noopener noreferrer">ヨドバシカメラ</a></p></li>
 					<div class="line-break"></div>
-					<li><p class="link"><a href="https://www.aniplexplus.com/" target="_blank" rel="noopener noreferrer">ANIPLEX+</a></p></li>
-					<li><p class="link"><a href="https://store.kadokawa.co.jp/" target="_blank" rel="noopener noreferrer">カドカワストア</a></p></li>
-					<li><p class="link"><a href="https://canime.jp/" target="_blank" rel="noopener noreferrer">きゃにめ</a></p></li>
+					<li><p><a class="link" href="https://www.aniplexplus.com/" target="_blank" rel="noopener noreferrer">ANIPLEX+</a></p></li>
+					<li><p><a class="link" href="https://store.kadokawa.co.jp/" target="_blank" rel="noopener noreferrer">カドカワストア</a></p></li>
+					<li><p><a class="link" href="https://canime.jp/" target="_blank" rel="noopener noreferrer">きゃにめ</a></p></li>
 					<div class="line-break"></div>
-					<li><p class="link"><a href="https://kyoanishop.com/" target="_blank" rel="noopener noreferrer">京アニショップ！</a></p></li>
-					<li><p class="link"><a href="https://kyoani.shop-pro.jp/" target="_blank" rel="noopener noreferrer">プレミアム名場面DP - 京アニショップ！</a></p></li>
-					<li><p class="link"><a href="https://shaften.shop/" target="_blank" rel="noopener noreferrer">シャフト公式オンラインショップ </a></p></li>
-					<li><p class="link"><a href="https://mappa-onlineshop.com/" target="_blank" rel="noopener noreferrer">MAPPA online shop</a></p></li>
-					<li><p class="link"><a href="https://shop.witstudio.app/" target="_blank" rel="noopener noreferrer">WIT STUDIO Online Shop</a></p></li>
-					<li><p class="link"><a href="https://trigger.ecq.sc/" target="_blank" rel="noopener noreferrer">TRIGGERオンラインショップ</a></p></li>
-					<li><p class="link"><a href="https://ufotablewebshop.shop-pro.jp/" target="_blank" rel="noopener noreferrer">ufotableWEBSHOP</a></p></li>
-					<li><p class="link"><a href="https://www.madhouse-ideacreate.net/" target="_blank" rel="noopener noreferrer">MADHOUSE × IDEACREATE 公式アニメグッズ販売サイト</a></p></li>
-					<li><p class="link"><a href="https://ig-store-onlineshop.jp/" target="_blank" rel="noopener noreferrer">I.Gストアonlineshop</a></p></li>
-					<li><p class="link"><a href="https://8bitshop.jp/" target="_blank" rel="noopener noreferrer">エイトビットショップ</a></p></li>
-					<li><p class="link"><a href="https://hibari-lerche.booth.pm/" target="_blank" rel="noopener noreferrer">スタジオ雲雀/Lerche（ラルケ）公式通販</a></p></li>
-					<li><p class="link"><a href="https://doko-shop.booth.pm/" target="_blank" rel="noopener noreferrer">株式会社 動画工房 版権事業部</a></p></li>
-					<li><p class="link"><a href="https://shopping.toei-anim.co.jp/" target="_blank" rel="noopener noreferrer">東映アニメーション Online Shop</a></p></li>
+					<li><p><a class="link" href="https://kyoanishop.com/" target="_blank" rel="noopener noreferrer">京アニショップ！</a></p></li>
+					<li><p><a class="link" href="https://kyoani.shop-pro.jp/" target="_blank" rel="noopener noreferrer">プレミアム名場面DP - 京アニショップ！</a></p></li>
+					<li><p><a class="link" href="https://shaften.shop/" target="_blank" rel="noopener noreferrer">シャフト公式オンラインショップ </a></p></li>
+					<li><p><a class="link" href="https://mappa-onlineshop.com/" target="_blank" rel="noopener noreferrer">MAPPA online shop</a></p></li>
+					<li><p><a class="link" href="https://shop.witstudio.app/" target="_blank" rel="noopener noreferrer">WIT STUDIO Online Shop</a></p></li>
+					<li><p><a class="link" href="https://trigger.ecq.sc/" target="_blank" rel="noopener noreferrer">TRIGGERオンラインショップ</a></p></li>
+					<li><p><a class="link" href="https://ufotablewebshop.shop-pro.jp/" target="_blank" rel="noopener noreferrer">ufotableWEBSHOP</a></p></li>
+					<li><p><a class="link" href="https://www.madhouse-ideacreate.net/" target="_blank" rel="noopener noreferrer">MADHOUSE × IDEACREATE 公式アニメグッズ販売サイト</a></p></li>
+					<li><p><a class="link" href="https://ig-store-onlineshop.jp/" target="_blank" rel="noopener noreferrer">I.Gストアonlineshop</a></p></li>
+					<li><p><a class="link" href="https://8bitshop.jp/" target="_blank" rel="noopener noreferrer">エイトビットショップ</a></p></li>
+					<li><p><a class="link" href="https://hibari-lerche.booth.pm/" target="_blank" rel="noopener noreferrer">スタジオ雲雀/Lerche（ラルケ）公式通販</a></p></li>
+					<li><p><a class="link" href="https://doko-shop.booth.pm/" target="_blank" rel="noopener noreferrer">株式会社 動画工房 版権事業部</a></p></li>
+					<li><p><a class="link" href="https://shopping.toei-anim.co.jp/" target="_blank" rel="noopener noreferrer">東映アニメーション Online Shop</a></p></li>
 					<div class="line-break"></div>
-					<li><p class="link"><a href="https://shop.hololivepro.com/" target="_blank" rel="noopener noreferrer">hololive production official shop</a></p></li>
-					<li><p class="link"><a href="https://hololive.booth.pm/" target="_blank" rel="noopener noreferrer">ホロライブプロダクション BOOTH</a></p></li>
+					<li><p><a class="link" href="https://shop.hololivepro.com/" target="_blank" rel="noopener noreferrer">hololive production official shop</a></p></li>
+					<li><p><a class="link" href="https://hololive.booth.pm/" target="_blank" rel="noopener noreferrer">ホロライブプロダクション BOOTH</a></p></li>
 					<div class="line-break"></div>
-					<li><p class="link"><a href="https://booth.pm/" target="_blank" rel="noopener noreferrer">BOOTH</a></p></li>
-					<li><p class="link"><a href="https://www.dlsite.com/" target="_blank" rel="noopener noreferrer">DLsite</a></p></li>
+					<li><p><a class="link" href="https://booth.pm/" target="_blank" rel="noopener noreferrer">BOOTH</a></p></li>
+					<li><p><a class="link" href="https://www.dlsite.com/" target="_blank" rel="noopener noreferrer">DLsite</a></p></li>
 					<div class="line-break"></div>
-					<li><p class="link"><a href="https://mora.jp/" target="_blank" rel="noopener noreferrer">mora ～WALKMAN®公式ミュージックストア～</a></p></li>
-					<li><p class="link"><a href="https://www.e-onkyo.com/music/" target="_blank" rel="noopener noreferrer">e-onkyo music</a></p></li>
-					<li><p class="link"><a href="https://ototoy.jp/top/" target="_blank" rel="noopener noreferrer">OTOTOY</a></p></li>
+					<li><p><a class="link" href="https://mora.jp/" target="_blank" rel="noopener noreferrer">mora ～WALKMAN®公式ミュージックストア～</a></p></li>
+					<li><p><a class="link" href="https://www.e-onkyo.com/music/" target="_blank" rel="noopener noreferrer">e-onkyo music</a></p></li>
+					<li><p><a class="link" href="https://ototoy.jp/top/" target="_blank" rel="noopener noreferrer">OTOTOY</a></p></li>
 				</ul>
 				<div class="line-break"></div>
 				<p lang="en">Oversea shipping and proxy services: </p>
@@ -328,10 +366,10 @@
 				<p lang="zh-Hans">海外转送、代购服务：</p>
 				<div class="line-break"></div>
 				<ul>
-					<li><p class="link"><a href="https://www.tenso.com/" target="_blank" rel="noopener noreferrer">tenso.com</a></p></li>
-					<li><p class="link"><a href="https://buyee.jp/" target="_blank" rel="noopener noreferrer">Buyee</a></p></li>
-					<li><p class="link"><a href="https://www.worldshopping.global/" target="_blank" rel="noopener noreferrer">WorldShopping</a></p></li>
-					<li><p class="link"><a href="https://www.leyifan.com/" target="_blank" rel="noopener noreferrer">楽一番</a></p></li>
+					<li><p><a class="link" href="https://www.tenso.com/" target="_blank" rel="noopener noreferrer">tenso.com</a></p></li>
+					<li><p><a class="link" href="https://buyee.jp/" target="_blank" rel="noopener noreferrer">Buyee</a></p></li>
+					<li><p><a class="link" href="https://www.worldshopping.global/" target="_blank" rel="noopener noreferrer">WorldShopping</a></p></li>
+					<li><p><a class="link" href="https://www.leyifan.com/" target="_blank" rel="noopener noreferrer">楽一番</a></p></li>
 				</ul>
 				<div class="line-break"></div>
 			</div>

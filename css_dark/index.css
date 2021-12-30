@@ -1,0 +1,36 @@
+@charset "utf-8";
+/* CSS Document */
+
+.dark-mode #container > div {
+	background-color: var(--foreground-color-dark);
+	box-shadow: 0 0 17px 0 var(--shadow-color-dark);
+}
+
+.dark-mode #container > div:hover {
+	box-shadow: 0 2px 30px 2px var(--shadow-color-hover-dark);
+}
+
+.dark-mode #container > div > div {
+	filter: brightness(0.95) contrast(0.96);
+	-webkit-filter: brightness(0.92) contrast(0.96);
+}
+
+.dark-mode #container > div:hover > div {
+	filter: brightness(1) contrast(1.07);
+	-webkit-filter: brightness(1) contrast(1,07);
+}
+
+.dark-mode #search-bar {
+    background: var(--foreground-color-dark);
+    box-shadow: 0 0 17px 0 var(--shadow-color-dark);
+	color: var(--text-color-dark);
+}
+.dark-mode #search-bar:hover {
+	box-shadow: 0 2px 30px 2px var(--shadow-color-hover-dark);
+}
+.dark-mode #search-bar .icon svg {
+    fill: var(--alt-text-color-dark);
+}
+.dark-mode #search-bar .input input {
+    color: var(--text-color-dark);
+}

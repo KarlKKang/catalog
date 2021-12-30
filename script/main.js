@@ -226,3 +226,30 @@ function onScreenConsoleOutput (message) {
 		onScreenConsole.value += (date.getHours()<10 ? '0'+date.getHours() : date.getHours()) + ':' + (date.getMinutes()<10 ? '0'+date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds()<10 ? '0'+date.getSeconds() : date.getSeconds()) + '   ' + message + '\r\n';
 	}
 }
+
+function appearanceSwitching () {
+	if (window.matchMedia) {
+		if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			document.body.classList.add('dark-mode');
+		}
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+			document.body.classList.add('appearance-switching');
+			if (e.matches) {
+				document.body.classList.add('dark-mode');
+			} else {
+				document.body.classList.remove('dark-mode');
+			}
+			setInterval(function () {
+				document.body.classList.remove('appearance-switching');
+			}, 400);
+		});
+	}
+	document.body.classList.remove('document-loading');
+}
+
+function changeColor (elem, color) {
+	elem.classList.remove('color-red');
+	elem.classList.remove('color-green');
+	elem.classList.remove('color-orange');
+	elem.classList.add('color-'+color);
+}

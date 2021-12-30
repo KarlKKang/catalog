@@ -5,6 +5,9 @@ window.addEventListener("load", function(){
 		window.location.href = 'https://login.featherine.com/request_password_reset';
 		return 0;
 	}
+	
+	appearanceSwitching();
+	
 	document.getElementById('email').addEventListener('keydown', function () {
 		if (event.key === "Enter") {
 			submitRequest ();

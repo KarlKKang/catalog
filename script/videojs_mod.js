@@ -89,7 +89,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 			event.stopPropagation();
 			controls.classList.add('vjs-has-started');
 			play();
-			controls.focus();
+			bigPlayButton.blur();
 		}, true);
 	}
 
@@ -104,7 +104,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         } else {
             togglePlayback ();
         }
-        controls.focus();
+        playButton.blur();
 	}, true);
 
     //Progress bar & frame drop monitor
@@ -153,13 +153,28 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
             controls.classList.remove('vjs-ended');
             playButton.classList.remove('vjs-ended');
         }
+		
+		let mouseX;
+        if (event.type == 'touchstart') {
+            let touch = event.touches[0] || event.changedTouches[0];
+            mouseX = touch.clientX;
+        } else {
+            mouseX = event.clientX;
+        }
+        let position = progressHolder.getBoundingClientRect();
+        let totalLength = position.right-position.left;
+        let leftPadding = Math.min(Math.max(mouseX-position.left, 0), totalLength);
+        let percentage = leftPadding/totalLength;
+        let currentTime = media.duration*percentage;
+		
+		media.currentTime = currentTime;
 	});
 	
     addMultipleEventListeners (document, ['mouseup', 'touchend'], function (event) {
 		if (that.dragging) {
             that.dragging = false;
 
-            let mouseX;
+            /*let mouseX;
             if (event.type == 'touchend') {
                 let touch = event.touches[0] || event.changedTouches[0];
                 mouseX = touch.clientX;
@@ -170,15 +185,15 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
             let totalLength = position.right-position.left;
             let leftPadding = Math.min(Math.max(mouseX-position.left, 0), totalLength);
             let percentage = leftPadding/totalLength;
-            let currentTime = media.duration*percentage;
+            let currentTime = media.duration*percentage;*/
 
-            if (currentTime == media.duration) {
+            if (media.currentTime == media.duration) {
                 controls.classList.add('vjs-ended');
                 playButton.classList.add('vjs-ended');
             }
 
-            media.currentTime = currentTime;
-            controls.focus();
+            /*media.currentTime = currentTime;*/
+            progressControl.blur();
         }
 	});
 	
@@ -199,14 +214,22 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         let leftPadding = Math.min(Math.max(mouseX-position.left, 0), totalLength);
         let percentage = leftPadding/totalLength;
         let currentTime = media.duration*percentage;
+		
+		let appearanceSurfix = '';
+		if (window.matchMedia) {
+			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				appearanceSurfix = '-dark';
+			}
+		}
+		
         if (progressMouseDisplay) {
             progressMouseDisplay.style.left = leftPadding + 'px';
             progressTooltip.innerHTML = secToTimestamp(currentTime);
             progressTooltip.style.right = -progressTooltip.offsetWidth/2 + 'px';
 			if (currentTime > media.currentTime) {
-				progressMouseDisplay.style.backgroundColor = 'black';
+				progressMouseDisplay.style.backgroundColor = 'var(--text-color'+appearanceSurfix+')';
 			} else {
-				progressMouseDisplay.style.backgroundColor = 'white';
+				progressMouseDisplay.style.backgroundColor = 'var(--foreground-color'+appearanceSurfix+')';
 			}
         }
         if (that.dragging) {
@@ -288,7 +311,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
             } else {
                 media.requestPictureInPicture();
             }
-            controls.focus();
+            PIPButton.blur();
 		}, true);
 		
         media.addEventListener('enterpictureinpicture', function () {
