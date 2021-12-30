@@ -251,12 +251,13 @@ window.addEventListener("load", function(){
 		}
 
 		function updateVideo (file) {
+			var contentContainer = document.getElementById('content');
 			if (file.title!='') {
 				let title = document.createElement('p');
 				title.setAttribute('class', 'sub-title');
 				title.classList.add('center-align');
 				title.innerHTML = file.title;
-				document.getElementById('content').appendChild(title);
+				contentContainer.insertBefore(title, document.getElementById('message'));
 			}
 			
 			var formats = file.formats;
@@ -291,11 +292,11 @@ window.addEventListener("load", function(){
 			}
 
 			formatSelector.appendChild(selectMenu);
-			document.getElementById('content').insertBefore(formatSelector, document.getElementById('message'));
+			contentContainer.insertBefore(formatSelector, document.getElementById('message'));
 			
 			var mediaHolder = document.createElement('div');
 			mediaHolder.id = 'media-holder';
-			document.getElementById('content').appendChild(mediaHolder);
+			contentContainer.appendChild(mediaHolder);
 			
 			/*var timestampParam = getURLParam ('timestamp');
 			if (timestampParam != null) {
@@ -360,6 +361,7 @@ window.addEventListener("load", function(){
 		
 		function updateAudio (file) {
 			
+			var contentContainer = document.getElementById('content');
 			var counter = 0;
 
 			if (file.info.album_title!='') {
@@ -367,13 +369,13 @@ window.addEventListener("load", function(){
 				albumTitle.setAttribute('class', 'sub-title');
 				albumTitle.classList.add('center-align');
 				albumTitle.innerHTML = file.info.album_title;
-				document.getElementById('content').appendChild(albumTitle);
+				contentContainer.insertBefore(albumTitle, document.getElementById('message'));
 				if (file.info.album_artist!='') {
 					let albumArtist = document.createElement('p');
 					albumArtist.setAttribute('class', 'artist');
 					albumArtist.classList.add('center-align');
 					albumArtist.innerHTML = file.info.album_artist;
-					document.getElementById('content').appendChild(albumArtist);
+					contentContainer.insertBefore(albumArtist, document.getElementById('message'));
 				}
 			} else if (file.info.album_artist!='') {
 				let titleElem = document.getElementById('title');
@@ -416,7 +418,7 @@ window.addEventListener("load", function(){
 			
 			var mediaHolder = document.createElement('div');
 			mediaHolder.id = 'media-holder';
-			document.getElementById('content').appendChild(mediaHolder);
+			contentContainer.appendChild(mediaHolder);
 			
 			var i;
 
@@ -572,6 +574,9 @@ window.addEventListener("load", function(){
 			
 			}
 			
+			addDownloadAccordion();
+			addAccordionEvent();
+			
 			function audioReady () {
 				for (var i = 0; i < mediaInstances.length; i++) {
 					let index = i;
@@ -588,8 +593,6 @@ window.addEventListener("load", function(){
 						}
 					});
 				}
-				addDownloadAccordion();
-				addAccordionEvent();
 			}
 		}
 		

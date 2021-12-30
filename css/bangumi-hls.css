@@ -177,6 +177,7 @@ hr {
 
 select {
 	border: none;
+	border-radius: 0px;
     font-size: 0.9em;
     margin: 0px;
     width: 100%;
