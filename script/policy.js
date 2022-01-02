@@ -11,8 +11,8 @@ window.addEventListener("load", function(){
 	handshake (function (){
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (checkXHRStatus (this.status)) {
+			if (checkXHRStatus (this.status)) {
+				if (this.readyState == 4) {
 					var responseText = this.responseText;
 					if (responseText.includes('/var/www')) {
 						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, true);
@@ -39,6 +39,7 @@ window.addEventListener("load", function(){
 				}
 			}
 		};
+		addXHROnError(xmlhttp);
 		xmlhttp.open("POST", serverURL + "/authenticate.php",true);
 		xmlhttp.withCredentials = true;
 		xmlhttp.send();

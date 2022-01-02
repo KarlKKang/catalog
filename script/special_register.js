@@ -58,8 +58,8 @@ window.addEventListener("load", function(){
 function initialize () {
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (this.responseText == 'APPROVED' || debug) {
 					document.getElementsByTagName("body")[0].classList.remove("hidden");
 				} else if (this.responseText.includes('REJECTED')) {
@@ -70,6 +70,7 @@ function initialize () {
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/special_register.php", true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("status_only=true");
@@ -121,8 +122,8 @@ function register () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (this.responseText.includes('/var/www')) {
 					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 				} else if (this.responseText.includes('SERVER ERROR:')) {
@@ -145,6 +146,7 @@ function register () {
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/special_register.php", true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.send("user="+encodeURIComponent(JSON.stringify(user)));

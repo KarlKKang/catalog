@@ -22,8 +22,8 @@ window.addEventListener("load", function(){
 	handshake (function () {
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (checkXHRStatus (this.status)) {
+			if (checkXHRStatus (this.status)) {
+				if (this.readyState == 4) {
 					if (this.responseText.includes('/var/www')) {
 						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 					} else if (this.responseText.includes('SERVER ERROR:')) {
@@ -31,7 +31,7 @@ window.addEventListener("load", function(){
 					} else if (this.responseText.includes('EXPIRED')) {
 						showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
 					} else if (this.responseText.includes('REJECTED')) {
-						showMessage ('リクエストは拒否されました', 'red', '未定の招待があります。招待が完了するまでお待ちください。', loginURL);
+						showMessage ('リクエストは拒否されました', 'red', '未完成の招待状があります。招待が完了するまでお待ちください。', loginURL);
 					} else if (this.responseText == 'DONE') {
 						showMessage ('完了しました', 'green', 'メールアドレスが変更されました。', loginURL);
 					} else {
@@ -40,6 +40,7 @@ window.addEventListener("load", function(){
 				}
 			}
 		};
+		addXHROnError(xmlhttp);
 		xmlhttp.open("POST", serverURL + "/change_email.php", true);
 		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xmlhttp.send("p="+param+"&signature="+signature);

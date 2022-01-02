@@ -42,8 +42,8 @@ function initialize () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (this.responseText!='APPROVED') {
 					window.location.href = 'https://featherine.com/404';
 				} else {
@@ -52,6 +52,7 @@ function initialize () {
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -70,12 +71,13 @@ function getSeriesTable () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				setOutput (this.responseText);
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -112,14 +114,15 @@ function modifySeries (button) {
 
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (setOutput (this.responseText)) {
 					alert ('Operation completed');
 				}
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -145,14 +148,15 @@ function deleteSeries (id) {
 
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (setOutput (this.responseText)) {
 					alert ('Operation completed');
 				}
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -189,14 +193,15 @@ function addSeries (button) {
 
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (setOutput (this.responseText)) {
 					alert ('Operation completed');
 				}
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -290,12 +295,13 @@ function generate (type) {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				setOutput (this.responseText, 'id-output');
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -312,14 +318,15 @@ function updateTime (id) {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (setOutput (this.responseText)) {
 					alert ('Operation completed');
 				}
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -337,12 +344,13 @@ function getAccountTable () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				setOutput (this.responseText);
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -400,14 +408,15 @@ function addAccount (button) {
 
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (setOutput (this.responseText)) {
 					alert ('Operation completed');
 				}
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -461,14 +470,15 @@ function modifyAccount (button, originalEmail) {
 
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (setOutput (this.responseText)) {
 					alert ('Operation completed');
 				}
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -558,14 +568,15 @@ function deleteAccount (email) {
 
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (setOutput (this.responseText)) {
 					alert ('Operation completed');
 				}
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -583,12 +594,13 @@ function getInviteTable () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				setOutput (this.responseText);
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -606,12 +618,13 @@ function getLogTable () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				setOutput (this.responseText);
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -641,12 +654,13 @@ function clearCache () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				alert(this.responseText);
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -669,12 +683,13 @@ function rebuildIndex () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				alert(this.responseText);
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/console.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

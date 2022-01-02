@@ -53,17 +53,16 @@ window.addEventListener("load", function(){
 		
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (checkXHRResponse (this)) {
-					if (this.responseText!='APPROVED') {
-						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, true);
-						return false;
-					} else {
-						callback ();
-					}
+			if (checkXHRResponse (this)) {
+				if (this.responseText!='APPROVED') {
+					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, true);
+					return false;
+				} else {
+					callback ();
 				}
 			}
 		};
+		addXHROnError(xmlhttp);
 		xmlhttp.open("POST", serverURL + "/device_authenticate.php", true);
 		xmlhttp.withCredentials = true;
 		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

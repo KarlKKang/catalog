@@ -28,26 +28,25 @@ window.addEventListener("load", function(){
 	handshake (function (){
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (checkXHRResponse (this)) {
-					if (this.responseText == 'APPROVED') {
-						document.getElementsByTagName("body")[0].classList.remove("hidden");
-						var scrollID = window.location.hash;
-						if (scrollID != '') {
-							var elem = document.getElementById(scrollID.substr(1));
-							if (elem) {
-								elem.scrollIntoView({
-									behavior: 'smooth'
-								});
-							}
+			if (checkXHRResponse (this)) {
+				if (this.responseText == 'APPROVED') {
+					document.getElementsByTagName("body")[0].classList.remove("hidden");
+					var scrollID = window.location.hash;
+					if (scrollID != '') {
+						var elem = document.getElementById(scrollID.substr(1));
+						if (elem) {
+							elem.scrollIntoView({
+								behavior: 'smooth'
+							});
 						}
-					} else {
-						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, true);
-						return false;
 					}
+				} else {
+					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, true);
+					return false;
 				}
 			}
 		};
+		addXHROnError(xmlhttp);
 		xmlhttp.open("POST", serverURL + "/authenticate.php",true);
 		xmlhttp.withCredentials = true;
 		xmlhttp.send();

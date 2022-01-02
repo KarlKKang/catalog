@@ -42,8 +42,8 @@ window.addEventListener("load", function(){
 
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (checkXHRStatus (this.status)) {
+			if (checkXHRStatus (this.status)) {
+				if (this.readyState == 4) {
 					if (this.responseText.includes('/var/www')) {
 						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 					} else if (this.responseText.includes('SERVER ERROR:')) {
@@ -61,6 +61,7 @@ window.addEventListener("load", function(){
 				}
 			}
 		};
+		addXHROnError(xmlhttp);
 		xmlhttp.open("POST", serverURL + "/send_password_reset.php", true);
 		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xmlhttp.send("email="+email);

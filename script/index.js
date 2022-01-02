@@ -37,21 +37,20 @@ window.addEventListener("load", function(){
 
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (checkXHRResponse (this)) {
-					try {
-						var series = JSON.parse(this.responseText);
-					} catch (e) {
-						showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL, true);
-						return 0;
-					}
-					document.getElementsByTagName("body")[0].classList.remove("hidden");
-					document.addEventListener('scroll', infiniteScrolling);
-					window.addEventListener("resize", infiniteScrolling);
-					showSeries (series);
+			if (checkXHRResponse (this)) {
+				try {
+					var series = JSON.parse(this.responseText);
+				} catch (e) {
+					showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL, true);
+					return 0;
 				}
+				document.getElementsByTagName("body")[0].classList.remove("hidden");
+				document.addEventListener('scroll', infiniteScrolling);
+				window.addEventListener("resize", infiniteScrolling);
+				showSeries (series);
 			}
 		};
+		addXHROnError(xmlhttp);
 		xmlhttp.open("POST", serverURL + "/request_series.php",true);
 		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xmlhttp.withCredentials = true;
@@ -115,32 +114,30 @@ window.addEventListener("load", function(){
 
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
-				if (this.readyState == 4) {
-					if (checkXHRResponse (this)) {
-						try {
-							var series = JSON.parse(this.responseText);
-						} catch (e) {
-							showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL, true);
-							return 0;
-						}
-						document.getElementById('container').innerHTML='';
-						offset = 0;
-						showSeries (series);
-						document.getElementById('container').classList.remove('transparent');
+				if (checkXHRResponse (this)) {
+					try {
+						var series = JSON.parse(this.responseText);
+					} catch (e) {
+						showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL, true);
+						return 0;
 					}
+					document.getElementById('container').innerHTML='';
+					offset = 0;
+					showSeries (series);
+					document.getElementById('container').classList.remove('transparent');
 				}
 			};
+			addXHROnError(xmlhttp);
 			setTimeout (function () {
 				xmlhttp.open("POST", serverURL + "/request_series.php",true);
 				xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 				xmlhttp.withCredentials = true;
 				if (keywords == '') {
 					request = "";
-					xmlhttp.send("offset=0");
 				} else {
 					request = "keywords="+encodeURIComponent(keywords) + '&';
-					xmlhttp.send("keywords="+encodeURIComponent(keywords)+"&offset=0");
-				}		
+				}
+				xmlhttp.send(request+"offset=0");
 			}, 400);
 		}
 
@@ -150,25 +147,24 @@ window.addEventListener("load", function(){
 			var viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
 			if (boundingRect.top-256-24<=viewportHeight*1.5 && offset != 'EOF' && !detector.classList.contains('loading')) {
-					detector.classList.add('loading');
-					let xmlhttp = new XMLHttpRequest();
-					xmlhttp.onreadystatechange = function() {
-						if (this.readyState == 4) {
-							if (checkXHRResponse (this)) {
-								try {
-									var series = JSON.parse(this.responseText);
-								} catch (e) {
-									showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL, true);
-									return 0;
-								}
-								showSeries (series);
-							}
+				detector.classList.add('loading');
+				let xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function() {
+					if (checkXHRResponse (this)) {
+						try {
+							var series = JSON.parse(this.responseText);
+						} catch (e) {
+							showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL, true);
+							return 0;
 						}
-					};
-					xmlhttp.open("POST", serverURL + "/request_series.php",true);
-					xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-					xmlhttp.withCredentials = true;
-					xmlhttp.send(request + "offset=" + offset);
+						showSeries (series);
+					}
+				};
+				addXHROnError(xmlhttp);
+				xmlhttp.open("POST", serverURL + "/request_series.php",true);
+				xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				xmlhttp.withCredentials = true;
+				xmlhttp.send(request + "offset=" + offset);
 			}
 		}
 	}

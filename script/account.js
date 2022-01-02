@@ -51,18 +51,17 @@ window.addEventListener("load", function(){
 function initialize (){
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRResponse (this)) {
-				try {
-					var userInfo = JSON.parse(this.responseText);
-				} catch (e) {
-					showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL);
-					return 0;
-				}
-				showUser (userInfo);
+		if (checkXHRResponse (this)) {
+			try {
+				var userInfo = JSON.parse(this.responseText);
+			} catch (e) {
+				showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL);
+				return 0;
 			}
+			showUser (userInfo);
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/request_user.php", true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.send();
@@ -94,41 +93,40 @@ function invite () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRResponse (this)) {
-				if (this.responseText.includes('NOT QUALIFIED')) {
-					warningElem.innerHTML = '招待状を送信する資格がありません。';
-					warningElem.classList.remove('hidden');
-				} else if (this.responseText.includes('INVALID FORMAT')) {
-					warningElem.innerHTML = '有効なメールアドレスを入力してください。';
-					warningElem.classList.remove('hidden');
-				} else if (this.responseText.includes('ALREADY REGISTERED')) {
-					warningElem.innerHTML = 'このメールアドレスはすでに登録済みです。';
-					warningElem.classList.remove('hidden');
-				} else if (this.responseText.includes('ONGOING')) {
-					warningElem.innerHTML = '未定の招待があります。招待が完了するまでお待ちください。';
-					warningElem.classList.remove('hidden');
-				} else if (this.responseText.includes('ALREADY INVITED')) {
-					warningElem.innerHTML = 'このメールアドレスはすでに招待されています。';
-					warningElem.classList.remove('hidden');
-				} else if (this.responseText.includes('SPECIAL')) {
-					warningElem.innerHTML = '現在、一般登録を受け付けています。featherine.com/special_registerで登録することができます。';
-					warningElem.classList.remove('hidden');
-				} else if (this.responseText.includes('CLOSED')) {
-					warningElem.innerHTML = '現在、新規登録は受け付けておりません。';
-					warningElem.classList.remove('hidden');
-				} else if (this.responseText == 'DONE') {
-					warningElem.innerHTML = 'メールが送信されました。届くまでに時間がかかる場合があります。';
-					changeColor (warningElem, 'green');
-					warningElem.classList.remove('hidden');
-				} else {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
-					return 0;
-				}
-				document.getElementById('invite-button').disabled = false;
+		if (checkXHRResponse (this)) {
+			if (this.responseText.includes('NOT QUALIFIED')) {
+				warningElem.innerHTML = '招待状を送信する資格がありません。';
+				warningElem.classList.remove('hidden');
+			} else if (this.responseText.includes('INVALID FORMAT')) {
+				warningElem.innerHTML = '有効なメールアドレスを入力してください。';
+				warningElem.classList.remove('hidden');
+			} else if (this.responseText.includes('ALREADY REGISTERED')) {
+				warningElem.innerHTML = 'このメールアドレスはすでに登録済みです。';
+				warningElem.classList.remove('hidden');
+			} else if (this.responseText.includes('ONGOING')) {
+				warningElem.innerHTML = '未完成の招待状があります。招待が完了するまでお待ちください。';
+				warningElem.classList.remove('hidden');
+			} else if (this.responseText.includes('ALREADY INVITED')) {
+				warningElem.innerHTML = 'このメールアドレスはすでに招待されています。';
+				warningElem.classList.remove('hidden');
+			} else if (this.responseText.includes('SPECIAL')) {
+				warningElem.innerHTML = '現在、一般登録を受け付けています。featherine.com/special_registerで登録することができます。';
+				warningElem.classList.remove('hidden');
+			} else if (this.responseText.includes('CLOSED')) {
+				warningElem.innerHTML = '現在、新規登録は受け付けておりません。';
+				warningElem.classList.remove('hidden');
+			} else if (this.responseText == 'DONE') {
+				warningElem.innerHTML = 'メールが送信されました。届くまでに時間がかかる場合があります。';
+				changeColor (warningElem, 'green');
+				warningElem.classList.remove('hidden');
+			} else {
+				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
+				return 0;
 			}
+			document.getElementById('invite-button').disabled = false;
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/send_invite.php", true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -162,19 +160,18 @@ function changePassword () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRResponse (this)) {
-				if (this.responseText == 'DONE') {
-					warningElem.innerHTML = '完了しました。';
-					warningElem.classList.remove('hidden');
-					changeColor (warningElem, 'green');
-					document.getElementById('password-change-button').disabled=false;
-				} else {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
-				}
+		if (checkXHRResponse (this)) {
+			if (this.responseText == 'DONE') {
+				warningElem.innerHTML = '完了しました。';
+				warningElem.classList.remove('hidden');
+				changeColor (warningElem, 'green');
+				document.getElementById('password-change-button').disabled=false;
+			} else {
+				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/password_change.php", true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -188,23 +185,22 @@ function changeEmail () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRResponse (this)) {
-				if (this.responseText.includes('DUPLICATED')) {
-					warningElem.innerHTML = '同じリクエストがまだ進行中です。 別のリクエストを提出する前にそれを完了してください。';
-					warningElem.classList.remove('hidden');
-				} else if (this.responseText == 'DONE') {
-					warningElem.innerHTML = 'メールが送信されました。届くまでに時間がかかる場合があります。';
-					warningElem.classList.remove('hidden');
-					changeColor (warningElem, 'green');
-				} else {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
-					return 0;
-				}
-				document.getElementById('email-change-button').disabled = false;
+		if (checkXHRResponse (this)) {
+			if (this.responseText.includes('DUPLICATED')) {
+				warningElem.innerHTML = '同じリクエストがまだ進行中です。 別のリクエストを提出する前にそれを完了してください。';
+				warningElem.classList.remove('hidden');
+			} else if (this.responseText == 'DONE') {
+				warningElem.innerHTML = 'メールが送信されました。届くまでに時間がかかる場合があります。';
+				warningElem.classList.remove('hidden');
+				changeColor (warningElem, 'green');
+			} else {
+				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
+				return 0;
 			}
+			document.getElementById('email-change-button').disabled = false;
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/send_email_change.php", true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.send();
@@ -230,23 +226,22 @@ function changeUsername () {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRResponse (this)) {
-				if (this.responseText == 'DONE') {
-					warningElem.innerHTML = '完了しました。';
-					warningElem.classList.remove('hidden');
-					changeColor (warningElem, 'green');
-				} else if (this.responseText.includes('DUPLICATED')) {
-					warningElem.innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
-					warningElem.classList.remove('hidden');
-				} else {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
-					return 0;
-				}
-				document.getElementById('username-change-button').disabled=false;
+		if (checkXHRResponse (this)) {
+			if (this.responseText == 'DONE') {
+				warningElem.innerHTML = '完了しました。';
+				warningElem.classList.remove('hidden');
+				changeColor (warningElem, 'green');
+			} else if (this.responseText.includes('DUPLICATED')) {
+				warningElem.innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
+				warningElem.classList.remove('hidden');
+			} else {
+				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
+				return 0;
 			}
+			document.getElementById('username-change-button').disabled=false;
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/username_change.php", true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

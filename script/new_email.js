@@ -38,8 +38,8 @@ window.addEventListener("load", function(){
 	handshake (function () {
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (checkXHRStatus (this.status)) {
+			if (checkXHRStatus (this.status)) {
+				if (this.readyState == 4) {
 					if (this.responseText.includes('/var/www')) {
 						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL);
 					} else if (this.responseText.includes('SERVER ERROR:')) {
@@ -54,6 +54,7 @@ window.addEventListener("load", function(){
 				}
 			}
 		};
+		addXHROnError(xmlhttp);
 		xmlhttp.open("POST", serverURL + "/verify_email_change.php", true);
 		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xmlhttp.send("p="+param+"&signature="+signature);
@@ -73,8 +74,8 @@ window.addEventListener("load", function(){
 
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (checkXHRStatus (this.status)) {
+			if (checkXHRStatus (this.status)) {
+				if (this.readyState == 4) {
 					if (this.responseText.includes('/var/www')) {
 						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
 					} else if (this.responseText.includes('SERVER ERROR:')) {
@@ -93,6 +94,7 @@ window.addEventListener("load", function(){
 				}
 			}
 		};
+		addXHROnError(xmlhttp);
 		xmlhttp.open("POST", serverURL + "/verify_email_change.php", true);
 		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xmlhttp.send("p="+param+"&signature="+signature+"&new="+newEmail);

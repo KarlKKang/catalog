@@ -82,18 +82,17 @@ window.addEventListener("load", function(){
 
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (checkXHRResponse (this)) {
-					try {
-						ep = JSON.parse(this.responseText);
-					} catch (e) {
-						showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL);
-						return 0;
-					}
-					updatePage (ep);
+			if (checkXHRResponse (this)) {
+				try {
+					ep = JSON.parse(this.responseText);
+				} catch (e) {
+					showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL);
+					return 0;
 				}
+				updatePage (ep);
 			}
 		};
+		addXHROnError(xmlhttp);
 		xmlhttp.open("POST", serverURL + "/request_ep.php", true);
 		xmlhttp.withCredentials = true;
 		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -162,15 +161,14 @@ window.addEventListener("load", function(){
 			setInterval (function () {
 				let xmlhttp = new XMLHttpRequest();
 				xmlhttp.onreadystatechange = function() {
-					if (this.readyState == 4) {
-						if (checkXHRResponse (this)) {
-							if (this.responseText!='APPROVED') {
-								showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, true);
-								return false;
-							}
+					if (checkXHRResponse (this)) {
+						if (this.responseText!='APPROVED') {
+							showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, true);
+							return false;
 						}
 					}
 				};
+				addXHROnError(xmlhttp);
 				xmlhttp.open("POST", serverURL + "/device_authenticate.php", true);
 				xmlhttp.withCredentials = true;
 				xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -717,15 +715,14 @@ window.addEventListener("load", function(){
 
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
-				if (this.readyState == 4) {
-					if (checkXHRResponse (this)) {
-						var currentTime = video.currentTime;
-						var paused = video.paused;
-						updateURLParam ('format', selectedFormat+1);
-						addVideoNode (this.responseText, {currentTime: currentTime, play: !paused});
-					}
+				if (checkXHRResponse (this)) {
+					var currentTime = video.currentTime;
+					var paused = video.paused;
+					updateURLParam ('format', selectedFormat+1);
+					addVideoNode (this.responseText, {currentTime: currentTime, play: !paused});
 				}
 			};
+			addXHROnError(xmlhttp);
 			xmlhttp.open("POST", serverURL + "/format_switch.php", true);
 			xmlhttp.withCredentials = true;
 			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -1002,12 +999,11 @@ window.addEventListener("load", function(){
 			downloadButton.addEventListener('click', function () {
 				var xmlhttp = new XMLHttpRequest();
 				xmlhttp.onreadystatechange = function() {
-					if (this.readyState == 4) {
-						if (checkXHRResponse (this)) {
-							window.location.href = this.responseText;
-						}
+					if (checkXHRResponse (this)) {
+						window.location.href = this.responseText;
 					}
 				};
+				addXHROnError(xmlhttp);
 				xmlhttp.open("POST", serverURL + "/start_download.php", true);
 				xmlhttp.withCredentials = true;
 				xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

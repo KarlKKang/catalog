@@ -15,8 +15,8 @@ function start (currentPage, callback) {
 		if (currentPage == 'login' || currentPage == 'request_password_reset' || currentPage == 'special_register') {
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
-				if (this.readyState == 4) {
-					if (checkXHRStatus (this.status)) {
+				if (checkXHRStatus (this.status)) {
+					if (this.readyState == 4) {
 						if (this.responseText == "PASSED") {
 							window.location.href = redirect(topURL);
 						} else if (this.responseText == "AUTHENTICATION FAILED") {
@@ -27,6 +27,7 @@ function start (currentPage, callback) {
 					}
 				}
 			};
+			addXHROnError(xmlhttp);
 			xmlhttp.open("POST", serverURL + "/check_cookies.php",true);
 			xmlhttp.withCredentials = true;
 			xmlhttp.send();
@@ -78,17 +79,16 @@ function logout (callback) {
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRResponse (this)) {
-				if (this.responseText=='DONE') {
-					callback ();
-				} else {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, false);
-					return false;
-				}
+		if (checkXHRResponse (this)) {
+			if (this.responseText=='DONE') {
+				callback ();
+			} else {
+				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, false);
+				return false;
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/logout.php",true);
 	xmlhttp.withCredentials = true;
 	xmlhttp.send();
@@ -96,8 +96,10 @@ function logout (callback) {
 
 function checkXHRResponse (response) {
 	if (checkXHRStatus (response.status)) {
-		if (checkXHRResponseText (response.responseText))
-			return true;
+		if (response.readyState == 4) {
+			if (checkXHRResponseText (response.responseText))
+				return true;
+		}
 	}
 	return false;
 }
@@ -121,14 +123,23 @@ function checkXHRResponseText (responseText) {
 }
 
 function checkXHRStatus (status) {
-	if (status == 200) 
+	if (status == 200) {
 		return true;
-	else if (status != 0) {
-		showMessage ("サーバーに接続できません", "red", "後でもう一度やり直してください。", null);
+	} else if (status == 429) {
+		showMessage ("429 Too Many Requests", "red", "サーバーにリクエストを送信する頻度が高すぎる。数分待ってから、もう一度試してください。", null);
+		return false;
+	} else if (status != 0) {
+		showMessage ("サーバーに接続できません", "red", "数分待ってから、もう一度試してください。", null);
 		return false;
 	} else {
 		return false;
 	}
+}
+
+function addXHROnError (xmlhttp) {
+	xmlhttp.onerror = function () {
+		showMessage ("サーバーに接続できません", "red", "数分待ってから、もう一度試してください。", null);
+	};
 }
 
 function passwordStyling (element) {
@@ -185,18 +196,19 @@ function handshake (callback) {
 	}
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			if (checkXHRStatus (this.status)) {
+		if (checkXHRStatus (this.status)) {
+			if (this.readyState == 4) {
 				if (this.responseText == "IN MAINTENANCE") {
-					showMessage ("メンテナンス中", "red", "後でもう一度やり直してください。", null);
+					showMessage ("メンテナンス中", "red", "後でもう一度試してください。", null);
 				} else if (this.responseText == "OK") {
 					callback();
 				} else {
-					showMessage ("サーバーでエラーが発生しました", "red", "後でもう一度やり直してください。", null);
+					showMessage ("サーバーでエラーが発生しました", "red", "数分待ってから、もう一度試してください。", null);
 				}
 			}
 		}
 	};
+	addXHROnError(xmlhttp);
 	xmlhttp.open("POST", serverURL + "/handshake.php",true);
 	xmlhttp.send();
 }
