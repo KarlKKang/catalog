@@ -1,33 +1,26 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
+	var mainLocal = main;
+	var debug = mainLocal.debug;
+	var appearanceSwitching = mainLocal.appearanceSwitching;
+	var sendServerRequest = mainLocal.sendServerRequest;
+	var showMessage = mainLocal.showMessage;
+	var loginURL = mainLocal.loginURL;
+	var getURLParam = mainLocal.getURLParam;
+	var passwordStyling = mainLocal.passwordStyling;
+	
 	if (!window.location.href.startsWith('https://login.featherine.com/password_reset') && !debug) {
 		window.location.href = 'https://featherine.com';
-		return 0;
+		return;
 	}
 	
 	appearanceSwitching();
 	
-	document.getElementById('new-password').addEventListener('keydown', function () {
-		if (event.key === "Enter") {
-			submitRequest ();
-		}
-	});
-	document.getElementById('new-password-confirm').addEventListener('keydown', function () {
-		if (event.key === "Enter") {
-			submitRequest ();
-		}
-	});
-	document.getElementById('submit-button').addEventListener('click', function () {
-		submitRequest ();
-	});
+	var newPasswordInput = document.getElementById('new-password');
+	var newPasswordConfirmInput = document.getElementById('new-password-confirm');
+	var sumbitButton = document.getElementById('submit-button');
 	
-	document.getElementById('new-password').addEventListener('input', function () {
-		passwordStyling(this);
-	});
-	document.getElementById('new-password-confirm').addEventListener('input', function () {
-		passwordStyling(this);
-	});
 	
 	var user = getURLParam ('user');
 	var signature = getURLParam ('signature');
@@ -35,92 +28,94 @@ window.addEventListener("load", function(){
 
 	if (user == null || user.match(/^[a-zA-Z0-9~_-]+$/)===null) {
 		if (debug) {
-			document.getElementsByTagName("body")[0].classList.remove("hidden");
+			document.body.classList.remove("hidden");
 		} else {
 			window.location.href = loginURL;
 		}
-		return 0;
+		return;
 	}
 	
 	if (signature == null || signature.match(/^[a-zA-Z0-9~_-]+$/)===null) {
 		window.location.href = loginURL;
-		return 0;
+		return;
 	}
 
 	if (expires == null || expires.match(/^[0-9]+$/)===null) {
 		window.location.href = loginURL;
-		return 0;
+		return;
 	}
 
-	handshake (function () {
-		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.onreadystatechange = function() {
-			if (checkXHRStatus (this.status)) {
-				if (this.readyState == 4) {
-					if (this.responseText.includes('/var/www')) {
-						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
-					} else if (this.responseText.includes('SERVER ERROR:')) {
-						showMessage ('エラーが発生しました', 'red', this.responseText, loginURL);
-					} else if (this.responseText.includes('EXPIRED')) {
-						showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
-					} else if (this.responseText != 'APPROVED') {
-						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
-					} else {
-						document.getElementsByTagName("body")[0].classList.remove("hidden");
+    sendServerRequest('reset_password.php', {
+        callback: function (response) {
+            if (response == 'EXPIRED') {
+                showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
+            } else if (response != 'APPROVED') {
+                showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+            } else {
+				newPasswordInput.addEventListener('keydown', function () {
+					if (event.key === "Enter") {
+						submitRequest ();
 					}
-				}
-			}
-		};
-		addXHROnError(xmlhttp);
-		xmlhttp.open("POST", serverURL + "/password_reset.php", true);
-		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xmlhttp.send("user="+user+"&signature="+signature+"&expires="+expires);
-	});
+				});
+				newPasswordConfirmInput.addEventListener('keydown', function () {
+					if (event.key === "Enter") {
+						submitRequest ();
+					}
+				});
+				sumbitButton.addEventListener('click', function () {
+					submitRequest ();
+				});
+
+				newPasswordInput.addEventListener('input', function () {
+					passwordStyling(this);
+				});
+				newPasswordConfirmInput.addEventListener('input', function () {
+					passwordStyling(this);
+				});
+				document.body.classList.remove("hidden");
+            }
+        },
+        content: "user="+user+"&signature="+signature+"&expires="+expires,
+        withCredentials: false
+    });
 
 
 	function submitRequest () {
-		document.getElementById('submit-button').disabled=true;
+		var warningElem = document.getElementById('warning');
+		
+		sumbitButton.disabled=true;
 
-		var newPassword = document.getElementById('new-password').value;
-		var newPasswordConfirm = document.getElementById('new-password-confirm').value;
+		var newPassword = newPasswordInput.value;
+		var newPasswordConfirm = newPasswordConfirmInput.value;
 
 		if (newPassword=='' || newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
-			document.getElementById('warning').innerHTML = 'パスワードが要件を満たしていません。';
-			document.getElementById('warning').classList.remove('hidden');
-			document.getElementById('submit-button').disabled=false;
-			return 0;
+			warningElem.innerHTML = 'パスワードが要件を満たしていません。';
+			warningElem.classList.remove('hidden');
+			sumbitButton.disabled=false;
+			return;
 		} else if (newPassword!=newPasswordConfirm) {
-			document.getElementById('warning').innerHTML = '確認再入力が一致しません。';
-			document.getElementById('warning').classList.remove('hidden');
-			document.getElementById('submit-button').disabled=false;
-			return 0;
+			warningElem.innerHTML = '確認再入力が一致しません。';
+			warningElem.classList.remove('hidden');
+			sumbitButton.disabled=false;
+			return;
 		} else {
 			var hash = forge.md.sha512.sha256.create();
 			hash.update(newPassword);
 			newPassword = hash.digest().toHex();
 		}
-
-		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.onreadystatechange = function() {
-			if (checkXHRStatus (this.status)) {
-				if (this.readyState == 4) {
-					if (this.responseText.includes('/var/www')) {
-						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
-					} else if (this.responseText.includes('SERVER ERROR:')) {
-						showMessage ('エラーが発生しました', 'red', this.responseText, loginURL);
-					} else if (this.responseText.includes('EXPIRED')) {
-						showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
-					} else if (this.responseText == 'DONE') {
-						showMessage ('完了しました', 'green', 'パスワードが変更されました。', loginURL);
-					} else {
-						showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
-					}
-				}
-			}
-		};
-		addXHROnError(xmlhttp);
-		xmlhttp.open("POST", serverURL + "/password_reset.php", true);
-		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xmlhttp.send("user="+user+"&signature="+signature+"&expires="+expires+"&new="+newPassword);
+		
+		sendServerRequest('reset_password.php', {
+			callback: function (response) {
+                if (response == 'EXPIRED') {
+                    showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
+                } else if (response == 'DONE') {
+                    showMessage ('完了しました', 'green', 'パスワードが変更されました。', loginURL);
+                } else {
+                    showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+                }
+			},
+			content: "user="+user+"&signature="+signature+"&expires="+expires+"&new="+newPassword,
+			withCredentials: false
+		});
 	}
 });

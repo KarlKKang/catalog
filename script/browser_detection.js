@@ -226,3 +226,6 @@
   var IS_ANY_SAFARI = (IS_SAFARI || IS_IOS) && !IS_CHROME;
 
 var DOWNLOAD_SUPPORTED = !IS_IOS && !IS_ANDROID;
+var USE_MSE = Hls.isSupported() && !IS_SAFARI;
+var CAN_PLAY_HLS = document.createElement('video').canPlayType('application/vnd.apple.mpegurl') && document.createElement('audio').canPlayType('application/vnd.apple.mpegurl');
+var CAN_PLAY_ALAC = document.createElement('audio').canPlayType('video/mp4; codecs="alac"');

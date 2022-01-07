@@ -1,0 +1,19 @@
+https://try.terser.org/
+
+// edit terser options
+{
+  module: true,
+  compress: {
+  	passes: 2
+  },
+  mangle: {},
+  output: {},
+  parse: {},
+  rename: {},
+  safari10: true
+}
+
+https://cssnano.co/playground/
+
+
+https://www.toptal.com/developers/html-minifier/

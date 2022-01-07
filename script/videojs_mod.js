@@ -1,6 +1,9 @@
 // JavaScript Document
 
 var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
+	var secToTimestamp = main.secToTimestamp;
+	var onScreenConsoleOutput = main.onScreenConsoleOutput;
+	
 	var that = {};
 	
 	if (!config) {

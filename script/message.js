@@ -1,6 +1,13 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
+	var mainLocal = main;
+	var appearanceSwitching = mainLocal.appearanceSwitching;
+	var debug = mainLocal.debug;
+	var topURL = mainLocal.topURL;
+	var logout = mainLocal.logout;
+	
+	
 	appearanceSwitching();
 	
 	var param = localStorage.getItem("message-param");
@@ -11,18 +18,18 @@ window.addEventListener("load", function(){
 			document.getElementById('title').classList.add('color-orange');
 			document.getElementById('title').innerHTML = 'タイトルTitle';
 			document.getElementById('message').innerHTML = 'メッセージMessageメッセージMessageメッセージMessageメッセージMessageメッセージMessage';
-			document.getElementsByTagName("body")[0].classList.remove("hidden");		
+			document.body.classList.remove("hidden");		
 		} else {
 			window.location.href = topURL;
 		}
-		return 0;
+		return;
 	}
 	
 	try {
 		param = JSON.parse(param);
 	} catch (e) {
 		window.location.href = topURL;
-		return 0;
+		return;
 	}
 	
 	var callback = function () {
@@ -41,13 +48,13 @@ window.addEventListener("load", function(){
 			});
 		}
 		
-		document.getElementsByTagName("body")[0].classList.remove("hidden");
+		document.body.classList.remove("hidden");
 	};
 
 	if ('logout' in param) {
 		if (param.logout === true) {
 			logout (callback);
-			return 0;
+			return;
 		}
 	}
 	

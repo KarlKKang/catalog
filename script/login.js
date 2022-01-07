@@ -1,63 +1,81 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
+	var mainLocal = main;
+	var debug = mainLocal.debug;
+	var appearanceSwitching = mainLocal.appearanceSwitching;
+	var sendServerRequest = mainLocal.sendServerRequest;
+	var showMessage = mainLocal.showMessage;
+	var loginURL = mainLocal.loginURL;
+	var topURL = mainLocal.topURL;
+	var redirect = mainLocal.redirect;
+	var passwordStyling = mainLocal.passwordStyling;
+	var goTo = mainLocal.goTo;
+	var authenticate = mainLocal.authenticate;
 	
 	if (!window.location.href.startsWith('https://login.featherine.com') && !debug) {
 		window.location.href = redirect ('https://login.featherine.com');
-		return 0;
+		return;
 	}
 	
 	appearanceSwitching();
-		
-	document.getElementById('username').addEventListener('keydown', function () {
-		if (event.key === "Enter") {
-			login ();
+	
+	var submitButton = document.getElementById('submit-button');
+	var passwordInput = document.getElementById('password');
+	var usernameInput = document.getElementById('username');
+	
+	authenticate({
+		successful:
+		function () {
+			window.location.href = topURL;
+		},
+		failed:
+		function () {
+			usernameInput.addEventListener('keydown', function () {
+				if (event.key === "Enter") {
+					login ();
+				}
+			});
+			passwordInput.addEventListener('keydown', function () {
+				if (event.key === "Enter") {
+					login ();
+				}
+			});
+
+			submitButton.addEventListener('click', function () {
+				login ();
+			});
+			document.getElementById('forgot-password').getElementsByTagName('span')[0].addEventListener('click', function () {
+				passwordReset ();
+			});
+
+			passwordInput.addEventListener('input', function () {
+				passwordStyling(this);
+			});
+			document.body.classList.remove("hidden");
 		}
 	});
-	document.getElementById('password').addEventListener('keydown', function () {
-		if (event.key === "Enter") {
-			login ();
-		}
-	});
-	
-	document.getElementById('submit-button').addEventListener('click', function () {
-		login ();
-	});
-	document.getElementById('forgot-password').getElementsByTagName('span')[0].addEventListener('click', function () {
-		passwordReset ();
-	});
-	
-	document.getElementById('password').addEventListener('input', function () {
-		passwordStyling(this);
-	});
-	
-	start ('login', function () {document.getElementsByTagName("body")[0].classList.remove("hidden");});
 
 function login () {
-	document.getElementById('submit-button').disabled = true;
+	submitButton.disabled = true;
 	
-	if (getCookie('allow-login')=='false') {
-		document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
-		document.getElementById('warning').classList.remove('hidden');
-		document.getElementById('submit-button').disabled = false;
-		return 0;
-	}
+	var warningElem = document.getElementById('warning');
 
-	var email = document.getElementById('username').value;
-	var password = document.getElementById('password').value;
+	var email = usernameInput.value;
+	var password = passwordInput.value;
 
 	if (email=='' || email.match(/^[^\s@]+@[^\s@]+$/)===null) {
-		document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
-		document.getElementById('warning').classList.remove('hidden');
-		document.getElementById('submit-button').disabled = false;
-		return 0;
+		warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
+		warningElem.classList.remove('hidden');
+		submitButton.disabled = false;
+		return;
 	}
 
 	if (password=='' || password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
-		document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
-		document.getElementById('warning').classList.remove('hidden');
-		document.getElementById('submit-button').disabled = false;
-		return 0;
+		warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
+		warningElem.classList.remove('hidden');
+		submitButton.disabled = false;
+		return;
 	} else {
 		var hash = forge.md.sha512.sha256.create();
 		hash.update(password);
@@ -71,51 +89,30 @@ function login () {
 	};
 
 	param = JSON.stringify (param);
-
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				let response = this.responseText
-				if (response.includes('/var/www')) {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
-				}  else if (response.includes('SERVER ERROR:')) {
-					showMessage ('エラーが発生しました', 'red', response, loginURL);
-				} else if (response.includes('NOT SUPPORTED')) {
-					document.getElementById('warning').innerHTML = 'お使いのブラウザはサポートされていません。または、IPアドレスの情報を取得できません。';
-					document.getElementById('warning').classList.remove('hidden');
-					document.getElementById('submit-button').disabled = false;
-				} else if (response.includes('AUTHENTICATION FAILED') || response.includes('NOT ACTIVATED')) {
-					document.getElementById('warning').innerHTML = 'アカウントIDかパスワードが正しくありません。';
-					document.getElementById('warning').classList.remove('hidden');
-					document.getElementById('submit-button').disabled = false;
-				} else if (response.includes('REJECTED')) {
-					document.getElementById('warning').innerHTML = 'しばらくしてからもう一度お試しください。';
-					document.getElementById('warning').classList.remove('hidden');
-					document.cookie = 'allow-login=false;max-age=86400;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
-					document.getElementById('submit-button').disabled = false;
-				} else if (response == 'NOT RECOMMENDED') {
-					setTimeout (function () {
-						showMessage ('お使いのブラウザは推奨されませ', 'orange', '一部のコンテンツが正常に再生されない場合は、Safariをお使いください。', topURL);
-					}, 500);
-				} else if (response == 'APPROVED') {
-					setTimeout (function () {
-						window.location.href = redirect (topURL);
-					}, 500);
-				} else {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL);
-				}
-			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/login.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+	
+	sendServerRequest('login.php', {
+		callback: function (response) {
+            if (response.includes('FAILED')) {
+                warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
+                warningElem.classList.remove('hidden');
+                submitButton.disabled = false;
+            } else if (response == 'NOT RECOMMENDED') {
+                setTimeout (function () {
+                    showMessage ('お使いのブラウザは推奨されませ', 'orange', '一部のコンテンツが正常に再生されない場合は、Safariをお使いください。', topURL);
+                }, 500);
+            } else if (response == 'APPROVED') {
+                setTimeout (function () {
+                    window.location.href = redirect (topURL);
+                }, 500);
+            } else {
+                showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。', loginURL);
+            }
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 function passwordReset () {
-	window.location.href = 'request_password_reset'+(debug?'.html':'');
+	goTo('request_password_reset');
 }
 });

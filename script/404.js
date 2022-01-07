@@ -1,6 +1,6 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
-	appearanceSwitching();
-	getImage (false);
+	main.appearanceSwitching();
+	getImage(false);
 });

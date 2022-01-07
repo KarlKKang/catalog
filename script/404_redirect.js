@@ -1,4 +1,4 @@
 // JavaScript Document
 window.addEventListener("load", function(){
-	window.location.href = 'https://featherine.com/404';
+	window.location.href = 'https://featherine.com';
 });

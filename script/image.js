@@ -1,16 +1,23 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
+	var mainLocal = main;
+	var debug = mainLocal.debug;
+	var getCookie = mainLocal.getCookie;
+	var topURL = mainLocal.topURL;
+	var sendServerRequest = mainLocal.sendServerRequest;
+	var showMessage = mainLocal.showMessage;
+	
 	if (!window.location.href.startsWith('https://featherine.com/image') && !debug) {
 		window.location.href = 'https://featherine.com/image';
-		return 0;
+		return;
 	}
 	
 	var param = getCookie('image-param');
 	
 	if (param == '') {
 		window.location.href = topURL;
-		return 0;
+		return;
 	}
 	
 	document.cookie = 'image-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
@@ -20,7 +27,7 @@ window.addEventListener("load", function(){
 		param = JSON.parse(param);
 	} catch (e) {
 		window.location.href = topURL;
-		return 0;
+		return;
 	}
 	
 	
@@ -28,7 +35,7 @@ window.addEventListener("load", function(){
 	
 	if (!('url' in param) || !('title' in param)) {
 		window.location.href = topURL;
-		return 0;
+		return;
 	}
 	
 	if ('token' in param) {
@@ -40,7 +47,7 @@ window.addEventListener("load", function(){
 	} else {
 		if (!param.url.startsWith('https://cdn.featherine.com/')) {
 			window.location.href = topURL;
-			return 0;
+			return;
 		}
 		showImage ();
 	}
@@ -48,25 +55,20 @@ window.addEventListener("load", function(){
 	
 	function deviceAuthentication (callback) {
 		if (callback === undefined) {
-			callback = function () {return 0;};
+			callback = function () {return;};
 		}
 		
-		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.onreadystatechange = function() {
-			if (checkXHRResponse (this)) {
-				if (this.responseText!='APPROVED') {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', topURL, true);
+		sendServerRequest('device_authenticate.php', {
+			callback: function (response) {
+				if (response!='APPROVED') {
+					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。', topURL, true);
 					return false;
 				} else {
 					callback ();
 				}
-			}
-		};
-		addXHROnError(xmlhttp);
-		xmlhttp.open("POST", serverURL + "/device_authenticate.php", true);
-		xmlhttp.withCredentials = true;
-		xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xmlhttp.send("token="+param.token);
+			},
+			content: "token="+param.token
+		});
 	}
 		
 	

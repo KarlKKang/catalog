@@ -1,64 +1,54 @@
 // JavaScript Document
 
 window.addEventListener("load", function(){
+	var mainLocal = main;
+	var debug = mainLocal.debug;
+	var sendServerRequest = mainLocal.sendServerRequest;
+	
 	if (!window.location.href.startsWith('https://featherine.com/console') && !debug) {
 		window.location.href = 'https://featherine.com/console';
-		return 0;
+		return;
 	}
-	
-	document.getElementById('get-series-table').addEventListener('click', function () {
-		getSeriesTable ();
-	});
-	document.getElementById('get-account-table').addEventListener('click', function () {
-		getAccountTable ();
-	});
-	document.getElementById('get-invite-table').addEventListener('click', function () {
-		getInviteTable ();
-	});
-	document.getElementById('get-log-table').addEventListener('click', function () {
-		getLogTable ();
-	});
-	document.getElementById('generate-id').addEventListener('click', function () {
-		generate ('id');
-	});
-	document.getElementById('generate-series-id').addEventListener('click', function () {
-		generate ('series-id');
-	});
-	document.getElementById('clear-cache').addEventListener('click', function () {
-		clearCache();
-	});
-	document.getElementById('rebuild-index').addEventListener('click', function () {
-		rebuildIndex();
-	});
-	
-	start ('console', function () {initialize();});
-	
-function initialize () {
 	
 	var param = {
 		'command': 'authenticate'
 	};
 	param = JSON.stringify (param);
 	
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				if (this.responseText!='APPROVED') {
-					window.location.href = 'https://featherine.com/404';
-				} else {
-					document.getElementsByTagName("body")[0].classList.remove("hidden");
-				}
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			if (response != 'APPROVED') {
+				window.location.href = 'https://featherine.com';
+			} else {
+				document.getElementById('get-series-table').addEventListener('click', function () {
+					getSeriesTable ();
+				});
+				document.getElementById('get-account-table').addEventListener('click', function () {
+					getAccountTable ();
+				});
+				document.getElementById('get-invite-table').addEventListener('click', function () {
+					getInviteTable ();
+				});
+				document.getElementById('get-log-table').addEventListener('click', function () {
+					getLogTable ();
+				});
+				document.getElementById('generate-id').addEventListener('click', function () {
+					generate ('id');
+				});
+				document.getElementById('generate-series-id').addEventListener('click', function () {
+					generate ('series-id');
+				});
+				document.getElementById('clear-cache').addEventListener('click', function () {
+					clearCache();
+				});
+				document.getElementById('rebuild-index').addEventListener('click', function () {
+					rebuildIndex();
+				});
+				document.body.classList.remove("hidden");
 			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
-	
-}
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 
 /*------------------------------------------------------------------------------------Series Functions------------------------------------------------------------------------------------*/
 
@@ -69,19 +59,12 @@ function getSeriesTable () {
 	};
 	param = JSON.stringify (param);
 	
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				setOutput (this.responseText);
-			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			setOutput (response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 function modifySeries (button) {
@@ -97,7 +80,7 @@ function modifySeries (button) {
 	
 	var param = parseSeriesRecord (id, title, thumbnail, isPublic, series_id, season_name, season_order, keywords);
 	if (!param) {
-		return 0;
+		return;
 	}
 	
 	param.command = 'modify';
@@ -108,25 +91,18 @@ function modifySeries (button) {
 	do {
 		confirm = prompt('Type "modify" to confirm.');
 		if (confirm === null) {
-			return 0;
+			return;
 		}
 	} while (confirm != "modify");
-
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				if (setOutput (this.responseText)) {
-					alert ('Operation completed');
-				}
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			if (setOutput (response)) {
+				alert ('Operation completed');
 			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 function deleteSeries (id) {
@@ -135,7 +111,7 @@ function deleteSeries (id) {
 	do {
 		confirm = prompt('Type "delete" to confirm.');
 		if (confirm === null) {
-			return 0;
+			return;
 		}
 	} while (confirm != "delete");
 	
@@ -145,22 +121,15 @@ function deleteSeries (id) {
 		'id': parseInt(id)
 	};
 	param = JSON.stringify (param);
-
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				if (setOutput (this.responseText)) {
-					alert ('Operation completed');
-				}
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			if (setOutput (response)) {
+				alert ('Operation completed');
 			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 function addSeries (button) {
@@ -176,7 +145,7 @@ function addSeries (button) {
 	
 	var param = parseSeriesRecord (id, title, thumbnail, isPublic, series_id, season_name, season_order, keywords);
 	if (!param) {
-		return 0;
+		return;
 	}
 	
 	param.command = 'insert';
@@ -187,25 +156,18 @@ function addSeries (button) {
 	do {
 		confirm = prompt('Type "insert" to confirm.');
 		if (confirm === null) {
-			return 0;
+			return;
 		}
 	} while (confirm != "insert");
-
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				if (setOutput (this.responseText)) {
-					alert ('Operation completed');
-				}
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			if (setOutput (response)) {
+				alert ('Operation completed');
 			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 function parseSeriesRecord (id, title, thumbnail, isPublic, series_id, season_name, season_order, keywords) {
@@ -293,19 +255,12 @@ function generate (type) {
 	};
 	param = JSON.stringify (param);
 	
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				setOutput (this.responseText, 'id-output');
-			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			setOutput (response, 'id-output');
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 
@@ -316,21 +271,14 @@ function updateTime (id) {
 	};
 	param = JSON.stringify (param);
 	
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				if (setOutput (this.responseText)) {
-					alert ('Operation completed');
-				}
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			if (setOutput (response)) {
+				alert ('Operation completed');
 			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 /*------------------------------------------------------------------------------------Account Functions------------------------------------------------------------------------------------*/
@@ -342,19 +290,12 @@ function getAccountTable () {
 	};
 	param = JSON.stringify (param);
 	
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				setOutput (this.responseText);
-			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			setOutput (response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 function addAccount (button) {
@@ -386,12 +327,12 @@ function addAccount (button) {
 	
 	var param = parseAccountRecord (email, username, password, user_group, status, available_invite);
 	if (!param) {
-		return 0;
+		return;
 	}
 	
 	if (param.password === null) {
 		alert ("ERROR: 'password' is required");
-		return 0;
+		return;
 	}
 	
 	param.command = 'insert';
@@ -402,25 +343,18 @@ function addAccount (button) {
 	do {
 		confirm = prompt('Type "insert" to confirm.');
 		if (confirm === null) {
-			return 0;
+			return;
 		}
 	} while (confirm != "insert");
-
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				if (setOutput (this.responseText)) {
-					alert ('Operation completed');
-				}
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			if (setOutput (response)) {
+				alert ('Operation completed');
 			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 function modifyAccount (button, originalEmail) {
@@ -452,7 +386,7 @@ function modifyAccount (button, originalEmail) {
 	
 	var param = parseAccountRecord (email, username, password, user_group, status, available_invite);
 	if (!param) {
-		return 0;
+		return;
 	}
 	
 	param.command = 'modify';
@@ -464,25 +398,18 @@ function modifyAccount (button, originalEmail) {
 	do {
 		confirm = prompt('Type "modify" to confirm.');
 		if (confirm === null) {
-			return 0;
+			return;
 		}
 	} while (confirm != "modify");
-
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				if (setOutput (this.responseText)) {
-					alert ('Operation completed');
-				}
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			if (setOutput (response)) {
+				alert ('Operation completed');
 			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 function parseAccountRecord (email, username, password, user_group, status, available_invite) {
@@ -555,7 +482,7 @@ function deleteAccount (email) {
 	do {
 		confirm = prompt('Type "delete" to confirm. Deleting an account is NOT recommended. Use "status" option instead.');
 		if (confirm === null) {
-			return 0;
+			return;
 		}
 	} while (confirm != "delete");
 	
@@ -565,22 +492,15 @@ function deleteAccount (email) {
 		'email': email
 	};
 	param = JSON.stringify (param);
-
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				if (setOutput (this.responseText)) {
-					alert ('Operation completed');
-				}
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			if (setOutput (response)) {
+				alert ('Operation completed');
 			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 /*------------------------------------------------------------------------------------Invite Functions------------------------------------------------------------------------------------*/
@@ -592,19 +512,12 @@ function getInviteTable () {
 	};
 	param = JSON.stringify (param);
 	
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				setOutput (this.responseText);
-			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			setOutput (response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 /*------------------------------------------------------------------------------------Log Functions------------------------------------------------------------------------------------*/
@@ -616,19 +529,12 @@ function getLogTable () {
 	};
 	param = JSON.stringify (param);
 	
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				setOutput (this.responseText);
-			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			setOutput (response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 	
 /*------------------------------------------------------------------------------------Cache Functions------------------------------------------------------------------------------------*/
@@ -642,7 +548,7 @@ function clearCache () {
 	do {
 		confirm = prompt('Type "clear" to confirm deleting cache for the following directory: ' + dir);
 		if (confirm === null) {
-			return 0;
+			return;
 		}
 	} while (confirm != "clear");
 	
@@ -652,19 +558,12 @@ function clearCache () {
 	};
 	param = JSON.stringify (param);
 	
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				alert(this.responseText);
-			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			alert(response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 	
 function rebuildIndex () {
@@ -672,7 +571,7 @@ function rebuildIndex () {
 	do {
 		confirm = prompt('Type "rebuild" to confirm rebuilding the index.');
 		if (confirm === null) {
-			return 0;
+			return;
 		}
 	} while (confirm != "rebuild");
 	
@@ -681,19 +580,12 @@ function rebuildIndex () {
 	};
 	param = JSON.stringify (param);
 	
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (checkXHRStatus (this.status)) {
-			if (this.readyState == 4) {
-				alert(this.responseText);
-			}
-		}
-	};
-	addXHROnError(xmlhttp);
-	xmlhttp.open("POST", serverURL + "/console.php",true);
-	xmlhttp.withCredentials = true;
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xmlhttp.send("p="+encodeURIComponent(param));
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			alert(response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
 }
 
 /*------------------------------------------------------------------------------------Utility Functions------------------------------------------------------------------------------------*/
