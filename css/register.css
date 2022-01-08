@@ -1,38 +1,6 @@
 @charset "utf-8";
 /* CSS Document */
 
-@font-face {
-	font-family: "Noto Sans JP";
-	src: url("../font/NotoSansJP/NotoSansJP-Medium.woff2") format("woff2"),
-		url("../font/NotoSansJP/NotoSansJP-Medium.otf") format("opentype");
-	font-weight: 500;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "roboto";
-	src: url("../font/Roboto/Roboto-Light.woff2") format("woff2"),
-		url("../font/Roboto/Roboto-Light.ttf") format("truetype");
-	font-weight: 300;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Noto Sans SC";
-	src: url("../font/NotoSansSC/NotoSansSC-Light.woff2") format("woff2"),
-		url("../font/NotoSansSC/NotoSansSC-Light.otf") format("opentype");
-	font-weight: 300;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Noto Sans TC";
-	src: url("../font/NotoSansTC/NotoSansTC-Light.woff2") format("woff2"),
-		url("../font/NotoSansTC/NotoSansTC-Light.otf") format("opentype");
-	font-weight: 300;
-	font-display: swap;
-}
-
 :lang(en) {
 	font-family: roboto,'Noto Sans Myanmar UI',arial,sans-serif;
 	font-weight: 300;

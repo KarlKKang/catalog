@@ -1,0 +1,11 @@
+@charset "UTF-8";
+/* CSS Document */
+
+@font-face {
+	font-family: "Noto Sans TC";
+	src: url("NotoSansTC-Regular_v2.woff2") format("woff2"),
+		url("NotoSansTC-Regular_v2.woff") format("woff");
+	font-weight: 400;
+	font-display: swap;
+	unicode-range: U+0020-007F /*Basic Latin*/, U+3000-303F/*CJK Symbols and Punctuation*/, U+FF00-FFEF/* Halfwidth and Fullwidth Forms*/, U+4E00-9FFF/*CJK Unified Ideographs*/;
+}

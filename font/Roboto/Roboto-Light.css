@@ -1,0 +1,11 @@
+@charset "UTF-8";
+/* CSS Document */
+
+@font-face {
+	font-family: "roboto";
+	src: url("Roboto-Light_v2.woff2") format("woff2"),
+		url("Roboto-Light_v2.woff") format("woff");
+	font-weight: 300;
+	font-display: swap;
+	unicode-range: U+0020-007F /*Basic Latin*/;
+}

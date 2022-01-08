@@ -1,4 +1,6 @@
-https://try.terser.org/
+Minify:
+
+Javascript: https://try.terser.org/
 
 // edit terser options
 {
@@ -13,7 +15,13 @@ https://try.terser.org/
   safari10: true
 }
 
-https://cssnano.co/playground/
+css: https://cssnano.co/playground/
+
+html: https://www.toptal.com/developers/html-minifier/
 
 
-https://www.toptal.com/developers/html-minifier/
+Font:
+
+https://jrgraphix.net/r/Unicode/
+
+pyftsubset "NotoSansJP-Light.otf" --unicodes="U+0020-007F,U+00A0-00FF,U+3000-303F,U+3040-309F,U+30A0-30FF,U+FF00-FFEF,U+4E00-9FFF,U+2600-26FF,U+0370-03FF,U+276E" --recommended-glyphs --name-IDs='*' --name-legacy --flavor="woff2"

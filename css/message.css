@@ -1,14 +1,6 @@
 @charset "utf-8";
 /* CSS Document */
 
-@font-face {
-	font-family: "Noto Sans JP";
-	src: url("../font/NotoSansJP/NotoSansJP-Medium.woff2") format("woff2"),
-		url("../font/NotoSansJP/NotoSansJP-Medium.otf") format("opentype");
-	font-weight: 500;
-	font-display: swap;
-}
-
 #container {
 	width: min(1000px, 90%);
 	margin: 5vh 0px;
