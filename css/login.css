@@ -49,13 +49,13 @@
 	height: 1.2em;
 	width: 1.2em;
 	background-color: var(--foreground-color);
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: 0 0 12px 1px var(--shadow-color);
 	transition: box-shadow .4s ease-out;
 }
 
 /* On mouse-over, add a grey background color */
 .container:hover input ~ .checkmark {
-	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+	box-shadow: 0 2px 20px 3px var(--shadow-color-hover);
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */

@@ -3,8 +3,8 @@
 
 @font-face {
 	font-family: "Noto Sans JP";
-	src: url("NotoSansJP-Light_v3.woff2") format("woff2"),
-		url("NotoSansJP-Light_v3.woff") format("woff");
+	src: url("NotoSansJP-Light_v2.woff2") format("woff2"),
+		url("NotoSansJP-Light_v2.woff") format("woff");
 	font-weight: 300;
 	font-display: swap;
 	unicode-range: U+0020-007F/*Basic Latin*/, U+00A0-00FF/*Latin-1 Supplement*/, U+3000-303F/*CJK Symbols and Punctuation*/, U+3040-309F/*Hiragana*/, U+30A0-30FF/*Katakana*/, U+FF00-FFEF/* Halfwidth and Fullwidth Forms*/, U+4E00-9FFF/*CJK Unified Ideographs*/, U+2600-26FF/*Miscellaneous Symbols*/, U+0370-03FF/*Greek and Coptic*/, U+276E/*❮*/;

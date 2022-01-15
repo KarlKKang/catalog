@@ -27,14 +27,14 @@
 	background-color: var(--foreground-color-dark);
 }
 .dark-mode .video-js .vjs-slider, .dark-mode .video-js.vjs-audio .vjs-slider{
-	background-color: var(--background-color-dark);
+	background-color: rgba(0,0,0,0.17);
 }
 .dark-mode .video-js .vjs-load-progress, 
 .dark-mode .video-js .vjs-load-progress div, 
 .dark-mode .video-js.vjs-audio .vjs-load-progress, 
 .dark-mode .video-js.vjs-audio .vjs-load-progress div{
 	background: var(--text-color-dark);
-	opacity: 0.15;
+	opacity: 0.10;
 }
 .dark-mode .video-js .vjs-play-progress,
 .dark-mode .video-js .vjs-volume-level, 

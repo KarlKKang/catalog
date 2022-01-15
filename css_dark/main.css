@@ -2,20 +2,20 @@
 /* CSS Document */
 
 :root {
-	--foreground-color-dark: rgba(48,50,60,1);
-	--background-color-dark: rgba(35,37,46,1);
-	--background-color-transparent-dark: rgba(38,40,49,0);
+	--foreground-color-dark: rgba(37,38,49,1);
+	--background-color-dark: rgba(35,36,46,1);
+	--background-color-transparent-dark: rgba(35,36,46,0);
 	--text-color-dark: rgba(210,213,220,1);
 	--text-color-transparent-dark: rgba(210,213,220,0);
 	--alt-text-color-dark: rgba(87,89,100,1);
 	--link-text-color-dark: rgba(28,98,221,1);
-	--shadow-color-dark: rgba(7,8,12,.55);
-	--shadow-color-hover-dark: rgba(7,8,12,.7);
+	--shadow-color-dark: rgba(7,8,15,.50);
+	--shadow-color-hover-dark: rgba(7,8,12,.65);
 	--horizontal-line-background-color-dark: rgba(48,55,75,1);
 	--horizontal-line-foreground-color-dark: rgba(58,65,85,1);
-	--red-color-dark: rgba(193,3,53,1);
-	--green-color-dark: rgba(17,246,83,1);
-	--orange-color-dark: rgba(243,146,12,1);
+	--red-color-dark: rgba(205,3,70,1);
+	--green-color-dark: rgba(15,214,72,1);
+	--orange-color-dark: rgba(234,129,4,1);
 }
 
 body.dark-mode {

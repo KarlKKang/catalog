@@ -12,12 +12,12 @@
 
 .dark-mode #container > div > div {
 	filter: brightness(0.95) contrast(0.96);
-	-webkit-filter: brightness(0.92) contrast(0.96);
+	-webkit-filter: brightness(0.95) contrast(0.96);
 }
 
 .dark-mode #container > div:hover > div {
-	filter: brightness(1) contrast(1.07);
-	-webkit-filter: brightness(1) contrast(1,07);
+	filter: brightness(1.05) contrast(1.0);
+	-webkit-filter: brightness(1.05) contrast(1,0);
 }
 
 .dark-mode #search-bar {
