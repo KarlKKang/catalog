@@ -66,14 +66,14 @@
 	background-color: var(--foreground-color);
 }
 .video-js .vjs-slider, .video-js.vjs-audio .vjs-slider{
-	background-color: rgba(0,0,0,0.15);
+	background-color: rgba(0,0,0,0.10);
 }
 .video-js .vjs-load-progress, 
 .video-js .vjs-load-progress div, 
 .video-js.vjs-audio .vjs-load-progress, 
 .video-js.vjs-audio .vjs-load-progress div{
- 	background: var(--text-color);
-	opacity: 0.1;
+ 	background: var(--alt-text-color);
+	opacity: 0.4;
 }
 .video-js .vjs-play-progress,.video-js .vjs-volume-level, .video-js.vjs-audio .vjs-play-progress,.video-js.vjs-audio .vjs-volume-level{
 	background-color: var(--text-color);

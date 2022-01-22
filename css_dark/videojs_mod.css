@@ -33,8 +33,8 @@
 .dark-mode .video-js .vjs-load-progress div, 
 .dark-mode .video-js.vjs-audio .vjs-load-progress, 
 .dark-mode .video-js.vjs-audio .vjs-load-progress div{
-	background: var(--text-color-dark);
-	opacity: 0.10;
+	background: var(--alt-text-color-dark);
+	opacity: 0.4;
 }
 .dark-mode .video-js .vjs-play-progress,
 .dark-mode .video-js .vjs-volume-level, 
