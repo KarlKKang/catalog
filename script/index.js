@@ -31,7 +31,7 @@ window.addEventListener("load", function(){
             try {
                 var series = JSON.parse(response);
             } catch (e) {
-                showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', loginURL, true);
+                showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: loginURL, logout: true});
                 return;
             }
             document.body.classList.remove("hidden");
@@ -110,7 +110,7 @@ window.addEventListener("load", function(){
                     try {
                         var series = JSON.parse(response);
                     } catch (e) {
-                        showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', loginURL, true);
+                        showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: loginURL, logout: true});
                         return;
                     }
                     document.getElementById('container').innerHTML='';
@@ -136,7 +136,7 @@ window.addEventListener("load", function(){
                     try {
                         var series = JSON.parse(response);
                     } catch (e) {
-                        showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', loginURL, true);
+                        showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: loginURL, logout: true});
                         return;
                     }
                     showSeries (series);

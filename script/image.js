@@ -61,7 +61,7 @@ window.addEventListener("load", function(){
 		sendServerRequest('device_authenticate.php', {
 			callback: function (response) {
 				if (response!='APPROVED') {
-					showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。', topURL, true);
+					showMessage ();
 					return false;
 				} else {
 					callback ();

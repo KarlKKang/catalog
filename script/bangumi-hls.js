@@ -40,30 +40,22 @@ window.addEventListener("load", function(){
         window.location.href = topURL;
         return;
     } else {
-        seriesID = parseInt(seriesID);
-        if (isNaN(seriesID)) {
+        if (!/^[a-zA-Z0-9~_-]+$/.test(seriesID)) {
             window.location.href = topURL;
-            return;   
-        }
-        if (seriesID < 0 || seriesID > 4294967295) {
-            window.location.href = topURL;
-            return; 
+            return;
         }
     }
 
     var epIndex = getURLParam ('ep');
-    var url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+'&ep=1';
+    var new_url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+'&ep=1';
     if (epIndex == null) {
-        window.location.href = url;
+        window.location.href = new_url;
         return;
     } else {
         epIndex = parseInt (epIndex);
-        if (isNaN(epIndex)) {
-            window.location.href = url;
+        if (isNaN(epIndex) || epIndex<1) {
+            window.location.href = new_url;
             return;
-        } else if (epIndex<1) {
-            window.location.href = url;
-            return; 
         }
         epIndex--;
     }
@@ -71,9 +63,7 @@ window.addEventListener("load", function(){
     var formatIndex = getURLParam ('format');
     if (formatIndex != null) {
         formatIndex = parseInt (formatIndex);
-        if (isNaN(formatIndex)) {
-            formatIndex = 1;
-        } else if (formatIndex<1) {
+        if (isNaN(formatIndex) || formatIndex<1) {
             formatIndex = 1;
         }
         formatIndex--;
@@ -85,7 +75,7 @@ window.addEventListener("load", function(){
             try {
                 ep = JSON.parse(response);
             } catch (e) {
-                showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL);
+                showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
                 return;
             }
             updatePage (ep);
@@ -124,27 +114,39 @@ window.addEventListener("load", function(){
         updateEPSelector (ep.series);
         updateSeasonSelector (ep.seasons);
 
-        var warningTitle = document.getElementById('warning-title');
-        var warningBody = document.getElementById('warning');
-
         if (ep.age_restricted) {
+			var warningParent = document.getElementById('warning');
+			var warningTitle = document.getElementById('warning-title');
+			var warningBody = document.getElementById('warning-body');
             changeColor (warningTitle, 'red');
             if (ep.age_restricted.toLowerCase() == 'r15+') {
                 warningTitle.innerHTML = '「R15+指定」<br>年齢認証';
             } else if (ep.age_restricted.toLowerCase() == 'r18+') {
                 warningTitle.innerHTML = '「R18+指定」<br>年齢認証';
-            }
-            document.getElementById('content').classList.add('hidden');
-            warningBody.classList.remove('hidden');
-            document.getElementById('warning-button-yes').addEventListener('click', function () {
-                warningBody.classList.add('hidden');
+            } else {
+				warningTitle.innerHTML = '年齢認証';
+			}
+			warningBody.innerHTML = 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？';
+			
+			var warningButtonGroup = document.getElementById('warning-button-group');
+			var warningButtonYes = document.createElement('button');
+			var warningButtonNo = document.createElement('button');
+			warningButtonYes.innerHTML = 'はい';
+			warningButtonNo.innerHTML = 'いいえ';
+			warningButtonYes.classList.add('button');
+			warningButtonNo.classList.add('button');
+			warningButtonGroup.appendChild(warningButtonYes);
+			warningButtonGroup.appendChild(warningButtonNo);
+			warningButtonYes.addEventListener('click', function () {
+                warningParent.classList.add('hidden');
                 document.getElementById('content').classList.remove('hidden');
             });
-            document.getElementById('warning-button-no').addEventListener('click', function () {
+            warningButtonNo.addEventListener('click', function () {
                 window.location.href = topURL;
             });
-        } else {
-            warningBody.remove();
+			
+            document.getElementById('content').classList.add('hidden');
+            warningParent.classList.remove('hidden');
         }
 
         /////////////////////////////////////////////device_authenticate/////////////////////////////////////////////
@@ -152,7 +154,7 @@ window.addEventListener("load", function(){
             sendServerRequest('device_authenticate.php', {
                 callback: function (response) {
                     if (response != 'APPROVED') {
-                        showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。', topURL);
+                        showMessage ({url: topURL});
                         return false;
                     }
                 },
@@ -421,7 +423,6 @@ window.addEventListener("load", function(){
 		};
 
         var i;
-		var audioTemplate = document.createElement('audio');
 
         for (i = 0; i < file.list.length; i++) {
             let index = i;
@@ -539,6 +540,13 @@ window.addEventListener("load", function(){
 
                 if (USE_MSE) {
 					if (isMp3) {
+						if (IS_CHROMIUM) {
+							var messageTitle = document.getElementById('message-title');
+							changeColor (messageTitle, 'orange');
+							messageTitle.innerHTML = '不具合があります';
+							document.getElementById('message-body').innerHTML = '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。ご迷惑をおかけして大変申し訳ございませんでした。</p>';
+							document.getElementById('message').classList.remove('hidden');
+						}
 						let hls = new Hls(configHls);
 						hlsInstances[index]=hls;
 						hls.on(Hls.Events.ERROR, function (event, data) {
@@ -806,24 +814,28 @@ window.addEventListener("load", function(){
     }
 
     function showPlaybackError (detail) {
-        changeColor (document.getElementById('message-title'), 'red');
+		var messageTitle = document.getElementById('message-title');
+        changeColor (messageTitle, 'red');
+		messageTitle.innerHTML = 'エラーが発生しました';
         document.getElementById('media-holder').classList.add('hidden');
         document.getElementById('message-body').innerHTML = '<p>再生中にエラーが発生しました。後ほどもう一度お試しいただくか、それでも問題が解決しない場合は管理者にお問い合わせください。</p>'+(detail?('<p>Error detail: '+detail+'</p>'):'');
         document.getElementById('message').classList.remove('hidden');
     }
 
     function showCompatibilityError () {
-        changeColor (document.getElementById('message-title'), 'red');
+		var messageTitle = document.getElementById('message-title');
+        changeColor (messageTitle, 'red');
+		messageTitle.innerHTML = 'エラーが発生しました';
         document.getElementById('media-holder').classList.add('hidden');
-        document.getElementById('message-body').innerHTML = '<p>お使いのブラウザやデバイスはHLSに対応していません。HLSに対応している一般的なブラウザを以下に示します。</p>\
-        <ul>\
-            <li><p>Chrome 39+ for Android</p></li>\
-            <li><p>Chrome 39+ for Desktop</p></li>\
-            <li><p>Firefox 41+ for Android</p></li>\
-            <li><p>Firefox 42+ for Desktop</p></li>\
-            <li><p>Edge for Windows 10+</p></li>\
-            <li><p>Safari 6.0+ for macOS, iOS and iPadOS</p></li>\
-        </ul>';
+        document.getElementById('message-body').innerHTML = '<p>お使いのブラウザやデバイスはHLSに対応していません。HLSに対応している一般的なブラウザを以下に示します。</p>' + 
+        '<ul>' +
+            '<li><p>Chrome 39+ for Android</p></li>' +
+            '<li><p>Chrome 39+ for Desktop</p></li>' +
+            '<li><p>Firefox 41+ for Android</p></li>' +
+            '<li><p>Firefox 42+ for Desktop</p></li>' +
+            '<li><p>Edge for Windows 10+</p></li>' +
+            '<li><p>Safari 6.0+ for macOS, iOS and iPadOS</p></li>' +
+        '</ul>';
         document.getElementById('message').classList.remove('hidden');
     }
 
@@ -868,9 +880,10 @@ window.addEventListener("load", function(){
         chaptersXML = parser.parseFromString(chaptersXML,"text/xml");
         let ChapterString = chaptersXML.querySelectorAll('ChapterString');
         let ChapterTimeStart = chaptersXML.querySelectorAll('ChapterTimeStart');
+        var i;
 
         chapters = {name: [], startTime: []};
-        for (var i = 0; i < ChapterString.length; i++) {
+        for (i = 0; i < ChapterString.length; i++) {
             chapters.name.push(ChapterString[i].childNodes[0].nodeValue);
             let timestamp = ChapterTimeStart[i].childNodes[0].nodeValue.split(":");
             let startTime = parseInt (timestamp[0]) * 60 * 60 + parseInt (timestamp[1]) * 60 + parseFloat (timestamp[2]);
@@ -952,12 +965,12 @@ window.addEventListener("load", function(){
         var accordionPanel = document.createElement('div');
         accordionPanel.classList.add('panel');
 
-        accordionPanel.innerHTML = "<ul>\
-            <li>まず、下の「ダウンロード」ボタンをクリックして、必要なツールやスクリプトが入ったZIPファイルをダウンロードしてください。</li>\
-            <li>このZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順に従ってください。</li>\
-            <li>ZIPファイルをダウンロード後、5分以内にスクリプトを起動してください。また、12時間以内にすべてのコンテンツのダウンロードを終了してください。</li>\
-            <li>インターネット接続が良好であることを確認してください。</li>\
-        </ul>";
+        accordionPanel.innerHTML = '<ul>' +
+            '<li>まず、下の「ダウンロード」ボタンをクリックして、必要なツールやスクリプトが入ったZIPファイルをダウンロードしてください。</li>' +
+            '<li>このZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順に従ってください。</li>' +
+            '<li>ZIPファイルをダウンロード後、5分以内にスクリプトを起動してください。また、12時間以内にすべてのコンテンツのダウンロードを終了してください。</li>' +
+            '<li>インターネット接続が良好であることを確認してください。</li>' +
+        '</ul>';
 
         var downloadButton = document.createElement('button');
         downloadButton.id = 'download-button';

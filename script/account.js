@@ -35,7 +35,7 @@ function initialize (){
 			try {
 				var userInfo = JSON.parse(response);
 			} catch (e) {
-				showMessage ('エラーが発生しました', 'red', 'サーバーが無効な応答を返しました。', topURL);
+				showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
 				return;
 			}
 			showUser (userInfo);
@@ -80,7 +80,7 @@ function invite () {
 	var receiver = document.getElementById('receiver-email').value;
 	var warningElem = document.getElementById('invite-warning');
 	changeColor (warningElem, 'red');
-	if (receiver == '' || receiver.match(/^[^\s@]+@[^\s@]+$/)===null) {
+	if (receiver == '' || !/^[^\s@]+@[^\s@]+$/.test(receiver)) {
 		warningElem.innerHTML="有効なメールアドレスを入力してください。";
 		warningElem.classList.remove('hidden');
 		inviteButton.disabled = false;
@@ -105,7 +105,7 @@ function invite () {
 				warningElem.innerHTML = 'このメールアドレスはすでに招待されています。';
 				warningElem.classList.remove('hidden');
 			} else if (response == 'SPECIAL') {
-				warningElem.innerHTML = '現在、一般登録を受け付けています。featherine.com/special_registerで登録することができます。';
+				warningElem.innerHTML = '現在、一般登録を受け付けています。featherine.com/special_register で登録することができます。';
 				warningElem.classList.remove('hidden');
 			} else if (response == 'CLOSED') {
 				warningElem.innerHTML = '現在、新規登録は受け付けておりません。';
@@ -115,7 +115,7 @@ function invite () {
 				changeColor (warningElem, 'green');
 				warningElem.classList.remove('hidden');
 			} else {
-				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。', topURL);
+				showMessage ({url: topURL});
 				return;
 			}
 			inviteButton.disabled = false;
@@ -133,7 +133,7 @@ function changePassword () {
 	
 	changeColor (warningElem, 'red');
 	
-	if (newPassword=='' || newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
+	if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/.test(newPassword)) {
 		warningElem.innerHTML="パスワードが要件を満たしていません。";
 		warningElem.classList.remove('hidden');
 		passwordChangeButton.disabled=false;
@@ -157,7 +157,7 @@ function changePassword () {
 				changeColor (warningElem, 'green');
 				passwordChangeButton.disabled=false;
 			} else {
-				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。', topURL);
+				showMessage ({url: topURL});
 			}
 		},
 		content: "new="+newPassword
@@ -179,7 +179,7 @@ function changeEmail () {
 				warningElem.classList.remove('hidden');
 				changeColor (warningElem, 'green');
 			} else {
-				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。', topURL);
+				showMessage ({url: topURL});
 				return;
 			}
 			emailChangeButton.disabled = false;
@@ -215,7 +215,7 @@ function changeUsername () {
 				warningElem.innerHTML = 'このユーザー名はすでに使用されています。別のユーザー名を入力してください。';
 				warningElem.classList.remove('hidden');
 			} else {
-				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。', topURL);
+				showMessage ({url: topURL});
 				return;
 			}
 			usernameChangeButton.disabled=false;

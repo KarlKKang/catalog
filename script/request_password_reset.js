@@ -51,7 +51,7 @@ window.addEventListener("load", function(){
 		submitButton.disabled = true;
 
 		var email = emailInput.value;
-		if (email=='' || email.match(/^[^\s@]+@[^\s@]+$/)===null) {
+		if (email=='' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
 			warningElem.innerHTML="有効なメールアドレスを入力してください。";
 			warningElem.classList.remove('hidden');
 			submitButton.disabled = false;
@@ -65,9 +65,14 @@ window.addEventListener("load", function(){
                     warningElem.classList.remove('hidden');
                     submitButton.disabled = false;
                 } else if (response == 'DONE') {
-                    showMessage ('送信されました', 'green', '入力したメールアドレスが正しければ、パスワードを再設定するためのメールを送信されました。届くまでに時間がかかる場合があります。', loginURL);
+                    showMessage ({
+						title: '送信されました',
+						message: '入力したメールアドレスが正しければ、パスワードを再設定するためのメールを送信されました。届くまでに時間がかかる場合があります。',
+						color: 'green',
+						url: loginURL
+					});
                 } else {
-                    showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。のエラーが続く場合は、管理者にお問い合わせください。');
+                    showMessage ();
                 }
 			},
 			content: "email="+email,

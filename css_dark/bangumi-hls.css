@@ -91,7 +91,7 @@
 	background: var(--foreground-color-dark);
 }
 
-.dark-mode #warning:hover, .dark-mode .button:hover {
+.dark-mode #warning:hover, .dark-mode #message:hover, .dark-mode .button:hover {
 	box-shadow: 0 2px 30px 2px var(--shadow-color-hover-dark);
 }
 

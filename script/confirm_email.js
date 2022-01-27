@@ -7,6 +7,7 @@ window.addEventListener("load", function(){
 	var showMessage = mainLocal.showMessage;
 	var getURLParam = mainLocal.getURLParam;
 	var loginURL = mainLocal.loginURL;
+	var expiredMessage = mainLocal.expiredMessage;
 	
 	if (!window.location.href.startsWith('https://featherine.com/confirm_email') && !debug) {
 		window.location.href = 'https://featherine.com';
@@ -16,12 +17,12 @@ window.addEventListener("load", function(){
 	var param = getURLParam ('p');
 	var signature = getURLParam ('signature');
 
-	if (param == null || param.match(/^[a-zA-Z0-9~_-]+$/)===null) {
+	if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
 		window.location.href = loginURL;
 		return;
 	}
 	
-	if (signature == null || signature.match(/^[a-zA-Z0-9~_-]+$/)===null) {
+	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
 		window.location.href = loginURL;
 		return;
 	}
@@ -29,13 +30,22 @@ window.addEventListener("load", function(){
 	sendServerRequest('change_email.php', {
 		callback: function (response) {
 			if (response == 'EXPIRED') {
-				showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
+				showMessage (expiredMessage);
 			} else if (response == 'REJECTED') {
-				showMessage ('リクエストは拒否されました', 'red', '未完成の招待状があります。招待が完了するまでお待ちください。', loginURL);
+				showMessage ({
+					title: 'リクエストは拒否されました',
+					message: '未完成の招待状があります。招待が完了するまでお待ちください。',
+					url: loginURL
+				});
 			} else if (response == 'DONE') {
-				showMessage ('完了しました', 'green', 'メールアドレスが変更されました。', loginURL);
+				showMessage ({
+					title: '完了しました',
+					message: 'メールアドレスが変更されました。',
+					color: 'green',
+					url: loginURL
+				});
 			} else {
-				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+				showMessage ();
 			}
 		},
 		content: "p="+param+"&signature="+signature,

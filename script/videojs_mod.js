@@ -291,10 +291,10 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 				fullscreenButton.title = 'Fullscreen';
 			}
 		};
-		document.addEventListener('fullscreenchange', event => fullscreenChange(event));
-		document.addEventListener('mozfullscreenchange', event => fullscreenChange(event));
-		document.addEventListener('MSFullscreenChange', event => fullscreenChange(event));
-		document.addEventListener('webkitfullscreenchange', event => fullscreenChange(event));
+		document.addEventListener('fullscreenchange', fullscreenChange);
+		document.addEventListener('mozfullscreenchange', fullscreenChange);
+		document.addEventListener('MSFullscreenChange', fullscreenChange);
+		document.addEventListener('webkitfullscreenchange', fullscreenChange);
 	}
 
     //Picture in picture

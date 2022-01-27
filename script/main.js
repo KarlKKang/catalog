@@ -16,6 +16,13 @@ main.serverURL = serverURL;
 	
 var debug = true;
 main.debug = debug;
+	
+var expiredMessage = {
+	title: '期限が切れています',
+	message: 'もう一度やり直してください。',
+	url: loginURL
+};
+main.expiredMessage = expiredMessage;
 
 //////////////////////////////////////// Dependencies: none
 var getURLParam = function (param) {
@@ -32,7 +39,7 @@ var redirect = function (url) {
 	var series = getURLParam ('series');
 	var format = getURLParam ('format');
 	var timestamp = getURLParam ('timestamp');
-	if (series == null) {
+	if (series == null || !/^[a-zA-Z0-9~_-]+$/.test(series)) {
 		return url;
 	} else {
 		return url+'?series='+series+'&ep='+((ep==null)?'1':ep)+((format==null)?'':('&format='+format))+((timestamp==null)?'':('&timestamp='+timestamp));
@@ -42,21 +49,26 @@ main.redirect = redirect;
 ////////////////////////////////////////
 	
 //////////////////////////////////////// Dependencies: none
-var showMessage = function (title, color, message, url, logout) {
-	if (logout === undefined) {
-		logout = false;
+var showMessage = function (param) {
+	if (param === undefined) {
+		param = {};
 	}
-	if (url === undefined) {
-		url = null;
+	
+	if (!param.hasOwnProperty('title')) {
+		param.title = 'エラーが発生しました';
 	}
-	var param = {
-		title: title,
-		titleColor: color,
-		message: message,
-		url: url,
-		htmlTitle: document.title,
-		logout: logout
-	};
+	if (!param.hasOwnProperty('message')) {
+		param.message = '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。';
+	}
+	if (!param.hasOwnProperty('color')) {
+		param.color = 'red';
+	}
+	if (!param.hasOwnProperty('logout')) {
+		param.logout = false;
+	}
+	if (!param.hasOwnProperty('url')) {
+		param.url = null;
+	}
 	
 	window.localStorage.setItem('message-param', JSON.stringify(param));
 	window.location.href = 'message'+(debug?'.html':'');
@@ -67,7 +79,10 @@ main.showMessage = showMessage;
 //////////////////////////////////////// Dependencies: showMessage
 var addXHROnError = function (xmlhttp) {
 	xmlhttp.onerror = function () {
-		showMessage ("サーバーに接続できません", "red", "数分待ってから、もう一度試してください。", null);
+		showMessage ({
+			title: "サーバーに接続できません",
+			message: "数分待ってから、もう一度お試しください。このエラーが続く場合は、管理者にお問い合わせください。"
+		});
 	};
 };
 main.addXHROnError = addXHROnError;
@@ -89,30 +104,47 @@ var checkXHRStatus = function (response) {
 			}	
 			return false;
 		} else if (status == 429) {
-			showMessage ("429 Too Many Requests", "red", "サーバーにリクエストを送信する頻度が高すぎる。数分待ってから、もう一度試してください。");
+			showMessage ({
+				title: "429 Too Many Requests",
+				message: "サーバーにリクエストを送信する頻度が高すぎる。数分待ってから、もう一度お試しください。"
+			});
 			return false;
 		} else if (status == 503) {
-			showMessage ("メンテナンス中", "red", "後でもう一度試してください。");
+			showMessage ({
+				title: "メンテナンス中",
+				message: "ご不便をおかけして申し訳ありません。後ほどもう一度お試しください。",
+				color: 'orange'
+			});
 			return false;
 		} else if (status == 500 || status == 400) {
 			var responseText = response.responseText;
-			var message = '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。';
 			if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request'))
-				message = 'サーバーからの応答：' + responseText + '<br>このエラーが続く場合は、管理者にお問い合わせください。';
-			showMessage ("エラーが発生しました", "red", message);
+				showMessage ({
+					message: 'サーバーからの応答：' + responseText + '<br>このエラーが続く場合は、管理者にお問い合わせください。'
+				});
+			else
+				showMessage ();
 			return false;
 		} else if (status == 403) {
-			showMessage ("エラーが発生しました", "red", "サーバーがリクエストを拒否しました。");
+			showMessage ({
+				message: "サーバーがリクエストを拒否しました。"
+			});
 			return false;
 		} else if (status == 404) {
 			if (response.responseText == 'REQUEST CANNOT BE SATISFIED')
 				window.location.href = topURL;
 			else {
-				showMessage ("サーバーに接続できません", "red", "数分待ってから、もう一度試してください。");
+				showMessage ({
+					title: "サーバーに接続できません",
+					message: "数分待ってから、もう一度お試しください。このエラーが続く場合は、管理者にお問い合わせください。"
+				});
 			}	
 			return false;
 		} else {
-			showMessage ("サーバーに接続できません", "red", "数分待ってから、もう一度試してください。");
+			showMessage ({
+				title: "サーバーに接続できません",
+				message: "数分待ってから、もう一度お試しください。このエラーが続く場合は、管理者にお問い合わせください。"
+			});
 			return false;
 		}
 	} else {
@@ -148,62 +180,6 @@ var sendServerRequest = function (uri, options) {
 };
 main.sendServerRequest = sendServerRequest;
 ////////////////////////////////////////
-	
-/*//////////////////////////////////////// Dependencies: showMessage
-var checkXHRResponseText = function (response) {
-	var responseText = response.responseText;
-	if (responseText.includes('/var/www')) {
-		showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。 この問題が引き続き発生する場合は、管理者に連絡してください。', loginURL, true);
-		return false;
-	} else if (responseText.includes('SERVER ERROR:')) {
-		showMessage ('エラーが発生しました', 'red', responseText, loginURL, true);
-		return false;
-	} else if (responseText=='AUTHENTICATION FAILED') {
-		logout(function () {window.location.href = redirect (loginURL);});
-		return false;
-	} else if (responseText=='NOT FOUND' || responseText=='SESSION ENDED') {
-		window.location.href = topURL;
-		return false;
-	} else {
-		return true;
-	}
-};
-main.checkXHRResponseText = checkXHRResponseText;
-////////////////////////////////////////
-	
-//////////////////////////////////////// Dependencies: checkXHRStatus, checkXHRResponseText
-var checkXHRResponse = function (response) {
-	if (checkXHRStatus (response)) {
-		if (checkXHRResponseText (response))
-			return true;
-	}
-	return false;
-};
-main.checkXHRResponse = checkXHRResponse;
-////////////////////////////////////////
-	
-//////////////////////////////////////// Dependencies: checkXHRStatus, sendServerRequest, showMessage
-var handshake = function (callback) {
-	if (callback === undefined) {
-		callback = function () {return 0;};
-	}
-	sendServerRequest('handshake.php', {
-		callback: function () {
-			if (checkXHRStatus (this)) {
-				if (this.responseText == "IN MAINTENANCE") {
-					showMessage ("メンテナンス中", "red", "後でもう一度試してください。", null);
-				} else if (this.responseText == "OK") {
-					callback();
-				} else {
-					showMessage ("サーバーでエラーが発生しました", "red", "数分待ってから、もう一度試してください。", null);
-				}
-			}
-		}, 
-		withCredentials: false
-	});
-};
-main.handshake = handshake;
-////////////////////////////////////////*/
 
 //////////////////////////////////////// Dependencies: sendServerRequest, showMessage
 var authenticate = function (callback) {
@@ -223,7 +199,7 @@ var authenticate = function (callback) {
 			} else if (response == "FAILED") {
 				failed();
 			} else {
-				showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+				showMessage ();
 			}
 		}
 	});
@@ -231,7 +207,7 @@ var authenticate = function (callback) {
 main.authenticate = authenticate;
 ////////////////////////////////////////
 
-//////////////////////////////////////// Dependencies: sendServerRequest, debug
+//////////////////////////////////////// Dependencies: sendServerRequest, debug, showMessage
 var logout = function (callback) {
 	if (callback === undefined) {
 		callback = function () {return;};
@@ -245,7 +221,7 @@ var logout = function (callback) {
                 }
                 callback ();
             } else {
-                showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+                showMessage ();
                 return false;
             }
 		}
@@ -342,7 +318,7 @@ var secToTimestamp = function (sec) {
 	var min = Math.floor(sec/60);
 	sec = sec - min*60;
 
-	sec = Math.round(sec);
+	sec = Math.floor(sec);
 	if (sec < 10) {
 		sec = '0' + sec;
 	}

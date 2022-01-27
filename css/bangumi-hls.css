@@ -285,13 +285,15 @@ p.artist {
 	font-weight: 500;
 }
 
-#warning-body, #message-body {
+#warning-body{
 	margin: 1em 0px;
 	padding: 0px;
+	text-align: center;
 }
 
-#warning-body {
-	text-align: center;
+#message-body {
+	margin: 1em 0px -1em 0px;
+	padding: 0px;
 }
 
 .button {
@@ -308,23 +310,23 @@ p.artist {
 	font-size: medium;
 }
 
-#warning-button-yes, #warning-button-no {
+#warning-button-group > .button {
 	margin: 1em 3% 0px 3%;
 }
 
-#warning:hover, .button:hover {
+#warning:hover, #message:hover, .button:hover {
 	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
 }
 
 #warning-button-group {
-	margin: -1em 0px 0px 0px;
+	/*margin: -0.5em 0px 0px 0px;*/
 	display: flex;
   	flex-wrap: wrap;
 	justify-content: center;
 }
 
 #on-screen-console {
-	margin: 0px 0px 10% 0px;
+	margin: -1px 0px 10% 0px;
 	width: 100%;
 }
 

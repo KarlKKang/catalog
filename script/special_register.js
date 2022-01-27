@@ -28,22 +28,22 @@ function initialize () {
 	sendServerRequest('special_register.php', {
 		callback: function (response) {
             if (response == 'APPROVED' || debug) {
-                emailInput.addEventListener('keydown', function () {
+                emailInput.addEventListener('keydown', function (event) {
                     if (event.key === "Enter") {
                         register ();
                     }
                 });
-                usernameInput.addEventListener('keydown', function () {
+                usernameInput.addEventListener('keydown', function (event) {
                     if (event.key === "Enter") {
                         register ();
                     }
                 });
-                passwordInput.addEventListener('keydown', function () {
+                passwordInput.addEventListener('keydown', function (event) {
                     if (event.key === "Enter") {
                         register ();
                     }
                 });
-                passwordConfirmInput.addEventListener('keydown', function () {
+                passwordConfirmInput.addEventListener('keydown', function (event) {
                     if (event.key === "Enter") {
                         register ();
                     }
@@ -74,9 +74,13 @@ function initialize () {
                 });
                 document.body.classList.remove("hidden");
             } else if (response == 'REJECTED') {
-				showMessage ('リクエストは拒否されました', 'red', '現在、このページでの新規登録は受け付けておりません。', loginURL);
+				showMessage ({
+					title: 'リクエストは拒否されました',
+					message: '現在、このページでの新規登録は受け付けておりません。',
+					url: loginURL
+				});
             } else {
-                showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+                showMessage ();
             }
 		},
 		content: "status_only=true",
@@ -94,7 +98,7 @@ function register () {
 	var password = passwordInput.value;
 	var passwordConfirm = passwordConfirmInput.value;
 	
-	if (email == '' || email.match(/^[^\s@]+@[^\s@]+$/)===null) {
+	if (email == '' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
 		warningElem.innerHTML = '有効なメールアドレスを入力してください。';
 		warningElem.classList.remove('hidden');
 		submitButton.disabled = false;
@@ -108,7 +112,7 @@ function register () {
 		return;
 	}
 	
-	if (password=='' || password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
+	if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/.test(password)) {
 		warningElem.innerHTML = 'パスワードが要件を満たしていません。';
 		warningElem.classList.remove('hidden');
 		submitButton.disabled = false;
@@ -133,7 +137,11 @@ function register () {
 	sendServerRequest('special_register.php', {
 		callback: function (response) {
             if (response == 'REJECTED') {
-                showMessage ('リクエストは拒否されました', 'red', '現在、このページでの新規登録は受け付けておりません。', loginURL);
+                showMessage ({
+					title: 'リクエストは拒否されました',
+					message: '現在、このページでの新規登録は受け付けておりません。',
+					url: loginURL
+				});
             } else if (response == 'INVALID FORMAT') {
                 warningElem.innerHTML = '有効なメールアドレスを入力してください。';
                 warningElem.classList.remove('hidden');
@@ -147,9 +155,15 @@ function register () {
                 warningElem.classList.remove('hidden');
                 submitButton.disabled = false;
             } else if (response == 'DONE') {
-                showMessage ('送信されました', 'green', '確認メールが送信されました。届くまでに時間がかかる場合があります。', loginURL, true);
+                showMessage ({
+					title: '送信されました',
+					message: '確認メールが送信されました。届くまでに時間がかかる場合があります。',
+					color: 'green',
+					url: loginURL,
+					logout: true
+				});
             } else {
-                showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+                showMessage ();
             }
 		},
 		content: "user="+encodeURIComponent(JSON.stringify(user)),

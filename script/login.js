@@ -6,7 +6,6 @@ window.addEventListener("load", function(){
 	var appearanceSwitching = mainLocal.appearanceSwitching;
 	var sendServerRequest = mainLocal.sendServerRequest;
 	var showMessage = mainLocal.showMessage;
-	var loginURL = mainLocal.loginURL;
 	var topURL = mainLocal.topURL;
 	var redirect = mainLocal.redirect;
 	var passwordStyling = mainLocal.passwordStyling;
@@ -31,12 +30,12 @@ window.addEventListener("load", function(){
 		},
 		failed:
 		function () {
-			usernameInput.addEventListener('keydown', function () {
+			usernameInput.addEventListener('keydown', function (event) {
 				if (event.key === "Enter") {
 					login ();
 				}
 			});
-			passwordInput.addEventListener('keydown', function () {
+			passwordInput.addEventListener('keydown', function (event) {
 				if (event.key === "Enter") {
 					login ();
 				}
@@ -64,14 +63,14 @@ function login () {
 	var email = usernameInput.value;
 	var password = passwordInput.value;
 
-	if (email=='' || email.match(/^[^\s@]+@[^\s@]+$/)===null) {
+	if (email=='' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
 		warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
 		warningElem.classList.remove('hidden');
 		submitButton.disabled = false;
 		return;
 	}
 
-	if (password=='' || password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
+	if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/.test(password)) {
 		warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
 		warningElem.classList.remove('hidden');
 		submitButton.disabled = false;
@@ -98,14 +97,19 @@ function login () {
                 submitButton.disabled = false;
             } else if (response == 'NOT RECOMMENDED') {
                 setTimeout (function () {
-                    showMessage ('お使いのブラウザは推奨されませ', 'orange', '一部のコンテンツが正常に再生されない場合は、Safariをお使いください。', topURL);
+                    showMessage ({
+						title: 'お使いのブラウザは推奨されませ', 
+						message: '一部のコンテンツが正常に再生されない場合は、Safariをお使いください。',
+						color: 'orange', 
+						url: topURL
+					});
                 }, 500);
             } else if (response == 'APPROVED') {
                 setTimeout (function () {
                     window.location.href = redirect (topURL);
                 }, 500);
             } else {
-                showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。', loginURL);
+                showMessage ();
             }
 		},
 		content: "p="+encodeURIComponent(param)

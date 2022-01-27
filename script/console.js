@@ -4,16 +4,17 @@ window.addEventListener("load", function(){
 	var mainLocal = main;
 	var debug = mainLocal.debug;
 	var sendServerRequest = mainLocal.sendServerRequest;
+
+	var completeCallback = function (response) {
+		if (setOutput (response)) {
+			alert ('Operation completed');
+		}
+	};
 	
 	if (!window.location.href.startsWith('https://featherine.com/console') && !debug) {
 		window.location.href = 'https://featherine.com/console';
 		return;
 	}
-	
-	var param = {
-		'command': 'authenticate'
-	};
-	param = JSON.stringify (param);
 	
 	sendServerRequest('console.php', {
 		callback: function (response) {
@@ -47,7 +48,7 @@ window.addEventListener("load", function(){
 				document.body.classList.remove("hidden");
 			}
 		},
-		content: "p="+encodeURIComponent(param)
+		content: "p="+encodeURIComponent(JSON.stringify ({'command': 'authenticate'}))
 	});
 
 /*------------------------------------------------------------------------------------Series Functions------------------------------------------------------------------------------------*/
@@ -96,11 +97,7 @@ function modifySeries (button) {
 	} while (confirm != "modify");
 	
 	sendServerRequest('console.php', {
-		callback: function (response) {
-			if (setOutput (response)) {
-				alert ('Operation completed');
-			}
-		},
+		callback: completeCallback,
 		content: "p="+encodeURIComponent(param)
 	});
 }
@@ -123,11 +120,7 @@ function deleteSeries (id) {
 	param = JSON.stringify (param);
 	
 	sendServerRequest('console.php', {
-		callback: function (response) {
-			if (setOutput (response)) {
-				alert ('Operation completed');
-			}
-		},
+		callback: completeCallback,
 		content: "p="+encodeURIComponent(param)
 	});
 }
@@ -161,11 +154,7 @@ function addSeries (button) {
 	} while (confirm != "insert");
 	
 	sendServerRequest('console.php', {
-		callback: function (response) {
-			if (setOutput (response)) {
-				alert ('Operation completed');
-			}
-		},
+		callback: completeCallback,
 		content: "p="+encodeURIComponent(param)
 	});
 }
@@ -272,11 +261,7 @@ function updateTime (id) {
 	param = JSON.stringify (param);
 	
 	sendServerRequest('console.php', {
-		callback: function (response) {
-			if (setOutput (response)) {
-				alert ('Operation completed');
-			}
-		},
+		callback: completeCallback,
 		content: "p="+encodeURIComponent(param)
 	});
 }
@@ -348,11 +333,7 @@ function addAccount (button) {
 	} while (confirm != "insert");
 	
 	sendServerRequest('console.php', {
-		callback: function (response) {
-			if (setOutput (response)) {
-				alert ('Operation completed');
-			}
-		},
+		callback: completeCallback,
 		content: "p="+encodeURIComponent(param)
 	});
 }
@@ -403,11 +384,7 @@ function modifyAccount (button, originalEmail) {
 	} while (confirm != "modify");
 	
 	sendServerRequest('console.php', {
-		callback: function (response) {
-			if (setOutput (response)) {
-				alert ('Operation completed');
-			}
-		},
+		callback: completeCallback,
 		content: "p="+encodeURIComponent(param)
 	});
 }
@@ -425,7 +402,7 @@ function parseAccountRecord (email, username, password, user_group, status, avai
 	
 	if (password=='') {
 		password = null;
-	} else if (password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
+	} else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/.test(password)) {
 		alert ("ERROR: password requirements not met");
 		return false;
 	} else {
@@ -494,11 +471,7 @@ function deleteAccount (email) {
 	param = JSON.stringify (param);
 	
 	sendServerRequest('console.php', {
-		callback: function (response) {
-			if (setOutput (response)) {
-				alert ('Operation completed');
-			}
-		},
+		callback: completeCallback,
 		content: "p="+encodeURIComponent(param)
 	});
 }

@@ -35,7 +35,7 @@ window.addEventListener("load", function(){
 	var callback = function () {
 		document.title = param.htmlTitle;
 		document.getElementById('title').innerHTML = param.title;
-		document.getElementById('title').classList.add('color-'+param.titleColor);
+		document.getElementById('title').classList.add('color-'+param.color);
 		document.getElementById('message').innerHTML = param.message;
 		url = param.url;
 		if (param.url == null) {

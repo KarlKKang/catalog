@@ -9,6 +9,7 @@ window.addEventListener("load", function(){
 	var showMessage = mainLocal.showMessage;
 	var loginURL = mainLocal.loginURL;
 	var passwordStyling = mainLocal.passwordStyling;
+	var expiredMessage = mainLocal.expiredMessage;
 	
 	if (!window.location.href.startsWith('https://featherine.com/register') && !debug) {
 		window.location.href = 'https://featherine.com';
@@ -25,7 +26,7 @@ window.addEventListener("load", function(){
 	var param = getURLParam ('p');
 	var signature = getURLParam ('signature');
 
-	if (param == null || param.match(/^[a-zA-Z0-9~_-]+$/)===null) {
+	if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
 		if (debug) {
 			document.body.classList.remove("hidden");
 		} else {
@@ -34,7 +35,7 @@ window.addEventListener("load", function(){
 		return;
 	}
 
-	if (signature == null || signature.match(/^[a-zA-Z0-9~_-]+$/)===null) {
+	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
 		window.location.href = loginURL;
 		return;
 	}
@@ -42,21 +43,25 @@ window.addEventListener("load", function(){
     sendServerRequest('register.php', {
         callback: function (response) {
             if (response == 'EXPIRED') {
-                showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
+                showMessage (expiredMessage);
             } else if (response == 'SPECIAL') {
-                showMessage ('リクエストは拒否されました', 'red', '現在、一般登録を受け付けています。ボタンをクリックして登録ページに移動してください。', 'special_register'+(debug?'.html':''));
+                showMessage ({
+					title: 'リクエストは拒否されました',
+					message: '現在、一般登録を受け付けています。ボタンをクリックして登録ページに移動してください。',
+					url: 'special_register'+(debug?'.html':'')
+				});
             } else if (response == 'APPROVED') {
-				usernameInput.addEventListener('keydown', function () {
+				usernameInput.addEventListener('keydown', function (event) {
 					if (event.key === "Enter") {
 						register ();
 					}
 				});
-				passwordInput.addEventListener('keydown', function () {
+				passwordInput.addEventListener('keydown', function (event) {
 					if (event.key === "Enter") {
 						register ();
 					}
 				});
-				passwordConfirmInput.addEventListener('keydown', function () {
+				passwordConfirmInput.addEventListener('keydown', function (event) {
 					if (event.key === "Enter") {
 						register ();
 					}
@@ -87,7 +92,7 @@ window.addEventListener("load", function(){
 				});
                 document.body.classList.remove("hidden");
             } else {
-                showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+                showMessage ();
             }
         },
         content: "p="+param+"&signature="+signature,
@@ -110,7 +115,7 @@ window.addEventListener("load", function(){
 			return;
 		}
 
-		if (password=='' || password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
+		if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/.test(password)) {
 			warningElem.innerHTML = 'パスワードが要件を満たしていません。';
 			warningElem.classList.remove('hidden');
 			submitButton.disabled = false;
@@ -134,15 +139,20 @@ window.addEventListener("load", function(){
 		sendServerRequest('register.php', {
 			callback: function (response) {
                 if (response == 'EXPIRED') {
-                    showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
+                    showMessage (expiredMessage);
                 } else if (response == 'USERNAME DUPLICATED') {
                     warningElem.innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
                     warningElem.classList.remove('hidden');
                     submitButton.disabled = false;
                 } else if (response == 'DONE') {
-                    showMessage ('完了しました', 'green', 'アカウントが登録されました。', loginURL);
+                    showMessage ({
+						title: '完了しました',
+						message: 'アカウントが登録されました。',
+						color: 'green',
+						url: loginURL
+					});
                 } else {
-                    showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+                    showMessage ();
                 }
 			},
 			content: "p="+param+"&signature="+signature+"&user="+encodeURIComponent(JSON.stringify(user)),

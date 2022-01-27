@@ -9,6 +9,8 @@ window.addEventListener("load", function(){
 	var loginURL = mainLocal.loginURL;
 	var getURLParam = mainLocal.getURLParam;
 	var passwordStyling = mainLocal.passwordStyling;
+	var expiredMessage = mainLocal.expiredMessage;
+
 	
 	if (!window.location.href.startsWith('https://login.featherine.com/password_reset') && !debug) {
 		window.location.href = 'https://featherine.com';
@@ -26,7 +28,7 @@ window.addEventListener("load", function(){
 	var signature = getURLParam ('signature');
 	var expires = getURLParam ('expires');
 
-	if (user == null || user.match(/^[a-zA-Z0-9~_-]+$/)===null) {
+	if (user == null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
 		if (debug) {
 			document.body.classList.remove("hidden");
 		} else {
@@ -35,12 +37,12 @@ window.addEventListener("load", function(){
 		return;
 	}
 	
-	if (signature == null || signature.match(/^[a-zA-Z0-9~_-]+$/)===null) {
+	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
 		window.location.href = loginURL;
 		return;
 	}
 
-	if (expires == null || expires.match(/^[0-9]+$/)===null) {
+	if (expires == null || !/^[0-9]+$/.test(expires)) {
 		window.location.href = loginURL;
 		return;
 	}
@@ -48,16 +50,16 @@ window.addEventListener("load", function(){
     sendServerRequest('reset_password.php', {
         callback: function (response) {
             if (response == 'EXPIRED') {
-                showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
+                showMessage (expiredMessage);
             } else if (response != 'APPROVED') {
-                showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+                showMessage ();
             } else {
-				newPasswordInput.addEventListener('keydown', function () {
+				newPasswordInput.addEventListener('keydown', function (event) {
 					if (event.key === "Enter") {
 						submitRequest ();
 					}
 				});
-				newPasswordConfirmInput.addEventListener('keydown', function () {
+				newPasswordConfirmInput.addEventListener('keydown', function (event) {
 					if (event.key === "Enter") {
 						submitRequest ();
 					}
@@ -88,7 +90,7 @@ window.addEventListener("load", function(){
 		var newPassword = newPasswordInput.value;
 		var newPasswordConfirm = newPasswordConfirmInput.value;
 
-		if (newPassword=='' || newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/)===null) {
+		if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/.test(newPassword)) {
 			warningElem.innerHTML = 'パスワードが要件を満たしていません。';
 			warningElem.classList.remove('hidden');
 			sumbitButton.disabled=false;
@@ -107,11 +109,16 @@ window.addEventListener("load", function(){
 		sendServerRequest('reset_password.php', {
 			callback: function (response) {
                 if (response == 'EXPIRED') {
-                    showMessage ('期限が切れています', 'red', 'もう一度やり直してください。', loginURL);
+                    showMessage (expiredMessage);
                 } else if (response == 'DONE') {
-                    showMessage ('完了しました', 'green', 'パスワードが変更されました。', loginURL);
+                    showMessage ({
+						title: '完了しました',
+						message: 'パスワードが変更されました。',
+						color: 'green',
+						url: loginURL
+					});
                 } else {
-                    showMessage ('エラーが発生しました', 'red', '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。');
+                    showMessage ();
                 }
 			},
 			content: "user="+user+"&signature="+signature+"&expires="+expires+"&new="+newPassword,
