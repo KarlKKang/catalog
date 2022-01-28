@@ -115,7 +115,7 @@ function deleteSeries (id) {
 	var param = {
 		'command': 'delete',
 		'table': 'series',
-		'id': parseInt(id)
+		'id': id
 	};
 	param = JSON.stringify (param);
 	
@@ -164,12 +164,9 @@ function parseSeriesRecord (id, title, thumbnail, isPublic, series_id, season_na
 		alert ("ERROR: 'id' is required");
 		return false;
 	} 
-	id = parseInt(id);
-	if (isNaN(id)) {
+
+	if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
 		alert ("ERROR: Invalid value for 'id'");
-		return false;
-	} else if (id>4294967295 || id<0) {
-		alert ("ERROR: 'id' should be in range 0-4294967295");
 		return false;
 	}
 	
@@ -185,15 +182,9 @@ function parseSeriesRecord (id, title, thumbnail, isPublic, series_id, season_na
 	
 	if (series_id=='') {
 		series_id=null;
-	} else {
-		series_id = parseInt(series_id);
-		if (isNaN(series_id)) {
-			alert ("ERROR: Invalid value for 'series_id'");
-			return false;
-		} else if (series_id>4294967295 || series_id<0) {
-			alert ("ERROR: 'series_id' should be in range 0-4294967295");
-			return false;
-		}
+	} else if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
+		alert ("ERROR: Invalid value for 'series_id'");
+		return false;
 	}
 	
 	if (season_name=='') {
@@ -256,7 +247,7 @@ function generate (type) {
 function updateTime (id) {
 	var param = {
 		'command': 'updatetime',
-		'id': parseInt(id)
+		'id': id
 	};
 	param = JSON.stringify (param);
 	

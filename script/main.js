@@ -70,6 +70,7 @@ var showMessage = function (param) {
 		param.url = null;
 	}
 	
+	param.htmlTitle = document.title;
 	window.localStorage.setItem('message-param', JSON.stringify(param));
 	window.location.href = 'message'+(debug?'.html':'');
 };
