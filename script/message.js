@@ -37,12 +37,14 @@ window.addEventListener("load", function(){
 		document.getElementById('title').innerHTML = param.title;
 		document.getElementById('title').classList.add('color-'+param.color);
 		document.getElementById('message').innerHTML = param.message;
+		var button = document.getElementById('button');
 		url = param.url;
 		if (param.url == null) {
 			localStorage.removeItem("message-param");
-			document.getElementById('button').classList.add('hidden');
+			button.classList.add('hidden');
 		} else {
-			document.getElementById('button').addEventListener('click', function () {
+			button.innerHTML = '次に進む';
+			button.addEventListener('click', function () {
 				localStorage.removeItem("message-param");
 				window.location.href = url;
 			});

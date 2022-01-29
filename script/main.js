@@ -166,6 +166,9 @@ var sendServerRequest = function (uri, options) {
 	if (!options.hasOwnProperty('withCredentials')) {
 		options.withCredentials = true;
 	}
+	if (!options.hasOwnProperty('method')) {
+		options.method = 'POST';
+	}
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function () {
@@ -174,7 +177,7 @@ var sendServerRequest = function (uri, options) {
 		}
 	};
 	addXHROnError(xmlhttp);
-	xmlhttp.open('POST', serverURL + "/" + uri, true);
+	xmlhttp.open(options.method, serverURL + "/" + uri, true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.withCredentials = options.withCredentials;
 	xmlhttp.send(options.content);
@@ -292,6 +295,11 @@ main.goTo = goTo;
 	
 //////////////////////////////////////// Dependencies: navUpdate, goTo, logout, redirect
 var navListeners = function () {
+	document.getElementById('nav-menu-content').innerHTML = '<p><span id="nav-menu-content-1">トップ／LIBRARY</span></p>' +
+			'<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>' +
+			'<p><span id="nav-menu-content-3">ご利用ガイド／INFO</span></p>' +
+			'<p><span id="nav-menu-content-4">ログアウト／LOG OUT</span></p>';
+	
 	document.getElementById('nav-btn').addEventListener('click', function () {
 		navUpdate ();
 	});

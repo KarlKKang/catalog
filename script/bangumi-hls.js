@@ -30,7 +30,6 @@ window.addEventListener("load", function(){
 	// DIST NOTE: insert browser detection here
     // DIST NOTE: insert videojs_mod here
 
-    var chapters = {name: [], startTime: []};
     var mediaInstances = [], hlsInstances = [];
     var token;
     var onScreenConsole = false;
@@ -69,7 +68,7 @@ window.addEventListener("load", function(){
         formatIndex--;
     }
 
-    sendServerRequest('request_ep.php', {
+    sendServerRequest('get_ep.php', {
         callback: function (response) {
             var ep;
             try {
@@ -335,7 +334,7 @@ window.addEventListener("load", function(){
             mediaInstances.push(videojs_mod (videoJS, {useNative: !USE_MSE}));
             mediaHolder.appendChild(videoJS);
 
-            addVideoNode (file.url, {chapters: file.chapters/*, currentTime: timestampParam*/});
+            addVideoNode (file.url, {/*, currentTime: timestampParam*/});
             if (file.chapters != '') {
                 displayChapters (file.chapters);
             }
@@ -874,25 +873,10 @@ window.addEventListener("load", function(){
         }
     }
 
-    function displayChapters (chaptersXML) {
-        //parse chapters
-        var parser = new DOMParser();
-        chaptersXML = parser.parseFromString(chaptersXML,"text/xml");
-        let ChapterString = chaptersXML.querySelectorAll('ChapterString');
-        let ChapterTimeStart = chaptersXML.querySelectorAll('ChapterTimeStart');
-        var i;
-
-        chapters = {name: [], startTime: []};
-        for (i = 0; i < ChapterString.length; i++) {
-            chapters.name.push(ChapterString[i].childNodes[0].nodeValue);
-            let timestamp = ChapterTimeStart[i].childNodes[0].nodeValue.split(":");
-            let startTime = parseInt (timestamp[0]) * 60 * 60 + parseInt (timestamp[1]) * 60 + parseFloat (timestamp[2]);
-            //startTime = Math.round(startTime*1000)/1000;
-            chapters.startTime.push(startTime);
-        }
+    function displayChapters (chapters) {
 
         //display chapters
-        var chapterLength = chapters.name.length;
+        var chapterLength = chapters.length;
         var accordion = document.createElement('button');
         accordion.classList.add('accordion');
         accordion.innerHTML = 'CHAPTERS';
@@ -902,11 +886,11 @@ window.addEventListener("load", function(){
 
         var video = mediaInstances[0].media;
 
-        for (i = 0; i < chapterLength; i++) {
+        for (var i = 0; i < chapterLength; i++) {
             let chapter = document.createElement('p');
             let timestamp = document.createElement('span');
-            let cueText = document.createTextNode('\xa0\xa0' + chapters.name[i]);
-            let startTime = chapters.startTime[i];
+            let cueText = document.createTextNode('\xa0\xa0' + chapters[i][0]);
+            let startTime = chapters[i][1];
             timestamp.innerHTML = secToTimestamp (startTime);
             timestamp.addEventListener ('click', function () {
                 if (video.currentTime <= startTime) {
@@ -931,10 +915,10 @@ window.addEventListener("load", function(){
             var chapterElements = accordionPanel.getElementsByTagName('p');
             var currentTime = video.currentTime;
             for (var i = 0; i < chapterLength; i++) {
-                if (currentTime >= chapters.startTime[i]) {
+                if (currentTime >= chapters[i][1]) {
                     if (i == chapterLength-1) {
                         chapterElements[i].className = 'current-chapter';
-                    } else if (currentTime < chapters.startTime[i+1]) {
+                    } else if (currentTime < chapters[i+1][1]) {
                         chapterElements[i].className = 'current-chapter';  
                     } else {
                         chapterElements[i].className = 'inactive-chapter';
@@ -968,8 +952,9 @@ window.addEventListener("load", function(){
         accordionPanel.innerHTML = '<ul>' +
             '<li>まず、下の「ダウンロード」ボタンをクリックして、必要なツールやスクリプトが入ったZIPファイルをダウンロードしてください。</li>' +
             '<li>このZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順に従ってください。</li>' +
-            '<li>ZIPファイルをダウンロード後、5分以内にスクリプトを起動してください。また、12時間以内にすべてのコンテンツのダウンロードを終了してください。</li>' +
+            '<li>ZIPファイルをダウンロード後、5分以内にスクリプトを起動してください。</li>' +
             '<li>インターネット接続が良好であることを確認してください。</li>' +
+			'<li>IDMなどの拡張機能を使用している場合、ZIPファイルのダウンロードに問題が発生する可能性があります。ダウンロードする前に、そのような拡張機能を無効にしてください。</li>' +
         '</ul>';
 
         var downloadButton = document.createElement('button');
