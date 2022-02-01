@@ -39,8 +39,11 @@ window.addEventListener("load", function(){
 				document.getElementById('generate-series-id').addEventListener('click', function () {
 					generate ('series-id');
 				});
-				document.getElementById('clear-cache').addEventListener('click', function () {
-					clearCache();
+				document.getElementById('clear-cdn-cache').addEventListener('click', function () {
+					clearCDNCache();
+				});
+				document.getElementById('clear-key-cache').addEventListener('click', function () {
+					clearKeyCache();
 				});
 				document.getElementById('rebuild-index').addEventListener('click', function () {
 					rebuildIndex();
@@ -502,7 +505,7 @@ function getLogTable () {
 }
 	
 /*------------------------------------------------------------------------------------Cache Functions------------------------------------------------------------------------------------*/
-function clearCache () {
+function clearCDNCache () {
 	var dir = document.getElementById('clear-cache-dir').value;
 	if (!dir.startsWith('/') || dir.includes('..')) {
 		alert('ERROR: Invalid format for dir');
@@ -517,8 +520,30 @@ function clearCache () {
 	} while (confirm != "clear");
 	
 	var param = {
-		'command': 'clear-cache',
+		'command': 'clear-cdn-cache',
 		'dir': dir
+	};
+	param = JSON.stringify (param);
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			alert(response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
+}
+	
+function clearKeyCache () {
+	var confirm;
+	do {
+		confirm = prompt('Type "clear" to confirm deleting expired key cache');
+		if (confirm === null) {
+			return;
+		}
+	} while (confirm != "clear");
+	
+	var param = {
+		'command': 'clear-key-cache'
 	};
 	param = JSON.stringify (param);
 	
