@@ -322,6 +322,9 @@ main.navListeners = navListeners;
 
 //////////////////////////////////////// Dependencies: none
 var secToTimestamp = function (sec) {
+	if (isNaN(sec)) {
+		return '--:--';
+	}
 	var hour = Math.floor(sec/60/60);
 	sec = sec - hour*60*60;
 	var min = Math.floor(sec/60);

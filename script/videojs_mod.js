@@ -1,16 +1,23 @@
 // JavaScript Document
 
 var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
+	// DIST NOTE: Delete the import lines
 	var secToTimestamp = main.secToTimestamp;
 	var onScreenConsoleOutput = main.onScreenConsoleOutput;
+	//
 	
-	var that = {};
+	var that = {
+		_playing: false,
+		_buffering: false,
+		_dragging: false,
+		_useNative: true,
+		hlsInstance: undefined
+	};
 	
 	if (!config) {
 		config = {};
 	}
 	const isVideo = !(config.audio);
-	const useNative = config.useNative;
 	
 	var media = isVideo ? controls.getElementsByTagName('video')[0] : controls.getElementsByTagName('audio')[0];
 
@@ -38,7 +45,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
     //Fluid resize and duration
     media.addEventListener('loadedmetadata', function () {
 		if (isVideo) {
-			if (!useNative) {
+			if (!that._useNative) {
 				media.pause();
 				startBuffer ();
 			}
@@ -68,18 +75,18 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 		media.addEventListener('waiting', function () {
 			onScreenConsoleOutput ('Playback entered waiting state.');
 			controls.classList.add('vjs-seeking');
-			if (!useNative)
+			if (!that._useNative)
 				media.pause();
 		});
 
 		media.addEventListener('canplaythrough', function () {
 			onScreenConsoleOutput ('Playback can play through.');
-			if (useNative) {
+			if (that._useNative) {
 				controls.classList.remove('vjs-seeking');
 			} else {
-				if (!that.buffering)
+				if (!that._buffering)
 					controls.classList.remove('vjs-seeking');
-				if (that.playing)
+				if (that._playing)
 					play();
 			}
 		});
@@ -102,7 +109,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         if (controls.classList.contains('vjs-ended')) {
             controls.classList.remove('vjs-ended');
             playButton.classList.remove('vjs-ended');
-            media.currentTime = 0;
+            seek (0);
             play();
         } else {
             togglePlayback ();
@@ -111,22 +118,26 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 	}, true);
 
     //Progress bar & frame drop monitor
-	that.inactiveCountdown = 3000;
+	that._inactiveCountdown = 3000;
 	that.droppedFrames = 0;
 	that.corruptedFrames = 0;
     setInterval (function () {
-		currentTimeDisplay.innerHTML = secToTimestamp (media.currentTime);
-        if (!that.dragging && media.duration)
+        if (!that._dragging && media.duration) {
+			currentTimeDisplay.innerHTML = secToTimestamp (media.currentTime);
             progressBar.style.width = media.currentTime/media.duration*100 + '%';
-		if (isVideo) {
-			if (that.inactiveCountdown > 0) {
-				that.inactiveCountdown -= 300;
-				if (that.inactiveCountdown == 0) {
-					controls.classList.remove('vjs-user-active');
-					controls.classList.add('vjs-user-inactive');
+			if (isVideo) {
+				if (that._inactiveCountdown > 0) {
+					that._inactiveCountdown -= 300;
+					if (that._inactiveCountdown == 0) {
+						controls.classList.remove('vjs-user-active');
+						controls.classList.add('vjs-user-inactive');
+					}
 				}
 			}
+		} else {
+			that._inactiveCountdown = 3000;
 		}
+		
 		if (isVideo && typeof media.getVideoPlaybackQuality === "function") {
 			var quality = media.getVideoPlaybackQuality();
 			if (quality.droppedVideoFrames && quality.droppedVideoFrames != that.droppedFrames) {
@@ -141,23 +152,28 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 	}, 300);
 	
 	if (isVideo) {
-		addMultipleEventListeners (controls, ['mousemove', 'click', 'touchend'], function () {
+		addMultipleEventListeners (controls, ['mousemove', 'click'], function () {
 			controls.classList.remove('vjs-user-inactive');
 			controls.classList.add('vjs-user-active');
-			that.inactiveCountdown = 3000;
+			that._inactiveCountdown = 3000;
 		}, false);
 	}
     
 
     //Progress bar drag
     addMultipleEventListeners (progressControl, ['mousedown', 'touchstart'], function () {
-		that.dragging = true;
+		that._dragging = true;
+		if (!media.paused) {
+			media.pause();
+			that._playing = true;
+		}
+		
         if (controls.classList.contains('vjs-ended')) {
             controls.classList.remove('vjs-ended');
             playButton.classList.remove('vjs-ended');
         }
 		
-		let mouseX;
+		/*let mouseX;
         if (event.type == 'touchstart') {
             let touch = event.touches[0] || event.changedTouches[0];
             mouseX = touch.clientX;
@@ -170,14 +186,14 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         let percentage = leftPadding/totalLength;
         let currentTime = media.duration*percentage;
 		
-		media.currentTime = currentTime;
+		media.currentTime = currentTime;*/
 	});
 	
     addMultipleEventListeners (document, ['mouseup', 'touchend'], function (event) {
-		if (that.dragging) {
-            that.dragging = false;
+		if (that._dragging) {
+            that._dragging = false;
 
-            /*let mouseX;
+            let mouseX;
             if (event.type == 'touchend') {
                 let touch = event.touches[0] || event.changedTouches[0];
                 mouseX = touch.clientX;
@@ -188,14 +204,22 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
             let totalLength = position.right-position.left;
             let leftPadding = Math.min(Math.max(mouseX-position.left, 0), totalLength);
             let percentage = leftPadding/totalLength;
-            let currentTime = media.duration*percentage;*/
+            let currentTime = media.duration*percentage;
 
-            if (media.currentTime == media.duration) {
+            /*if (media.currentTime == media.duration) {
                 controls.classList.add('vjs-ended');
                 playButton.classList.add('vjs-ended');
-            }
+            }*/
 
-            /*media.currentTime = currentTime;*/
+			seek (currentTime);
+			if (isVideo && !that._useNative) {
+				if (that._playing) {
+					play();
+				}
+			} else if (that._playing) {
+				media.play();
+				that._playing = false;
+			}
             progressControl.blur();
         }
 	});
@@ -217,6 +241,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         let leftPadding = Math.min(Math.max(mouseX-position.left, 0), totalLength);
         let percentage = leftPadding/totalLength;
         let currentTime = media.duration*percentage;
+		let currentTimestamp = secToTimestamp(currentTime);
 		
 		let appearanceSurfix = '';
 		if (window.matchMedia) {
@@ -227,7 +252,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 		
         if (progressMouseDisplay) {
             progressMouseDisplay.style.left = leftPadding + 'px';
-            progressTooltip.innerHTML = secToTimestamp(currentTime);
+            progressTooltip.innerHTML = currentTimestamp;
             progressTooltip.style.right = -progressTooltip.offsetWidth/2 + 'px';
 			if (currentTime > media.currentTime) {
 				progressMouseDisplay.style.backgroundColor = 'var(--text-color'+appearanceSurfix+')';
@@ -235,8 +260,9 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 				progressMouseDisplay.style.backgroundColor = 'var(--foreground-color'+appearanceSurfix+')';
 			}
         }
-        if (that.dragging) {
-            media.currentTime = currentTime;
+        if (that._dragging) {
+            //media.currentTime = currentTime;
+			currentTimeDisplay.innerHTML = currentTimestamp;
             progressBar.style.width = percentage*100 + '%';
         }
 	});
@@ -348,18 +374,16 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 				toggleFullscreen ();
 				event.preventDefault();
 			} else if (keyCode == 37) {
-				media.currentTime = media.currentTime - 5;
+				seek (media.currentTime - 5);
 				event.preventDefault();
 			} else if (keyCode == 39) {
-				that.seekingForward = true;
 				media.currentTime = media.currentTime + 5;
 				event.preventDefault();
 			} else if (keyCode == 38) {
-				that.seekingForward = true;
 				media.currentTime = media.currentTime + 15;
 				event.preventDefault();
 			} else if (keyCode == 40) {
-				media.currentTime = media.currentTime - 15;
+				seek (media.currentTime - 15);
 				event.preventDefault();
 			}
 		}, true);
@@ -375,8 +399,8 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 
     //Helper Functions
 	function play() {
-		if (isVideo && !useNative) {
-			that.playing = true;
+		if (isVideo && !that._useNative) {
+			that._playing = true;
 			startBuffer();
 		} else {
 			media.play();
@@ -384,10 +408,30 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 	}
 	
 	function pause() {
-		if (isVideo && !useNative) {
-			that.playing = false;
+		if (isVideo && !that._useNative) {
+			that._playing = false;
 		}
 		media.pause();
+	}
+	
+	function seek (timestamp) {
+		if (isVideo && !that._useNative) {
+			let currentTime = media.currentTime;
+			if (currentTime <= timestamp || (timestamp >= that._fragStart && timestamp <= that._fragEnd)) {
+				media.currentTime = timestamp;
+				onScreenConsoleOutput ('Skipped buffer flushing.');
+			} else {
+				that.hlsInstance.once(Hls.Events.BUFFER_FLUSHED, function () {
+					media.currentTime = timestamp;
+					that.hlsInstance.startLoad(timestamp);
+					onScreenConsoleOutput ('Buffer reloaded.');
+				});
+				that.hlsInstance.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: media.duration});
+				onScreenConsoleOutput ('Buffer flushed.');
+			}
+		} else {
+			media.currentTime = timestamp;
+		}
 	}
 	
     media.addEventListener('play', function () {
@@ -400,8 +444,8 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
             controls.classList.remove('vjs-ended');
             playButton.classList.remove('vjs-ended');
         }
-		if (isVideo && !useNative) {
-			that.playing = true;
+		if (isVideo && !that._useNative) {
+			that._playing = true;
 			startBuffer ();
 		}
 	});
@@ -432,7 +476,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
     }
 	
 	function checkBuffer(event) {
-        if (event && (event.type == 'play' || event.type == 'timeupdate')) {
+        if (event && (event.type == 'play' || (!media.paused && event.type == 'timeupdate'))) {
             media.pause();
         }
         for (var i = media.buffered.length - 1; i >= 0; i--) {
@@ -443,9 +487,9 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
                     media.removeEventListener ('play', checkBuffer);
                     media.removeEventListener ('timeupdate', checkBuffer);
                     controls.classList.remove('vjs-seeking');
-                    that.buffering = false;
+                    that._buffering = false;
 					onScreenConsoleOutput ('Buffer complete!');
-                    if (that.playing) {
+                    if (that._playing && !that._dragging) {
 						media.play();
 					}  
                 }
@@ -459,14 +503,14 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 			/*if (!media.paused && media.readyState>2) {
 				media.pause();
 			}*/
-            that.buffering = true;
+            that._buffering = true;
             controls.classList.add('vjs-seeking');
             media.addEventListener ('progress', checkBuffer);
             media.addEventListener ('play', checkBuffer);
             media.addEventListener ('timeupdate', checkBuffer);
 			checkBuffer();
         }
-        if (!that.buffering) {
+        if (!that._buffering) {
             if (media.buffered.length == 0) {
                 addCheckBuffer ();
 				onScreenConsoleOutput ('Buffer empty, start buffering.');
@@ -478,7 +522,7 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 							onScreenConsoleOutput ('Buffer under threshold, start buffering.');
                         } else {
 							onScreenConsoleOutput ('Buffer above threshold.');
-                            if (that.playing && media.paused) {
+                            if (that._playing && media.paused && !that._dragging) {
 								media.play();
 							}
                         }
@@ -488,6 +532,20 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
             }
         }
     }
+	
+	function attachHls (hls) {
+		that._useNative = false;
+		that.hlsInstance = hls;
+		that._fragStart = 0;
+		that._fragEnd = 0;
+		hls.on(Hls.Events.FRAG_CHANGED, (e, data) => { 
+			that._fragStart = data.frag.startDTS;
+			that._fragEnd = data.frag.endDTS;
+			onScreenConsoleOutput ('Fragment changed: ' + that._fragStart + '-' + that._fragEnd);
+		});
+		hls.attachMedia(media);
+		onScreenConsoleOutput ('HLS is attached.');
+	}
 
     function addMultipleEventListeners (elem, types, callback, useCapture) {
         for (var i = 0; i < types.length; i++) {
@@ -497,12 +555,10 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 	
 	that.media = media;
 	that.controls = controls;
-	that.playing = false;
-	that.buffering = false;
-	that.dragging = false;
-	that.seekingForward = false;
 	that.play = play;
 	that.pause = pause;
+	that.seek = seek;
+	that.attachHls = attachHls;
 	
 	return that;
 })(controls_ext, config_ext);
