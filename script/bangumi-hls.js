@@ -23,7 +23,6 @@ window.addEventListener("load", function(){
 	}
 	
 	appearanceSwitching();
-	navListeners();
 	
 	// DIST NOTE: insert videojs here
 	// DIST NOTE: insert hls.js here
@@ -83,6 +82,7 @@ window.addEventListener("load", function(){
     });
 
     function updatePage (ep) {
+		navListeners();
         document.body.classList.remove("hidden");
 
         token = ep.token;
@@ -930,10 +930,19 @@ window.addEventListener("load", function(){
         downloadButton.id = 'download-button';
         downloadButton.classList.add('button');
         downloadButton.innerHTML = 'ダウンロード';
+		var warning = document.createElement('p');
+		warning.classList.add('color-red');
+		warning.classList.add('hidden');
+		warning.innerHTML = 'お使いの端末はダウンロードに対応していません。';
+		accordionPanel.appendChild(warning);
         downloadButton.addEventListener('click', function () {
             sendServerRequest('start_download.php', {
                 callback: function (response) {
-                    window.location.href = response;
+					if (response == 'UNAVAILABLE') {
+						warning.classList.remove('hidden');
+					} else {
+						window.location.href = response;
+					}
                 },
                 content: "token="+token+((formatIndex==null)?'':('&format='+formatIndex))
             });

@@ -16,7 +16,6 @@ window.addEventListener("load", function(){
 	}
 	
 	appearanceSwitching();
-	navListeners();
 	
     var request='';
     var offset=0;
@@ -34,10 +33,11 @@ window.addEventListener("load", function(){
                 showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: loginURL, logout: true});
                 return;
             }
-            document.body.classList.remove("hidden");
             document.addEventListener('scroll', infiniteScrolling);
             window.addEventListener("resize", infiniteScrolling);
             showSeries (series);
+			navListeners();
+			document.body.classList.remove("hidden");
         }, 
         content: "offset=0"
     });

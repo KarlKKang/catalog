@@ -295,7 +295,7 @@ main.goTo = goTo;
 	
 //////////////////////////////////////// Dependencies: navUpdate, goTo, logout, redirect
 var navListeners = function () {
-	document.getElementById('nav-menu-content').innerHTML = '<p><span id="nav-menu-content-1">トップ／LIBRARY</span></p>' +
+	document.getElementById('nav-menu-content').innerHTML = '<p><span id="nav-menu-content-1">ライブラリ／LIBRARY</span></p>' +
 			'<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>' +
 			'<p><span id="nav-menu-content-3">ご利用ガイド／INFO</span></p>' +
 			'<p><span id="nav-menu-content-4">ログアウト／LOG OUT</span></p>';

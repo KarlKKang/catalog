@@ -15,12 +15,12 @@ window.addEventListener("load", function(){
 	}
 	
 	appearanceSwitching();
-	navListeners();
 	
 	sendServerRequest('get_info.php', {
         callback: function (response) {
             if (response.startsWith('INFOBODY:') && response.endsWith('EOF')) {
 				document.getElementById('content').innerHTML = response.slice(9, -3);
+				navListeners();
 				document.body.classList.remove("hidden");
 				var scrollID = window.location.hash;
 				if (scrollID != '') {

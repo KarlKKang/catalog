@@ -18,14 +18,12 @@ window.addEventListener("load", function(){
 	
 	var currentUsername;
 	
-	var emailChangeButton = document.getElementById('email-change-button');
-	var usernameChangeButton = document.getElementById('username-change-button');
-	var passwordChangeButton = document.getElementById('password-change-button');
-	var inviteButton = document.getElementById('invite-button');
+	var emailChangeButton;
+	var usernameChangeButton;
+	var passwordChangeButton;
+	var inviteButton;
 	
 	appearanceSwitching();
-	navListeners();
-	
 	initialize();
 	
 function initialize (){
@@ -43,6 +41,59 @@ function initialize (){
 	});
 	
 	function showUser (userInfo) {
+		document.getElementById('container').innerHTML = '<p id="title">マイページ</p>'+
+
+			'<p class="sub-title">メールアドレス</p>'+
+			'<p class="warning hidden" id="email-warning"></p>'+
+			'<p id="email"></p>'+
+			'<button class="button" id="email-change-button">変更する</button>'+
+
+			'<hr>'+
+
+			'<p class="sub-title">ユーザー名</p>'+
+			'<p class="warning hidden" id="username-warning"></p>'+
+			'<div class="input-field"><input id="new-username" class="multi-language" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off"></div>'+
+			'<button class="button" id="username-change-button">変更する</button>'+
+			'<div class="note">'+
+				'<ul>'+
+					'<li>現在、ユーザー名は使用されていません。 新しい機能が実装されたときに使用できるように準備されています。</li>'+
+				'</ul>'+
+			'</div>'+
+
+			'<hr>'+
+
+			'<p class="sub-title">パスワード</p>'+
+			'<p class="warning hidden" id="password-warning"></p>'+
+			'<div class="input-field"><input id="new-password" type="password" placeholder="新しいパスワード" autocapitalize="off" autocomplete="off"></div>'+
+			'<div class="input-field"><input id="new-password-confirm" type="password" placeholder="確認再入力" autocapitalize="off" autocomplete="off"></div>'+
+			'<button class="button" id="password-change-button">変更する</button>'+
+			'<div class="note">'+
+				'<ul>'+
+					'<li>使用出来る文字は、半角英大文字、半角英小文字、数字、記号+_!@#$%^&amp;*.,?-です。</li>'+
+					'<li>8文字以上を含めてください 。</li>'+
+					'<li>大文字、小文字、数字を含めてください。</li>'+
+				'</ul>'+
+			'</div>'+
+
+			'<hr>'+
+
+			'<p class="sub-title">ご招待</p>'+
+			'<p id="invite-count-text">送信できる招待状の数：<span id="invite-count"></span></p>'+
+			'<p class="warning hidden" id="invite-warning"></p>'+
+			'<div class="input-field" id="invite-input"><input id="receiver-email" type="email" placeholder="メールアドレス" autocapitalize="off" autocomplete="off"></div>'+
+			'<button class="button" id="invite-button">送信する</button>'+
+			'<div class="note">'+
+				'<ul>'+
+					'<li>受け入れなかった招待を含めて、1年に最大5人までしか招待できません。</li>'+
+					'<li>未定の招待がある場合、これ以上招待を送信することはできません。 </li>'+
+				'</ul>'+
+			'</div>';
+		
+		emailChangeButton = document.getElementById('email-change-button');
+		usernameChangeButton = document.getElementById('username-change-button');
+		passwordChangeButton = document.getElementById('password-change-button');
+		inviteButton = document.getElementById('invite-button');
+		
 		emailChangeButton.addEventListener('click', function () {
 			changeEmail ();
 		});
@@ -63,7 +114,6 @@ function initialize (){
 			passwordStyling(this);
 		});
 		
-		document.body.classList.remove("hidden");
 		document.getElementById('email').innerHTML = userInfo.email;
 		document.getElementById('invite-count').innerHTML = userInfo.invite_quota;
 		if (userInfo.invite_quota == 0) {
@@ -72,6 +122,9 @@ function initialize (){
 		}
 		document.getElementById('new-username').value = userInfo.username;
 		currentUsername = userInfo.username;
+		
+		navListeners();
+		document.body.classList.remove("hidden");
 	}
 }
 	

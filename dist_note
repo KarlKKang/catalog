@@ -9,10 +9,13 @@ Javascript: https://try.terser.org/
   	passes: 2
   },
   mangle: {},
-  output: {},
+  output: {
+    comments: false
+  },
   parse: {},
   rename: {},
-  safari10: true
+  safari10: true,
+  ecma: 2015
 }
 
 css: https://cssnano.co/playground/
