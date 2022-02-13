@@ -127,9 +127,11 @@ var checkXHRStatus = function (response) {
 				showMessage ();
 			return false;
 		} else if (status == 403) {
-			showMessage ({
-				message: "サーバーがリクエストを拒否しました。"
-			});
+			if (!response.responseText == 'CRAWLER') {
+				showMessage ({
+					message: "サーバーがリクエストを拒否しました。"
+				});
+			}
 			return false;
 		} else if (status == 404) {
 			if (response.responseText == 'REQUEST CANNOT BE SATISFIED')
