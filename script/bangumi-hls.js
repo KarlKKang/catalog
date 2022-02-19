@@ -69,25 +69,24 @@ window.addEventListener("load", function(){
 
     sendServerRequest('get_ep.php', {
         callback: function (response) {
-            var ep;
             try {
-                ep = JSON.parse(response);
+                response = JSON.parse(response);
             } catch (e) {
                 showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
                 return;
             }
-            updatePage (ep);
+            updatePage (response);
         },
         content: "series="+seriesID+"&ep="+epIndex+((formatIndex==null)?'':('&format='+formatIndex))
     });
 
-    function updatePage (ep) {
+    function updatePage (response) {
 		navListeners();
         document.body.classList.remove("hidden");
 
-        token = ep.token;
+        token = response.ep_info.token;
 
-        var title =  ep.title;
+        var title =  response.title;
         var titleElem = document.getElementById('title');
         titleElem.innerHTML = title;
 
@@ -110,17 +109,17 @@ window.addEventListener("load", function(){
 
         document.title = title + ' | featherine';
 
-        updateEPSelector (ep.series);
-        updateSeasonSelector (ep.seasons);
+        updateEPSelector (response.series_ep);
+        updateSeasonSelector (response.seasons);
 
-        if (ep.age_restricted) {
+        if (response.ep_info.age_restricted) {
 			var warningParent = document.getElementById('warning');
 			var warningTitle = document.getElementById('warning-title');
 			var warningBody = document.getElementById('warning-body');
             changeColor (warningTitle, 'red');
-            if (ep.age_restricted.toLowerCase() == 'r15+') {
+            if (response.ep_info.age_restricted.toLowerCase() == 'r15+') {
                 warningTitle.innerHTML = '「R15+指定」<br>年齢認証';
-            } else if (ep.age_restricted.toLowerCase() == 'r18+') {
+            } else if (response.ep_info.age_restricted.toLowerCase() == 'r18+') {
                 warningTitle.innerHTML = '「R18+指定」<br>年齢認証';
             } else {
 				warningTitle.innerHTML = '年齢認証';
@@ -157,30 +156,30 @@ window.addEventListener("load", function(){
                         return false;
                     }
                 },
-                content: "token="+ep.token
+                content: "token="+token
             });
         }, 60*1000);
 
         /////////////////////////////////////////////Add Media/////////////////////////////////////////////
-        var type = ep.type;
+        var type = response.ep_info.type;
 
         if (type == 'video') {
-            updateVideo (ep.file);
+            updateVideo (response.ep_info);
         } else if (type == 'audio') {
-            updateAudio (ep.file);
+            updateAudio (response.ep_info);
         } else {
-            updateImage (ep.file);
+            updateImage (response.ep_info);
         }
     }
 
-    function updateEPSelector (series) {
+    function updateEPSelector (seriesEP) {
         var epButtonWrapper = document.createElement('div');
         epButtonWrapper.id = 'ep-button-wrapper';
-        for (var i = 0; i < series.length; i++) {
+        for (var i = 0; i < seriesEP.length; i++) {
             let epButton = document.createElement('div');
             let epText = document.createElement('p');
 
-            epText.innerHTML = series[i];
+            epText.innerHTML = seriesEP[i];
 
             if (epIndex == i) {
                 epButton.classList.add('current-ep');
@@ -234,17 +233,17 @@ window.addEventListener("load", function(){
         }
     }
 
-    function updateVideo (file) {
+    function updateVideo (ep) {
         var contentContainer = document.getElementById('content');
-        if (file.title!='') {
+        if (ep.title!='') {
             let title = document.createElement('p');
             title.setAttribute('class', 'sub-title');
             title.classList.add('center-align');
-            title.innerHTML = file.title;
+            title.innerHTML = ep.title;
             contentContainer.insertBefore(title, document.getElementById('message'));
         }
 
-        var formats = file.formats;
+        var formats = ep.formats;
 
         var formatSelector = document.createElement('div');
         formatSelector.setAttribute('id', 'format-selector');
@@ -334,9 +333,9 @@ window.addEventListener("load", function(){
             mediaInstances.push(videojs_mod (videoJS, {}));
             mediaHolder.appendChild(videoJS);
 
-            addVideoNode (file.url, {/*, currentTime: timestampParam*/});
-            if (file.chapters != '') {
-                displayChapters (file.chapters);
+            addVideoNode (ep.url, {/*, currentTime: timestampParam*/});
+            if (ep.chapters != '') {
+                displayChapters (ep.chapters);
             }
             addDownloadAccordion();
             addAccordionEvent();
@@ -344,29 +343,29 @@ window.addEventListener("load", function(){
         });
     }
 
-    function updateAudio (file) {
+    function updateAudio (ep) {
 
         var contentContainer = document.getElementById('content');
         var counter = 0;
 
-        if (file.info.album_title!='') {
+        if (ep.album_info.album_title!='') {
             let albumTitle = document.createElement('p');
             albumTitle.setAttribute('class', 'sub-title');
             albumTitle.classList.add('center-align');
-            albumTitle.innerHTML = file.info.album_title;
+            albumTitle.innerHTML = ep.album_info.album_title;
             contentContainer.insertBefore(albumTitle, document.getElementById('message'));
-            if (file.info.album_artist!='') {
+            if (ep.album_info.album_artist!='') {
                 let albumArtist = document.createElement('p');
                 albumArtist.setAttribute('class', 'artist');
                 albumArtist.classList.add('center-align');
-                albumArtist.innerHTML = file.info.album_artist;
+                albumArtist.innerHTML = ep.album_info.album_artist;
                 contentContainer.insertBefore(albumArtist, document.getElementById('message'));
             }
-        } else if (file.info.album_artist!='') {
+        } else if (ep.album_info.album_artist!='') {
             let titleElem = document.getElementById('title');
             let artistElem = document.createElement('span');
             artistElem.setAttribute('class', 'artist');
-            artistElem.innerHTML = '<br/>' + file.info.album_artist;
+            artistElem.innerHTML = '<br/>' + ep.album_info.album_artist;
             titleElem.appendChild(artistElem);
         }
 
@@ -423,7 +422,7 @@ window.addEventListener("load", function(){
 
         var i;
 
-        for (i = 0; i < file.list.length; i++) {
+        for (i = 0; i < ep.files.length; i++) {
             let index = i;
 
             let audioNode = document.createElement('audio');
@@ -438,26 +437,26 @@ window.addEventListener("load", function(){
             audioNode.setAttribute('lang', 'en');
 
             //subtitle
-            if (file.list[i].title != '') {
-                subtitle.innerHTML = file.list[i].title;
+            if (ep.files[i].title != '') {
+                subtitle.innerHTML = ep.files[i].title;
 
-                if (file.list[i].artist != '') {
+                if (ep.files[i].artist != '') {
                     let artist = document.createElement('span');
                     artist.setAttribute('class', 'artist');
-                    artist.innerHTML = '／' + file.list[i].artist;
+                    artist.innerHTML = '／' + ep.files[i].artist;
                     subtitle.appendChild(artist);
                 }
             }
 
             //format
-            if (file.list[i].format != '') {
+            if (ep.files[i].format != '') {
                 if (subtitle.innerHTML != '')
                     subtitle.innerHTML += '<br />';
 
                 format.setAttribute('class', 'format');
-                format.innerHTML = file.list[i].format;
+                format.innerHTML = ep.files[i].format;
 
-                let samplerate = file.list[i].samplerate;
+                let samplerate = ep.files[i].samplerate;
                 if (samplerate != '') {
                     let samplerateText = samplerate;
                     switch (samplerate) {
@@ -479,7 +478,7 @@ window.addEventListener("load", function(){
                     }
                     format.innerHTML += ' ' + samplerateText;
 
-                    let bitdepth = file.list[i].bitdepth;
+                    let bitdepth = ep.files[i].bitdepth;
                     if (bitdepth != '') {
                         let bitdepthText = bitdepth;
                         switch (bitdepth) {
@@ -502,7 +501,7 @@ window.addEventListener("load", function(){
             mediaHolder.appendChild(subtitle);
             mediaHolder.appendChild(audioNode);
 			
-			var isMp3 = (file.list[index].format.toLowerCase() == 'mp3');
+			var isMp3 = (ep.files[index].format.toLowerCase() == 'mp3');
 			
 			let configVideoJS = configVideoJSTemplate;
 			if (USE_MSE && !isMp3) {
@@ -519,10 +518,10 @@ window.addEventListener("load", function(){
 
             let videoJSAudio = videojs(audioNode, configVideoJS, function () {
 
-                let url = file.list[index].url;
+                let url = ep.files[index].url;
 
-                if (file.list[index].flac_fallback_url != '' && !CAN_PLAY_ALAC) {
-                    url = file.list[index].flac_fallback_url;
+                if (ep.files[index].flac_fallback_url != '' && !CAN_PLAY_ALAC) {
+                    url = ep.files[index].flac_fallback_url;
                     format.innerHTML = format.innerHTML.replace('ALAC', 'FLAC');
                     format.innerHTML = format.innerHTML.replace('32bit', '24bit');
                 }
@@ -543,7 +542,7 @@ window.addEventListener("load", function(){
 							var messageTitle = document.getElementById('message-title');
 							changeColor (messageTitle, 'orange');
 							messageTitle.innerHTML = '不具合があります';
-							document.getElementById('message-body').innerHTML = '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。ご迷惑をおかけして大変申し訳ございませんでした。</p>';
+							document.getElementById('message-body').innerHTML = '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。ご迷惑をおかけして大変申し訳ございませんでした。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>';
 							document.getElementById('message').classList.remove('hidden');
 						}
 						let hls = new Hls(configHls);
@@ -554,7 +553,7 @@ window.addEventListener("load", function(){
 						});
 						hls.on(Hls.Events.MANIFEST_PARSED, function () {
 							counter ++;
-							if (counter == file.list.length) {
+							if (counter == ep.files.length) {
 								hlsAudioReady();
 							}
 						});
@@ -564,7 +563,7 @@ window.addEventListener("load", function(){
 						mediaInstances[index] = videoJSAudio;
 					
 						counter ++;
-						if (counter == file.list.length) {
+						if (counter == ep.files.length) {
 							videoJSAudioReady();
 						}
 
@@ -588,7 +587,7 @@ window.addEventListener("load", function(){
                     audio.setAttribute ('crossorigin', 'use-credentials');
                     audio.addEventListener('loadedmetadata', function () {
                         counter ++;
-                        if (counter == file.list.length) {
+                        if (counter == ep.files.length) {
                             hlsAudioReady();
                         }
                     });
@@ -641,23 +640,23 @@ window.addEventListener("load", function(){
 		}
     }
 
-    function updateImage (file) {
+    function updateImage (ep) {
         var mediaHolder = document.createElement('div');
         mediaHolder.id = 'media-holder';
         document.getElementById('content').appendChild(mediaHolder);
 
-        for (var i = 0; i < file.length; i++) {
+        for (var i = 0; i < ep.files.length; i++) {
 
-            if (file[i].tag != '') {
+            if (ep.files[i].tag != '') {
                 let subtitle = document.createElement('p');
                 subtitle.setAttribute('class', 'sub-title');
-                subtitle.innerHTML = file[i].tag;
+                subtitle.innerHTML = ep.files[i].tag;
                 mediaHolder.appendChild(subtitle);
             }
 
             let imageNode = document.createElement('div');
             let overlay = document.createElement('div');
-            let url = file[i].url;
+            let url = ep.files[i].url;
 
             overlay.classList.add('overlay');
             imageNode.appendChild(overlay);
