@@ -48,6 +48,9 @@ window.addEventListener("load", function(){
 				document.getElementById('rebuild-index').addEventListener('click', function () {
 					rebuildIndex();
 				});
+				document.getElementById('verify').addEventListener('click', function () {
+					verify();
+				});
 				document.body.classList.remove("hidden");
 			}
 		},
@@ -509,6 +512,7 @@ function clearCDNCache () {
 	var dir = document.getElementById('clear-cache-dir').value;
 	if (!dir.startsWith('/') || dir.includes('..')) {
 		alert('ERROR: Invalid format for dir');
+		return;
 	}
 	
 	var confirm;
@@ -572,6 +576,39 @@ function rebuildIndex () {
 	sendServerRequest('console.php', {
 		callback: function (response) {
 			alert(response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
+}
+	
+
+/*------------------------------------------------------------------------------------Verify Functions------------------------------------------------------------------------------------*/
+function verify () {
+	var id = document.getElementById('verify-id').value;
+	if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
+		alert ("ERROR: Invalid value for 'id'");
+		return;
+	}
+	
+	var confirm;
+	do {
+		confirm = prompt('Type "verify" to confirm verifying the series: ' + id);
+		if (confirm === null) {
+			return;
+		}
+	} while (confirm != "verify");
+	
+	document.getElementById('verify-output').innerHTML = '';
+	
+	var param = {
+		'command': 'verify',
+		'series': id
+	};
+	param = JSON.stringify (param);
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			setOutput (response, 'verify-output');
 		},
 		content: "p="+encodeURIComponent(param)
 	});
