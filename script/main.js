@@ -96,7 +96,7 @@ var checkXHRStatus = function (response) {
 		if (status == 200) {
 			return true;
 		} else if (status == 401) {
-			if (response.responseText == 'SESSION ENDED')
+			if (response.responseText == 'SESSION ENDED' || response.responseText == 'INSUFFICIENT PERMISSIONS')
 				window.location.href = topURL;
 			else {
 				logout(function () {
