@@ -4,11 +4,10 @@ window.addEventListener("load", function(){
 	var mainLocal = main;
 	var debug = mainLocal.debug;
 	var appearanceSwitching = mainLocal.appearanceSwitching;
-	var goTo = mainLocal.goTo;
 	var authenticate = mainLocal.authenticate;
 	
 	if (!window.location.href.startsWith('https://featherine.com/policy') && !debug) {
-		window.location.href = 'https://featherine.com/policy';
+		window.location.replace('https://featherine.com/policy');
 		return;
 	}
 	
@@ -17,7 +16,7 @@ window.addEventListener("load", function(){
 	authenticate({
 		successful: 
 		function () {
-			goTo ('info');
+			window.location.replace('info'+(debug?'.html':''));
 		},
 		failed: 
 		function () {

@@ -18,7 +18,7 @@ window.addEventListener("load", function(){
 	
 	
 	if (!window.location.href.startsWith('https://featherine.com/bangumi') && !debug) {
-		window.location.href = redirect ('https://featherine.com/bangumi');
+		window.location.replace(redirect ('https://featherine.com/bangumi'));
 		return;
 	}
 	
@@ -35,11 +35,11 @@ window.addEventListener("load", function(){
 
     var seriesID = getURLParam ('series');
     if (seriesID == null) {
-        window.location.href = topURL;
+        window.location.replace(topURL);
         return;
     } else {
         if (!/^[a-zA-Z0-9~_-]+$/.test(seriesID)) {
-            window.location.href = topURL;
+			window.location.replace(topURL);
             return;
         }
     }
@@ -47,12 +47,12 @@ window.addEventListener("load", function(){
     var epIndex = getURLParam ('ep');
     var new_url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+'&ep=1';
     if (epIndex == null) {
-        window.location.href = new_url;
+        window.location.replace(new_url);
         return;
     } else {
         epIndex = parseInt (epIndex);
         if (isNaN(epIndex) || epIndex<1) {
-            window.location.href = new_url;
+			window.location.replace(new_url);
             return;
         }
         epIndex--;
@@ -940,7 +940,7 @@ window.addEventListener("load", function(){
 					if (response == 'UNAVAILABLE') {
 						warning.classList.remove('hidden');
 					} else {
-						window.location.href = response;
+						window.location.replace(response);
 					}
                 },
                 content: "token="+token+((formatIndex==null)?'':('&format='+formatIndex))

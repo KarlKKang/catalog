@@ -5,25 +5,28 @@ window.addEventListener("load", function(){
 	var navListeners = mainLocal.navListeners;
 	var redirect = mainLocal.redirect;
 	var appearanceSwitching = mainLocal.appearanceSwitching;
+	var topURL = mainLocal.topURL;
 	var loginURL = mainLocal.loginURL;
 	var sendServerRequest = mainLocal.sendServerRequest;
 	var showMessage = mainLocal.showMessage;
 	var getURLParam = mainLocal.getURLParam;
 	
 	if (!window.location.href.startsWith('https://featherine.com') && !debug) {
-		window.location.href = redirect ('https://featherine.com');
+		window.location.replace(redirect (topURL));
 		return;
 	}
 	
 	appearanceSwitching();
 	
-    var request='';
     var offset=0;
 
     if (getURLParam ('ep') != null) {
-        window.location.href = redirect('bangumi'+(debug?'.html':''));
+        window.location.replace(redirect('bangumi'+(debug?'.html':'')));
         return;
     }
+	
+	var keywords = '';
+	updateKeywords ();
 
     sendServerRequest('get_series.php', {
         callback: function (response) {
@@ -39,7 +42,7 @@ window.addEventListener("load", function(){
 			navListeners();
 			document.body.classList.remove("hidden");
         }, 
-        content: "offset=0"
+        content: keywords+"offset=0"
     });
 
     document.getElementById('search-bar').getElementsByClassName('icon')[0].addEventListener('click', function () {
@@ -95,33 +98,57 @@ window.addEventListener("load", function(){
     function search () {
         document.getElementById('position-detector').classList.add('loading');
 
-        document.getElementById('container').classList.add('transparent');
-        var keywords = document.getElementById('search-bar').getElementsByTagName('input')[0].value;
-
-        setTimeout (function () {
-            if (keywords == '') {
-                request = "";
-            } else {
-                request = "keywords="+encodeURIComponent(keywords) + '&';
-            }
-
-            sendServerRequest('get_series.php', {
-                callback: function (response) {
-                    try {
-                        var series = JSON.parse(response);
-                    } catch (e) {
-                        showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: loginURL, logout: true});
-                        return;
-                    }
-                    document.getElementById('container').innerHTML='';
-                    offset = 0;
-                    showSeries (series);
-                    document.getElementById('container').classList.remove('transparent');
-                },
-                content: request+"offset=0"
-            });
-        }, 400);
+        var searchBarInput = document.getElementById('search-bar').getElementsByTagName('input')[0].value.substring(0, 50);
+		
+		if (searchBarInput == '') {
+            keywords = "";
+			history.pushState(null, '', topURL);
+        } else {
+            keywords = "keywords="+encodeURIComponent(searchBarInput);
+			history.pushState(null, '', topURL + '?' + keywords);
+			keywords += '&';
+        }
+		
+		requestSearchResults ();
     }
+	
+	function requestSearchResults () {
+		sendServerRequest('get_series.php', {
+            callback: function (response) {
+                try {
+                    var series = JSON.parse(response);
+                } catch (e) {
+                    showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: loginURL, logout: true});
+                    return;
+                }
+				document.getElementById('container').classList.add('transparent');
+				setTimeout (function () {
+					document.getElementById('container').innerHTML='';
+					offset = 0;
+					showSeries (series);
+					document.getElementById('container').classList.remove('transparent');
+				}, 400);
+            },
+            content: keywords+"offset=0"
+        });
+	}
+	
+	window.addEventListener('popstate', function () {
+		updateKeywords ();
+		requestSearchResults ();
+	});
+	
+	function updateKeywords () {
+		keywords = getURLParam ('keywords');
+		if (keywords == null) {
+			keywords = "";
+			document.getElementById('search-bar').getElementsByTagName('input')[0].value = '';
+		} else {
+			keywords = decodeURIComponent(keywords).substring(0, 50);
+			document.getElementById('search-bar').getElementsByTagName('input')[0].value = keywords;
+			keywords = "keywords=" + encodeURIComponent(keywords) + "&";
+		}
+	}
 
     function infiniteScrolling () {
         var detector = document.getElementById('position-detector');
@@ -141,7 +168,7 @@ window.addEventListener("load", function(){
                     }
                     showSeries (series);
                 },
-                content: request + "offset=" + offset
+                content: keywords + "offset=" + offset
             });
         }
     }

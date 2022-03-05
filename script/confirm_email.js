@@ -10,7 +10,7 @@ window.addEventListener("load", function(){
 	var expiredMessage = mainLocal.expiredMessage;
 	
 	if (!window.location.href.startsWith('https://featherine.com/confirm_email') && !debug) {
-		window.location.href = 'https://featherine.com';
+		window.location.replace(loginURL);
 		return;
 	}
 	
@@ -18,12 +18,12 @@ window.addEventListener("load", function(){
 	var signature = getURLParam ('signature');
 
 	if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
-		window.location.href = loginURL;
+		window.location.replace(loginURL);
 		return;
 	}
 	
 	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		window.location.href = loginURL;
+		window.location.replace(loginURL);
 		return;
 	}
 		

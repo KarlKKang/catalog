@@ -9,11 +9,10 @@ window.addEventListener("load", function(){
 	var topURL = mainLocal.topURL;
 	var redirect = mainLocal.redirect;
 	var passwordStyling = mainLocal.passwordStyling;
-	var goTo = mainLocal.goTo;
 	var authenticate = mainLocal.authenticate;
 	
 	if (!window.location.href.startsWith('https://login.featherine.com') && !debug) {
-		window.location.href = redirect ('https://login.featherine.com');
+		window.location.replace(redirect ('https://login.featherine.com'));
 		return;
 	}
 	
@@ -26,7 +25,7 @@ window.addEventListener("load", function(){
 	authenticate({
 		successful:
 		function () {
-			window.location.href = topURL;
+			window.location.replace(topURL);
 		},
 		failed:
 		function () {
@@ -45,7 +44,7 @@ window.addEventListener("load", function(){
 				login ();
 			});
 			document.getElementById('forgot-password').getElementsByTagName('span')[0].addEventListener('click', function () {
-				passwordReset ();
+				window.location.replace('request_password_reset'+(debug?'.html':''));
 			});
 
 			passwordInput.addEventListener('input', function () {
@@ -101,12 +100,12 @@ function login () {
 						title: 'お使いのブラウザは推奨されませ', 
 						message: '一部のコンテンツが正常に再生されない場合は、Safariをお使いください。',
 						color: 'orange', 
-						url: topURL
+						url: redirect (topURL)
 					});
                 }, 500);
             } else if (response == 'APPROVED') {
                 setTimeout (function () {
-                    window.location.href = redirect (topURL);
+                    window.location.replace(redirect (topURL));
                 }, 500);
             } else {
                 showMessage ();
@@ -114,9 +113,5 @@ function login () {
 		},
 		content: "p="+encodeURIComponent(param)
 	});
-}
-
-function passwordReset () {
-	goTo('request_password_reset');
 }
 });

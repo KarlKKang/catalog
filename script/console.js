@@ -12,7 +12,7 @@ window.addEventListener("load", function(){
 	};
 	
 	if (!window.location.href.startsWith('https://featherine.com/console') && !debug) {
-		window.location.href = 'https://featherine.com/console';
+		window.location.replace('https://featherine.com/console');
 		return;
 	}
 	

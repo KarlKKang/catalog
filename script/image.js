@@ -9,14 +9,14 @@ window.addEventListener("load", function(){
 	var showMessage = mainLocal.showMessage;
 	
 	if (!window.location.href.startsWith('https://featherine.com/image') && !debug) {
-		window.location.href = 'https://featherine.com/image';
+		window.location.replace('https://featherine.com/image');
 		return;
 	}
 	
 	var param = getCookie('image-param');
 	
 	if (param == '') {
-		window.location.href = topURL;
+		window.location.replace(topURL);
 		return;
 	}
 	
@@ -26,7 +26,7 @@ window.addEventListener("load", function(){
 		param = decodeURIComponent(param);
 		param = JSON.parse(param);
 	} catch (e) {
-		window.location.href = topURL;
+		window.location.replace(topURL);
 		return;
 	}
 	
@@ -34,7 +34,7 @@ window.addEventListener("load", function(){
 	var image = document.createElement('img');
 	
 	if (!('url' in param) || !('title' in param)) {
-		window.location.href = topURL;
+		window.location.replace(topURL);
 		return;
 	}
 	
@@ -46,7 +46,7 @@ window.addEventListener("load", function(){
 		});
 	} else {
 		if (!param.url.startsWith('https://cdn.featherine.com/')) {
-			window.location.href = topURL;
+			window.location.replace(topURL);
 			return;
 		}
 		showImage ();
@@ -78,7 +78,7 @@ window.addEventListener("load", function(){
 		var container = document.getElementById('image-container');
 
 		image.addEventListener('error', function () {
-			window.location.href = topURL;
+			window.location.replace(topURL);
 		});
 
 		image.addEventListener('load', function () {

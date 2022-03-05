@@ -10,18 +10,18 @@ window.addEventListener("load", function(){
 	var expiredMessage = mainLocal.expiredMessage;
 	
 	if (!window.location.href.startsWith('https://featherine.com/confirm_special_register') && !debug) {
-		window.location.href = 'https://featherine.com';
+		window.location.replace(loginURL);
 		return;
 	}
 	var user = getURLParam ('user');
 	var signature = getURLParam ('signature');
 
 	if (user == null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
-		window.location.href = loginURL;
+		window.location.replace(loginURL);
 		return;
 	}
 	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		window.location.href = loginURL;
+		window.location.replace(loginURL);
 		return;
 	}
 	

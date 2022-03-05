@@ -10,7 +10,7 @@ window.addEventListener("load", function(){
 	var passwordStyling = mainLocal.passwordStyling;
 	
 	if (!window.location.href.startsWith('https://featherine.com/special_register') && !debug) {
-		window.location.href = 'https://featherine.com/special_register';
+		window.location.replace('https://featherine.com/special_register');
 		return;
 	}
 	

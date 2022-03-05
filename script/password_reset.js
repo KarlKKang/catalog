@@ -13,7 +13,7 @@ window.addEventListener("load", function(){
 
 	
 	if (!window.location.href.startsWith('https://login.featherine.com/password_reset') && !debug) {
-		window.location.href = 'https://featherine.com';
+		window.location.replace(loginURL);
 		return;
 	}
 	
@@ -32,18 +32,18 @@ window.addEventListener("load", function(){
 		if (debug) {
 			document.body.classList.remove("hidden");
 		} else {
-			window.location.href = loginURL;
+			window.location.replace(loginURL);
 		}
 		return;
 	}
 	
 	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		window.location.href = loginURL;
+		window.location.replace(loginURL);
 		return;
 	}
 
 	if (expires == null || !/^[0-9]+$/.test(expires)) {
-		window.location.href = loginURL;
+		window.location.replace(loginURL);
 		return;
 	}
 

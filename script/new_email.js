@@ -12,7 +12,7 @@ window.addEventListener("load", function(){
 	var expiredMessage = mainLocal.expiredMessage;
 	
 	if (!window.location.href.startsWith('https://featherine.com/new_email') && !debug) {
-		window.location.href = 'https://featherine.com';
+		window.location.replace(topURL);
 		return;
 	}
 	
@@ -29,12 +29,12 @@ window.addEventListener("load", function(){
 		if (debug) {
 			document.body.classList.remove("hidden");
 		} else {
-			window.location.href = topURL;
+			window.location.replace(topURL);
 		}
 		return;
 	}
 	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		window.location.href = topURL;
+		window.location.replace(topURL);
 		return;
 	}
 

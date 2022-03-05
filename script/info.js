@@ -10,7 +10,7 @@ window.addEventListener("load", function(){
 	var showMessage = mainLocal.showMessage;
 	
 	if (!window.location.href.startsWith('https://featherine.com/info') && !debug) {
-		window.location.href = 'https://featherine.com/info';
+		window.location.replace('https://featherine.com/info');
 		return;
 	}
 	

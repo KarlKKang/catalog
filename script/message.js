@@ -20,7 +20,7 @@ window.addEventListener("load", function(){
 			document.getElementById('message').innerHTML = 'メッセージMessageメッセージMessageメッセージMessageメッセージMessageメッセージMessage';
 			document.body.classList.remove("hidden");		
 		} else {
-			window.location.href = topURL;
+			window.location.replace(topURL);
 		}
 		return;
 	}
@@ -28,7 +28,7 @@ window.addEventListener("load", function(){
 	try {
 		param = JSON.parse(param);
 	} catch (e) {
-		window.location.href = topURL;
+		window.location.replace(topURL);
 		return;
 	}
 	
@@ -46,7 +46,7 @@ window.addEventListener("load", function(){
 			button.innerHTML = '次に進む';
 			button.addEventListener('click', function () {
 				localStorage.removeItem("message-param");
-				window.location.href = url;
+				window.location.replace(url);
 			});
 		}
 		

@@ -39,8 +39,9 @@ var redirect = function (url) {
 	var series = getURLParam ('series');
 	var format = getURLParam ('format');
 	var timestamp = getURLParam ('timestamp');
+	var keywords = getURLParam ('keywords');
 	if (series == null || !/^[a-zA-Z0-9~_-]+$/.test(series)) {
-		return url;
+		return url+((keywords==null)?'':'?keywords='+keywords);
 	} else {
 		return url+'?series='+series+'&ep='+((ep==null)?'1':ep)+((format==null)?'':('&format='+format))+((timestamp==null)?'':('&timestamp='+timestamp));
 	}
@@ -72,7 +73,7 @@ var showMessage = function (param) {
 	
 	param.htmlTitle = document.title;
 	window.localStorage.setItem('message-param', JSON.stringify(param));
-	window.location.href = 'message'+(debug?'.html':'');
+	window.location.replace('message'+(debug?'.html':''));
 };
 main.showMessage = showMessage;
 ////////////////////////////////////////
@@ -96,11 +97,13 @@ var checkXHRStatus = function (response) {
 		if (status == 200) {
 			return true;
 		} else if (status == 401) {
-			if (response.responseText == 'SESSION ENDED' || response.responseText == 'INSUFFICIENT PERMISSIONS')
+			if (response.responseText == 'SESSION ENDED')
 				window.location.href = topURL;
+			else if (response.responseText == 'INSUFFICIENT PERMISSIONS')
+				window.location.replace(topURL);
 			else {
 				logout(function () {
-					window.location.href = redirect (loginURL);
+					window.location.replace(redirect(loginURL));
 				});
 			}	
 			return false;
@@ -135,13 +138,13 @@ var checkXHRStatus = function (response) {
 			return false;
 		} else if (status == 404) {
 			if (response.responseText == 'REQUEST CANNOT BE SATISFIED')
-				window.location.href = topURL;
+				window.location.replace(topURL);
 			else {
 				showMessage ({
 					title: "サーバーに接続できません",
 					message: "数分待ってから、もう一度お試しください。このエラーが続く場合は、管理者にお問い合わせください。"
 				});
-			}	
+			}
 			return false;
 		} else {
 			showMessage ({
@@ -283,19 +286,8 @@ var navUpdate = function () {
 };
 main.navUpdate = navUpdate
 ////////////////////////////////////////
-
-//////////////////////////////////////// Dependencies: none
-var goTo = function (page) {
-	if (page == 'top') {
-		window.location.href = topURL;
-	} else {
-		window.location.href = page+(debug?'.html':'');
-	}
-};
-main.goTo = goTo;
-////////////////////////////////////////
 	
-//////////////////////////////////////// Dependencies: navUpdate, goTo, logout, redirect
+//////////////////////////////////////// Dependencies: navUpdate, logout, redirect
 var navListeners = function () {
 	document.getElementById('nav-menu-content').innerHTML = '<p><span id="nav-menu-content-1">ライブラリ／LIBRARY</span></p>' +
 			'<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>' +
@@ -307,13 +299,13 @@ var navListeners = function () {
 	});
 	
 	document.getElementById('nav-menu-content-1').addEventListener('click', function () {
-		goTo('top');
+		window.location.href = topURL;
 	});
 	document.getElementById('nav-menu-content-2').addEventListener('click', function () {
-		goTo('account');
+		window.location.href = 'account'+(debug?'.html':'');
 	});
 	document.getElementById('nav-menu-content-3').addEventListener('click', function () {
-		goTo('info');
+		window.location.href = 'info'+(debug?'.html':'');
 	});
 	document.getElementById('nav-menu-content-4').addEventListener('click', function () {
 		logout(function () {window.location.href = loginURL;});

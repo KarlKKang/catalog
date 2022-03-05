@@ -11,7 +11,7 @@ window.addEventListener("load", function(){
 	var authenticate = mainLocal.authenticate;
 	
 	if (!window.location.href.startsWith('https://login.featherine.com/request_password_reset') && !debug) {
-		window.location.href = 'https://login.featherine.com/request_password_reset';
+		window.location.replace('https://login.featherine.com/request_password_reset');
 		return;
 	}
 	
@@ -30,13 +30,13 @@ window.addEventListener("load", function(){
 		submitRequest ();
 	});
 	document.getElementById('go-back').getElementsByTagName('span')[0].addEventListener('click', function () {
-		window.location.href = loginURL;
+		window.location.replace(loginURL);
 	});
 	
 	authenticate({
 		successful: 
 		function () {
-			window.location.href = topURL;
+			window.location.replace(topURL);
 		},
 		failed: 
 		function () {

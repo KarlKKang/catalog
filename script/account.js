@@ -12,7 +12,7 @@ window.addEventListener("load", function(){
 	var changeColor = mainLocal.changeColor;
 	
 	if (!window.location.href.startsWith('https://featherine.com/account') && !debug) {
-		window.location.href = 'https://featherine.com/account';
+		window.location.replace('https://featherine.com/account');
 		return;
 	}
 	
