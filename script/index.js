@@ -91,7 +91,7 @@ window.addEventListener("load", function(){
     }
 
     function goToSeries (id) {
-        var url = 'bangumi'+(debug?'.html':'')+'?series='+id+'&ep=1';
+        var url = 'bangumi'+(debug?'.html':'')+'?series='+id;
         window.location.href = url;
     }
 

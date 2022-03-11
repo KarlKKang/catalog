@@ -45,23 +45,27 @@ window.addEventListener("load", function(){
     }
 
     var epIndex = getURLParam ('ep');
-    var new_url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+'&ep=1';
+    var newURL = 'bangumi'+(debug?'.html':'')+'?series='+seriesID;
     if (epIndex == null) {
-        window.location.replace(new_url);
-        return;
+        epIndex = 0;
     } else {
         epIndex = parseInt (epIndex);
         if (isNaN(epIndex) || epIndex<1) {
-			window.location.replace(new_url);
-            return;
-        }
+			history.replaceState(null, '', newURL);
+            epIndex = 1;
+        } else if (epIndex == 1) {
+			history.replaceState(null, '', newURL);
+		}
         epIndex--;
     }
 
     var formatIndex = getURLParam ('format');
-    if (formatIndex != null) {
+	if (formatIndex == null) {
+        formatIndex = 0;
+    } else {
         formatIndex = parseInt (formatIndex);
         if (isNaN(formatIndex) || formatIndex<1) {
+			updateURLParam('format', 1);
             formatIndex = 1;
         }
         formatIndex--;
@@ -77,7 +81,7 @@ window.addEventListener("load", function(){
             }
             updatePage (response);
         },
-        content: "series="+seriesID+"&ep="+epIndex+((formatIndex==null)?'':('&format='+formatIndex))
+        content: "series="+seriesID+"&ep="+epIndex+'&format='+formatIndex
     });
 
     function updatePage (response) {
@@ -253,9 +257,7 @@ window.addEventListener("load", function(){
             formatSwitch();
         });
 
-        if (formatIndex == null)
-            formatIndex = 0;
-        else if (formatIndex >= formats.length) {
+        if (formatIndex >= formats.length) {
             formatIndex = 0;
             updateURLParam ('format', 1);
         }
@@ -807,7 +809,7 @@ window.addEventListener("load", function(){
     }
 
     function goToEP (dest_series, dest_ep) {
-        var url = 'bangumi'+(debug?'.html':'')+'?series='+dest_series+'&ep='+dest_ep;
+        var url = 'bangumi'+(debug?'.html':'')+'?series='+dest_series+(dest_ep==1?'':('&ep='+dest_ep));
         window.location.href = url;
     }
 
@@ -943,7 +945,7 @@ window.addEventListener("load", function(){
 						window.location.replace(response);
 					}
                 },
-                content: "token="+token+((formatIndex==null)?'':('&format='+formatIndex))
+                content: "token="+token+'&format='+formatIndex
             });
         });
         accordionPanel.appendChild(downloadButton);
@@ -957,11 +959,11 @@ window.addEventListener("load", function(){
 
 
     function updateURLParam (key, value) {
-        var url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+'&ep='+(epIndex+1);
+        var url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+(epIndex==0?'':('&ep='+(epIndex+1)));
         var currentFormat = getURLParam ('format');
         var currentTimestamp = getURLParam ('timestamp');
         if (key == 'format') {
-            url += '&format='+value+((currentTimestamp==null)?'':('&timestamp='+currentTimestamp));
+            url += (value==1?'':('&format='+value))+((currentTimestamp==null)?'':('&timestamp='+currentTimestamp));
         } else if (key == 'timestamp') {
             url += ((currentFormat==null)?'':('&format='+currentFormat))+'&timestamp='+value;
         }
