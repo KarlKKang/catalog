@@ -90,7 +90,7 @@ window.addEventListener("load", function(){
 		var newPassword = newPasswordInput.value;
 		var newPasswordConfirm = newPasswordConfirmInput.value;
 
-		if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/.test(newPassword)) {
+		if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
 			warningElem.innerHTML = 'パスワードが要件を満たしていません。';
 			warningElem.classList.remove('hidden');
 			sumbitButton.disabled=false;

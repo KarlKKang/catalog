@@ -19,7 +19,7 @@ window.addEventListener("load", function(){
 	appearanceSwitching();
 	
 	var submitButton = document.getElementById('submit-button');
-	var passwordInput = document.getElementById('password');
+	var passwordInput = document.getElementById('current-password');
 	var usernameInput = document.getElementById('username');
 	
 	authenticate({
@@ -69,7 +69,7 @@ function login () {
 		return;
 	}
 
-	if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/.test(password)) {
+	if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
 		warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
 		warningElem.classList.remove('hidden');
 		submitButton.disabled = false;

@@ -64,12 +64,12 @@ function initialize (){
 
 			'<p class="sub-title">パスワード</p>'+
 			'<p class="warning hidden" id="password-warning"></p>'+
-			'<div class="input-field"><input id="new-password" type="password" placeholder="新しいパスワード" autocapitalize="off" autocomplete="off"></div>'+
-			'<div class="input-field"><input id="new-password-confirm" type="password" placeholder="確認再入力" autocapitalize="off" autocomplete="off"></div>'+
+			'<div class="input-field"><input id="new-password" type="password" autocomplete="new-password" placeholder="新しいパスワード" autocapitalize="off"></div>'+
+			'<div class="input-field"><input id="new-password-confirm" type="password" autocomplete="new-password" placeholder="確認再入力" autocapitalize="off"></div>'+
 			'<button class="button" id="password-change-button">変更する</button>'+
 			'<div class="note">'+
 				'<ul>'+
-					'<li>使用出来る文字は、半角英大文字、半角英小文字、数字、記号+_!@#$%^&amp;*.,?-です。</li>'+
+					'<li>使用出来る文字は、半角英大文字、半角英小文字、数字、記号 ` ~ ! @ # $ % ^ &amp; * ( ) - = _ + [ ] { } \ | ; : &apos; &quot; , . &lt; &gt; / ? です。</li>'+
 					'<li>8文字以上を含めてください 。</li>'+
 					'<li>大文字、小文字、数字を含めてください。</li>'+
 				'</ul>'+
@@ -186,7 +186,7 @@ function changePassword () {
 	
 	changeColor (warningElem, 'red');
 	
-	if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9+_!@#$%^&*.,?-]{8,}$/.test(newPassword)) {
+	if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
 		warningElem.innerHTML="パスワードが要件を満たしていません。";
 		warningElem.classList.remove('hidden');
 		passwordChangeButton.disabled=false;
