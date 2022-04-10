@@ -32,18 +32,44 @@ var getURLParam = function (param) {
 };
 main.getURLParam = getURLParam;
 ////////////////////////////////////////
-
+	
 //////////////////////////////////////// Dependencies: getURLParam
+var getSeriesID = function () {
+	var url = window.location.href + '?';
+	if (url.startsWith(topURL + '/bangumi/')) {
+		var start = (topURL+'/bangumi/').length;
+		var end = url.indexOf('?');
+		return url.slice(start, end);
+	} else {
+		return getURLParam('series')
+	}
+};
+main.getSeriesID = getSeriesID;
+////////////////////////////////////////
+
+//////////////////////////////////////// Dependencies: getURLParam, getSeriesID
 var redirect = function (url) {
 	var ep = getURLParam ('ep');
-	var series = getURLParam ('series');
+	var series = getSeriesID();
 	var format = getURLParam ('format');
-	var timestamp = getURLParam ('timestamp');
 	var keywords = getURLParam ('keywords');
-	if (series == null || !/^[a-zA-Z0-9~_-]+$/.test(series)) {
+	if (series == null || !/^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
 		return url+((keywords==null)?'':'?keywords='+keywords);
 	} else {
-		return url+'?series='+series+'&ep='+((ep==null)?'1':ep)+((format==null)?'':('&format='+format))+((timestamp==null)?'':('&timestamp='+timestamp));
+		if (url == topURL+'/bangumi/') {
+			var separator = '?';
+			url += series;
+			if (ep!=null && ep!='1') {
+				url += separator + 'ep=' + ep;
+				separator = '&';
+			} 
+			if (format!=null && format!='1') {
+				url += separator + 'format=' + format;
+			}
+			return url;
+		} else {
+			return url+'?series='+series+((ep!=null && ep!='1')?('&ep='+ep):'')+((format!=null && format!='1')?('&format='+format):'');
+		}
 	}
 };
 main.redirect = redirect;
@@ -73,7 +99,7 @@ var showMessage = function (param) {
 	
 	param.htmlTitle = document.title;
 	window.localStorage.setItem('message-param', JSON.stringify(param));
-	window.location.replace('message'+(debug?'.html':''));
+	window.location.replace(debug?'message.html':(topURL+'/message'));
 };
 main.showMessage = showMessage;
 ////////////////////////////////////////
@@ -287,7 +313,7 @@ var navUpdate = function () {
 main.navUpdate = navUpdate
 ////////////////////////////////////////
 	
-//////////////////////////////////////// Dependencies: navUpdate, logout, redirect
+//////////////////////////////////////// Dependencies: navUpdate, logout
 var navListeners = function () {
 	document.getElementById('nav-menu-content').innerHTML = '<p><span id="nav-menu-content-1">ライブラリ／LIBRARY</span></p>' +
 			'<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>' +
@@ -302,10 +328,10 @@ var navListeners = function () {
 		window.location.href = topURL;
 	});
 	document.getElementById('nav-menu-content-2').addEventListener('click', function () {
-		window.location.href = 'account'+(debug?'.html':'');
+		window.location.href = (debug?'account.html':(topURL+'/account'));
 	});
 	document.getElementById('nav-menu-content-3').addEventListener('click', function () {
-		window.location.href = 'info'+(debug?'.html':'');
+		window.location.href = (debug?'info.html':(topURL+'/info'));
 	});
 	document.getElementById('nav-menu-content-4').addEventListener('click', function () {
 		logout(function () {window.location.href = loginURL;});

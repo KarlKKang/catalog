@@ -7,12 +7,13 @@ window.addEventListener("load", function(){
 	var sendServerRequest = mainLocal.sendServerRequest;
 	var showMessage = mainLocal.showMessage;
 	var topURL = mainLocal.topURL;
+	var loginURL = mainLocal.loginURL;
 	var redirect = mainLocal.redirect;
 	var passwordStyling = mainLocal.passwordStyling;
 	var authenticate = mainLocal.authenticate;
 	
-	if (!window.location.href.startsWith('https://login.featherine.com') && !debug) {
-		window.location.replace(redirect ('https://login.featherine.com'));
+	if (!window.location.href.startsWith(loginURL) && !debug) {
+		window.location.replace(loginURL);
 		return;
 	}
 	
@@ -44,7 +45,7 @@ window.addEventListener("load", function(){
 				login ();
 			});
 			document.getElementById('forgot-password').getElementsByTagName('span')[0].addEventListener('click', function () {
-				window.location.replace('request_password_reset'+(debug?'.html':''));
+				window.location.replace(debug?'request_password_reset.html':(loginURL+'/request_password_reset'));
 			});
 
 			passwordInput.addEventListener('input', function () {

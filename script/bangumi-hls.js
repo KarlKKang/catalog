@@ -6,19 +6,19 @@ window.addEventListener("load", function(){
 
 	var debug = mainLocal.debug;
 	var navListeners = mainLocal.navListeners;
-	var redirect = mainLocal.redirect;
 	var appearanceSwitching = mainLocal.appearanceSwitching;
 	var topURL = mainLocal.topURL;
 	var sendServerRequest = mainLocal.sendServerRequest;
 	var showMessage = mainLocal.showMessage;
 	var changeColor = mainLocal.changeColor;
 	var getURLParam = mainLocal.getURLParam;
+	var getSeriesID = mainLocal.getSeriesID;
 	var onScreenConsoleOutput = mainLocal.onScreenConsoleOutput;
 	var secToTimestamp = mainLocal.secToTimestamp;
 	
 	
-	if (!window.location.href.startsWith('https://featherine.com/bangumi') && !debug) {
-		window.location.replace(redirect ('https://featherine.com/bangumi'));
+	if (!window.location.href.startsWith(topURL + '/bangumi') && !debug) {
+		window.location.replace(topURL);
 		return;
 	}
 	
@@ -33,19 +33,20 @@ window.addEventListener("load", function(){
     var token;
     var onScreenConsole = false;
 
-    var seriesID = getURLParam ('series');
+    var seriesID = getSeriesID();
+	
     if (seriesID == null) {
         window.location.replace(topURL);
         return;
     } else {
-        if (!/^[a-zA-Z0-9~_-]+$/.test(seriesID)) {
+        if (!/^[a-zA-Z0-9~_-]{8,}$/.test(seriesID)) {
 			window.location.replace(topURL);
             return;
         }
     }
 
     var epIndex = getURLParam ('ep');
-    var newURL = 'bangumi'+(debug?'.html':'')+'?series='+seriesID;
+    var newURL = debug?('bangumi.html'+'?series='+seriesID):(topURL+'/bangumi/'+seriesID);
     if (epIndex == null) {
         epIndex = 0;
     } else {
@@ -677,7 +678,7 @@ window.addEventListener("load", function(){
                 if (debug) {
                     window.location.href = 'image.html';
                 } else {
-                    window.open ('image');
+                    window.open (topURL + '/image');
                 }
             });
             imageNode.addEventListener('contextmenu', event => event.preventDefault());
@@ -809,7 +810,12 @@ window.addEventListener("load", function(){
     }
 
     function goToEP (dest_series, dest_ep) {
-        var url = 'bangumi'+(debug?'.html':'')+'?series='+dest_series+(dest_ep==1?'':('&ep='+dest_ep));
+        var url;
+		if (debug) {
+			url = 'bangumi.html'+'?series='+dest_series+(dest_ep==1?'':('&ep='+dest_ep));
+		} else {
+			url = topURL+'/bangumi/'+dest_series+(dest_ep==1?'':('?ep='+dest_ep));
+		}
         window.location.href = url;
     }
 
@@ -959,13 +965,21 @@ window.addEventListener("load", function(){
 
 
     function updateURLParam (key, value) {
-        var url = 'bangumi'+(debug?'.html':'')+'?series='+seriesID+(epIndex==0?'':('&ep='+(epIndex+1)));
-        var currentFormat = getURLParam ('format');
-        var currentTimestamp = getURLParam ('timestamp');
+		var url;
+		var separator = '?';
+		if (debug) {
+			url = 'bangumi.html'+'?series='+seriesID+(epIndex==0?'':('&ep='+(epIndex+1)));
+			separator = '&';
+		} else {
+			url = topURL + '/bangumi/'+seriesID;
+			if (epIndex!=0) {
+				url += '?ep='+(epIndex+1);
+				separator = '&';
+			}
+		}
+
         if (key == 'format') {
-            url += (value==1?'':('&format='+value))+((currentTimestamp==null)?'':('&timestamp='+currentTimestamp));
-        } else if (key == 'timestamp') {
-            url += ((currentFormat==null)?'':('&format='+currentFormat))+'&timestamp='+value;
+            url += (value==1?'':(separator+'format='+value));
         }
 
         history.replaceState(null, '', url);

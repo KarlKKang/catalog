@@ -12,7 +12,7 @@ window.addEventListener("load", function(){
 	var getURLParam = mainLocal.getURLParam;
 	
 	if (!window.location.href.startsWith('https://featherine.com') && !debug) {
-		window.location.replace(redirect (topURL));
+		window.location.replace(topURL);
 		return;
 	}
 	
@@ -20,8 +20,8 @@ window.addEventListener("load", function(){
 	
     var offset=0;
 
-    if (getURLParam ('ep') != null) {
-        window.location.replace(redirect('bangumi'+(debug?'.html':'')));
+    if (getURLParam ('series') != null) {
+        window.location.replace(redirect(debug?'bangumi.html':(topURL+'/bangumi/')));
         return;
     }
 	
@@ -91,7 +91,12 @@ window.addEventListener("load", function(){
     }
 
     function goToSeries (id) {
-        var url = 'bangumi'+(debug?'.html':'')+'?series='+id;
+		var url;
+		if (debug) {
+			url = 'bangumi.html'+'?series='+id;
+		} else {
+			url = topURL+'/bangumi/'+id;
+		}
         window.location.href = url;
     }
 
