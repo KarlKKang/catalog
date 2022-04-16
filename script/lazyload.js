@@ -1,6 +1,13 @@
 // JavaScript Document
 
 function lazyloadInitialize () {
+	let mainLocal = main;
+	let imageProtection = mainLocal.imageProtection;
+	let sendServerRequest = mainLocal.sendServerRequest;
+	let topURL = mainLocal.topURL;
+	let showMessage = mainLocal.showMessage;
+	let concatenateSignedURL = mainLocal.concatenateSignedURL;
+	
 	var elem = document.getElementsByClassName('lazyload');
 	const options = {
 		root: null,
@@ -16,6 +23,7 @@ function lazyloadInitialize () {
 					observer.unobserve(target);
 						
 					let imageNode = document.createElement('img');
+					imageProtection(imageNode);
 					imageNode.addEventListener('load', function () {
 						target.classList.add('complete');
 					});
@@ -25,10 +33,27 @@ function lazyloadInitialize () {
 					if ('alt' in target.dataset) {
 						imageNode.alt = target.dataset.alt;
 					} else {
-						imageNode.alt = 'image placeholder';
+						imageNode.alt = 'image element';
 					}
-					imageNode.src = target.dataset.src;
-					target.appendChild(imageNode);
+					if ('authenticationToken' in target.dataset) {
+						sendServerRequest('get_image.php', {
+							callback: function (response) {
+								try {
+									response = JSON.parse(response);
+								} catch (e) {
+									showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
+									return;
+								}
+								let url = concatenateSignedURL(target.dataset.src, response);
+								imageNode.src = url;
+								target.appendChild(imageNode);
+							},
+							content: "token="+target.dataset.authenticationToken+"&p="+target.dataset.xhrParam
+						});
+					} else {
+						imageNode.src = target.dataset.src;
+						target.appendChild(imageNode);
+					}
 				}
 			}, options);
 			observer.observe(elem[i]);

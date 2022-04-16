@@ -15,6 +15,9 @@ window.addEventListener("load", function(){
 	var getSeriesID = mainLocal.getSeriesID;
 	var onScreenConsoleOutput = mainLocal.onScreenConsoleOutput;
 	var secToTimestamp = mainLocal.secToTimestamp;
+	var cdnURL = mainLocal.cdnURL;
+	var concatenateSignedURL = mainLocal.concatenateSignedURL;
+	var encodeCFURIComponent = mainLocal.encodeCFURIComponent;
 	
 	
 	if (!window.location.href.startsWith(topURL + '/bangumi') && !debug) {
@@ -30,7 +33,8 @@ window.addEventListener("load", function(){
     // DIST NOTE: insert videojs_mod here
 
     var mediaInstances = [];
-    var token;
+    var epInfo;
+	var baseURL = '';
     var onScreenConsole = false;
 
     var seriesID = getSeriesID();
@@ -89,10 +93,10 @@ window.addEventListener("load", function(){
 		navListeners();
         document.body.classList.remove("hidden");
 
-        token = response.ep_info.token;
+        epInfo = response.ep_info;
 
-        var title =  response.title;
-        var titleElem = document.getElementById('title');
+        let title =  response.title;
+        let titleElem = document.getElementById('title');
         titleElem.innerHTML = title;
 
         function addOnScreenConsole () {
@@ -117,14 +121,14 @@ window.addEventListener("load", function(){
         updateEPSelector (response.series_ep);
         updateSeasonSelector (response.seasons);
 
-        if (response.ep_info.age_restricted) {
+        if (epInfo.age_restricted) {
 			var warningParent = document.getElementById('warning');
 			var warningTitle = document.getElementById('warning-title');
 			var warningBody = document.getElementById('warning-body');
             changeColor (warningTitle, 'red');
-            if (response.ep_info.age_restricted.toLowerCase() == 'r15+') {
+            if (epInfo.age_restricted.toLowerCase() == 'r15+') {
                 warningTitle.innerHTML = '「R15+指定」<br>年齢認証';
-            } else if (response.ep_info.age_restricted.toLowerCase() == 'r18+') {
+            } else if (epInfo.age_restricted.toLowerCase() == 'r18+') {
                 warningTitle.innerHTML = '「R18+指定」<br>年齢認証';
             } else {
 				warningTitle.innerHTML = '年齢認証';
@@ -161,19 +165,20 @@ window.addEventListener("load", function(){
                         return false;
                     }
                 },
-                content: "token="+token
+                content: "token="+epInfo.authentication_token
             });
         }, 60*1000);
 
         /////////////////////////////////////////////Add Media/////////////////////////////////////////////
-        var type = response.ep_info.type;
+        var type = epInfo.type;
+		baseURL = cdnURL + '/' + (epInfo.hasOwnProperty('series_override')?epInfo.series_override:seriesID) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
 
         if (type == 'video') {
-            updateVideo (response.ep_info);
+            updateVideo ();
         } else if (type == 'audio') {
-            updateAudio (response.ep_info);
+            updateAudio ();
         } else {
-            updateImage (response.ep_info);
+            updateImage ();
         }
     }
 
@@ -238,22 +243,22 @@ window.addEventListener("load", function(){
         }
     }
 
-    function updateVideo (ep) {
-        var contentContainer = document.getElementById('content');
-        if (ep.title!='') {
+    function updateVideo () {
+        let contentContainer = document.getElementById('content');
+        if (epInfo.title!='') {
             let title = document.createElement('p');
             title.setAttribute('class', 'sub-title');
             title.classList.add('center-align');
-            title.innerHTML = ep.title;
+            title.innerHTML = epInfo.title;
             contentContainer.insertBefore(title, document.getElementById('message'));
         }
 
-        var formats = ep.formats;
+        let formats = epInfo.formats;
 
-        var formatSelector = document.createElement('div');
+        let formatSelector = document.createElement('div');
         formatSelector.setAttribute('id', 'format-selector');
 
-        var selectMenu = document.createElement('select');
+        let selectMenu = document.createElement('select');
         selectMenu.addEventListener("change", function () {
             formatSwitch();
         });
@@ -264,8 +269,8 @@ window.addEventListener("load", function(){
         }
 
         for (var i = 0; i < formats.length; i++) {
-            var format = formats[i];
-            var option = document.createElement('option');
+            let format = formats[i];
+            let option = document.createElement('option');
 
             option.setAttribute('value', format);
             option.innerHTML = format;
@@ -335,10 +340,12 @@ window.addEventListener("load", function(){
             this.dispose();
             mediaInstances.push(videojs_mod (videoJS, {}));
             mediaHolder.appendChild(videoJS);
+			
+			let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + epInfo.formats[0] + '].m3u8'), epInfo.cdn_credentials);
 
-            addVideoNode (ep.url, {/*, currentTime: timestampParam*/});
-            if (ep.chapters != '') {
-                displayChapters (ep.chapters);
+            addVideoNode (url, {/*, currentTime: timestampParam*/});
+            if (epInfo.chapters != '') {
+                displayChapters (epInfo.chapters);
             }
             addDownloadAccordion();
             addAccordionEvent();
@@ -346,29 +353,30 @@ window.addEventListener("load", function(){
         });
     }
 
-    function updateAudio (ep) {
+    function updateAudio () {
 
-        var contentContainer = document.getElementById('content');
-        var counter = 0;
+        let contentContainer = document.getElementById('content');
+        let counter = 0;
 
-        if (ep.album_info.album_title!='') {
-            let albumTitle = document.createElement('p');
-            albumTitle.setAttribute('class', 'sub-title');
-            albumTitle.classList.add('center-align');
-            albumTitle.innerHTML = ep.album_info.album_title;
-            contentContainer.insertBefore(albumTitle, document.getElementById('message'));
-            if (ep.album_info.album_artist!='') {
+		let albumInfo = epInfo.album_info;
+        if (albumInfo.album_title!='') {
+            let albumTitleElem = document.createElement('p');
+            albumTitleElem.setAttribute('class', 'sub-title');
+            albumTitleElem.classList.add('center-align');
+            albumTitleElem.innerHTML = albumInfo.album_title;
+            contentContainer.insertBefore(albumTitleElem, document.getElementById('message'));
+            if (albumInfo.album_artist!='') {
                 let albumArtist = document.createElement('p');
                 albumArtist.setAttribute('class', 'artist');
                 albumArtist.classList.add('center-align');
-                albumArtist.innerHTML = ep.album_info.album_artist;
+                albumArtist.innerHTML = albumInfo.album_artist;
                 contentContainer.insertBefore(albumArtist, document.getElementById('message'));
             }
-        } else if (ep.album_info.album_artist!='') {
+        } else if (albumInfo.album_artist!='') {
             let titleElem = document.getElementById('title');
             let artistElem = document.createElement('span');
             artistElem.setAttribute('class', 'artist');
-            artistElem.innerHTML = '<br/>' + ep.album_info.album_artist;
+            artistElem.innerHTML = '<br/>' + albumInfo.album_artist;
             titleElem.appendChild(artistElem);
         }
 
@@ -423,9 +431,10 @@ window.addEventListener("load", function(){
 			}
 		};
 
-        var i;
-
-        for (i = 0; i < ep.files.length; i++) {
+        let i;
+		let files = epInfo.files;
+		let cdnCredentials = epInfo.cdn_credentials;
+        for (i = 0; i < files.length; i++) {
             let index = i;
 
             let audioNode = document.createElement('audio');
@@ -440,26 +449,26 @@ window.addEventListener("load", function(){
             audioNode.setAttribute('lang', 'en');
 
             //subtitle
-            if (ep.files[i].title != '') {
-                subtitle.innerHTML = ep.files[i].title;
+            if (files[i].title != '') {
+                subtitle.innerHTML = files[i].title;
 
-                if (ep.files[i].artist != '') {
+                if (files[i].artist != '') {
                     let artist = document.createElement('span');
                     artist.setAttribute('class', 'artist');
-                    artist.innerHTML = '／' + ep.files[i].artist;
+                    artist.innerHTML = '／' + files[i].artist;
                     subtitle.appendChild(artist);
                 }
             }
 
             //format
-            if (ep.files[i].format != '') {
+            if (files[i].format != '') {
                 if (subtitle.innerHTML != '')
                     subtitle.innerHTML += '<br />';
 
                 format.setAttribute('class', 'format');
-                format.innerHTML = ep.files[i].format;
+                format.innerHTML = files[i].format;
 
-                let samplerate = ep.files[i].samplerate;
+                let samplerate = files[i].samplerate;
                 if (samplerate != '') {
                     let samplerateText = samplerate;
                     switch (samplerate) {
@@ -481,7 +490,7 @@ window.addEventListener("load", function(){
                     }
                     format.innerHTML += ' ' + samplerateText;
 
-                    let bitdepth = ep.files[i].bitdepth;
+                    let bitdepth = files[i].bitdepth;
                     if (bitdepth != '') {
                         let bitdepthText = bitdepth;
                         switch (bitdepth) {
@@ -504,7 +513,7 @@ window.addEventListener("load", function(){
             mediaHolder.appendChild(subtitle);
             mediaHolder.appendChild(audioNode);
 			
-			var isMp3 = (ep.files[index].format.toLowerCase() == 'mp3');
+			var isMp3 = (files[index].format.toLowerCase() == 'mp3');
 			
 			let configVideoJS = configVideoJSTemplate;
 			if (USE_MSE && !isMp3) {
@@ -520,11 +529,10 @@ window.addEventListener("load", function(){
 			}
 
             let videoJSAudio = videojs(audioNode, configVideoJS, function () {
+				let flacFallback = (files[index].flac_fallback && !CAN_PLAY_ALAC);
+                let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' +files[index].file_name + (flacFallback?'[FLAC]':'') +'.m3u8'), cdnCredentials, baseURL + '_MASTER_*.m3u8'); 
 
-                let url = ep.files[index].url;
-
-                if (ep.files[index].flac_fallback_url != '' && !CAN_PLAY_ALAC) {
-                    url = ep.files[index].flac_fallback_url;
+                if (flacFallback) {
                     format.innerHTML = format.innerHTML.replace('ALAC', 'FLAC');
                     format.innerHTML = format.innerHTML.replace('32bit', '24bit');
                 }
@@ -556,7 +564,7 @@ window.addEventListener("load", function(){
 						});
 						hls.on(Hls.Events.MANIFEST_PARSED, function () {
 							counter ++;
-							if (counter == ep.files.length) {
+							if (counter == files.length) {
 								hlsAudioReady();
 							}
 						});
@@ -566,7 +574,7 @@ window.addEventListener("load", function(){
 						mediaInstances[index] = videoJSAudio;
 					
 						counter ++;
-						if (counter == ep.files.length) {
+						if (counter == files.length) {
 							videoJSAudioReady();
 						}
 
@@ -590,7 +598,7 @@ window.addEventListener("load", function(){
                     audio.setAttribute ('crossorigin', 'use-credentials');
                     audio.addEventListener('loadedmetadata', function () {
                         counter ++;
-                        if (counter == ep.files.length) {
+                        if (counter == files.length) {
                             hlsAudioReady();
                         }
                     });
@@ -643,38 +651,41 @@ window.addEventListener("load", function(){
 		}
     }
 
-    function updateImage (ep) {
+    function updateImage () {
         var mediaHolder = document.createElement('div');
         mediaHolder.id = 'media-holder';
         document.getElementById('content').appendChild(mediaHolder);
-
-        for (var i = 0; i < ep.files.length; i++) {
-
-            if (ep.files[i].tag != '') {
+		
+		let files = epInfo.files;
+        for (var i = 0; i < files.length; i++) {
+			let index = i;
+            if (files[index].tag != '') {
                 let subtitle = document.createElement('p');
                 subtitle.setAttribute('class', 'sub-title');
-                subtitle.innerHTML = ep.files[i].tag;
+                subtitle.innerHTML = files[index].tag;
                 mediaHolder.appendChild(subtitle);
             }
 
             let imageNode = document.createElement('div');
             let overlay = document.createElement('div');
-            let url = ep.files[i].url;
 
             overlay.classList.add('overlay');
             imageNode.appendChild(overlay);
 
             imageNode.classList.add('lazyload');
             imageNode.dataset.crossorigin = 'use-credentials';
-            imageNode.dataset.src = url;
+            imageNode.dataset.src = baseURL + encodeCFURIComponent(files[index].file_name);
             imageNode.dataset.alt = document.getElementById('title').innerHTML;
+			imageNode.dataset.xhrParam = index;
+			imageNode.dataset.authenticationToken = epInfo.authentication_token;
             imageNode.addEventListener('click', function() {
                 let param = {
-                    url: url,
+					src: baseURL + encodeCFURIComponent(files[index].file_name),
+                    xhrParam: index,
                     title: document.getElementById('title').innerHTML,
-                    token: token
+                    authenticationToken: epInfo.authentication_token
                 };
-                document.cookie = 'image-param='+encodeURIComponent(JSON.stringify(param))+';max-age=30;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+                document.cookie = 'image-param='+encodeURIComponent(JSON.stringify(param))+';max-age=10;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
                 if (debug) {
                     window.location.href = 'image.html';
                 } else {
@@ -697,10 +708,17 @@ window.addEventListener("load", function(){
             callback: function (response) {
                 var currentTime = video.currentTime;
                 var paused = video.paused;
-                updateURLParam ('format', selectedFormat+1);
-                addVideoNode (response, {currentTime: currentTime, play: !paused});
+				updateURLParam ('format', selectedFormat+1);
+				try {
+					response = JSON.parse(response);
+				} catch (e) {
+					showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
+					return;
+				}
+				let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + epInfo.formats[selectedFormat] + '].m3u8'), response);
+                addVideoNode (url, {currentTime: currentTime, play: !paused});
             },
-            content: "token="+token+"&format="+selectedFormat
+            content: "token="+epInfo.authentication_token+"&format="+selectedFormat
         });
 
         /*
@@ -951,7 +969,7 @@ window.addEventListener("load", function(){
 						window.location.replace(response);
 					}
                 },
-                content: "token="+token+'&format='+formatIndex
+                content: "token="+epInfo.authentication_token+'&format='+formatIndex
             });
         });
         accordionPanel.appendChild(downloadButton);

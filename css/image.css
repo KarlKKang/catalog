@@ -9,12 +9,14 @@ body {
 #image-container {
 	position: relative;
 	padding: 0px;
-	max-width: 100%;
+	width: 100%;
 }
 
 #image-container > img {
 	display: block;
-	width: 100%
+	max-width: 100%;
+	pointer-events: none;
+	-webkit-touch-callout: none;
 }
 
 #image-container > .overlay {

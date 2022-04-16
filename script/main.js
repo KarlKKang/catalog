@@ -14,6 +14,9 @@ main.loginURL = loginURL;
 var serverURL = 'https://server.featherine.com';
 main.serverURL = serverURL;
 	
+var cdnURL = 'https://cdn.featherine.com';
+main.cdnURL = cdnURL;
+	
 var debug = true;
 main.debug = debug;
 	
@@ -163,7 +166,7 @@ var checkXHRStatus = function (response) {
 			}
 			return false;
 		} else if (status == 404) {
-			if (response.responseText == 'REQUEST CANNOT BE SATISFIED')
+			if (response.responseText == 'REJECTED')
 				window.location.replace(topURL);
 			else {
 				showMessage ({
@@ -268,7 +271,8 @@ main.logout = logout;
 //////////////////////////////////////// Dependencies: none
 var getCookie = function (cname) {
 	var name = cname + "=";
-	var decodedCookie = decodeURIComponent(document.cookie);
+	// var decodedCookie = decodeURIComponent(document.cookie);
+	var decodedCookie = document.cookie;
 	var ca = decodedCookie.split(';');
 	for(var i = 0; i <ca.length; i++) {
 		var c = ca[i];
@@ -412,5 +416,57 @@ var changeColor = function (elem, color) {
 main.changeColor = changeColor;
 ////////////////////////////////////////
 
+//////////////////////////////////////// Dependencies: none
+var imageProtection = function (elem) {
+	elem.addEventListener('contextmenu', e => {
+		e.preventDefault();
+		return false;
+	});
+	elem.addEventListener('dragstart', e => {
+		e.preventDefault();
+		return false;
+	});
+	elem.addEventListener('touchforcechange', e => {
+		if (e.changedTouches[0].force > 0.1) {
+			e.preventDefault();
+			return false;
+		}
+	});
+	elem.addEventListener('touchstart', e => {
+		if (e.changedTouches[0].force > 0.1) {
+			e.preventDefault();
+			return false;
+		}
+	});
+};
+main.imageProtection = imageProtection;
+////////////////////////////////////////
+	
+//////////////////////////////////////// Dependencies: none
+var concatenateSignedURL = function (url, credentials, resourceURLOverride) {
+	var policy = '';
+	if (credentials.hasOwnProperty('Policy')) {
+		policy = credentials['Policy'];
+		policy['Statement'][0]['Resource'] = (resourceURLOverride===undefined)?url:resourceURLOverride;
+		policy = JSON.stringify(policy);
+		policy = btoa(policy);
+		policy = policy.replace(/\+/g, "-");
+		policy = policy.replace(/\=/g, "_");
+		policy = policy.replace(/\//g, "~");
+		policy = 'Policy=' + policy
+	} else {
+		policy = 'Expires=' + credentials['Expires']
+	}
+	return url + '?' + policy + '&Signature=' + credentials['Signature'] + '&Key-Pair-Id=' + credentials['Key-Pair-Id'];
+};
+main.concatenateSignedURL = concatenateSignedURL;
+////////////////////////////////////////
+	
+//////////////////////////////////////// Dependencies: none
+var encodeCFURIComponent = function (uri) {
+	return encodeURIComponent(uri).replace(/%20/g, "+");
+};
+main.encodeCFURIComponent = encodeCFURIComponent;
+////////////////////////////////////////
 
 })();

@@ -7,6 +7,8 @@ window.addEventListener("load", function(){
 	var topURL = mainLocal.topURL;
 	var sendServerRequest = mainLocal.sendServerRequest;
 	var showMessage = mainLocal.showMessage;
+	var imageProtection = mainLocal.imageProtection;
+	var concatenateSignedURL = mainLocal.concatenateSignedURL;
 	
 	if (!window.location.href.startsWith('https://featherine.com/image') && !debug) {
 		window.location.replace('https://featherine.com/image');
@@ -32,66 +34,49 @@ window.addEventListener("load", function(){
 	
 	
 	var image = document.createElement('img');
+	imageProtection(image);
 	
-	if (!('url' in param) || !('title' in param)) {
+	if (!('src' in param) || !('title' in param) || !('authenticationToken' in param) || !('xhrParam' in param)) {
 		window.location.replace(topURL);
 		return;
 	}
 	
-	if ('token' in param) {
-		deviceAuthentication (function () {
-			setInterval (function () {deviceAuthentication ();}, 60*1000);
-			image.setAttribute('crossorigin', 'use-credentials');
-			showImage ();
-		});
-	} else {
-		if (!param.url.startsWith('https://cdn.featherine.com/')) {
-			window.location.replace(topURL);
-			return;
-		}
-		showImage ();
-	}
+	setInterval (function () {sendServerRequest('device_authenticate.php', {
+		callback: function (response) {
+			if (response!='APPROVED') {
+				showMessage ();
+				return false;
+			}
+		},
+		content: "token="+param.authenticationToken
+	});}, 60*1000);
 	
+	document.title = param.title + ' | featherine';
 	
-	function deviceAuthentication (callback) {
-		if (callback === undefined) {
-			callback = function () {return;};
-		}
-		
-		sendServerRequest('device_authenticate.php', {
-			callback: function (response) {
-				if (response!='APPROVED') {
-					showMessage ();
-					return false;
-				} else {
-					callback ();
-				}
-			},
-			content: "token="+param.token
-		});
-	}
-		
+	var container = document.getElementById('image-container');
 	
-	function showImage () {
-		document.title = param.title + ' | featherine';
-
-		var container = document.getElementById('image-container');
-
-		image.addEventListener('error', function () {
-			window.location.replace(topURL);
-		});
-
-		image.addEventListener('load', function () {
-			container.style.width = this.width + 'px';
-			container.style.height = this.height + 'px';
-		});
-
-		image.src = param.url;
-		image.alt = 'image from ' + param.title;
-
-		container.addEventListener('contextmenu', event => event.preventDefault());
-
-		container.appendChild(image);
-	}
+	image.addEventListener('error', function () {
+		window.location.replace(topURL);
+	});
+	image.setAttribute('crossorigin', 'use-credentials');
 	
+	image.alt = 'image from ' + param.title;
+
+	container.addEventListener('contextmenu', event => event.preventDefault());
+	
+	sendServerRequest('get_image.php', {
+		callback: function (response) {
+			try {
+				response = JSON.parse(response);
+			} catch (e) {
+				showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
+				return;
+			}
+			console.log(param.src);
+			let url = concatenateSignedURL(param.src, response);
+			image.src = url;
+			container.appendChild(image);
+		},
+		content: "token="+param.authenticationToken + '&p=' + param.xhrParam
+	});
 });

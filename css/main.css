@@ -104,6 +104,8 @@ select {
 	margin: 0px;
 	padding: 0px;
 	width: 100%;
+	pointer-events: none;
+	-webkit-touch-callout: none;
 }
 .lazyload > .overlay {
 	position: absolute;
