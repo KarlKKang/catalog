@@ -10,6 +10,7 @@ window.addEventListener("load", function(){
 	var sendServerRequest = mainLocal.sendServerRequest;
 	var showMessage = mainLocal.showMessage;
 	var getURLParam = mainLocal.getURLParam;
+	var cdnURL = mainLocal.cdnURL;
 	
 	if (!window.location.href.startsWith('https://featherine.com') && !debug) {
 		window.location.replace(topURL);
@@ -73,7 +74,7 @@ window.addEventListener("load", function(){
             overlay.classList.add('overlay');
             thumbnailNode.appendChild(overlay);
             thumbnailNode.classList.add('lazyload');
-            thumbnailNode.dataset.src = series[i].thumbnail;
+            thumbnailNode.dataset.src = cdnURL + '/thumbnails/' + series[i].thumbnail;
             thumbnailNode.dataset.alt = 'thumbnail: ' + series[i].thumbnail;
             titleNode.innerHTML = series[i].title;
 
