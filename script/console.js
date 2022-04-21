@@ -48,6 +48,12 @@ window.addEventListener("load", function(){
 				document.getElementById('rebuild-index').addEventListener('click', function () {
 					rebuildIndex();
 				});
+				document.getElementById('rebuild-search-index').addEventListener('click', function () {
+					rebuildSearchIndex();
+				});
+				document.getElementById('rebuild-all').addEventListener('click', function () {
+					rebuildAll();
+				});
 				document.getElementById('verify').addEventListener('click', function () {
 					verify();
 				});
@@ -570,6 +576,50 @@ function rebuildIndex () {
 	
 	var param = {
 		'command': 'rebuild-index'
+	};
+	param = JSON.stringify (param);
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			alert(response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
+}
+	
+function rebuildSearchIndex () {
+	var confirm;
+	do {
+		confirm = prompt('Type "rebuild" to confirm rebuilding the search index.');
+		if (confirm === null) {
+			return;
+		}
+	} while (confirm != "rebuild");
+	
+	var param = {
+		'command': 'rebuild-search-index'
+	};
+	param = JSON.stringify (param);
+	
+	sendServerRequest('console.php', {
+		callback: function (response) {
+			alert(response);
+		},
+		content: "p="+encodeURIComponent(param)
+	});
+}
+	
+function rebuildAll () {
+	var confirm;
+	do {
+		confirm = prompt('Type "rebuild" to confirm rebuilding all index.');
+		if (confirm === null) {
+			return;
+		}
+	} while (confirm != "rebuild");
+	
+	var param = {
+		'command': 'rebuild-all'
 	};
 	param = JSON.stringify (param);
 	

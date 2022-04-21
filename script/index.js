@@ -28,6 +28,8 @@ window.addEventListener("load", function(){
 	
 	var keywords = '';
 	updateKeywords ();
+	
+	var pivot = '';
 
     sendServerRequest('get_series.php', {
         callback: function (response) {
@@ -57,11 +59,7 @@ window.addEventListener("load", function(){
 
     function showSeries (series) {
         offset ++;
-        for (var i=0; i<series.length; i++) {
-            if (series[i] == 'EOF') {
-                offset='EOF';
-                break;
-            }
+        for (var i=0; i<series.length-1; i++) {
 
             let seriesNode = document.createElement('div');
             let thumbnailNode = document.createElement('div');
@@ -84,6 +82,14 @@ window.addEventListener("load", function(){
 
             document.getElementById('container').appendChild(seriesNode);
         }
+		
+		offset = series[series.length-1];
+		
+		if (offset != 'EOF' && keywords != '') {
+			pivot = 'pivot=' + series[series.length-2].id + '&';
+		} else {
+			pivot = '';
+		}
 
         lazyloadInitialize ();
 
@@ -174,7 +180,7 @@ window.addEventListener("load", function(){
                     }
                     showSeries (series);
                 },
-                content: keywords + "offset=" + offset
+                content: keywords + pivot + "offset=" + offset
             });
         }
     }
