@@ -341,7 +341,7 @@ window.addEventListener("load", function(){
             mediaInstances.push(videojs_mod (videoJS, {}));
             mediaHolder.appendChild(videoJS);
 			
-			let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + epInfo.formats[0] + '].m3u8'), epInfo.cdn_credentials);
+			let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + epInfo.formats[formatIndex] + '].m3u8'), epInfo.cdn_credentials);
 
             addVideoNode (url, {/*, currentTime: timestampParam*/});
             if (epInfo.chapters != '') {

@@ -480,9 +480,9 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
             media.pause();
         }
         for (var i = media.buffered.length - 1; i >= 0; i--) {
-            if (media.buffered.start(i) <= media.currentTime+0.001) {
+            if (media.buffered.start(i) <= media.currentTime+0.05) {
 				onScreenConsoleOutput ('Checking buffer range :' + media.buffered.start(i) + '-' + media.buffered.end(i) + '. Current time: ' + media.currentTime);
-                if (media.buffered.end(i) >= Math.min(media.currentTime+15, media.duration)) {
+                if (media.buffered.end(i) >= Math.min(media.currentTime+15, media.duration-0.1)) {
                     media.removeEventListener ('progress', checkBuffer);
                     media.removeEventListener ('play', checkBuffer);
                     media.removeEventListener ('timeupdate', checkBuffer);
@@ -516,8 +516,8 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
 				onScreenConsoleOutput ('Buffer empty, start buffering.');
             } else {
                 for (var i = media.buffered.length - 1; i >= 0; i--) {
-                    if (media.buffered.start(i) <= media.currentTime+0.001) {
-                        if (media.buffered.end(i) < Math.min(media.currentTime+14.9, media.duration)) {
+                    if (media.buffered.start(i) <= media.currentTime+0.05) {
+                        if (media.buffered.end(i) < Math.min(media.currentTime+14.9, media.duration-0.2)) {
                             addCheckBuffer ();
 							onScreenConsoleOutput ('Buffer under threshold, start buffering.');
                         } else {
