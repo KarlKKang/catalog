@@ -25,7 +25,7 @@
 	margin-left: -.81666em;
 	line-height: 1.6em;
 }
-.video-js .vjs-big-play-button:focus, .video-js:hover .vjs-big-play-button {
+.video-js .vjs-big-play-button:focus, .video-js:hover .vjs-big-play-button { 
 	background-color: var(--foreground-color);
 }
 .vjs-loading-spinner {
@@ -40,6 +40,23 @@
 	border-top-color: rgba(255,255,255,1);
 	-webkit-animation: vjs-spinner-spin 1.1s cubic-bezier(.6,.2,0,.8) infinite;
 	animation: vjs-spinner-spin 1.1s cubic-bezier(.6,.2,0,.8) infinite;
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+	.vjs-loading-spinner {
+		border: 6px solid rgba(45,48,57,.6);
+	}
+	
+	.vjs-seeking .vjs-loading-spinner:before,
+	.vjs-seeking .vjs-loading-spinner:after,
+	.vjs-waiting .vjs-loading-spinner:before,
+	.vjs-waiting .vjs-loading-spinner:after {
+		border-top-color: var(--text-color);
+	}
+	
+	.vjs-mouse-display .vjs-time-tooltip {
+		color: var(--text-color);
+	}
 }
 
 .vjs-seeking .vjs-loading-spinner:after,
@@ -66,18 +83,22 @@
 	background-color: var(--foreground-color);
 }
 .video-js .vjs-slider, .video-js.vjs-audio .vjs-slider{
-	background-color: rgba(0,0,0,0.10);
+	background-color: rgba(0,0,0,0.15);
 }
 .video-js .vjs-load-progress, 
 .video-js .vjs-load-progress div, 
 .video-js.vjs-audio .vjs-load-progress, 
 .video-js.vjs-audio .vjs-load-progress div{
  	background: var(--alt-text-color);
-	opacity: 0.4;
+	opacity: 0.5;
 }
-.video-js .vjs-play-progress,.video-js .vjs-volume-level, .video-js.vjs-audio .vjs-play-progress,.video-js.vjs-audio .vjs-volume-level{
+.video-js .vjs-play-progress,
+.video-js .vjs-volume-level, 
+.video-js.vjs-audio .vjs-play-progress,
+.video-js.vjs-audio .vjs-volume-level{
 	background-color: var(--text-color);
 }
+
 /* Audio: Remove big play button (leave only the button in controls). */
 .video-js.vjs-audio .vjs-big-play-button, .video-js.vjs-audio .vjs-loading-spinner {
 	display: none;
@@ -96,9 +117,4 @@
 /* Hide audio buffer progress. */
 .video-js.vjs-audio .vjs-load-progress {
 	display: none;
-}
-
-.dark-mode .video-js .vjs-slider:focus {
-	text-shadow: none;
-	box-shadow: none;
 }

@@ -9,7 +9,7 @@
 	left: 50%;
 	transform: translate(-50%, 0%);
 	background-color: var(--foreground-color);
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	box-sizing: border-box;
 	text-align: center;
@@ -30,7 +30,7 @@
 button {
 	padding: 0px;
 	height: 40px;
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	background: var(--foreground-color);
 	border: none;
@@ -43,5 +43,5 @@ button {
 }
 
 #container:hover, button:hover {
-	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+	box-shadow: var(--shadow-hover);
 }

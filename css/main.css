@@ -5,17 +5,62 @@
 	--foreground-color: rgba(255,255,255,1);
 	--background-color: rgba(252,252,252,1);
 	--background-color-transparent: rgba(251,251,251,0);
+	--nav-menu-background-color: rgba(255, 255, 255, 0.55);
+	
 	--text-color: rgba(0,0,0,1);
 	--text-color-transparent: rgba(0,0,0,0);
 	--alt-text-color: rgba(173,173,181,1);
 	--link-text-color: rgba(16,105,201,1);
-	--shadow-color: rgba(32,52,76,.15);
-	--shadow-color-hover: rgba(32,52,76,.25);
+	
 	--horizontal-line-background-color: rgba(220,222,226,1);
 	--horizontal-line-foreground-color: rgba(225,227,231,1);
+	
 	--red-color: rgba(255,0,0,1);
 	--green-color: rgba(0,255,0,1);
 	--orange-color: rgba(255,170,16,1);
+	
+	--shadow-color: rgba(32,52,76,.15);
+	--shadow-color-hover: rgba(32,52,76,.25);
+	--shadow-size: 0 0 17px 0;
+	--shadow-size-hover: 0 2px 30px 2px;
+	--shadow: var(--shadow-size) var(--shadow-color);
+	--shadow-hover: var(--shadow-size) var(--shadow-color);
+	
+	--checkbox-shadow-size: 0 0 10px 1.3px;
+	--checkbox-shadow-size-hover: 0 2px 17px 4px;
+	--checkbox-shadow: var(--checkbox-shadow-size) var(--shadow-color);
+	--checkbox-shadow-hover: var(--checkbox-shadow-size) var(--shadow-color);
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+	:root {
+		--foreground-color: rgba(43,44,52,1);
+		--background-color: rgba(40,41,49,1);
+		--background-color-transparent: rgba(40,41,49,0);
+		--nav-menu-background-color: rgba(0, 0, 0, 0.55);
+		
+		--text-color: rgba(210,213,220,1);
+		--text-color-transparent: rgba(210,213,220,0);
+		--alt-text-color: rgba(95,97,106,1);
+		--link-text-color: rgba(28,98,221,1);
+		
+		--horizontal-line-background-color: rgba(48,52,62,1);
+		--horizontal-line-foreground-color: rgba(51,55,65,1);
+		
+		--red-color: rgba(205,3,70,1);
+		--green-color: rgba(15,214,72,1);
+		--orange-color: rgba(234,129,4,1);
+		
+		--shadow-color: rgba(15,16,24,.55);
+		--shadow-color-hover: rgba(15,16,24,.60);
+	}
+}
+
+@media only screen and (hover: hover) and (pointer: fine) {
+    :root {
+        --shadow-hover: var(--shadow-size-hover) var(--shadow-color-hover);
+		--checkbox-shadow-hover: var(--checkbox-shadow-size-hover) var(--shadow-color-hover);
+    }
 }
 
 *{
@@ -29,26 +74,9 @@
 	font-family: 'Noto Sans JP','Noto Sans TC','Noto Sans SC','游ゴシック体','游ゴシック','Yu Gothic','メイリオ',Meiryo,'PingFang TC','PingFang SC','Helvetica Neue','Helvetica','Arial',sans-serif;
 }
 
-.document-loading, .document-loading * {
-	transition: all 0s ease 0s !important;
-}
-
-.appearance-switching, .appearance-switching * {
-	transition: all .4s ease-out !important;
-}
-
 html {
 	scroll-behavior: smooth;
-}
-@media (prefers-color-scheme: dark) {
-    html {
-        background: var(--background-color-dark);
-    }
-}
-@media (prefers-color-scheme: light) {
-    html {
-        background: var(--background-color);
-    }
+	background: var(--background-color);
 }
 
 body {
@@ -79,6 +107,12 @@ select {
 	background: var(--foreground-color);
 	border-bottom: 1px solid var(--horizontal-line-background-color);
 	z-index: 98;
+}
+@media only screen and (prefers-color-scheme: dark) {
+	#header {
+		border-bottom: 0px;
+		box-shadow: var(--shadow);
+	}
 }
 
 #main {
@@ -242,7 +276,7 @@ select {
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
 	#nav-menu {
-		background-color: rgba(255, 255, 255, 0.55);
+		background-color: var(--nav-menu-background-color);
 		-webkit-backdrop-filter: blur(10px);
 		backdrop-filter: blur(10px);
 	}

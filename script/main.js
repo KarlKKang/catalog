@@ -381,7 +381,8 @@ main.onScreenConsoleOutput = onScreenConsoleOutput;
 
 //////////////////////////////////////// Dependencies: none
 var appearanceSwitching = function () {
-	var bodyElem = document.body;
+	return; // Deprecated
+	/*var bodyElem = document.body;
 	var htmlElem = document.documentElement;
 	if (window.matchMedia) {
 		if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -401,7 +402,7 @@ var appearanceSwitching = function () {
 			}, 400);
 		});
 	}
-	bodyElem.classList.remove('document-loading');
+	bodyElem.classList.remove('document-loading');*/
 };
 main.appearanceSwitching = appearanceSwitching;
 ////////////////////////////////////////

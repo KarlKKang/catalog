@@ -15,7 +15,7 @@
 	width: min(256px, 50% - 2 * min(2%, 12px));
 	height: auto;
 	background-color: var(--foreground-color);
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	margin: min(2%, 12px);
 	cursor: pointer;
@@ -23,7 +23,7 @@
 }
 
 #container > div:hover {
-	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+	box-shadow: var(--shadow-hover);
 }
 
 #container > div > * {
@@ -34,8 +34,26 @@
 	position: relative;
 	padding-bottom: 141.4213562%;
 	margin: 0px;
-	transition: filter .4s ease-out;
-	-webkit-transition: -webkit-filter .4s ease-out;
+}
+
+#container > div > div.complete {
+	background-color: rgb(255,255,255);
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+	#container > div > div > img {
+		filter: brightness(0.95) contrast(0.96);
+		-webkit-filter: brightness(0.95) contrast(0.96);
+	}
+}
+
+@media only screen and (hover: hover) and (pointer: fine) {
+    #container > div > div > img {
+		transition: opacity .4s ease-out;
+	}
+	#container > div:hover > div > img {
+		opacity: 0.9;
+	}
 }
 
 #container > div > p {
@@ -59,14 +77,14 @@
     display: flex;
     align-items: stretch;
     height: 50px;
-    box-shadow: 0 0 17px 0 var(--shadow-color);
+    box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
     margin: 5vh auto 0px auto;
 	width: 75%;
 	max-width: 1000px;
 }
 #search-bar:hover {
-	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+	box-shadow: var(--shadow-hover);
 }
 #search-bar .icon {
 	margin: 0px;

@@ -81,7 +81,7 @@
 	position: relative;
 	height: auto;
 	background-color: var(--foreground-color);
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	padding: 0.6em 1em;
 	margin: min(2%, 12px);
@@ -89,7 +89,7 @@
 }
 
 #ep-button-wrapper > div:hover {
-	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+	box-shadow: var(--shadow-hover);
 	z-index: 0;
 }
 
@@ -174,11 +174,11 @@ select {
     height: 34px;
 	line-height: 22px;
     background-color: var(--foreground-color);
-    box-shadow: 0 0 17px 0 var(--shadow-color);
+    box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 }
 select:hover{
-    box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+    box-shadow: var(--shadow-hover);
 }
 
 #media-holder {
@@ -200,12 +200,12 @@ select:hover{
 }
 
 #media-holder > .lazyload, #media-holder > .video-js {
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 }
 
 #media-holder > .lazyload:hover , #media-holder > .video-js:hover {
-	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+	box-shadow: var(--shadow-hover);
 }
 
 #media-holder > video-js.vjs-fullscreen {
@@ -272,7 +272,7 @@ p.artist {
 #warning, #message {
 	padding: 2em;
 	background-color: var(--foreground-color);
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	box-sizing: border-box;
 }
@@ -299,7 +299,7 @@ p.artist {
 .button {
 	padding: 0px;
 	height: 40px;
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	background: var(--foreground-color);
 	border: none;
@@ -315,7 +315,7 @@ p.artist {
 }
 
 #warning:hover, #message:hover, .button:hover {
-	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+	box-shadow: var(--shadow-hover);
 }
 
 #warning-button-group {
@@ -364,13 +364,13 @@ p.artist {
 	text-align: left;
 	border: none;
 	outline: none;
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: var(--shadow);
 	transition: box-shadow .4s ease-out;
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .accordion:hover {
-	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+	box-shadow: var(--shadow-hover);
 }
 
 /* Style the accordion panel. Note: hidden by default */
@@ -381,7 +381,7 @@ p.artist {
 	max-height: 0;
 	overflow: hidden;
 	transition: max-height 0.2s ease-out, padding 0.2s ease-out, box-shadow .4s ease-out;
-	box-shadow: 0 0 17px 0 var(--shadow-color);
+	box-shadow: var(--shadow);
 }
 
 .accordion:after {
@@ -397,7 +397,7 @@ p.artist {
 }
 
 .panel:hover {
-	box-shadow: 0 2px 30px 2px var(--shadow-color-hover);
+	box-shadow: var(--shadow-hover);
 }
 
 /*Chapters*/

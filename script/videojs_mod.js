@@ -243,21 +243,14 @@ var videojs_mod = (controls_ext, config_ext) => (function (controls, config) {
         let currentTime = media.duration*percentage;
 		let currentTimestamp = secToTimestamp(currentTime);
 		
-		let appearanceSurfix = '';
-		if (window.matchMedia) {
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				appearanceSurfix = '-dark';
-			}
-		}
-		
         if (progressMouseDisplay) {
             progressMouseDisplay.style.left = leftPadding + 'px';
             progressTooltip.innerHTML = currentTimestamp;
             progressTooltip.style.right = -progressTooltip.offsetWidth/2 + 'px';
 			if (currentTime > media.currentTime) {
-				progressMouseDisplay.style.backgroundColor = 'var(--text-color'+appearanceSurfix+')';
+				progressMouseDisplay.style.backgroundColor = 'var(--text-color)';
 			} else {
-				progressMouseDisplay.style.backgroundColor = 'var(--foreground-color'+appearanceSurfix+')';
+				progressMouseDisplay.style.backgroundColor = 'var(--foreground-color)';
 			}
         }
         if (that._dragging) {
