@@ -545,6 +545,8 @@ window.addEventListener("load", function(){
 
 					oldAudioNode.parentNode.insertBefore(audioNode, oldAudioNode);
 					videoJSAudio.dispose();
+				} else {
+					document.getElementById('track' + index).addEventListener('contextmenu', event => event.preventDefault());
 				}
 
                 if (USE_MSE) {

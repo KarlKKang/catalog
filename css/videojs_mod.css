@@ -99,6 +99,11 @@
 	background-color: var(--text-color);
 }
 
+.video-js .vjs-slider:focus {
+	text-shadow: none;
+	box-shadow: none;
+}
+
 /* Audio: Remove big play button (leave only the button in controls). */
 .video-js.vjs-audio .vjs-big-play-button, .video-js.vjs-audio .vjs-loading-spinner {
 	display: none;
