@@ -100,9 +100,9 @@ window.addEventListener("load", function(){
     });
 
 	function register () {
-		var warningElem = document.getElementById('warning');
+		disableAllInputs(true);
 		
-		submitButton.disabled = true;
+		var warningElem = document.getElementById('warning');
 
 		var username = usernameInput.value;
 		var password = passwordInput.value;
@@ -111,19 +111,19 @@ window.addEventListener("load", function(){
 		if (username == '') {
 			warningElem.innerHTML = 'ユーザー名を入力してください。';
 			warningElem.classList.remove('hidden');
-			submitButton.disabled = false;
+			disableAllInputs(false);
 			return;
 		}
 
 		if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
 			warningElem.innerHTML = 'パスワードが要件を満たしていません。';
 			warningElem.classList.remove('hidden');
-			submitButton.disabled = false;
+			disableAllInputs(false);
 			return;
 		} else if (password!=passwordConfirm) {
 			warningElem.innerHTML = '新しいパスワードと新しいパスワード(確認)が一致しません。';
 			warningElem.classList.remove('hidden');
-			submitButton.disabled = false;
+			disableAllInputs(false);
 			return;
 		} else {
 			var hash = forge.md.sha512.sha256.create();
@@ -143,7 +143,7 @@ window.addEventListener("load", function(){
                 } else if (response == 'USERNAME DUPLICATED') {
                     warningElem.innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
                     warningElem.classList.remove('hidden');
-                    submitButton.disabled = false;
+                    disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage ({
 						title: '完了しました',
@@ -158,5 +158,12 @@ window.addEventListener("load", function(){
 			content: "p="+param+"&signature="+signature+"&user="+encodeURIComponent(JSON.stringify(user)),
 			withCredentials: false
 		});
+	}
+	
+	function disableAllInputs(disabled) {
+		submitButton.disabled = disabled;
+		usernameInput.disabled = disabled;
+		passwordInput.disabled = disabled;
+		passwordConfirmInput.disabled = disabled;
 	}
 });

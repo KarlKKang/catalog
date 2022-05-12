@@ -21,7 +21,7 @@ window.addEventListener("load", function(){
 	
 	var newPasswordInput = document.getElementById('new-password');
 	var newPasswordConfirmInput = document.getElementById('new-password-confirm');
-	var sumbitButton = document.getElementById('submit-button');
+	var submitButton = document.getElementById('submit-button');
 	
 	
 	var user = getURLParam ('user');
@@ -64,7 +64,7 @@ window.addEventListener("load", function(){
 						submitRequest ();
 					}
 				});
-				sumbitButton.addEventListener('click', function () {
+				submitButton.addEventListener('click', function () {
 					submitRequest ();
 				});
 
@@ -85,7 +85,7 @@ window.addEventListener("load", function(){
 	function submitRequest () {
 		var warningElem = document.getElementById('warning');
 		
-		sumbitButton.disabled=true;
+		disableAllInputs(true);
 
 		var newPassword = newPasswordInput.value;
 		var newPasswordConfirm = newPasswordConfirmInput.value;
@@ -93,12 +93,12 @@ window.addEventListener("load", function(){
 		if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
 			warningElem.innerHTML = 'パスワードが要件を満たしていません。';
 			warningElem.classList.remove('hidden');
-			sumbitButton.disabled=false;
+			disableAllInputs(false);
 			return;
 		} else if (newPassword!=newPasswordConfirm) {
 			warningElem.innerHTML = '確認再入力が一致しません。';
 			warningElem.classList.remove('hidden');
-			sumbitButton.disabled=false;
+			disableAllInputs(false);
 			return;
 		} else {
 			var hash = forge.md.sha512.sha256.create();
@@ -124,5 +124,11 @@ window.addEventListener("load", function(){
 			content: "user="+user+"&signature="+signature+"&expires="+expires+"&new="+newPassword,
 			withCredentials: false
 		});
+	}
+	
+	function disableAllInputs(disabled) {
+		submitButton.disabled = disabled;
+		newPasswordInput.disabled = disabled;
+		newPasswordConfirmInput.disabled = disabled;
 	}
 });

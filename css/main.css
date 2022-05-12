@@ -87,11 +87,18 @@ body {
 
 button {
 	color: var(--text-color);
+	cursor: pointer;
 }
 
 button:disabled {
 	color: var(--alt-text-color);
-	pointer-events: none;
+	/*pointer-events: none;*/
+	cursor: wait;
+}
+input:disabled {
+	color: var(--alt-text-color);
+	/*pointer-events: none;*/
+	cursor: wait;
 }
 
 select {
@@ -274,17 +281,15 @@ select {
 	transition: opacity .3s ease-out;
 }
 
+#nav-menu {
+	background-color: var(--foreground-color);
+}
+
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
 	#nav-menu {
 		background-color: var(--nav-menu-background-color);
 		-webkit-backdrop-filter: blur(10px);
 		backdrop-filter: blur(10px);
-	}
-}
-
-@supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-	#nav-menu {
-		background-color: var(--foreground-color);
 	}
 }
 

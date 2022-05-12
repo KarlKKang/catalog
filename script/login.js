@@ -11,6 +11,7 @@ window.addEventListener("load", function(){
 	var redirect = mainLocal.redirect;
 	var passwordStyling = mainLocal.passwordStyling;
 	var authenticate = mainLocal.authenticate;
+	var disableCheckbox = mainLocal.disableCheckbox;
 	
 	if (!window.location.href.startsWith(loginURL) && !debug) {
 		window.location.replace(loginURL);
@@ -22,6 +23,7 @@ window.addEventListener("load", function(){
 	var submitButton = document.getElementById('submit-button');
 	var passwordInput = document.getElementById('current-password');
 	var usernameInput = document.getElementById('username');
+	var rememberMeInput = document.getElementById('remember-me-checkbox');
 	
 	authenticate({
 		successful:
@@ -56,7 +58,7 @@ window.addEventListener("load", function(){
 	});
 
 function login () {
-	submitButton.disabled = true;
+	disableAllInputs(true);
 	
 	var warningElem = document.getElementById('warning');
 
@@ -66,14 +68,14 @@ function login () {
 	if (email=='' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
 		warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
 		warningElem.classList.remove('hidden');
-		submitButton.disabled = false;
+		disableAllInputs(false);
 		return;
 	}
 
 	if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
 		warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
 		warningElem.classList.remove('hidden');
-		submitButton.disabled = false;
+		disableAllInputs(false);
 		return;
 	} else {
 		var hash = forge.md.sha512.sha256.create();
@@ -84,7 +86,7 @@ function login () {
 	var param = {
 		email: email,
 		password: password,
-		remember_me: document.getElementById('remember-me-checkbox').checked
+		remember_me: rememberMeInput.checked
 	};
 
 	param = JSON.stringify (param);
@@ -94,7 +96,7 @@ function login () {
             if (response.includes('FAILED')) {
                 warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
                 warningElem.classList.remove('hidden');
-                submitButton.disabled = false;
+                disableAllInputs(false);
             } else if (response == 'NOT RECOMMENDED') {
                 setTimeout (function () {
                     showMessage ({
@@ -114,5 +116,12 @@ function login () {
 		},
 		content: "p="+encodeURIComponent(param)
 	});
+}
+	
+function disableAllInputs (disabled) {
+	submitButton.disabled = disabled;
+	passwordInput.disabled = disabled;
+	usernameInput.disabled = disabled;
+	disableCheckbox(rememberMeInput, disabled);
 }
 });

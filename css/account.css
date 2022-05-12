@@ -51,7 +51,6 @@ hr {
 	width: 150px;
 	text-align: center;
 	position: relative;
-	cursor: pointer;
 	font-size: medium;
 }
 
@@ -72,14 +71,6 @@ hr {
 
 .input-field:hover, .button:hover {
 	box-shadow: var(--shadow-hover);
-}
-
-button:disabled {
-	cursor: default;
-}
-
-button:disabled:hover {
-	box-shadow: var(--shadow);
 }
 
 .note > ul {

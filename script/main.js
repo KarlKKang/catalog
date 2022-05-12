@@ -469,5 +469,17 @@ var encodeCFURIComponent = function (uri) {
 };
 main.encodeCFURIComponent = encodeCFURIComponent;
 ////////////////////////////////////////
+	
+//////////////////////////////////////// Dependencies: none
+var disableCheckbox = function (checkbox, disabled) {
+	checkbox.disabled = disabled;
+	if (disabled) {
+		checkbox.parentElement.classList.add('disabled');
+	} else {
+		checkbox.parentElement.classList.remove('disabled');
+	}
+};
+main.disableCheckbox = disableCheckbox;
+////////////////////////////////////////
 
 })();

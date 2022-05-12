@@ -63,15 +63,15 @@ window.addEventListener("load", function(){
 
 
 	function submitRequest () {
-		var warningElem = document.getElementById('warning');
+		disableAllInputs(true);
 		
-		submitButton.disabled = true;
+		var warningElem = document.getElementById('warning');
 		var newEmail = newEmailInput.value;
 
 		if (newEmail == '' || !/^[^\s@]+@[^\s@]+$/.test(newEmail)) {
 			warningElem.innerHTML = '有効なメールアドレスを入力してください。';
 			warningElem.classList.remove('hidden');
-			submitButton.disabled = false;
+			disableAllInputs(false);
 			return;
 		}
 		
@@ -82,11 +82,11 @@ window.addEventListener("load", function(){
                 } else if (response == 'DUPLICATED') {
                     warningElem.innerHTML = 'このメールアドレスは登録済み、または招待されています。';
                     warningElem.classList.remove('hidden');
-                    submitButton.disabled = false;
+                    disableAllInputs(false);
                 } else if (response == 'INVALID FORMAT') {
                     warningElem.innerHTML = '有効なメールアドレスを入力してください。';
                     warningElem.classList.remove('hidden');
-                    submitButton.disabled = false;
+                    disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage ({
 						title: '送信されました',
@@ -101,5 +101,10 @@ window.addEventListener("load", function(){
 			content: "p="+param+"&signature="+signature+"&new="+newEmail,
 			withCredentials: false
 		});
+	}
+	
+	function disableAllInputs(disabled) {
+		submitButton.disabled = disabled;
+		newEmailInput.disabled = disabled
 	}
 });

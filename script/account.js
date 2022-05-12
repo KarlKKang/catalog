@@ -18,6 +18,11 @@ window.addEventListener("load", function(){
 	
 	var currentUsername;
 	
+	var newUsernameInput;
+	var newPasswordInput;
+	var newPasswordComfirmInput;
+	var inviteReceiverEmailInput;
+	
 	var emailChangeButton;
 	var usernameChangeButton;
 	var passwordChangeButton;
@@ -89,6 +94,11 @@ function initialize (){
 				'</ul>'+
 			'</div>';
 		
+		newUsernameInput = document.getElementById('new-username');
+		newPasswordInput = document.getElementById('new-password');
+		newPasswordComfirmInput = document.getElementById('new-password-confirm');
+		inviteReceiverEmailInput = document.getElementById('receiver-email');
+		
 		emailChangeButton = document.getElementById('email-change-button');
 		usernameChangeButton = document.getElementById('username-change-button');
 		passwordChangeButton = document.getElementById('password-change-button');
@@ -107,10 +117,10 @@ function initialize (){
 			invite ();
 		});
 
-		document.getElementById('new-password').addEventListener('input', function () {
+		newPasswordInput.addEventListener('input', function () {
 			passwordStyling(this);
 		});
-		document.getElementById('new-password-confirm').addEventListener('input', function () {
+		newPasswordComfirmInput.addEventListener('input', function () {
 			passwordStyling(this);
 		});
 		
@@ -120,7 +130,7 @@ function initialize (){
 			document.getElementById('invite-input').classList.add('hidden');
 			inviteButton.classList.add('hidden');
 		}
-		document.getElementById('new-username').value = userInfo.username;
+		newUsernameInput.value = userInfo.username;
 		currentUsername = userInfo.username;
 		
 		navListeners();
@@ -129,14 +139,14 @@ function initialize (){
 }
 	
 function invite () {
-	inviteButton.disabled = true;
-	var receiver = document.getElementById('receiver-email').value;
+	disableAllInputs(true);
+	var receiver = inviteReceiverEmailInput.value;
 	var warningElem = document.getElementById('invite-warning');
 	changeColor (warningElem, 'red');
 	if (receiver == '' || !/^[^\s@]+@[^\s@]+$/.test(receiver)) {
 		warningElem.innerHTML="有効なメールアドレスを入力してください。";
 		warningElem.classList.remove('hidden');
-		inviteButton.disabled = false;
+		disableAllInputs(false);
 		return;
 	}
 	
@@ -171,30 +181,30 @@ function invite () {
 				showMessage ({url: topURL});
 				return;
 			}
-			inviteButton.disabled = false;
+			disableAllInputs(false);
 		},
 		content: "receiver="+encodeURIComponent(receiver)
 	});
 }
 
 function changePassword () {
-	passwordChangeButton.disabled=true;
+	disableAllInputs(true);
 	
 	var warningElem = document.getElementById('password-warning');
-	var newPassword = document.getElementById('new-password').value;
-	var newPasswordConfirm = document.getElementById('new-password-confirm').value;
+	var newPassword = newPasswordInput.value;
+	var newPasswordConfirm = newPasswordComfirmInput.value;
 	
 	changeColor (warningElem, 'red');
 	
 	if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
 		warningElem.innerHTML="パスワードが要件を満たしていません。";
 		warningElem.classList.remove('hidden');
-		passwordChangeButton.disabled=false;
+		disableAllInputs(false);
 		return;
 	} else if (newPassword!=newPasswordConfirm) {
 		warningElem.innerHTML = '確認再入力が一致しません。';
 		warningElem.classList.remove('hidden');
-		passwordChangeButton.disabled=false;
+		disableAllInputs(false);
 		return;
 	} else {
 		var hash = forge.md.sha512.sha256.create();
@@ -208,7 +218,7 @@ function changePassword () {
 				warningElem.innerHTML = '完了しました。';
 				warningElem.classList.remove('hidden');
 				changeColor (warningElem, 'green');
-				passwordChangeButton.disabled=false;
+				disableAllInputs(false);
 			} else {
 				showMessage ({url: topURL});
 			}
@@ -218,7 +228,7 @@ function changePassword () {
 }
 
 function changeEmail () {
-	emailChangeButton.disabled = true;
+	disableAllInputs(true);
 	var warningElem = document.getElementById('email-warning');
 	changeColor (warningElem, 'red');
 	
@@ -235,26 +245,26 @@ function changeEmail () {
 				showMessage ({url: topURL});
 				return;
 			}
-			emailChangeButton.disabled = false;
+			disableAllInputs(false);
 		}
 	});
 }
 
 function changeUsername () {
-	usernameChangeButton.disabled=true;
+	disableAllInputs(true);
 	var warningElem = document.getElementById('username-warning');
-	var newUsername = document.getElementById('new-username').value;
+	var newUsername = newUsernameInput.value;
 	changeColor (warningElem, 'red');
 	
 	if (newUsername=='') {
 		warningElem.innerHTML="新しいユーザー名を入力してください。";
 		warningElem.classList.remove('hidden');
-		usernameChangeButton.disabled=false;
+		disableAllInputs(false);
 		return;
 	} else if (newUsername == currentUsername) {
 		warningElem.innerHTML = '新しいユーザー名は元のユーザー名と同じです。';
 		warningElem.classList.remove('hidden');
-		usernameChangeButton.disabled=false;
+		disableAllInputs(false);
 		return;
 	} 
 	
@@ -264,6 +274,7 @@ function changeUsername () {
 				warningElem.innerHTML = '完了しました。';
 				warningElem.classList.remove('hidden');
 				changeColor (warningElem, 'green');
+				currentUsername = newUsername
 			} else if (response == 'DUPLICATED') {
 				warningElem.innerHTML = 'このユーザー名はすでに使用されています。別のユーザー名を入力してください。';
 				warningElem.classList.remove('hidden');
@@ -271,9 +282,21 @@ function changeUsername () {
 				showMessage ({url: topURL});
 				return;
 			}
-			usernameChangeButton.disabled=false;
+			disableAllInputs(false);
 		},
 		content: "new="+newUsername
 	});
+}
+	
+function disableAllInputs(disabled) {
+	newUsernameInput.disabled = disabled;
+	newPasswordInput.disabled = disabled;
+	newPasswordComfirmInput.disabled = disabled;
+	inviteReceiverEmailInput.disabled = disabled;
+		
+	emailChangeButton.disabled = disabled;
+	usernameChangeButton.disabled = disabled;
+	passwordChangeButton.disabled = disabled;
+	inviteButton.disabled = disabled;
 }
 });

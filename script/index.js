@@ -19,17 +19,20 @@ window.addEventListener("load", function(){
 	
 	appearanceSwitching();
 	
-    var offset=0;
-
-    if (getURLParam ('series') != null) {
+	if (getURLParam ('series') != null) {
         window.location.replace(redirect(debug?'bangumi.html':(topURL+'/bangumi/')));
         return;
     }
 	
-	var keywords = '';
-	updateKeywords ();
+	var searchBar = document.getElementById('search-bar');
+	var searchBarInput = searchBar.getElementsByTagName('input')[0];
 	
+    var offset=0;
+	
+	var keywords = '';
 	var pivot = '';
+	
+	updateKeywords ();
 
     sendServerRequest('get_series.php', {
         callback: function (response) {
@@ -48,10 +51,12 @@ window.addEventListener("load", function(){
         content: keywords+"offset=0"
     });
 
-    document.getElementById('search-bar').getElementsByClassName('icon')[0].addEventListener('click', function () {
-        search ();
+    searchBar.getElementsByClassName('icon')[0].addEventListener('click', function () {
+		if (!searchBarInput.disabled) {
+			search ();
+		}
     });
-    document.getElementById('search-bar').getElementsByTagName('input')[0].addEventListener('keyup', function () {
+    searchBarInput.addEventListener('keyup', function () {
         if (event.key === "Enter") {
             search ();
         }
@@ -108,15 +113,17 @@ window.addEventListener("load", function(){
     }
 
     function search () {
+		disableSearchBarInput(true);
+		
         document.getElementById('position-detector').classList.add('loading');
 
-        var searchBarInput = document.getElementById('search-bar').getElementsByTagName('input')[0].value.substring(0, 50);
+        var searchBarInputValue = searchBarInput.value.substring(0, 50);
 		
-		if (searchBarInput == '') {
+		if (searchBarInputValue == '') {
             keywords = "";
 			history.pushState(null, '', topURL);
         } else {
-            keywords = "keywords="+encodeURIComponent(searchBarInput);
+            keywords = "keywords="+encodeURIComponent(searchBarInputValue);
 			history.pushState(null, '', topURL + '?' + keywords);
 			keywords += '&';
         }
@@ -139,6 +146,7 @@ window.addEventListener("load", function(){
 					offset = 0;
 					showSeries (series);
 					document.getElementById('container').classList.remove('transparent');
+					disableSearchBarInput(false);
 				}, 400);
             },
             content: keywords+"offset=0"
@@ -154,10 +162,10 @@ window.addEventListener("load", function(){
 		keywords = getURLParam ('keywords');
 		if (keywords == null) {
 			keywords = "";
-			document.getElementById('search-bar').getElementsByTagName('input')[0].value = '';
+			searchBarInput.value = '';
 		} else {
 			keywords = decodeURIComponent(keywords).substring(0, 50);
-			document.getElementById('search-bar').getElementsByTagName('input')[0].value = keywords;
+			searchBarInput.value = keywords;
 			keywords = "keywords=" + encodeURIComponent(keywords) + "&";
 		}
 	}
@@ -184,4 +192,13 @@ window.addEventListener("load", function(){
             });
         }
     }
+	
+	function disableSearchBarInput (disabled) {
+		searchBarInput.disabled = disabled;
+		if (disabled) {
+			searchBar.classList.add('disabled');
+		} else {
+			searchBar.classList.remove('disabled');
+		}
+	}
 });

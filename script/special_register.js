@@ -89,9 +89,9 @@ function initialize () {
 }
 	
 function register () {
-	var warningElem = document.getElementById('warning');
+	disableAllInputs(true);
 	
-	submitButton.disabled = true;
+	var warningElem = document.getElementById('warning');
 	
 	var email = emailInput.value;
 	var username = usernameInput.value;
@@ -101,26 +101,26 @@ function register () {
 	if (email == '' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
 		warningElem.innerHTML = '有効なメールアドレスを入力してください。';
 		warningElem.classList.remove('hidden');
-		submitButton.disabled = false;
+		disableAllInputs(false);
 		return;
 	}
 	
 	if (username == '') {
 		warningElem.innerHTML = 'ユーザー名を入力してください。';
 		warningElem.classList.remove('hidden');
-		submitButton.disabled = false;
+		disableAllInputs(false);
 		return;
 	}
 	
 	if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
 		warningElem.innerHTML = 'パスワードが要件を満たしていません。';
 		warningElem.classList.remove('hidden');
-		submitButton.disabled = false;
+		disableAllInputs(false);
 		return;
 	} else if (password!=passwordConfirm) {
 		warningElem.innerHTML = '新しいパスワードと新しいパスワード(確認)が一致しません。';
 		warningElem.classList.remove('hidden');
-		submitButton.disabled = false;
+		disableAllInputs(false);
 		return;
 	} else {
 		var hash = forge.md.sha512.sha256.create();
@@ -145,15 +145,15 @@ function register () {
             } else if (response == 'INVALID FORMAT') {
                 warningElem.innerHTML = '有効なメールアドレスを入力してください。';
                 warningElem.classList.remove('hidden');
-                submitButton.disabled = false;
+                disableAllInputs(false);
             }else if (response == 'ALREADY REGISTERED') {
                 warningElem.innerHTML = 'このメールアドレスはすでに登録済みです。';
                 warningElem.classList.remove('hidden');
-                submitButton.disabled = false;
+                disableAllInputs(false);
             } else if (response == 'USERNAME DUPLICATED') {
                 warningElem.innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
                 warningElem.classList.remove('hidden');
-                submitButton.disabled = false;
+                disableAllInputs(false);
             } else if (response == 'DONE') {
                 showMessage ({
 					title: '送信されました',
@@ -170,4 +170,13 @@ function register () {
 		withCredentials: false
 	});
 }
+	
+function disableAllInputs(disabled) {
+	submitButton.disabled = disabled;
+	usernameInput.disabled = disabled;
+	passwordInput.disabled = disabled;
+	passwordConfirmInput.disabled = disabled;
+	emailInput.disabled = disabled;
+}
+	
 });

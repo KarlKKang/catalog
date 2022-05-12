@@ -46,15 +46,15 @@ window.addEventListener("load", function(){
 	
 	
 	function submitRequest () {
-		var warningElem = document.getElementById('warning');
+		disableAllInputs(true);
 		
-		submitButton.disabled = true;
+		var warningElem = document.getElementById('warning');
 
 		var email = emailInput.value;
 		if (email=='' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
 			warningElem.innerHTML="有効なメールアドレスを入力してください。";
 			warningElem.classList.remove('hidden');
-			submitButton.disabled = false;
+			disableAllInputs(false);
 			return;
 		}
 		
@@ -63,7 +63,7 @@ window.addEventListener("load", function(){
                 if (response == 'INVALID FORMAT') {
                     warningElem.innerHTML = '有効なメールアドレスを入力してください。';
                     warningElem.classList.remove('hidden');
-                    submitButton.disabled = false;
+                    disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage ({
 						title: '送信されました',
@@ -78,5 +78,10 @@ window.addEventListener("load", function(){
 			content: "email="+email,
 			withCredentials: false
 		})
+	}
+	
+	function disableAllInputs(disabled) {
+		submitButton.disabled = disabled;
+		emailInput.disabled = disabled;
 	}
 });
