@@ -101,7 +101,7 @@ var showMessage = function (param) {
 	}
 	
 	param.htmlTitle = document.title;
-	window.localStorage.setItem('message-param', JSON.stringify(param));
+	document.cookie = 'local-message-param='+encodeURIComponent(JSON.stringify(param))+';max-age=86400;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
 	window.location.replace(debug?'message.html':(topURL+'/message'));
 };
 main.showMessage = showMessage;
@@ -283,7 +283,7 @@ var getCookie = function (cname) {
 			return c.substring(name.length, c.length);
 		}
 	}
-	return "";
+	return null;
 };
 main.getCookie = getCookie;
 ////////////////////////////////////////
@@ -481,5 +481,13 @@ var disableCheckbox = function (checkbox, disabled) {
 };
 main.disableCheckbox = disableCheckbox;
 ////////////////////////////////////////
+	
+////////////////////////////////////////Cookie Reset////////////////////////////////////////
+if (window.location.href != topURL + '/message' && !debug) {
+	document.cookie = 'local-message-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+}
+if (window.location.href != topURL + '/image' && !debug) {
+	document.cookie = 'local-image-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+}
 
 })();

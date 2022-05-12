@@ -15,14 +15,14 @@ window.addEventListener("load", function(){
 		return;
 	}
 	
-	var param = getCookie('image-param');
+	var param = getCookie('local-image-param');
 	
-	if (param == '') {
+	if (param === null) {
 		window.location.replace(topURL);
 		return;
 	}
 	
-	document.cookie = 'image-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+	document.cookie = 'local-image-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
 	
 	try {
 		param = decodeURIComponent(param);
@@ -72,7 +72,6 @@ window.addEventListener("load", function(){
 				showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
 				return;
 			}
-			console.log(param.src);
 			let url = concatenateSignedURL(param.src, response);
 			image.src = url;
 			container.appendChild(image);

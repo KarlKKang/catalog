@@ -6,11 +6,13 @@ window.addEventListener("load", function(){
 	var debug = mainLocal.debug;
 	var topURL = mainLocal.topURL;
 	var logout = mainLocal.logout;
+	var getCookie = mainLocal.getCookie;
 	
 	
 	appearanceSwitching();
 	
-	var param = localStorage.getItem("message-param");
+	var param = getCookie('local-message-param');
+	
 	var url;
 	
 	if (param === null) {
@@ -18,7 +20,7 @@ window.addEventListener("load", function(){
 			document.getElementById('title').classList.add('color-orange');
 			document.getElementById('title').innerHTML = 'タイトルTitle';
 			document.getElementById('message').innerHTML = 'メッセージMessageメッセージMessageメッセージMessageメッセージMessageメッセージMessage';
-			document.body.classList.remove("hidden");		
+			document.body.classList.remove("hidden");
 		} else {
 			window.location.replace(topURL);
 		}
@@ -26,6 +28,7 @@ window.addEventListener("load", function(){
 	}
 	
 	try {
+		param = decodeURIComponent(param);
 		param = JSON.parse(param);
 	} catch (e) {
 		window.location.replace(topURL);
@@ -40,12 +43,12 @@ window.addEventListener("load", function(){
 		var button = document.getElementById('button');
 		url = param.url;
 		if (param.url == null) {
-			localStorage.removeItem("message-param");
+			document.cookie = 'local-message-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
 			button.classList.add('hidden');
 		} else {
 			button.innerHTML = '次に進む';
 			button.addEventListener('click', function () {
-				localStorage.removeItem("message-param");
+				document.cookie = 'local-message-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
 				window.location.replace(url);
 			});
 		}

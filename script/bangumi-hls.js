@@ -687,7 +687,7 @@ window.addEventListener("load", function(){
                     title: document.getElementById('title').innerHTML,
                     authenticationToken: epInfo.authentication_token
                 };
-                document.cookie = 'image-param='+encodeURIComponent(JSON.stringify(param))+';max-age=10;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+                document.cookie = 'local-image-param='+encodeURIComponent(JSON.stringify(param))+';max-age=10;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
                 if (debug) {
                     window.location.href = 'image.html';
                 } else {
