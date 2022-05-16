@@ -225,6 +225,7 @@ window.addEventListener("load", function(){
 
     function updateSeasonSelector (seasons) {
         var seasonButtonWrapper = document.createElement('div');
+        var seasonSelector = document.getElementById('season-selector');
         seasonButtonWrapper.id = 'season-button-wrapper';
 
         if (seasons.length != 0) {
@@ -244,9 +245,9 @@ window.addEventListener("load", function(){
                 }
                 seasonButtonWrapper.appendChild (seasonButton);
             }
-            document.getElementById('season-selector').appendChild(seasonButtonWrapper);
+            seasonSelector.appendChild(seasonButtonWrapper);
         } else {
-            document.getElementById('season-selector').remove();
+            seasonSelector.parentNode.removeChild(seasonSelector);
         }
     }
 

@@ -52,13 +52,7 @@ for (var i = 0; i < entry.length; i++) {
 			result.warnings().forEach(warn => {
 				console.warn(warn.toString())
 			});
-			fs.writeFile(destDir + filename, result.css, err => {
-				if (err) {
-					console.error(err);
-					return;
-				}
-				console.log('Successfully written ' + destDir + filename);
-			});
+			writeFile (destDir + filename, result.css);
 		});
 	});
 }
@@ -69,10 +63,20 @@ fs.readFile('./node_modules/video.js/dist/video-js.min.css', 'utf8', (err, data)
 		console.error(err);
 		return;
 	}
-	fs.writeFile(destDir + 'video-js.min.css', data, err => {
-		if (err) {
-			console.error(err);
-		}
-		console.log('Successfully written ' + destDir + 'video-js.min.css');
-	});
+	writeFile (destDir + 'video-js.min.css', data);
 });
+
+function writeFile (file, data) {
+	fs.readFile(file, 'utf8', (err_r, read) => {
+		if (err_r || data != read) {
+			fs.writeFile(file, data, err_w => {
+				if (err_w) {
+					console.error(err_w);
+				}
+				console.log('Successfully written ' + file);
+			});
+		} else {
+			console.log(file + ' not modified');
+		}
+	});
+}

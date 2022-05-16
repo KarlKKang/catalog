@@ -16,7 +16,7 @@ module.exports = merge(common, {
 					ecma: undefined,
 					parse: {},
 					compress: {
-						passes: 3
+						passes: 5
 					},
 					mangle: true, // Note `mangle.properties` is `false` by default.
 					module: true,

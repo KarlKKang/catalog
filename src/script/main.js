@@ -433,9 +433,9 @@ export function encodeCFURIComponent (uri) {
 export function disableCheckbox (checkbox, disabled) {
 	checkbox.disabled = disabled;
 	if (disabled) {
-		checkbox.parentElement.classList.add('disabled');
+		checkbox.parentNode.classList.add('disabled');
 	} else {
-		checkbox.parentElement.classList.remove('disabled');
+		checkbox.parentNode.classList.remove('disabled');
 	}
 }
 ////////////////////////////////////////

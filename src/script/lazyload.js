@@ -1,4 +1,5 @@
 // JavaScript Document
+import 'intersection-observer';
 import {
 	imageProtection,
 	sendServerRequest,

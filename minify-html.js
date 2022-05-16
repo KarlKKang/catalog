@@ -50,11 +50,21 @@ for (var i = 0; i < entry.length; i++) {
 			result = result.replaceAll('href=/', 'href=');
 			result = result.replaceAll('src=/', 'src=');
 		}
-		fs.writeFile(destDir + filename, result, err => {
-			if (err) {
-				console.error(err);
-			}
-			console.log('Successfully written ' + destDir + filename);
-		});
+		writeFile (destDir + filename, result);
+	});
+}
+
+function writeFile (file, data) {
+	fs.readFile(file, 'utf8', (err_r, read) => {
+		if (err_r || data != read) {
+			fs.writeFile(file, data, err_w => {
+				if (err_w) {
+					console.error(err_w);
+				}
+				console.log('Successfully written ' + file);
+			});
+		} else {
+			console.log(file + ' not modified');
+		}
 	});
 }
