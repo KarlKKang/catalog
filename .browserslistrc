@@ -1,0 +1,7 @@
+last 5 major versions
+> 0.5%
+> 0.5% in alt-AS
+not ie < 11
+chrome >= 39
+firefox >= 42
+safari >= 8

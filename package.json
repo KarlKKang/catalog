@@ -1,0 +1,33 @@
+{
+  "name": "catalog",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "build": "webpack --config webpack.prod.js && node minify-html.js && node minify-css.js",
+    "build-dev": "webpack --config webpack.dev.js && node minify-html.js dev && node minify-css.js dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.17.10",
+    "@babel/plugin-transform-runtime": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "babel-loader": "^8.2.5",
+    "cssnano": "^5.1.7",
+    "cssnano-preset-advanced": "^5.3.3",
+    "html-minifier": "^4.0.0",
+    "postcss": "^8.4.13",
+    "terser-webpack-plugin": "^5.3.1",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-merge": "^5.8.0"
+  },
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.17.9",
+    "hls.js": "^1.1.5",
+    "node-forge": "^1.3.1",
+    "video.js": "^7.18.1"
+  }
+}
