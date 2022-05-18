@@ -1,4 +1,5 @@
 // JavaScript Document
+import "core-js";
 import {
 	debug,
 	navListeners,
@@ -10,9 +11,9 @@ import {
 	getURLParam,
 	cdnURL,
     clearCookies
-} from './main.js';
+} from './helper/main.js';
 
-import {lazyloadInitialize} from './lazyload.js';
+import {lazyloadInitialize} from './helper/lazyload.js';
 
 window.addEventListener("load", function(){
 	clearCookies();

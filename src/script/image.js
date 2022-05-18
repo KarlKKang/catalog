@@ -1,4 +1,5 @@
 // JavaScript Document
+import "core-js";
 import {
 	debug,
 	getCookie,
@@ -8,7 +9,7 @@ import {
 	imageProtection,
 	concatenateSignedURL,
 	clearCookies
-} from './main.js';
+} from './helper/main.js';
 
 window.addEventListener("load", function(){
 	clearCookies();
@@ -59,7 +60,18 @@ window.addEventListener("load", function(){
 	var container = document.getElementById('image-container');
 	
 	image.addEventListener('error', function () {
-		window.location.replace(topURL);
+		if (image.src.includes('.webp')) {
+			import(
+				'webp-hero/dist-cjs'
+			).then(({WebpMachine}) => {
+				const webpMachine = new WebpMachine();
+				webpMachine.polyfillImage(image);
+			}).catch((e) => {
+				showMessage ({message: 'モジュールの読み込みに失敗しました。このエラーが続く場合は、管理者にお問い合わせください。<br>' + e});
+			});
+		} else {
+			window.location.replace(topURL);
+		}
 	});
 	image.setAttribute('crossorigin', 'use-credentials');
 	

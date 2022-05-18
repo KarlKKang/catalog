@@ -48,7 +48,7 @@ for (var i = 0; i < entry.length; i++) {
 					}}
 				] 
 			})
-		]).process(data).then(result => {
+		]).process(data, {from: baseDir + filename, to: destDir + filename}).then(result => {
 			result.warnings().forEach(warn => {
 				console.warn(warn.toString())
 			});

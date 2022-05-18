@@ -1,4 +1,5 @@
 // JavaScript Document
+import "core-js";
 import {
     debug,
 	navListeners,
@@ -13,7 +14,7 @@ import {
 	concatenateSignedURL,
 	encodeCFURIComponent,
     clearCookies
-} from './main.js';
+} from './helper/main.js';
 
 import Hls from 'hls.js';
 import videojs from 'video.js';
@@ -24,11 +25,11 @@ import {
     USE_MSE,
     CAN_PLAY_HLS,
     CAN_PLAY_ALAC,
-} from './browser_detection.js';
+} from './helper/browser_detection.js';
 
-import {videojs_mod} from './videojs_mod.js';
+import {videojs_mod} from './helper/videojs_mod.js';
 
-import {lazyloadInitialize} from './lazyload.js';
+import {lazyloadInitialize} from './helper/lazyload.js';
 
 window.addEventListener("load", function(){
 	

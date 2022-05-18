@@ -1,4 +1,5 @@
 // JavaScript Document
+import "core-js";
 import {
 	debug,
 	navListeners,
@@ -6,7 +7,7 @@ import {
 	sendServerRequest,
 	showMessage,
 	clearCookies
-} from './main.js';
+} from './helper/main.js';
 
 window.addEventListener("load", function(){
 	clearCookies();

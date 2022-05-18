@@ -8,6 +8,10 @@ import {
 	concatenateSignedURL
 } from './main.js';
 
+var webpMachine = null;
+var webpMachineActive = false;
+var webpMachineQueue = [];
+
 export function lazyloadInitialize () {
 	
 	var elem = document.getElementsByClassName('lazyload');
@@ -28,6 +32,17 @@ export function lazyloadInitialize () {
 					imageProtection(imageNode);
 					imageNode.addEventListener('load', function () {
 						target.classList.add('complete');
+					});
+					imageNode.addEventListener('error', function () {
+						if (imageNode.src.includes('.webp')) {
+							if (webpMachineActive) {
+								webpMachineQueue.push(imageNode);
+							} else {
+								webpMachineActive = true;
+								webpMachineQueue.push(imageNode);
+								startWebpMachine();
+							}
+						}
 					});
 					if ('crossorigin' in target.dataset) {
 						imageNode.setAttribute('crossorigin', target.dataset.crossorigin);
@@ -62,4 +77,15 @@ export function lazyloadInitialize () {
 			elem[i].classList.add('listening');
 		}
 	}
+}
+
+async function startWebpMachine() {
+	if (webpMachine === null) {
+		let {WebpMachine} = await import('webp-hero/dist-cjs');
+		webpMachine = new WebpMachine();
+	}
+	while(webpMachineQueue.length != 0) {
+		await webpMachine.polyfillImage(webpMachineQueue.shift());
+	}
+	webpMachineActive = false;
 }

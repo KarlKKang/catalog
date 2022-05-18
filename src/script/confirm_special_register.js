@@ -1,4 +1,5 @@
 // JavaScript Document
+import "core-js";
 import {
 	debug,
 	loginURL,
@@ -7,7 +8,7 @@ import {
 	getURLParam,
 	expiredMessage,
 	clearCookies
-} from './main.js';
+} from './helper/main.js';
 
 window.addEventListener("load", function(){
 	clearCookies();

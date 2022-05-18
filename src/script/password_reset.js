@@ -1,4 +1,5 @@
 // JavaScript Document
+import "core-js";
 import {
 	debug,
 	sendServerRequest,
@@ -8,7 +9,7 @@ import {
 	passwordStyling,
 	expiredMessage,
 	clearCookies
-} from './main.js';
+} from './helper/main.js';
 import sha512 from 'node-forge/lib/sha512';
 
 window.addEventListener("load", function(){
