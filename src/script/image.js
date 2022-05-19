@@ -4,6 +4,7 @@ import {
 	debug,
 	getCookie,
 	topURL,
+	keyExists,
 	sendServerRequest,
 	showMessage,
 	imageProtection,
@@ -19,18 +20,19 @@ window.addEventListener("load", function(){
 		return;
 	}
 	
-	var param = getCookie('local-image-param');
+	var paramCookie = getCookie('local-image-param');
 	
-	if (param === null) {
+	if (paramCookie === null) {
 		window.location.replace(topURL);
 		return;
 	}
 	
 	document.cookie = 'local-image-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
 	
+	var param;
 	try {
-		param = decodeURIComponent(param);
-		param = JSON.parse(param);
+		paramCookie = decodeURIComponent(paramCookie);
+		param = JSON.parse(paramCookie);
 	} catch (e) {
 		window.location.replace(topURL);
 		return;
@@ -40,7 +42,7 @@ window.addEventListener("load", function(){
 	var image = document.createElement('img');
 	imageProtection(image);
 	
-	if (!('src' in param) || !('title' in param) || !('authenticationToken' in param) || !('xhrParam' in param)) {
+	if (!keyExists(param, 'src') || !keyExists(param, 'title') || !keyExists(param, 'authenticationToken') || !keyExists(param, 'xhrParam')) {
 		window.location.replace(topURL);
 		return;
 	}
@@ -62,6 +64,8 @@ window.addEventListener("load", function(){
 	image.addEventListener('error', function () {
 		if (image.src.includes('.webp')) {
 			import(
+				/* webpackChunkName: "webp-hero" */
+				/* webpackExports: ["WebpMachine"] */
 				'webp-hero/dist-cjs'
 			).then(({WebpMachine}) => {
 				const webpMachine = new WebpMachine();

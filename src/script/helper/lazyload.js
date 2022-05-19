@@ -12,7 +12,7 @@ var webpMachine = null;
 var webpMachineActive = false;
 var webpMachineQueue = [];
 
-export function lazyloadInitialize () {
+export default function () {
 	
 	var elem = document.getElementsByClassName('lazyload');
 	const options = {
@@ -81,7 +81,11 @@ export function lazyloadInitialize () {
 
 async function startWebpMachine() {
 	if (webpMachine === null) {
-		let {WebpMachine} = await import('webp-hero/dist-cjs');
+		let {WebpMachine} = await import(
+			/* webpackChunkName: "webp-hero" */
+			/* webpackExports: ["WebpMachine"] */
+			'webp-hero/dist-cjs'
+		);
 		webpMachine = new WebpMachine();
 	}
 	while(webpMachineQueue.length != 0) {

@@ -12,7 +12,7 @@ module.exports = {
 		},
 		'bangumi-hls': {
 			import: './src/script/bangumi-hls.js',
-			dependOn: ['main', 'core-js', 'lazyload'],
+			dependOn: ['main', 'core-js'],
 		},
 		'confirm_email': {
 			import: './src/script/confirm_email.js',
@@ -32,7 +32,7 @@ module.exports = {
 		},
 		'index': {
 			import: './src/script/index.js',
-			dependOn: ['main', 'core-js', 'lazyload'],
+			dependOn: ['main', 'core-js'],
 		},
 		'info': {
 			import: './src/script/info.js',
@@ -72,10 +72,6 @@ module.exports = {
 		},
 
 		//helpers
-		'lazyload': {
-			import: './src/script/helper/lazyload.js',
-			dependOn: ['main'],
-		},
 		'main': ['./src/script/helper/main.js'],
 		'sha512': ['node-forge/lib/sha512'],
 		'core-js': ['core-js'],
@@ -86,6 +82,10 @@ module.exports = {
 	},
 	optimization: {
 		runtimeChunk: 'single',
+		//moduleIds: 'named',
+		//splitChunks: {
+		//	chunks: 'all',
+		//},
 	},
 	module: {
 		rules: [

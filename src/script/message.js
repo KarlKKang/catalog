@@ -3,6 +3,7 @@ import "core-js";
 import {
 	debug,
 	topURL,
+	keyExists,
 	logout,
 	getCookie,
 	clearCookies
@@ -11,11 +12,11 @@ import {
 window.addEventListener("load", function(){
 	clearCookies();
 	
-	var param = getCookie('local-message-param');
+	var paramCookie = getCookie('local-message-param');
 	
 	var url;
 	
-	if (param === null) {
+	if (paramCookie === null) {
 		if (debug) {
 			document.getElementById('title').classList.add('color-orange');
 			document.getElementById('title').innerHTML = 'タイトルTitle';
@@ -27,9 +28,10 @@ window.addEventListener("load", function(){
 		return;
 	}
 	
+	var param;
 	try {
-		param = decodeURIComponent(param);
-		param = JSON.parse(param);
+		paramCookie = decodeURIComponent(paramCookie);
+		param = JSON.parse(paramCookie);
 	} catch (e) {
 		window.location.replace(topURL);
 		return;
@@ -56,7 +58,7 @@ window.addEventListener("load", function(){
 		document.body.classList.remove("hidden");
 	};
 
-	if ('logout' in param) {
+	if (keyExists(param, 'logout')) {
 		if (param.logout === true) {
 			logout (callback);
 			return;

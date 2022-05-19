@@ -21,23 +21,21 @@ var expiredMessage = {
 
 export {topURL, loginURL, serverURL, cdnURL, debug, expiredMessage};
 
+
+//////////////////////////////////////// Javascript/DOM interfaces ////////////////////////////////////////
+//////////////////////////////////////// Dependencies: none
+export function keyExists (obj, key) {
+	return obj.hasOwnProperty(key);
+}
+////////////////////////////////////////
+
+
+//////////////////////////////////////// Helper functions ////////////////////////////////////////
 //////////////////////////////////////// Dependencies: none
 export function getURLParam (name) {
 	var url = window.location.href;
 	url = new URL(url);
 	return url.searchParams.get(name);
-
-	/*var query = window.location.search.substring(1);
-	var params = query.split('&');
-	for (var i = 0; i < params.length; i++) {
-		var param = params[i];
-		console.log(param);
-		if (param.indexOf(name) == 0) {
-			console.log('Found ' + name + ' ' + param.substring(name.length + 1));
-			return param.substring(name.length + 1);
-		}
-	}
-	return null;*/
 }
 ////////////////////////////////////////
 	
@@ -87,19 +85,19 @@ export function showMessage (param) {
 		param = {};
 	}
 	
-	if (!param.hasOwnProperty('title')) {
+	if (!keyExists(param, 'title')) {
 		param.title = 'エラーが発生しました';
 	}
-	if (!param.hasOwnProperty('message')) {
+	if (!keyExists(param, 'message')) {
 		param.message = '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。';
 	}
-	if (!param.hasOwnProperty('color')) {
+	if (!keyExists(param, 'color')) {
 		param.color = 'red';
 	}
-	if (!param.hasOwnProperty('logout')) {
+	if (!keyExists(param, 'logout')) {
 		param.logout = false;
 	}
-	if (!param.hasOwnProperty('url')) {
+	if (!keyExists(param, 'url')) {
 		param.url = null;
 	}
 	
@@ -191,16 +189,16 @@ export function checkXHRStatus (response) {
 	
 //////////////////////////////////////// Dependencies: checkXHRStatus, addXHROnError
 export function sendServerRequest (uri, options) {
-	if (!options.hasOwnProperty('callback')) {
+	if (!keyExists(options, 'callback')) {
 		options.callback = function () {return;};
 	}
-	if (!options.hasOwnProperty('content')) {
+	if (!keyExists(options, 'content')) {
 		options.content = '';
 	}
-	if (!options.hasOwnProperty('withCredentials')) {
+	if (!keyExists(options, 'withCredentials')) {
 		options.withCredentials = true;
 	}
-	if (!options.hasOwnProperty('method')) {
+	if (!keyExists(options, 'method')) {
 		options.method = 'POST';
 	}
 	
@@ -222,10 +220,10 @@ export function sendServerRequest (uri, options) {
 export function authenticate (callback) {
 	var successful = function () {return;};
 	var failed = function () {return;};
-	if (callback.hasOwnProperty('successful')) {
+	if (keyExists(callback, 'successful')) {
 		successful = callback.successful;
 	}
-	if (callback.hasOwnProperty('failed')) {
+	if (keyExists(callback, 'failed')) {
 		failed = callback.failed;
 	}
 	
@@ -407,7 +405,7 @@ export function imageProtection (elem) {
 //////////////////////////////////////// Dependencies: none
 export function concatenateSignedURL (url, credentials, resourceURLOverride) {
 	var policy = '';
-	if (credentials.hasOwnProperty('Policy')) {
+	if (keyExists(credentials, 'Policy')) {
 		policy = credentials['Policy'];
 		policy['Statement'][0]['Resource'] = (resourceURLOverride===undefined)?url:resourceURLOverride;
 		policy = JSON.stringify(policy);

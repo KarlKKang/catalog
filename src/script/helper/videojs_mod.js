@@ -10,7 +10,7 @@ import {
     IS_IPAD
 } from './browser_detection.js';
 
-export var videojs_mod = function (controls, config) {
+export default function (controls, config) {
 	
 	var that = {
 		_playing: false,
