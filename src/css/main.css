@@ -90,14 +90,11 @@ button {
 	cursor: pointer;
 }
 
-button:disabled {
+button:disabled, input:disabled {
 	color: var(--alt-text-color);
-	/*pointer-events: none;*/
-	cursor: wait;
-}
-input:disabled {
-	color: var(--alt-text-color);
-	/*pointer-events: none;*/
+	background-color:var(--foreground-color);
+	-webkit-text-fill-color: var(--alt-text-color);
+	opacity: 1; /* required on iOS */
 	cursor: wait;
 }
 
