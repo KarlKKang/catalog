@@ -1,5 +1,5 @@
 export {default as Hls} from 'hls.js';
-export {default as videojs} from 'video.js';
+export {default as videojs} from 'video.js/dist/video.cjs';
 
 export {
     IS_CHROMIUM,
