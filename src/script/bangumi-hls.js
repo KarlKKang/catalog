@@ -208,7 +208,6 @@ async function updatePage (response) {
     /////////////////////////////////////////////Add Media/////////////////////////////////////////////
     var type = epInfo.type;
     baseURL = cdnURL + '/' + (keyExists(epInfo, 'series_override')?epInfo.series_override:seriesID) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
-    console.log('update-page');
     if (type == 'video' || type == 'audio') {
         try {
             ({
