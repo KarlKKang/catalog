@@ -2,15 +2,20 @@
 
 import {
     secToTimestamp,
-	onScreenConsoleOutput
+	onScreenConsoleOutput,
+	keyExists
 } from './main.js';
 import Hls from 'hls.js';
+import {default as videojs} from 'video.js/dist/video.cjs';
 
-import {
-    IS_IPAD
-} from './browser_detection.js';
+export default function (controls, instance, config) {
 
-export default function (controls, config) {
+	let oldControls = controls;
+    controls = oldControls.cloneNode(true);
+    oldControls.id = '';
+
+    oldControls.parentNode.insertBefore(controls, oldControls);
+    instance.dispose();
 	
 	var that = {
 		_playing: false,
@@ -26,6 +31,11 @@ export default function (controls, config) {
 	const isVideo = !(config.audio);
 	
 	var media = isVideo ? controls.getElementsByTagName('video')[0] : controls.getElementsByTagName('audio')[0];
+	if (keyExists(config, 'mediaElemOverride')) {
+		media.parentNode.removeChild(media);
+		media = config.mediaElemOverride;
+	}
+	
 
     controls.addEventListener('contextmenu', event => event.preventDefault());
 	
@@ -275,7 +285,7 @@ export default function (controls, config) {
 			controls.mozRequestFullScreen();
 		} else if (controls.msRequestFullscreen) { /* IE11 */
 			controls.msRequestFullscreen();	
-		} else if (controls.webkitRequestFullscreen && !IS_IPAD) { /* Safari */
+		} else if (controls.webkitRequestFullscreen && !videojs.browser.IS_IPAD) { /* Safari */
 			controls.webkitRequestFullscreen();
 		} else if (media.webkitEnterFullscreen) { /* iPhone and iPad */
 			media.webkitEnterFullscreen();

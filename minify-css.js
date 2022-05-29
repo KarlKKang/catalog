@@ -37,15 +37,18 @@ for (var i = 0; i < entry.length; i++) {
 			cssnano({ 
 				preset: [
 					'cssnano-preset-advanced', 
-					{autoprefixer: {
-						add: true,
-						remove: true,
-						supports: true,
-						flexbox: true
-					},
-					cssDeclarationSorter: {
-						order: "smacss"
-					}}
+					{
+						autoprefixer: {
+							add: true,
+							remove: true,
+							supports: true,
+							flexbox: true,
+						},
+						cssDeclarationSorter: {
+							order: "smacss"
+						},
+						zindex: false
+					}
 				] 
 			})
 		]).process(data, {from: baseDir + filename, to: destDir + filename}).then(result => {

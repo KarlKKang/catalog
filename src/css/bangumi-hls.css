@@ -194,6 +194,10 @@ select:hover{
 	background-color: #000;
 }
 
+#media-holder > .video-js > video, #media-holder > .video-js > audio { /* Hide mouse-over tooltips */
+	pointer-events: none;
+}
+
 #media-holder > .lazyload {
 	width: 100%;
 	margin: 0px 0px 18px 0px;

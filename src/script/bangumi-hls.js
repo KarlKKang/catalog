@@ -17,21 +17,6 @@ import {
     clearCookies
 } from './helper/main.js';
 
-//import Hls from 'hls.js';
-//import videojs from 'video.js';
-
-/*import {
-    IS_CHROMIUM,
-    DOWNLOAD_SUPPORTED,
-    USE_MSE,
-    CAN_PLAY_HLS,
-    CAN_PLAY_ALAC,
-} from './helper/browser_detection.js';*/
-
-//import {videojs_mod} from './helper/videojs_mod.js';
-
-//import {lazyloadInitialize} from './helper/lazyload.js';
-
 
 var seriesID;
 var epIndex;
@@ -104,16 +89,9 @@ window.addEventListener("load", function(){
 
 var Hls;
 var videojs;
-
-var videojs_mod;
+var browser;
+var videojsMod;
 var lazyloadInitialize;
-
-var IS_CHROMIUM;
-var DOWNLOAD_SUPPORTED;
-var USE_MSE;
-var CAN_PLAY_HLS;
-var CAN_PLAY_ALAC;
-
 
 var mediaInstances = [];
 var epInfo;
@@ -213,15 +191,11 @@ async function updatePage (response) {
             ({
                 Hls,
                 videojs,
-                IS_CHROMIUM,
-                DOWNLOAD_SUPPORTED,
-                USE_MSE,
-                CAN_PLAY_HLS,
-                CAN_PLAY_ALAC, 
-                videojs_mod
+                browser, 
+                videojsMod
             } = await import(
-                /* webpackExports: ["Hls", "videojs", "IS_CHROMIUM", "DOWNLOAD_SUPPORTED", "USE_MSE", "CAN_PLAY_HLS", "CAN_PLAY_ALAC", "videojs_mod"] */
-                './helper/bangumi-hls_modules.js'));
+                /* webpackExports: ["Hls", "videojs", "browser", "videojsMod"] */
+                './helper/player.js'));
         } catch (e) {
             showMessage ({message: 'モジュールの読み込みに失敗しました。このエラーが続く場合は、管理者にお問い合わせください。<br>' + e});
         } finally {
@@ -401,11 +375,8 @@ function updateVideo () {
 
     videojs(videoJS, config, function () {
         videoJS.style.paddingTop = 9/16*100 + '%';
-        videoJS = videoJS.cloneNode(true);
-        this.dispose();
-        mediaInstances.push(videojs_mod (videoJS, {}));
-        mediaHolder.appendChild(videoJS);
-        
+        mediaInstances.push(videojsMod (videoJS, this, {}));
+
         let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + epInfo.formats[formatIndex] + '].m3u8'), epInfo.cdn_credentials);
 
         addVideoNode (url, {/*, currentTime: timestampParam*/});
@@ -416,356 +387,6 @@ function updateVideo () {
         addAccordionEvent();
         //updateURLTimestamp();
     });
-}
-
-function updateAudio () {
-
-    let contentContainer = document.getElementById('content');
-    let counter = 0;
-
-    let albumInfo = epInfo.album_info;
-    if (albumInfo.album_title!='') {
-        let albumTitleElem = document.createElement('p');
-        albumTitleElem.setAttribute('class', 'sub-title');
-        albumTitleElem.classList.add('center-align');
-        albumTitleElem.innerHTML = albumInfo.album_title;
-        contentContainer.insertBefore(albumTitleElem, document.getElementById('message'));
-        if (albumInfo.album_artist!='') {
-            let albumArtist = document.createElement('p');
-            albumArtist.setAttribute('class', 'artist');
-            albumArtist.classList.add('center-align');
-            albumArtist.innerHTML = albumInfo.album_artist;
-            contentContainer.insertBefore(albumArtist, document.getElementById('message'));
-        }
-    } else if (albumInfo.album_artist!='') {
-        let titleElem = document.getElementById('title');
-        let artistElem = document.createElement('span');
-        artistElem.setAttribute('class', 'artist');
-        artistElem.innerHTML = '<br/>' + albumInfo.album_artist;
-        titleElem.appendChild(artistElem);
-    }
-
-    //smooth progress bar scrubbing https://github.com/videojs/video.js/issues/4460
-    const SeekBar = videojs.getComponent('SeekBar');
-
-    SeekBar.prototype.getPercent = function getPercent() {
-        const time = this.player_.currentTime();
-        const percent = time / this.player_.duration();
-        return percent >= 1 ? 1 : percent;
-    };
-
-    SeekBar.prototype.handleMouseMove = function handleMouseMove(event) {
-        let newTime = this.calculateDistance(event) * this.player_.duration();
-        if (newTime === this.player_.duration()) {
-            newTime = newTime - 0.1;
-        }
-        this.player_.currentTime(newTime);
-        this.update();
-    };
-    //
-    
-    var mediaHolder = document.createElement('div');
-    mediaHolder.id = 'media-holder';
-    contentContainer.appendChild(mediaHolder);
-
-    var configVideoJSTemplate = {
-        controls: true,
-        autoplay: false,
-        preload: 'auto',
-        fluid: true,
-        aspectRatio: "1:0",
-        controlBar: {
-            fullscreenToggle: false,
-            pictureInPictureToggle: false
-        }
-    };
-    
-    var configHls = {
-        enableWebVTT: false,
-        enableIMSC1: false,
-        enableCEA708Captions: false,
-        lowLatencyMode: false,
-        enableWorker: false,
-        maxFragLookUpTolerance: 0.0,
-        testBandwidth: false,
-        maxBufferSize: 0,
-        maxBufferHole: 0,
-        debug: false,
-        xhrSetup: function(xhr, url) {
-            xhr.withCredentials = true;
-        }
-    };
-
-    let i;
-    let files = epInfo.files;
-    let cdnCredentials = epInfo.cdn_credentials;
-    for (i = 0; i < files.length; i++) {
-        let index = i;
-
-        let audioNode = document.createElement('audio');
-        let subtitle = document.createElement('p');
-        subtitle.setAttribute('class', 'sub-title');
-        let format = document.createElement('span');
-
-        audioNode.id = 'track'+index;
-
-        audioNode.classList.add("vjs-default-skin");
-        audioNode.classList.add("video-js");
-        audioNode.setAttribute('lang', 'en');
-
-        //subtitle
-        if (files[i].title != '') {
-            subtitle.innerHTML = files[i].title;
-
-            if (files[i].artist != '') {
-                let artist = document.createElement('span');
-                artist.setAttribute('class', 'artist');
-                artist.innerHTML = '／' + files[i].artist;
-                subtitle.appendChild(artist);
-            }
-        }
-
-        //format
-        if (files[i].format != '') {
-            if (subtitle.innerHTML != '')
-                subtitle.innerHTML += '<br />';
-
-            format.setAttribute('class', 'format');
-            format.innerHTML = files[i].format;
-
-            let samplerate = files[i].samplerate;
-            if (samplerate != '') {
-                let samplerateText = samplerate;
-                switch (samplerate) {
-                    case '44100':
-                        samplerateText = '44.1kHz';
-                        break;
-                    case '48000':
-                        samplerateText = '48.0kHz';
-                        break;
-                    case '96000':
-                        samplerateText = '96.0kHz';
-                        break;
-                    case '88200':
-                        samplerateText = '88.2kHz';
-                        break;
-                    case '192000':
-                        samplerateText = '192.0kHz';
-                        break;
-                }
-                format.innerHTML += ' ' + samplerateText;
-
-                let bitdepth = files[i].bitdepth;
-                if (bitdepth != '') {
-                    let bitdepthText = bitdepth;
-                    switch (bitdepth) {
-                        case '16':
-                            bitdepthText = '16bit';
-                            break;
-                        case '24':
-                            bitdepthText = '24bit';
-                            break;
-                        case '32':
-                            bitdepthText = '32bit';
-                            break;	
-                    }
-                    format.innerHTML += '/' + bitdepthText;
-                }
-            }
-            subtitle.appendChild(format);
-        }
-
-        mediaHolder.appendChild(subtitle);
-        mediaHolder.appendChild(audioNode);
-        
-        var isMp3 = (files[index].format.toLowerCase() == 'mp3');
-        
-        let configVideoJS = configVideoJSTemplate;
-        if (USE_MSE && !isMp3) {
-            configVideoJS.html5 = {
-                vhs: {
-                    overrideNative: true,
-                    withCredentials: true
-                },
-                nativeAudioTracks: false,
-                nativeVideoTracks: false
-            };
-            configVideoJS.crossOrigin = 'use-credentials';
-        }
-
-        let videoJSAudio = videojs(audioNode, configVideoJS, function () {
-            let flacFallback = (files[index].flac_fallback && !CAN_PLAY_ALAC);
-            let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' +files[index].file_name + (flacFallback?'[FLAC]':'') +'.m3u8'), cdnCredentials, baseURL + '_MASTER_*.m3u8'); 
-
-            if (flacFallback) {
-                format.innerHTML = format.innerHTML.replace('ALAC', 'FLAC');
-                format.innerHTML = format.innerHTML.replace('32bit', '24bit');
-            }
-            
-            audioNode = document.getElementById('track' + index);
-            if (isMp3 || CAN_PLAY_HLS) {
-                let oldAudioNode = audioNode;
-                audioNode = oldAudioNode.cloneNode(true);
-                oldAudioNode.id = '';
-                mediaInstances[index] = videojs_mod (audioNode, {audio: true});
-
-                oldAudioNode.parentNode.insertBefore(audioNode, oldAudioNode);
-                videoJSAudio.dispose();
-            } else {
-                mediaInstances[index] = videoJSAudio;
-                audioNode.addEventListener('contextmenu', event => event.preventDefault());
-            }
-
-            audioNode.getElementsByTagName('audio')[0].setAttribute('title', ((files[index].title=='')?'':(files[index].title + ' | ')) + document.title);
-
-            if (USE_MSE) {
-                if (isMp3) {
-                    if (IS_CHROMIUM) {
-                        var messageTitle = document.getElementById('message-title');
-                        changeColor (messageTitle, 'orange');
-                        messageTitle.innerHTML = '不具合があります';
-                        document.getElementById('message-body').innerHTML = '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。ご迷惑をおかけして大変申し訳ございませんでした。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>';
-                        document.getElementById('message').classList.remove('hidden');
-                    }
-                    let hls = new Hls(configHls);
-                    hls.on(Hls.Events.ERROR, function (event, data) {
-                        if (data.fatal) {
-                            showPlaybackError('Index ' + index + ': ' + data.detail);
-                        }
-                    });
-                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                        counter ++;
-                        if (counter == files.length) {
-                            hlsAudioReady();
-                        }
-                    });
-                    mediaInstances[index].attachHls(hls);
-                    hls.loadSource(url);
-                } else {
-                    counter ++;
-                    if (counter == files.length) {
-                        videoJSAudioReady();
-                    }
-
-                    videoJSAudio.on('error', function() {
-                        showPlaybackError('Index ' + index + ': ' + 'videojs: '+JSON.stringify(videoJSAudio.error()));
-                        videoJSAudio.dispose();
-                    });
-
-                    videoJSAudio.src({
-                        src: url,
-                        type: 'application/x-mpegURL'
-                    });
-
-                    videoJSAudio.volume(1);
-                }
-            } else if (CAN_PLAY_HLS) {
-                let audio = mediaInstances[index].media;
-                audio.volume = 1;
-                
-                audio.addEventListener('error', function () {showPlaybackError();});
-                audio.setAttribute ('crossorigin', 'use-credentials');
-                audio.addEventListener('loadedmetadata', function () {
-                    counter ++;
-                    if (counter == files.length) {
-                        hlsAudioReady();
-                    }
-                });
-                audio.src = url;
-                audio.load();
-            } else {
-                showCompatibilityError ();
-            }
-        });
-
-    }
-
-    addDownloadAccordion();
-    addAccordionEvent();
-    
-    function hlsAudioReady () {
-        for (i = 0; i < mediaInstances.length; i++) {
-            let index = i;
-            mediaInstances[index].media.addEventListener('play', function () {
-                for (var j = 0; j < mediaInstances.length; j++) {
-                    if (j != index) {
-                        mediaInstances[j].pause();
-                    }
-                }
-            });
-            mediaInstances[index].media.addEventListener('ended', function () {
-                if (index != mediaInstances.length-1) {
-                    mediaInstances[index+1].play();
-                }
-            });
-        }
-    }
-    
-    function videoJSAudioReady () {
-        for (i = 0; i < mediaInstances.length; i++) {
-            let index = i;
-            mediaInstances[index].on('play', function () {
-                for (var j = 0; j < mediaInstances.length; j++) {
-                    if (j != index) {
-                        mediaInstances[j].pause();
-                    }
-                }
-            });
-            mediaInstances[index].on('ended', function () {
-                if (index != mediaInstances.length-1) {
-                    mediaInstances[index+1].play();
-                }
-            });
-        }
-    }
-}
-
-function updateImage () {
-    var mediaHolder = document.createElement('div');
-    mediaHolder.id = 'media-holder';
-    document.getElementById('content').appendChild(mediaHolder);
-    
-    let files = epInfo.files;
-    for (var i = 0; i < files.length; i++) {
-        let index = i;
-        if (files[index].tag != '') {
-            let subtitle = document.createElement('p');
-            subtitle.setAttribute('class', 'sub-title');
-            subtitle.innerHTML = files[index].tag;
-            mediaHolder.appendChild(subtitle);
-        }
-
-        let imageNode = document.createElement('div');
-        let overlay = document.createElement('div');
-
-        overlay.classList.add('overlay');
-        imageNode.appendChild(overlay);
-
-        imageNode.classList.add('lazyload');
-        imageNode.dataset.crossorigin = 'use-credentials';
-        imageNode.dataset.src = baseURL + encodeCFURIComponent(files[index].file_name);
-        imageNode.dataset.alt = document.getElementById('title').innerHTML;
-        imageNode.dataset.xhrParam = index;
-        imageNode.dataset.authenticationToken = epInfo.authentication_token;
-        imageNode.addEventListener('click', function() {
-            let param = {
-                src: baseURL + encodeCFURIComponent(files[index].file_name),
-                xhrParam: index,
-                title: document.getElementById('title').innerHTML,
-                authenticationToken: epInfo.authentication_token
-            };
-            document.cookie = 'local-image-param='+encodeURIComponent(JSON.stringify(param))+';max-age=10;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
-            if (debug) {
-                window.location.href = 'image.html';
-            } else {
-                window.open (topURL + '/image');
-            }
-        });
-        imageNode.addEventListener('contextmenu', event => event.preventDefault());
-        mediaHolder.appendChild(imageNode);
-    }
-
-    lazyloadInitialize ();
 }
 
 function formatSwitch () {
@@ -824,7 +445,7 @@ function addVideoNode (url, options) {
         }
     }
 
-    if (USE_MSE) {
+    if (browser.USE_MSE) {
 
         var config = {
             enableWebVTT: false,
@@ -850,6 +471,7 @@ function addVideoNode (url, options) {
         hls.on(Hls.Events.ERROR, function (event, data) {
             if (data.fatal) {
                 showPlaybackError(data.detail);
+                mediaInstances[0].hlsInstance.destroy();
             }
         });
         hls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -858,7 +480,7 @@ function addVideoNode (url, options) {
 
         mediaInstances[0].attachHls(hls);
         hls.loadSource(url);
-    } else if (CAN_PLAY_HLS) {
+    } else if (browser.NATIVE_HLS) {
         video.addEventListener('error', function () {showPlaybackError ();});
         video.setAttribute ('crossorigin', 'use-credentials');
         video.addEventListener('loadedmetadata', function () {
@@ -871,29 +493,361 @@ function addVideoNode (url, options) {
     }
 }
 
+
+var audioReadyCounter = 0;
+function updateAudio () {
+
+    let contentContainer = document.getElementById('content');
+
+    addAlbumInfo(contentContainer);
+    
+    var mediaHolder = document.createElement('div');
+    mediaHolder.id = 'media-holder';
+    contentContainer.appendChild(mediaHolder);
+
+    for (var i = 0; i < epInfo.files.length; i++) {
+        addAudioNode (mediaHolder, i);
+    }
+
+    addDownloadAccordion();
+    addAccordionEvent();
+}
+
+function addAudioNode (mediaHolder, index) {
+    var cdnCredentials = epInfo.cdn_credentials;
+    var files = epInfo.files;
+
+    var configVideoJSControl = {
+        controls: true,
+        autoplay: false,
+        preload: 'auto',
+        fluid: true,
+        aspectRatio: "1:0",
+        controlBar: {
+            fullscreenToggle: false,
+            pictureInPictureToggle: false
+        }
+    };
+    
+    var configHls = {
+        enableWebVTT: false,
+        enableIMSC1: false,
+        enableCEA708Captions: false,
+        lowLatencyMode: false,
+        enableWorker: false,
+        maxFragLookUpTolerance: 0.0,
+        testBandwidth: false,
+        maxBufferSize: 0,
+        maxBufferHole: 0,
+        debug: false,
+        xhrSetup: function(xhr, url) {
+            xhr.withCredentials = true;
+        }
+    };
+
+    let audioNode = document.createElement('audio');
+    audioNode.id = 'track'+index;
+
+    audioNode.classList.add("vjs-default-skin");
+    audioNode.classList.add("video-js");
+    audioNode.setAttribute('lang', 'en');
+
+    let flacFallback = (files[index].flac_fallback && !browser.CAN_PLAY_ALAC);
+
+    mediaHolder.appendChild(getAudioSubtitleNode(files[index], flacFallback));
+    mediaHolder.appendChild(audioNode);
+    
+    const IS_FLAC = (files[index].format.toLowerCase() == 'flac' || flacFallback);
+    const USE_VIDEOJS = browser.USE_MSE && IS_FLAC;
+    
+    let videoJSControl = videojs(audioNode, configVideoJSControl, function () {
+        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + files[index].file_name + (flacFallback?'[FLAC]':'') +'.m3u8'), cdnCredentials, baseURL + '_MASTER_*.m3u8'); 
+        let controlNode = document.getElementById('track' + index);
+
+        if (USE_VIDEOJS) {
+            let configVideoJSMedia = {
+                controls: false,
+                autoplay: false,
+                preload: 'auto',
+                html5: {
+                    vhs: {
+                        overrideNative: true,
+                        withCredentials: true
+                    },
+                    nativeAudioTracks: false,
+                    nativeVideoTracks: false
+                },
+                crossOrigin: 'use-credentials'
+            };
+            let videoJSMediaNode = document.createElement('audio');
+            videoJSMediaNode.style.display = 'none';
+            mediaHolder.appendChild(videoJSMediaNode);
+
+            let videoJSMedia = videojs(videoJSMediaNode, configVideoJSMedia, function () {
+
+                mediaInstances[index] = videojsMod (controlNode, videoJSControl, {
+                    mediaElemOverride: videoJSMediaNode,
+                    audio: true
+                });
+
+                setMediaTitle();
+
+                audioReadyCounter ++;
+                if (audioReadyCounter == files.length) {
+                    audioReady();
+                }
+
+                videoJSMedia.on('error', function() {
+                    showPlaybackError('Index ' + index + ': ' + 'videojs: '+JSON.stringify(videoJSMedia.error()));
+                    videoJSMedia.dispose();
+                });
+
+                videoJSMedia.src({
+                    src: url,
+                    type: 'application/x-mpegURL'
+                });
+
+                videoJSMedia.volume(1);
+            });
+        } else {
+            mediaInstances[index] = videojsMod (controlNode, videoJSControl, {audio: true});
+            setMediaTitle();
+            if (browser.USE_MSE) {
+                if (browser.IS_CHROMIUM) {
+                    var messageTitle = document.getElementById('message-title');
+                    changeColor (messageTitle, 'orange');
+                    messageTitle.innerHTML = '不具合があります';
+                    document.getElementById('message-body').innerHTML = '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。ご迷惑をおかけして大変申し訳ございませんでした。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>';
+                    document.getElementById('message').classList.remove('hidden');
+                }
+                let hls = new Hls(configHls);
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        showPlaybackError('Index ' + index + ': ' + data.detail);
+                        mediaInstances[index].hlsInstance.destroy();
+                    }
+                });
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    audioReadyCounter ++;
+                    if (audioReadyCounter == files.length) {
+                        audioReady();
+                    }
+                });
+                mediaInstances[index].attachHls(hls);
+                hls.loadSource(url);
+            } else if (browser.NATIVE_HLS) {
+                let audio = mediaInstances[index].media;
+                audio.volume = 1;
+                
+                audio.addEventListener('error', function () {showPlaybackError();});
+                audio.setAttribute ('crossorigin', 'use-credentials');
+                audio.addEventListener('loadedmetadata', function () {
+                    audioReadyCounter ++;
+                    if (audioReadyCounter == files.length) {
+                        audioReady();
+                    }
+                });
+                audio.src = url;
+                audio.load();
+            } else {
+                showCompatibilityError ();
+            }
+        }
+    });
+
+    function setMediaTitle () {
+        mediaInstances[index].media.setAttribute('title', ((files[index].title=='')?'':(files[index].title + ' | ')) + document.title);
+    }
+}
+
+function addAlbumInfo (contentContainer) {
+    let albumInfo = epInfo.album_info;
+    if (albumInfo.album_title!='') {
+        let albumTitleElem = document.createElement('p');
+        albumTitleElem.setAttribute('class', 'sub-title');
+        albumTitleElem.classList.add('center-align');
+        albumTitleElem.innerHTML = albumInfo.album_title;
+        contentContainer.insertBefore(albumTitleElem, document.getElementById('message'));
+        if (albumInfo.album_artist!='') {
+            let albumArtist = document.createElement('p');
+            albumArtist.setAttribute('class', 'artist');
+            albumArtist.classList.add('center-align');
+            albumArtist.innerHTML = albumInfo.album_artist;
+            contentContainer.insertBefore(albumArtist, document.getElementById('message'));
+        }
+    } else if (albumInfo.album_artist!='') {
+        let titleElem = document.getElementById('title');
+        let artistElem = document.createElement('span');
+        artistElem.setAttribute('class', 'artist');
+        artistElem.innerHTML = '<br/>' + albumInfo.album_artist;
+        titleElem.appendChild(artistElem);
+    }
+}
+
+function getAudioSubtitleNode (file, flacFallback) {
+    let subtitle = document.createElement('p');
+    subtitle.setAttribute('class', 'sub-title');
+    let format = document.createElement('span');
+
+    //subtitle
+    if (file.title != '') {
+        subtitle.innerHTML = file.title;
+
+        if (file.artist != '') {
+            let artist = document.createElement('span');
+            artist.setAttribute('class', 'artist');
+            artist.innerHTML = '／' + file.artist;
+            subtitle.appendChild(artist);
+        }
+    }
+
+    //format
+    if (file.format != '') {
+        if (subtitle.innerHTML != '') {
+            subtitle.innerHTML += '<br />';
+        }
+
+        format.setAttribute('class', 'format');
+        format.innerHTML = file.format;
+
+        let samplerate = file.samplerate;
+        if (samplerate != '') {
+            let samplerateText = samplerate;
+            switch (samplerate) {
+                case '44100':
+                    samplerateText = '44.1kHz';
+                    break;
+                case '48000':
+                    samplerateText = '48.0kHz';
+                    break;
+                case '96000':
+                    samplerateText = '96.0kHz';
+                    break;
+                case '88200':
+                    samplerateText = '88.2kHz';
+                    break;
+                case '192000':
+                    samplerateText = '192.0kHz';
+                    break;
+            }
+            format.innerHTML += ' ' + samplerateText;
+
+            let bitdepth = file.bitdepth;
+            if (bitdepth != '') {
+                let bitdepthText = bitdepth;
+                switch (bitdepth) {
+                    case '16':
+                        bitdepthText = '16bit';
+                        break;
+                    case '24':
+                        bitdepthText = '24bit';
+                        break;
+                    case '32':
+                        bitdepthText = '32bit';
+                        break;	
+                }
+                format.innerHTML += '/' + bitdepthText;
+            }
+        }
+
+        if (flacFallback) {
+            format.innerHTML = format.innerHTML.replace('ALAC', 'FLAC');
+            format.innerHTML = format.innerHTML.replace('32bit', '24bit');
+        }
+
+        subtitle.appendChild(format);
+    }
+
+    return subtitle;
+}
+
+function audioReady () {
+    function pauseAll (currentIndex) {
+        for (var j = 0; j < mediaInstances.length; j++) {
+            if (j != currentIndex) {
+                mediaInstances[j].pause();
+            }
+        }
+    }
+    function playNext (currentIndex) {
+        if (currentIndex != mediaInstances.length-1) {
+            mediaInstances[currentIndex+1].play();
+        }
+    }
+
+    for (var i = 0; i < mediaInstances.length; i++) {
+        let index = i;
+        mediaInstances[index].media.addEventListener('play', function () {
+            pauseAll(index);
+        });
+        mediaInstances[index].media.addEventListener('ended', function () {
+            playNext(index);
+        });
+    }
+}
+
+function updateImage () {
+    var mediaHolder = document.createElement('div');
+    mediaHolder.id = 'media-holder';
+    document.getElementById('content').appendChild(mediaHolder);
+    
+    let files = epInfo.files;
+    for (var i = 0; i < files.length; i++) {
+        let index = i;
+        if (files[index].tag != '') {
+            let subtitle = document.createElement('p');
+            subtitle.setAttribute('class', 'sub-title');
+            subtitle.innerHTML = files[index].tag;
+            mediaHolder.appendChild(subtitle);
+        }
+
+        let imageNode = document.createElement('div');
+        let overlay = document.createElement('div');
+
+        overlay.classList.add('overlay');
+        imageNode.appendChild(overlay);
+
+        imageNode.classList.add('lazyload');
+        imageNode.dataset.crossorigin = 'use-credentials';
+        imageNode.dataset.src = baseURL + encodeCFURIComponent(files[index].file_name);
+        imageNode.dataset.alt = document.getElementById('title').innerHTML;
+        imageNode.dataset.xhrParam = index;
+        imageNode.dataset.authenticationToken = epInfo.authentication_token;
+        imageNode.addEventListener('click', function() {
+            let param = {
+                src: baseURL + encodeCFURIComponent(files[index].file_name),
+                xhrParam: index,
+                title: document.getElementById('title').innerHTML,
+                authenticationToken: epInfo.authentication_token
+            };
+            document.cookie = 'local-image-param='+encodeURIComponent(JSON.stringify(param))+';max-age=10;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+            if (debug) {
+                window.location.href = 'image.html';
+            } else {
+                window.open (topURL + '/image');
+            }
+        });
+        imageNode.addEventListener('contextmenu', event => event.preventDefault());
+        mediaHolder.appendChild(imageNode);
+    }
+
+    lazyloadInitialize ();
+}
+
 function showPlaybackError (detail) {
-    var messageTitle = document.getElementById('message-title');
-    changeColor (messageTitle, 'red');
-    messageTitle.innerHTML = 'エラーが発生しました';
-    document.getElementById('media-holder').classList.add('hidden');
-    document.getElementById('message-body').innerHTML = '<p>再生中にエラーが発生しました。後ほどもう一度お試しいただくか、それでも問題が解決しない場合は管理者にお問い合わせください。</p>'+(detail?('<p>Error detail: '+detail+'</p>'):'');
-    document.getElementById('message').classList.remove('hidden');
+    showError ('エラーが発生しました', '<p>再生中にエラーが発生しました。後ほどもう一度お試しいただくか、それでも問題が解決しない場合は管理者にお問い合わせください。</p>'+(detail?('<p>Error detail: '+detail+'</p>'):''));
 }
 
 function showCompatibilityError () {
+    showError('再生できません', '<p>お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。</p>');
+}
+
+function showError (title, message) {
     var messageTitle = document.getElementById('message-title');
     changeColor (messageTitle, 'red');
-    messageTitle.innerHTML = 'エラーが発生しました';
+    messageTitle.innerHTML = title;
     document.getElementById('media-holder').classList.add('hidden');
-    document.getElementById('message-body').innerHTML = '<p>お使いのブラウザやデバイスはHLSに対応していません。HLSに対応している一般的なブラウザを以下に示します。</p>' + 
-    '<ul>' +
-        '<li><p>Chrome 39+ for Android</p></li>' +
-        '<li><p>Chrome 39+ for Desktop</p></li>' +
-        '<li><p>Firefox 41+ for Android</p></li>' +
-        '<li><p>Firefox 42+ for Desktop</p></li>' +
-        '<li><p>Edge for Windows 10+</p></li>' +
-        '<li><p>Safari 6.0+ for macOS, iOS and iPadOS</p></li>' +
-    '</ul>';
+    document.getElementById('message-body').innerHTML = message;
     document.getElementById('message').classList.remove('hidden');
 }
 
@@ -1002,7 +956,7 @@ function displayChapters (chapters) {
 }
 
 function addDownloadAccordion () {
-    if (!DOWNLOAD_SUPPORTED) {
+    if (browser.IS_MOBILE) {
         return;
     }
 
