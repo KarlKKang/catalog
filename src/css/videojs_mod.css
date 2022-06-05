@@ -126,6 +126,7 @@
 /* Make player height minimum to the controls height so when we hide video/poster area the controls are displayed correctly. */
 .video-js.vjs-audio {
 	min-height: 3em;
+	padding-top: 0px;
 }
 /* Hide audio buffer progress. */
 .video-js.vjs-audio .vjs-load-progress {
