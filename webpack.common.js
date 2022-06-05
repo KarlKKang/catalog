@@ -8,11 +8,11 @@ module.exports = {
 		},
 		'account': {
 			import: './src/script/account.js',
-			dependOn: ['main', 'core-js', 'sha512'],
+			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
 		},
 		'bangumi-hls': {
 			import: './src/script/bangumi-hls.js',
-			dependOn: ['main', 'core-js'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'confirm_email': {
 			import: './src/script/confirm_email.js',
@@ -32,49 +32,50 @@ module.exports = {
 		},
 		'index': {
 			import: './src/script/index.js',
-			dependOn: ['main', 'core-js'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'info': {
 			import: './src/script/info.js',
-			dependOn: ['main', 'core-js'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'login': {
 			import: './src/script/login.js',
-			dependOn: ['main', 'core-js', 'sha512'],
+			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
 		},
 		'message': {
 			import: './src/script/message.js',
-			dependOn: ['main', 'core-js'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'new_email': {
 			import: './src/script/new_email.js',
-			dependOn: ['main', 'core-js'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'password_reset': {
 			import: './src/script/password_reset.js',
-			dependOn: ['main', 'core-js', 'sha512'],
+			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
 		},
 		'policy': {
 			import: './src/script/policy.js',
-			dependOn: ['main', 'core-js'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'register': {
 			import: './src/script/register.js',
-			dependOn: ['main', 'core-js', 'sha512'],
+			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
 		},
 		'request_password_reset': {
 			import: './src/script/request_password_reset.js',
-			dependOn: ['main', 'core-js'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'special_register': {
 			import: './src/script/special_register.js',
-			dependOn: ['main', 'core-js', 'sha512'],
+			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
 		},
 
 		//helpers
 		'main': ['./src/script/helper/main.js'],
 		'sha512': ['node-forge/lib/sha512'],
 		'core-js': ['core-js'],
+		'css-vars-ponyfill': ['css-vars-ponyfill']
 	},
 	output: {
 		filename: '[name].js',

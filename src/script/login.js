@@ -10,12 +10,14 @@ import {
 	passwordStyling,
 	authenticate,
 	disableCheckbox,
-	clearCookies
+	clearCookies,
+	cssVarWrapper
 } from './helper/main.js';
 import sha512 from 'node-forge/lib/sha512';
+import cssVars from 'css-vars-ponyfill';
 
 window.addEventListener("load", function(){
-
+	cssVarWrapper(cssVars);
 	clearCookies();
 	
 	if (!window.location.href.startsWith(loginURL) && !debug) {

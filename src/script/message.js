@@ -6,10 +6,13 @@ import {
 	keyExists,
 	logout,
 	getCookie,
-	clearCookies
+	clearCookies,
+	cssVarWrapper
 } from './helper/main.js';
+import cssVars from 'css-vars-ponyfill';
 
 window.addEventListener("load", function(){
+	cssVarWrapper(cssVars);
 	clearCookies();
 	
 	var paramCookie = getCookie('local-message-param');

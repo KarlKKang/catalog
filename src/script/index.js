@@ -10,8 +10,10 @@ import {
 	showMessage,
 	getURLParam,
 	cdnURL,
-    clearCookies
+    clearCookies,
+    cssVarWrapper
 } from './helper/main.js';
+import cssVars from 'css-vars-ponyfill';
 
 var lazyloadInitialize;
 
@@ -25,6 +27,7 @@ var pivot = '';
 
 
 window.addEventListener("load", function(){
+    cssVarWrapper(cssVars);
 	clearCookies();
 	
 	if (!window.location.href.startsWith('https://featherine.com') && !debug) {

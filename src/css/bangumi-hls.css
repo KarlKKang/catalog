@@ -35,7 +35,7 @@
 #season-button-wrapper > div {
 	height: auto;
     transition: .4s ease-out;
-	margin: 0px min(2em, 25px);
+	margin: 0px 1.5em;
 	cursor: pointer;
 	border-bottom-style: solid;
 	border-bottom-width: 1px;
@@ -84,8 +84,14 @@
 	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	padding: 0.6em 1em;
-	margin: min(2%, 12px);
+	margin: 12px;
 	cursor: pointer;
+}
+
+@supports (margin: min(2%, 12px)) {
+	#ep-button-wrapper > div {
+		margin: min(2%, 12px);
+	}
 }
 
 #ep-button-wrapper > div:hover {
@@ -176,6 +182,9 @@ select {
     background-color: var(--foreground-color);
     box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
+}
+select::-ms-expand {
+    display: none;
 }
 select:hover{
     box-shadow: var(--shadow-hover);
@@ -307,7 +316,8 @@ p.artist {
     transition: box-shadow .4s ease-out;
 	background: var(--foreground-color);
 	border: none;
-	width: min(150px, 100%);
+	width: 150px;
+	max-width: 100%;
 	text-align: center;
 	position: relative;
 	cursor: pointer;

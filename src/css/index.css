@@ -12,14 +12,22 @@
 
 #container > div {
 	position: relative;
-	width: min(256px, 50% - 2 * min(2%, 12px));
+	width: 256px;
+	max-width: calc(50% - 2 * 12px);
 	height: auto;
 	background-color: var(--foreground-color);
 	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
-	margin: min(2%, 12px);
+	margin: 12px;
 	cursor: pointer;
 	align-self: flex-start;
+}
+
+@supports (max-width: min(2%, 12px)) and (margin: min(2%, 12px)) {
+	#container > div {
+		max-width: calc(50% - 2 * min(2%, 12px));
+		margin: min(2%, 12px);
+	}
 }
 
 #container > div:hover {

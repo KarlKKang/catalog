@@ -15,7 +15,8 @@
 }
 
 #container {
-	width: min(1000px, 90%);
+	width: 1000px;
+	max-width: 90%;
 	margin: 5vh 0px;
 	padding: 1em 0px;
 	position: relative;

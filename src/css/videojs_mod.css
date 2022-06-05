@@ -104,6 +104,14 @@
 	box-shadow: none;
 }
 
+.video-js .vjs-progress-control .vjs-mouse-display.backward {
+	background-color: var(--foreground-color);
+}
+
+.video-js .vjs-progress-control .vjs-mouse-display.forward {
+	background-color: var(--text-color);
+}
+
 /* Audio: Remove big play button (leave only the button in controls). */
 .video-js.vjs-audio .vjs-big-play-button, .video-js.vjs-audio .vjs-loading-spinner {
 	display: none;

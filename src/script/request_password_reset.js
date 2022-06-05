@@ -7,10 +7,13 @@ import {
 	loginURL,
 	topURL,
 	authenticate,
-	clearCookies
+	clearCookies,
+	cssVarWrapper
 } from './helper/main.js';
+import cssVars from 'css-vars-ponyfill';
 
 window.addEventListener("load", function(){
+	cssVarWrapper(cssVars);
 	clearCookies();
 	
 	if (!window.location.href.startsWith('https://login.featherine.com/request_password_reset') && !debug) {

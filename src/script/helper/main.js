@@ -1,17 +1,12 @@
 // JavaScript Document
 
-var topURL = 'https://featherine.com';
-var loginURL = 'https://login.featherine.com';
-
-var serverURL = 'https://server.featherine.com';
-var cdnURL = 'https://cdn.featherine.com';
+const serverURL = 'https://server.featherine.com';
+const cdnURL = 'https://cdn.featherine.com';
 	
-var debug = process.env.NODE_ENV !== 'production';
+const debug = process.env.NODE_ENV !== 'production';
 
-if (debug) {
-	topURL = 'index.html';
-	loginURL = 'login.html';
-}
+const topURL = debug?'index.html':'https://featherine.com';
+const loginURL = debug?'login.html':'https://login.featherine.com';
 	
 var expiredMessage = {
 	title: '期限が切れています',
@@ -446,4 +441,20 @@ export function clearCookies () {
 	if (window.location.href != topURL + '/image' && !debug) {
 		document.cookie = 'local-image-param=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
 	}
+}
+
+//////////////////////////////////////// Dependencies: none
+export function cssVarWrapper (cssVars) {
+	cssVars({
+		onError: function(message, elm, xhr, url) {
+			if (window.location.href != topURL + '/message' && !debug) {
+				showMessage({
+					message: "cssの解析に失敗しました。別のブラウザで、もう一度お試しください。<br>" + message
+				});
+			}
+		},
+		onWarning: function(message) {
+			console.log(message);
+		}
+	  });
 }

@@ -5,7 +5,8 @@ import {
 	sendServerRequest,
 	topURL,
 	showMessage,
-	concatenateSignedURL
+	concatenateSignedURL,
+	debug
 } from './main.js';
 
 var webpMachine = null;
@@ -37,10 +38,16 @@ export default function () {
 						if (imageNode.src.includes('.webp')) {
 							if (webpMachineActive) {
 								webpMachineQueue.push(imageNode);
+								if (debug) {
+									console.log('Webp Machine active. Pushed ' + imageNode.src + ' to queue.');
+								}
 							} else {
 								webpMachineActive = true;
 								webpMachineQueue.push(imageNode);
 								startWebpMachine();
+								if (debug) {
+									console.log('Webp Machine NOT active. Pushed ' + imageNode.src + ' to queue. Webp Machine started.');
+								}
 							}
 						}
 					});
@@ -81,15 +88,30 @@ export default function () {
 
 async function startWebpMachine() {
 	if (webpMachine === null) {
+		if (debug) {
+			console.log('webp-hero not imported.');
+		}
 		let {WebpMachine} = await import(
 			/* webpackChunkName: "webp-hero" */
 			/* webpackExports: ["WebpMachine"] */
 			'webp-hero/dist-cjs'
 		);
 		webpMachine = new WebpMachine();
+		if (debug) {
+			console.log('webp-hero successfully imported.');
+		}
 	}
 	while(webpMachineQueue.length != 0) {
-		await webpMachine.polyfillImage(webpMachineQueue.shift());
+		let imageNode = webpMachineQueue.shift();
+		let originalSrc = imageNode.src;
+		await webpMachine.polyfillImage(imageNode);
+		if (imageNode.src == originalSrc) { // The first two images tend to failed to decode.
+			if (debug) {
+				console.log('Failed to polyfill webp. Appended back to the queue to retry.');
+			}
+			webpMachineQueue.push(imageNode);
+		}
+		webpMachine.clearCache();
 	}
 	webpMachineActive = false;
 }

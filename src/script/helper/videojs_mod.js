@@ -264,9 +264,11 @@ export default function (controls, instance, config) {
             progressTooltip.innerHTML = currentTimestamp;
             progressTooltip.style.right = -progressTooltip.offsetWidth/2 + 'px';
 			if (currentTime > media.currentTime) {
-				progressMouseDisplay.style.backgroundColor = 'var(--text-color)';
+				progressMouseDisplay.classList.remove('backward');
+				progressMouseDisplay.classList.add('forward');
 			} else {
-				progressMouseDisplay.style.backgroundColor = 'var(--foreground-color)';
+				progressMouseDisplay.classList.remove('forward');
+				progressMouseDisplay.classList.add('backward');
 			}
         }
         if (that._dragging) {

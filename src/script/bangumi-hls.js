@@ -14,8 +14,10 @@ import {
 	cdnURL,
 	concatenateSignedURL,
 	encodeCFURIComponent,
-    clearCookies
+    clearCookies,
+    cssVarWrapper
 } from './helper/main.js';
+import cssVars from 'css-vars-ponyfill';
 
 
 var seriesID;
@@ -23,7 +25,7 @@ var epIndex;
 var formatIndex;
 
 window.addEventListener("load", function(){
-	
+	cssVarWrapper(cssVars);
 	clearCookies();
 	
 	if (!window.location.href.startsWith(topURL + '/bangumi') && !debug) {

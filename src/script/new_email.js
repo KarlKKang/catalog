@@ -8,10 +8,13 @@ import {
 	topURL,
 	getURLParam,
 	expiredMessage,
-	clearCookies
+	clearCookies,
+	cssVarWrapper
 } from './helper/main.js';
+import cssVars from 'css-vars-ponyfill';
 
 window.addEventListener("load", function(){
+	cssVarWrapper(cssVars);
 	clearCookies();
 	
 	if (!window.location.href.startsWith('https://featherine.com/new_email') && !debug) {

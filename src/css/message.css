@@ -2,7 +2,8 @@
 /* CSS Document */
 
 #container {
-	width: min(1000px, 90%);
+	width: 1000px;
+	max-width: 90%;
 	margin: 5vh 0px;
 	padding: 2em;
 	position: relative;
@@ -34,7 +35,8 @@ button {
     transition: box-shadow .4s ease-out;
 	background: var(--foreground-color);
 	border: none;
-	width: min(150px, 100%);
+	width: 150px;
+	max-width: 100%;
 	text-align: center;
 	position: relative;
 	cursor: pointer;
