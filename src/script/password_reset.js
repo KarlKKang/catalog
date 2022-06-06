@@ -3,15 +3,15 @@ import "core-js";
 import {
 	debug,
 	sendServerRequest,
-	showMessage,
+	message,
 	loginURL,
 	getURLParam,
 	passwordStyling,
-	expiredMessage,
 	clearCookies,
-	cssVarWrapper
+	cssVarWrapper,
+	hashPassword,
+	getHref
 } from './helper/main.js';
-import sha512 from 'node-forge/lib/sha512';
 import cssVars from 'css-vars-ponyfill';
 
 window.addEventListener("load", function(){
@@ -19,7 +19,7 @@ window.addEventListener("load", function(){
 	clearCookies();
 
 	
-	if (!window.location.href.startsWith('https://login.featherine.com/password_reset') && !debug) {
+	if (!getHref().startsWith('https://login.featherine.com/password_reset') && !debug) {
 		window.location.replace(loginURL);
 		return;
 	}
@@ -56,39 +56,41 @@ window.addEventListener("load", function(){
     sendServerRequest('reset_password.php', {
         callback: function (response) {
             if (response == 'EXPIRED') {
-                showMessage (expiredMessage);
+                message.show(message.template.param.expired);
+				return;
             } else if (response != 'APPROVED') {
-                showMessage ();
-            } else {
-				newPasswordInput.addEventListener('keydown', function (event) {
-					if (event.key === "Enter") {
-						submitRequest ();
-					}
-				});
-				newPasswordConfirmInput.addEventListener('keydown', function (event) {
-					if (event.key === "Enter") {
-						submitRequest ();
-					}
-				});
-				submitButton.addEventListener('click', function () {
-					submitRequest ();
-				});
-
-				newPasswordInput.addEventListener('input', function () {
-					passwordStyling(this);
-				});
-				newPasswordConfirmInput.addEventListener('input', function () {
-					passwordStyling(this);
-				});
-				document.body.classList.remove("hidden");
+                message.show();
+				return;
             }
+
+			newPasswordInput.addEventListener('keydown', function (event) {
+				if (event.key === "Enter") {
+					submitRequest ();
+				}
+			});
+			newPasswordConfirmInput.addEventListener('keydown', function (event) {
+				if (event.key === "Enter") {
+					submitRequest();
+				}
+			});
+			submitButton.addEventListener('click', function () {
+				submitRequest();
+			});
+
+			newPasswordInput.addEventListener('input', function () {
+				passwordStyling(this);
+			});
+			newPasswordConfirmInput.addEventListener('input', function () {
+				passwordStyling(this);
+			});
+			document.body.classList.remove("hidden");
         },
         content: "user="+user+"&signature="+signature+"&expires="+expires,
         withCredentials: false
     });
 
 
-	function submitRequest () {
+	async function submitRequest () {
 		var warningElem = document.getElementById('warning');
 		
 		disableAllInputs(true);
@@ -97,34 +99,27 @@ window.addEventListener("load", function(){
 		var newPasswordConfirm = newPasswordConfirmInput.value;
 
 		if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
-			warningElem.innerHTML = 'パスワードが要件を満たしていません。';
+			warningElem.innerHTML = message.template.inline.invalidPasswordFormat;
 			warningElem.classList.remove('hidden');
 			disableAllInputs(false);
 			return;
 		} else if (newPassword!=newPasswordConfirm) {
-			warningElem.innerHTML = '確認再入力が一致しません。';
+			warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
 			warningElem.classList.remove('hidden');
 			disableAllInputs(false);
 			return;
-		} else {
-			var hash = sha512.sha256.create();
-			hash.update(newPassword);
-			newPassword = hash.digest().toHex();
 		}
-		
+
+		newPassword = await hashPassword(newPassword)
+
 		sendServerRequest('reset_password.php', {
 			callback: function (response) {
                 if (response == 'EXPIRED') {
-                    showMessage (expiredMessage);
+					message.show(message.template.param.expired);
                 } else if (response == 'DONE') {
-                    showMessage ({
-						title: '完了しました',
-						message: 'パスワードが変更されました。',
-						color: 'green',
-						url: loginURL
-					});
+                    message.show(message.template.param.passwordChanged);
                 } else {
-                    showMessage ();
+                    message.show();
                 }
 			},
 			content: "user="+user+"&signature="+signature+"&expires="+expires+"&new="+newPassword,

@@ -6,16 +6,17 @@ import {
 	topURL,
 	keyExists,
 	sendServerRequest,
-	showMessage,
+	message,
 	imageProtection,
 	concatenateSignedURL,
-	clearCookies
+	clearCookies,
+	getHref
 } from './helper/main.js';
 
 window.addEventListener("load", function(){
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com/image') && !debug) {
+	if (getHref()!='https://featherine.com/image' && !debug) {
 		window.location.replace('https://featherine.com/image');
 		return;
 	}
@@ -50,7 +51,7 @@ window.addEventListener("load", function(){
 	setInterval (function () {sendServerRequest('device_authenticate.php', {
 		callback: function (response) {
 			if (response!='APPROVED') {
-				showMessage ();
+				message.show();
 				return false;
 			}
 		},
@@ -71,7 +72,7 @@ window.addEventListener("load", function(){
 				const webpMachine = new WebpMachine();
 				webpMachine.polyfillImage(image);
 			}).catch((e) => {
-				showMessage ({message: 'モジュールの読み込みに失敗しました。このエラーが続く場合は、管理者にお問い合わせください。<br>' + e});
+				message.show(message.template.param.moduleImportError(e));
 			});
 		} else {
 			window.location.replace(topURL);
@@ -88,7 +89,7 @@ window.addEventListener("load", function(){
 			try {
 				response = JSON.parse(response);
 			} catch (e) {
-				showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
+				message.show(message.template.param.server.invalidResponse);
 				return;
 			}
 			let url = concatenateSignedURL(param.src, response);

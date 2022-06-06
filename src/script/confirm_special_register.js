@@ -4,16 +4,16 @@ import {
 	debug,
 	loginURL,
 	sendServerRequest,
-	showMessage,
+	message,
 	getURLParam,
-	expiredMessage,
-	clearCookies
+	clearCookies,
+	getHref
 } from './helper/main.js';
 
 window.addEventListener("load", function(){
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com/confirm_special_register') && !debug) {
+	if (!getHref().startsWith('https://featherine.com/confirm_special_register') && !debug) {
 		window.location.replace(loginURL);
 		return;
 	}
@@ -33,22 +33,13 @@ window.addEventListener("load", function(){
 	sendServerRequest('verify_special_register.php', {
 		callback: function (response) {
 				if (response == 'REJECTED') {
-					showMessage ({
-						title: '拒否されました',
-						message: '現在、登録は招待制となっています。',
-						url: loginURL
-					});
+					message.show(message.template.param.invitationOnly);
 				} else if (response == 'EXPIRED') {
-					showMessage (expiredMessage);
+					message.show(message.template.param.expired);
 				} else if (response == 'DONE') {
-					showMessage ({
-						title: '完了しました',
-						message: 'アカウントが登録されました。',
-						color: 'green',
-						url: loginURL
-					});
+					message.show(message.template.param.registerComplete);
 				} else {
-					showMessage ();
+					message.show();
 				}
 		},
 		content: "user="+user+"&signature="+signature,

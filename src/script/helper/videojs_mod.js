@@ -6,7 +6,7 @@ import {
 	keyExists
 } from './main.js';
 import Hls from 'hls.js';
-import {default as videojs} from 'video.js/dist/video.cjs';
+import {default as videojs} from 'video.js/dist/alt/video.novtt';
 
 export default function (controls, instance, config) {
 
@@ -22,7 +22,9 @@ export default function (controls, instance, config) {
 		_buffering: false,
 		_dragging: false,
 		_useNative: true,
-		hlsInstance: undefined
+		_attached: false,
+		hlsInstance: undefined,
+		videoJSInstance: undefined
 	};
 	
 	if (!config) {
@@ -125,7 +127,7 @@ export default function (controls, instance, config) {
         if (controls.classList.contains('vjs-ended')) {
             controls.classList.remove('vjs-ended');
             playButton.classList.remove('vjs-ended');
-            seek (0);
+            seek(0);
             play();
         } else {
             togglePlayback ();
@@ -227,7 +229,7 @@ export default function (controls, instance, config) {
                 playButton.classList.add('vjs-ended');
             }*/
 
-			seek (currentTime);
+			seek(currentTime);
 			if (isVideo && !that._useNative) {
 				if (that._playing) {
 					play();
@@ -385,7 +387,7 @@ export default function (controls, instance, config) {
 				toggleFullscreen ();
 				event.preventDefault();
 			} else if (keyCode == 37) {
-				seek (media.currentTime - 5);
+				seek(media.currentTime - 5);
 				event.preventDefault();
 			} else if (keyCode == 39) {
 				media.currentTime = media.currentTime + 5;
@@ -394,7 +396,7 @@ export default function (controls, instance, config) {
 				media.currentTime = media.currentTime + 15;
 				event.preventDefault();
 			} else if (keyCode == 40) {
-				seek (media.currentTime - 15);
+				seek(media.currentTime - 15);
 				event.preventDefault();
 			}
 		}, true);
@@ -544,18 +546,67 @@ export default function (controls, instance, config) {
         }
     }
 	
-	function attachHls (hls) {
+	function attachHls (hlsInstance, url) {
+		if (that._attached) {
+			return false;
+		}
+		that._attached = true;
 		that._useNative = false;
-		that.hlsInstance = hls;
+		that.hlsInstance = hlsInstance;
 		that._fragStart = 0;
 		that._fragEnd = 0;
-		hls.on(Hls.Events.FRAG_CHANGED, (e, data) => { 
+		hlsInstance.on(Hls.Events.FRAG_CHANGED, (e, data) => { 
 			that._fragStart = data.frag.startDTS;
 			that._fragEnd = data.frag.endDTS;
 			onScreenConsoleOutput ('Fragment changed: ' + that._fragStart + '-' + that._fragEnd);
 		});
-		hls.attachMedia(media);
+		hlsInstance.attachMedia(media);
+		hlsInstance.loadSource(url);
 		onScreenConsoleOutput ('HLS is attached.');
+		return true;
+	}
+
+	function attachVideoJS (videoJSInstance, url) {
+		if (that._attached) {
+			return false;
+		}
+		that._attached = true;
+		that._useNative = false;
+		that.videoJSInstance = videoJSInstance;
+		videoJSInstance.src({
+			src: url,
+			type: 'application/vnd.apple.mpegurl'
+		});
+		videoJSInstance.volume(1);
+		onScreenConsoleOutput ('VideoJS is attached.');
+		return true;
+	}
+
+	function attachNative (url) {
+		if (that._attached) {
+			return false;
+		}
+		that._attached = true;
+		media.volume = 1;
+		media.src = url;
+        media.load();
+		return true;
+	}
+
+	function destroy () {
+		if (!that._attached) {
+			return;
+		}
+		if (that.hlsInstance !== undefined) {
+			that.hlsInstance.destroy();
+		} else if (that.videoJSInstance !== undefined) {
+			that.videoJSInstance.dispose();
+		} else {
+			media.pause();
+			media.removeAttribute('src');
+			media.load();
+		}
+		that._attached = false;
 	}
 
     function addMultipleEventListeners (elem, types, callback, useCapture) {
@@ -570,6 +621,9 @@ export default function (controls, instance, config) {
 	that.pause = pause;
 	that.seek = seek;
 	that.attachHls = attachHls;
+	that.attachVideoJS = attachVideoJS;
+	that.attachNative = attachNative;
+	that.destroy = destroy;
 	
 	return that;
 };

@@ -7,5 +7,5 @@ module.exports = merge(common, {
 	devtool: 'inline-source-map',
 	output: {
 		path: path.resolve(__dirname, 'dev/script'),
-	},
+	}
 });

@@ -5,13 +5,13 @@ import {
 	navListeners,
 	redirect,
 	topURL,
-	loginURL,
 	sendServerRequest,
-	showMessage,
+	message,
 	getURLParam,
 	cdnURL,
     clearCookies,
-    cssVarWrapper
+    cssVarWrapper,
+    getHref
 } from './helper/main.js';
 import cssVars from 'css-vars-ponyfill';
 
@@ -30,7 +30,7 @@ window.addEventListener("load", function(){
     cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com') && !debug) {
+	if (!getHref().startsWith('https://featherine.com') && !debug) {
 		window.location.replace(topURL);
 		return;
 	}
@@ -51,7 +51,7 @@ window.addEventListener("load", function(){
             try {
                 series = JSON.parse(response);
             } catch (e) {
-                showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: loginURL, logout: true});
+                message.show(message.template.param.server.invalidResponse);
                 return;
             }
             import(
@@ -66,7 +66,7 @@ window.addEventListener("load", function(){
                 navListeners();
                 document.body.classList.remove("hidden");
 			}).catch((e) => {
-				showMessage ({message: 'モジュールの読み込みに失敗しました。このエラーが続く場合は、管理者にお問い合わせください。<br>' + e});
+				message.show(message.template.param.moduleImportError(e));
 			});
         }, 
         content: keywords+"offset=0"
@@ -162,7 +162,7 @@ function requestSearchResults () {
             try {
                 series = JSON.parse(response);
             } catch (e) {
-                showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: loginURL, logout: true});
+                message.show(message.template.param.server.invalidResponse);
                 return;
             }
             document.getElementById('container').classList.add('transparent');
@@ -209,7 +209,7 @@ function infiniteScrolling () {
                 try {
                     series = JSON.parse(response);
                 } catch (e) {
-                    showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: loginURL, logout: true});
+                    message.show(message.template.param.server.invalidResponse);
                     return;
                 }
                 showSeries (series);

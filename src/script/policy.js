@@ -4,7 +4,8 @@ import {
 	debug,
 	authenticate,
 	clearCookies,
-	cssVarWrapper
+	cssVarWrapper,
+	getHref
 } from './helper/main.js';
 import cssVars from 'css-vars-ponyfill';
 
@@ -12,7 +13,7 @@ window.addEventListener("load", function(){
 	cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com/policy') && !debug) {
+	if (!getHref().startsWith('https://featherine.com/policy') && !debug) {
 		window.location.replace('https://featherine.com/policy');
 		return;
 	}

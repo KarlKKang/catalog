@@ -3,8 +3,7 @@ import 'intersection-observer';
 import {
 	imageProtection,
 	sendServerRequest,
-	topURL,
-	showMessage,
+	message,
 	concatenateSignedURL,
 	debug
 } from './main.js';
@@ -65,7 +64,7 @@ export default function () {
 								try {
 									response = JSON.parse(response);
 								} catch (e) {
-									showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
+									message.show (message.template.param.server.invalidResponse);
 									return;
 								}
 								let url = concatenateSignedURL(target.dataset.src, response);
@@ -88,17 +87,16 @@ export default function () {
 
 async function startWebpMachine() {
 	if (webpMachine === null) {
-		if (debug) {
-			console.log('webp-hero not imported.');
-		}
-		let {WebpMachine} = await import(
-			/* webpackChunkName: "webp-hero" */
-			/* webpackExports: ["WebpMachine"] */
-			'webp-hero/dist-cjs'
-		);
-		webpMachine = new WebpMachine();
-		if (debug) {
-			console.log('webp-hero successfully imported.');
+		try {
+			let {WebpMachine} = await import(
+				/* webpackChunkName: "webp-hero" */
+				/* webpackExports: ["WebpMachine"] */
+				'webp-hero/dist-cjs'
+			);
+			webpMachine = new WebpMachine();
+		} catch(e) {
+			message.show (message.template.param.moduleImportError(e));
+            return;
 		}
 	}
 	while(webpMachineQueue.length != 0) {

@@ -3,10 +3,10 @@ import "core-js";
 import {
 	debug,
 	sendServerRequest,
-	clearCookies
+	clearCookies,
+	hashPassword,
+	getHref
 } from './helper/main.js';
-
-import sha512 from 'node-forge/lib/sha512';
 
 window.addEventListener("load", function(){
 	clearCookies();
@@ -17,7 +17,7 @@ window.addEventListener("load", function(){
 		}
 	};
 	
-	if (!window.location.href.startsWith('https://featherine.com/console') && !debug) {
+	if (getHref()!='https://featherine.com/console' && !debug) {
 		window.location.replace('https://featherine.com/console');
 		return;
 	}
@@ -292,7 +292,7 @@ function getAccountTable () {
 	});
 }
 
-function addAccount (button) {
+async function addAccount (button) {
 	var record = button.parentNode.parentNode;
 	var email = record.getElementsByClassName('email')[0].value;
 	var username = record.getElementsByClassName('username')[0].value;
@@ -319,7 +319,7 @@ function addAccount (button) {
 	
 	var available_invite = record.getElementsByClassName('available-invite')[0].value;
 	
-	var param = parseAccountRecord (email, username, password, user_group, status, available_invite);
+	var param = await parseAccountRecord (email, username, password, user_group, status, available_invite);
 	if (!param) {
 		return;
 	}
@@ -347,7 +347,7 @@ function addAccount (button) {
 	});
 }
 
-function modifyAccount (button, originalEmail) {
+async function modifyAccount (button, originalEmail) {
 	var record = button.parentNode.parentNode;
 	var email = record.getElementsByClassName('email')[0].value;
 	var username = record.getElementsByClassName('username')[0].value;
@@ -374,7 +374,7 @@ function modifyAccount (button, originalEmail) {
 	
 	var available_invite = record.getElementsByClassName('available-invite')[0].value;
 	
-	var param = parseAccountRecord (email, username, password, user_group, status, available_invite);
+	var param = await parseAccountRecord (email, username, password, user_group, status, available_invite);
 	if (!param) {
 		return;
 	}
@@ -398,7 +398,7 @@ function modifyAccount (button, originalEmail) {
 	});
 }
 
-function parseAccountRecord (email, username, password, user_group, status, available_invite) {
+async function parseAccountRecord (email, username, password, user_group, status, available_invite) {
 	if (email=='') {
 		alert ("ERROR: 'email' is required");
 		return false;
@@ -415,9 +415,7 @@ function parseAccountRecord (email, username, password, user_group, status, avai
 		alert ("ERROR: password requirements not met");
 		return false;
 	} else {
-		var hash = sha512.sha256.create();
-		hash.update(password);
-		password = hash.digest().toHex();
+		password = await hashPassword(password);
 	}
 	
 	if (user_group=='admin') {

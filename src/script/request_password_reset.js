@@ -3,12 +3,13 @@ import "core-js";
 import {
 	debug,
 	sendServerRequest,
-	showMessage,
+	message,
 	loginURL,
 	topURL,
 	authenticate,
 	clearCookies,
-	cssVarWrapper
+	cssVarWrapper,
+	getHref
 } from './helper/main.js';
 import cssVars from 'css-vars-ponyfill';
 
@@ -16,7 +17,7 @@ window.addEventListener("load", function(){
 	cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://login.featherine.com/request_password_reset') && !debug) {
+	if (getHref()!='https://login.featherine.com/request_password_reset' && !debug) {
 		window.location.replace('https://login.featherine.com/request_password_reset');
 		return;
 	}
@@ -56,7 +57,7 @@ window.addEventListener("load", function(){
 
 		var email = emailInput.value;
 		if (email=='' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
-			warningElem.innerHTML="有効なメールアドレスを入力してください。";
+			warningElem.innerHTML=message.template.inline.invalidEmailFormat;
 			warningElem.classList.remove('hidden');
 			disableAllInputs(false);
 			return;
@@ -65,18 +66,13 @@ window.addEventListener("load", function(){
 		sendServerRequest('send_password_reset.php', {
 			callback: function (response) {
                 if (response == 'INVALID FORMAT') {
-                    warningElem.innerHTML = '有効なメールアドレスを入力してください。';
+                    warningElem.innerHTML = message.template.inline.invalidEmailFormat;
                     warningElem.classList.remove('hidden');
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    showMessage ({
-						title: '送信されました',
-						message: '入力したメールアドレスが正しければ、パスワードを再設定するためのメールを送信されました。届くまでに時間がかかる場合があります。',
-						color: 'green',
-						url: loginURL
-					});
+                    message.show(message.template.param.emailSent);
                 } else {
-                    showMessage ();
+                    message.show();
                 }
 			},
 			content: "email="+email,

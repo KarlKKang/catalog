@@ -3,15 +3,15 @@ import "core-js";
 import {
 	debug, 
 	navListeners, 
-	topURL, 
 	passwordStyling,
 	sendServerRequest,
-	showMessage,
+	message,
 	changeColor,
 	clearCookies,
-	cssVarWrapper
+	cssVarWrapper,
+	hashPassword,
+	getHref
 } from './helper/main.js';
-import sha512 from 'node-forge/lib/sha512';
 import cssVars from 'css-vars-ponyfill';
 
 window.addEventListener("load", function(){
@@ -19,7 +19,7 @@ window.addEventListener("load", function(){
 	cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com/account') && !debug) {
+	if (getHref() != 'https://featherine.com/account' && !debug) {
 		window.location.replace('https://featherine.com/account');
 		return;
 	}
@@ -46,7 +46,7 @@ function initialize (){
 			try {
 				userInfo = JSON.parse(response);
 			} catch (e) {
-				showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
+				message.show (message.template.param.server.invalidResponse);
 				return;
 			}
 			showUser (userInfo);
@@ -152,7 +152,7 @@ function invite () {
 	var warningElem = document.getElementById('invite-warning');
 	changeColor (warningElem, 'red');
 	if (receiver == '' || !/^[^\s@]+@[^\s@]+$/.test(receiver)) {
-		warningElem.innerHTML="有効なメールアドレスを入力してください。";
+		warningElem.innerHTML=message.template.inline.invalidEmailFormat;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
@@ -161,32 +161,32 @@ function invite () {
 	sendServerRequest('send_invite.php', {
 		callback: function (response) {
 			if (response == 'NOT QUALIFIED') {
-				warningElem.innerHTML = '招待状を送る条件を満たしていません。';
+				warningElem.innerHTML = message.template.inline.invitationNotQualified;
 				warningElem.classList.remove('hidden');
 			} else if (response == 'INVALID FORMAT') {
-				warningElem.innerHTML = '有効なメールアドレスを入力してください。';
+				warningElem.innerHTML = message.template.inline.invalidEmailFormat;
 				warningElem.classList.remove('hidden');
 			} else if (response == 'ALREADY REGISTERED') {
-				warningElem.innerHTML = 'このメールアドレスはすでに登録済みです。';
+				warningElem.innerHTML = message.template.inline.emailAlreadyRegistered;
 				warningElem.classList.remove('hidden');
 			} else if (response == 'ONGOING') {
-				warningElem.innerHTML = '未完成の招待状があります。招待が完了するまでお待ちください。';
+				warningElem.innerHTML = message.template.inline.incompletedInvitation;
 				warningElem.classList.remove('hidden');
 			} else if (response == 'ALREADY INVITED') {
-				warningElem.innerHTML = 'このメールアドレスはすでに招待されています。';
+				warningElem.innerHTML = message.template.inline.emailAlreadyInvited;
 				warningElem.classList.remove('hidden');
 			} else if (response == 'SPECIAL') {
-				warningElem.innerHTML = '現在、一般登録を受け付けています。featherine.com/special_register で登録することができます。';
+				warningElem.innerHTML = message.template.inline.specialRegistrationOnly;
 				warningElem.classList.remove('hidden');
 			} else if (response == 'CLOSED') {
-				warningElem.innerHTML = '現在、新規登録は受け付けておりません。';
+				warningElem.innerHTML = message.template.inline.invitationClosed;
 				warningElem.classList.remove('hidden');
 			} else if (response == 'DONE') {
-				warningElem.innerHTML = 'メールが送信されました。届くまでに時間がかかる場合があります。';
+				warningElem.innerHTML = message.template.inline.emailSent;
 				changeColor (warningElem, 'green');
 				warningElem.classList.remove('hidden');
 			} else {
-				showMessage ({url: topURL});
+				message.show();
 				return;
 			}
 			disableAllInputs(false);
@@ -195,7 +195,7 @@ function invite () {
 	});
 }
 
-function changePassword () {
+async function changePassword () {
 	disableAllInputs(true);
 	
 	var warningElem = document.getElementById('password-warning');
@@ -205,30 +205,28 @@ function changePassword () {
 	changeColor (warningElem, 'red');
 	
 	if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
-		warningElem.innerHTML="パスワードが要件を満たしていません。";
+		warningElem.innerHTML=message.template.inline.invalidPasswordFormat;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
 	} else if (newPassword!=newPasswordConfirm) {
-		warningElem.innerHTML = '確認再入力が一致しません。';
+		warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
-	} else {
-		var hash = sha512.sha256.create();
-		hash.update(newPassword);
-		newPassword = hash.digest().toHex();
 	}
+
+	newPassword = await hashPassword(newPassword);
 	
 	sendServerRequest('change_password.php', {
 		callback: function (response) {
 			if (response == 'DONE') {
-				warningElem.innerHTML = '完了しました。';
+				warningElem.innerHTML = message.template.inline.passwordChanged;
 				warningElem.classList.remove('hidden');
 				changeColor (warningElem, 'green');
 				disableAllInputs(false);
 			} else {
-				showMessage ({url: topURL});
+				message.show();
 			}
 		},
 		content: "new="+newPassword
@@ -243,14 +241,14 @@ function changeEmail () {
 	sendServerRequest('send_email_change.php', {
 		callback: function (response) {
 			if (response == 'DUPLICATED') {
-				warningElem.innerHTML = '同じリクエストがまだ進行中です。 別のリクエストを提出する前にそれを完了してください。';
+				warningElem.innerHTML = message.template.inline.duplicatedRequest;
 				warningElem.classList.remove('hidden');
 			} else if (response == 'DONE') {
-				warningElem.innerHTML = 'メールが送信されました。届くまでに時間がかかる場合があります。';
+				warningElem.innerHTML = message.template.inline.emailSent;
 				warningElem.classList.remove('hidden');
 				changeColor (warningElem, 'green');
 			} else {
-				showMessage ({url: topURL});
+				message.show();
 				return;
 			}
 			disableAllInputs(false);
@@ -265,12 +263,12 @@ function changeUsername () {
 	changeColor (warningElem, 'red');
 	
 	if (newUsername=='') {
-		warningElem.innerHTML="新しいユーザー名を入力してください。";
+		warningElem.innerHTML=message.template.inline.usernameEmpty;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
 	} else if (newUsername == currentUsername) {
-		warningElem.innerHTML = '新しいユーザー名は元のユーザー名と同じです。';
+		warningElem.innerHTML = message.template.inline.usernameUnchanged;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
@@ -279,15 +277,15 @@ function changeUsername () {
 	sendServerRequest('change_username.php', {
 		callback: function (response) {
 			if (response == 'DONE') {
-				warningElem.innerHTML = '完了しました。';
+				warningElem.innerHTML = message.template.inline.usernameChanged;
 				warningElem.classList.remove('hidden');
 				changeColor (warningElem, 'green');
 				currentUsername = newUsername
 			} else if (response == 'DUPLICATED') {
-				warningElem.innerHTML = 'このユーザー名はすでに使用されています。別のユーザー名を入力してください。';
+				warningElem.innerHTML = message.template.inline.usernameTaken;
 				warningElem.classList.remove('hidden');
 			} else {
-				showMessage ({url: topURL});
+				message.show();
 				return;
 			}
 			disableAllInputs(false);

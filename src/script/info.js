@@ -3,11 +3,11 @@ import "core-js";
 import {
 	debug,
 	navListeners,
-	topURL,
 	sendServerRequest,
-	showMessage,
+	message,
 	clearCookies,
-	cssVarWrapper
+	cssVarWrapper,
+	getHref
 } from './helper/main.js';
 import cssVars from 'css-vars-ponyfill';
 
@@ -15,7 +15,7 @@ window.addEventListener("load", function(){
 	cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com/info') && !debug) {
+	if (!getHref().startsWith('https://featherine.com/info') && !debug) {
 		window.location.replace('https://featherine.com/info');
 		return;
 	}
@@ -28,7 +28,7 @@ window.addEventListener("load", function(){
 				document.body.classList.remove("hidden");
 				var scrollID = window.location.hash;
 				if (scrollID != '') {
-					var elem = document.getElementById(scrollID.substr(1));
+					var elem = document.getElementById(scrollID.substring(1));
 					if (elem) {
 						elem.scrollIntoView({
 							behavior: 'smooth'
@@ -36,7 +36,7 @@ window.addEventListener("load", function(){
 					}
 				}
 			} else {
-				showMessage({url: topURL});
+				message.show();
 			}
         },
 		method: 'GET'

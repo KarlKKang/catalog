@@ -3,13 +3,12 @@ import "core-js";
 import {
 	debug,
 	sendServerRequest,
-	showMessage,
-	loginURL,
+	message,
 	topURL,
 	getURLParam,
-	expiredMessage,
 	clearCookies,
-	cssVarWrapper
+	cssVarWrapper,
+	getHref
 } from './helper/main.js';
 import cssVars from 'css-vars-ponyfill';
 
@@ -17,7 +16,7 @@ window.addEventListener("load", function(){
 	cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com/new_email') && !debug) {
+	if (!getHref().startsWith('https://featherine.com/new_email') && !debug) {
 		window.location.replace(topURL);
 		return;
 	}
@@ -45,7 +44,7 @@ window.addEventListener("load", function(){
     sendServerRequest('verify_email_change.php', {
         callback: function (response) {
             if (response == 'EXPIRED') {
-                showMessage (expiredMessage);
+                message.show(message.template.param.expired);
             } else if (response == 'APPROVED') {
 				newEmailInput.addEventListener('keydown', function () {
 					if (event.key === "Enter") {
@@ -58,7 +57,7 @@ window.addEventListener("load", function(){
 				});
                 document.body.classList.remove("hidden");
             } else {
-                showMessage ();
+                message.show();
             }
         },
         content: "p="+param+"&signature="+signature,
@@ -73,7 +72,7 @@ window.addEventListener("load", function(){
 		var newEmail = newEmailInput.value;
 
 		if (newEmail == '' || !/^[^\s@]+@[^\s@]+$/.test(newEmail)) {
-			warningElem.innerHTML = '有効なメールアドレスを入力してください。';
+			warningElem.innerHTML = message.template.inline.invalidEmailFormat;
 			warningElem.classList.remove('hidden');
 			disableAllInputs(false);
 			return;
@@ -82,24 +81,19 @@ window.addEventListener("load", function(){
 		sendServerRequest('verify_email_change.php', {
 			callback: function (response) {
                 if (response == 'EXPIRED') {
-                    showMessage (expiredMessage);
+					message.show(message.template.param.expired);
                 } else if (response == 'DUPLICATED') {
-                    warningElem.innerHTML = 'このメールアドレスは登録済み、または招待されています。';
+                    warningElem.innerHTML = message.template.inline.emailAlreadyInvitedOrRegistered;
                     warningElem.classList.remove('hidden');
                     disableAllInputs(false);
                 } else if (response == 'INVALID FORMAT') {
-                    warningElem.innerHTML = '有効なメールアドレスを入力してください。';
+                    warningElem.innerHTML = message.template.inline.invalidEmailFormat;
                     warningElem.classList.remove('hidden');
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    showMessage ({
-						title: '送信されました',
-						message: '変更を確認するメールが送信されました。届くまでに時間がかかる場合があります。',
-						color: 'green',
-						url: loginURL
-					});
+                    message.show(message.template.param.emailSent);
                 } else {
-                    showMessage ();
+                    message.show();
 				}
 			},
 			content: "p="+param+"&signature="+signature+"&new="+newEmail,

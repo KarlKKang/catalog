@@ -3,17 +3,17 @@ import "core-js";
 import {
 	debug,
 	sendServerRequest,
-	showMessage,
+	message,
 	getURLParam,
 	loginURL,
-	expiredMessage,
-	clearCookies
+	clearCookies,
+	getHref
 } from './helper/main.js';
 
 window.addEventListener("load", function(){
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com/confirm_email') && !debug) {
+	if (!getHref().startsWith('https://featherine.com/confirm_email') && !debug) {
 		window.location.replace(loginURL);
 		return;
 	}
@@ -34,22 +34,13 @@ window.addEventListener("load", function(){
 	sendServerRequest('change_email.php', {
 		callback: function (response) {
 			if (response == 'EXPIRED') {
-				showMessage (expiredMessage);
+				message.show (message.template.param.expired);
 			} else if (response == 'REJECTED') {
-				showMessage ({
-					title: 'リクエストは拒否されました',
-					message: '未完成の招待状があります。招待が完了するまでお待ちください。',
-					url: loginURL
-				});
+				message.show (message.template.param.incompletedInvitation);
 			} else if (response == 'DONE') {
-				showMessage ({
-					title: '完了しました',
-					message: 'メールアドレスが変更されました。',
-					color: 'green',
-					url: loginURL
-				});
+				message.show (message.template.param.emailChanged);
 			} else {
-				showMessage ();
+				message.show ();
 			}
 		},
 		content: "p="+param+"&signature="+signature,

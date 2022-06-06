@@ -23,8 +23,8 @@
 	display: flex;
   	flex-wrap: wrap;
 	justify-content: center;
-	margin: 0px 0px -10px;
-	padding: 34px 5% 0px 5%;
+	margin: 0px 0px -0.5em 0px; /*Offset #season-button-wrapper > div > p margin for underline spacing.*/
+	padding: 2em 5% 0px 5%;
 }
 
 #season-button-wrapper > div > p {
@@ -72,9 +72,13 @@
   	flex-wrap: wrap;
 	justify-content: center;
 	margin: 0px;
-	padding: 34px 5%;
-	transition: .4s ease-out;
+	padding: 2em 5%;
 	overflow-y: hidden;
+	box-sizing: content-box;
+}
+
+#ep-button-wrapper.expanded {
+	padding-bottom: 4.5em; /*Repel the show-more-button*/
 }
 
 #ep-button-wrapper > div {
@@ -89,6 +93,10 @@
 }
 
 @supports (margin: min(2%, 12px)) {
+	#ep-button-wrapper {
+		transition: max-height .4s ease-out, padding-bottom .4s ease-out; /*This animation is broken on some legacy browsers (IE)*/
+	}
+
 	#ep-button-wrapper > div {
 		margin: min(2%, 12px);
 	}
@@ -110,23 +118,18 @@
 }
 
 #show-more-button {
-	background: linear-gradient(to bottom, var(--background-color-transparent) 0%,var(--background-color) 2em);
+	background: linear-gradient(to bottom, var(--background-color-transparent) 0%,var(--background-color) 1.5em);
 	width: 100%;
-	margin: -34px 0px 0px 0px;
-	padding: 0px 0px 34px;
+	margin: -4.5em 0px 0px 0px; /*Total height = padding-top 1.5em + padding-bottom 2em + line-height 1em*/
+	padding: 1.5em 0px 2em 0px; /*padding-top for gradient, padding bottom to fill in #ep-button-wrapper padding*/
 	text-align: center;
 	position: relative;
 	text-decoration: none;
-	transition: .4s ease-out;
+	line-height: 1; /*Line height 1em*/
 }
 
 #show-more-button, #show-more-button * {
 	color: var(--link-text-color);
-}
-
-#show-more-button.clipped {
-	margin: calc(-3.5em - 34px) 0px 0px;
-	padding: 2em 0px 34px;
 }
 
 #show-more-button:hover{
@@ -305,7 +308,13 @@ p.artist {
 }
 
 #message-body {
-	margin: 1em 0px -1em 0px;
+	margin: 1em 0px 0px 0px;
+	padding: 0px;
+	text-align: center;
+}
+
+#message-body > p { /*margin and padding already done in #message-body wrapper*/
+	margin: 0px;
 	padding: 0px;
 }
 
@@ -333,7 +342,7 @@ p.artist {
 }
 
 #warning-button-group {
-	/*margin: -0.5em 0px 0px 0px;*/
+	margin: -0.5em 0px 0px 0px;
 	display: flex;
   	flex-wrap: wrap;
 	justify-content: center;
@@ -342,6 +351,7 @@ p.artist {
 #on-screen-console {
 	margin: -1px 0px 10% 0px;
 	width: 100%;
+	box-sizing: border-box;
 }
 
 /*#loader {
@@ -372,7 +382,7 @@ p.artist {
 	background-color: var(--foreground-color);
 	font-size: medium;
 	cursor: pointer;
-	padding: 1em;
+	padding: 1em 2em 1em 1em; /*Right 2em padding to avoid overflow into the icon section*/
 	margin: 0px;
 	width: 100%;
 	text-align: left;
@@ -380,6 +390,7 @@ p.artist {
 	outline: none;
 	box-shadow: var(--shadow);
 	transition: box-shadow .4s ease-out;
+	overflow-wrap: anywhere;
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
@@ -403,7 +414,7 @@ p.artist {
 	font-size: 1em;
 	color: var(--alt-text-color);
 	float: right;
-	margin-left: 5px;
+	margin: 0px -1em 0px 0px; /*Offset into the padding region to avoid collision with accodion text*/
 }
 
 .accordion.active:after {

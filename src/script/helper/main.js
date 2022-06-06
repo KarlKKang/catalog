@@ -1,36 +1,25 @@
-// JavaScript Document
+import {
+	serverURL,
+	cdnURL,
+	debug,
+	topURL,
+	loginURL
+} from './constant.js';
 
-const serverURL = 'https://server.featherine.com';
-const cdnURL = 'https://cdn.featherine.com';
-	
-const debug = process.env.NODE_ENV !== 'production';
+export {topURL, loginURL, serverURL, cdnURL, debug};
 
-const topURL = debug?'index.html':'https://featherine.com';
-const loginURL = debug?'login.html':'https://login.featherine.com';
-	
-var expiredMessage = {
-	title: '期限が切れています',
-	message: 'もう一度やり直してください。',
-	url: loginURL
-};
+import {keyExists, getHref} from './javascript_wrapper.js';
+export {keyExists, getHref};
 
-export {topURL, loginURL, serverURL, cdnURL, debug, expiredMessage};
-
-
-//////////////////////////////////////// Javascript/DOM interfaces ////////////////////////////////////////
-//////////////////////////////////////// Dependencies: none
-export function keyExists (obj, key) {
-	return obj.hasOwnProperty(key);
-}
-////////////////////////////////////////
-
+import {default as message} from './message.js';
+export {message};
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
+
 //////////////////////////////////////// Dependencies: none
 export function getURLParam (name) {
-	var url = window.location.href;
-	url = new URL(url);
-	return url.searchParams.get(name);
+	var urlObj = new URL(window.location.href);
+	return urlObj.searchParams.get(name);
 }
 ////////////////////////////////////////
 	
@@ -74,46 +63,15 @@ export function redirect (url) {
 }
 ////////////////////////////////////////
 	
-//////////////////////////////////////// Dependencies: none
-export function showMessage (param) {
-	if (param === undefined) {
-		param = {};
-	}
-	
-	if (!keyExists(param, 'title')) {
-		param.title = 'エラーが発生しました';
-	}
-	if (!keyExists(param, 'message')) {
-		param.message = '不明なエラーが発生しました。このエラーが続く場合は、管理者にお問い合わせください。';
-	}
-	if (!keyExists(param, 'color')) {
-		param.color = 'red';
-	}
-	if (!keyExists(param, 'logout')) {
-		param.logout = false;
-	}
-	if (!keyExists(param, 'url')) {
-		param.url = null;
-	}
-	
-	param.htmlTitle = document.title;
-	document.cookie = 'local-message-param='+encodeURIComponent(JSON.stringify(param))+';max-age=86400;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
-	window.location.replace(debug?'message.html':(topURL+'/message'));
-}
-////////////////////////////////////////
-	
-//////////////////////////////////////// Dependencies: showMessage
+//////////////////////////////////////// Dependencies: message
 export function addXHROnError (xmlhttp) {
 	xmlhttp.onerror = function () {
-		showMessage ({
-			title: "サーバーに接続できません",
-			message: "数分待ってから、もう一度お試しください。このエラーが続く場合は、管理者にお問い合わせください。"
-		});
+		message.show (message.template.param.server.connectionError);
 	};
 }
 ////////////////////////////////////////
 	
-//////////////////////////////////////// Dependencies: showMessage, logout
+//////////////////////////////////////// Dependencies: message, logout
 export function checkXHRStatus (response) {
 	var status = response.status;
 	if (response.readyState == 4) {
@@ -129,53 +87,28 @@ export function checkXHRStatus (response) {
 					window.location.replace(redirect(loginURL));
 				});
 			}	
-			return false;
 		} else if (status == 429) {
-			showMessage ({
-				title: "429 Too Many Requests",
-				message: "サーバーにリクエストを送信する頻度が高すぎる。数分待ってから、もう一度お試しください。"
-			});
-			return false;
+			message.show (message.template.param.server['429']);
 		} else if (status == 503) {
-			showMessage ({
-				title: "メンテナンス中",
-				message: "ご不便をおかけして申し訳ありません。後ほどもう一度お試しください。",
-				color: 'orange'
-			});
-			return false;
+			message.show (message.template.param.server['503']);
 		} else if (status == 500 || status == 400) {
 			var responseText = response.responseText;
-			if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request'))
-				showMessage ({
-					message: 'サーバーからの応答：' + responseText + '<br>このエラーが続く場合は、管理者にお問い合わせください。'
-				});
-			else
-				showMessage ();
-			return false;
+			if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
+				message.show (message.template.param.server['400And500'](responseText));
+			}
+			else {
+				message.show ();
+			}
 		} else if (status == 403) {
 			if (response.responseText != 'CRAWLER') {
-				showMessage ({
-					message: "サーバーがリクエストを拒否しました。"
-				});
+				message.show (message.template.param.server[403]);
 			}
-			return false;
-		} else if (status == 404) {
-			if (response.responseText == 'REJECTED')
-				window.location.replace(topURL);
-			else {
-				showMessage ({
-					title: "サーバーに接続できません",
-					message: "数分待ってから、もう一度お試しください。このエラーが続く場合は、管理者にお問い合わせください。"
-				});
-			}
-			return false;
+		} else if (status == 404 && response.responseText == 'REJECTED') {
+			window.location.replace(topURL);
 		} else {
-			showMessage ({
-				title: "サーバーに接続できません",
-				message: "数分待ってから、もう一度お試しください。このエラーが続く場合は、管理者にお問い合わせください。"
-			});
-			return false;
+			message.show (message.template.param.server.connectionError);
 		}
+		return false;
 	} else {
 		return false;
 	}
@@ -211,7 +144,7 @@ export function sendServerRequest (uri, options) {
 }
 ////////////////////////////////////////
 
-//////////////////////////////////////// Dependencies: sendServerRequest, showMessage
+//////////////////////////////////////// Dependencies: sendServerRequest, message
 export function authenticate (callback) {
 	var successful = function () {return;};
 	var failed = function () {return;};
@@ -229,14 +162,14 @@ export function authenticate (callback) {
 			} else if (response == "FAILED") {
 				failed();
 			} else {
-				showMessage ();
+				message.show();
 			}
 		}
 	});
 }
 ////////////////////////////////////////
 
-//////////////////////////////////////// Dependencies: sendServerRequest, debug, showMessage
+//////////////////////////////////////// Dependencies: sendServerRequest, debug, message
 export function logout (callback) {
 	if (callback === undefined) {
 		callback = function () {return;};
@@ -250,7 +183,7 @@ export function logout (callback) {
                 }
                 callback ();
             } else {
-                showMessage ();
+                message.show();
                 return false;
             }
 		}
@@ -354,11 +287,11 @@ export function secToTimestamp (sec) {
 ////////////////////////////////////////
 
 //////////////////////////////////////// Dependencies: none
-export function onScreenConsoleOutput (message) {
+export function onScreenConsoleOutput (txt) {
 	var onScreenConsole = document.getElementById('on-screen-console');
 	if (onScreenConsole) {
 		var date = new Date();
-		onScreenConsole.value += (date.getHours()<10 ? '0'+date.getHours() : date.getHours()) + ':' + (date.getMinutes()<10 ? '0'+date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds()<10 ? '0'+date.getSeconds() : date.getSeconds()) + '   ' + message + '\r\n';
+		onScreenConsole.value += (date.getHours()<10 ? '0'+date.getHours() : date.getHours()) + ':' + (date.getMinutes()<10 ? '0'+date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds()<10 ? '0'+date.getSeconds() : date.getSeconds()) + '   ' + txt + '\r\n';
 	}
 }
 ////////////////////////////////////////
@@ -446,15 +379,34 @@ export function clearCookies () {
 //////////////////////////////////////// Dependencies: none
 export function cssVarWrapper (cssVars) {
 	cssVars({
-		onError: function(message, elm, xhr, url) {
+		onError: function(errorMessage, elm, xhr, url) {
 			if (window.location.href != topURL + '/message' && !debug) {
-				showMessage({
-					message: "cssの解析に失敗しました。別のブラウザで、もう一度お試しください。<br>" + message
-				});
+				message.show(message.template.param.cssVarError(errorMessage));
 			}
 		},
-		onWarning: function(message) {
-			console.log(message);
+		onWarning: function(errorMessage) {
+			console.log(errorMessage);
 		}
-	  });
+	});
+}
+
+//////////////////////////////////////// Dependencies: none
+var sha512 = null;
+export async function hashPassword (password) {
+	if (sha512 === null) {
+		try {
+			({default: sha512} = await import(
+				/* webpackChunkName: "sha512" */
+				/* webpackExports: ["default"] */
+				'node-forge/lib/sha512'
+			));
+		} catch (e) {
+			message.show(message.template.param.moduleImportError(e));
+			return;
+		}
+	}
+	
+	var hash = sha512.sha256.create();
+	hash.update(password);
+	return hash.digest().toHex();
 }

@@ -8,7 +8,7 @@ module.exports = {
 		},
 		'account': {
 			import: './src/script/account.js',
-			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'bangumi-hls': {
 			import: './src/script/bangumi-hls.js',
@@ -24,7 +24,7 @@ module.exports = {
 		},
 		'console': {
 			import: './src/script/console.js',
-			dependOn: ['main', 'core-js', 'sha512'],
+			dependOn: ['main', 'core-js'],
 		},
 		'image': {
 			import: './src/script/image.js',
@@ -40,7 +40,7 @@ module.exports = {
 		},
 		'login': {
 			import: './src/script/login.js',
-			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'message': {
 			import: './src/script/message.js',
@@ -52,7 +52,7 @@ module.exports = {
 		},
 		'password_reset': {
 			import: './src/script/password_reset.js',
-			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'policy': {
 			import: './src/script/policy.js',
@@ -60,7 +60,7 @@ module.exports = {
 		},
 		'register': {
 			import: './src/script/register.js',
-			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 		'request_password_reset': {
 			import: './src/script/request_password_reset.js',
@@ -68,12 +68,11 @@ module.exports = {
 		},
 		'special_register': {
 			import: './src/script/special_register.js',
-			dependOn: ['main', 'core-js', 'sha512', 'css-vars-ponyfill'],
+			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
 		},
 
 		//helpers
 		'main': ['./src/script/helper/main.js'],
-		'sha512': ['node-forge/lib/sha512'],
 		'core-js': ['core-js'],
 		'css-vars-ponyfill': ['css-vars-ponyfill']
 	},
@@ -96,7 +95,7 @@ module.exports = {
 					and: [/node_modules/], // Exclude libraries in node_modules ...
 					not: [
 						// Except for a few of them that needs to be transpiled because they use modern syntax
-						/node_modules[\\\/]@babel[\\\/]runtime/,
+						// /node_modules[\\\/]@babel[\\\/]runtime/,
 					]
 				},
 				use: {

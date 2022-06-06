@@ -4,21 +4,21 @@ import {
 	debug,
 	getURLParam,
 	sendServerRequest,
-	showMessage,
+	message,
 	loginURL,
 	passwordStyling,
-	expiredMessage,
 	clearCookies,
-	cssVarWrapper
+	cssVarWrapper,
+	hashPassword,
+	getHref
 } from './helper/main.js';
-import sha512 from 'node-forge/lib/sha512';
 import cssVars from 'css-vars-ponyfill';
 
 window.addEventListener("load", function(){
 	cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com/register') && !debug) {
+	if (!getHref().startsWith('https://featherine.com/register') && !debug) {
 		window.location.replace(loginURL);
 		return;
 	}
@@ -48,13 +48,9 @@ window.addEventListener("load", function(){
     sendServerRequest('register.php', {
         callback: function (response) {
             if (response == 'EXPIRED') {
-                showMessage (expiredMessage);
+                message.show(message.template.param.expired);
             } else if (response == 'SPECIAL') {
-                showMessage ({
-					title: 'リクエストは拒否されました',
-					message: '現在、一般登録を受け付けています。ボタンをクリックして登録ページに移動してください。',
-					url: 'special_register'+(debug?'.html':'')
-				});
+                message.show(message.template.param.specialRegistrationOnly);
             } else if (response == 'APPROVED') {
 				usernameInput.addEventListener('keydown', function (event) {
 					if (event.key === "Enter") {
@@ -97,14 +93,14 @@ window.addEventListener("load", function(){
 				});
                 document.body.classList.remove("hidden");
             } else {
-                showMessage ();
+                message.show();
             }
         },
         content: "p="+param+"&signature="+signature,
         withCredentials: false
     });
 
-	function register () {
+	async function register () {
 		disableAllInputs(true);
 		
 		var warningElem = document.getElementById('warning');
@@ -114,27 +110,25 @@ window.addEventListener("load", function(){
 		var passwordConfirm = passwordConfirmInput.value;
 
 		if (username == '') {
-			warningElem.innerHTML = 'ユーザー名を入力してください。';
+			warningElem.innerHTML = message.template.inline.usernameEmpty;
 			warningElem.classList.remove('hidden');
 			disableAllInputs(false);
 			return;
 		}
 
 		if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
-			warningElem.innerHTML = 'パスワードが要件を満たしていません。';
+			warningElem.innerHTML = message.template.inline.invalidPasswordFormat;
 			warningElem.classList.remove('hidden');
 			disableAllInputs(false);
 			return;
 		} else if (password!=passwordConfirm) {
-			warningElem.innerHTML = '新しいパスワードと新しいパスワード(確認)が一致しません。';
+			warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
 			warningElem.classList.remove('hidden');
 			disableAllInputs(false);
 			return;
-		} else {
-			var hash = sha512.sha256.create();
-			hash.update(password);
-			password = hash.digest().toHex();
 		}
+
+		password = await hashPassword(password);
 
 		var user = {
 			username: username,
@@ -144,20 +138,15 @@ window.addEventListener("load", function(){
 		sendServerRequest('register.php', {
 			callback: function (response) {
                 if (response == 'EXPIRED') {
-                    showMessage (expiredMessage);
+					message.show(message.template.param.expired);
                 } else if (response == 'USERNAME DUPLICATED') {
-                    warningElem.innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
+                    warningElem.innerHTML = message.template.inline.usernameTaken;
                     warningElem.classList.remove('hidden');
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    showMessage ({
-						title: '完了しました',
-						message: 'アカウントが登録されました。',
-						color: 'green',
-						url: loginURL
-					});
+                    message.show(message.template.param.registerComplete);
                 } else {
-                    showMessage ();
+                    message.show();
                 }
 			},
 			content: "p="+param+"&signature="+signature+"&user="+encodeURIComponent(JSON.stringify(user)),

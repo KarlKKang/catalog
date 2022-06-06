@@ -6,7 +6,7 @@ import {
 	navListeners,
 	topURL,
 	sendServerRequest,
-	showMessage,
+	message,
 	changeColor,
 	getURLParam,
 	getSeriesID,
@@ -15,7 +15,8 @@ import {
 	concatenateSignedURL,
 	encodeCFURIComponent,
     clearCookies,
-    cssVarWrapper
+    cssVarWrapper,
+    getHref
 } from './helper/main.js';
 import cssVars from 'css-vars-ponyfill';
 
@@ -24,11 +25,15 @@ var seriesID;
 var epIndex;
 var formatIndex;
 
+const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
+const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
+var EPSelectorHeight;
+
 window.addEventListener("load", function(){
 	cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith(topURL + '/bangumi') && !debug) {
+	if (!getHref().startsWith(topURL + '/bangumi') && !debug) {
 		window.location.replace(topURL);
 		return;
 	}
@@ -79,7 +84,7 @@ window.addEventListener("load", function(){
             try {
                 response = JSON.parse(response);
             } catch (e) {
-                showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
+                message.show (message.template.param.server.invalidResponse);
                 return;
             }
             updatePage(response);
@@ -177,7 +182,7 @@ async function updatePage (response) {
         sendServerRequest('device_authenticate.php', {
             callback: function (authResult) {
                 if (authResult != 'APPROVED') {
-                    showMessage ({url: topURL});
+                    message.show();
                     return false;
                 }
             },
@@ -199,13 +204,14 @@ async function updatePage (response) {
                 /* webpackExports: ["Hls", "videojs", "browser", "videojsMod"] */
                 './helper/player.js'));
         } catch (e) {
-            showMessage ({message: 'モジュールの読み込みに失敗しました。このエラーが続く場合は、管理者にお問い合わせください。<br>' + e});
-        } finally {
-            if (type == 'video') {
-                updateVideo ();
-            } else{
-                updateAudio ();
-            }
+            message.show(message.template.param.moduleImportError(e));
+            return;
+        }
+
+        if (type == 'video') {
+            updateVideo ();
+        } else{
+            updateAudio ();
         }
     } else {
         try {
@@ -215,10 +221,11 @@ async function updatePage (response) {
                 './helper/lazyload.js'
             ));
         } catch (e) {
-            showMessage ({message: 'モジュールの読み込みに失敗しました。このエラーが続く場合は、管理者にお問い合わせください。<br>' + e});
-        } finally {
-            updateImage ();
+            message.show(message.template.param.moduleImportError(e));
+            return;
         }
+
+        updateImage ();
     }
 }
 
@@ -244,16 +251,20 @@ function updateEPSelector (seriesEP) {
 
     document.getElementById('ep-selector').appendChild(epButtonWrapper);
 
-    if (epButtonWrapper.clientHeight/window.innerHeight > 0.50) {
-        var showMoreButton = document.createElement('p');
-        showMoreButton.id = 'show-more-button';
-        showMoreButton.innerHTML = 'すべてを見る <span class="symbol">&#xE972;</span>';
-        showMoreButton.addEventListener('click', toggleEpSelector);
-
-        document.getElementById('ep-selector').appendChild(showMoreButton);
-        epButtonWrapper.style.maxHeight = "50vh";
-        showMoreButton.classList.add('clipped');
-    }
+    EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10; //Add some extra pixels to compensate for slight variation and error.
+    var showMoreButton = document.createElement('p');
+    showMoreButton.id = 'show-more-button';
+    showMoreButton.classList.add('hidden');
+    document.getElementById('ep-selector').appendChild(showMoreButton);
+    showMoreButton.addEventListener('click', toggleEPSelector);
+    styleEPSelector();
+    window.addEventListener('resize', function(){
+        var currentMaxHeight = epButtonWrapper.style.maxHeight;
+        epButtonWrapper.style.maxHeight = null; //Resetting max-height can mitigate a bug in IE browser where the scrollHeight attribute is not accurate.
+        EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10;
+        epButtonWrapper.style.maxHeight = currentMaxHeight;
+        styleEPSelector();
+    });
 }
 
 function updateSeasonSelector (seasons) {
@@ -330,6 +341,7 @@ function updateVideo () {
     mediaHolder.id = 'media-holder';
     mediaHolder.classList.add('video');
     contentContainer.appendChild(mediaHolder);
+    addDownloadAccordion();
 
     /*var timestampParam = getURLParam ('timestamp');
     if (timestampParam != null) {
@@ -385,8 +397,6 @@ function updateVideo () {
         if (epInfo.chapters != '') {
             displayChapters (epInfo.chapters);
         }
-        addDownloadAccordion();
-        addAccordionEvent();
         //updateURLTimestamp();
     });
 }
@@ -404,7 +414,7 @@ function formatSwitch () {
             try {
                 response = JSON.parse(response);
             } catch (e) {
-                showMessage ({message: 'サーバーが無効な応答を返しました。このエラーが続く場合は、管理者にお問い合わせください。', url: topURL});
+                message.show(message.template.param.server.invalidResponse);
                 return;
             }
             let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + epInfo.formats[selectedFormat] + '].m3u8'), response);
@@ -426,8 +436,11 @@ function formatSwitch () {
 }
 
 function addVideoNode (url, options) {
-    if (mediaInstances[0].hlsInstance) {
-        mediaInstances[0].hlsInstance.destroy();
+    destroyAll();
+
+    if (!browser.CAN_PLAY_AVC_AAC) {
+        showCodecCompatibilityError();
+        return;
     }
     
     let video = mediaInstances[0].media;
@@ -473,25 +486,26 @@ function addVideoNode (url, options) {
         hls.on(Hls.Events.ERROR, function (event, data) {
             if (data.fatal) {
                 showPlaybackError(data.detail);
-                mediaInstances[0].hlsInstance.destroy();
             }
         });
         hls.on(Hls.Events.MANIFEST_PARSED, function () {
             videoReady();
         });
 
-        mediaInstances[0].attachHls(hls);
-        hls.loadSource(url);
+        if (!mediaInstances[0].attachHls(hls, url)) {
+            showAttachError();
+        }
     } else if (browser.NATIVE_HLS) {
         video.addEventListener('error', function () {showPlaybackError ();});
         video.setAttribute ('crossorigin', 'use-credentials');
         video.addEventListener('loadedmetadata', function () {
             videoReady ();
         });
-        video.src = url;
-        video.load();
+        if (!mediaInstances[0].attachNative(url)) {
+            showAttachError();
+        }
     } else {
-        showCompatibilityError ();
+        showHLSCompatibilityError();
     }
 }
 
@@ -507,12 +521,13 @@ function updateAudio () {
     mediaHolder.id = 'media-holder';
     contentContainer.appendChild(mediaHolder);
 
-    for (var i = 0; i < epInfo.files.length; i++) {
-        addAudioNode (mediaHolder, i);
-    }
-
     addDownloadAccordion();
-    addAccordionEvent();
+
+    for (var i = 0; i < epInfo.files.length; i++) {
+        if (!addAudioNode (mediaHolder, i)) {
+            return;
+        }
+    }
 }
 
 function addAudioNode (mediaHolder, index) {
@@ -554,16 +569,23 @@ function addAudioNode (mediaHolder, index) {
     audioNode.classList.add("video-js");
     audioNode.setAttribute('lang', 'en');
 
-    let flacFallback = (files[index].flac_fallback && !browser.CAN_PLAY_ALAC);
+    const FLAC_FALLBACK = (files[index].flac_fallback && !browser.CAN_PLAY_ALAC);
 
-    mediaHolder.appendChild(getAudioSubtitleNode(files[index], flacFallback));
+    mediaHolder.appendChild(getAudioSubtitleNode(files[index], FLAC_FALLBACK));
     mediaHolder.appendChild(audioNode);
     
-    const IS_FLAC = (files[index].format.toLowerCase() == 'flac' || flacFallback);
+    const IS_FLAC = (files[index].format.toLowerCase() == 'flac' || FLAC_FALLBACK);
     const USE_VIDEOJS = browser.USE_MSE && IS_FLAC;
+
+    const IS_MP3 = files[index].format.toLowerCase() == 'mp3';
+
+    if ((IS_FLAC && !browser.CAN_PLAY_FLAC) || (IS_MP3 && !browser.CAN_PLAY_MP3)) { //ALAC has already fallen back to FLAC if not supported.
+        showMediaMessage(message.template.media.title.incompatible, '<p>お使いのブラウザはこのメディアタイプに対応していません。' + message.template.media.body.incompatibleSuffix + '</p>', true);
+        return false;
+    }
     
     let videoJSControl = videojs(audioNode, configVideoJSControl, function () {
-        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + files[index].file_name + (flacFallback?'[FLAC]':'') +'.m3u8'), cdnCredentials, baseURL + '_MASTER_*.m3u8'); 
+        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + files[index].file_name + (FLAC_FALLBACK?'[FLAC]':'') +'.m3u8'), cdnCredentials, baseURL + '_MASTER_*.m3u8'); 
         let controlNode = document.getElementById('track' + index);
 
         if (USE_VIDEOJS) {
@@ -577,7 +599,7 @@ function addAudioNode (mediaHolder, index) {
                         withCredentials: true
                     },
                     nativeAudioTracks: false,
-                    nativeVideoTracks: false
+                    //nativeVideoTracks: false
                 },
                 crossOrigin: 'use-credentials'
             };
@@ -600,33 +622,29 @@ function addAudioNode (mediaHolder, index) {
                 }
 
                 videoJSMedia.on('error', function() {
-                    showPlaybackError('Index ' + index + ': ' + 'videojs: '+JSON.stringify(videoJSMedia.error()));
-                    videoJSMedia.dispose();
+                    if (browser.IS_FIREFOX && parseInt(files[index].samplerate) > 48000) { //Firefox has problem playing Hi-res audio
+                        showMediaMessage(message.template.media.title.incompatible, '<p>Firefoxはハイレゾ音源を再生できません。' + message.template.media.body.incompatibleSuffix + '</p>', true);
+                    } else {
+                        showPlaybackError('Index ' + index + ': ' + 'videojs: '+JSON.stringify(videoJSMedia.error()));
+                    }
                 });
 
-                videoJSMedia.src({
-                    src: url,
-                    type: 'application/x-mpegURL'
-                });
-
-                videoJSMedia.volume(1);
+                if (!mediaInstances[index].attachVideoJS(videoJSMedia, url)) {
+                    showAttachError();
+                    return false;
+                }
             });
         } else {
             mediaInstances[index] = videojsMod (controlNode, videoJSControl, {audio: true});
             setMediaTitle();
             if (browser.USE_MSE) {
                 if (browser.IS_CHROMIUM) {
-                    var messageTitle = document.getElementById('message-title');
-                    changeColor (messageTitle, 'orange');
-                    messageTitle.innerHTML = '不具合があります';
-                    document.getElementById('message-body').innerHTML = '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。ご迷惑をおかけして大変申し訳ございませんでした。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>';
-                    document.getElementById('message').classList.remove('hidden');
+                    showMediaMessage('不具合があります', '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>', false);
                 }
                 let hls = new Hls(configHls);
                 hls.on(Hls.Events.ERROR, function (event, data) {
                     if (data.fatal) {
                         showPlaybackError('Index ' + index + ': ' + data.detail);
-                        mediaInstances[index].hlsInstance.destroy();
                     }
                 });
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -635,11 +653,12 @@ function addAudioNode (mediaHolder, index) {
                         audioReady();
                     }
                 });
-                mediaInstances[index].attachHls(hls);
-                hls.loadSource(url);
+                if (!mediaInstances[index].attachHls(hls, url)) {
+                    showAttachError();
+                    return false;
+                }
             } else if (browser.NATIVE_HLS) {
                 let audio = mediaInstances[index].media;
-                audio.volume = 1;
                 
                 audio.addEventListener('error', function () {showPlaybackError();});
                 audio.setAttribute ('crossorigin', 'use-credentials');
@@ -649,10 +668,14 @@ function addAudioNode (mediaHolder, index) {
                         audioReady();
                     }
                 });
-                audio.src = url;
-                audio.load();
+                
+                if (!mediaInstances[index].attachNative(url)) {
+                    showAttachError();
+                    return false;
+                }
             } else {
-                showCompatibilityError ();
+                showHLSCompatibilityError();
+                return false;
             }
         }
     });
@@ -660,6 +683,8 @@ function addAudioNode (mediaHolder, index) {
     function setMediaTitle () {
         mediaInstances[index].media.setAttribute('title', ((files[index].title=='')?'':(files[index].title + ' | ')) + document.title);
     }
+
+    return true;
 }
 
 function addAlbumInfo (contentContainer) {
@@ -686,7 +711,7 @@ function addAlbumInfo (contentContainer) {
     }
 }
 
-function getAudioSubtitleNode (file, flacFallback) {
+function getAudioSubtitleNode (file, FLAC_FALLBACK) {
     let subtitle = document.createElement('p');
     subtitle.setAttribute('class', 'sub-title');
     let format = document.createElement('span');
@@ -752,7 +777,7 @@ function getAudioSubtitleNode (file, flacFallback) {
             }
         }
 
-        if (flacFallback) {
+        if (FLAC_FALLBACK) {
             format.innerHTML = format.innerHTML.replace('ALAC', 'FLAC');
             format.innerHTML = format.innerHTML.replace('32bit', '24bit');
         }
@@ -837,19 +862,30 @@ function updateImage () {
 }
 
 function showPlaybackError (detail) {
-    showError ('エラーが発生しました', '<p>再生中にエラーが発生しました。後ほどもう一度お試しいただくか、それでも問題が解決しない場合は管理者にお問い合わせください。</p>'+(detail?('<p>Error detail: '+detail+'</p>'):''));
+    showMediaMessage (message.template.media.title.defaultError, '<p>再生中にエラーが発生しました' + message.template.media.body.defaultErrorSuffix + (detail?('<br>Error detail: '+detail):'') + '</p>', true);
 }
 
-function showCompatibilityError () {
-    showError('再生できません', '<p>お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。</p>');
+function showHLSCompatibilityError () {
+    showMediaMessage(message.template.media.title.incompatible, '<p>お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + message.template.media.body.incompatibleSuffix + '</p>', true);
 }
 
-function showError (title, message) {
+function showCodecCompatibilityError () {
+    showMediaMessage(message.template.media.title.incompatible, '<p>お使いのブラウザは、再生に必要なAVC/AACコーデックに対応していません。' + message.template.media.body.incompatibleSuffix + 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。</p>', true);
+}
+
+function showAttachError () {
+    showMediaMessage(message.template.media.title.defaultError, '<p>メディアを添付できません。ページを再読み込みして、もう一度お試しください。' + message.template.media.body.defaultErrorSuffix + '</p>', true);
+}
+
+function showMediaMessage (title, messageTxt, error) {
     var messageTitle = document.getElementById('message-title');
-    changeColor (messageTitle, 'red');
+    changeColor(messageTitle, error?"red":"orange");
     messageTitle.innerHTML = title;
-    document.getElementById('media-holder').classList.add('hidden');
-    document.getElementById('message-body').innerHTML = message;
+    if (error) {
+        document.getElementById('media-holder').classList.add('hidden');
+        destroyAll();
+    }
+    document.getElementById('message-body').innerHTML = messageTxt;
     document.getElementById('message').classList.remove('hidden');
 }
 
@@ -863,34 +899,18 @@ function goToEP (dest_series, dest_ep) {
     window.location.href = url;
 }
 
-function toggleEpSelector () {
-    let clipped = document.getElementById('show-more-button').classList.contains('clipped');
-    document.getElementById('show-more-button').innerHTML = clipped ? '非表示にする <span class="symbol">&#xE971;</span>' : 'すべてを見る <span class="symbol">&#xE972;</span>';
-    if (clipped) {
-        document.getElementById('ep-button-wrapper').style.maxHeight = document.getElementById('ep-button-wrapper').scrollHeight + "px";
-    } else {
-        document.getElementById('ep-button-wrapper').style.maxHeight = "50vh";
-    }
-    document.getElementById('show-more-button').classList.toggle('clipped');
-}
-
-function addAccordionEvent () {
-    var acc = document.getElementsByClassName("accordion");
-    var i;
-
-    for (i = 0; i < acc.length; i++) {
-        acc[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var panel = this.nextElementSibling;
-            if (panel.style.maxHeight) {
-                panel.style.maxHeight = null;
-                panel.style.padding = '0px 1em';
-            } else {
-                panel.style.maxHeight = panel.scrollHeight + "px";
-                panel.style.padding = '1em';
-            }
-        });
-    }
+function addAccordionEvent (acc) {
+    acc.addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.maxHeight) {
+            panel.style.maxHeight = null;
+            panel.style.padding = '0px 1em';
+        } else {
+            panel.style.maxHeight = getContentBoxHeight(panel) + "px";
+            panel.style.padding = '1em';
+        }
+    });
 }
 
 function displayChapters (chapters) {
@@ -913,9 +933,6 @@ function displayChapters (chapters) {
         let startTime = chapters[i][1];
         timestamp.innerHTML = secToTimestamp (startTime);
         timestamp.addEventListener ('click', function () {
-            if (video.currentTime <= startTime) {
-                mediaInstances[0].seekingForward = true;
-            }
             mediaInstances[0].seek(startTime);
             mediaInstances[0].controls.focus();
         });
@@ -929,6 +946,7 @@ function displayChapters (chapters) {
     chaptersNode.classList.add('chapters');
     chaptersNode.appendChild(accordion);
     chaptersNode.appendChild(accordionPanel);
+    addAccordionEvent(accordion);
     document.getElementById('media-holder').appendChild(chaptersNode);
 
     var updateChapterDisplay = function () {
@@ -1004,6 +1022,7 @@ function addDownloadAccordion () {
     downloadElem.classList.add('download');
     downloadElem.appendChild(accordion);
     downloadElem.appendChild(accordionPanel);
+    addAccordionEvent(accordion);
     document.getElementById('content').appendChild(downloadElem);
 }
 
@@ -1051,4 +1070,68 @@ function addConsecutiveEventListener (elem, event, callback, count, timeInterval
             currentCount ++;
         }
     });
+}
+
+function destroyAll () {
+    for (var i = 0; i < mediaInstances.length; i++) {
+        mediaInstances[i].destroy();
+    }
+}
+
+
+function styleEPSelector () {
+    if (EPSelectorHeight/window.innerHeight > 0.50) {
+        foldEPSelector();
+    } else {
+        unfoldEPSelector();
+    }
+}
+
+function foldEPSelector () {
+    var showMoreButton = document.getElementById('show-more-button');
+    var epButtonWrapper = document.getElementById('ep-button-wrapper');
+    if (!showMoreButton.classList.contains('hidden')) {
+        if (epButtonWrapper.classList.contains('expanded')) {
+            epButtonWrapper.style.maxHeight = EPSelectorHeight + "px";
+        }
+        return;
+    }
+    showMoreButton.innerHTML = showMoreButtonClippedText;
+    epButtonWrapper.style.maxHeight = "50vh";
+    epButtonWrapper.classList.remove('expanded');
+    showMoreButton.classList.remove('hidden');
+}
+
+function unfoldEPSelector () {
+    var showMoreButton = document.getElementById('show-more-button');
+    var epButtonWrapper = document.getElementById('ep-button-wrapper');
+    if (showMoreButton.classList.contains('hidden')) {
+        return;
+    }
+    epButtonWrapper.style.maxHeight = null;
+    epButtonWrapper.classList.remove('expanded');
+    showMoreButton.classList.add('hidden');
+}
+
+function toggleEPSelector () {
+    var epButtonWrapper = document.getElementById('ep-button-wrapper');
+    var showMoreButton = document.getElementById('show-more-button');
+    const CLIPPED = !epButtonWrapper.classList.contains('expanded');
+    showMoreButton.innerHTML = CLIPPED ? showMoreButtonExpandedText : showMoreButtonClippedText;
+    if (CLIPPED) {
+        epButtonWrapper.style.maxHeight = EPSelectorHeight + "px";
+    } else {
+        epButtonWrapper.style.maxHeight = "50vh";
+    }
+    epButtonWrapper.classList.toggle('expanded');
+}
+
+function getContentBoxHeight (elem) {
+    function getCSSProperty(elem, property) { 
+        return parseFloat(window.getComputedStyle(elem, null).getPropertyValue(property)); 
+    }
+
+    var height = elem.scrollHeight;
+    height -= getCSSProperty(elem, 'padding-top') + getCSSProperty(elem, 'padding-bottom');
+    return height;
 }

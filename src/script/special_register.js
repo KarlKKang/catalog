@@ -3,20 +3,20 @@ import "core-js";
 import {
 	debug,
 	sendServerRequest,
-	showMessage,
-	loginURL,
+	message,
 	passwordStyling,
 	clearCookies,
-	cssVarWrapper
+	cssVarWrapper,
+	hashPassword,
+	getHref
 } from './helper/main.js';
-import sha512 from 'node-forge/lib/sha512';
 import cssVars from 'css-vars-ponyfill';
 
 window.addEventListener("load", function(){
 	cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith('https://featherine.com/special_register') && !debug) {
+	if (getHref()!='https://featherine.com/special_register' && !debug) {
 		window.location.replace('https://featherine.com/special_register');
 		return;
 	}
@@ -79,13 +79,9 @@ function initialize () {
                 });
                 document.body.classList.remove("hidden");
             } else if (response == 'REJECTED') {
-				showMessage ({
-					title: 'リクエストは拒否されました',
-					message: '現在、このページでの新規登録は受け付けておりません。',
-					url: loginURL
-				});
+				message.show(message.template.param.invitationOnly);
             } else {
-                showMessage ();
+                message.show();
             }
 		},
 		content: "status_only=true",
@@ -93,7 +89,7 @@ function initialize () {
 	});
 }
 	
-function register () {
+async function register () {
 	disableAllInputs(true);
 	
 	var warningElem = document.getElementById('warning');
@@ -104,34 +100,32 @@ function register () {
 	var passwordConfirm = passwordConfirmInput.value;
 	
 	if (email == '' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
-		warningElem.innerHTML = '有効なメールアドレスを入力してください。';
+		warningElem.innerHTML = message.template.inline.invalidEmailFormat;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
 	}
 	
 	if (username == '') {
-		warningElem.innerHTML = 'ユーザー名を入力してください。';
+		warningElem.innerHTML = message.template.inline.usernameEmpty;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
 	}
 	
 	if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
-		warningElem.innerHTML = 'パスワードが要件を満たしていません。';
+		warningElem.innerHTML = message.template.inline.invalidPasswordFormat;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
 	} else if (password!=passwordConfirm) {
-		warningElem.innerHTML = '新しいパスワードと新しいパスワード(確認)が一致しません。';
+		warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
-	} else {
-		var hash = sha512.sha256.create();
-		hash.update(password);
-		password = hash.digest().toHex();
 	}
+	
+	password = await hashPassword(password);
 	
 	var user = {
 		email: email,
@@ -142,33 +136,23 @@ function register () {
 	sendServerRequest('special_register.php', {
 		callback: function (response) {
             if (response == 'REJECTED') {
-                showMessage ({
-					title: 'リクエストは拒否されました',
-					message: '現在、このページでの新規登録は受け付けておりません。',
-					url: loginURL
-				});
+				message.show(message.template.param.invitationOnly);
             } else if (response == 'INVALID FORMAT') {
-                warningElem.innerHTML = '有効なメールアドレスを入力してください。';
+                warningElem.innerHTML = message.template.inline.invalidEmailFormat;
                 warningElem.classList.remove('hidden');
                 disableAllInputs(false);
             }else if (response == 'ALREADY REGISTERED') {
-                warningElem.innerHTML = 'このメールアドレスはすでに登録済みです。';
+                warningElem.innerHTML = message.template.inline.emailAlreadyRegistered;
                 warningElem.classList.remove('hidden');
                 disableAllInputs(false);
             } else if (response == 'USERNAME DUPLICATED') {
-                warningElem.innerHTML = 'このユーザー名は既に使われています。 別のユーザー名を入力してください。';
+                warningElem.innerHTML = message.template.inline.usernameTaken;
                 warningElem.classList.remove('hidden');
                 disableAllInputs(false);
             } else if (response == 'DONE') {
-                showMessage ({
-					title: '送信されました',
-					message: '確認メールが送信されました。届くまでに時間がかかる場合があります。',
-					color: 'green',
-					url: loginURL,
-					logout: true
-				});
+                message.show(message.template.param.emailSent);
             } else {
-                showMessage ();
+                message.show();
             }
 		},
 		content: "user="+encodeURIComponent(JSON.stringify(user)),

@@ -3,7 +3,7 @@ import "core-js";
 import {
 	debug, 
 	sendServerRequest, 
-	showMessage, 
+	message, 
 	topURL,
 	loginURL,
 	redirect,
@@ -11,16 +11,17 @@ import {
 	authenticate,
 	disableCheckbox,
 	clearCookies,
-	cssVarWrapper
+	cssVarWrapper,
+	hashPassword,
+	getHref
 } from './helper/main.js';
-import sha512 from 'node-forge/lib/sha512';
 import cssVars from 'css-vars-ponyfill';
 
 window.addEventListener("load", function(){
 	cssVarWrapper(cssVars);
 	clearCookies();
 	
-	if (!window.location.href.startsWith(loginURL) && !debug) {
+	if (!getHref().startsWith(loginURL) && !debug) {
 		window.location.replace(loginURL);
 		return;
 	}
@@ -62,7 +63,7 @@ window.addEventListener("load", function(){
 		}
 	});
 
-function login () {
+async function login () {
 	disableAllInputs(true);
 	
 	var warningElem = document.getElementById('warning');
@@ -71,22 +72,20 @@ function login () {
 	var password = passwordInput.value;
 
 	if (email=='' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
-		warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
+		warningElem.innerHTML = message.template.inline.loginFailed;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
 	}
 
 	if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
-		warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
+		warningElem.innerHTML = message.template.inline.loginFailed;
 		warningElem.classList.remove('hidden');
 		disableAllInputs(false);
 		return;
-	} else {
-		var hash = sha512.sha256.create();
-		hash.update(password);
-		password = hash.digest().toHex();
 	}
+
+	password = await hashPassword(password);
 
 	var param = {
 		email: email,
@@ -99,24 +98,19 @@ function login () {
 	sendServerRequest('login.php', {
 		callback: function (response) {
             if (response.includes('FAILED')) {
-                warningElem.innerHTML = 'アカウントIDかパスワードが正しくありません。';
+                warningElem.innerHTML = message.template.inline.loginFailed;
                 warningElem.classList.remove('hidden');
                 disableAllInputs(false);
             } else if (response == 'NOT RECOMMENDED') {
                 setTimeout (function () {
-                    showMessage ({
-						title: 'お使いのブラウザは推奨されませ', 
-						message: '一部のコンテンツが正常に再生されない場合は、Safariをお使いください。',
-						color: 'orange', 
-						url: redirect (topURL)
-					});
+                    message.show(message.template.param.unrecommendedBrowser(redirect(topURL)));
                 }, 500);
             } else if (response == 'APPROVED') {
                 setTimeout (function () {
                     window.location.replace(redirect (topURL));
                 }, 500);
             } else {
-                showMessage ();
+                message.show ();
             }
 		},
 		content: "p="+encodeURIComponent(param)
