@@ -4,8 +4,12 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "webpack --config webpack.prod.js && node minify-html.js && node minify-css.js",
-    "build-dev": "webpack --config webpack.dev.js && node minify-html.js dev && node minify-css.js dev"
+    "build-js": "webpack --config webpack.prod.js",
+    "build-js-dev": "webpack --config webpack.dev.js",
+    "build-html": "node minify-html.js",
+    "build-css": "node minify-css.js",
+    "build-dev": "npm run build-js-dev && npm run build-html -- dev && npm run build-css -- dev",
+    "build": "npm run build-js && npm run build-html && npm run build-css"
   },
   "keywords": [],
   "author": "",

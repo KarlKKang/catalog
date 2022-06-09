@@ -91,25 +91,8 @@ module.exports = {
 		rules: [
 			{
 				test: /\.m?js$/,
-				exclude: {
-					and: [/node_modules/], // Exclude libraries in node_modules ...
-					not: [
-						// Except for a few of them that needs to be transpiled because they use modern syntax
-						// /node_modules[\\\/]@babel[\\\/]runtime/,
-					]
-				},
-				use: {
-					loader: 'babel-loader',
-					options: {
-						presets: [['@babel/preset-env',
-						  {
-							"useBuiltIns": "entry",
-							"corejs": "3.22"
-						  }
-						]],
-						plugins: ['@babel/plugin-transform-runtime']
-					}
-				}
+				exclude: /node_modules/,
+				loader: 'babel-loader',
 			}
 		]
 	}
