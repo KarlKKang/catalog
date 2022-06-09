@@ -6,7 +6,7 @@ import {
 	keyExists
 } from './main.js';
 import Hls from 'hls.js';
-import {default as videojs} from 'video.js/dist/alt/video.novtt';
+import {default as videojs} from 'video.js';
 
 export default function (controls, instance, config) {
 
