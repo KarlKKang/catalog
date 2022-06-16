@@ -51,7 +51,8 @@ import {
 	addEventsListener,
 	removeEventListener,
 	removeEventsListener,
-	getComputedStyle
+	getComputedStyle,
+	appendChild
 } from './DOM';
 //export {DOM};
 export {
@@ -93,7 +94,8 @@ export {
 	addEventsListener,
 	removeEventListener,
 	removeEventsListener,
-	getComputedStyle
+	getComputedStyle,
+	appendChild
 };
 
 import * as type from '../../type';

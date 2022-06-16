@@ -13,7 +13,8 @@ import {
 	containsClass,
 	createElement,
 	addClass,
-	addEventListener
+	addEventListener,
+	appendChild
 } from './main';
 import type {WebpMachine} from 'webp-hero/dist-cjs';
 
@@ -102,13 +103,13 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 					}
 					let url = concatenateSignedURL(target.dataset.src, credentials);
 					imageNode.src = url;
-					target.appendChild(imageNode);
+					appendChild(target, imageNode);
 				},
 				content: "token="+target.dataset.authenticationToken+"&p="+target.dataset.xhrParam
 			});
 		} else {
 			imageNode.src = target.dataset.src;
-			target.appendChild(imageNode);
+			appendChild(target, imageNode);
 		}
 	}
 }

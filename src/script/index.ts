@@ -26,6 +26,7 @@ import {
     changeURL,
     containsClass,
     d,
+    appendChild,
 
     type
 } from './module/main';
@@ -107,11 +108,11 @@ function showSeries (seriesInfo: type.SeriesInfo.SeriesInfo) {
         let overlay = createElement('div');
         let titleNode = createElement('p');
 
-        seriesNode.appendChild(thumbnailNode);
-        seriesNode.appendChild(titleNode);
+        appendChild(seriesNode, thumbnailNode);
+        appendChild(seriesNode, titleNode);
 
         addClass(overlay, 'overlay');
-        thumbnailNode.appendChild(overlay);
+        appendChild(thumbnailNode, overlay);
         addClass(thumbnailNode, 'lazyload');
         thumbnailNode.dataset.src = cdnURL + '/thumbnails/' + seriesEntry.thumbnail;
         thumbnailNode.dataset.alt = 'thumbnail: ' + seriesEntry.thumbnail;
@@ -120,7 +121,7 @@ function showSeries (seriesInfo: type.SeriesInfo.SeriesInfo) {
         addEventListener(seriesNode, 'click', function(){goToSeries (seriesEntry.id);});
         addClass(seriesNode, 'series')
 
-        containerElem.appendChild(seriesNode);
+        appendChild(containerElem, seriesNode);
     }
     
     offset = seriesInfo[seriesInfo.length-1] as type.SeriesInfo.OffsetInfo;

@@ -19,6 +19,7 @@ import {
 	createElement,
 	setTitle,
 	getById,
+	appendChild,
 
 	type
 } from './module/main';
@@ -102,7 +103,7 @@ addEventListener(w, 'load', function(){
 			var credentials = parsedResponse as type.CDNCredentials.CDNCredentials;
 			let url = concatenateSignedURL(param.src, credentials);
 			image.src = url;
-			container.appendChild(image);
+			appendChild(container, image);
 		},
 		content: "token="+param.authenticationToken + '&p=' + param.xhrParam
 	});

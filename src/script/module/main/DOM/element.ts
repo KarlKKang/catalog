@@ -129,3 +129,7 @@ export function removeEventsListener (elem: Element | Document | Window, events:
 export function getComputedStyle(elem: HTMLElement, property: string) { 
     return w.getComputedStyle(elem, null).getPropertyValue(property); 
 }
+
+export function appendChild (parent: Node, child: Node) {
+    parent.appendChild(child);
+}

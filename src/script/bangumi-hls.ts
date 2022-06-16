@@ -43,6 +43,7 @@ import {
     removeEventListener,
     containsClass,
     getComputedStyle,
+    appendChild,
 
     type
 } from './module/main';
@@ -168,7 +169,7 @@ async function updatePage (response: type.BangumiInfo.BangumiInfo) {
         onScreenConsole.id = 'on-screen-console';
         onScreenConsole.readOnly = true;
         onScreenConsole.rows = 20;
-        getById('main').appendChild(onScreenConsole);
+        appendChild(getById('main'), onScreenConsole);
     }
     if (debug) {
         addOnScreenConsole();
@@ -206,8 +207,8 @@ async function updatePage (response: type.BangumiInfo.BangumiInfo) {
         warningButtonNo.innerHTML = 'いいえ';
         addClass(warningButtonYes, 'button');
         addClass(warningButtonNo, 'button');
-        warningButtonGroup.appendChild(warningButtonYes);
-        warningButtonGroup.appendChild(warningButtonNo);
+        appendChild(warningButtonGroup, warningButtonYes);
+        appendChild(warningButtonGroup, warningButtonNo);
         addEventListener(warningButtonYes, 'click', function () {
             addClass(warningParent, 'hidden');
             removeClass(contentContainer, 'hidden');
@@ -287,20 +288,20 @@ function updateEPSelector (seriesEP: type.BangumiInfo.SeriesEP) {
         }
 
         let targetEP = index+1;
-        epButton.appendChild(epText);
+        appendChild(epButton, epText);
         addEventListener(epButton, 'click', function () {goToEP(seriesID, targetEP);});
 
-        epButtonWrapper.appendChild(epButton);
+        appendChild(epButtonWrapper, epButton);
     });
 
     let epSelector = getById('ep-selector');
-    epSelector.appendChild(epButtonWrapper);
+    appendChild(epSelector, epButtonWrapper);
 
     EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10; //Add some extra pixels to compensate for slight variation and error.
     var showMoreButton = createElement('p');
     showMoreButton.id = 'show-more-button';
     addClass(showMoreButton, 'hidden');
-    epSelector.appendChild(showMoreButton);
+    appendChild(epSelector, showMoreButton);
     addEventListener(showMoreButton, 'click', toggleEPSelector);
     styleEPSelector();
 
@@ -325,17 +326,17 @@ function updateSeasonSelector (seasons: type.BangumiInfo.Seasons) {
 
             if (season.id != seriesID) {
                 seasonText.innerHTML = season.season_name;
-                seasonButton.appendChild (seasonText);
+                appendChild(seasonButton, seasonText);
                 let targetSeries = season.id;
                 addEventListener(seasonButton, 'click', function () {goToEP(targetSeries, 1);});
             } else {
                 seasonText.innerHTML = season.season_name;
-                seasonButton.appendChild (seasonText);
+                appendChild(seasonButton, seasonText);
                 addClass(seasonButton, 'current-season');
             }
-            seasonButtonWrapper.appendChild (seasonButton);
+            appendChild(seasonButtonWrapper, seasonButton);
         }
-        seasonSelector.appendChild(seasonButtonWrapper);
+        appendChild(seasonSelector, seasonButtonWrapper);
     } else {
         remove(seasonSelector);
     }
@@ -376,10 +377,10 @@ function updateVideo () {
             option.selected = true;
         }
 
-        selectMenu.appendChild (option);
+        appendChild(selectMenu, option);
     });
 
-    formatSelector.appendChild(selectMenu);
+    appendChild(formatSelector, selectMenu);
     insertBefore(formatSelector, getById('message'));
 
     addClass(mediaHolder, 'video');
@@ -389,7 +390,7 @@ function updateVideo () {
 
     addClass(videoJS, 'vjs-big-play-centered');
     videoJS.lang = 'en';
-    mediaHolder.appendChild(videoJS);
+    appendChild(mediaHolder, videoJS);
 
     var config = {
         controls: true,
@@ -572,8 +573,8 @@ function addAudioNode (index: number) {
 
     const FLAC_FALLBACK = (file.flac_fallback && !browser.CAN_PLAY_ALAC);
 
-    mediaHolder.appendChild(getAudioSubtitleNode(file, FLAC_FALLBACK));
-    mediaHolder.appendChild(audioNode);
+    appendChild(mediaHolder, getAudioSubtitleNode(file, FLAC_FALLBACK));
+    appendChild(mediaHolder, audioNode);
     
     const IS_FLAC = (file.format.toLowerCase() == 'flac' || FLAC_FALLBACK);
     const USE_VIDEOJS = browser.USE_MSE && IS_FLAC;
@@ -606,7 +607,7 @@ function addAudioNode (index: number) {
             };
             let videoJSMediaNode = createElement('audio') as HTMLAudioElement; 
             videoJSMediaNode.style.display = 'none';
-            mediaHolder.appendChild(videoJSMediaNode);
+            appendChild(mediaHolder, videoJSMediaNode);
 
             let videoJSMedia = videojs(videoJSMediaNode, configVideoJSMedia, function () {
 
@@ -708,7 +709,7 @@ function addAlbumInfo () {
         let artistElem = createElement('span');
         addClass(artistElem, 'artist');
         artistElem.innerHTML = '<br/>' + albumInfo.album_artist;
-        titleElem.appendChild(artistElem);
+        appendChild(titleElem, artistElem);
     }
 }
 
@@ -724,7 +725,7 @@ function getAudioSubtitleNode (file: type.BangumiInfo.AudioFile, FLAC_FALLBACK: 
             let artist = createElement('span');
             addClass(artist, 'artist');
             artist.innerHTML = '／' + file.artist;
-            subtitle.appendChild(artist);
+            appendChild(subtitle, artist);
         }
     }
 
@@ -783,7 +784,7 @@ function getAudioSubtitleNode (file: type.BangumiInfo.AudioFile, FLAC_FALLBACK: 
             format.innerHTML = format.innerHTML.replace('32bit', '24bit');
         }
 
-        subtitle.appendChild(format);
+        appendChild(subtitle, format);
     }
 
     return subtitle;
@@ -823,14 +824,14 @@ function updateImage () {
             let subtitle = createElement('p');
             addClass(subtitle, 'sub-title');
             subtitle.innerHTML = file.tag;
-            mediaHolder.appendChild(subtitle);
+            appendChild(mediaHolder, subtitle);
         }
 
         let imageNode = createElement('div');
         let overlay = createElement('div');
 
         addClass(overlay, 'overlay');
-        imageNode.appendChild(overlay);
+        appendChild(imageNode, overlay);
 
         addClass(imageNode, 'lazyload');
         imageNode.dataset.crossorigin = 'use-credentials';
@@ -853,7 +854,7 @@ function updateImage () {
             }
         });
         removeRightClick(imageNode);
-        mediaHolder.appendChild(imageNode);
+        appendChild(mediaHolder, imageNode);
     });
 
     lazyloadInitialize ();
@@ -938,18 +939,18 @@ function displayChapters (chapters: type.BangumiInfo.Chapters) {
             videoInstance.seek(startTime);
             videoInstance.controls.focus();
         });
-        chapterNode.appendChild(timestamp);
-        chapterNode.appendChild(cueText);
+        appendChild(chapterNode, timestamp);
+        appendChild(chapterNode, cueText);
         setClass(chapterNode, 'inactive-chapter');
-        accordionPanel.appendChild(chapterNode);
+        appendChild(accordionPanel, chapterNode);
     }
 
     var chaptersNode = createElement('div');
     addClass(chaptersNode, 'chapters');
-    chaptersNode.appendChild(accordion);
-    chaptersNode.appendChild(accordionPanel);
+    appendChild(chaptersNode, accordion);
+    appendChild(chaptersNode, accordionPanel);
     addAccordionEvent(accordion);
-    mediaHolder.appendChild(chaptersNode);
+    appendChild(mediaHolder, chaptersNode);
 
     var updateChapterDisplay = function () {
         var chapterElements = getDescendantsByTag(accordionPanel, 'p'); 
@@ -1003,7 +1004,7 @@ function addDownloadAccordion () {
     changeColor(warning, 'red');
     addClass(warning, 'hidden');
     warning.innerHTML = 'お使いの端末はダウンロードに対応していません。';
-    accordionPanel.appendChild(warning);
+    appendChild(accordionPanel, warning);
 
     addEventListener(downloadButton, 'click', function () {
         sendServerRequest('start_download.php', {
@@ -1019,14 +1020,14 @@ function addDownloadAccordion () {
             content: "token="+epInfo.authentication_token+'&format='+formatIndex
         });
     });
-    accordionPanel.appendChild(downloadButton);
+    appendChild(accordionPanel, downloadButton);
 
     var downloadElem = createElement('div');
     addClass(downloadElem, 'download');
-    downloadElem.appendChild(accordion);
-    downloadElem.appendChild(accordionPanel);
+    appendChild(downloadElem, accordion);
+    appendChild(downloadElem, accordionPanel);
     addAccordionEvent(accordion);
-    getById('content').appendChild(downloadElem);
+    appendChild(getById('content'), downloadElem);
 }
 
 
