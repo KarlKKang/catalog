@@ -281,7 +281,7 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 
 	function changeProgress (event: MouseEvent | TouchEvent) {
 		let mouseX;
-		if (event.type === 'touchmove') {
+		if (window.TouchEvent !== undefined && event instanceof TouchEvent) {
 			let touchEvent = event as TouchEvent;
 			let touch = touchEvent.touches[0] || touchEvent.changedTouches[0];
 			if (touch === undefined) {
@@ -321,11 +321,12 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 	
 	if (isVideo) {
 		let videoMedia = media as HTMLVideoElement;
+		const IOS_FULLSCREEN = IS_IOS && videoMedia.webkitEnterFullscreen;
 
 		//Fullscreen
 		let requestFullscreen = function () {
-			if (IS_IOS && videoMedia.webkitEnterFullscreen) {
-				videoMedia.webkitEnterFullscreen();
+			if (IOS_FULLSCREEN) {
+				videoMedia.webkitEnterFullscreen!();
 			} else {
 				screenfull.request(controls);
 			}
@@ -348,7 +349,7 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 
 		let fullscreenButton = getDescendantsByClassAt(controlBar, 'vjs-fullscreen-control', 0) as HTMLButtonElement;
 
-		if (screenfull.isEnabled || (IS_IOS && videoMedia.webkitEnterFullscreen)) {
+		if (screenfull.isEnabled || IOS_FULLSCREEN) {
 			removeClass(fullscreenButton, 'vjs-disabled');
 			fullscreenButton.disabled = false;
 
@@ -356,18 +357,20 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 				event.stopPropagation();
 				toggleFullscreen ();
 			}, true);
-	
-			let fullscreenChange = function () {
-				let elemInFS = screenfull.element;
-				if (elemInFS === undefined) {
-					removeClass(controls, 'vjs-fullscreen');
-					fullscreenButton.title = 'Fullscreen';
-				} else if (elemInFS.isSameNode(controls) || elemInFS.isSameNode(videoMedia)) {
-					addClass(controls, 'vjs-fullscreen');
-					fullscreenButton.title = 'Exit Fullscreen';
-				}
-			};
-			screenfull.on('change', fullscreenChange);	
+			
+			if (!IOS_FULLSCREEN) {
+				let fullscreenChange = function () {
+					let elemInFS = screenfull.element;
+					if (elemInFS === undefined) {
+						removeClass(controls, 'vjs-fullscreen');
+						fullscreenButton.title = 'Fullscreen';
+					} else if (elemInFS.isSameNode(controls) || elemInFS.isSameNode(videoMedia)) {
+						addClass(controls, 'vjs-fullscreen');
+						fullscreenButton.title = 'Exit Fullscreen';
+					}
+				};
+				screenfull.on('change', fullscreenChange);
+			}
 		} else {
 			addClass(fullscreenButton, 'vjs-disabled');
 			fullscreenButton.disabled = true;

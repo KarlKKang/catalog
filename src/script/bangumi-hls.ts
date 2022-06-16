@@ -245,7 +245,7 @@ async function updatePage (response: type.BangumiInfo.BangumiInfo) {
                 browser, 
                 videojsMod
             } = await import(
-                /* webpackExports: ["Hls", "videojs", "browser", "videoJSMod"] */
+                /* webpackExports: ["Hls", "videojs", "browser", "videojsMod"] */
                 './module/player'));
         } catch (e) {
             message.show(message.template.param.moduleImportError(e));
