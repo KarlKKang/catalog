@@ -7,14 +7,18 @@ import {
 	getURLParam,
 	loginURL,
 	clearCookies,
-	DOM
+	
+	w,
+	addEventListener,
+	getHref,
+	redirect,
 } from './module/main';
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 	clearCookies();
 	
-	if (!DOM.getHref().startsWith('https://featherine.com/confirm_email') && !debug) {
-		DOM.redirect(loginURL, true);
+	if (!getHref().startsWith('https://featherine.com/confirm_email') && !debug) {
+		redirect(loginURL, true);
 		return;
 	}
 	
@@ -22,12 +26,12 @@ DOM.addEventListener(DOM.w, 'load', function(){
 	var signature = getURLParam ('signature');
 
 	if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
-		DOM.redirect(loginURL, true);
+		redirect(loginURL, true);
 		return;
 	}
 	
 	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		DOM.redirect(loginURL, true);
+		redirect(loginURL, true);
 		return;
 	}
 		

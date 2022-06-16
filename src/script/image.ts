@@ -8,27 +8,37 @@ import {
 	imageProtection,
 	concatenateSignedURL,
 	clearCookies,
-	DOM,
-	type,
-	removeRightClick
+	removeRightClick,
+
+	w,
+	addEventListener,
+	getHref,
+	redirect,
+	getCookie,
+	deleteCookie,
+	createElement,
+	setTitle,
+	getById,
+
+	type
 } from './module/main';
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 	clearCookies();
 	
-	if (DOM.getHref()!='https://featherine.com/image' && !debug) {
-		DOM.redirect('https://featherine.com/image', true);
+	if (getHref()!='https://featherine.com/image' && !debug) {
+		redirect('https://featherine.com/image', true);
 		return;
 	}
 	
-	var paramCookie = DOM.getCookie('local-image-param');
+	var paramCookie = getCookie('local-image-param');
 	
 	if (paramCookie === null) {
-		DOM.redirect(topURL, true);
+		redirect(topURL, true);
 		return;
 	}
 	
-	DOM.deleteCookie('local-image-param');
+	deleteCookie('local-image-param');
 
 	var parsedCookie: any;
 	try {
@@ -36,13 +46,13 @@ DOM.addEventListener(DOM.w, 'load', function(){
 		parsedCookie = JSON.parse(paramCookie);
 		type.LocalImageParam.check(parsedCookie);
 	} catch (e) {
-		DOM.redirect(topURL, true);
+		redirect(topURL, true);
 		return;
 	}
 	var param = parsedCookie as type.LocalImageParam.LocalImageParam;
 	
 	
-	var image = DOM.createElement('img') as HTMLImageElement;
+	var image = createElement('img') as HTMLImageElement;
 	imageProtection(image);
 	
 	setInterval (function () {sendServerRequest('device_authenticate.php', {
@@ -54,11 +64,11 @@ DOM.addEventListener(DOM.w, 'load', function(){
 		content: "token="+param.authenticationToken
 	});}, 60*1000);
 	
-	DOM.setTitle(param.title + ' | featherine');
+	setTitle(param.title + ' | featherine');
 	
-	var container = DOM.getById('image-container');
+	var container = getById('image-container');
 
-	DOM.addEventListener(image, 'error', function () {
+	addEventListener(image, 'error', function () {
 		if (image.src.includes('.webp')) {
 			import(
 				/* webpackChunkName: "webp-hero" */
@@ -71,7 +81,7 @@ DOM.addEventListener(DOM.w, 'load', function(){
 				message.show(message.template.param.moduleImportError(e));
 			});
 		} else {
-			DOM.redirect(topURL, true);
+			redirect(topURL, true);
 		}
 	});
 

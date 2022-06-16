@@ -15,10 +15,36 @@ import {
 	encodeCFURIComponent,
     clearCookies,
     cssVarWrapper,
-    DOM,
+    removeRightClick,
     serverURL,
-    type,
-    removeRightClick
+
+    w,
+    addEventListener,
+    getHref,
+    redirect,
+    changeURL,
+    getById,
+    getBody,
+    removeClass,
+    setTitle,
+    createElement,
+    addClass,
+    remove,
+    insertBefore,
+    getDescendantsByTagAt,
+    getTitle,
+    openWindow,
+    setCookie,
+    toggleClass,
+    setClass,
+    getDescendantsByTag,
+    createTextNode,
+    addEventsListener,
+    removeEventListener,
+    containsClass,
+    getComputedStyle,
+
+    type
 } from './module/main';
 
 
@@ -33,12 +59,12 @@ var EPSelectorHeight: number;
 var contentContainer: HTMLElement;
 var mediaHolder: HTMLElement;
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (!DOM.getHref().startsWith(topURL + '/bangumi') && !debug) {
-        DOM.redirect(topURL, true);
+	if (!getHref().startsWith(topURL + '/bangumi') && !debug) {
+        redirect(topURL, true);
 		return;
 	}
 
@@ -46,10 +72,10 @@ DOM.addEventListener(DOM.w, 'load', function(){
     //get parameters
     let seriesIDParam = getSeriesID();
     if (seriesIDParam === null) {
-        DOM.redirect(topURL, true);
+        redirect(topURL, true);
         return;
     } else if (!/^[a-zA-Z0-9~_-]{8,}$/.test(seriesIDParam)) {
-		DOM.redirect(topURL, true);
+		redirect(topURL, true);
         return;
     }
     seriesID = seriesIDParam;
@@ -61,10 +87,10 @@ DOM.addEventListener(DOM.w, 'load', function(){
     } else {
         epIndex = parseInt (epIndexParam);
         if (isNaN(epIndex) || epIndex<1) {
-            DOM.changeURL(newURL, true);
+            changeURL(newURL, true);
             epIndex = 1;
         } else if (epIndex == 1) {
-			DOM.changeURL(newURL, true);
+			changeURL(newURL, true);
 		}
         epIndex--;
     }
@@ -81,8 +107,8 @@ DOM.addEventListener(DOM.w, 'load', function(){
         formatIndex--;
     }
 
-    contentContainer = DOM.getById('content');
-    mediaHolder = DOM.getById('media-holder');
+    contentContainer = getById('content');
+    mediaHolder = getById('media-holder');
 
     //send requests
     sendServerRequest('get_ep.php', {
@@ -121,28 +147,28 @@ var onScreenConsole: HTMLTextAreaElement | false = false;
 
 async function updatePage (response: type.BangumiInfo.BangumiInfo) {
     navListeners();
-    DOM.removeClass(DOM.getBody(), "hidden");
+    removeClass(getBody(), "hidden");
 
     epInfo = response.ep_info;
 
-    let titleElem = DOM.getById('title');
+    let titleElem = getById('title');
     let title = response.title;
     let titleOverride = response.title_override;
     if (titleOverride !== undefined) {
         titleElem.innerHTML = titleOverride;
-        DOM.setTitle(titleOverride + ' | featherine');
+        setTitle(titleOverride + ' | featherine');
     } else {
         titleElem.innerHTML = title;
-        DOM.setTitle(title + '[' + response.series_ep[epIndex] + '] | featherine');
+        setTitle(title + '[' + response.series_ep[epIndex] + '] | featherine');
     } 
     
 
     function addOnScreenConsole () {
-        onScreenConsole = DOM.createElement('textarea') as HTMLTextAreaElement; 
+        onScreenConsole = createElement('textarea') as HTMLTextAreaElement; 
         onScreenConsole.id = 'on-screen-console';
         onScreenConsole.readOnly = true;
         onScreenConsole.rows = 20;
-        DOM.getById('main').appendChild(onScreenConsole);
+        getById('main').appendChild(onScreenConsole);
     }
     if (debug) {
         addOnScreenConsole();
@@ -160,9 +186,9 @@ async function updatePage (response: type.BangumiInfo.BangumiInfo) {
     let ageRestricted = epInfo.age_restricted;
 
     if (ageRestricted) {
-        var warningParent = DOM.getById('warning');
-        var warningTitle = DOM.getById('warning-title');
-        var warningBody = DOM.getById('warning-body');
+        var warningParent = getById('warning');
+        var warningTitle = getById('warning-title');
+        var warningBody = getById('warning-body');
         changeColor (warningTitle, 'red');
         if (ageRestricted.toLowerCase() == 'r15+') {
             warningTitle.innerHTML = '「R15+指定」<br>年齢認証';
@@ -173,25 +199,25 @@ async function updatePage (response: type.BangumiInfo.BangumiInfo) {
         }
         warningBody.innerHTML = 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？';
         
-        var warningButtonGroup = DOM.getById('warning-button-group'); 
-        var warningButtonYes = DOM.createElement('button');
-        var warningButtonNo = DOM.createElement('button');
+        var warningButtonGroup = getById('warning-button-group'); 
+        var warningButtonYes = createElement('button');
+        var warningButtonNo = createElement('button');
         warningButtonYes.innerHTML = 'はい';
         warningButtonNo.innerHTML = 'いいえ';
-        DOM.addClass(warningButtonYes, 'button');
-        DOM.addClass(warningButtonNo, 'button');
+        addClass(warningButtonYes, 'button');
+        addClass(warningButtonNo, 'button');
         warningButtonGroup.appendChild(warningButtonYes);
         warningButtonGroup.appendChild(warningButtonNo);
-        DOM.addEventListener(warningButtonYes, 'click', function () {
-            DOM.addClass(warningParent, 'hidden');
-            DOM.removeClass(contentContainer, 'hidden');
+        addEventListener(warningButtonYes, 'click', function () {
+            addClass(warningParent, 'hidden');
+            removeClass(contentContainer, 'hidden');
         });
-        DOM.addEventListener(warningButtonNo, 'click', function () {
-            DOM.redirect(topURL);
+        addEventListener(warningButtonNo, 'click', function () {
+            redirect(topURL);
         });
 
-        DOM.addClass(contentContainer, 'hidden');
-        DOM.removeClass(warningParent, 'hidden');
+        addClass(contentContainer, 'hidden');
+        removeClass(warningParent, 'hidden');
     }
 
     /////////////////////////////////////////////device_authenticate/////////////////////////////////////////////
@@ -247,38 +273,38 @@ async function updatePage (response: type.BangumiInfo.BangumiInfo) {
 }
 
 function updateEPSelector (seriesEP: type.BangumiInfo.SeriesEP) {
-    var epButtonWrapper = DOM.createElement('div');
+    var epButtonWrapper = createElement('div');
     epButtonWrapper.id = 'ep-button-wrapper';
 
     seriesEP.forEach(function(value, index) {
-        let epButton = DOM.createElement('div');
-        let epText = DOM.createElement('p');
+        let epButton = createElement('div');
+        let epText = createElement('p');
 
         epText.innerHTML = value;
 
         if (epIndex == index) {
-            DOM.addClass(epButton, 'current-ep');
+            addClass(epButton, 'current-ep');
         }
 
         let targetEP = index+1;
         epButton.appendChild(epText);
-        DOM.addEventListener(epButton, 'click', function () {goToEP(seriesID, targetEP);});
+        addEventListener(epButton, 'click', function () {goToEP(seriesID, targetEP);});
 
         epButtonWrapper.appendChild(epButton);
     });
 
-    let epSelector = DOM.getById('ep-selector');
+    let epSelector = getById('ep-selector');
     epSelector.appendChild(epButtonWrapper);
 
     EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10; //Add some extra pixels to compensate for slight variation and error.
-    var showMoreButton = DOM.createElement('p');
+    var showMoreButton = createElement('p');
     showMoreButton.id = 'show-more-button';
-    DOM.addClass(showMoreButton, 'hidden');
+    addClass(showMoreButton, 'hidden');
     epSelector.appendChild(showMoreButton);
-    DOM.addEventListener(showMoreButton, 'click', toggleEPSelector);
+    addEventListener(showMoreButton, 'click', toggleEPSelector);
     styleEPSelector();
 
-    DOM.addEventListener(DOM.w, 'resize', function(){
+    addEventListener(w, 'resize', function(){
         var currentMaxHeight = epButtonWrapper.style.maxHeight;
         epButtonWrapper.style.maxHeight = ''; //Resetting max-height can mitigate a bug in IE browser where the scrollHeight attribute is not accurate.
         EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10;
@@ -288,50 +314,50 @@ function updateEPSelector (seriesEP: type.BangumiInfo.SeriesEP) {
 }
 
 function updateSeasonSelector (seasons: type.BangumiInfo.Seasons) {
-    var seasonButtonWrapper = DOM.createElement('div');
-    var seasonSelector = DOM.getById('season-selector');
+    var seasonButtonWrapper = createElement('div');
+    var seasonSelector = getById('season-selector');
     seasonButtonWrapper.id = 'season-button-wrapper';
 
     if (seasons.length != 0) {
         for (let season of seasons) {
-            let seasonButton = DOM.createElement('div');
-            let seasonText = DOM.createElement('p');
+            let seasonButton = createElement('div');
+            let seasonText = createElement('p');
 
             if (season.id != seriesID) {
                 seasonText.innerHTML = season.season_name;
                 seasonButton.appendChild (seasonText);
                 let targetSeries = season.id;
-                DOM.addEventListener(seasonButton, 'click', function () {goToEP(targetSeries, 1);});
+                addEventListener(seasonButton, 'click', function () {goToEP(targetSeries, 1);});
             } else {
                 seasonText.innerHTML = season.season_name;
                 seasonButton.appendChild (seasonText);
-                DOM.addClass(seasonButton, 'current-season');
+                addClass(seasonButton, 'current-season');
             }
             seasonButtonWrapper.appendChild (seasonButton);
         }
         seasonSelector.appendChild(seasonButtonWrapper);
     } else {
-        DOM.remove(seasonSelector);
+        remove(seasonSelector);
     }
 }
 
 function updateVideo () {
     let videoEPInfo = epInfo as type.BangumiInfo.VideoEPInfo;
     if (videoEPInfo.title!='') {
-        let title = DOM.createElement('p');
-        DOM.addClass(title, 'sub-title');
-        DOM.addClass(title, 'center-align');
+        let title = createElement('p');
+        addClass(title, 'sub-title');
+        addClass(title, 'center-align');
         title.innerHTML = videoEPInfo.title;
-        DOM.insertBefore(title, DOM.getById('message'));
+        insertBefore(title, getById('message'));
     }
 
     let formats = videoEPInfo.formats;
 
-    let formatSelector = DOM.createElement('div');
+    let formatSelector = createElement('div');
     formatSelector.id = 'format-selector';
 
-    let selectMenu = DOM.createElement('select');
-    DOM.addEventListener(selectMenu, "change", function () {
+    let selectMenu = createElement('select');
+    addEventListener(selectMenu, "change", function () {
         formatSwitch();
     });
 
@@ -341,7 +367,7 @@ function updateVideo () {
     }
 
     formats.forEach(function(value, index){
-        let option = DOM.createElement('option') as HTMLOptionElement;
+        let option = createElement('option') as HTMLOptionElement;
 
         option.value = value;
         option.innerHTML = value;
@@ -354,14 +380,14 @@ function updateVideo () {
     });
 
     formatSelector.appendChild(selectMenu);
-    DOM.insertBefore(formatSelector, DOM.getById('message'));
+    insertBefore(formatSelector, getById('message'));
 
-    DOM.addClass(mediaHolder, 'video');
+    addClass(mediaHolder, 'video');
     addDownloadAccordion();
 
-    var videoJS = DOM.createElement('video-js');
+    var videoJS = createElement('video-js');
 
-    DOM.addClass(videoJS, 'vjs-big-play-centered');
+    addClass(videoJS, 'vjs-big-play-centered');
     videoJS.lang = 'en';
     mediaHolder.appendChild(videoJS);
 
@@ -390,7 +416,7 @@ function updateVideo () {
 function formatSwitch () {
     let videoEPInfo = epInfo as type.BangumiInfo.VideoEPInfo;
     
-    let selectedFormat = (DOM.getDescendantsByTagAt(DOM.getById('format-selector'), 'select', 0) as HTMLSelectElement).selectedIndex;
+    let selectedFormat = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement).selectedIndex;
     let video = (mediaInstances[0] as VideojsModInstance).media;
     formatIndex = selectedFormat;
 
@@ -425,7 +451,7 @@ function addVideoNode (url: string, options: {currentTime?: number, play?: boole
     
     let videoInstance = mediaInstances[0] as VideojsModInstance;
     let videoMedia = videoInstance.media;
-    videoMedia.title = DOM.getTitle();
+    videoMedia.title = getTitle();
 
     function videoReady () {
         if (options.currentTime !== undefined) {
@@ -475,9 +501,9 @@ function addVideoNode (url: string, options: {currentTime?: number, play?: boole
             showAttachError();
         }
     } else if (browser.NATIVE_HLS) {
-        DOM.addEventListener(videoMedia, 'error', function () {showPlaybackError ();});
+        addEventListener(videoMedia, 'error', function () {showPlaybackError ();});
         videoMedia.crossOrigin = 'use-credentials';
-        DOM.addEventListener(videoMedia, 'loadedmetadata', function () {
+        addEventListener(videoMedia, 'loadedmetadata', function () {
             videoReady ();
         });
         if (!videoInstance.attachNative(url)) {
@@ -537,11 +563,11 @@ function addAudioNode (index: number) {
         }
     };
 
-    let audioNode = DOM.createElement('audio'); 
+    let audioNode = createElement('audio'); 
     audioNode.id = 'track'+index;
 
-    DOM.addClass(audioNode, "vjs-default-skin");
-    DOM.addClass(audioNode, "video-js");
+    addClass(audioNode, "vjs-default-skin");
+    addClass(audioNode, "video-js");
     audioNode.lang = 'en';
 
     const FLAC_FALLBACK = (file.flac_fallback && !browser.CAN_PLAY_ALAC);
@@ -561,7 +587,7 @@ function addAudioNode (index: number) {
     
     let videoJSControl = videojs(audioNode, configVideoJSControl, function () {
         let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK?'[FLAC]':'') +'.m3u8'), cdnCredentials, baseURL + '_MASTER_*.m3u8'); 
-        let controlNode = DOM.getById('track' + index);
+        let controlNode = getById('track' + index);
 
         if (USE_VIDEOJS) {
             let configVideoJSMedia = {
@@ -578,7 +604,7 @@ function addAudioNode (index: number) {
                 },
                 crossOrigin: 'use-credentials'
             };
-            let videoJSMediaNode = DOM.createElement('audio') as HTMLAudioElement; 
+            let videoJSMediaNode = createElement('audio') as HTMLAudioElement; 
             videoJSMediaNode.style.display = 'none';
             mediaHolder.appendChild(videoJSMediaNode);
 
@@ -637,9 +663,9 @@ function addAudioNode (index: number) {
             } else if (browser.NATIVE_HLS) {
                 let audioMedia = audioInstance.media;
                 
-                DOM.addEventListener(audioMedia, 'error', function () {showPlaybackError();});
+                addEventListener(audioMedia, 'error', function () {showPlaybackError();});
                 audioMedia.crossOrigin = 'use-credentials';
-                DOM.addEventListener(audioMedia, 'loadedmetadata', function () {
+                addEventListener(audioMedia, 'loadedmetadata', function () {
                     audioReadyCounter ++;
                     if (audioReadyCounter == audioEPInfo.files.length) {
                         audioReady();
@@ -656,7 +682,7 @@ function addAudioNode (index: number) {
     });
 
     function setMediaTitle (audioInstance: VideojsModInstance) {
-        audioInstance.media.title = ((file.title=='')?'':(file.title + ' | ')) + DOM.getTitle();
+        audioInstance.media.title = ((file.title=='')?'':(file.title + ' | ')) + getTitle();
     }
 
     return true;
@@ -665,38 +691,38 @@ function addAudioNode (index: number) {
 function addAlbumInfo () {
     let albumInfo = (epInfo as type.BangumiInfo.AudioEPInfo).album_info;
     if (albumInfo.album_title!='') {
-        let albumTitleElem = DOM.createElement('p');
-        DOM.addClass(albumTitleElem, 'sub-title');
-        DOM.addClass(albumTitleElem, 'center-align');
+        let albumTitleElem = createElement('p');
+        addClass(albumTitleElem, 'sub-title');
+        addClass(albumTitleElem, 'center-align');
         albumTitleElem.innerHTML = albumInfo.album_title;
-        DOM.insertBefore(albumTitleElem, DOM.getById('message'));
+        insertBefore(albumTitleElem, getById('message'));
         if (albumInfo.album_artist!='') {
-            let albumArtist = DOM.createElement('p');
-            DOM.addClass(albumArtist, 'artist');
-            DOM.addClass(albumArtist, 'center-align');
+            let albumArtist = createElement('p');
+            addClass(albumArtist, 'artist');
+            addClass(albumArtist, 'center-align');
             albumArtist.innerHTML = albumInfo.album_artist;
-            DOM.insertBefore(albumArtist, DOM.getById('message'));
+            insertBefore(albumArtist, getById('message'));
         }
     } else if (albumInfo.album_artist!='') {
-        let titleElem = DOM.getById('title');
-        let artistElem = DOM.createElement('span');
-        DOM.addClass(artistElem, 'artist');
+        let titleElem = getById('title');
+        let artistElem = createElement('span');
+        addClass(artistElem, 'artist');
         artistElem.innerHTML = '<br/>' + albumInfo.album_artist;
         titleElem.appendChild(artistElem);
     }
 }
 
 function getAudioSubtitleNode (file: type.BangumiInfo.AudioFile, FLAC_FALLBACK: boolean) {
-    let subtitle = DOM.createElement('p');
-    DOM.addClass(subtitle, 'sub-title');
+    let subtitle = createElement('p');
+    addClass(subtitle, 'sub-title');
 
     //subtitle
     if (file.title != '') {
         subtitle.innerHTML = file.title;
 
         if (file.artist != '') {
-            let artist = DOM.createElement('span');
-            DOM.addClass(artist, 'artist');
+            let artist = createElement('span');
+            addClass(artist, 'artist');
             artist.innerHTML = '／' + file.artist;
             subtitle.appendChild(artist);
         }
@@ -708,8 +734,8 @@ function getAudioSubtitleNode (file: type.BangumiInfo.AudioFile, FLAC_FALLBACK: 
             subtitle.innerHTML += '<br>';
         }
 
-        let format = DOM.createElement('span');
-        DOM.addClass(format, 'format');
+        let format = createElement('span');
+        addClass(format, 'format');
         format.innerHTML = file.format;
 
         let samplerate = file.samplerate;
@@ -779,10 +805,10 @@ function audioReady () {
 
     mediaInstances.forEach(function (instance, index) {
         let media = instance.media;
-        DOM.addEventListener(media, 'play', function () {
+        addEventListener(media, 'play', function () {
             pauseAll(index);
         });
-        DOM.addEventListener(media, 'ended', function () {
+        addEventListener(media, 'ended', function () {
             playNext(index);
         });
     });
@@ -794,36 +820,36 @@ function updateImage () {
 
     files.forEach(function (file, index) {
         if (file.tag != '') {
-            let subtitle = DOM.createElement('p');
-            DOM.addClass(subtitle, 'sub-title');
+            let subtitle = createElement('p');
+            addClass(subtitle, 'sub-title');
             subtitle.innerHTML = file.tag;
             mediaHolder.appendChild(subtitle);
         }
 
-        let imageNode = DOM.createElement('div');
-        let overlay = DOM.createElement('div');
+        let imageNode = createElement('div');
+        let overlay = createElement('div');
 
-        DOM.addClass(overlay, 'overlay');
+        addClass(overlay, 'overlay');
         imageNode.appendChild(overlay);
 
-        DOM.addClass(imageNode, 'lazyload');
+        addClass(imageNode, 'lazyload');
         imageNode.dataset.crossorigin = 'use-credentials';
         imageNode.dataset.src = baseURL + encodeCFURIComponent(file.file_name);
-        imageNode.dataset.alt = DOM.getById('title').innerHTML;
+        imageNode.dataset.alt = getById('title').innerHTML;
         imageNode.dataset.xhrParam = index.toString();
         imageNode.dataset.authenticationToken = epInfo.authentication_token;
-        DOM.addEventListener(imageNode, 'click', function() {
+        addEventListener(imageNode, 'click', function() {
             let param: type.LocalImageParam.LocalImageParam = {
                 src: baseURL + encodeCFURIComponent(file.file_name),
                 xhrParam: index.toString(),
-                title: DOM.getById('title').innerHTML,
+                title: getById('title').innerHTML,
                 authenticationToken: epInfo.authentication_token
             };
-            DOM.setCookie('local-image-param', JSON.stringify(param), 10);
+            setCookie('local-image-param', JSON.stringify(param), 10);
             if (debug) {
-                DOM.redirect('image.html');
+                redirect('image.html');
             } else {
-                DOM.openWindow(topURL + '/image');
+                openWindow(topURL + '/image');
             }
         });
         removeRightClick(imageNode);
@@ -850,15 +876,15 @@ function showAttachError () {
 }
 
 function showMediaMessage (title: string, messageTxt: string, error: boolean) {
-    var messageTitle = DOM.getById('message-title');
+    var messageTitle = getById('message-title');
     changeColor(messageTitle, error?"red":"orange");
     messageTitle.innerHTML = title;
     if (error) {
-        DOM.addClass(mediaHolder, 'hidden');
+        addClass(mediaHolder, 'hidden');
         destroyAll();
     }
-    DOM.getById('message-body').innerHTML = messageTxt;
-    DOM.removeClass(DOM.getById('message'), 'hidden');
+    getById('message-body').innerHTML = messageTxt;
+    removeClass(getById('message'), 'hidden');
 }
 
 function goToEP (dest_series: string, dest_ep: number) {
@@ -868,12 +894,12 @@ function goToEP (dest_series: string, dest_ep: number) {
     } else {
         url = topURL+'/bangumi/'+dest_series+(dest_ep==1?'':('?ep='+dest_ep));
     }
-    DOM.redirect(url);
+    redirect(url);
 }
 
 function addAccordionEvent (acc: HTMLElement) {
-    DOM.addEventListener(acc, "click", function() {
-        DOM.toggleClass(acc, "active");
+    addEventListener(acc, "click", function() {
+        toggleClass(acc, "active");
         let panel = acc.nextElementSibling;
         if (panel === null) {
             return;
@@ -893,60 +919,60 @@ function displayChapters (chapters: type.BangumiInfo.Chapters) {
     let videoInstance = mediaInstances[0] as VideojsModInstance;
 
     //display chapters
-    var accordion = DOM.createElement('button'); 
-    DOM.addClass(accordion, 'accordion');
+    var accordion = createElement('button'); 
+    addClass(accordion, 'accordion');
     accordion.innerHTML = 'CHAPTERS';
 
-    var accordionPanel = DOM.createElement('div');
-    DOM.addClass(accordionPanel, 'panel');
+    var accordionPanel = createElement('div');
+    addClass(accordionPanel, 'panel');
 
     var video = videoInstance.media;
 
     for (let chapter of chapters) {
-        let chapterNode = DOM.createElement('p');
-        let timestamp = DOM.createElement('span');
-        let cueText = DOM.createTextNode('\xa0\xa0' + chapter[0]);
+        let chapterNode = createElement('p');
+        let timestamp = createElement('span');
+        let cueText = createTextNode('\xa0\xa0' + chapter[0]);
         let startTime = chapter[1];
         timestamp.innerHTML = secToTimestamp (startTime);
-        DOM.addEventListener(timestamp, 'click', function () {
+        addEventListener(timestamp, 'click', function () {
             videoInstance.seek(startTime);
             videoInstance.controls.focus();
         });
         chapterNode.appendChild(timestamp);
         chapterNode.appendChild(cueText);
-        DOM.setClass(chapterNode, 'inactive-chapter');
+        setClass(chapterNode, 'inactive-chapter');
         accordionPanel.appendChild(chapterNode);
     }
 
-    var chaptersNode = DOM.createElement('div');
-    DOM.addClass(chaptersNode, 'chapters');
+    var chaptersNode = createElement('div');
+    addClass(chaptersNode, 'chapters');
     chaptersNode.appendChild(accordion);
     chaptersNode.appendChild(accordionPanel);
     addAccordionEvent(accordion);
     mediaHolder.appendChild(chaptersNode);
 
     var updateChapterDisplay = function () {
-        var chapterElements = DOM.getDescendantsByTag(accordionPanel, 'p'); 
+        var chapterElements = getDescendantsByTag(accordionPanel, 'p'); 
         var currentTime = video.currentTime;
         chapters.forEach(function(chapter, index) {
             let chapterElement = chapterElements[index] as HTMLElement;
             if (currentTime >= chapter[1]) {
                 if (index == chapters.length-1) {
-                    DOM.setClass(chapterElement, 'current-chapter');
+                    setClass(chapterElement, 'current-chapter');
                 } else if (currentTime < chapters[index+1]![1]) {
-                    DOM.setClass(chapterElement, 'current-chapter');
+                    setClass(chapterElement, 'current-chapter');
                 } else {
-                    DOM.setClass(chapterElement, 'inactive-chapter');
+                    setClass(chapterElement, 'inactive-chapter');
                 }
             } else {
-                DOM.setClass(chapterElement, 'inactive-chapter');
+                setClass(chapterElement, 'inactive-chapter');
             }
         });
     };
 
     //video.addEventListener ('timeupdate', updateChapterDisplay);
     setInterval (updateChapterDisplay, 500);
-    DOM.addEventsListener(video, ['play', 'pause', 'seeking', 'seeked'], updateChapterDisplay);
+    addEventsListener(video, ['play', 'pause', 'seeking', 'seeked'], updateChapterDisplay);
 }
 
 function addDownloadAccordion () {
@@ -954,12 +980,12 @@ function addDownloadAccordion () {
         return;
     }
 
-    var accordion = DOM.createElement('button');
-    DOM.addClass(accordion, 'accordion');
+    var accordion = createElement('button');
+    addClass(accordion, 'accordion');
     accordion.innerHTML = 'DOWNLOAD';
 
-    var accordionPanel = DOM.createElement('div');
-    DOM.addClass(accordionPanel, 'panel');
+    var accordionPanel = createElement('div');
+    addClass(accordionPanel, 'panel');
 
     accordionPanel.innerHTML = '<ul>' +
         '<li>まず、下の「ダウンロード」ボタンをクリックして、必要なツールやスクリプトが入ったZIPファイルをダウンロードしてください。</li>' +
@@ -969,23 +995,23 @@ function addDownloadAccordion () {
         '<li>IDMなどの拡張機能を使用している場合、ZIPファイルのダウンロードに問題が発生する可能性があります。ダウンロードする前に、そのような拡張機能を無効にしてください。</li>' +
     '</ul>';
 
-    var downloadButton = DOM.createElement('button');
+    var downloadButton = createElement('button');
     downloadButton.id = 'download-button';
-    DOM.addClass(downloadButton, 'button');
+    addClass(downloadButton, 'button');
     downloadButton.innerHTML = 'ダウンロード';
-    var warning = DOM.createElement('p');
+    var warning = createElement('p');
     changeColor(warning, 'red');
-    DOM.addClass(warning, 'hidden');
+    addClass(warning, 'hidden');
     warning.innerHTML = 'お使いの端末はダウンロードに対応していません。';
     accordionPanel.appendChild(warning);
 
-    DOM.addEventListener(downloadButton, 'click', function () {
+    addEventListener(downloadButton, 'click', function () {
         sendServerRequest('start_download.php', {
             callback: function (response: string) {
                 if (response == 'UNAVAILABLE') {
-                    DOM.removeClass(warning, 'hidden');
+                    removeClass(warning, 'hidden');
                 } else if (response.startsWith(serverURL)) {
-                    DOM.redirect(response, true);
+                    redirect(response, true);
                 } else {
                     message.show(message.template.param.server.invalidResponse);
                 }
@@ -995,12 +1021,12 @@ function addDownloadAccordion () {
     });
     accordionPanel.appendChild(downloadButton);
 
-    var downloadElem = DOM.createElement('div');
-    DOM.addClass(downloadElem, 'download');
+    var downloadElem = createElement('div');
+    addClass(downloadElem, 'download');
     downloadElem.appendChild(accordion);
     downloadElem.appendChild(accordionPanel);
     addAccordionEvent(accordion);
-    DOM.getById('content').appendChild(downloadElem);
+    getById('content').appendChild(downloadElem);
 }
 
 
@@ -1022,7 +1048,7 @@ function updateURLParam (key: string, value: number) {
         url += (value==1?'':(separator+'format='+value));
     }
 
-    DOM.changeURL(url, true);
+    changeURL(url, true);
 }
 
 function addConsecutiveEventListener (elem: HTMLElement, event: string, callback: () => void, count: number, timeInterval: number) {
@@ -1037,7 +1063,7 @@ function addConsecutiveEventListener (elem: HTMLElement, event: string, callback
             currentCount = 0;
             allowed = false;
             callback();
-            DOM.removeEventListener(elem, event, eventHandler);
+            removeEventListener(elem, event, eventHandler);
         } else if (!allowed) {
             allowed = true;
             currentCount = 1;
@@ -1050,7 +1076,7 @@ function addConsecutiveEventListener (elem: HTMLElement, event: string, callback
         }
     };
 
-    DOM.addEventListener(elem, event, eventHandler);
+    addEventListener(elem, event, eventHandler);
 }
 
 function destroyAll () {
@@ -1061,7 +1087,7 @@ function destroyAll () {
 
 
 function styleEPSelector () {
-    if (EPSelectorHeight/DOM.w.innerHeight > 0.50) {
+    if (EPSelectorHeight/w.innerHeight > 0.50) {
         foldEPSelector();
     } else {
         unfoldEPSelector();
@@ -1069,48 +1095,48 @@ function styleEPSelector () {
 }
 
 function foldEPSelector () {
-    var showMoreButton = DOM.getById('show-more-button');
-    var epButtonWrapper = DOM.getById('ep-button-wrapper');
+    var showMoreButton = getById('show-more-button');
+    var epButtonWrapper = getById('ep-button-wrapper');
 
-    if (!DOM.containsClass(showMoreButton, 'hidden')) {
-        if (DOM.containsClass(epButtonWrapper, 'expanded')) {
+    if (!containsClass(showMoreButton, 'hidden')) {
+        if (containsClass(epButtonWrapper, 'expanded')) {
             epButtonWrapper.style.maxHeight = EPSelectorHeight + "px";
         }
         return;
     }
     showMoreButton.innerHTML = showMoreButtonClippedText;
     epButtonWrapper.style.maxHeight = "50vh";
-    DOM.removeClass(epButtonWrapper, 'expanded');
-    DOM.removeClass(showMoreButton, 'hidden');
+    removeClass(epButtonWrapper, 'expanded');
+    removeClass(showMoreButton, 'hidden');
 }
 
 function unfoldEPSelector () {
-    var showMoreButton = DOM.getById('show-more-button');
-    var epButtonWrapper = DOM.getById('ep-button-wrapper');
-    if (DOM.containsClass(showMoreButton, 'hidden')) {
+    var showMoreButton = getById('show-more-button');
+    var epButtonWrapper = getById('ep-button-wrapper');
+    if (containsClass(showMoreButton, 'hidden')) {
         return;
     }
     epButtonWrapper.style.maxHeight = "";
-    DOM.removeClass(epButtonWrapper, 'expanded');
-    DOM.addClass(showMoreButton, 'hidden');
+    removeClass(epButtonWrapper, 'expanded');
+    addClass(showMoreButton, 'hidden');
 }
 
 function toggleEPSelector () {
-    var showMoreButton = DOM.getById('show-more-button');
-    var epButtonWrapper = DOM.getById('ep-button-wrapper');
-    const CLIPPED = !DOM.containsClass(epButtonWrapper, 'expanded');
+    var showMoreButton = getById('show-more-button');
+    var epButtonWrapper = getById('ep-button-wrapper');
+    const CLIPPED = !containsClass(epButtonWrapper, 'expanded');
     showMoreButton.innerHTML = CLIPPED ? showMoreButtonExpandedText : showMoreButtonClippedText;
     if (CLIPPED) {
         epButtonWrapper.style.maxHeight = EPSelectorHeight + "px";
-        DOM.addClass(epButtonWrapper, 'expanded');
+        addClass(epButtonWrapper, 'expanded');
     } else {
         epButtonWrapper.style.maxHeight = "50vh";
-        DOM.removeClass(epButtonWrapper, 'expanded');
+        removeClass(epButtonWrapper, 'expanded');
     }
 }
 
 function getContentBoxHeight (elem: HTMLElement) {
     var height = elem.scrollHeight;
-    height -= parseFloat(DOM.getComputedStyle(elem, 'padding-top')) + parseFloat(DOM.getComputedStyle(elem, 'padding-bottom'));
+    height -= parseFloat(getComputedStyle(elem, 'padding-top')) + parseFloat(getComputedStyle(elem, 'padding-bottom'));
     return height;
 }

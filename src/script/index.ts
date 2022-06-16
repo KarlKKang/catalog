@@ -11,7 +11,22 @@ import {
 	cdnURL,
     clearCookies,
     cssVarWrapper,
-    DOM,
+
+    w,
+    addEventListener,
+    getHref,
+    redirect,
+    getById,
+    getDescendantsByTag,
+    getDescendantsByClassAt,
+    removeClass,
+    getBody,
+    createElement,
+    addClass,
+    changeURL,
+    containsClass,
+    d,
+
     type
 } from './module/main';
 import type {default as LazyloadInitialize} from './module/lazyload';
@@ -30,24 +45,24 @@ var pivot = '';
 
 
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
     cssVarWrapper();
 	clearCookies();
 	
-	if (!DOM.getHref().startsWith('https://featherine.com') && !debug) {
-        DOM.redirect(topURL, true);
+	if (!getHref().startsWith('https://featherine.com') && !debug) {
+        redirect(topURL, true);
 		return;
 	}
 		
 	if (getURLParam ('series') != null) {
-        DOM.redirect(urlWithParam(debug?'bangumi.html':(topURL+'/bangumi/')), true);
+        redirect(urlWithParam(debug?'bangumi.html':(topURL+'/bangumi/')), true);
         return;
     }
 	
-	searchBar = DOM.getById('search-bar');
-    searchBarInput = DOM.getDescendantsByTag(searchBar, 'input')[0] as HTMLInputElement;
+	searchBar = getById('search-bar');
+    searchBarInput = getDescendantsByTag(searchBar, 'input')[0] as HTMLInputElement;
 
-    containerElem = DOM.getById('container');
+    containerElem = getById('container');
 	
 	getURLKeywords();
     getSeries(async function(showSeriesCallback) {
@@ -64,20 +79,20 @@ DOM.addEventListener(DOM.w, 'load', function(){
 		}
 
         showSeriesCallback();
-        DOM.addEventListener(DOM.d, 'scroll', infiniteScrolling);
-        DOM.addEventListener(DOM.w, 'resize', infiniteScrolling);
+        addEventListener(d, 'scroll', infiniteScrolling);
+        addEventListener(w, 'resize', infiniteScrolling);
         navListeners();
-        DOM.addEventListener(DOM.getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
+        addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
             if (!searchBarInput.disabled) {
                 search();
             }
         });
-        DOM.addEventListener(searchBarInput, 'keyup', function (event) {
+        addEventListener(searchBarInput, 'keyup', function (event) {
             if ((event as KeyboardEvent).key === "Enter") {
                 search();
             }
         });
-        DOM.removeClass(DOM.getBody(), "hidden");
+        removeClass(getBody(), "hidden");
     });
 });
 
@@ -87,23 +102,23 @@ DOM.addEventListener(DOM.w, 'load', function(){
 function showSeries (seriesInfo: type.SeriesInfo.SeriesInfo) {
     var seriesEntries = seriesInfo.slice(0, -1) as type.SeriesInfo.SeriesEntries;
     for (let seriesEntry of seriesEntries) {
-        let seriesNode = DOM.createElement('div');
-        let thumbnailNode = DOM.createElement('div');
-        let overlay = DOM.createElement('div');
-        let titleNode = DOM.createElement('p');
+        let seriesNode = createElement('div');
+        let thumbnailNode = createElement('div');
+        let overlay = createElement('div');
+        let titleNode = createElement('p');
 
         seriesNode.appendChild(thumbnailNode);
         seriesNode.appendChild(titleNode);
 
-        DOM.addClass(overlay, 'overlay');
+        addClass(overlay, 'overlay');
         thumbnailNode.appendChild(overlay);
-        DOM.addClass(thumbnailNode, 'lazyload');
+        addClass(thumbnailNode, 'lazyload');
         thumbnailNode.dataset.src = cdnURL + '/thumbnails/' + seriesEntry.thumbnail;
         thumbnailNode.dataset.alt = 'thumbnail: ' + seriesEntry.thumbnail;
         titleNode.innerHTML = seriesEntry.title;
 
-        DOM.addEventListener(seriesNode, 'click', function(){goToSeries (seriesEntry.id);});
-        DOM.addClass(seriesNode, 'series')
+        addEventListener(seriesNode, 'click', function(){goToSeries (seriesEntry.id);});
+        addClass(seriesNode, 'series')
 
         containerElem.appendChild(seriesNode);
     }
@@ -118,7 +133,7 @@ function showSeries (seriesInfo: type.SeriesInfo.SeriesInfo) {
 
     lazyloadInitialize();
 
-    DOM.removeClass(DOM.getById('position-detector'), 'loading');
+    removeClass(getById('position-detector'), 'loading');
     infiniteScrolling();
 }
 
@@ -129,28 +144,28 @@ function goToSeries (id: string) {
     } else {
         url = topURL+'/bangumi/'+id;
     }
-    DOM.redirect(url);
+    redirect(url);
 }
 
 function search () {
     disableSearchBarInput(true);
     
-    DOM.addClass(DOM.getById('position-detector'), 'loading');
+    addClass(getById('position-detector'), 'loading');
 
     var searchBarInputValue = searchBarInput.value.substring(0, 50);
     
     if (searchBarInputValue == '') {
         keywords = "";
-        DOM.changeURL(topURL);
+        changeURL(topURL);
     } else {
         keywords = "keywords="+encodeURIComponent(searchBarInputValue);
-        DOM.changeURL(topURL + '?' + keywords);
+        changeURL(topURL + '?' + keywords);
         keywords += '&';
     }
     requestSearchResults();
 }
 
-DOM.addEventListener(DOM.w, 'popstate', function(){
+addEventListener(w, 'popstate', function(){
     getURLKeywords();
     requestSearchResults();
 });
@@ -192,12 +207,12 @@ function getSeries (callback?: (showSeriesCallback: ()=>void)=>(void | Promise<v
 }
 
 function infiniteScrolling () {
-    var detector = DOM.getById('position-detector');
+    var detector = getById('position-detector');
     var boundingRect = detector.getBoundingClientRect();
-    var viewportHeight = Math.max(DOM.d.documentElement.clientHeight || 0, DOM.w.innerHeight || 0);
+    var viewportHeight = Math.max(d.documentElement.clientHeight || 0, w.innerHeight || 0);
 
-    if (boundingRect.top-256-24<=viewportHeight*1.5 && offset != 'EOF' && !DOM.containsClass(detector, 'loading')) { 
-        DOM.addClass(detector, 'loading');
+    if (boundingRect.top-256-24<=viewportHeight*1.5 && offset != 'EOF' && !containsClass(detector, 'loading')) { 
+        addClass(detector, 'loading');
         getSeries();
     }
 }
@@ -207,11 +222,11 @@ function requestSearchResults () {
     pivot = '';
 
     getSeries(function (showSeriesCallback) {
-        DOM.addClass(containerElem, 'transparent');
+        addClass(containerElem, 'transparent');
         setTimeout (function () {
             containerElem.innerHTML='';
             showSeriesCallback();
-            DOM.removeClass(containerElem, 'transparent');
+            removeClass(containerElem, 'transparent');
             disableSearchBarInput(false);
         }, 400);
     });
@@ -220,8 +235,8 @@ function requestSearchResults () {
 function disableSearchBarInput (disabled: boolean) {
     searchBarInput.disabled = disabled;
     if (disabled) {
-        DOM.addClass(searchBar, 'disabled');
+        addClass(searchBar, 'disabled');
     } else {
-        DOM.removeClass(searchBar, 'disabled');
+        removeClass(searchBar, 'disabled');
     }
 }

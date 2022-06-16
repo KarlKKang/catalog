@@ -10,17 +10,26 @@ import {
 	clearCookies,
 	cssVarWrapper,
 	hashPassword,
-	DOM,
+
+	w,
+	addEventListener,
+	getHref,
+	redirect,
+	getById,
+	addClass,
+	removeClass,
+	getBody,
+	
 	type
 } from './module/main';
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 
 	cssVarWrapper();
 	clearCookies();
 	
-	if (DOM.getHref() != 'https://featherine.com/account' && !debug) {
-		DOM.redirect('https://featherine.com/account', true);
+	if (getHref() != 'https://featherine.com/account' && !debug) {
+		redirect('https://featherine.com/account', true);
 		return;
 	}
 	
@@ -51,7 +60,7 @@ DOM.addEventListener(DOM.w, 'load', function(){
 	});
 	
 	function showUser (userInfo: type.UserInfo.UserInfo) {
-		DOM.getById('container').innerHTML = '<p id="title">マイページ</p>'+
+		getById('container').innerHTML = '<p id="title">マイページ</p>'+
 
 			'<p class="sub-title">メールアドレス</p>'+
 			'<p class="warning hidden" id="email-warning"></p>'+
@@ -99,57 +108,57 @@ DOM.addEventListener(DOM.w, 'load', function(){
 				'</ul>'+
 			'</div>';
 		
-		newUsernameInput = DOM.getById('new-username') as HTMLInputElement;
-		newPasswordInput = DOM.getById('new-password') as HTMLInputElement;
-		newPasswordComfirmInput = DOM.getById('new-password-confirm') as HTMLInputElement;
-		inviteReceiverEmailInput = DOM.getById('receiver-email') as HTMLInputElement;
+		newUsernameInput = getById('new-username') as HTMLInputElement;
+		newPasswordInput = getById('new-password') as HTMLInputElement;
+		newPasswordComfirmInput = getById('new-password-confirm') as HTMLInputElement;
+		inviteReceiverEmailInput = getById('receiver-email') as HTMLInputElement;
 		
-		emailChangeButton = DOM.getById('email-change-button') as HTMLButtonElement;
-		usernameChangeButton = DOM.getById('username-change-button') as HTMLButtonElement;
-		passwordChangeButton = DOM.getById('password-change-button') as HTMLButtonElement;
-		inviteButton = DOM.getById('invite-button') as HTMLButtonElement;
+		emailChangeButton = getById('email-change-button') as HTMLButtonElement;
+		usernameChangeButton = getById('username-change-button') as HTMLButtonElement;
+		passwordChangeButton = getById('password-change-button') as HTMLButtonElement;
+		inviteButton = getById('invite-button') as HTMLButtonElement;
 		
-		DOM.addEventListener(emailChangeButton, 'click', function () {
+		addEventListener(emailChangeButton, 'click', function () {
 			changeEmail ();
 		});
-		DOM.addEventListener(usernameChangeButton, 'click', function () {
+		addEventListener(usernameChangeButton, 'click', function () {
 			changeUsername ();
 		});
-		DOM.addEventListener(passwordChangeButton, 'click', function () {
+		addEventListener(passwordChangeButton, 'click', function () {
 			changePassword ();
 		});
-		DOM.addEventListener(inviteButton, 'click', function () {
+		addEventListener(inviteButton, 'click', function () {
 			invite ();
 		});
 
-		DOM.addEventListener(newPasswordInput, 'input', function () {
+		addEventListener(newPasswordInput, 'input', function () {
 			passwordStyling(newPasswordInput);
 		});
-		DOM.addEventListener(newPasswordComfirmInput, 'input', function () {
+		addEventListener(newPasswordComfirmInput, 'input', function () {
 			passwordStyling(newPasswordComfirmInput);
 		});
 		
-		DOM.getById('email').innerHTML = userInfo.email;
-		DOM.getById('invite-count').innerHTML = userInfo.invite_quota.toString();
+		getById('email').innerHTML = userInfo.email;
+		getById('invite-count').innerHTML = userInfo.invite_quota.toString();
 		if (userInfo.invite_quota == 0) {
-			DOM.addClass(DOM.getById('invite-input'), 'hidden');
-			DOM.addClass(inviteButton, 'hidden');
+			addClass(getById('invite-input'), 'hidden');
+			addClass(inviteButton, 'hidden');
 		}
 		newUsernameInput.value = userInfo.username;
 		currentUsername = userInfo.username;
 		
 		navListeners();
-		DOM.removeClass(DOM.getBody(), "hidden");
+		removeClass(getBody(), "hidden");
 	}
 	
 	function invite () {
 		disableAllInputs(true);
 		var receiver = inviteReceiverEmailInput.value;
-		var warningElem = DOM.getById('invite-warning');
+		var warningElem = getById('invite-warning');
 		changeColor (warningElem, 'red');
 		if (receiver == '' || !/^[^\s@]+@[^\s@]+$/.test(receiver)) {
 			warningElem.innerHTML=message.template.inline.invalidEmailFormat;
-			DOM.removeClass(warningElem, 'hidden');
+			removeClass(warningElem, 'hidden');
 			disableAllInputs(false);
 			return;
 		}
@@ -177,7 +186,7 @@ DOM.addEventListener(DOM.w, 'load', function(){
 					message.show();
 					return;
 				}
-				DOM.removeClass(warningElem, 'hidden');
+				removeClass(warningElem, 'hidden');
 				disableAllInputs(false);
 			},
 			content: "receiver="+encodeURIComponent(receiver)
@@ -187,7 +196,7 @@ DOM.addEventListener(DOM.w, 'load', function(){
 	async function changePassword () {
 		disableAllInputs(true);
 		
-		var warningElem = DOM.getById('password-warning');
+		var warningElem = getById('password-warning');
 		var newPassword = newPasswordInput.value;
 		var newPasswordConfirm = newPasswordComfirmInput.value;
 		
@@ -195,12 +204,12 @@ DOM.addEventListener(DOM.w, 'load', function(){
 		
 		if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
 			warningElem.innerHTML=message.template.inline.invalidPasswordFormat;
-			DOM.removeClass(warningElem, 'hidden');
+			removeClass(warningElem, 'hidden');
 			disableAllInputs(false);
 			return;
 		} else if (newPassword!=newPasswordConfirm) {
 			warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
-			DOM.removeClass(warningElem, 'hidden');
+			removeClass(warningElem, 'hidden');
 			disableAllInputs(false);
 			return;
 		}
@@ -211,7 +220,7 @@ DOM.addEventListener(DOM.w, 'load', function(){
 			callback: function (response: string) {
 				if (response == 'DONE') {
 					warningElem.innerHTML = message.template.inline.passwordChanged;
-					DOM.removeClass(warningElem, 'hidden');
+					removeClass(warningElem, 'hidden');
 					changeColor (warningElem, 'green');
 					disableAllInputs(false);
 				} else {
@@ -224,17 +233,17 @@ DOM.addEventListener(DOM.w, 'load', function(){
 
 	function changeEmail () {
 		disableAllInputs(true);
-		var warningElem = DOM.getById('email-warning');
+		var warningElem = getById('email-warning');
 		changeColor (warningElem, 'red');
 		
 		sendServerRequest('send_email_change.php', {
 			callback: function (response: string) {
 				if (response == 'DUPLICATED') {
 					warningElem.innerHTML = message.template.inline.duplicatedRequest;
-					DOM.removeClass(warningElem, 'hidden');
+					removeClass(warningElem, 'hidden');
 				} else if (response == 'DONE') {
 					warningElem.innerHTML = message.template.inline.emailSent;
-					DOM.removeClass(warningElem, 'hidden');
+					removeClass(warningElem, 'hidden');
 					changeColor (warningElem, 'green');
 				} else {
 					message.show();
@@ -247,18 +256,18 @@ DOM.addEventListener(DOM.w, 'load', function(){
 
 	function changeUsername () {
 		disableAllInputs(true);
-		var warningElem = DOM.getById('username-warning');
+		var warningElem = getById('username-warning');
 		var newUsername = newUsernameInput.value;
 		changeColor (warningElem, 'red');
 		
 		if (newUsername=='') {
 			warningElem.innerHTML=message.template.inline.usernameEmpty;
-			DOM.removeClass(warningElem, 'hidden');
+			removeClass(warningElem, 'hidden');
 			disableAllInputs(false);
 			return;
 		} else if (newUsername == currentUsername) {
 			warningElem.innerHTML = message.template.inline.usernameUnchanged;
-			DOM.removeClass(warningElem, 'hidden');
+			removeClass(warningElem, 'hidden');
 			disableAllInputs(false);
 			return;
 		} 
@@ -267,12 +276,12 @@ DOM.addEventListener(DOM.w, 'load', function(){
 			callback: function (response: string) {
 				if (response == 'DONE') {
 					warningElem.innerHTML = message.template.inline.usernameChanged;
-					DOM.removeClass(warningElem, 'hidden');
+					removeClass(warningElem, 'hidden');
 					changeColor (warningElem, 'green');
 					currentUsername = newUsername
 				} else if (response == 'DUPLICATED') {
 					warningElem.innerHTML = message.template.inline.usernameTaken;
-					DOM.removeClass(warningElem, 'hidden');
+					removeClass(warningElem, 'hidden');
 				} else {
 					message.show();
 					return;

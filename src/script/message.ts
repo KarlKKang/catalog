@@ -6,27 +6,38 @@ import {
 	logout,
 	clearCookies,
 	cssVarWrapper,
-	DOM,
-	type,
-	changeColor
+	changeColor,
+
+	w,
+	addEventListener,
+	getCookie,
+	getById,
+	removeClass,
+	getBody,
+	redirect,
+	setTitle,
+	deleteCookie,
+	addClass,
+
+	type
 } from './module/main';
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	var paramCookie = DOM.getCookie('local-message-param');
-	var titleElem = DOM.getById('title');
-	var messageElem = DOM.getById('message');
+	var paramCookie = getCookie('local-message-param');
+	var titleElem = getById('title');
+	var messageElem = getById('message');
 
 	if (paramCookie === null) {
 		if (debug) {
 			changeColor(titleElem, 'orange');
 			titleElem.innerHTML = 'タイトルTitle';
 			messageElem.innerHTML = 'メッセージMessageメッセージMessageメッセージMessageメッセージMessageメッセージMessage';
-			DOM.removeClass(DOM.getBody(), "hidden");
+			removeClass(getBody(), "hidden");
 		} else {
-			DOM.redirect(topURL, true);
+			redirect(topURL, true);
 		}
 		return;
 	}
@@ -37,31 +48,31 @@ DOM.addEventListener(DOM.w, 'load', function(){
 		parsedParam = JSON.parse(paramCookie);
 		type.LocalMessageParam.check(parsedParam);
 	} catch (e) {
-		DOM.redirect(topURL, true)
+		redirect(topURL, true)
 		return;
 	}
 
 	var param = parsedParam as type.LocalMessageParam.LocalMessageParam;
 	
 	var callback = function () {
-		DOM.setTitle(param.htmlTitle);
+		setTitle(param.htmlTitle);
 		titleElem.innerHTML = param.title;
 		changeColor(titleElem, param.color);
 		messageElem.innerHTML = param.message;
-		var button = DOM.getById('button');
+		var button = getById('button');
 		if (param.url === null) {
-			DOM.deleteCookie('local-message-param');
-			DOM.addClass(button, 'hidden');
+			deleteCookie('local-message-param');
+			addClass(button, 'hidden');
 		} else {
 			let url = param.url;
 			button.innerHTML = '次に進む';
-			DOM.addEventListener(button, 'click', function () {
-				DOM.deleteCookie('local-message-param');
-				DOM.redirect(url, true);
+			addEventListener(button, 'click', function () {
+				deleteCookie('local-message-param');
+				redirect(url, true);
 			})
 		}
 		
-		DOM.removeClass(DOM.getBody(), "hidden");
+		removeClass(getBody(), "hidden");
 	};
 
 	if (param.logout === true) {

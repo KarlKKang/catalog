@@ -2,9 +2,21 @@
 import {
     secToTimestamp,
 	onScreenConsoleOutput,
-	DOM,
 	removeRightClick,
-	message
+	message,
+
+	insertBefore,
+	addEventListener,
+	getDescendantsByTagAt,
+	getDescendantsByClassAt,
+	getDescendantsByClass,
+	addClass,
+	removeClass,
+	containsClass,
+	addEventsListener,
+	removeEventsListener,
+	d,
+	remove
 } from '../main';
 import Hls from 'hls.js';
 import {default as videojs} from 'video.js';
@@ -48,7 +60,7 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
     var controls = oldControls.cloneNode(true) as HTMLElement;
     oldControls.id = '';
 
-	DOM.insertBefore(controls, oldControls);
+	insertBefore(controls, oldControls);
     instance.dispose();
 	
 	if (config === undefined) {
@@ -58,13 +70,13 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 	
 	var media: HTMLVideoElement | HTMLAudioElement;
 	if (isVideo) {
-		media = DOM.getDescendantsByTagAt(controls, 'video', 0) as HTMLVideoElement;
+		media = getDescendantsByTagAt(controls, 'video', 0) as HTMLVideoElement;
 	} else {
-		media = DOM.getDescendantsByTagAt(controls, 'audio', 0) as HTMLAudioElement;
+		media = getDescendantsByTagAt(controls, 'audio', 0) as HTMLAudioElement;
 	}
 
 	if (config.mediaElemOverride !== undefined) {
-		DOM.remove(media);
+		remove(media);
 		media = config.mediaElemOverride;
 	}
 
@@ -98,22 +110,22 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 	};
 	
     //Elements
-    var controlBar = DOM.getDescendantsByClassAt(controls, 'vjs-control-bar', 0) as HTMLElement;
-    var playButton = DOM.getDescendantsByClassAt(controlBar, 'vjs-play-control', 0) as HTMLElement;
-    var durationDisplay = DOM.getDescendantsByClassAt(DOM.getDescendantsByClassAt(controlBar, 'vjs-duration', 0), 'vjs-duration-display', 0) as HTMLElement;
-    var currentTimeDisplay = DOM.getDescendantsByClassAt(DOM.getDescendantsByClassAt(controlBar, 'vjs-current-time', 0), 'vjs-current-time-display', 0) as HTMLElement;
-    var progressControl = DOM.getDescendantsByClassAt(controlBar, 'vjs-progress-control', 0) as HTMLElement;
-    var progressHolder = DOM.getDescendantsByClassAt(progressControl, 'vjs-progress-holder', 0) as HTMLElement;
-    var progressBar = DOM.getDescendantsByClassAt(progressHolder, 'vjs-play-progress', 0) as HTMLElement;
-    var progressMouseDisplay = DOM.getDescendantsByClass(progressHolder, 'vjs-mouse-display')[0] as HTMLElement | undefined;
+    var controlBar = getDescendantsByClassAt(controls, 'vjs-control-bar', 0) as HTMLElement;
+    var playButton = getDescendantsByClassAt(controlBar, 'vjs-play-control', 0) as HTMLElement;
+    var durationDisplay = getDescendantsByClassAt(getDescendantsByClassAt(controlBar, 'vjs-duration', 0), 'vjs-duration-display', 0) as HTMLElement;
+    var currentTimeDisplay = getDescendantsByClassAt(getDescendantsByClassAt(controlBar, 'vjs-current-time', 0), 'vjs-current-time-display', 0) as HTMLElement;
+    var progressControl = getDescendantsByClassAt(controlBar, 'vjs-progress-control', 0) as HTMLElement;
+    var progressHolder = getDescendantsByClassAt(progressControl, 'vjs-progress-holder', 0) as HTMLElement;
+    var progressBar = getDescendantsByClassAt(progressHolder, 'vjs-play-progress', 0) as HTMLElement;
+    var progressMouseDisplay = getDescendantsByClass(progressHolder, 'vjs-mouse-display')[0] as HTMLElement | undefined;
 	var progressTooltip: HTMLElement | undefined;
     if (progressMouseDisplay !== undefined) {
-        progressTooltip = DOM.getDescendantsByClassAt(progressMouseDisplay, 'vjs-time-tooltip', 0) as HTMLElement;
+        progressTooltip = getDescendantsByClassAt(progressMouseDisplay, 'vjs-time-tooltip', 0) as HTMLElement;
 	}
     
 
     //Fluid resize and duration
-	DOM.addEventListener(media, 'loadedmetadata', function () {
+	addEventListener(media, 'loadedmetadata', function () {
 		if (isVideo) {
 			if (!that._useNative) {
 				media.pause();
@@ -129,8 +141,8 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
     
 	if (isVideo) {
 		//Load progress
-		let loadProgress = DOM.getDescendantsByClassAt(progressHolder, 'vjs-load-progress', 0) as HTMLElement;
-		DOM.addEventListener(media, 'progress', function () {
+		let loadProgress = getDescendantsByClassAt(progressHolder, 'vjs-load-progress', 0) as HTMLElement;
+		addEventListener(media, 'progress', function () {
 			let bufferEnd = 0;
 			for (var i = media.buffered.length - 1; i >= 0; i--) {
 				if (media.buffered.start(i) <= media.currentTime) {
@@ -141,21 +153,21 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 			(loadProgress as HTMLElement).style.width = bufferEnd / media.duration * 100 + '%';
 		});
 
-		DOM.addEventListener(media, 'waiting', function () {
+		addEventListener(media, 'waiting', function () {
 			onScreenConsoleOutput ('Playback entered waiting state.');
-			DOM.addClass(controls, 'vjs-seeking');
+			addClass(controls, 'vjs-seeking');
 			if (!that._useNative)
 				media.pause();
 		});
 
 		//Loading
-		DOM.addEventListener(media, 'canplaythrough', function () {
+		addEventListener(media, 'canplaythrough', function () {
 			onScreenConsoleOutput ('Playback can play through.');
 			if (that._useNative) {
-				DOM.removeClass(controls, 'vjs-seeking');
+				removeClass(controls, 'vjs-seeking');
 			} else {
 				if (!that._buffering) {
-					DOM.removeClass(controls, 'vjs-seeking');
+					removeClass(controls, 'vjs-seeking');
 				}
 				if (that._playing) {
 					play();
@@ -164,21 +176,21 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 		});
 
 		//Big play button
-		let bigPlayButton = DOM.getDescendantsByClassAt(controls, 'vjs-big-play-button', 0) as HTMLElement;
-		DOM.addEventListener(bigPlayButton, 'click', function (event) {
+		let bigPlayButton = getDescendantsByClassAt(controls, 'vjs-big-play-button', 0) as HTMLElement;
+		addEventListener(bigPlayButton, 'click', function (event) {
 			event.stopPropagation();
-			DOM.addClass(controls, 'vjs-has-started');
+			addClass(controls, 'vjs-has-started');
 			play();
 			bigPlayButton.blur();
 		}, true);
 	}
 
     //Play button
-	DOM.addEventListener(playButton, 'click', function (event) {
+	addEventListener(playButton, 'click', function (event) {
 		event.stopPropagation();
-        if (DOM.containsClass(controls, 'vjs-ended')) {
-			DOM.removeClass(controls, 'vjs-ended');
-			DOM.removeClass(playButton, 'vjs-ended');
+        if (containsClass(controls, 'vjs-ended')) {
+			removeClass(controls, 'vjs-ended');
+			removeClass(playButton, 'vjs-ended');
             seek(0);
             play();
         } else {
@@ -196,8 +208,8 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 				if (that._inactiveCountdown > 0) {
 					that._inactiveCountdown -= 300;
 					if (that._inactiveCountdown == 0) {
-						DOM.removeClass(controls, 'vjs-user-active');
-						DOM.addClass(controls, 'vjs-user-inactive');
+						removeClass(controls, 'vjs-user-active');
+						addClass(controls, 'vjs-user-inactive');
 					}
 				}
 			}
@@ -222,29 +234,29 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 	}, 300);
 	
 	if (isVideo) {
-		DOM.addEventsListener(controls, ['mousemove', 'click'], function () {
-			DOM.removeClass(controls, 'vjs-user-inactive');
-			DOM.addClass(controls, 'vjs-user-active');
+		addEventsListener(controls, ['mousemove', 'click'], function () {
+			removeClass(controls, 'vjs-user-inactive');
+			addClass(controls, 'vjs-user-active');
 			that._inactiveCountdown = 3000;
 		});
 	}
     
 
     //Progress bar
-    DOM.addEventsListener(progressControl, ['mousedown', 'touchstart'], function (event) {
+    addEventsListener(progressControl, ['mousedown', 'touchstart'], function (event) {
 		that._dragging = true;
 		if (!media.paused) {
 			media.pause();
 			that._playing = true;
 		}
 
-		DOM.removeClass(controls, 'vjs-ended');
-		DOM.removeClass(playButton, 'vjs-ended');
+		removeClass(controls, 'vjs-ended');
+		removeClass(playButton, 'vjs-ended');
 		
 		changeProgress(event as MouseEvent | TouchEvent);
 	});
 	
-    DOM.addEventsListener(DOM.d, ['mouseup', 'touchend'], function (event) {
+    addEventsListener(d, ['mouseup', 'touchend'], function (event) {
 		if (that._dragging) {
             that._dragging = false;
 
@@ -263,7 +275,7 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
         }
 	});
 	
-    DOM.addEventsListener(progressControl, ['mousemove', 'touchmove'], function (event) {  
+    addEventsListener(progressControl, ['mousemove', 'touchmove'], function (event) {  
         changeProgress(event as MouseEvent | TouchEvent);
 	});
 
@@ -291,11 +303,11 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
             progressTooltip.innerHTML = currentTimestamp;
             progressTooltip.style.right = -progressTooltip.offsetWidth/2 + 'px';
 			if (currentTime > media.currentTime) {
-				DOM.removeClass(progressMouseDisplay, 'backward');
-				DOM.addClass(progressMouseDisplay, 'forward');
+				removeClass(progressMouseDisplay, 'backward');
+				addClass(progressMouseDisplay, 'forward');
 			} else {
-				DOM.removeClass(progressMouseDisplay, 'forward');
-				DOM.addClass(progressMouseDisplay, 'backward');
+				removeClass(progressMouseDisplay, 'forward');
+				addClass(progressMouseDisplay, 'backward');
 			}
         }
         if (that._dragging) {
@@ -327,20 +339,20 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 		};
 
 		let toggleFullscreen = function () {
-			if (DOM.containsClass(controls, 'vjs-fullscreen')) {
+			if (containsClass(controls, 'vjs-fullscreen')) {
 				exitFullscreen ();
 			} else {
 				requestFullscreen ();
 			}
 		};
 
-		let fullscreenButton = DOM.getDescendantsByClassAt(controlBar, 'vjs-fullscreen-control', 0) as HTMLButtonElement;
+		let fullscreenButton = getDescendantsByClassAt(controlBar, 'vjs-fullscreen-control', 0) as HTMLButtonElement;
 
 		if (screenfull.isEnabled || (IS_IOS && videoMedia.webkitEnterFullscreen)) {
-			DOM.removeClass(fullscreenButton, 'vjs-disabled');
+			removeClass(fullscreenButton, 'vjs-disabled');
 			fullscreenButton.disabled = false;
 
-			DOM.addEventListener(fullscreenButton, 'click', function (event) {
+			addEventListener(fullscreenButton, 'click', function (event) {
 				event.stopPropagation();
 				toggleFullscreen ();
 			}, true);
@@ -348,61 +360,61 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 			let fullscreenChange = function () {
 				let elemInFS = screenfull.element;
 				if (elemInFS === undefined) {
-					DOM.removeClass(controls, 'vjs-fullscreen');
+					removeClass(controls, 'vjs-fullscreen');
 					fullscreenButton.title = 'Fullscreen';
 				} else if (elemInFS.isSameNode(controls) || elemInFS.isSameNode(videoMedia)) {
-					DOM.addClass(controls, 'vjs-fullscreen');
+					addClass(controls, 'vjs-fullscreen');
 					fullscreenButton.title = 'Exit Fullscreen';
 				}
 			};
 			screenfull.on('change', fullscreenChange);	
 		} else {
-			DOM.addClass(fullscreenButton, 'vjs-disabled');
+			addClass(fullscreenButton, 'vjs-disabled');
 			fullscreenButton.disabled = true;
 		}
 
 		//Picture in picture
-		let PIPButton = DOM.getDescendantsByClass(controlBar, 'vjs-picture-in-picture-control')[0];
+		let PIPButton = getDescendantsByClass(controlBar, 'vjs-picture-in-picture-control')[0];
 		if (PIPButton !== undefined) {
 			let PIPButtonCast = PIPButton as HTMLButtonElement;
-			if (DOM.d.pictureInPictureEnabled) {
-				DOM.removeClass(PIPButtonCast, 'vjs-disabled');
+			if (d.pictureInPictureEnabled) {
+				removeClass(PIPButtonCast, 'vjs-disabled');
 				PIPButtonCast.disabled = false;
 
-				DOM.addEventListener(PIPButtonCast, 'click', function (event) {
+				addEventListener(PIPButtonCast, 'click', function (event) {
 					event.stopPropagation();
-					if (DOM.containsClass(controls, 'vjs-picture-in-picture')) {
-						DOM.d.exitPictureInPicture();
+					if (containsClass(controls, 'vjs-picture-in-picture')) {
+						d.exitPictureInPicture();
 					} else {
 						videoMedia.requestPictureInPicture();
 					}
 					PIPButtonCast.blur();
 				}, true);
 
-				DOM.addEventListener(videoMedia, 'enterpictureinpicture', function () {
-					DOM.addClass(controls, 'vjs-picture-in-picture');
+				addEventListener(videoMedia, 'enterpictureinpicture', function () {
+					addClass(controls, 'vjs-picture-in-picture');
 					PIPButtonCast.title = 'Exit Picture-in-Picture';
 				});
 
-				DOM.addEventListener(videoMedia, 'leavepictureinpicture', function () {
-					DOM.removeClass(controls, 'vjs-picture-in-picture');
+				addEventListener(videoMedia, 'leavepictureinpicture', function () {
+					removeClass(controls, 'vjs-picture-in-picture');
 					PIPButtonCast.title = 'Picture-in-Picture';
 				});
 			} else {
-				DOM.addClass(PIPButtonCast, 'vjs-disabled');
+				addClass(PIPButtonCast, 'vjs-disabled');
 				PIPButtonCast.disabled = true;
 			}
 		}
 
 		//Hotkeys		
-		DOM.addEventListener(controls, 'click', function () {
-			if (!DOM.containsClass(controls, 'vjs-has-started')){
-				DOM.addClass(controls, 'vjs-has-started');
+		addEventListener(controls, 'click', function () {
+			if (!containsClass(controls, 'vjs-has-started')){
+				addClass(controls, 'vjs-has-started');
 				play();
 			}
 		});
 
-		DOM.addEventListener(controls, 'keydown', function (event) {
+		addEventListener(controls, 'keydown', function (event) {
 			let key = (event as KeyboardEvent).key;
 			if (key === ' ' || key === 'Spacebar') {
 				togglePlayback ();
@@ -427,10 +439,10 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 	}
 	
 	//Redundent
-	DOM.addEventListener(media, 'seeking', function () {
+	addEventListener(media, 'seeking', function () {
 		onScreenConsoleOutput ('Seeking: ' + media.currentTime);
 	});
-	DOM.addEventListener(media, 'seeked', function () {
+	addEventListener(media, 'seeked', function () {
 		onScreenConsoleOutput ('Seeked: ' + media.currentTime);
 	});
 
@@ -470,15 +482,15 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 		}
 	}
 
-	DOM.addEventListener(media, 'play', function () {
+	addEventListener(media, 'play', function () {
 		onScreenConsoleOutput ('Playback started.');
-		DOM.removeClass(playButton, 'vjs-paused');
-		DOM.addClass(playButton, 'vjs-playing');
-		DOM.removeClass(controls, 'vjs-paused');
-		DOM.addClass(controls, 'vjs-playing');
-        if (DOM.containsClass(controls, 'vjs-ended')) {
-			DOM.removeClass(controls, 'vjs-ended');
-			DOM.removeClass(playButton, 'vjs-ended');
+		removeClass(playButton, 'vjs-paused');
+		addClass(playButton, 'vjs-playing');
+		removeClass(controls, 'vjs-paused');
+		addClass(controls, 'vjs-playing');
+        if (containsClass(controls, 'vjs-ended')) {
+			removeClass(controls, 'vjs-ended');
+			removeClass(playButton, 'vjs-ended');
         }
 		if (isVideo && !that._useNative) {
 			that._playing = true;
@@ -486,25 +498,25 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 		}
 	});
 
-	DOM.addEventListener(media, 'pause', function () {
+	addEventListener(media, 'pause', function () {
 		onScreenConsoleOutput ('Playback paused.');
-		DOM.removeClass(playButton, 'vjs-playing');
-		DOM.addClass(playButton, 'vjs-paused');
-		DOM.removeClass(controls, 'vjs-playing');
-		DOM.addClass(controls, 'vjs-paused');
+		removeClass(playButton, 'vjs-playing');
+		addClass(playButton, 'vjs-paused');
+		removeClass(controls, 'vjs-playing');
+		addClass(controls, 'vjs-paused');
         if (media.currentTime == media.duration) {
-			DOM.addClass(controls, 'vjs-ended');
-			DOM.addClass(playButton, 'vjs-ended');
+			addClass(controls, 'vjs-ended');
+			addClass(playButton, 'vjs-ended');
         }
 	});
 
-	DOM.addEventListener(media, 'ended', function () {
-		DOM.addClass(controls, 'vjs-ended');
-		DOM.addClass(playButton, 'vjs-ended');
+	addEventListener(media, 'ended', function () {
+		addClass(controls, 'vjs-ended');
+		addClass(playButton, 'vjs-ended');
 	});
 
     function togglePlayback() {
-        if (DOM.containsClass(controls, 'vjs-playing')) { 
+        if (containsClass(controls, 'vjs-playing')) { 
             pause();
         } else {
             play();
@@ -519,8 +531,8 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
             if (media.buffered.start(i) <= media.currentTime+0.05) {
 				onScreenConsoleOutput ('Checking buffer range :' + media.buffered.start(i) + '-' + media.buffered.end(i) + '. Current time: ' + media.currentTime);
                 if (media.buffered.end(i) >= Math.min(media.currentTime+15, media.duration-0.1)) {
-					DOM.removeEventsListener(media, ['progress', 'play', 'timeupdate'], checkBuffer);
-					DOM.removeClass(controls, 'vjs-seeking');
+					removeEventsListener(media, ['progress', 'play', 'timeupdate'], checkBuffer);
+					removeClass(controls, 'vjs-seeking');
                     that._buffering = false;
 					onScreenConsoleOutput ('Buffer complete!');
                     if (that._playing && !that._dragging) {
@@ -538,8 +550,8 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 				media.pause();
 			}*/
             that._buffering = true;
-			DOM.addClass(controls, 'vjs-seeking');
-			DOM.addEventsListener(media, ['progress', 'play', 'timeupdate'], checkBuffer);
+			addClass(controls, 'vjs-seeking');
+			addEventsListener(media, ['progress', 'play', 'timeupdate'], checkBuffer);
 			checkBuffer();
         }
         if (!that._buffering) {

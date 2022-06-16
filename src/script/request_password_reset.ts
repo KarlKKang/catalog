@@ -9,43 +9,51 @@ import {
 	authenticate,
 	clearCookies,
 	cssVarWrapper,
-	DOM
+	
+	w,
+	addEventListener,
+	getHref,
+	redirect,
+	getById,
+	getDescendantsByTagAt,
+	removeClass,
+	getBody
 } from './module/main';
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (DOM.getHref()!='https://login.featherine.com/request_password_reset' && !debug) {
-		DOM.redirect('https://login.featherine.com/request_password_reset', true);
+	if (getHref()!='https://login.featherine.com/request_password_reset' && !debug) {
+		redirect('https://login.featherine.com/request_password_reset', true);
 		return;
 	}
 		
-	var emailInput = DOM.getById('email') as HTMLInputElement;
-	var submitButton = DOM.getById('submit-button') as HTMLButtonElement;
+	var emailInput = getById('email') as HTMLInputElement;
+	var submitButton = getById('submit-button') as HTMLButtonElement;
 
-	DOM.addEventListener(emailInput, 'keydown', function (event) {
+	addEventListener(emailInput, 'keydown', function (event) {
 		if ((event as KeyboardEvent).key === "Enter") {
 			submitRequest ();
 		}
 	});
 
-	DOM.addEventListener(submitButton, 'click', function () {
+	addEventListener(submitButton, 'click', function () {
 		submitRequest ();
 	});
 
-	DOM.addEventListener(DOM.getDescendantsByTagAt(DOM.getById('go-back'), 'span', 0), 'click', function () {
-		DOM.redirect(loginURL, true);
+	addEventListener(getDescendantsByTagAt(getById('go-back'), 'span', 0), 'click', function () {
+		redirect(loginURL, true);
 	});
 	
 	authenticate({
 		successful: 
 		function () {
-			DOM.redirect(topURL, true);
+			redirect(topURL, true);
 		},
 		failed: 
 		function () {
-			DOM.removeClass(DOM.getBody(), "hidden");
+			removeClass(getBody(), "hidden");
 		},
 	});
 	
@@ -53,12 +61,12 @@ DOM.addEventListener(DOM.w, 'load', function(){
 	function submitRequest () {
 		disableAllInputs(true);
 		
-		var warningElem = DOM.getById('warning');
+		var warningElem = getById('warning');
 
 		var email = emailInput.value;
 		if (email=='' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
 			warningElem.innerHTML=message.template.inline.invalidEmailFormat;
-			DOM.removeClass(warningElem, "hidden");
+			removeClass(warningElem, "hidden");
 			disableAllInputs(false);
 			return;
 		}
@@ -67,7 +75,7 @@ DOM.addEventListener(DOM.w, 'load', function(){
 			callback: function (response: string) {
                 if (response == 'INVALID FORMAT') {
                     warningElem.innerHTML = message.template.inline.invalidEmailFormat;
-                    DOM.removeClass(warningElem, "hidden");
+                    removeClass(warningElem, "hidden");
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
                     message.show(message.template.param.emailSent);

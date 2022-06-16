@@ -8,20 +8,27 @@ import {
 	getURLParam,
 	clearCookies,
 	cssVarWrapper,
-	DOM
+	
+	w,
+	addEventListener,
+	getHref,
+	redirect,
+	getById,
+	removeClass,
+	getBody
 } from './module/main';
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (!DOM.getHref().startsWith('https://featherine.com/new_email') && !debug) {
-		DOM.redirect(topURL, true);
+	if (!getHref().startsWith('https://featherine.com/new_email') && !debug) {
+		redirect(topURL, true);
 		return;
 	}
 		
-	var newEmailInput = DOM.getById('new-email') as HTMLInputElement;
-	var submitButton = DOM.getById('submit-button') as HTMLButtonElement;
+	var newEmailInput = getById('new-email') as HTMLInputElement;
+	var submitButton = getById('submit-button') as HTMLButtonElement;
 	
 	var param = getURLParam('p');
 	var signature = getURLParam('signature');
@@ -29,14 +36,14 @@ DOM.addEventListener(DOM.w, 'load', function(){
 	
 	if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
 		if (debug) {
-			DOM.removeClass(DOM.getBody(), "hidden");
+			removeClass(getBody(), "hidden");
 		} else {
-			DOM.redirect(topURL, true);
+			redirect(topURL, true);
 		}
 		return;
 	}
 	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		DOM.redirect(topURL, true);
+		redirect(topURL, true);
 		return;
 	}
 
@@ -45,16 +52,16 @@ DOM.addEventListener(DOM.w, 'load', function(){
             if (response == 'EXPIRED') {
                 message.show(message.template.param.expired);
             } else if (response == 'APPROVED') {
-				DOM.addEventListener(newEmailInput, 'keydown', function (event) {
+				addEventListener(newEmailInput, 'keydown', function (event) {
 					if ((event as KeyboardEvent).key === "Enter") {
 						submitRequest ();
 					}
 				});
 
-				DOM.addEventListener(submitButton, 'click', function () {
+				addEventListener(submitButton, 'click', function () {
 					submitRequest ();
 				});
-                DOM.removeClass(DOM.getBody(), "hidden");
+                removeClass(getBody(), "hidden");
             } else {
                 message.show();
             }
@@ -67,12 +74,12 @@ DOM.addEventListener(DOM.w, 'load', function(){
 	function submitRequest () {
 		disableAllInputs(true);
 		
-		var warningElem = DOM.getById('warning');
+		var warningElem = getById('warning');
 		var newEmail = newEmailInput.value;
 
 		if (newEmail == '' || !/^[^\s@]+@[^\s@]+$/.test(newEmail)) {
 			warningElem.innerHTML = message.template.inline.invalidEmailFormat;
-			DOM.removeClass(warningElem, "hidden");
+			removeClass(warningElem, "hidden");
 			disableAllInputs(false);
 			return;
 		}
@@ -83,11 +90,11 @@ DOM.addEventListener(DOM.w, 'load', function(){
 					message.show(message.template.param.expired);
                 } else if (response == 'DUPLICATED') {
                     warningElem.innerHTML = message.template.inline.emailAlreadyInvitedOrRegistered;
-                    DOM.removeClass(warningElem, "hidden");
+                    removeClass(warningElem, "hidden");
                     disableAllInputs(false);
                 } else if (response == 'INVALID FORMAT') {
                     warningElem.innerHTML = message.template.inline.invalidEmailFormat;
-                    DOM.removeClass(warningElem, "hidden");
+                    removeClass(warningElem, "hidden");
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
                     message.show(message.template.param.emailSent);

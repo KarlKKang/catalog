@@ -5,29 +5,37 @@ import {
 	authenticate,
 	clearCookies,
 	cssVarWrapper,
-	DOM
+	
+	w,
+	addEventListener,
+	getHref,
+	redirect,
+	removeClass,
+	getBody,
+	getHash,
+	getByIdNative
 } from './module/main';
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (!DOM.getHref().startsWith('https://featherine.com/policy') && !debug) {
-		DOM.redirect('https://featherine.com/policy', true);
+	if (!getHref().startsWith('https://featherine.com/policy') && !debug) {
+		redirect('https://featherine.com/policy', true);
 		return;
 	}
 		
 	authenticate({
 		successful: 
 		function () {
-			DOM.redirect('info'+(debug?'.html':''), true);
+			redirect('info'+(debug?'.html':''), true);
 		},
 		failed: 
 		function () {
-			DOM.removeClass(DOM.getBody(), "hidden");
-			var scrollID = DOM.getHash();
+			removeClass(getBody(), "hidden");
+			var scrollID = getHash();
 			if (scrollID != '') {
-				var elem = DOM.getByIdNative(scrollID);
+				var elem = getByIdNative(scrollID);
 				if (elem !== null) {
 					elem.scrollIntoView({
 						behavior: 'smooth'

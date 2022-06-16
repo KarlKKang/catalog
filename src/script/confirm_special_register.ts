@@ -7,25 +7,29 @@ import {
 	message,
 	getURLParam,
 	clearCookies,
-	DOM
+	
+	w,
+	addEventListener,
+	getHref,
+	redirect,
 } from './module/main';
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 	clearCookies();
 	
-	if (!DOM.getHref().startsWith('https://featherine.com/confirm_special_register') && !debug) {
-		DOM.redirect(loginURL, true);
+	if (!getHref().startsWith('https://featherine.com/confirm_special_register') && !debug) {
+		redirect(loginURL, true);
 		return;
 	}
 	var user = getURLParam ('user');
 	var signature = getURLParam ('signature');
 
 	if (user == null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
-		DOM.redirect(loginURL, true);
+		redirect(loginURL, true);
 		return;
 	}
 	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		DOM.redirect(loginURL, true);
+		redirect(loginURL, true);
 		return;
 	}
 	

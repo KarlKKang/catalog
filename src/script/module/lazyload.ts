@@ -6,8 +6,14 @@ import {
 	message,
 	concatenateSignedURL,
 	debug,
+	
 	type,
-	DOM
+
+	getByClass,
+	containsClass,
+	createElement,
+	addClass,
+	addEventListener
 } from './main';
 import type {WebpMachine} from 'webp-hero/dist-cjs';
 
@@ -17,7 +23,7 @@ var webpMachineQueue: HTMLImageElement[] = [];
 
 export default function () {
 	
-	var elems = DOM.getByClass('lazyload');
+	var elems = getByClass('lazyload');
 	const options = {
 		root: null,
 		rootMargin: '0px 0px 50% 0px',
@@ -25,10 +31,10 @@ export default function () {
 	};
 	
 	for (let elem of elems) {
-		if (elem instanceof HTMLElement && !DOM.containsClass(elem, 'listening')) {
+		if (elem instanceof HTMLElement && !containsClass(elem, 'listening')) {
 			let observer = new IntersectionObserver(observerCallback, options);
 			observer.observe(elem);
-			DOM.addClass(elem, 'listening');
+			addClass(elem, 'listening');
 		}
 	}
 }
@@ -44,12 +50,12 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 	if(entry['isIntersecting'] === true) {
 		observer.unobserve(target);
 			
-		const imageNode = DOM.createElement('img') as HTMLImageElement;
+		const imageNode = createElement('img') as HTMLImageElement;
 		imageProtection(imageNode);
-		DOM.addEventListener(imageNode, 'load', function () {
-			DOM.addClass(target, 'complete');
+		addEventListener(imageNode, 'load', function () {
+			addClass(target, 'complete');
 		});
-		DOM.addEventListener(imageNode, 'error', function () {
+		addEventListener(imageNode, 'error', function () {
 			if (imageNode.src.includes('.webp')) {
 				if (webpMachineActive) {
 					webpMachineQueue.push(imageNode);

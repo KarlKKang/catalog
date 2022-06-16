@@ -5,10 +5,23 @@ import {
 	sendServerRequest,
 	clearCookies,
 	hashPassword,
-	DOM
+	
+	w,
+	addEventListener,
+	getHref,
+	redirect,
+	getById,
+	removeClass,
+	getBody,
+	getParent,
+	getDescendantsByClassAt,
+	getDescendantsByTag,
+	addClass,
+	containsClass,
+	getByClass
 } from './module/main';
 
-DOM.addEventListener(DOM.w, 'load', function(){
+addEventListener(w, 'load', function(){
 	clearCookies();
 
 	var completeCallback = function (response: string) {
@@ -17,53 +30,53 @@ DOM.addEventListener(DOM.w, 'load', function(){
 		}
 	};
 	
-	if (DOM.getHref()!='https://featherine.com/console' && !debug) {
-		DOM.redirect('https://featherine.com/console', true);
+	if (getHref()!='https://featherine.com/console' && !debug) {
+		redirect('https://featherine.com/console', true);
 		return;
 	}
 	
 	sendServerRequest('console.php', {
 		callback: function (response: string) {
 			if (response != 'APPROVED') {
-				DOM.redirect('https://featherine.com', true);
+				redirect('https://featherine.com', true);
 			} else {
-				DOM.addEventListener(DOM.getById('get-series-table'), 'click', function () {
+				addEventListener(getById('get-series-table'), 'click', function () {
 					getSeriesTable ();
 				});
-				DOM.addEventListener(DOM.getById('get-account-table'), 'click', function () {
+				addEventListener(getById('get-account-table'), 'click', function () {
 					getAccountTable ();
 				});
-				DOM.addEventListener(DOM.getById('get-invite-table'), 'click', function () {
+				addEventListener(getById('get-invite-table'), 'click', function () {
 					getInviteTable ();
 				});
-				DOM.addEventListener(DOM.getById('get-log-table'), 'click', function () {
+				addEventListener(getById('get-log-table'), 'click', function () {
 					getLogTable ();
 				});
-				DOM.addEventListener(DOM.getById('generate-id'), 'click', function () {
+				addEventListener(getById('generate-id'), 'click', function () {
 					generate ('id');
 				});
-				DOM.addEventListener(DOM.getById('generate-series-id'), 'click', function () {
+				addEventListener(getById('generate-series-id'), 'click', function () {
 					generate ('series-id');
 				});
-				DOM.addEventListener(DOM.getById('clear-cdn-cache'), 'click', function () {
+				addEventListener(getById('clear-cdn-cache'), 'click', function () {
 					clearCDNCache();
 				});
-				DOM.addEventListener(DOM.getById('clear-key-cache'), 'click', function () {
+				addEventListener(getById('clear-key-cache'), 'click', function () {
 					clearKeyCache();
 				});
-				DOM.addEventListener(DOM.getById('rebuild-index'), 'click', function () {
+				addEventListener(getById('rebuild-index'), 'click', function () {
 					rebuildIndex();
 				});
-				DOM.addEventListener(DOM.getById('rebuild-search-index'), 'click', function () {
+				addEventListener(getById('rebuild-search-index'), 'click', function () {
 					rebuildSearchIndex();
 				});
-				DOM.addEventListener(DOM.getById('rebuild-all'), 'click', function () {
+				addEventListener(getById('rebuild-all'), 'click', function () {
 					rebuildAll();
 				});
-				DOM.addEventListener(DOM.getById('verify'), 'click', function () {
+				addEventListener(getById('verify'), 'click', function () {
 					verify();
 				});
-				DOM.removeClass(DOM.getBody(), "hidden");
+				removeClass(getBody(), "hidden");
 			}
 		},
 		content: "p="+encodeURIComponent(JSON.stringify ({'command': 'authenticate'}))
@@ -87,15 +100,15 @@ function getSeriesTable () {
 }
 
 function modifySeries (button: Element) {
-	var record = DOM.getParent(DOM.getParent(button));
-	var id = DOM.getDescendantsByClassAt(record, 'id', 0).innerHTML; 
-	var title = (DOM.getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value; 
-	var thumbnail = (DOM.getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value; 
-	var isPublic = (DOM.getDescendantsByClassAt(record, 'public', 0) as HTMLInputElement).checked;
-	var series_id = (DOM.getDescendantsByClassAt(record, 'series-id', 0) as HTMLTextAreaElement).value; 
-	var season_name = (DOM.getDescendantsByClassAt(record, 'season-name', 0) as HTMLTextAreaElement).value; 
-	var season_order = (DOM.getDescendantsByClassAt(record, 'season-order', 0) as HTMLTextAreaElement).value; 
-	var keywords = (DOM.getDescendantsByClassAt(record, 'keywords', 0) as HTMLTextAreaElement).value; 
+	var record = getParent(getParent(button));
+	var id = getDescendantsByClassAt(record, 'id', 0).innerHTML; 
+	var title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value; 
+	var thumbnail = (getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value; 
+	var isPublic = (getDescendantsByClassAt(record, 'public', 0) as HTMLInputElement).checked;
+	var series_id = (getDescendantsByClassAt(record, 'series-id', 0) as HTMLTextAreaElement).value; 
+	var season_name = (getDescendantsByClassAt(record, 'season-name', 0) as HTMLTextAreaElement).value; 
+	var season_order = (getDescendantsByClassAt(record, 'season-order', 0) as HTMLTextAreaElement).value; 
+	var keywords = (getDescendantsByClassAt(record, 'keywords', 0) as HTMLTextAreaElement).value; 
 	
 	var parsedRecord = parseSeriesRecord (id, title, thumbnail, isPublic, series_id, season_name, season_order, keywords);
 	if (!parsedRecord) {
@@ -145,15 +158,15 @@ function deleteSeries (id: string) {
 }
 
 function addSeries (button: Element) {
-	var record = DOM.getParent(DOM.getParent(button));
-	var id = (DOM.getDescendantsByClassAt(record, 'id', 0) as HTMLTextAreaElement).value; 
-	var title = (DOM.getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value; 
-	var thumbnail = (DOM.getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value; 
-	var isPublic = (DOM.getDescendantsByClassAt(record, 'public', 0) as HTMLInputElement).checked;
-	var series_id = (DOM.getDescendantsByClassAt(record, 'series-id', 0) as HTMLTextAreaElement).value; 
-	var season_name = (DOM.getDescendantsByClassAt(record, 'season-name', 0) as HTMLTextAreaElement).value; 
-	var season_order = (DOM.getDescendantsByClassAt(record, 'season-order', 0) as HTMLTextAreaElement).value; 
-	var keywords = (DOM.getDescendantsByClassAt(record, 'keywords', 0) as HTMLTextAreaElement).value; 
+	var record = getParent(getParent(button));
+	var id = (getDescendantsByClassAt(record, 'id', 0) as HTMLTextAreaElement).value; 
+	var title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value; 
+	var thumbnail = (getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value; 
+	var isPublic = (getDescendantsByClassAt(record, 'public', 0) as HTMLInputElement).checked;
+	var series_id = (getDescendantsByClassAt(record, 'series-id', 0) as HTMLTextAreaElement).value; 
+	var season_name = (getDescendantsByClassAt(record, 'season-name', 0) as HTMLTextAreaElement).value; 
+	var season_order = (getDescendantsByClassAt(record, 'season-order', 0) as HTMLTextAreaElement).value; 
+	var keywords = (getDescendantsByClassAt(record, 'keywords', 0) as HTMLTextAreaElement).value; 
 	
 	var parsedRecord = parseSeriesRecord (id, title, thumbnail, isPublic, series_id, season_name, season_order, keywords);
 	if (!parsedRecord) {
@@ -299,12 +312,12 @@ function getAccountTable () {
 }
 
 async function addAccount (button: Element) {
-	var record = DOM.getParent(DOM.getParent(button));
-	var email = (DOM.getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value; 
-	var username = (DOM.getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value; 
-	var password = (DOM.getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value; 
+	var record = getParent(getParent(button));
+	var email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value; 
+	var username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value; 
+	var password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value; 
 	
-	var selections = (DOM.getDescendantsByTag(DOM.getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+	var selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
 	var user_group='';
 	for (let selection of selections) {
 		if (selection.checked) {
@@ -313,7 +326,7 @@ async function addAccount (button: Element) {
 		}
 	}
 	
-	selections = (DOM.getDescendantsByTag(DOM.getDescendantsByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+	selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
 	var status='';
 	for (let selection of selections) {
 		if (selection.checked) {
@@ -322,7 +335,7 @@ async function addAccount (button: Element) {
 		}
 	}
 	
-	var available_invite = (DOM.getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value; 
+	var available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value; 
 	
 	var parsedRecord = await parseAccountRecord (email, username, password, user_group, status, available_invite);
 	if (!parsedRecord) {
@@ -355,12 +368,12 @@ async function addAccount (button: Element) {
 }
 
 async function modifyAccount (button: Element, originalEmail: string) {
-	var record = DOM.getParent(DOM.getParent(button));
-	var email = (DOM.getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value; 
-	var username = (DOM.getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value; 
-	var password = (DOM.getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value; 
+	var record = getParent(getParent(button));
+	var email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value; 
+	var username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value; 
+	var password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value; 
 
-	var selections = (DOM.getDescendantsByTag(DOM.getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+	var selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
 	var user_group='';
 	for (let selection of selections) {
 		if (selection.checked) {
@@ -369,7 +382,7 @@ async function modifyAccount (button: Element, originalEmail: string) {
 		}
 	}
 	
-	selections = (DOM.getDescendantsByTag(DOM.getDescendantsByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+	selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
 	var status='';
 	for (let selection of selections) {
 		if (selection.checked) {
@@ -378,7 +391,7 @@ async function modifyAccount (button: Element, originalEmail: string) {
 		}
 	}
 	
-	var available_invite = (DOM.getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value; 
+	var available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value; 
 		
 	var parsedRecord = await parseAccountRecord (email, username, password, user_group, status, available_invite);
 	if (!parsedRecord) {
@@ -528,7 +541,7 @@ function getLogTable () {
 	
 /*------------------------------------------------------------------------------------Cache Functions------------------------------------------------------------------------------------*/
 function clearCDNCache () {
-	var dir = (DOM.getById('clear-cache-dir') as HTMLTextAreaElement).value; 
+	var dir = (getById('clear-cache-dir') as HTMLTextAreaElement).value; 
 	if (!dir.startsWith('/') || dir.includes('..')) {
 		alert('ERROR: Invalid format for dir');
 		return;
@@ -642,7 +655,7 @@ function rebuildAll () {
 
 /*------------------------------------------------------------------------------------Verify Functions------------------------------------------------------------------------------------*/
 function verify () {
-	var id = (DOM.getById('verify-id') as HTMLTextAreaElement).value; 
+	var id = (getById('verify-id') as HTMLTextAreaElement).value; 
 	if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
 		alert ("ERROR: Invalid value for 'id'");
 		return;
@@ -656,7 +669,7 @@ function verify () {
 		}
 	} while (confirm != "verify");
 	
-	DOM.getById('verify-output').innerHTML = '';
+	getById('verify-output').innerHTML = '';
 	
 	var param = {
 		'command': 'verify',
@@ -681,33 +694,33 @@ function setOutput (response: string, outputElementID?: string) {
 	if (error) {
 		alert (response);
 	} else {
-		DOM.getById(outputElementID).innerHTML = response;
+		getById(outputElementID).innerHTML = response;
 		updateEventHandlers ();
 	}
 	return !error;
 }
 
 function changed (elem: Element) {
-	DOM.addClass(DOM.getParent(elem), 'changed');
+	addClass(getParent(elem), 'changed');
 }
 
 function updateEventHandlers () {
-	var buttons = DOM.getByClass('add-series'); 
+	var buttons = getByClass('add-series'); 
 
 	for (let button of buttons) {
-		if (!DOM.containsClass(button, 'initialized')) { 
-			DOM.addClass(button, 'initialized');
-			DOM.addEventListener(button, 'click', function() {
+		if (!containsClass(button, 'initialized')) { 
+			addClass(button, 'initialized');
+			addEventListener(button, 'click', function() {
 				addSeries(button);
 			});
 		}
 	}
 	
-	buttons = DOM.getByClass('update-time'); 
+	buttons = getByClass('update-time'); 
 	for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-		if (!DOM.containsClass(button, 'initialized')) {
-			DOM.addClass(button, 'initialized');
-			DOM.addEventListener(button, 'click', function() {
+		if (!containsClass(button, 'initialized')) {
+			addClass(button, 'initialized');
+			addEventListener(button, 'click', function() {
 				if (button.dataset.id === undefined) {
 					alert ("ERROR: 'id' attribute on the element is undefined.");
 					return;
@@ -717,11 +730,11 @@ function updateEventHandlers () {
 		}
 	}
 	
-	buttons = DOM.getByClass('delete-series');
+	buttons = getByClass('delete-series');
 	for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-		if (!DOM.containsClass(button, 'initialized')) {
-			DOM.addClass(button, 'initialized');
-			DOM.addEventListener(button, 'click', function() {
+		if (!containsClass(button, 'initialized')) {
+			addClass(button, 'initialized');
+			addEventListener(button, 'click', function() {
 				if (button.dataset.id === undefined) {
 					alert ("ERROR: 'id' attribute on the element is undefined.");
 					return;
@@ -731,31 +744,31 @@ function updateEventHandlers () {
 		}
 	}
 	
-	buttons = DOM.getByClass('add-account'); 
+	buttons = getByClass('add-account'); 
 	for (let button of buttons) {
-		if (!DOM.containsClass(button, 'initialized')) {
-			DOM.addClass(button, 'initialized');
-			DOM.addEventListener(button, 'click', function() {
+		if (!containsClass(button, 'initialized')) {
+			addClass(button, 'initialized');
+			addEventListener(button, 'click', function() {
 				addAccount(button);
 			});
 		}
 	}
 	
-	buttons = DOM.getByClass('modify-series');
+	buttons = getByClass('modify-series');
 	for (let button of buttons) {
-		if (!DOM.containsClass(button, 'initialized')) {
-			DOM.addClass(button, 'initialized');
-			DOM.addEventListener(button, 'click', function() {
+		if (!containsClass(button, 'initialized')) {
+			addClass(button, 'initialized');
+			addEventListener(button, 'click', function() {
 				modifySeries(button);
 			});
 		}
 	}
 	
-	buttons = DOM.getByClass('modify-account');
+	buttons = getByClass('modify-account');
 	for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-		if (!DOM.containsClass(button, 'initialized')) {
-			DOM.addClass(button, 'initialized');
-			DOM.addEventListener(button, 'click', function() {
+		if (!containsClass(button, 'initialized')) {
+			addClass(button, 'initialized');
+			addEventListener(button, 'click', function() {
 				if (button.dataset.email === undefined) {
 					alert ("ERROR: 'email' attribute on the element is undefined.");
 					return;
@@ -765,11 +778,11 @@ function updateEventHandlers () {
 		}
 	}
 	
-	buttons = DOM.getByClass('delete-account'); 
+	buttons = getByClass('delete-account'); 
 	for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-		if (!DOM.containsClass(button, 'initialized')) {
-			DOM.addClass(button, 'initialized');
-			DOM.addEventListener(button, 'click', function() {
+		if (!containsClass(button, 'initialized')) {
+			addClass(button, 'initialized');
+			addEventListener(button, 'click', function() {
 				if (button.dataset.email === undefined) {
 					alert ("ERROR: 'email' attribute on the element is undefined.");
 					return;
@@ -779,21 +792,21 @@ function updateEventHandlers () {
 		}
 	}
 	
-	var elems = DOM.getByClass('onchange');
+	var elems = getByClass('onchange');
 	for (let elem of elems) {
-		if (!DOM.containsClass(elem, 'initialized')) {
-			DOM.addClass(elem, 'initialized');
-			DOM.addEventListener(elem, 'change', function() {
+		if (!containsClass(elem, 'initialized')) {
+			addClass(elem, 'initialized');
+			addEventListener(elem, 'change', function() {
 				changed(elem);
 			});
 		}
 	}
 	
-	elems = DOM.getByClass('oninput');
+	elems = getByClass('oninput');
 	for (let elem of elems) {
-		if (!DOM.containsClass(elem, 'initialized')) {
-			DOM.addClass(elem, 'initialized');
-			DOM.addEventListener(elem, 'input', function() {
+		if (!containsClass(elem, 'initialized')) {
+			addClass(elem, 'initialized');
+			addEventListener(elem, 'input', function() {
 				changed(elem);
 			});
 		}

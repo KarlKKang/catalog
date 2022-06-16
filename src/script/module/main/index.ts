@@ -11,8 +11,8 @@ export {topURL, loginURL, serverURL, cdnURL, debug};
 import * as message from './message/message';
 export {message};
 
-import * as DOM from './DOM';
-/*import {
+//import * as DOM from './DOM';
+import {
 	d, 
 	w, 
 	getBody, 
@@ -25,9 +25,76 @@ import * as DOM from './DOM';
 	setCookie,
 	deleteCookie,
 	getTitle,
-	setTitle
-} from './DOM';*/
-export {DOM};
+	setTitle,
+	
+	getByIdNative,
+	getById,
+	getDescendantsByClass,
+	getByClass,
+	getDescendantsByClassAt,
+	getByClassAt,
+	getDescendantsByTag,
+	getByTag,
+	getDescendantsByTagAt,
+	getByTagAt,
+	addClass,
+	removeClass,
+	setClass,
+	toggleClass,
+	containsClass,
+	getParent,
+	insertBefore,
+	remove,
+	createElement,
+	createTextNode,
+	addEventListener,
+	addEventsListener,
+	removeEventListener,
+	removeEventsListener,
+	getComputedStyle
+} from './DOM';
+//export {DOM};
+export {
+	d, 
+	w, 
+	getBody, 
+	getHref, 
+	getHash, 
+	redirect,
+	changeURL,
+	openWindow,
+	getCookie,
+	setCookie,
+	deleteCookie,
+	getTitle,
+	setTitle,
+	
+	getByIdNative,
+	getById,
+	getDescendantsByClass,
+	getByClass,
+	getDescendantsByClassAt,
+	getByClassAt,
+	getDescendantsByTag,
+	getByTag,
+	getDescendantsByTagAt,
+	getByTagAt,
+	addClass,
+	removeClass,
+	setClass,
+	toggleClass,
+	containsClass,
+	getParent,
+	insertBefore,
+	remove,
+	createElement,
+	createTextNode,
+	addEventListener,
+	addEventsListener,
+	removeEventListener,
+	removeEventsListener,
+	getComputedStyle
+};
 
 import * as type from '../../type';
 export {type};
@@ -36,14 +103,14 @@ export {type};
 
 ////////////////////////////////////////
 export function getURLParam (name: string): string | null {
-	var urlObj = new URL(DOM.getHref());
+	var urlObj = new URL(getHref());
 	return urlObj.searchParams.get(name);
 }
 ////////////////////////////////////////
 	
 ////////////////////////////////////////
 export function getSeriesID (): string | null {
-	var url = DOM.getHref() + '?';
+	var url = getHref() + '?';
 	if (url.startsWith(topURL + '/bangumi/')) {
 		var start = (topURL+'/bangumi/').length;
 		var end = url.indexOf('?');
@@ -100,12 +167,12 @@ export function checkXHRStatus (response: XMLHttpRequest): boolean {
 			return true;
 		} else if (status == 401) {
 			if (response.responseText == 'SESSION ENDED')
-				DOM.redirect(topURL);
+				redirect(topURL);
 			else if (response.responseText == 'INSUFFICIENT PERMISSIONS')
-				DOM.redirect(topURL, true);
+				redirect(topURL, true);
 			else {
 				logout(function () {
-					DOM.redirect(urlWithParam(loginURL), true);
+					redirect(urlWithParam(loginURL), true);
 				});
 			}	
 		} else if (status == 429) {
@@ -125,7 +192,7 @@ export function checkXHRStatus (response: XMLHttpRequest): boolean {
 				message.show (message.template.param.server[403]);
 			}
 		} else if (status == 404 && response.responseText == 'REJECTED') {
-			DOM.redirect(topURL);
+			redirect(topURL);
 		} else {
 			message.show (message.template.param.server.connectionError);
 		}
@@ -220,26 +287,26 @@ export function logout (callback: Function) {
 ////////////////////////////////////////
 export function passwordStyling (element: HTMLInputElement) {
 	if (element.value == '') {
-		DOM.removeClass(element, 'password-font');
+		removeClass(element, 'password-font');
 	} else {
-		DOM.addClass(element, 'password-font');
+		addClass(element, 'password-font');
 	}
 }
 ////////////////////////////////////////
 
 ////////////////////////////////////////
 export function navUpdate () {
-	var navBtn = DOM.getById('nav-btn');
-	DOM.toggleClass(navBtn, 'active');
-	var menu = DOM.getById('nav-menu');
+	var navBtn = getById('nav-btn');
+	toggleClass(navBtn, 'active');
+	var menu = getById('nav-menu');
 	
-	if (DOM.containsClass(navBtn, 'active')) {
-		DOM.removeClass(menu, 'invisible');
-		DOM.removeClass(menu, 'transparent');
+	if (containsClass(navBtn, 'active')) {
+		removeClass(menu, 'invisible');
+		removeClass(menu, 'transparent');
 	} else {
-		DOM.addClass(menu, 'transparent');
+		addClass(menu, 'transparent');
 		setTimeout (function () {
-			DOM.addClass(menu, 'invisible');
+			addClass(menu, 'invisible');
 		}, 300);
 	}
 }
@@ -247,29 +314,29 @@ export function navUpdate () {
 	
 ////////////////////////////////////////
 export function navListeners () {
-	DOM.getById('nav-menu-content').innerHTML = '<p><span id="nav-menu-content-1">ライブラリ／LIBRARY</span></p>' +
+	getById('nav-menu-content').innerHTML = '<p><span id="nav-menu-content-1">ライブラリ／LIBRARY</span></p>' +
 			'<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>' +
 			'<p><span id="nav-menu-content-3">ご利用ガイド／INFO</span></p>' +
 			'<p><span id="nav-menu-content-4">ログアウト／LOG OUT</span></p>';
 	
-	DOM.addEventListener(DOM.getById('nav-btn'), 'click', function () {
+	addEventListener(getById('nav-btn'), 'click', function () {
 		navUpdate ();
 	});
 	
-	DOM.addEventListener(DOM.getById('nav-menu-content-1'), 'click', function () {
-		DOM.redirect(topURL);
+	addEventListener(getById('nav-menu-content-1'), 'click', function () {
+		redirect(topURL);
 	});
 
-	DOM.addEventListener(DOM.getById('nav-menu-content-2'), 'click', function () {
-		DOM.redirect(debug?'account.html':(topURL+'/account'));
+	addEventListener(getById('nav-menu-content-2'), 'click', function () {
+		redirect(debug?'account.html':(topURL+'/account'));
 	});
 
-	DOM.addEventListener(DOM.getById('nav-menu-content-3'), 'click', function () {
-		DOM.redirect(debug?'info.html':(topURL+'/info'));
+	addEventListener(getById('nav-menu-content-3'), 'click', function () {
+		redirect(debug?'info.html':(topURL+'/info'));
 	});
 
-	DOM.addEventListener(DOM.getById('nav-menu-content-4'), 'click', function () {
-		logout(function () {DOM.redirect(loginURL);});
+	addEventListener(getById('nav-menu-content-4'), 'click', function () {
+		logout(function () {redirect(loginURL);});
 	});
 }
 ////////////////////////////////////////
@@ -301,7 +368,7 @@ export function secToTimestamp (sec: number) {
 
 ////////////////////////////////////////
 export function onScreenConsoleOutput (txt: string) {
-	var onScreenConsole = DOM.getByIdNative('on-screen-console');
+	var onScreenConsole = getByIdNative('on-screen-console');
 	if (onScreenConsole instanceof HTMLTextAreaElement) {
 		var date = new Date();
 		onScreenConsole.value += (date.getHours()<10 ? '0'+date.getHours() : date.getHours()) + ':' + (date.getMinutes()<10 ? '0'+date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds()<10 ? '0'+date.getSeconds() : date.getSeconds()) + '   ' + txt + '\r\n';
@@ -311,27 +378,27 @@ export function onScreenConsoleOutput (txt: string) {
 
 ////////////////////////////////////////
 export  function changeColor (elem: HTMLElement, color: string) {
-	DOM.removeClass(elem, 'color-red');
-	DOM.removeClass(elem, 'color-green');
-	DOM.removeClass(elem, 'color-orange');
-	DOM.addClass(elem, 'color-'+color);
+	removeClass(elem, 'color-red');
+	removeClass(elem, 'color-green');
+	removeClass(elem, 'color-orange');
+	addClass(elem, 'color-'+color);
 }
 ////////////////////////////////////////
 
 ////////////////////////////////////////
 export function imageProtection (elem: HTMLImageElement) {
 	removeRightClick(elem);
-	DOM.addEventListener(elem, 'dragstart', e => {
+	addEventListener(elem, 'dragstart', e => {
 		e.preventDefault();
 	});
-	DOM.addEventListener(elem, 'touchforcechange', e => {
+	addEventListener(elem, 'touchforcechange', e => {
 		var event = e as TouchEvent;
 		if (event.changedTouches[0] !== undefined && event.changedTouches[0].force > 0.1) {
 			event.preventDefault();
 		}
 	});
 
-	DOM.addEventListener(elem, 'touchstart', e=> {
+	addEventListener(elem, 'touchstart', e=> {
 		var event = e as TouchEvent;
 		if (event.changedTouches[0] !== undefined && event.changedTouches[0].force > 0.1) {
 			event.preventDefault();
@@ -347,7 +414,7 @@ export function concatenateSignedURL (url: string, credentials: type.CDNCredenti
 		var policy = credentials['Policy'];
 		policy['Statement'][0]['Resource'] = (resourceURLOverride===undefined)?url:resourceURLOverride;
 		policyString = JSON.stringify(policy);
-		policyString = DOM.w.btoa(policyString);
+		policyString = w.btoa(policyString);
 		policyString = policyString.replace(/\+/g, "-");
 		policyString = policyString.replace(/\=/g, "_");
 		policyString = policyString.replace(/\//g, "~");
@@ -369,20 +436,20 @@ export function encodeCFURIComponent (uri: string) {
 export function disableCheckbox (checkbox: HTMLInputElement, disabled: boolean) {
 	checkbox.disabled = disabled;
 	if (disabled) {
-		DOM.addClass(DOM.getParent(checkbox), 'disabled');
+		addClass(getParent(checkbox), 'disabled');
 	} else {
-		DOM.removeClass(DOM.getParent(checkbox), 'disabled');
+		removeClass(getParent(checkbox), 'disabled');
 	}
 }
 ////////////////////////////////////////
 	
 ////////////////////////////////////////
 export function clearCookies () {
-	if (DOM.getHref() != topURL + '/message' && !debug) {
-		DOM.deleteCookie('local-message-param');
+	if (getHref() != topURL + '/message' && !debug) {
+		deleteCookie('local-message-param');
 	}
-	if (DOM.getHref() != topURL + '/image' && !debug) {
-		DOM.deleteCookie('local-image-param');
+	if (getHref() != topURL + '/image' && !debug) {
+		deleteCookie('local-image-param');
 	}
 }
 ////////////////////////////////////////
@@ -396,7 +463,7 @@ export function cssVarWrapper () {
 	).then(({default: cssVars}) => {
 		cssVars({
 			onError: function(errorMessage) {
-				if (DOM.getHref() != topURL + '/message' && !debug) {
+				if (getHref() != topURL + '/message' && !debug) {
 					message.show(message.template.param.cssVarError(errorMessage));
 				}
 			},
@@ -434,5 +501,5 @@ export async function hashPassword (password: string) {
 
 ////////////////////////////////////////
 export function removeRightClick (elem: HTMLElement) {
-	DOM.addEventListener(elem, 'contextmenu', event => event.preventDefault());
+	addEventListener(elem, 'contextmenu', event => event.preventDefault());
 }
