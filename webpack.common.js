@@ -4,77 +4,76 @@ module.exports = {
 	target: 'browserslist',
 	entry: {
 		'404': {
-			import: './src/script/404.js',
+			import: './src/script/404',
 		},
 		'account': {
-			import: './src/script/account.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/account',
+			dependOn: ['main', 'core-js'],
 		},
 		'bangumi-hls': {
-			import: './src/script/bangumi-hls.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/bangumi-hls',
+			dependOn: ['main', 'core-js'],
 		},
 		'confirm_email': {
-			import: './src/script/confirm_email.js',
+			import: './src/script/confirm_email',
 			dependOn: ['main', 'core-js'],
 		},
 		'confirm_special_register': {
-			import: './src/script/confirm_special_register.js',
+			import: './src/script/confirm_special_register',
 			dependOn: ['main', 'core-js'],
 		},
 		'console': {
-			import: './src/script/console.js',
+			import: './src/script/console',
 			dependOn: ['main', 'core-js'],
 		},
 		'image': {
-			import: './src/script/image.js',
+			import: './src/script/image',
 			dependOn: ['main', 'core-js'],
 		},
 		'index': {
-			import: './src/script/index.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/index',
+			dependOn: ['main', 'core-js'],
 		},
 		'info': {
-			import: './src/script/info.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/info',
+			dependOn: ['main', 'core-js'],
 		},
 		'login': {
-			import: './src/script/login.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/login',
+			dependOn: ['main', 'core-js'],
 		},
 		'message': {
-			import: './src/script/message.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/message',
+			dependOn: ['main', 'core-js'],
 		},
 		'new_email': {
-			import: './src/script/new_email.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/new_email',
+			dependOn: ['main', 'core-js'],
 		},
 		'password_reset': {
-			import: './src/script/password_reset.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/password_reset',
+			dependOn: ['main', 'core-js'],
 		},
 		'policy': {
-			import: './src/script/policy.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/policy',
+			dependOn: ['main', 'core-js'],
 		},
 		'register': {
-			import: './src/script/register.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/register',
+			dependOn: ['main', 'core-js'],
 		},
 		'request_password_reset': {
-			import: './src/script/request_password_reset.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/request_password_reset',
+			dependOn: ['main', 'core-js'],
 		},
 		'special_register': {
-			import: './src/script/special_register.js',
-			dependOn: ['main', 'core-js', 'css-vars-ponyfill'],
+			import: './src/script/special_register',
+			dependOn: ['main', 'core-js'],
 		},
 
 		//helpers
-		'main': ['./src/script/helper/main.js'],
+		'main': ['./src/script/module/main'],
 		'core-js': ['core-js'],
-		'css-vars-ponyfill': ['css-vars-ponyfill']
 	},
 	output: {
 		filename: '[name].js',
@@ -87,12 +86,36 @@ module.exports = {
 		//	chunks: 'all',
 		//},
 	},
+	resolve: {
+        extensions: ['.ts', '.tsx', '.js', '.json']
+    },
 	module: {
 		rules: [
 			{
-				test: /\.m?js$/,
-				exclude: /node_modules/,
-				loader: 'babel-loader',
+				test: /\.(ts|js)x?$/,
+				exclude: {
+					and: [/node_modules/], // Exclude libraries in node_modules ...
+					not: [
+						// Except for a few of them that needs to be transpiled because they use modern syntax
+						/node_modules[\\\/]screenfull/,
+					]
+				},
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: [
+							[
+								"@babel/preset-env",
+								{
+									"useBuiltIns": "entry",
+									"corejs": "3.22"
+								}
+							],
+							"@babel/preset-typescript"
+						],
+						plugins: ["@babel/plugin-transform-runtime"]
+					}
+				}
 			}
 		]
 	}
