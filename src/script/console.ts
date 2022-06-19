@@ -225,7 +225,7 @@ function parseSeriesRecord (id: string, title: string, thumbnail: string, isPubl
 	
 	let season_name_parsed: string | null;
 	if (season_name=='') {
-		if (series_id!==null) {
+		if (series_id_parsed!==null) {
 			alert ("ERROR: 'season_name' must be specified when 'series_id' is specified");
 			return false;
 		}
@@ -236,7 +236,7 @@ function parseSeriesRecord (id: string, title: string, thumbnail: string, isPubl
 	
 	let season_order_parsed: number | null;
 	if (season_order=='') {
-		if (series_id!==null) {
+		if (series_id_parsed!==null) {
 			alert ("ERROR: 'season_order' must be specified when 'series_id' is specified");
 			return false;
 		}

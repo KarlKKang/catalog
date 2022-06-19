@@ -21,6 +21,7 @@ import type {WebpMachine} from 'webp-hero/dist-cjs';
 var webpMachine: WebpMachine | null = null;
 var webpMachineActive = false;
 var webpMachineQueue: HTMLImageElement[] = [];
+var webpSupported: boolean;
 
 export default function () {
 	
@@ -117,22 +118,34 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 async function startWebpMachine() {
 	if (webpMachine === null) {
 		try {
-			let {WebpMachine} = await import(
+			let {WebpMachine, detectWebpSupport} = await import(
 				/* webpackChunkName: "webp-hero" */
-				/* webpackExports: ["WebpMachine"] */
+				/* webpackExports: ["WebpMachine", "detectWebpSupport"] */
 				'webp-hero/dist-cjs'
 			);
 			webpMachine = new WebpMachine();
+			webpSupported = await detectWebpSupport();
 		} catch(e: unknown) {
 			message.show (message.template.param.moduleImportError(e));
             return;
 		}
 	}
+
+	if (webpSupported) {
+		return;
+	}
+
 	while(webpMachineQueue.length != 0) {
 		let imageNode = webpMachineQueue.shift() as HTMLImageElement;
 		let originalSrc = imageNode.src;
-		await webpMachine.polyfillImage(imageNode);
-		if (imageNode.src == originalSrc) { // The first two images tend to failed to decode.
+		let retry = true;
+		try {
+			await webpMachine.polyfillImage(imageNode); // Unrecoverable errors (e.g. network errors) will be thrown, while recoverable errors will be logged only.
+		} catch (_) {
+			retry = false;
+		}
+		
+		if (imageNode.src == originalSrc && retry) { // The first two images tend to failed to decode.
 			if (debug) {
 				console.log('Failed to polyfill webp. Appended back to the queue to retry.');
 			}
