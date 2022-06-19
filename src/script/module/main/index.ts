@@ -288,11 +288,27 @@ export function logout (callback: Function) {
 
 ////////////////////////////////////////
 export function passwordStyling (element: HTMLInputElement) {
-	if (element.value == '') {
-		removeClass(element, 'password-font');
-	} else {
-		addClass(element, 'password-font');
+	function inputChangeHandler () {
+		if (element.value === '') {
+			removeClass(element, 'password-font');
+		} else {
+			addClass(element, 'password-font');
+		}
 	}
+	
+	var descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value") as PropertyDescriptor; //The object returned is mutable but mutating it has no effect on the original property's configuration.
+	var originalSet = descriptor.set;
+
+	// define our own setter
+	descriptor.set = function() {
+		originalSet!.apply(this, arguments as any);
+		inputChangeHandler();
+	}
+
+	Object.defineProperty(element, "value", descriptor);
+
+	addEventListener(element, 'input', inputChangeHandler);
+	addEventListener(element, 'change', inputChangeHandler);
 }
 ////////////////////////////////////////
 

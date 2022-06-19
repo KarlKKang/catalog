@@ -94,12 +94,8 @@ addEventListener(w, 'load', function(){
 					register ();
 				});
 
-				addEventListener(passwordInput, 'input', function () {
-					passwordStyling(passwordInput);
-				});
-				addEventListener(passwordConfirmInput, 'input', function () {
-					passwordStyling(passwordConfirmInput);
-				});
+				passwordStyling(passwordInput);
+				passwordStyling(passwordConfirmInput);
 
                 removeClass(getBody(), "hidden");
             } else {

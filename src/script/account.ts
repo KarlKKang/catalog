@@ -131,12 +131,8 @@ addEventListener(w, 'load', function(){
 			invite ();
 		});
 
-		addEventListener(newPasswordInput, 'input', function () {
-			passwordStyling(newPasswordInput);
-		});
-		addEventListener(newPasswordComfirmInput, 'input', function () {
-			passwordStyling(newPasswordComfirmInput);
-		});
+		passwordStyling(newPasswordInput);
+		passwordStyling(newPasswordComfirmInput);
 		
 		getById('email').innerHTML = userInfo.email;
 		getById('invite-count').innerHTML = userInfo.invite_quota.toString();
