@@ -15,10 +15,7 @@ type webpMachineQueueItem = {container: HTMLElement, image: HTMLImageElement, we
 var webpMachineQueue: webpMachineQueueItem[] = [];
 var webpSupported: boolean;
 
-export default function (container: HTMLElement, src: string, alt: string, onload?: () => void, onerror?: () => void) {
-	if (onerror === undefined) {
-		onerror = onload;
-	}
+export default function (container: HTMLElement, src: string, alt: string, onload?: () => void) {
 
 	let blob: Blob;
 	let isWebp: boolean;
@@ -31,9 +28,6 @@ export default function (container: HTMLElement, src: string, alt: string, onloa
 		}
 		image.src = '//:0';
 		appendChild(container, image);
-		if (onerror !== undefined) {
-			onerror();
-		}
 	}
 
 	function errorHandler () {
