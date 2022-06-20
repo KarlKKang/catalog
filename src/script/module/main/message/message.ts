@@ -5,7 +5,7 @@ import {
 } from '../env/constant';
 
 import {getHref, redirect, setCookie, getTitle} from '../DOM/document';
-import { LocalMessageParam } from '../../../type';
+import { LocalMessageParam } from '../type';
 
 const defaultErrorSuffix = 'このエラーが続く場合は、管理者にお問い合わせください。';
 const browserCompatibilitySuffix = '別のブラウザで、もう一度お試しください。';

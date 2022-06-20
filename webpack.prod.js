@@ -9,6 +9,7 @@ module.exports = merge(common, {
 		path: path.resolve(__dirname, 'dist/script'),
 	},
 	optimization: {
+		mangleExports: 'size',
 		minimize: true,
 		minimizer: [
 			new TerserPlugin({

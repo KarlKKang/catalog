@@ -47,6 +47,7 @@ import {
 
     type
 } from './module/main';
+import {default as importLazyload} from './module/lazyload';
 
 
 var seriesID: string;
@@ -132,13 +133,12 @@ import type {Hls as Hls_} from './module/player';
 import type {videojs as VideoJS} from './module/player';
 import type {browser as Browser} from './module/player';
 import type {videojsMod as VideojsMod, VideojsModInstance} from './module/player';
-import type {default as LazyloadInitialize} from './module/lazyload';
 
 var Hls: typeof Hls_;
 var videojs: typeof VideoJS;
 var browser: typeof Browser;
 var videojsMod: typeof VideojsMod;
-var lazyloadInitialize: typeof LazyloadInitialize;
+var lazyloadInitialize: ()=>void;
 
 var mediaInstances: Array<VideojsModInstance> = [];
 var epInfo: type.BangumiInfo.VideoEPInfo | type.BangumiInfo.AudioEPInfo | type.BangumiInfo.ImageEPInfo;
@@ -258,17 +258,7 @@ async function updatePage (response: type.BangumiInfo.BangumiInfo) {
             updateAudio ();
         }
     } else {
-        try {
-            ({default: lazyloadInitialize} = await import(
-                /* webpackChunkName: "lazyload" */
-                /* webpackExports: ["default"] */
-                './module/lazyload'
-            ));
-        } catch (e) {
-            message.show(message.template.param.moduleImportError(e));
-            return;
-        }
-
+        lazyloadInitialize = await importLazyload();
         updateImage ();
     }
 }
@@ -857,7 +847,7 @@ function updateImage () {
         appendChild(mediaHolder, imageNode);
     });
 
-    lazyloadInitialize ();
+    lazyloadInitialize();
 }
 
 function showPlaybackError (detail?: string) {

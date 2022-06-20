@@ -30,9 +30,9 @@ import {
 
     type
 } from './module/main';
-import type {default as LazyloadInitialize} from './module/lazyload';
+import {default as importLazyload} from './module/lazyload';
 
-var lazyloadInitialize: typeof LazyloadInitialize;
+var lazyloadInitialize: ()=>void;
 
 var searchBar: HTMLElement;
 var searchBarInput: HTMLInputElement;
@@ -67,17 +67,7 @@ addEventListener(w, 'load', function(){
 	
 	getURLKeywords();
     getSeries(async function(showSeriesCallback) {
-        try {
-			let {default: defaultModule} = await import(
-                /* webpackChunkName: "lazyload" */
-                /* webpackExports: ["default"] */
-                './module/lazyload'
-            );
-			lazyloadInitialize = defaultModule;
-		} catch(e: unknown) {
-			message.show (message.template.param.moduleImportError(e));
-            return;
-		}
+	    lazyloadInitialize = await importLazyload();
 
         showSeriesCallback();
         addEventListener(d, 'scroll', infiniteScrolling);

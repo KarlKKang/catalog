@@ -98,7 +98,7 @@ export {
 	appendChild
 };
 
-import * as type from '../../type';
+import * as type from './type';
 export {type};
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
@@ -404,7 +404,7 @@ export  function changeColor (elem: HTMLElement, color: string) {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function imageProtection (elem: HTMLImageElement) {
+export function imageProtection (elem: HTMLElement) {
 	removeRightClick(elem);
 	addEventListener(elem, 'dragstart', e => {
 		e.preventDefault();

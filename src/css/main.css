@@ -137,7 +137,7 @@ select {
 .lazyload.complete {
 	padding-bottom: 0px!important;
 }
-.lazyload > img {
+.lazyload > img, .lazyload > canvas {
 	display: block;
 	margin: 0px;
 	padding: 0px;

@@ -5,7 +5,6 @@ import {
 	topURL,
 	sendServerRequest,
 	message,
-	imageProtection,
 	concatenateSignedURL,
 	clearCookies,
 	removeRightClick,
@@ -16,10 +15,8 @@ import {
 	redirect,
 	getCookie,
 	deleteCookie,
-	createElement,
 	setTitle,
 	getById,
-	appendChild,
 
 	type
 } from './module/main';
@@ -50,11 +47,7 @@ addEventListener(w, 'load', function(){
 		redirect(topURL, true);
 		return;
 	}
-	var param = parsedCookie as type.LocalImageParam.LocalImageParam;
-	
-	
-	var image = createElement('img') as HTMLImageElement;
-	imageProtection(image);
+	const param = parsedCookie as type.LocalImageParam.LocalImageParam;
 	
 	setInterval (function () {sendServerRequest('device_authenticate.php', {
 		callback: function (response: string) {
@@ -69,26 +62,6 @@ addEventListener(w, 'load', function(){
 	
 	var container = getById('image-container');
 
-	addEventListener(image, 'error', function () {
-		if (image.src.includes('.webp')) {
-			import(
-				/* webpackChunkName: "webp-hero" */
-				/* webpackExports: ["WebpMachine"] */
-				'webp-hero/dist-cjs'
-			).then(({WebpMachine}) => {
-				const webpMachine = new WebpMachine();
-				webpMachine.polyfillImage(image);
-			}).catch((e) => {
-				message.show(message.template.param.moduleImportError(e));
-			});
-		} else {
-			redirect(topURL, true);
-		}
-	});
-
-	image.crossOrigin = 'use-credentials';
-	image.alt = 'image from ' + param.title;
-
 	removeRightClick(container);
 	
 	sendServerRequest('get_image.php', {
@@ -100,10 +73,18 @@ addEventListener(w, 'load', function(){
 			} catch (e) {
 				message.show(message.template.param.server.invalidResponse);
 			}
-			var credentials = parsedResponse as type.CDNCredentials.CDNCredentials;
-			let url = concatenateSignedURL(param.src, credentials);
-			image.src = url;
-			appendChild(container, image);
+			const credentials = parsedResponse as type.CDNCredentials.CDNCredentials;
+			const url = concatenateSignedURL(param.src, credentials);
+			
+			import(
+                /* webpackChunkName: "image_loader" */
+                /* webpackExports: ["default"] */
+                './module/image_loader'
+            ).then(({default: imageLoader}) => {
+				imageLoader(container, url, 'image from ' + param.title);
+			}).catch((e) => {
+				message.show(message.template.param.moduleImportError(e));
+			});
 		},
 		content: "token="+param.authenticationToken + '&p=' + param.xhrParam
 	});

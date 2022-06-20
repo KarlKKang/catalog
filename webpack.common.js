@@ -8,72 +8,71 @@ module.exports = {
 		},
 		'account': {
 			import: './src/script/account',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'bangumi-hls': {
 			import: './src/script/bangumi-hls',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'confirm_email': {
 			import: './src/script/confirm_email',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'confirm_special_register': {
 			import: './src/script/confirm_special_register',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'console': {
 			import: './src/script/console',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'image': {
 			import: './src/script/image',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'index': {
 			import: './src/script/index',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'info': {
 			import: './src/script/info',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'login': {
 			import: './src/script/login',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'message': {
 			import: './src/script/message',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'new_email': {
 			import: './src/script/new_email',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'password_reset': {
 			import: './src/script/password_reset',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'policy': {
 			import: './src/script/policy',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'register': {
 			import: './src/script/register',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'request_password_reset': {
 			import: './src/script/request_password_reset',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 		'special_register': {
 			import: './src/script/special_register',
-			dependOn: ['main', 'core-js'],
+			//dependOn: ['main'],
 		},
 
 		//helpers
-		'main': ['./src/script/module/main'],
-		'core-js': ['core-js'],
+		//'main': ['./src/script/module/main'],
 	},
 	output: {
 		filename: '[name].js',
@@ -81,10 +80,26 @@ module.exports = {
 	},
 	optimization: {
 		runtimeChunk: 'single',
-		//moduleIds: 'named',
-		//splitChunks: {
-		//	chunks: 'all',
-		//},
+		concatenateModules: true,
+		flagIncludedChunks: true,
+		removeAvailableModules: true,
+		splitChunks: {
+			cacheGroups: {
+				polyfill: {
+					test: /[\\/]node_modules[\\/](core-js|@babel)[\\/]/,
+					name: 'polyfill',
+					chunks: 'all',
+					reuseExistingChunk: true
+				}, 
+				main: {
+					test: /[\\/]src[\\/]script[\\/]module[\\/]main/,
+					name: 'main',
+					chunks: 'all',
+					reuseExistingChunk: true
+				}
+			}
+		}
+		//usedExports: 'global',
 	},
 	resolve: {
         extensions: ['.ts', '.tsx', '.js', '.json']
