@@ -98,7 +98,7 @@ module.exports = {
 					reuseExistingChunk: true
 				}
 			}
-		}
+		},
 		//usedExports: 'global',
 	},
 	resolve: {

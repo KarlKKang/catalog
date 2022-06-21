@@ -474,6 +474,7 @@ export function clearCookies () {
 
 ////////////////////////////////////////
 export function cssVarWrapper () {
+	const showMessage = !getHref().endsWith('/message') && !debug;
 	import(
 		/* webpackChunkName: "css-vars-ponyfill" */
 		/* webpackExports: ["default"] */
@@ -481,7 +482,7 @@ export function cssVarWrapper () {
 	).then(({default: cssVars}) => {
 		cssVars({
 			onError: function(errorMessage) {
-				if (getHref() != topURL + '/message' && !debug) {
+				if (showMessage) {
 					message.show(message.template.param.cssVarError(errorMessage));
 				}
 			},
@@ -490,7 +491,9 @@ export function cssVarWrapper () {
 			}
 		});
 	}).catch((e) => {
-		message.show(message.template.param.moduleImportError(e));
+		if (showMessage) {
+			message.show(message.template.param.moduleImportError(e));
+		}
 	});
 }
 ////////////////////////////////////////
