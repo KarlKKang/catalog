@@ -296,16 +296,18 @@ export function passwordStyling (element: HTMLInputElement) {
 		}
 	}
 	
-	var descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value") as PropertyDescriptor; //The object returned is mutable but mutating it has no effect on the original property's configuration.
-	var originalSet = descriptor.set;
+	var descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value"); //The object returned is mutable but mutating it has no effect on the original property's configuration.
+	if (descriptor !== undefined) { // 'undefined' in Chrome prior to Chrome 43 (https://developer.chrome.com/blog/DOM-attributes-now-on-the-prototype-chain/)
+		var originalSet = descriptor.set;
 
-	// define our own setter
-	descriptor.set = function() {
-		originalSet!.apply(this, arguments as any);
-		inputChangeHandler();
+		// define our own setter
+		descriptor.set = function() {
+			originalSet!.apply(this, arguments as any);
+			inputChangeHandler();
+		}
+	
+		Object.defineProperty(element, "value", descriptor);
 	}
-
-	Object.defineProperty(element, "value", descriptor);
 
 	addEventListener(element, 'input', inputChangeHandler);
 	addEventListener(element, 'change', inputChangeHandler);
