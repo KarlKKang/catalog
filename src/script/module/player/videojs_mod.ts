@@ -234,7 +234,7 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 	}, 300);
 	
 	if (isVideo) {
-		addEventsListener(controls, ['mousemove', 'click'], function () {
+		addEventsListener(controls, ['mousemove', 'click', 'touchstart', 'touchmove', 'touchend'], function () {
 			removeClass(controls, 'vjs-user-inactive');
 			addClass(controls, 'vjs-user-active');
 			that._inactiveCountdown = 3000;

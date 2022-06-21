@@ -21,6 +21,7 @@ export default function (container: HTMLElement, src: string, alt: string, onloa
 	let isWebp: boolean;
 
 	const image = new Image();
+	image.alt = alt;
 
 	function finalizeErrorImage () {
 		if (debug) {
@@ -93,7 +94,6 @@ export default function (container: HTMLElement, src: string, alt: string, onloa
 				isWebp = xhr.getResponseHeader('Content-Type') === 'image/webp';
 				blob = xhr.response as Blob;
 				image.src = URL.createObjectURL(blob);
-				image.alt = alt;
 			} else {
 				finalizeErrorImage();
 			}
