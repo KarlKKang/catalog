@@ -668,9 +668,7 @@ function verify () {
 			return;
 		}
 	} while (confirm != "verify");
-	
-	getById('verify-output').innerHTML = '';
-	
+		
 	var param = {
 		'command': 'verify',
 		'series': id
@@ -678,7 +676,7 @@ function verify () {
 	
 	sendServerRequest('console.php', {
 		callback: function (response: string) {
-			setOutput (response, 'verify-output');
+			alert(response);
 		},
 		content: "p="+encodeURIComponent(JSON.stringify (param))
 	});

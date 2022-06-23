@@ -727,7 +727,7 @@ function getAudioSubtitleNode (file: type.BangumiInfo.AudioFile, FLAC_FALLBACK: 
 
         let format = createElement('span');
         addClass(format, 'format');
-        format.innerHTML = file.format;
+        format.innerHTML = FLAC_FALLBACK?'FLAC':file.format;
 
         let samplerate = file.samplerate;
         if (samplerate != '') {
@@ -765,13 +765,11 @@ function getAudioSubtitleNode (file: type.BangumiInfo.AudioFile, FLAC_FALLBACK: 
                         bitdepthText = '32bit';
                         break;	
                 }
+                if (bitdepthText == '32bit' && FLAC_FALLBACK) {
+                    bitdepthText = '24bit';
+                }
                 format.innerHTML += '/' + bitdepthText;
             }
-        }
-
-        if (FLAC_FALLBACK) {
-            format.innerHTML = format.innerHTML.replace('ALAC', 'FLAC');
-            format.innerHTML = format.innerHTML.replace('32bit', '24bit');
         }
 
         appendChild(subtitle, format);
