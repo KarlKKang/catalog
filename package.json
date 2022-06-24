@@ -14,7 +14,8 @@
     "build:css": "node minify-css.js",
     "build-dev:css": "npm run build:css -- dev",
     "build-dev": "npm run type-check && npm run build-dev:js && npm run build-dev:html && npm run build-dev:css",
-    "build": "npm run type-check && npm run build:js && npm run build:html && npm run build:css"
+    "build": "npm run type-check && npm run build:js && npm run build:html && npm run build:css",
+    "start-server":"npx http-server dev -g -b -c-1"
   },
   "keywords": [],
   "author": "",

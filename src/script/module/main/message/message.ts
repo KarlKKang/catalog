@@ -36,7 +36,7 @@ const titleAndBody = {
         emailSent: 'メールボックスをご確認ください。届くまでに時間がかかる場合があります。',
         passwordChanged: 'パスワードを変更しました。',
         specialRegistrationOnly: '現在、一般登録の受付を開始しています。ボタンをクリックして、登録ページにお進みください。',
-        unrecommendedBrowser: '一部のコンテンツが正常に再生されない場合は、Safari 11またはChrome 71以降のブラウザをお使いください。',
+        unrecommendedBrowser: '一部のコンテンツが正常に再生されない場合は、Safari 11またはChrome 67以降のブラウザをお使いください。',
         server: {
             invalidResponse: `サーバーが無効な応答を返しました。${defaultErrorSuffix}`,
             connectionError: `数分待ってから、もう一度お試しください。${defaultErrorSuffix}`,

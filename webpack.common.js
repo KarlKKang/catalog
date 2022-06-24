@@ -8,71 +8,52 @@ module.exports = {
 		},
 		'account': {
 			import: './src/script/account',
-			//dependOn: ['main'],
 		},
 		'bangumi-hls': {
 			import: './src/script/bangumi-hls',
-			//dependOn: ['main'],
 		},
 		'confirm_email': {
 			import: './src/script/confirm_email',
-			//dependOn: ['main'],
 		},
 		'confirm_special_register': {
 			import: './src/script/confirm_special_register',
-			//dependOn: ['main'],
 		},
 		'console': {
 			import: './src/script/console',
-			//dependOn: ['main'],
 		},
 		'image': {
 			import: './src/script/image',
-			//dependOn: ['main'],
 		},
 		'index': {
 			import: './src/script/index',
-			//dependOn: ['main'],
 		},
 		'info': {
 			import: './src/script/info',
-			//dependOn: ['main'],
 		},
 		'login': {
 			import: './src/script/login',
-			//dependOn: ['main'],
 		},
 		'message': {
 			import: './src/script/message',
-			//dependOn: ['main'],
 		},
 		'new_email': {
 			import: './src/script/new_email',
-			//dependOn: ['main'],
 		},
 		'password_reset': {
 			import: './src/script/password_reset',
-			//dependOn: ['main'],
 		},
 		'policy': {
 			import: './src/script/policy',
-			//dependOn: ['main'],
 		},
 		'register': {
 			import: './src/script/register',
-			//dependOn: ['main'],
 		},
 		'request_password_reset': {
 			import: './src/script/request_password_reset',
-			//dependOn: ['main'],
 		},
 		'special_register': {
 			import: './src/script/special_register',
-			//dependOn: ['main'],
 		},
-
-		//helpers
-		//'main': ['./src/script/module/main'],
 	},
 	output: {
 		filename: '[name].js',
@@ -100,6 +81,9 @@ module.exports = {
 			}
 		},
 		//usedExports: 'global',
+	},
+	node: {
+		global: false // Fix __webpack_require__ is undefined in Chrome prior to version 71.
 	},
 	resolve: {
         extensions: ['.ts', '.tsx', '.js', '.json']
