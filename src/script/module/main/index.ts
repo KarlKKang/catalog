@@ -154,7 +154,7 @@ export function urlWithParam (url: string) {
 ////////////////////////////////////////
 	
 ////////////////////////////////////////
-export function addXHROnError (xmlhttp: XMLHttpRequest) {
+function addXHROnError (xmlhttp: XMLHttpRequest) {
 	xmlhttp.onerror = function () {
 		message.show (message.template.param.server.connectionError);
 	};
@@ -162,7 +162,7 @@ export function addXHROnError (xmlhttp: XMLHttpRequest) {
 ////////////////////////////////////////
 	
 ////////////////////////////////////////
-export function checkXHRStatus (response: XMLHttpRequest): boolean {
+function checkXHRStatus (response: XMLHttpRequest): boolean {
 	var status = response.status;
 	if (response.readyState == 4) {
 		if (status == 200) {
@@ -315,7 +315,7 @@ export function passwordStyling (element: HTMLInputElement) {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function navUpdate () {
+function navUpdate () {
 	var navBtn = getById('nav-btn');
 	toggleClass(navBtn, 'active');
 	var menu = getById('nav-menu');
