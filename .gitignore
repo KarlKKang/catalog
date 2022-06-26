@@ -7,3 +7,5 @@ _notes/
 .DS_Store
 /publish.log
 /dev/
+__pycache__
+*.pem

@@ -44,7 +44,7 @@ var offset: type.SeriesInfo.OffsetInfo = 0;
 var keywords = '';
 var pivot = '';
 
-
+var lazyloadImportPromise: ReturnType<typeof importLazyload>;
 
 addEventListener(w, 'load', function(){
     cssVarWrapper();
@@ -59,6 +59,9 @@ addEventListener(w, 'load', function(){
         redirect(urlWithParam(debug?'bangumi.html':(topURL+'/bangumi/')), true);
         return;
     }
+
+    // Preload module
+    lazyloadImportPromise = importLazyload();
 	
 	searchBar = getById('search-bar');
     searchBarInput = getDescendantsByTag(searchBar, 'input')[0] as HTMLInputElement;
@@ -66,24 +69,25 @@ addEventListener(w, 'load', function(){
     containerElem = getById('container');
 	
 	getURLKeywords();
-    getSeries(async function(showSeriesCallback) {
-	    lazyloadInitialize = await importLazyload();
-
-        showSeriesCallback();
-        addEventListener(d, 'scroll', infiniteScrolling);
-        addEventListener(w, 'resize', infiniteScrolling);
-        navListeners();
-        addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
-            if (!searchBarInput.disabled) {
-                search();
-            }
+    getSeries(function(showSeriesCallback) {
+        lazyloadImportPromise.then((module) => {
+            lazyloadInitialize = module;
+            showSeriesCallback();
+            addEventListener(d, 'scroll', infiniteScrolling);
+            addEventListener(w, 'resize', infiniteScrolling);
+            navListeners();
+            addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
+                if (!searchBarInput.disabled) {
+                    search();
+                }
+            });
+            addEventListener(searchBarInput, 'keyup', function (event) {
+                if ((event as KeyboardEvent).key === "Enter") {
+                    search();
+                }
+            });
+            removeClass(getBody(), "hidden");
         });
-        addEventListener(searchBarInput, 'keyup', function (event) {
-            if ((event as KeyboardEvent).key === "Enter") {
-                search();
-            }
-        });
-        removeClass(getBody(), "hidden");
     });
 });
 

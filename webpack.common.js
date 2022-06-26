@@ -1,4 +1,15 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const html_minify_options = {
+	collapseWhitespace: true,
+	keepClosingSlash: true,
+	removeComments: true,
+	removeRedundantAttributes: true,
+	useShortDoctype: true,
+	sortAttributes: true,
+	sortClassName: true
+};
 
 module.exports = {
 	target: 'browserslist',
@@ -55,8 +66,113 @@ module.exports = {
 			import: './src/script/special_register',
 		},
 	},
+	plugins: [
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['404'],
+			filename: '../404.html',
+			template: 'src/html/404.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['account'],
+			filename: '../account.html',
+			template: 'src/html/account.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['bangumi-hls'],
+			filename: '../bangumi.html',
+			template: 'src/html/bangumi.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['confirm_email'],
+			filename: '../confirm_email.html',
+			template: 'src/html/confirm_email.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['confirm_special_register'],
+			filename: '../confirm_special_register.html',
+			template: 'src/html/confirm_special_register.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['console'],
+			filename: '../console.html',
+			template: 'src/html/console.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['image'],
+			filename: '../image.html',
+			template: 'src/html/image.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['index'],
+			filename: '../index.html',
+			template: 'src/html/index.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['info'],
+			filename: '../info.html',
+			template: 'src/html/info.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['login'],
+			filename: '../login.html',
+			template: 'src/html/login.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['message'],
+			filename: '../message.html',
+			template: 'src/html/message.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['new_email'],
+			filename: '../new_email.html',
+			template: 'src/html/new_email.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['password_reset'],
+			filename: '../password_reset.html',
+			template: 'src/html/password_reset.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['policy'],
+			filename: '../policy.html',
+			template: 'src/html/policy.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['register'],
+			filename: '../register.html',
+			template: 'src/html/register.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['request_password_reset'],
+			filename: '../request_password_reset.html',
+			template: 'src/html/request_password_reset.html'
+		}),
+		new HtmlWebpackPlugin({
+			minify: html_minify_options,
+			chunks: ['special_register'],
+			filename: '../special_register.html',
+			template: 'src/html/special_register.html'
+		}),
+	],
 	output: {
 		filename: '[name].js',
+		publicPath: '/script/',
 		clean: true,
 	},
 	optimization: {
@@ -65,7 +181,9 @@ module.exports = {
 		flagIncludedChunks: true,
 		removeAvailableModules: true,
 		splitChunks: {
-			cacheGroups: {
+			maxSize: 1000 * 1000,
+			chunks: 'all',
+			/*cacheGroups: {
 				polyfill: {
 					test: /[\\/]node_modules[\\/](core-js|@babel)[\\/]/,
 					name: 'polyfill',
@@ -78,7 +196,7 @@ module.exports = {
 					chunks: 'all',
 					reuseExistingChunk: true
 				}
-			}
+			}*/
 		},
 		//usedExports: 'global',
 	},
@@ -107,7 +225,7 @@ module.exports = {
 								"@babel/preset-env",
 								{
 									"useBuiltIns": "entry",
-									"corejs": "3.22"
+									"corejs": "3.23"
 								}
 							],
 							"@babel/preset-typescript"

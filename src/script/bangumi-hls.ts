@@ -61,6 +61,13 @@ var EPSelectorHeight: number;
 var contentContainer: HTMLElement;
 var mediaHolder: HTMLElement;
 
+var playerImportPromise: Promise<typeof import(
+    /* webpackExports: ["Hls", "videojs", "browser", "videojsMod"] */
+    './module/player'
+)>;
+var lazyloadImportPromise: ReturnType<typeof importLazyload>;
+
+
 addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
@@ -71,7 +78,7 @@ addEventListener(w, 'load', function(){
 	}
 
     
-    //get parameters
+    // Parse parameters
     let seriesIDParam = getSeriesID();
     if (seriesIDParam === null) {
         redirect(topURL, true);
@@ -82,6 +89,14 @@ addEventListener(w, 'load', function(){
     }
     seriesID = seriesIDParam;
 
+    // Preload modules
+    lazyloadImportPromise = importLazyload(); // Putting smaller (lazyload) promises before larger (player) promise attains better performance somehow.
+    playerImportPromise = import(
+        /* webpackExports: ["Hls", "videojs", "browser", "videojsMod"] */
+        './module/player'
+    );
+
+    // Parse other parameters
     const epIndexParam = getURLParam ('ep');
     const newURL = debug?('bangumi.html'+'?series='+seriesID):(topURL+'/bangumi/'+seriesID);
     if (epIndexParam === null) {
@@ -146,7 +161,7 @@ var baseURL = '';
 var onScreenConsole: HTMLTextAreaElement | false = false;
 
 
-async function updatePage (response: type.BangumiInfo.BangumiInfo) {
+function updatePage (response: type.BangumiInfo.BangumiInfo) {
     navListeners();
     removeClass(getBody(), "hidden");
 
@@ -238,28 +253,26 @@ async function updatePage (response: type.BangumiInfo.BangumiInfo) {
     let seriesOverride = epInfo.series_override;
     baseURL = cdnURL + '/' + (seriesOverride===undefined?seriesID:seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
     if (type == 'video' || type == 'audio') {
-        try {
-            ({
-                Hls,
-                videojs,
-                browser, 
-                videojsMod
-            } = await import(
-                /* webpackExports: ["Hls", "videojs", "browser", "videojsMod"] */
-                './module/player'));
-        } catch (e) {
+        playerImportPromise.then((playerModule) => {
+            Hls = playerModule.Hls;
+            videojs = playerModule.videojs;
+            browser = playerModule.browser; 
+            videojsMod = playerModule.videojsMod; 
+
+            if (type == 'video') {
+                updateVideo ();
+            } else{
+                updateAudio ();
+            }
+        }).catch((e) => { 
             message.show(message.template.param.moduleImportError(e));
             return;
-        }
-
-        if (type == 'video') {
-            updateVideo ();
-        } else{
-            updateAudio ();
-        }
+        });
     } else {
-        lazyloadInitialize = await importLazyload();
-        updateImage ();
+        lazyloadImportPromise.then((module) => {
+            lazyloadInitialize = module;
+            updateImage ();
+        }); // Import error is caught in 'importLazyload' already.
     }
 }
 
@@ -382,13 +395,13 @@ function updateVideo () {
     videoJS.lang = 'en';
     appendChild(mediaHolder, videoJS);
 
-    var config = {
+    const config = {
         controls: true,
         autoplay: false,
         preload: 'auto',
         fluid: true,
         playsinline: true,
-    };
+    } as const;
 
     videojs(videoJS, config, function () {
         videoJS.style.paddingTop = 9/16*100 + '%';
@@ -526,7 +539,7 @@ function addAudioNode (index: number) {
 
     let cdnCredentials = audioEPInfo.cdn_credentials;
 
-    let configVideoJSControl = {
+    const configVideoJSControl = {
         controls: true,
         autoplay: false,
         preload: 'auto',
@@ -536,7 +549,7 @@ function addAudioNode (index: number) {
             fullscreenToggle: false,
             pictureInPictureToggle: false
         }
-    };
+    } as const;
     
     let configHls = {
         enableWebVTT: false,
@@ -581,7 +594,7 @@ function addAudioNode (index: number) {
         let controlNode = getById('track' + index);
 
         if (USE_VIDEOJS) {
-            let configVideoJSMedia = {
+            const configVideoJSMedia = {
                 controls: false,
                 autoplay: false,
                 preload: 'auto',
@@ -594,7 +607,7 @@ function addAudioNode (index: number) {
                     //nativeVideoTracks: false
                 },
                 crossOrigin: 'use-credentials'
-            };
+            } as const;
             let videoJSMediaNode = createElement('audio') as HTMLAudioElement; 
             videoJSMediaNode.style.display = 'none';
             appendChild(mediaHolder, videoJSMediaNode);
@@ -998,6 +1011,7 @@ function addDownloadAccordion () {
         sendServerRequest('start_download.php', {
             callback: function (response: string) {
                 if (response == 'UNAVAILABLE') {
+                    addClass(downloadButton, 'hidden');
                     removeClass(warning, 'hidden');
                 } else if (response.startsWith(serverURL)) {
                     redirect(response, true);
