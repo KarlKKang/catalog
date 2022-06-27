@@ -5,8 +5,9 @@
   "private": true,
   "scripts": {
     "type-check": "tsc --noEmit",
-    "build:types": "tsc --emitDeclarationOnly --outDir dist/script",
-    "build-dev:types": "tsc --emitDeclarationOnly --outDir dev/script",
+    "build:type": "tsc --emitDeclarationOnly --outDir dist/script",
+    "build-dev:type": "tsc --emitDeclarationOnly --outDir dev/script",
+    "build:font": "python build_font.py && node minify-font-css.js",
     "build:js": "webpack --config webpack.prod.js",
     "build-dev:js": "webpack --config webpack.dev.js",
     "build:css": "node minify-css.js",

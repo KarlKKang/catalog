@@ -8,7 +8,7 @@ if (dev) {
 	destDir = './dev/css/';
 }
 
-const entry = [
+const entries = [
 	'account.css',
 	'bangumi-hls.css',
 	'console.css',
@@ -23,9 +23,8 @@ const entry = [
 	'videojs_mod.css',
 ];
 
-for (var i = 0; i < entry.length; i++) {
-	let filename = entry[i];
-	minifier(filename, srcDir, destDir);
+for (let filename of entries) {
+	minifier(srcDir, destDir, filename);
 }
 
-minifier('video-js.min.css', './node_modules/video.js/dist/', destDir);
+minifier('./node_modules/video.js/dist/', destDir, 'video-js.min.css');

@@ -2,8 +2,11 @@ const fs = require('fs');
 const postcss = require('postcss');
 const cssnano = require('cssnano');
 
-module.exports = function (filename, srcDir, destDir) {
-    fs.readFile(srcDir + filename, 'utf8', (err, data) => {
+module.exports = function (srcDir, destDir, srcFilename, destFilename) {
+    if (destFilename === undefined) {
+        destFilename = srcFilename
+    }
+    fs.readFile(srcDir + srcFilename, 'utf8', (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -22,15 +25,16 @@ module.exports = function (filename, srcDir, destDir) {
                         cssDeclarationSorter: {
                             order: "smacss"
                         },
-                        zindex: false
+                        zindex: false,
+                        discardUnused: false
                     }
                 ] 
             })
-        ]).process(data, {from: srcDir + filename, to: destDir + filename}).then(result => {
+        ]).process(data, {from: srcDir + srcFilename, to: destDir + destFilename}).then(result => {
             result.warnings().forEach(warn => {
                 console.warn(warn.toString())
             });
-            writeFile (destDir + filename, result.css);
+            writeFile (destDir + destFilename, result.css);
         });
     });
 }
