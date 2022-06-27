@@ -141,7 +141,14 @@ def font_splitter (font_name: str, src_dir: str, file_name: str, file_extension:
 
     #compress
     for glyph in unicode_blocks:
-        dest_file_name = file_name+'_'+unicode_blocks[glyph][2:6]
+        end_index = len(unicode_blocks[glyph])
+        hyphen_index = unicode_blocks[glyph].find('-')
+        comma_index = unicode_blocks[glyph].find(',')
+        if (hyphen_index != -1):
+            end_index = hyphen_index
+        if (comma_index != -1 and comma_index < end_index):
+            end_index = comma_index
+        dest_file_name = unicode_blocks[glyph][2:end_index]
         output_file_woff2 = os.path.join(output_dir, dest_file_name+".woff2")
         output_file_woff = os.path.join(output_dir, dest_file_name+".woff")
         sys.argv = [

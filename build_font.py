@@ -1,6 +1,6 @@
 from font_splitter import font_splitter
 
-dir_surfix = '_v3'
+dir_surfix = '_v4'
 
 font_families = [
     {
