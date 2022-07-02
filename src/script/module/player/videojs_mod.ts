@@ -25,7 +25,13 @@ import screenfull from 'screenfull';
 
 declare global {
 	interface HTMLVideoElement {
-		webkitEnterFullscreen?: () => void;
+		webkitEnterFullscreen?: () => void,
+		autoPictureInPicture?: boolean,
+		playsinline?: boolean,
+	}
+
+	interface HTMLMediaElement {
+		controlsList?: DOMTokenList
 	}
 }
 
@@ -56,7 +62,8 @@ export type VideojsModInstance = {
 	destroy: () => void,
 }
 
-export default function (oldControls: HTMLElement, instance: videojs.Player, config?: {audio?: boolean, mediaElemOverride?: HTMLVideoElement | HTMLAudioElement}) {
+export default function (instance: videojs.Player, config?: {audio?: boolean, mediaElemOverride?: HTMLVideoElement | HTMLAudioElement}) {
+	let oldControls = instance.el();
     var controls = oldControls.cloneNode(true) as HTMLElement;
     oldControls.id = '';
 
@@ -587,6 +594,7 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 		that._attached = true;
 		that._useNative = false;
 		that._hlsInstance = hlsInstance;
+		setMediaAttributes();
 		hlsInstance.on(Hls.Events.FRAG_CHANGED, (_, data) => { 
 			that._fragStart = data.frag.startDTS;
 			onScreenConsoleOutput ('Fragment changed: ' + that._fragStart + '-' + data.frag.endDTS);
@@ -605,6 +613,7 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 		that._attached = true;
 		that._useNative = false;
 		that._videoJSInstance = videoJSInstance;
+		setMediaAttributes();
 		videoJSInstance.src({
 			src: url,
 			type: 'application/vnd.apple.mpegurl'
@@ -619,6 +628,9 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 			return false;
 		}
 		that._attached = true;
+		media.crossOrigin = 'use-credentials';
+		setMediaAttributes();
+
 		media.src = url;
         media.load();
 		media.volume = 1;
@@ -639,6 +651,24 @@ export default function (oldControls: HTMLElement, instance: videojs.Player, con
 			media.load();
 		}
 		that._attached = false;
+	}
+
+	function setMediaAttributes () {
+		if (typeof media.preload !== 'undefined') {
+			media.preload = 'auto';
+		}
+		if (typeof media.controlsList !== 'undefined') {
+			media.controlsList.add('nodownload');
+		}
+		
+		if (media instanceof HTMLVideoElement) {
+			if (typeof media.playsInline !== 'undefined') {
+				media.playsInline = true;
+			}
+			if (typeof media.autoPictureInPicture !== 'undefined') {
+				media.autoPictureInPicture = true;
+			}
+		}
 	}
 	
 	that.media = media;

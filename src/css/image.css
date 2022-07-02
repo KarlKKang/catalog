@@ -1,6 +1,16 @@
 @charset "utf-8";
 /* CSS Document */
 
+html {
+	display: none;
+}
+
+@media screen {
+	html {
+		display: block;
+	}
+}
+
 body {
 	padding: 0px;
 	margin: 0px;

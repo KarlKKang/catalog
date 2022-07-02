@@ -75,8 +75,15 @@
 }
 
 html {
+	display: none;
 	scroll-behavior: smooth;
-	background: var(--background-color);
+}
+
+@media screen {
+	html {
+		display: block;
+		background: var(--background-color);
+	}
 }
 
 body {

@@ -90,7 +90,7 @@ export function getParent (elem: Element) {
     return parent as HTMLElement;
 }
 
-export function insertBefore (newNode: Node, beforeNode: HTMLElement) {
+export function insertBefore (newNode: Node, beforeNode: Element) {
     getParent(beforeNode).insertBefore(newNode, beforeNode);
 }
 

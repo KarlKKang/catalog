@@ -398,14 +398,12 @@ function updateVideo () {
     const config = {
         controls: true,
         autoplay: false,
-        preload: 'auto',
         fluid: true,
-        playsinline: true,
     } as const;
 
     videojs(videoJS, config, function () {
         videoJS.style.paddingTop = 9/16*100 + '%';
-        mediaInstances.push(videojsMod (videoJS, this, {}));
+        mediaInstances.push(videojsMod(this, {}));
 
         let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + videoEPInfo.file_name + '[' + videoEPInfo.formats[formatIndex] + '].m3u8'), videoEPInfo.cdn_credentials);
 
@@ -506,7 +504,6 @@ function addVideoNode (url: string, options: {currentTime?: number, play?: boole
         }
     } else if (browser.NATIVE_HLS) {
         addEventListener(videoMedia, 'error', function () {showPlaybackError ();});
-        videoMedia.crossOrigin = 'use-credentials';
         addEventListener(videoMedia, 'loadedmetadata', function () {
             videoReady ();
         });
@@ -542,7 +539,6 @@ function addAudioNode (index: number) {
     const configVideoJSControl = {
         controls: true,
         autoplay: false,
-        preload: 'auto',
         fluid: true,
         aspectRatio: "1:0",
         controlBar: {
@@ -591,13 +587,11 @@ function addAudioNode (index: number) {
     
     let videoJSControl = videojs(audioNode, configVideoJSControl, function () {
         let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK?'[FLAC]':'') +'.m3u8'), cdnCredentials, baseURL + '_MASTER_*.m3u8'); 
-        let controlNode = getById('track' + index);
 
         if (USE_VIDEOJS) {
             const configVideoJSMedia = {
                 controls: false,
                 autoplay: false,
-                preload: 'auto',
                 html5: {
                     vhs: {
                         overrideNative: true,
@@ -606,7 +600,6 @@ function addAudioNode (index: number) {
                     nativeAudioTracks: false,
                     //nativeVideoTracks: false
                 },
-                crossOrigin: 'use-credentials'
             } as const;
             let videoJSMediaNode = createElement('audio') as HTMLAudioElement; 
             videoJSMediaNode.style.display = 'none';
@@ -614,7 +607,7 @@ function addAudioNode (index: number) {
 
             let videoJSMedia = videojs(videoJSMediaNode, configVideoJSMedia, function () {
 
-                let audioInstance =  videojsMod (controlNode, videoJSControl, {
+                let audioInstance =  videojsMod (videoJSControl, {
                     mediaElemOverride: videoJSMediaNode,
                     audio: true
                 });
@@ -642,7 +635,7 @@ function addAudioNode (index: number) {
                 }
             });
         } else {
-            let audioInstance = videojsMod (controlNode, videoJSControl, {audio: true});
+            let audioInstance = videojsMod (videoJSControl, {audio: true});
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
             if (browser.USE_MSE) {
@@ -668,7 +661,6 @@ function addAudioNode (index: number) {
                 let audioMedia = audioInstance.media;
                 
                 addEventListener(audioMedia, 'error', function () {showPlaybackError();});
-                audioMedia.crossOrigin = 'use-credentials';
                 addEventListener(audioMedia, 'loadedmetadata', function () {
                     audioReadyCounter ++;
                     if (audioReadyCounter == audioEPInfo.files.length) {
