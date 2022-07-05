@@ -26,7 +26,8 @@ module.exports = function (srcDir, destDir, srcFilename, destFilename) {
                             order: "smacss"
                         },
                         zindex: false,
-                        discardUnused: false
+                        discardUnused: false,
+                        reduceIdents: false
                     }
                 ] 
             })
