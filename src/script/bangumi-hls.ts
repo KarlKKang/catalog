@@ -347,6 +347,9 @@ function updateSeasonSelector (seasons: type.BangumiInfo.Seasons) {
 
 function updateVideo () {
     let videoEPInfo = epInfo as type.BangumiInfo.VideoEPInfo;
+    addClass(mediaHolder, 'video');
+
+    // Title
     if (videoEPInfo.title!='') {
         let title = createElement('p');
         addClass(title, 'sub-title');
@@ -355,6 +358,7 @@ function updateVideo () {
         insertBefore(title, getById('message'));
     }
 
+    // Formats
     let formats = videoEPInfo.formats;
 
     let formatSelector = createElement('div');
@@ -386,9 +390,19 @@ function updateVideo () {
     appendChild(formatSelector, selectMenu);
     insertBefore(formatSelector, getById('message'));
 
-    addClass(mediaHolder, 'video');
+    // Download Accordion
     addDownloadAccordion();
 
+    // Video Node
+    if (!browser.USE_MSE && !browser.NATIVE_HLS) {
+        showHLSCompatibilityError();
+        return;
+    }
+    if (!browser.CAN_PLAY_AVC_AAC) {
+        showCodecCompatibilityError();
+        return;
+    }
+    
     var videoJS = createElement('video-js');
 
     addClass(videoJS, 'vjs-big-play-centered');
@@ -445,11 +459,6 @@ function formatSwitch () {
 
 function addVideoNode (url: string, options: {currentTime?: number, play?: boolean}) {
     destroyAll();
-
-    if (!browser.CAN_PLAY_AVC_AAC) {
-        showCodecCompatibilityError();
-        return;
-    }
     
     let videoInstance = mediaInstances[0] as VideojsModInstance;
     let videoMedia = videoInstance.media;
@@ -499,35 +508,43 @@ function addVideoNode (url: string, options: {currentTime?: number, play?: boole
             videoReady();
         });
 
-        if (!videoInstance.attachHls(hls, url)) {
+        videoInstance.attachHls(hls, url).catch(function () {
             showAttachError();
-        }
+        });
     } else if (browser.NATIVE_HLS) {
         addEventListener(videoMedia, 'error', function () {showPlaybackError ();});
         addEventListener(videoMedia, 'loadedmetadata', function () {
             videoReady ();
         });
-        if (!videoInstance.attachNative(url)) {
+        videoInstance.attachNative(url).catch(function () {
             showAttachError();
-        }
-    } else {
-        showHLSCompatibilityError();
+        });
     }
 }
 
 
 var audioReadyCounter = 0;
+var audioMediaAttachPromise: Promise<void>[] = [];
 function updateAudio () {
     let audioEPInfo = epInfo as type.BangumiInfo.AudioEPInfo;
 
     addAlbumInfo();
     addDownloadAccordion();
 
+    if (!browser.USE_MSE && !browser.NATIVE_HLS) {
+        showHLSCompatibilityError();
+        return;
+    }
+
     for (var i = 0; i < audioEPInfo.files.length; i++) {
         if (!addAudioNode (i)) {
             return;
         }
     }
+
+    Promise.all(audioMediaAttachPromise).catch(function() {
+        showAttachError();
+    })
 }
 
 function addAudioNode (index: number) {
@@ -630,9 +647,7 @@ function addAudioNode (index: number) {
                     }
                 });
 
-                if (!audioInstance.attachVideoJS(videoJSMedia, url)) {
-                    showAttachError();
-                }
+                audioMediaAttachPromise.push(audioInstance.attachVideoJS(videoJSMedia, url));
             });
         } else {
             let audioInstance = videojsMod (videoJSControl, {audio: true});
@@ -654,9 +669,7 @@ function addAudioNode (index: number) {
                         audioReady();
                     }
                 });
-                if (!audioInstance.attachHls(hls, url)) {
-                    showAttachError();
-                }
+                audioMediaAttachPromise.push(audioInstance.attachHls(hls, url));
             } else if (browser.NATIVE_HLS) {
                 let audioMedia = audioInstance.media;
                 
@@ -666,13 +679,8 @@ function addAudioNode (index: number) {
                     if (audioReadyCounter == audioEPInfo.files.length) {
                         audioReady();
                     }
-                });
-                
-                if (!audioInstance.attachNative(url)) {
-                    showAttachError();
-                }
-            } else {
-                showHLSCompatibilityError();
+                });        
+                audioMediaAttachPromise.push(audioInstance.attachNative(url));
             }
         }
     });

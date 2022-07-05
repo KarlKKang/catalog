@@ -56,9 +56,9 @@ export type VideojsModInstance = {
 	play: () => void,
 	pause: () => void,
 	seek: (timestamp: number) => void,
-	attachHls: (hlsInstance: Hls, url: string) => boolean,
-	attachVideoJS: (videoJSInstance: videojs.Player, url: string) => boolean,
-	attachNative: (url: string) => boolean,
+	attachHls: (hlsInstance: Hls, url: string) => Promise<void>,
+	attachVideoJS: (videoJSInstance: videojs.Player, url: string) => Promise<void>,
+	attachNative: (url: string) => Promise<void>,
 	destroy: () => void,
 }
 
@@ -587,9 +587,9 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
         }
     }
 	
-	function attachHls (hlsInstance: Hls, url: string) {
+	async function attachHls (hlsInstance: Hls, url: string) {
 		if (that._attached) {
-			return false;
+			throw new Error('Failed to attach.');
 		}
 		that._attached = true;
 		that._useNative = false;
@@ -603,12 +603,11 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 		hlsInstance.loadSource(url);
 		media.volume = 1;
 		onScreenConsoleOutput('HLS is attached.');
-		return true;
 	}
 
-	function attachVideoJS (videoJSInstance: videojs.Player, url: string) {
+	async function attachVideoJS (videoJSInstance: videojs.Player, url: string) {
 		if (that._attached) {
-			return false;
+			throw new Error('Failed to attach.');
 		}
 		that._attached = true;
 		that._useNative = false;
@@ -620,12 +619,11 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 		});
 		videoJSInstance.volume(1);
 		onScreenConsoleOutput ('VideoJS is attached.');
-		return true;
 	}
 
-	function attachNative (url: string) {
+	async function attachNative (url: string) {
 		if (that._attached) {
-			return false;
+			throw new Error('Failed to attach.');
 		}
 		that._attached = true;
 		media.crossOrigin = 'use-credentials';
@@ -634,7 +632,6 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 		media.src = url;
         media.load();
 		media.volume = 1;
-		return true;
 	}
 
 	function destroy () {
