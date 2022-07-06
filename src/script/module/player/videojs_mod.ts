@@ -632,6 +632,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 		media.src = url;
         media.load();
 		media.volume = 1;
+		onScreenConsoleOutput ('Native HLS is attached.');
 	}
 
 	function destroy () {

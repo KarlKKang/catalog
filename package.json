@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.18.3",
+    "bowser": "^2.11.0",
     "core-js": "^3.23.3",
     "css-vars-ponyfill": "^2.4.7",
     "hls.js": "^1.1.5",

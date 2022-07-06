@@ -1,5 +1,5 @@
 import {default as Hls} from 'hls.js';
-import {default as videojs} from 'video.js';
+import Bowser from 'bowser';
 
 import {w, createElement} from '../main';
 
@@ -10,28 +10,42 @@ declare global {
     }
 }
 
-interface browser extends videojs.Browser {
-    IS_FIREFOX?: boolean
+const USER_AGENT = window.navigator && window.navigator.userAgent || '';
+var IS_SAFARI = false;
+var IS_CHROMIUM = false;
+var IS_IOS = false;
+var IS_DESKTOP = false;
+var IS_IE = false;
+var IS_FIREFOX = false;
+
+if (USER_AGENT !== '') {
+    const bowserParser = Bowser.getParser(USER_AGENT);
+
+    const browserName = bowserParser.getBrowserName();
+    const osName = bowserParser.getOSName();
+    const engineName = bowserParser.getEngineName();
+    const platformType = bowserParser.getPlatformType();
+
+    IS_CHROMIUM = engineName === 'Blink' || !!w.chrome;
+    IS_IOS = (osName === 'iOS') || (browserName === 'Safari' && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))) /* iPad in desktop mode */;
+    IS_DESKTOP = platformType === 'desktop' && (osName === 'Linux' || osName === 'Windows' || osName === 'macOS') && !IS_IOS;
+    IS_IE = browserName === 'Internet Explorer';
+    IS_FIREFOX = engineName === 'Gecko';
+
+    IS_SAFARI = IS_IOS || browserName === 'Safari';
 }
 
 let audioElem = createElement('audio') as HTMLAudioElement;
 let videoElem = createElement('video') as HTMLVideoElement;
 
-const vjsBrowser: browser = videojs.browser;
+var NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != "") && (audioElem.canPlayType('application/vnd.apple.mpegurl') != "") && IS_SAFARI;
+var USE_MSE = Hls.isSupported() && !NATIVE_HLS;
 
-const IS_CHROMIUM = !!w.chrome;
-const IS_IOS = vjsBrowser.IS_IOS; // IS_IOS = IS_IPHONE || IS_IPAD || IS_IPOD
-const IS_MOBILE = IS_IOS || vjsBrowser.IS_ANDROID; 
-const IS_SAFARI = vjsBrowser.IS_SAFARI || vjsBrowser.IS_IOS;
-const USE_MSE = Hls.isSupported() && !IS_SAFARI;
+var CAN_PLAY_ALAC: boolean;
+var CAN_PLAY_FLAC: boolean;
+var CAN_PLAY_MP3 = (audioElem.canPlayType('audio/mpeg') != "")  && !IS_IE;
+var CAN_PLAY_AVC_AAC: boolean;
 
-
-const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != "") && (audioElem.canPlayType('application/vnd.apple.mpegurl') != "");
-
-let CAN_PLAY_ALAC;
-let CAN_PLAY_FLAC;
-let CAN_PLAY_MP3 = audioElem.canPlayType('audio/mpeg') != "";
-let CAN_PLAY_AVC_AAC;
 if (USE_MSE) {
     let mediaSource = w.MediaSource || w.WebKitMediaSource;
     CAN_PLAY_ALAC = mediaSource.isTypeSupported('audio/mp4; codecs="alac"');
@@ -45,16 +59,14 @@ if (USE_MSE) {
     //CAN_PLAY_MP3 = audioElem.canPlayType('audio/mpeg') != "";
 }
 
-const IS_IE = (vjsBrowser.IE_VERSION !== null) && (!CAN_PLAY_FLAC);
-CAN_PLAY_MP3 = CAN_PLAY_MP3 && !IS_IE; //IE cannot play mp3 in HLS
-
 export {IS_CHROMIUM};
 export {IS_IOS};
-export {IS_MOBILE};
+export {IS_DESKTOP};
 export {IS_IE};
-export const IS_FIREFOX = vjsBrowser.IS_FIREFOX === true; //IS_FIREFOX is not presented in the interface
-export {USE_MSE};
+export {IS_FIREFOX};
+
 export {NATIVE_HLS};
+export {USE_MSE};
 export {CAN_PLAY_ALAC};
 export {CAN_PLAY_FLAC};
 export {CAN_PLAY_MP3};

@@ -172,10 +172,10 @@ function updatePage (response: type.BangumiInfo.BangumiInfo) {
     let titleOverride = response.title_override;
     if (titleOverride !== undefined) {
         titleElem.innerHTML = titleOverride;
-        setTitle(titleOverride + ' | featherine');
+        setTitle(parseCharacters(titleOverride) + ' | featherine');
     } else {
         titleElem.innerHTML = title;
-        setTitle(title + '[' + response.series_ep[epIndex] + '] | featherine');
+        setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | featherine');
     } 
     
 
@@ -686,7 +686,7 @@ function addAudioNode (index: number) {
     });
 
     function setMediaTitle (audioInstance: VideojsModInstance) {
-        audioInstance.media.title = ((file.title=='')?'':(file.title + ' | ')) + getTitle();
+        audioInstance.media.title = ((file.title=='')?'':(parseCharacters(file.title) + ' | ')) + getTitle();
     }
 
     return true;
@@ -862,7 +862,7 @@ function updateImage () {
 }
 
 function showPlaybackError (detail?: string) {
-    showMediaMessage (message.template.media.title.defaultError, '<p>再生中にエラーが発生しました。AppleデバイスでiCloudプライベートリレーを使用する際に、既知の問題があります。iCloudプライベートリレーを使用している場合は、それをオフにしてからもう一度試してみてください。' + message.template.media.body.defaultErrorSuffix + (detail===undefined?'':('<br>Error detail: '+detail)) + '</p>', true);
+    showMediaMessage (message.template.media.title.defaultError, '<p>再生中にエラーが発生しました。' + (detail===undefined?'AppleデバイスでiCloudプライベートリレーを使用する際に、既知の問題があります。iCloudプライベートリレーを使用している場合は、それをオフにしてからもう一度試してみてください。':'') + message.template.media.body.defaultErrorSuffix + (detail===undefined?'':('<br>Error detail: '+detail)) + '</p>', true);
 }
 
 function showHLSCompatibilityError () {
@@ -978,7 +978,7 @@ function displayChapters (chapters: type.BangumiInfo.Chapters) {
 }
 
 function addDownloadAccordion () {
-    if (browser.IS_MOBILE) {
+    if (!browser.IS_DESKTOP) {
         return;
     }
 
@@ -1086,6 +1086,14 @@ function destroyAll () {
     for (let mediaInstance of mediaInstances) {
         mediaInstance.destroy();
     }
+}
+
+function parseCharacters (txt: string) {
+    txt = txt.replace(/<.*?>/g, '');
+    txt = txt.replace(/&gt;/g, '>');
+    txt = txt.replace(/&lt;/g, '<');
+    txt = txt.replace(/&amp;/g, '&');
+    return txt;
 }
 
 
