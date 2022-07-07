@@ -19,7 +19,7 @@ import {
 	remove
 } from '../main';
 import Hls from 'hls.js';
-import {default as videojs} from 'video.js';
+import type {default as videojs} from 'video.js';
 import {IS_IOS} from './browser';
 import screenfull from 'screenfull';
 
@@ -138,9 +138,10 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 				media.pause();
 				startBuffer();
 			}
-			let videoMedia = media as HTMLVideoElement;
-			let width = videoMedia.videoWidth, height = videoMedia.videoHeight;
-			controls.style.paddingTop = height/width*100 + '%';
+			// let videoMedia = media as HTMLVideoElement;
+			// let width = videoMedia.videoWidth, height = videoMedia.videoHeight;
+			// controls.style.paddingTop = height/width*100 + '%';
+			controls.style.removeProperty('padding-top');
 		}
 		durationDisplay.innerHTML = secToTimestamp(media.duration);
 	})
@@ -656,7 +657,12 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 			media.preload = 'auto';
 		}
 		if (typeof media.controlsList !== 'undefined') {
-			media.controlsList.add('nodownload');
+			if (media.controlsList.supports('nodownload')) {
+				media.controlsList.add('nodownload');
+			}
+			if (media.controlsList.supports('noplaybackrate')) {
+				media.controlsList.add('noplaybackrate');
+			}
 		}
 		
 		if (media instanceof HTMLVideoElement) {

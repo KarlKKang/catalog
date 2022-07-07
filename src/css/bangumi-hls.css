@@ -224,13 +224,6 @@ select:hover{
 	box-shadow: var(--shadow-hover);
 }
 
-#media-holder > video-js.vjs-fullscreen {
-	box-shadow: none;
-}
-#media-holder > video-js.vjs-fullscreen:hover {
-	box-shadow: none;
-}
-
 #media-holder > .lazyload {
 	position: relative;
 	padding-bottom: 56.25%;

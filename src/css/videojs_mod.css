@@ -74,6 +74,49 @@
 	text-shadow: none;
 }
 
+.video-js .vjs-slider:focus {
+	text-shadow: none;
+	box-shadow: none;
+}
+
+.video-js .vjs-progress-control .vjs-mouse-display.backward {
+	background-color: var(--foreground-color);
+}
+
+.video-js .vjs-progress-control .vjs-mouse-display.forward {
+	background-color: var(--text-color);
+}
+
+/* Fullscreen */
+
+.video-js.vjs-fullscreen {
+	box-shadow: none;
+}
+.video-js.vjs-fullscreen:hover {
+	box-shadow: none;
+}
+
+.video-js.vjs-fullscreen .vjs-control-bar {
+	width: 95%;
+	margin: 0px auto 3em auto;
+	border-radius: 10px;
+	padding: 0px 0.5em 0px 0.5em;
+	height: 4em;
+	box-shadow: var(--shadow);
+}
+
+.video-js.vjs-fullscreen .vjs-button > .vjs-icon-placeholder:before {
+	font-size: 2em;
+	line-height: 2;
+}
+
+.video-js.vjs-fullscreen .vjs-time-control {
+	font-size: 1.15em;
+	line-height: 3.48;
+}
+
+
+/* Audio */
 
 .video-js, .video-js.vjs-audio {
 	background-color: var(--foreground-color);
@@ -96,19 +139,6 @@
 .video-js .vjs-volume-level, 
 .video-js.vjs-audio .vjs-play-progress,
 .video-js.vjs-audio .vjs-volume-level{
-	background-color: var(--text-color);
-}
-
-.video-js .vjs-slider:focus {
-	text-shadow: none;
-	box-shadow: none;
-}
-
-.video-js .vjs-progress-control .vjs-mouse-display.backward {
-	background-color: var(--foreground-color);
-}
-
-.video-js .vjs-progress-control .vjs-mouse-display.forward {
 	background-color: var(--text-color);
 }
 

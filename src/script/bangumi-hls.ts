@@ -487,7 +487,7 @@ function addVideoNode (url: string, options: {currentTime?: number, play?: boole
             maxFragLookUpTolerance: 0.0,
             testBandwidth: false,
             backBufferLength: 30,
-            maxBufferLength: 60,
+            maxBufferLength: 45,
             maxMaxBufferLength: 90,
             maxBufferSize: 0,
             maxBufferHole: 0,
@@ -862,7 +862,7 @@ function updateImage () {
 }
 
 function showPlaybackError (detail?: string) {
-    showMediaMessage (message.template.media.title.defaultError, '<p>再生中にエラーが発生しました。' + (detail===undefined?'AppleデバイスでiCloudプライベートリレーを使用する際に、既知の問題があります。iCloudプライベートリレーを使用している場合は、それをオフにしてからもう一度試してみてください。':'') + message.template.media.body.defaultErrorSuffix + (detail===undefined?'':('<br>Error detail: '+detail)) + '</p>', true);
+    showMediaMessage (message.template.media.title.defaultError, '<p>再生中にエラーが発生しました。' + (browser.IS_APPLE?'AppleデバイスでiCloudプライベートリレーを使用する際に、既知の問題があります。iCloudプライベートリレーを使用している場合は、それをオフにしてからもう一度試してみてください。':'') + message.template.media.body.defaultErrorSuffix + (detail===undefined?'':('<br>Error detail: '+detail)) + '</p>', true);
 }
 
 function showHLSCompatibilityError () {
