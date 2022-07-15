@@ -1,7 +1,7 @@
 import {
-	debug,
-	topURL,
-    loginURL
+	DEVELOPMENT,
+	TOP_URL,
+    LOGIN_URL
 } from '../env/constant';
 
 import {getHref, redirect, setCookie, getTitle} from '../DOM/document';
@@ -122,46 +122,46 @@ const param = {
     expired: {
         title: titleAndBody.title.expired,
         message: titleAndBody.body.expired,
-        url: loginURL
+        url: LOGIN_URL
     },
     emailChanged: {
         title: titleAndBody.title.completed,
 		message: titleAndBody.body.emailChanged,
 		color: 'green',
-		url: loginURL
+		url: LOGIN_URL
     },
     incompletedInvitation: {
         title: titleAndBody.title.rejected,
         message: titleAndBody.body.incompletedInvitation,
-        url: loginURL
+        url: LOGIN_URL
     },
     invitationOnly: {
         title: titleAndBody.title.rejected,
 	    message: titleAndBody.body.invitationOnly,
-		url: loginURL
+		url: LOGIN_URL
     },
     registerComplete: {
         title: titleAndBody.title.completed,
 		message: titleAndBody.body.registerComplete,
 		color: 'green',
-		url: loginURL
+		url: LOGIN_URL
     },
     emailSent: {
         title: titleAndBody.title.emailSent,
 		message: titleAndBody.body.emailSent,
 		color: 'green',
-		url: loginURL
+		url: LOGIN_URL
     },
     passwordChanged: {
         title: titleAndBody.title.completed,
 		message: titleAndBody.body.passwordChanged,
 		color: 'green',
-		url: loginURL
+		url: LOGIN_URL
     },
     specialRegistrationOnly: {
         title: titleAndBody.title.rejected,
         message: titleAndBody.body.specialRegistrationOnly,
-        url: 'special_register'+(debug?'.html':'')
+        url: 'special_register'+(DEVELOPMENT?'.html':'')
     },
     unrecommendedBrowser: function (redirectURL: string) {
         return {
@@ -197,22 +197,22 @@ const param = {
     }
 } as const;
 
-function paramWithRedirect<T extends string> (message: T): {readonly message: T, readonly url?: typeof loginURL | typeof topURL, readonly logout?: boolean} {
+function paramWithRedirect<T extends string> (message: T): {readonly message: T, readonly url?: typeof LOGIN_URL | typeof TOP_URL, readonly logout?: boolean} {
     const href = getHref();
-    if (href == topURL) {
+    if (href == TOP_URL) {
         return {
             message: message,
-            url: loginURL,
+            url: LOGIN_URL,
             logout: true
         } as const;
-    } else if (href == loginURL) {
+    } else if (href == LOGIN_URL) {
         return {
             message: message
         } as const;
     } else {
         return {
             message: message,
-            url: topURL,
+            url: TOP_URL,
         } as const;
     }
 }
@@ -230,11 +230,11 @@ export function show (param?: MessageParam) {
 	if (param === undefined) { 
         param = {};
         const href = getHref();
-		if (href == topURL) {
+		if (href == TOP_URL) {
             param.logout = true;
-            param.url = loginURL;
-        } else if (href != loginURL) {
-            param.url = topURL;
+            param.url = LOGIN_URL;
+        } else if (href != LOGIN_URL) {
+            param.url = TOP_URL;
         }
 	}
 	
@@ -264,7 +264,7 @@ export function show (param?: MessageParam) {
     };
 	
     setCookie('local-message-param', JSON.stringify(cookie), 86400);
-	redirect(debug?'message.html':(topURL+'/message'), true);
+	redirect(DEVELOPMENT?'message.html':(TOP_URL+'/message'), true);
 }
 
 export const template = {

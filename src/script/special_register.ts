@@ -1,7 +1,7 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
+	DEVELOPMENT,
 	sendServerRequest,
 	message,
 	passwordStyling,
@@ -24,7 +24,7 @@ addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (getHref()!='https://featherine.com/special_register' && !debug) {
+	if (getHref()!='https://featherine.com/special_register' && !DEVELOPMENT) {
 		window.location.replace('https://featherine.com/special_register');
 		redirect('https://featherine.com/special_register', true);
 		return;
@@ -39,7 +39,7 @@ addEventListener(w, 'load', function(){
 
 	sendServerRequest('special_register.php', {
 		callback: function (response: string) {
-            if (response == 'APPROVED' || debug) {
+            if (response == 'APPROVED' || DEVELOPMENT) {
 				addEventListener(emailInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === "Enter") {
                         register ();

@@ -1,10 +1,10 @@
 // JavaScript Document
 import {
     secToTimestamp,
-	onScreenConsoleOutput,
 	removeRightClick,
 	message,
 
+	getById,
 	insertBefore,
 	addEventListener,
 	getDescendantsByTagAt,
@@ -62,7 +62,7 @@ export type VideojsModInstance = {
 	destroy: () => void,
 }
 
-export default function (instance: videojs.Player, config?: {audio?: boolean, mediaElemOverride?: HTMLVideoElement | HTMLAudioElement}) {
+export default function (instance: videojs.Player, config?: {audio?: boolean, mediaElemOverride?: HTMLVideoElement | HTMLAudioElement, debug?: boolean}) {
 	let oldControls = instance.el();
     var controls = oldControls.cloneNode(true) as HTMLElement;
     oldControls.id = '';
@@ -73,10 +73,11 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 	if (config === undefined) {
 		config = {};
 	}
-	const isVideo = !(config.audio === true);
+	const IS_VIDEO = !(config.audio === true);
+	const DEBUG = config.debug === true;
 	
 	var media: HTMLVideoElement | HTMLAudioElement;
-	if (isVideo) {
+	if (IS_VIDEO) {
 		media = getDescendantsByTagAt(controls, 'video', 0) as HTMLVideoElement;
 	} else {
 		media = getDescendantsByTagAt(controls, 'audio', 0) as HTMLAudioElement;
@@ -133,7 +134,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 
     //Fluid resize and duration
 	addEventListener(media, 'loadedmetadata', function () {
-		if (isVideo) {
+		if (IS_VIDEO) {
 			if (!that._useNative) {
 				media.pause();
 				startBuffer();
@@ -144,10 +145,14 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 			controls.style.removeProperty('padding-top');
 		}
 		durationDisplay.innerHTML = secToTimestamp(media.duration);
+	});
+
+	addEventListener(media, 'durationchange', function () {
+		durationDisplay.innerHTML = secToTimestamp(media.duration);
 	})
 
     
-	if (isVideo) {
+	if (IS_VIDEO) {
 		//Load progress
 		let loadProgress = getDescendantsByClassAt(progressHolder, 'vjs-load-progress', 0) as HTMLElement;
 		addEventListener(media, 'progress', function () {
@@ -212,7 +217,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
         if (!that._dragging && media.duration) {
 			currentTimeDisplay.innerHTML = secToTimestamp (media.currentTime);
             progressBar.style.width = media.currentTime/media.duration*100 + '%';
-			if (isVideo) {
+			if (IS_VIDEO) {
 				if (that._inactiveCountdown > 0) {
 					that._inactiveCountdown -= 300;
 					if (that._inactiveCountdown == 0) {
@@ -225,7 +230,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 			that._inactiveCountdown = 3000;
 		}
 		
-		if (isVideo) {
+		if (DEBUG && IS_VIDEO) {
 			let videoMedia = media as HTMLVideoElement;
 			if (typeof videoMedia.getVideoPlaybackQuality === "function") {
 				var quality = videoMedia.getVideoPlaybackQuality();
@@ -241,7 +246,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 		}
 	}, 300);
 	
-	if (isVideo) {
+	if (IS_VIDEO) {
 		addEventsListener(controls, ['mousemove', 'click', 'touchstart', 'touchmove', 'touchend'], function () {
 			removeClass(controls, 'vjs-user-inactive');
 			addClass(controls, 'vjs-user-active');
@@ -271,7 +276,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
             let currentTime = changeProgress(event as MouseEvent | TouchEvent);
 			seek(currentTime);
 
-			if (isVideo && !that._useNative) {
+			if (IS_VIDEO && !that._useNative) {
 				if (that._playing) {
 					play();
 				}
@@ -327,7 +332,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 		return currentTime;
 	}
 	
-	if (isVideo) {
+	if (IS_VIDEO) {
 		let videoMedia = media as HTMLVideoElement;
 		const IOS_FULLSCREEN = IS_IOS && videoMedia.webkitEnterFullscreen;
 
@@ -459,7 +464,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 
     //Helper Functions
 	function play() {
-		if (isVideo && !that._useNative) {
+		if (IS_VIDEO && !that._useNative) {
 			that._playing = true;
 			startBuffer();
 		} else {
@@ -468,14 +473,14 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 	}
 	
 	function pause() {
-		if (isVideo && !that._useNative) {
+		if (IS_VIDEO && !that._useNative) {
 			that._playing = false;
 		}
 		media.pause();
 	}
 	
 	function seek (timestamp: number) {
-		if (isVideo && that._hlsInstance !== undefined) {
+		if (IS_VIDEO && that._hlsInstance !== undefined) {
 			if (timestamp >= that._fragStart) {
 				media.currentTime = timestamp;
 				onScreenConsoleOutput ('Skipped buffer flushing.');
@@ -503,7 +508,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 			removeClass(controls, 'vjs-ended');
 			removeClass(playButton, 'vjs-ended');
         }
-		if (isVideo && !that._useNative) {
+		if (IS_VIDEO && !that._useNative) {
 			that._playing = true;
 			startBuffer ();
 		}
@@ -515,7 +520,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 		addClass(playButton, 'vjs-paused');
 		removeClass(controls, 'vjs-playing');
 		addClass(controls, 'vjs-paused');
-        if (media.currentTime == media.duration) {
+        if (media.currentTime >= media.duration) {
 			addClass(controls, 'vjs-ended');
 			addClass(playButton, 'vjs-ended');
         }
@@ -672,6 +677,18 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, me
 			if (typeof media.autoPictureInPicture !== 'undefined') {
 				media.autoPictureInPicture = true;
 			}
+		}
+	}
+
+	function onScreenConsoleOutput (txt: string) {
+		if (!DEBUG) {
+			return;
+		}
+
+		var onScreenConsole = getById('on-screen-console');
+		if (onScreenConsole instanceof HTMLTextAreaElement) {
+			var date = new Date();
+			onScreenConsole.value += (date.getHours()<10 ? '0'+date.getHours() : date.getHours()) + ':' + (date.getMinutes()<10 ? '0'+date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds()<10 ? '0'+date.getSeconds() : date.getSeconds()) + '   ' + txt + '\r\n';
 		}
 	}
 	

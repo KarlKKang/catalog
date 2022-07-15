@@ -1,8 +1,8 @@
 // Low level DOM functions, required in ./message
 import {
-	topURL,
-	loginURL,
-    debug
+	TOP_URL,
+	LOGIN_URL,
+    DEVELOPMENT
 } from '../env/constant';
 
 export const d = document;
@@ -15,7 +15,7 @@ export function getBody () {
 
 export function getHref (): string {
     const href = windowLocation.href;
-    if (href == topURL + '/' || href == loginURL + '/') { //When the trailing slash is included for root pages
+    if (href == TOP_URL + '/' || href == LOGIN_URL + '/') { //When the trailing slash is included for root pages
         return href.substring(0, href.length-1);
     }
     return href;
@@ -62,11 +62,11 @@ export function getCookie (name: string) {
 }
 
 export function setCookie (name: string, value: string, maxAge: number) {
-    d.cookie = name + '=' + encodeURIComponent(value) + ';max-age=' + maxAge.toString() + ';path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+    d.cookie = name + '=' + encodeURIComponent(value) + ';max-age=' + maxAge.toString() + ';path=/' + (DEVELOPMENT?'':';domain=.featherine.com;secure;samesite=strict');
 }
 
 export function deleteCookie (name: string) {
-    d.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (debug?'':';domain=.featherine.com;secure;samesite=strict');
+    d.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (DEVELOPMENT?'':';domain=.featherine.com;secure;samesite=strict');
 }
 
 export function getTitle () {

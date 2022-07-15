@@ -1,8 +1,8 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
-	topURL,
+	DEVELOPMENT,
+	TOP_URL,
 	sendServerRequest,
 	message,
 	concatenateSignedURL,
@@ -24,7 +24,7 @@ import {
 addEventListener(w, 'load', function(){
 	clearCookies();
 	
-	if (getHref()!='https://featherine.com/image' && !debug) {
+	if (getHref()!='https://featherine.com/image' && !DEVELOPMENT) {
 		redirect('https://featherine.com/image', true);
 		return;
 	}
@@ -32,7 +32,7 @@ addEventListener(w, 'load', function(){
 	var paramCookie = getCookie('local-image-param');
 	
 	if (paramCookie === null) {
-		redirect(topURL, true);
+		redirect(TOP_URL, true);
 		return;
 	}
 	
@@ -44,7 +44,7 @@ addEventListener(w, 'load', function(){
 		parsedCookie = JSON.parse(paramCookie);
 		type.LocalImageParam.check(parsedCookie);
 	} catch (e) {
-		redirect(topURL, true);
+		redirect(TOP_URL, true);
 		return;
 	}
 	const param = parsedCookie as type.LocalImageParam.LocalImageParam;

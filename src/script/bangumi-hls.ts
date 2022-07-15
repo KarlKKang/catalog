@@ -1,22 +1,22 @@
 // JavaScript Document
 import "core-js";
 import {
-    debug,
+    DEVELOPMENT,
 	navListeners,
-	topURL,
+	TOP_URL,
 	sendServerRequest,
 	message,
 	changeColor,
 	getURLParam,
 	getSeriesID,
 	secToTimestamp,
-	cdnURL,
+	CDN_URL,
 	concatenateSignedURL,
 	encodeCFURIComponent,
     clearCookies,
     cssVarWrapper,
     removeRightClick,
-    serverURL,
+    SERVER_URL,
 
     w,
     addEventListener,
@@ -40,7 +40,6 @@ import {
     getDescendantsByTag,
     createTextNode,
     addEventsListener,
-    removeEventListener,
     containsClass,
     getComputedStyle,
     appendChild,
@@ -67,13 +66,14 @@ var playerImportPromise: Promise<typeof import(
 )>;
 var lazyloadImportPromise: ReturnType<typeof importLazyload>;
 
+var debug = DEVELOPMENT;
 
 addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (!getHref().startsWith(topURL + '/bangumi') && !debug) {
-        redirect(topURL, true);
+	if (!getHref().startsWith(TOP_URL + '/bangumi') && !DEVELOPMENT) {
+        redirect(TOP_URL, true);
 		return;
 	}
 
@@ -81,10 +81,10 @@ addEventListener(w, 'load', function(){
     // Parse parameters
     let seriesIDParam = getSeriesID();
     if (seriesIDParam === null) {
-        redirect(topURL, true);
+        redirect(TOP_URL, true);
         return;
     } else if (!/^[a-zA-Z0-9~_-]{8,}$/.test(seriesIDParam)) {
-		redirect(topURL, true);
+		redirect(TOP_URL, true);
         return;
     }
     seriesID = seriesIDParam;
@@ -98,7 +98,7 @@ addEventListener(w, 'load', function(){
 
     // Parse other parameters
     const epIndexParam = getURLParam ('ep');
-    const newURL = debug?('bangumi.html'+'?series='+seriesID):(topURL+'/bangumi/'+seriesID);
+    const newURL = DEVELOPMENT?('bangumi.html'+'?series='+seriesID):(TOP_URL+'/bangumi/'+seriesID);
     if (epIndexParam === null) {
         epIndex = 0;
     } else {
@@ -123,6 +123,11 @@ addEventListener(w, 'load', function(){
         }
         formatIndex--;
     }
+
+    const debugParam = getURLParam ('debug');
+	if (debugParam === '1') {
+        debug = true;
+    } 
 
     contentContainer = getById('content');
     mediaHolder = getById('media-holder');
@@ -158,8 +163,6 @@ var lazyloadInitialize: ()=>void;
 var mediaInstances: Array<VideojsModInstance> = [];
 var epInfo: type.BangumiInfo.VideoEPInfo | type.BangumiInfo.AudioEPInfo | type.BangumiInfo.ImageEPInfo;
 var baseURL = '';
-var onScreenConsole: HTMLTextAreaElement | false = false;
-
 
 function updatePage (response: type.BangumiInfo.BangumiInfo) {
     navListeners();
@@ -178,22 +181,12 @@ function updatePage (response: type.BangumiInfo.BangumiInfo) {
         setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | featherine');
     } 
     
-
-    function addOnScreenConsole () {
-        onScreenConsole = createElement('textarea') as HTMLTextAreaElement; 
+    if (debug) {
+        let onScreenConsole = createElement('textarea') as HTMLTextAreaElement; 
         onScreenConsole.id = 'on-screen-console';
         onScreenConsole.readOnly = true;
         onScreenConsole.rows = 20;
         appendChild(getById('main'), onScreenConsole);
-    }
-    if (debug) {
-        addOnScreenConsole();
-    } else {
-        addConsecutiveEventListener (titleElem, 'click', function () {
-            if (!onScreenConsole) {
-                addOnScreenConsole();
-            }
-        }, 10, 3*1000);
     }
 
     updateEPSelector (response.series_ep);
@@ -229,7 +222,7 @@ function updatePage (response: type.BangumiInfo.BangumiInfo) {
             removeClass(contentContainer, 'hidden');
         });
         addEventListener(warningButtonNo, 'click', function () {
-            redirect(topURL);
+            redirect(TOP_URL);
         });
 
         addClass(contentContainer, 'hidden');
@@ -251,7 +244,7 @@ function updatePage (response: type.BangumiInfo.BangumiInfo) {
     /////////////////////////////////////////////Add Media/////////////////////////////////////////////
     let type = epInfo.type;
     let seriesOverride = epInfo.series_override;
-    baseURL = cdnURL + '/' + (seriesOverride===undefined?seriesID:seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
+    baseURL = CDN_URL + '/' + (seriesOverride===undefined?seriesID:seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
     if (type == 'video' || type == 'audio') {
         playerImportPromise.then((playerModule) => {
             Hls = playerModule.Hls;
@@ -417,7 +410,7 @@ function updateVideo () {
 
     videojs(videoJS, config, function () {
         videoJS.style.paddingTop = 9/16*100 + '%';
-        mediaInstances.push(videojsMod(this, {}));
+        mediaInstances.push(videojsMod(this, {debug: debug}));
 
         let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + videoEPInfo.file_name + '[' + videoEPInfo.formats[formatIndex] + '].m3u8'), videoEPInfo.cdn_credentials);
 
@@ -626,7 +619,8 @@ function addAudioNode (index: number) {
 
                 let audioInstance =  videojsMod (videoJSControl, {
                     mediaElemOverride: videoJSMediaNode,
-                    audio: true
+                    audio: true,
+                    debug: debug
                 });
 
                 mediaInstances[index] = audioInstance;
@@ -650,7 +644,7 @@ function addAudioNode (index: number) {
                 audioMediaAttachPromise.push(audioInstance.attachVideoJS(videoJSMedia, url));
             });
         } else {
-            let audioInstance = videojsMod (videoJSControl, {audio: true});
+            let audioInstance = videojsMod (videoJSControl, {audio: true, debug: debug});
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
             if (browser.USE_MSE) {
@@ -848,10 +842,10 @@ function updateImage () {
                 authenticationToken: epInfo.authentication_token
             };
             setCookie('local-image-param', JSON.stringify(param), 10);
-            if (debug) {
+            if (DEVELOPMENT) {
                 redirect('image.html');
             } else {
-                openWindow(topURL + '/image');
+                openWindow(TOP_URL + '/image');
             }
         });
         removeRightClick(imageNode);
@@ -891,10 +885,10 @@ function showMediaMessage (title: string, messageTxt: string, error: boolean) {
 
 function goToEP (dest_series: string, dest_ep: number) {
     var url: string;
-    if (debug) {
+    if (DEVELOPMENT) {
         url = 'bangumi.html'+'?series='+dest_series+(dest_ep==1?'':('&ep='+dest_ep));
     } else {
-        url = topURL+'/bangumi/'+dest_series+(dest_ep==1?'':('?ep='+dest_ep));
+        url = TOP_URL+'/bangumi/'+dest_series+(dest_ep==1?'':('?ep='+dest_ep));
     }
     redirect(url);
 }
@@ -1013,7 +1007,7 @@ function addDownloadAccordion () {
                 if (response == 'UNAVAILABLE') {
                     addClass(downloadButton, 'hidden');
                     removeClass(warning, 'hidden');
-                } else if (response.startsWith(serverURL)) {
+                } else if (response.startsWith(SERVER_URL)) {
                     redirect(response, true);
                 } else {
                     message.show(message.template.param.server.invalidResponse);
@@ -1036,11 +1030,11 @@ function addDownloadAccordion () {
 function updateURLParam (key: string, value: number) {
     var url: string;
     var separator: '?' | '&' = '?';
-    if (debug) {
+    if (DEVELOPMENT) {
         url = 'bangumi.html'+'?series='+seriesID+(epIndex==0?'':('&ep='+(epIndex+1)));
         separator = '&';
     } else {
-        url = topURL + '/bangumi/'+seriesID;
+        url = TOP_URL + '/bangumi/'+seriesID;
         if (epIndex!=0) {
             url += '?ep='+(epIndex+1);
             separator = '&';
@@ -1052,34 +1046,6 @@ function updateURLParam (key: string, value: number) {
     }
 
     changeURL(url, true);
-}
-
-function addConsecutiveEventListener (elem: HTMLElement, event: string, callback: () => void, count: number, timeInterval: number) {
-    if (count < 2) {
-        throw 'addConsecutiveEventListener must listen for more than 1 consecutive events.';
-    }
-    var currentCount = 0;
-    var allowed = false;
-
-    var eventHandler = function () {
-        if (currentCount+1 == count && allowed) {
-            currentCount = 0;
-            allowed = false;
-            callback();
-            removeEventListener(elem, event, eventHandler);
-        } else if (!allowed) {
-            allowed = true;
-            currentCount = 1;
-            setTimeout (function () {
-                allowed = false;
-                currentCount = 0;
-            }, timeInterval);
-        } else if (allowed) {
-            currentCount ++;
-        }
-    };
-
-    addEventListener(elem, event, eventHandler);
 }
 
 function destroyAll () {

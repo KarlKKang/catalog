@@ -1,7 +1,7 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug, 
+	DEVELOPMENT, 
 	navListeners, 
 	passwordStyling,
 	sendServerRequest,
@@ -28,7 +28,7 @@ addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (getHref() != 'https://featherine.com/account' && !debug) {
+	if (getHref() != 'https://featherine.com/account' && !DEVELOPMENT) {
 		redirect('https://featherine.com/account', true);
 		return;
 	}

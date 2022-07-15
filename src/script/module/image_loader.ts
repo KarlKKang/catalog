@@ -1,7 +1,7 @@
 import type {WebpMachine} from 'webp-hero/dist-cjs';
 
 import {
-    debug,
+    DEVELOPMENT,
     imageProtection,
     message,
 
@@ -24,7 +24,7 @@ export default function (container: HTMLElement, src: string, alt: string, onloa
 	image.alt = alt;
 
 	function finalizeErrorImage () {
-		if (debug) {
+		if (DEVELOPMENT) {
 			console.log('Unrecoverable error occured when loading the image.');
 		}
 		image.src = '//:0';
@@ -44,14 +44,14 @@ export default function (container: HTMLElement, src: string, alt: string, onloa
 			const webpData = new Uint8Array(base64URL);
 			if (webpMachineActive) {
 				webpMachineQueue.push({ container: container, image: image, webpData: webpData, onload: onload, onerror: finalizeErrorImage });
-				if (debug) {
+				if (DEVELOPMENT) {
 					console.log('Webp Machine active. Pushed ' + image.alt + ' to queue.');
 				}
 			} else {
 				webpMachineActive = true;
 				webpMachineQueue.push({ container: container, image: image, webpData: webpData, onload: onload, onerror: finalizeErrorImage });
 				startWebpMachine();
-				if (debug) {
+				if (DEVELOPMENT) {
 					console.log('Webp Machine NOT active. Pushed ' + image.alt + ' to queue. Webp Machine started.');
 				}
 			}
@@ -137,7 +137,7 @@ async function drawWebp (webpMachine: WebpMachine, queueItem: webpMachineQueueIt
 	try {
 		await webpMachine.decodeToCanvas(canvas, queueItem.webpData); 
 	} catch (_) {
-		if (debug) {
+		if (DEVELOPMENT) {
 			console.log('Failed to polyfill webp. Appended back to the queue to retry.');
 		}
 		webpMachineQueue.push(queueItem);

@@ -1,7 +1,7 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
+	DEVELOPMENT,
 	authenticate,
 	clearCookies,
 	cssVarWrapper,
@@ -20,7 +20,7 @@ addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (!getHref().startsWith('https://featherine.com/policy') && !debug) {
+	if (!getHref().startsWith('https://featherine.com/policy') && !DEVELOPMENT) {
 		redirect('https://featherine.com/policy', true);
 		return;
 	}
@@ -28,7 +28,7 @@ addEventListener(w, 'load', function(){
 	authenticate({
 		successful: 
 		function () {
-			redirect('info'+(debug?'.html':''), true);
+			redirect('info'+(DEVELOPMENT?'.html':''), true);
 		},
 		failed: 
 		function () {

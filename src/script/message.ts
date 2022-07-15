@@ -1,8 +1,8 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
-	topURL,
+	DEVELOPMENT,
+	TOP_URL,
 	logout,
 	clearCookies,
 	cssVarWrapper,
@@ -31,13 +31,13 @@ addEventListener(w, 'load', function(){
 	var messageElem = getById('message');
 
 	if (paramCookie === null) {
-		if (debug) {
+		if (DEVELOPMENT) {
 			changeColor(titleElem, 'orange');
 			titleElem.innerHTML = 'タイトルTitle';
 			messageElem.innerHTML = 'メッセージMessageメッセージMessageメッセージMessageメッセージMessageメッセージMessage';
 			removeClass(getBody(), "hidden");
 		} else {
-			redirect(topURL, true);
+			redirect(TOP_URL, true);
 		}
 		return;
 	}
@@ -48,7 +48,7 @@ addEventListener(w, 'load', function(){
 		parsedParam = JSON.parse(paramCookie);
 		type.LocalMessageParam.check(parsedParam);
 	} catch (e) {
-		redirect(topURL, true)
+		redirect(TOP_URL, true)
 		return;
 	}
 

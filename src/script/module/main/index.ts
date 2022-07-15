@@ -1,12 +1,12 @@
 import {
-	serverURL,
-	cdnURL,
-	debug,
-	topURL,
-	loginURL
+	SERVER_URL,
+	CDN_URL,
+	DEVELOPMENT,
+	TOP_URL,
+	LOGIN_URL
 } from './env/constant';
 
-export {topURL, loginURL, serverURL, cdnURL, debug};
+export {TOP_URL, LOGIN_URL, SERVER_URL, CDN_URL, DEVELOPMENT};
 
 import * as message from './message/message';
 export {message};
@@ -113,8 +113,8 @@ export function getURLParam (name: string): string | null {
 ////////////////////////////////////////
 export function getSeriesID (): string | null {
 	var url = getHref() + '?';
-	if (url.startsWith(topURL + '/bangumi/')) {
-		var start = (topURL+'/bangumi/').length;
+	if (url.startsWith(TOP_URL + '/bangumi/')) {
+		var start = (TOP_URL+'/bangumi/').length;
 		var end = url.indexOf('?');
 		if (start == end) {
 			return null;
@@ -135,7 +135,7 @@ export function urlWithParam (url: string) {
 	if (series === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
 		return url + ((keywords === null)?'':'?keywords='+keywords);
 	} else {
-		if (url == topURL+'/bangumi/') {
+		if (url == TOP_URL+'/bangumi/') {
 			var separator = '?';
 			url += series;
 			if (ep !== null && ep !== '1') {
@@ -169,12 +169,12 @@ function checkXHRStatus (response: XMLHttpRequest): boolean {
 			return true;
 		} else if (status == 401) {
 			if (response.responseText == 'SESSION ENDED')
-				redirect(topURL);
+				redirect(TOP_URL);
 			else if (response.responseText == 'INSUFFICIENT PERMISSIONS')
-				redirect(topURL, true);
+				redirect(TOP_URL, true);
 			else {
 				logout(function () {
-					redirect(urlWithParam(loginURL), true);
+					redirect(urlWithParam(LOGIN_URL), true);
 				});
 			}	
 		} else if (status == 429) {
@@ -194,7 +194,7 @@ function checkXHRStatus (response: XMLHttpRequest): boolean {
 				message.show (message.template.param.server[403]);
 			}
 		} else if (status == 404 && response.responseText == 'REJECTED') {
-			redirect(topURL);
+			redirect(TOP_URL);
 		} else {
 			message.show (message.template.param.server.connectionError);
 		}
@@ -233,7 +233,7 @@ export function sendServerRequest (uri: string, options: SendServerRequestOption
 		}
 	};
 	addXHROnError(xmlhttp);
-	xmlhttp.open(options.method, serverURL + "/" + uri, true);
+	xmlhttp.open(options.method, SERVER_URL + "/" + uri, true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xmlhttp.withCredentials = options.withCredentials;
 	xmlhttp.send(options.content);
@@ -274,7 +274,7 @@ export function logout (callback: Function) {
 	sendServerRequest('logout.php', {
 		callback: function (response: string) {
             if (response=='PARTIAL' || response=='DONE') {
-                if (debug) {
+                if (DEVELOPMENT) {
                     console.log(response);
                 }
                 callback ();
@@ -344,19 +344,19 @@ export function navListeners () {
 	});
 	
 	addEventListener(getById('nav-menu-content-1'), 'click', function () {
-		redirect(topURL);
+		redirect(TOP_URL);
 	});
 
 	addEventListener(getById('nav-menu-content-2'), 'click', function () {
-		redirect(debug?'account.html':(topURL+'/account'));
+		redirect(DEVELOPMENT?'account.html':(TOP_URL+'/account'));
 	});
 
 	addEventListener(getById('nav-menu-content-3'), 'click', function () {
-		redirect(debug?'info.html':(topURL+'/info'));
+		redirect(DEVELOPMENT?'info.html':(TOP_URL+'/info'));
 	});
 
 	addEventListener(getById('nav-menu-content-4'), 'click', function () {
-		logout(function () {redirect(loginURL);});
+		logout(function () {redirect(LOGIN_URL);});
 	});
 }
 ////////////////////////////////////////
@@ -383,16 +383,6 @@ export function secToTimestamp (sec: number) {
 	}
 	
 	return ((hour==0)?'':(hour + ':')) + minText + ':' + secText;
-}
-////////////////////////////////////////
-
-////////////////////////////////////////
-export function onScreenConsoleOutput (txt: string) {
-	var onScreenConsole = getByIdNative('on-screen-console');
-	if (onScreenConsole instanceof HTMLTextAreaElement) {
-		var date = new Date();
-		onScreenConsole.value += (date.getHours()<10 ? '0'+date.getHours() : date.getHours()) + ':' + (date.getMinutes()<10 ? '0'+date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds()<10 ? '0'+date.getSeconds() : date.getSeconds()) + '   ' + txt + '\r\n';
-	}
 }
 ////////////////////////////////////////
 
@@ -465,10 +455,10 @@ export function disableCheckbox (checkbox: HTMLInputElement, disabled: boolean) 
 	
 ////////////////////////////////////////
 export function clearCookies () {
-	if (getHref() != topURL + '/message' && !debug) {
+	if (getHref() != TOP_URL + '/message' && !DEVELOPMENT) {
 		deleteCookie('local-message-param');
 	}
-	if (getHref() != topURL + '/image' && !debug) {
+	if (getHref() != TOP_URL + '/image' && !DEVELOPMENT) {
 		deleteCookie('local-image-param');
 	}
 }
@@ -476,7 +466,7 @@ export function clearCookies () {
 
 ////////////////////////////////////////
 export function cssVarWrapper () {
-	const showMessage = !getHref().endsWith('/message') && !debug;
+	const showMessage = !getHref().endsWith('/message') && !DEVELOPMENT;
 	import(
 		/* webpackChunkName: "css-vars-ponyfill" */
 		/* webpackExports: ["default"] */

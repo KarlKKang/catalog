@@ -1,11 +1,11 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
+	DEVELOPMENT,
 	sendServerRequest,
 	message,
-	loginURL,
-	topURL,
+	LOGIN_URL,
+	TOP_URL,
 	authenticate,
 	clearCookies,
 	cssVarWrapper,
@@ -24,7 +24,7 @@ addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (getHref()!='https://login.featherine.com/request_password_reset' && !debug) {
+	if (getHref()!='https://login.featherine.com/request_password_reset' && !DEVELOPMENT) {
 		redirect('https://login.featherine.com/request_password_reset', true);
 		return;
 	}
@@ -43,13 +43,13 @@ addEventListener(w, 'load', function(){
 	});
 
 	addEventListener(getDescendantsByTagAt(getById('go-back'), 'span', 0), 'click', function () {
-		redirect(loginURL, true);
+		redirect(LOGIN_URL, true);
 	});
 	
 	authenticate({
 		successful: 
 		function () {
-			redirect(topURL, true);
+			redirect(TOP_URL, true);
 		},
 		failed: 
 		function () {

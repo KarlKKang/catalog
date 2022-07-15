@@ -1,10 +1,10 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
+	DEVELOPMENT,
 	sendServerRequest,
 	message,
-	topURL,
+	TOP_URL,
 	getURLParam,
 	clearCookies,
 	cssVarWrapper,
@@ -22,8 +22,8 @@ addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (!getHref().startsWith('https://featherine.com/new_email') && !debug) {
-		redirect(topURL, true);
+	if (!getHref().startsWith('https://featherine.com/new_email') && !DEVELOPMENT) {
+		redirect(TOP_URL, true);
 		return;
 	}
 		
@@ -35,15 +35,15 @@ addEventListener(w, 'load', function(){
 
 	
 	if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
-		if (debug) {
+		if (DEVELOPMENT) {
 			removeClass(getBody(), "hidden");
 		} else {
-			redirect(topURL, true);
+			redirect(TOP_URL, true);
 		}
 		return;
 	}
 	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		redirect(topURL, true);
+		redirect(TOP_URL, true);
 		return;
 	}
 

@@ -1,10 +1,10 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
+	DEVELOPMENT,
 	sendServerRequest,
 	message,
-	loginURL,
+	LOGIN_URL,
 	getURLParam,
 	passwordStyling,
 	clearCookies,
@@ -25,8 +25,8 @@ addEventListener(w, 'load', function(){
 	clearCookies();
 
 	
-	if (!getHref().startsWith('https://login.featherine.com/password_reset') && !debug) {
-		redirect(loginURL, true);
+	if (!getHref().startsWith('https://login.featherine.com/password_reset') && !DEVELOPMENT) {
+		redirect(LOGIN_URL, true);
 		return;
 	}
 	
@@ -40,21 +40,21 @@ addEventListener(w, 'load', function(){
 	var expires = getURLParam('expires');
 
 	if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
-		if (debug) {
+		if (DEVELOPMENT) {
 			removeClass(getBody(), "hidden");
 		} else {
-			redirect(loginURL, true);
+			redirect(LOGIN_URL, true);
 		}
 		return;
 	}
 	
 	if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		redirect(loginURL, true);
+		redirect(LOGIN_URL, true);
 		return;
 	}
 
 	if (expires === null || !/^[0-9]+$/.test(expires)) {
-		redirect(loginURL, true);
+		redirect(LOGIN_URL, true);
 		return;
 	}
 

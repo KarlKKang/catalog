@@ -1,7 +1,7 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
+	DEVELOPMENT,
 	sendServerRequest,
 	clearCookies,
 	hashPassword,
@@ -30,7 +30,7 @@ addEventListener(w, 'load', function(){
 		}
 	};
 	
-	if (getHref()!='https://featherine.com/console' && !debug) {
+	if (getHref()!='https://featherine.com/console' && !DEVELOPMENT) {
 		redirect('https://featherine.com/console', true);
 		return;
 	}

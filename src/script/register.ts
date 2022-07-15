@@ -1,11 +1,11 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
+	DEVELOPMENT,
 	getURLParam,
 	sendServerRequest,
 	message,
-	loginURL,
+	LOGIN_URL,
 	passwordStyling,
 	clearCookies,
 	cssVarWrapper,
@@ -26,8 +26,8 @@ addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (!getHref().startsWith('https://featherine.com/register') && !debug) {
-		redirect(loginURL, true);
+	if (!getHref().startsWith('https://featherine.com/register') && !DEVELOPMENT) {
+		redirect(LOGIN_URL, true);
 		return;
 	}
 		
@@ -40,16 +40,16 @@ addEventListener(w, 'load', function(){
 	var signature = getURLParam('signature');
 
 	if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
-		if (debug) {
+		if (DEVELOPMENT) {
 			removeClass(getBody(), "hidden");
 		} else {
-			redirect(loginURL, true);
+			redirect(LOGIN_URL, true);
 		}
 		return;
 	}
 
 	if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		redirect(loginURL, true);
+		redirect(LOGIN_URL, true);
 		return;
 	}
 

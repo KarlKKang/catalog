@@ -1,14 +1,14 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
+	DEVELOPMENT,
 	navListeners,
 	urlWithParam,
-	topURL,
+	TOP_URL,
 	sendServerRequest,
 	message,
 	getURLParam,
-	cdnURL,
+	CDN_URL,
     clearCookies,
     cssVarWrapper,
 
@@ -50,13 +50,13 @@ addEventListener(w, 'load', function(){
     cssVarWrapper();
 	clearCookies();
 	
-	if (!getHref().startsWith('https://featherine.com') && !debug) {
-        redirect(topURL, true);
+	if (!getHref().startsWith('https://featherine.com') && !DEVELOPMENT) {
+        redirect(TOP_URL, true);
 		return;
 	}
 		
 	if (getURLParam ('series') != null) {
-        redirect(urlWithParam(debug?'bangumi.html':(topURL+'/bangumi/')), true);
+        redirect(urlWithParam(DEVELOPMENT?'bangumi.html':(TOP_URL+'/bangumi/')), true);
         return;
     }
 
@@ -108,7 +108,7 @@ function showSeries (seriesInfo: type.SeriesInfo.SeriesInfo) {
         addClass(overlay, 'overlay');
         appendChild(thumbnailNode, overlay);
         addClass(thumbnailNode, 'lazyload');
-        thumbnailNode.dataset.src = cdnURL + '/thumbnails/' + seriesEntry.thumbnail;
+        thumbnailNode.dataset.src = CDN_URL + '/thumbnails/' + seriesEntry.thumbnail;
         thumbnailNode.dataset.alt = 'thumbnail: ' + seriesEntry.thumbnail;
         titleNode.innerHTML = seriesEntry.title;
 
@@ -134,10 +134,10 @@ function showSeries (seriesInfo: type.SeriesInfo.SeriesInfo) {
 
 function goToSeries (id: string) {
     var url;
-    if (debug) {
+    if (DEVELOPMENT) {
         url = 'bangumi.html'+'?series='+id;
     } else {
-        url = topURL+'/bangumi/'+id;
+        url = TOP_URL+'/bangumi/'+id;
     }
     redirect(url);
 }
@@ -151,10 +151,10 @@ function search () {
     
     if (searchBarInputValue == '') {
         keywords = "";
-        changeURL(topURL);
+        changeURL(TOP_URL);
     } else {
         keywords = "keywords="+encodeURIComponent(searchBarInputValue);
-        changeURL(topURL + '?' + keywords);
+        changeURL(TOP_URL + '?' + keywords);
         keywords += '&';
     }
     requestSearchResults();

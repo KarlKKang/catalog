@@ -1,8 +1,8 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug,
-	loginURL,
+	DEVELOPMENT,
+	LOGIN_URL,
 	sendServerRequest,
 	message,
 	getURLParam,
@@ -17,19 +17,19 @@ import {
 addEventListener(w, 'load', function(){
 	clearCookies();
 	
-	if (!getHref().startsWith('https://featherine.com/confirm_special_register') && !debug) {
-		redirect(loginURL, true);
+	if (!getHref().startsWith('https://featherine.com/confirm_special_register') && !DEVELOPMENT) {
+		redirect(LOGIN_URL, true);
 		return;
 	}
 	var user = getURLParam ('user');
 	var signature = getURLParam ('signature');
 
 	if (user == null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
-		redirect(loginURL, true);
+		redirect(LOGIN_URL, true);
 		return;
 	}
 	if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-		redirect(loginURL, true);
+		redirect(LOGIN_URL, true);
 		return;
 	}
 	

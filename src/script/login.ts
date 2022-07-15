@@ -1,11 +1,11 @@
 // JavaScript Document
 import "core-js";
 import {
-	debug, 
+	DEVELOPMENT, 
 	sendServerRequest, 
 	message, 
-	topURL,
-	loginURL,
+	TOP_URL,
+	LOGIN_URL,
 	urlWithParam,
 	passwordStyling,
 	authenticate,
@@ -28,8 +28,8 @@ addEventListener(w, 'load', function(){
 	cssVarWrapper();
 	clearCookies();
 	
-	if (!getHref().startsWith(loginURL) && !debug) {
-		redirect(loginURL, true);
+	if (!getHref().startsWith(LOGIN_URL) && !DEVELOPMENT) {
+		redirect(LOGIN_URL, true);
 		return;
 	}
 		
@@ -41,7 +41,7 @@ addEventListener(w, 'load', function(){
 	authenticate({
 		successful:
 		function () {
-			redirect(topURL, true);
+			redirect(TOP_URL, true);
 		},
 		failed:
 		function () {
@@ -60,7 +60,7 @@ addEventListener(w, 'load', function(){
 				login ();
 			});
 			addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', function () {
-				redirect(debug?'request_password_reset.html':(loginURL+'/request_password_reset'), true);
+				redirect(DEVELOPMENT?'request_password_reset.html':(LOGIN_URL+'/request_password_reset'), true);
 			});
 			passwordStyling(passwordInput);
 			removeClass(getBody(), "hidden");
@@ -107,11 +107,11 @@ async function login () {
                 disableAllInputs(false);
             } else if (response == 'NOT RECOMMENDED') {
                 setTimeout (function () {
-                    message.show(message.template.param.unrecommendedBrowser(urlWithParam(topURL)));
+                    message.show(message.template.param.unrecommendedBrowser(urlWithParam(TOP_URL)));
                 }, 500);
             } else if (response == 'APPROVED') {
                 setTimeout (function () {
-					redirect(urlWithParam(topURL), true);
+					redirect(urlWithParam(TOP_URL), true);
                 }, 500);
             } else {
                 message.show ();
