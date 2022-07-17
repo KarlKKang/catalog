@@ -53,10 +53,6 @@ var seriesID: string;
 var epIndex: number;
 var formatIndex: number;
 
-const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
-const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
-var EPSelectorHeight: number;
-
 var contentContainer: HTMLElement;
 var mediaHolder: HTMLElement;
 
@@ -153,6 +149,13 @@ import type {Hls as Hls_} from './module/player';
 import type {videojs as VideoJS} from './module/player';
 import type {browser as Browser} from './module/player';
 import type {videojsMod as VideojsMod, VideojsModInstance} from './module/player';
+
+const incompatibleTitle = '再生できません';
+const incompatibleSuffix = '他のブラウザでご覧いただくか、デスクトップでファイルをダウンロードし、ローカルで再生してください。';
+
+const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
+const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
+var EPSelectorHeight: number;
 
 var Hls: typeof Hls_;
 var videojs: typeof VideoJS;
@@ -591,7 +594,7 @@ function addAudioNode (index: number) {
     const IS_MP3 = file.format.toLowerCase() == 'mp3';
 
     if ((IS_FLAC && !browser.CAN_PLAY_FLAC) || (IS_MP3 && !browser.CAN_PLAY_MP3)) { //ALAC has already fallen back to FLAC if not supported.
-        showMediaMessage(message.template.media.title.incompatible, '<p>お使いのブラウザはこのメディアタイプに対応していません。' + message.template.media.body.incompatibleSuffix + '</p>', true);
+        showMediaMessage(incompatibleTitle, '<p>お使いのブラウザはこのメディアタイプに対応していません。' + incompatibleSuffix + '</p>', true);
         return false;
     }
     
@@ -635,7 +638,7 @@ function addAudioNode (index: number) {
 
                 videoJSMedia.on('error', function() {
                     if (browser.IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
-                        showMediaMessage(message.template.media.title.incompatible, '<p>Firefoxはハイレゾ音源を再生できません。' + message.template.media.body.incompatibleSuffix + '</p>', true);
+                        showMediaMessage(incompatibleTitle, '<p>Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix + '</p>', true);
                     } else {
                         showPlaybackError('Index ' + index + ': ' + 'videojs: '+JSON.stringify(videoJSMedia.error()));
                     }
@@ -856,19 +859,19 @@ function updateImage () {
 }
 
 function showPlaybackError (detail?: string) {
-    showMediaMessage (message.template.media.title.defaultError, '<p>再生中にエラーが発生しました。' + (browser.IS_APPLE?'AppleデバイスでiCloudプライベートリレーを使用する際に、既知の問題があります。iCloudプライベートリレーを使用している場合は、それをオフにしてからもう一度試してみてください。':'') + message.template.media.body.defaultErrorSuffix + (detail===undefined?'':('<br>Error detail: '+detail)) + '</p>', true);
+    showMediaMessage (message.template.title.defaultError, '<p>再生中にエラーが発生しました。' + (browser.IS_APPLE?'AppleデバイスでiCloudプライベートリレーを使用する際に、既知の問題があります。iCloudプライベートリレーを使用している場合は、それをオフにしてからもう一度試してみてください。':'') + message.template.body.defaultErrorSuffix + (detail===undefined?'':('<br>Error detail: '+detail)) + '</p>', true);
 }
 
 function showHLSCompatibilityError () {
-    showMediaMessage(message.template.media.title.incompatible, '<p>お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + message.template.media.body.incompatibleSuffix + '</p>', true);
+    showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + incompatibleSuffix + '</p>', true);
 }
 
 function showCodecCompatibilityError () {
-    showMediaMessage(message.template.media.title.incompatible, '<p>お使いのブラウザは、再生に必要なAVC/AACコーデックに対応していません。' + message.template.media.body.incompatibleSuffix + 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。</p>', true);
+    showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは、再生に必要なAVC/AACコーデックに対応していません。' + incompatibleSuffix + 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。</p>', true);
 }
 
 function showAttachError () {
-    showMediaMessage(message.template.media.title.defaultError, '<p>メディアを添付できません。ページを再読み込みして、もう一度お試しください。' + message.template.media.body.defaultErrorSuffix + '</p>', true);
+    showMediaMessage(message.template.title.defaultError, '<p>メディアを添付できません。ページを再読み込みして、もう一度お試しください。' + message.template.body.defaultErrorSuffix + '</p>', true);
 }
 
 function showMediaMessage (title: string, messageTxt: string, error: boolean) {

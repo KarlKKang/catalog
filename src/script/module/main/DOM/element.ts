@@ -1,5 +1,5 @@
 import {w, d} from './document';
-import * as message from '../message/message';
+import * as message from '../message';
 
 
 export function getByIdNative (id: string) {

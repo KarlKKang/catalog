@@ -8,7 +8,7 @@ import {
 
 export {TOP_URL, LOGIN_URL, SERVER_URL, CDN_URL, DEVELOPMENT};
 
-import * as message from './message/message';
+import * as message from './message';
 export {message};
 
 //import * as DOM from './DOM';
@@ -178,20 +178,20 @@ function checkXHRStatus (response: XMLHttpRequest): boolean {
 				});
 			}	
 		} else if (status == 429) {
-			message.show (message.template.param.server['429']);
+			message.show (message.template.param.server.status429);
 		} else if (status == 503) {
-			message.show (message.template.param.server['503']);
+			message.show (message.template.param.server.status503);
 		} else if (status == 500 || status == 400) {
 			var responseText = response.responseText;
 			if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
-				message.show (message.template.param.server['400And500'](responseText));
+				message.show (message.template.param.server.status400And500(responseText));
 			}
 			else {
 				message.show ();
 			}
 		} else if (status == 403) {
 			if (response.responseText != 'CRAWLER') {
-				message.show (message.template.param.server[403]);
+				message.show (message.template.param.server.status403);
 			}
 		} else if (status == 404 && response.responseText == 'REJECTED') {
 			redirect(TOP_URL);
