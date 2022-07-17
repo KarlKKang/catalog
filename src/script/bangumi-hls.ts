@@ -621,7 +621,7 @@ function addAudioNode (index: number) {
             let videoJSMedia = videojs(videoJSMediaNode, configVideoJSMedia, function () {
 
                 let audioInstance =  videojsMod (videoJSControl, {
-                    mediaElemOverride: videoJSMediaNode,
+                    videojsMediaOverrideInstance: videoJSMedia,
                     audio: true,
                     debug: debug
                 });
@@ -644,7 +644,7 @@ function addAudioNode (index: number) {
                     }
                 });
 
-                audioMediaAttachPromise.push(audioInstance.attachVideoJS(videoJSMedia, url));
+                audioMediaAttachPromise.push(audioInstance.attachVideojs(url));
             });
         } else {
             let audioInstance = videojsMod (videoJSControl, {audio: true, debug: debug});
