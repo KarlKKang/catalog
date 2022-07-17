@@ -573,7 +573,7 @@ async function attachEventListeners (that: VideojsModInstance) {
 
 	//Load progress
 	let loadProgress = getDescendantsByClassAt(progressHolder, 'vjs-load-progress', 0) as HTMLElement;
-	addEventListener(media, 'progress', function () {
+	function updateLoadProgress () {
 		let bufferEnd = 0;
 		for (var i = media.buffered.length - 1; i >= 0; i--) {
 			if (media.buffered.start(i) <= media.currentTime) {
@@ -582,6 +582,10 @@ async function attachEventListeners (that: VideojsModInstance) {
 			}
 		}
 		(loadProgress as HTMLElement).style.width = Math.min(Math.round(bufferEnd / media.duration * 100), 100) + '%';
+	}
+	addEventListener(media, 'progress', function () {
+		updateLoadProgress();
+		setTimeout(updateLoadProgress, 1000);
 	});
 
 	addEventListener(media, 'waiting', function () {
