@@ -859,7 +859,7 @@ function updateImage () {
 }
 
 function showPlaybackError (detail?: string) {
-    showMediaMessage (message.template.title.defaultError, '<p>再生中にエラーが発生しました。' + (browser.IS_APPLE?'AppleデバイスでiCloudプライベートリレーを使用する際に、既知の問題があります。iCloudプライベートリレーを使用している場合は、それをオフにしてからもう一度試してみてください。':'') + message.template.body.defaultErrorSuffix + (detail===undefined?'':('<br>Error detail: '+detail)) + '</p>', true);
+    showMediaMessage (message.template.title.defaultError, '<p>再生中にエラーが発生しました。' + message.template.body.defaultErrorSuffix + (detail===undefined?'':('<br>Error detail: '+detail)) + '</p>', true);
 }
 
 function showHLSCompatibilityError () {
