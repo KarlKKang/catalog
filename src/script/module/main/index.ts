@@ -480,7 +480,9 @@ export function cssVarWrapper () {
 			},
 			onWarning: function(errorMessage) {
 				console.log(errorMessage);
-			}
+			},
+			include: "link[rel=stylesheet]",
+			exclude: '[href*="/font/"]'
 		});
 	}).catch((e) => {
 		if (showMessage) {

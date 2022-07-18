@@ -56,9 +56,9 @@ export type VideojsModInstance = {
 	readonly play: () => void,
 	readonly pause: () => void,
 	readonly seek: (timestamp: number) => void,
-	readonly attachHls: (hlsInstance: Hls, url: string) => Promise<void>,
-	readonly attachVideojs: (url: string) => Promise<void>,
-	readonly attachNative: (url: string) => Promise<void>,
+	readonly attachHls: (hlsInstance: Hls, url: string) => void,
+	readonly attachVideojs: (url: string) => void,
+	readonly attachNative: (url: string) => void,
 	readonly destroy: () => void,
 	readonly startBuffer: () => void
 }
@@ -223,11 +223,11 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 		}
     }
 
-	const attachEventListenersPromise = attachEventListeners(that);
+	attachEventListeners(that);
 	
-	async function attachHls (hlsInstance: Hls, url: string) {
+	function attachHls (hlsInstance: Hls, url: string) {
 		if (that._attached) {
-			throw new Error('Failed to attach.');
+			throw new Error('The instance already has source attached.');
 		}
 		if (that._videoJSInstance !== undefined) {
 			throw new Error('Cannot attach hls.js source to instances initialized with videojs override.');
@@ -236,7 +236,6 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 		that._attached = true;
 		that._useNative = false;
 		that._hlsInstance = hlsInstance;
-		await attachEventListenersPromise;
 		
 		setMediaAttributes();
 		hlsInstance.on(Hls.Events.FRAG_CHANGED, (_, data) => { 
@@ -249,9 +248,9 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 		onScreenConsoleOutput('HLS is attached.');
 	}
 
-	async function attachVideojs (url: string) {
+	function attachVideojs (url: string) {
 		if (that._attached) {
-			throw new Error('Failed to attach.');
+			throw new Error('The instance already has source attached.');
 		}
 		if (that._videoJSInstance === undefined) {
 			throw new Error('Cannot attach videojs source to instances not been initialized with videojs override.');
@@ -259,7 +258,6 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 
 		that._attached = true;
 		that._useNative = false;
-		await attachEventListenersPromise;
 		
 		setMediaAttributes();
 		that._videoJSInstance.src({
@@ -270,9 +268,9 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 		onScreenConsoleOutput ('VideoJS is attached.');
 	}
 
-	async function attachNative (url: string) {
+	function attachNative (url: string) {
 		if (that._attached) {
-			throw new Error('Failed to attach.');
+			throw new Error('The instance already has source attached.');
 		}
 		if (that._videoJSInstance !== undefined) {
 			throw new Error('Cannot attach native source to instances initialized with videojs override.');
@@ -280,7 +278,6 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 
 		that._attached = true;
 		that._useNative = true;
-		await attachEventListenersPromise;
 		
 		media.crossOrigin = 'use-credentials';
 		setMediaAttributes();
@@ -335,7 +332,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 };
 
 
-async function attachEventListeners (that: VideojsModInstance) {
+function attachEventListeners (that: VideojsModInstance) {
 	const media = that.media;
 	const controls = that.controls;
 

@@ -504,23 +504,18 @@ function addVideoNode (url: string, options: {currentTime?: number, play?: boole
             videoReady();
         });
 
-        videoInstance.attachHls(hls, url).catch(function () {
-            showAttachError();
-        });
+        videoInstance.attachHls(hls, url);
     } else if (browser.NATIVE_HLS) {
         addEventListener(videoMedia, 'error', function () {showPlaybackError ();});
         addEventListener(videoMedia, 'loadedmetadata', function () {
             videoReady ();
         });
-        videoInstance.attachNative(url).catch(function () {
-            showAttachError();
-        });
+        videoInstance.attachNative(url);
     }
 }
 
 
 var audioReadyCounter = 0;
-var audioMediaAttachPromise: Promise<void>[] = [];
 function updateAudio () {
     let audioEPInfo = epInfo as type.BangumiInfo.AudioEPInfo;
 
@@ -537,10 +532,6 @@ function updateAudio () {
             return;
         }
     }
-
-    Promise.all(audioMediaAttachPromise).catch(function() {
-        showAttachError();
-    })
 }
 
 function addAudioNode (index: number) {
@@ -644,7 +635,7 @@ function addAudioNode (index: number) {
                     }
                 });
 
-                audioMediaAttachPromise.push(audioInstance.attachVideojs(url));
+                audioInstance.attachVideojs(url);
             });
         } else {
             let audioInstance = videojsMod (videoJSControl, {audio: true, debug: debug});
@@ -666,7 +657,7 @@ function addAudioNode (index: number) {
                         audioReady();
                     }
                 });
-                audioMediaAttachPromise.push(audioInstance.attachHls(hls, url));
+                audioInstance.attachHls(hls, url);
             } else if (browser.NATIVE_HLS) {
                 let audioMedia = audioInstance.media;
                 
@@ -677,7 +668,7 @@ function addAudioNode (index: number) {
                         audioReady();
                     }
                 });        
-                audioMediaAttachPromise.push(audioInstance.attachNative(url));
+                audioInstance.attachNative(url);
             }
         }
     });
@@ -870,9 +861,9 @@ function showCodecCompatibilityError () {
     showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは、再生に必要なAVC/AACコーデックに対応していません。' + incompatibleSuffix + 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。</p>', true);
 }
 
-function showAttachError () {
+/*function showAttachError () {
     showMediaMessage(message.template.title.defaultError, '<p>メディアを添付できません。ページを再読み込みして、もう一度お試しください。' + message.template.body.defaultErrorSuffix + '</p>', true);
-}
+}*/
 
 function showMediaMessage (title: string, messageTxt: string, error: boolean) {
     var messageTitle = getById('message-title');

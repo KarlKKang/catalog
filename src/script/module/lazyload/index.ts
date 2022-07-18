@@ -28,5 +28,5 @@ export default async function () {
 
     return function () {
         lazyloadInitialize(imageLoader);
-    }
+    };
 }

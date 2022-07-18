@@ -48,6 +48,12 @@ addEventListener(w, 'load', function(){
 		return;
 	}
 	const param = parsedCookie as type.LocalImageParam.LocalImageParam;
+
+	const imageLoaderImportPromise = import(
+		/* webpackChunkName: "image_loader" */
+		/* webpackExports: ["default"] */
+		'./module/image_loader'
+	);
 	
 	setInterval (function () {sendServerRequest('device_authenticate.php', {
 		callback: function (response: string) {
@@ -76,11 +82,7 @@ addEventListener(w, 'load', function(){
 			const credentials = parsedResponse as type.CDNCredentials.CDNCredentials;
 			const url = concatenateSignedURL(param.src, credentials);
 			
-			import(
-                /* webpackChunkName: "image_loader" */
-                /* webpackExports: ["default"] */
-                './module/image_loader'
-            ).then(({default: imageLoader}) => {
+			imageLoaderImportPromise.then(({default: imageLoader}) => {
 				imageLoader(container, url, 'image from ' + param.title);
 			}).catch((e) => {
 				message.show(message.template.param.moduleImportError(e));
