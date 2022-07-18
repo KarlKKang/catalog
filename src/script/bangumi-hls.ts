@@ -979,11 +979,11 @@ function addDownloadAccordion () {
         return;
     }
 
-    var accordion = createElement('button');
+    const accordion = createElement('button');
     addClass(accordion, 'accordion');
     accordion.innerHTML = 'DOWNLOAD';
 
-    var accordionPanel = createElement('div');
+    const accordionPanel = createElement('div');
     addClass(accordionPanel, 'panel');
 
     accordionPanel.innerHTML = '<ul>' +
@@ -994,16 +994,21 @@ function addDownloadAccordion () {
         '<li>IDMなどの拡張機能を使用している場合、ZIPファイルのダウンロードに問題が発生する可能性があります。ダウンロードする前に、そのような拡張機能を無効にしてください。</li>' +
     '</ul>';
 
-    var downloadButton = createElement('button');
+    const downloadButton = createElement('button');
     downloadButton.id = 'download-button';
     addClass(downloadButton, 'button');
     downloadButton.innerHTML = 'ダウンロード';
-    var warning = createElement('p');
+    const warning = createElement('p');
     changeColor(warning, 'red');
     addClass(warning, 'hidden');
     warning.innerHTML = 'お使いの端末はダウンロードに対応していません。';
     appendChild(accordionPanel, warning);
 
+    const iframe = createElement('iframe') as HTMLIFrameElement;
+    iframe.id = 'download-iframe';
+    iframe.height = '0';
+    iframe.width = '0';
+    
     addEventListener(downloadButton, 'click', function () {
         sendServerRequest('start_download.php', {
             callback: function (response: string) {
@@ -1011,7 +1016,7 @@ function addDownloadAccordion () {
                     addClass(downloadButton, 'hidden');
                     removeClass(warning, 'hidden');
                 } else if (response.startsWith(SERVER_URL)) {
-                    redirect(response, true);
+                    iframe.src = response;
                 } else {
                     message.show(message.template.param.server.invalidResponse);
                 }
@@ -1021,12 +1026,13 @@ function addDownloadAccordion () {
     });
     appendChild(accordionPanel, downloadButton);
 
-    var downloadElem = createElement('div');
+    const downloadElem = createElement('div');
     addClass(downloadElem, 'download');
     appendChild(downloadElem, accordion);
     appendChild(downloadElem, accordionPanel);
+    appendChild(downloadElem, iframe);
     addAccordionEvent(accordion);
-    appendChild(getById('content'), downloadElem);
+    appendChild(contentContainer, downloadElem);
 }
 
 

@@ -448,3 +448,7 @@ p.artist {
 	padding: 0px 0px 0px 2em;
 	text-align: left;
 }
+
+#download-iframe {
+	display: none;
+}
