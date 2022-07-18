@@ -399,7 +399,7 @@ async function attachEventListeners (that: VideojsModInstance) {
 	}, true);
 
 	//Progress bar & frame drop monitor
-	setInterval (async function () {
+	setInterval (function () {
 		if (!that._dragging && media.duration) {
 			currentTimeDisplay.innerHTML = secToTimestamp (media.currentTime);
 			progressBar.style.width = Math.min(media.currentTime/media.duration*100, 100) + '%';
