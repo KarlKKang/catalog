@@ -985,7 +985,7 @@ function addDownloadAccordion () {
         '<li>IDMなどの拡張機能を使用している場合、ZIPファイルのダウンロードに問題が発生する可能性があります。ダウンロードする前に、そのような拡張機能を無効にしてください。</li>' +
     '</ul>';
 
-    const downloadButton = createElement('button');
+    const downloadButton = createElement('button') as HTMLButtonElement;
     downloadButton.id = 'download-button';
     addClass(downloadButton, 'button');
     downloadButton.innerHTML = 'ダウンロード';
@@ -1001,6 +1001,7 @@ function addDownloadAccordion () {
     iframe.width = '0';
     
     addEventListener(downloadButton, 'click', function () {
+        downloadButton.disabled = true;
         sendServerRequest('start_download.php', {
             callback: function (response: string) {
                 if (response == 'UNAVAILABLE') {
@@ -1008,6 +1009,7 @@ function addDownloadAccordion () {
                     removeClass(warning, 'hidden');
                 } else if (response.startsWith(SERVER_URL)) {
                     iframe.src = response;
+                    downloadButton.disabled = false;
                 } else {
                     message.show(message.template.param.server.invalidResponse);
                 }
