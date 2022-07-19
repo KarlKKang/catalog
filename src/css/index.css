@@ -23,7 +23,7 @@
 	align-self: flex-start;
 }
 
-@supports (max-width: min(2%, 12px)) and (margin: min(2%, 12px)) {
+@supports (max-width: calc(50% - 2 * min(2%, 12px))) and (margin: min(2%, 12px)) {
 	#container > div {
 		max-width: calc(50% - 2 * min(2%, 12px));
 		margin: min(2%, 12px);
