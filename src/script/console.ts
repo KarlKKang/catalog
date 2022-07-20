@@ -56,7 +56,7 @@ addEventListener(w, 'load', function(){
 					generate ('id');
 				});
 				addEventListener(getById('generate-series-id'), 'click', function () {
-					generate ('series-id');
+					generate ('series_id');
 				});
 				addEventListener(getById('clear-cdn-cache'), 'click', function () {
 					clearCDNCache();
@@ -75,6 +75,15 @@ addEventListener(w, 'load', function(){
 				});
 				addEventListener(getById('verify'), 'click', function () {
 					verify();
+				});
+				addEventListener(getById('show-databases'), 'click', function () {
+					showDatabases();
+				});
+				addEventListener(getById('run-debug'), 'click', function () {
+					run('debug');
+				});
+				addEventListener(getById('run-benchmark'), 'click', function () {
+					run('benchmark');
 				});
 				removeClass(getBody(), "hidden");
 			}
@@ -271,7 +280,8 @@ function parseSeriesRecord (id: string, title: string, thumbnail: string, isPubl
 
 function generate (type: string) {
 	var param = {
-		'command': 'generate-'+type
+		'command': 'generate',
+		'type': type
 	};
 	
 	sendServerRequest('console.php', {
@@ -538,6 +548,36 @@ function getLogTable () {
 		content: "p="+encodeURIComponent(JSON.stringify (param))
 	});
 }
+
+/*------------------------------------------------------------------------------------Show All Databases------------------------------------------------------------------------------------*/
+function showDatabases () {
+	var param = {
+		'command': 'get',
+		'table': 'all'
+	};
+	
+	sendServerRequest('console.php', {
+		callback: function (response: string) {
+			setOutput (response);
+		},
+		content: "p="+encodeURIComponent(JSON.stringify (param))
+	});
+}
+
+/*------------------------------------------------------------------------------------Run Functions------------------------------------------------------------------------------------*/
+function run (type: string) {
+	var param = {
+		'command': 'run',
+		'type': type
+	};
+	
+	sendServerRequest('console.php', {
+		callback: function (response: string) {
+			setOutput (response);
+		},
+		content: "p="+encodeURIComponent(JSON.stringify (param))
+	});
+}
 	
 /*------------------------------------------------------------------------------------Cache Functions------------------------------------------------------------------------------------*/
 function clearCDNCache () {
@@ -556,7 +596,8 @@ function clearCDNCache () {
 	} while (confirm != "clear");
 	
 	var param = {
-		'command': 'clear-cdn-cache',
+		'command': 'clear',
+		'type': 'cdn_cache',
 		'dir': dir
 	};
 	
@@ -578,7 +619,8 @@ function clearKeyCache () {
 	} while (confirm != "clear");
 	
 	var param = {
-		'command': 'clear-key-cache'
+		'command': 'clear',
+		'type': 'key_cache'
 	};
 	
 	sendServerRequest('console.php', {
@@ -599,7 +641,8 @@ function rebuildIndex () {
 	} while (confirm != "rebuild");
 	
 	var param = {
-		'command': 'rebuild-index'
+		'command': 'rebuild',
+		'type': 'index'
 	};
 	
 	sendServerRequest('console.php', {
@@ -620,7 +663,8 @@ function rebuildSearchIndex () {
 	} while (confirm != "rebuild");
 	
 	var param = {
-		'command': 'rebuild-search-index'
+		'command': 'rebuild',
+		'type': 'search_index'
 	};
 	
 	sendServerRequest('console.php', {
@@ -641,7 +685,8 @@ function rebuildAll () {
 	} while (confirm != "rebuild");
 	
 	var param = {
-		'command': 'rebuild-all'
+		'command': 'rebuild',
+		'type': 'all'
 	};
 	
 	sendServerRequest('console.php', {
