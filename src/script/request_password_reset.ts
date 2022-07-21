@@ -17,7 +17,8 @@ import {
 	getById,
 	getDescendantsByTagAt,
 	removeClass,
-	getBody
+	getBody,
+	disableInput
 } from './module/main';
 
 addEventListener(w, 'load', function(){
@@ -90,6 +91,6 @@ addEventListener(w, 'load', function(){
 	
 	function disableAllInputs(disabled: boolean) {
 		submitButton.disabled = disabled;
-		emailInput.disabled = disabled;
+		disableInput(emailInput, disabled);
 	}
 });

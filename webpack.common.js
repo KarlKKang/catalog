@@ -1,4 +1,3 @@
-const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const html_minify_options = {
@@ -215,6 +214,7 @@ module.exports = {
 					not: [
 						// Except for a few of them that needs to be transpiled because they use modern syntax
 						/node_modules[\\\/]screenfull/,
+						/node_modules[\\\/]hls.js[\\\/]src/,
 					]
 				},
 				use: {

@@ -19,7 +19,8 @@ import {
 	removeClass,
 	getBody,
 	getByClassAt,
-	openWindow
+	openWindow,
+	disableInput
 } from './module/main';
 
 addEventListener(w, 'load', function(){
@@ -162,8 +163,8 @@ addEventListener(w, 'load', function(){
 	
 	function disableAllInputs(disabled: boolean) {
 		submitButton.disabled = disabled;
-		usernameInput.disabled = disabled;
-		passwordInput.disabled = disabled;
-		passwordConfirmInput.disabled = disabled;
+		disableInput(usernameInput, disabled);
+		disableInput(passwordInput, disabled);
+		disableInput(passwordConfirmInput, disabled);
 	}
 });

@@ -40,37 +40,22 @@ hr {
 
 .input-field, .button {
 	margin: 1em 0px;
-	padding: 0px;
 	height: 40px;
 	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	background: var(--foreground-color);
-	border: none;
 }
 
 .button {
 	width: 150px;
-	text-align: center;
 	position: relative;
-	font-size: medium;
 }
 
 .input-field {
 	width: 300px;
 }
 
-.input-field > input {
-	width: 100%;
-	height: 100%;
-	border: none;
-	background-color: transparent;
-	margin: 0px;
-	padding: 0px 5%;
-	box-sizing: border-box;
-	font-size: medium;
-}
-
-.input-field:hover, .button:hover {
+.input-field:not(.disabled):hover, .button:enabled:hover {
 	box-shadow: var(--shadow-hover);
 }
 

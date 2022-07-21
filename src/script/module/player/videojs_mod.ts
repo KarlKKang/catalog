@@ -18,7 +18,7 @@ import {
 	d,
 	remove
 } from '../main';
-import Hls from 'hls.js';
+import type Hls from 'hls.js';
 import type {default as videojs} from 'video.js';
 import {IS_IOS} from './browser';
 import screenfull from 'screenfull';
@@ -42,7 +42,10 @@ export type VideojsModInstance = {
 	_useNative: boolean,
 
 	_attached: boolean,
-	_hlsInstance: Hls | undefined,
+	_hls: undefined | {
+		instance: Hls,
+		constructor: typeof Hls
+	},
 	_videoJSInstance: videojs.Player | undefined,
 
 	_inactiveCountdown: number,
@@ -56,7 +59,7 @@ export type VideojsModInstance = {
 	readonly play: () => void,
 	readonly pause: () => void,
 	readonly seek: (timestamp: number) => void,
-	readonly attachHls: (hlsInstance: Hls, url: string) => void,
+	readonly attachHls: (hlsConstructor: typeof Hls, hlsInstance: Hls, url: string) => void,
 	readonly attachVideojs: (url: string) => void,
 	readonly attachNative: (url: string) => void,
 	readonly destroy: () => void,
@@ -105,7 +108,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 		_useNative: true,
 
 		_attached: false,
-		_hlsInstance: undefined,
+		_hls: undefined,
 		_videoJSInstance: videojsMediaOverrideInstance,
 
 		_inactiveCountdown: 10,
@@ -143,17 +146,19 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 	}
 	
 	function seek (timestamp: number) {
-		if (IS_VIDEO && that._hlsInstance !== undefined) {
+		if (IS_VIDEO && that._hls !== undefined) {
 			if (timestamp >= that._fragStart) {
 				media.currentTime = timestamp;
 				onScreenConsoleOutput ('Skipped buffer flushing.');
 			} else {
-				that._hlsInstance.once(Hls.Events.BUFFER_FLUSHED, function () {
+				let hlsInstance = that._hls.instance;
+				let hlsConstructor = that._hls.constructor;
+				hlsInstance.once(hlsConstructor.Events.BUFFER_FLUSHED, function () {
 					media.currentTime = timestamp;
-					(that._hlsInstance as Hls).startLoad(timestamp);
+					hlsInstance.startLoad(timestamp);
 					onScreenConsoleOutput ('Buffer reloaded.');
 				});
-				that._hlsInstance.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: Number.POSITIVE_INFINITY, type: null});
+				hlsInstance.trigger(hlsConstructor.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: Number.POSITIVE_INFINITY, type: null});
 				onScreenConsoleOutput ('Buffer flushed.');
 			}
 		} else {
@@ -225,7 +230,7 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 
 	attachEventListeners(that);
 	
-	function attachHls (hlsInstance: Hls, url: string) {
+	function attachHls (hlsConstructor: typeof Hls, hlsInstance: Hls, url: string) {
 		if (that._attached) {
 			throw new Error('The instance already has source attached.');
 		}
@@ -235,10 +240,13 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 
 		that._attached = true;
 		that._useNative = false;
-		that._hlsInstance = hlsInstance;
+		that._hls = {
+			instance: hlsInstance,
+			constructor: hlsConstructor
+		};
 		
 		setMediaAttributes();
-		hlsInstance.on(Hls.Events.FRAG_CHANGED, (_, data) => { 
+		hlsInstance.on(hlsConstructor.Events.FRAG_CHANGED, (_, data) => { 
 			that._fragStart = data.frag.startDTS;
 			onScreenConsoleOutput ('Fragment changed: ' + that._fragStart + '-' + data.frag.endDTS);
 		});
@@ -292,9 +300,9 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 		if (!that._attached) {
 			return;
 		}
-		if (that._hlsInstance !== undefined) {
-			that._hlsInstance.destroy();
-			that._hlsInstance = undefined;
+		if (that._hls !== undefined) {
+			that._hls.instance.destroy();
+			that._hls = undefined;
 		} else if (that._videoJSInstance !== undefined) {
 			that._videoJSInstance.reset();
 		} else {

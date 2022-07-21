@@ -312,25 +312,20 @@ p.artist {
 }
 
 .button {
-	padding: 0px;
 	height: 40px;
 	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	background: var(--foreground-color);
-	border: none;
 	width: 150px;
 	max-width: 100%;
-	text-align: center;
 	position: relative;
-	cursor: pointer;
-	font-size: medium;
 }
 
 #warning-button-group > .button {
 	margin: 1em 3% 0px 3%;
 }
 
-#warning:hover, #message:hover, .button:hover {
+#warning:hover, #message:hover, .button:enabled:hover {
 	box-shadow: var(--shadow-hover);
 }
 

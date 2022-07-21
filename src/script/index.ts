@@ -11,6 +11,7 @@ import {
 	CDN_URL,
     clearCookies,
     cssVarWrapper,
+    disableInput,
 
     w,
     addEventListener,
@@ -228,7 +229,7 @@ function requestSearchResults () {
 }
 
 function disableSearchBarInput (disabled: boolean) {
-    searchBarInput.disabled = disabled;
+    disableInput(searchBarInput, disabled);
     if (disabled) {
         addClass(searchBar, 'disabled');
     } else {

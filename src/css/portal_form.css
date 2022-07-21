@@ -27,19 +27,15 @@
 
 .input-field, #submit-button {
 	margin: 1em 0px;
-	padding: 0px;
 	height: 40px;
 	box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 	background: var(--foreground-color);
-	border: none;
 }
 
 #submit-button {
 	width: 150px;
 	max-width: 80%;
-	text-align: center;
-	font-size: medium;
 }
 
 .input-field {
@@ -50,18 +46,7 @@
   	transform: translate(-50%, 0%);
 }
 
-.input-field > input {
-	width: 100%;
-	height: 100%;
-	border: none;
-	background-color: transparent;
-	margin: 0px;
-	padding: 0px 5%;
-	box-sizing: border-box;
-	font-size: medium;
-}
-
-.input-field:hover, #submit-button:hover {
+.input-field:not(.disabled):hover, #submit-button:enabled:hover {
 	box-shadow: var(--shadow-hover);
 }
 

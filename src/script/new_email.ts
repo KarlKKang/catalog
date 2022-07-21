@@ -15,7 +15,8 @@ import {
 	redirect,
 	getById,
 	removeClass,
-	getBody
+	getBody,
+	disableInput
 } from './module/main';
 
 addEventListener(w, 'load', function(){
@@ -109,6 +110,6 @@ addEventListener(w, 'load', function(){
 	
 	function disableAllInputs(disabled: boolean) {
 		submitButton.disabled = disabled;
-		newEmailInput.disabled = disabled
+		disableInput(newEmailInput, disabled);
 	}
 });

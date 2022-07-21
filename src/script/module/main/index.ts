@@ -441,14 +441,14 @@ export function encodeCFURIComponent (uri: string) {
 	return encodeURIComponent(uri).replace(/%20/g, "+");
 }
 ////////////////////////////////////////
-	
+
 ////////////////////////////////////////
-export function disableCheckbox (checkbox: HTMLInputElement, disabled: boolean) {
-	checkbox.disabled = disabled;
+export function disableInput (inputElement: HTMLInputElement, disabled: boolean) {
+	inputElement.disabled = disabled;
 	if (disabled) {
-		addClass(getParent(checkbox), 'disabled');
+		addClass(getParent(inputElement), 'disabled');
 	} else {
-		removeClass(getParent(checkbox), 'disabled');
+		removeClass(getParent(inputElement), 'disabled');
 	}
 }
 ////////////////////////////////////////

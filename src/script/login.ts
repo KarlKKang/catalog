@@ -9,7 +9,7 @@ import {
 	urlWithParam,
 	passwordStyling,
 	authenticate,
-	disableCheckbox,
+	disableInput,
 	clearCookies,
 	cssVarWrapper,
 	hashPassword,
@@ -123,8 +123,8 @@ async function login () {
 	
 function disableAllInputs (disabled: boolean) {
 	submitButton.disabled = disabled;
-	passwordInput.disabled = disabled;
-	usernameInput.disabled = disabled;
-	disableCheckbox(rememberMeInput, disabled);
+	disableInput(passwordInput, disabled);
+	disableInput(usernameInput, disabled);
+	disableInput(rememberMeInput, disabled);
 }
 });

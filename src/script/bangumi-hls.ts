@@ -57,8 +57,12 @@ var contentContainer: HTMLElement;
 var mediaHolder: HTMLElement;
 
 var playerImportPromise: Promise<typeof import(
-    /* webpackExports: ["Hls", "videojs", "browser", "videojsMod"] */
+    /* webpackExports: ["videojs", "browser", "videojsMod"] */
     './module/player'
+)>;
+var hlsImportPromise: Promise<typeof import(
+    /* webpackExports: ["default"] */
+    'hls.js'
 )>;
 var lazyloadImportPromise: ReturnType<typeof importLazyload>;
 
@@ -88,8 +92,12 @@ addEventListener(w, 'load', function(){
     // Preload modules
     lazyloadImportPromise = importLazyload(); // Putting smaller (lazyload) promises before larger (player) promise attains better performance somehow.
     playerImportPromise = import(
-        /* webpackExports: ["Hls", "videojs", "browser", "videojsMod"] */
+        /* webpackExports: ["videojs", "browser", "videojsMod"] */
         './module/player'
+    );
+    hlsImportPromise = import(
+        /* webpackExports: ["default"] */
+        'hls.js'
     );
 
     // Parse other parameters
@@ -145,7 +153,6 @@ addEventListener(w, 'load', function(){
     });
 });
 
-import type {Hls as Hls_} from './module/player';
 import type {videojs as VideoJS} from './module/player';
 import type {browser as Browser} from './module/player';
 import type {videojsMod as VideojsMod, VideojsModInstance} from './module/player';
@@ -157,7 +164,6 @@ const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE9
 const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
 var EPSelectorHeight: number;
 
-var Hls: typeof Hls_;
 var videojs: typeof VideoJS;
 var browser: typeof Browser;
 var videojsMod: typeof VideojsMod;
@@ -250,7 +256,6 @@ function updatePage (response: type.BangumiInfo.BangumiInfo) {
     baseURL = CDN_URL + '/' + (seriesOverride===undefined?seriesID:seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
     if (type == 'video' || type == 'audio') {
         playerImportPromise.then((playerModule) => {
-            Hls = playerModule.Hls;
             videojs = playerModule.videojs;
             browser = playerModule.browser; 
             videojsMod = playerModule.videojsMod; 
@@ -493,18 +498,23 @@ function addVideoNode (url: string, options: {currentTime?: number, play?: boole
             }
         }
 
-        let hls = new Hls(config);
+        hlsImportPromise.then(({default: Hls}) => {
+            let hls = new Hls(config);
 
-        hls.on(Hls.Events.ERROR, function (_, data) {
-            if (data.fatal) {
-                showPlaybackError(data.details);
-            }
-        });
-        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-            videoReady();
-        });
+            hls.on(Hls.Events.ERROR, function (_, data) {
+                if (data.fatal) {
+                    showPlaybackError(data.details);
+                }
+            });
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                videoReady();
+            });
 
-        videoInstance.attachHls(hls, url);
+            videoInstance.attachHls(Hls, hls, url);
+        }).catch((e) => { 
+            message.show(message.template.param.moduleImportError(e));
+            return;
+        });;
     } else if (browser.NATIVE_HLS) {
         addEventListener(videoMedia, 'error', function () {showPlaybackError ();});
         addEventListener(videoMedia, 'loadedmetadata', function () {
@@ -645,19 +655,24 @@ function addAudioNode (index: number) {
                 if (browser.IS_CHROMIUM) {
                     showMediaMessage('不具合があります', '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>', false);
                 }
-                let hls = new Hls(configHls);
-                hls.on(Hls.Events.ERROR, function (_, data) {
-                    if (data.fatal) {
-                        showPlaybackError('Index ' + index + ': ' + data.details);
-                    }
-                });
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    audioReadyCounter ++;
-                    if (audioReadyCounter == audioEPInfo.files.length) {
-                        audioReady();
-                    }
-                });
-                audioInstance.attachHls(hls, url);
+                hlsImportPromise.then(({default: Hls}) => {
+                    let hls = new Hls(configHls);
+                    hls.on(Hls.Events.ERROR, function (_, data) {
+                        if (data.fatal) {
+                            showPlaybackError('Index ' + index + ': ' + data.details);
+                        }
+                    });
+                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                        audioReadyCounter ++;
+                        if (audioReadyCounter == audioEPInfo.files.length) {
+                            audioReady();
+                        }
+                    });
+                    audioInstance.attachHls(Hls, hls, url);
+                }).catch((e) => { 
+                    message.show(message.template.param.moduleImportError(e));
+                    return;
+                });;
             } else if (browser.NATIVE_HLS) {
                 let audioMedia = audioInstance.media;
                 

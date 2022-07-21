@@ -25,7 +25,6 @@
 }
 .checkbox-container.disabled {
 	cursor: wait;
-	pointer-events: none;
 }
 
 .checkbox-container > p {
@@ -57,7 +56,7 @@
 }
 
 /* On mouse-over, add a grey background color */
-.checkbox-container:hover input ~ .checkmark {
+.checkbox-container:not(.disabled):hover input ~ .checkmark {
 	box-shadow: var(--checkbox-shadow-hover);
 }
 

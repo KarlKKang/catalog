@@ -1,4 +1,4 @@
-import {default as Hls} from 'hls.js';
+import {isSupported} from 'hls.js/src/is-supported';
 import Bowser from 'bowser';
 
 import {w, createElement} from '../main';
@@ -41,7 +41,7 @@ let audioElem = createElement('audio') as HTMLAudioElement;
 let videoElem = createElement('video') as HTMLVideoElement;
 
 var NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != "") && (audioElem.canPlayType('application/vnd.apple.mpegurl') != "") && IS_SAFARI;
-var USE_MSE = Hls.isSupported() && !NATIVE_HLS;
+var USE_MSE = isSupported() && !NATIVE_HLS;
 
 var CAN_PLAY_ALAC: boolean;
 var CAN_PLAY_FLAC: boolean;

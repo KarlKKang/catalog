@@ -20,7 +20,8 @@ import {
 	removeClass,
 	getBody,
 	
-	type
+	type,
+	disableInput
 } from './module/main';
 
 addEventListener(w, 'load', function(){
@@ -289,10 +290,10 @@ addEventListener(w, 'load', function(){
 	}
 		
 	function disableAllInputs(disabled: boolean) {
-		newUsernameInput.disabled = disabled;
-		newPasswordInput.disabled = disabled;
-		newPasswordComfirmInput.disabled = disabled;
-		inviteReceiverEmailInput.disabled = disabled;
+		disableInput(newUsernameInput, disabled);
+		disableInput(newPasswordInput, disabled);
+		disableInput(newPasswordComfirmInput, disabled);
+		disableInput(inviteReceiverEmailInput, disabled);
 			
 		emailChangeButton.disabled = disabled;
 		usernameChangeButton.disabled = disabled;
