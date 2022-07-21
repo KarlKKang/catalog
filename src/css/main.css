@@ -103,6 +103,7 @@ button:disabled, input:disabled {
 	-webkit-text-fill-color: var(--alt-text-color);
 	opacity: 1; /* required on iOS */
 	cursor: wait;
+	pointer-events: none;
 }
 
 select {

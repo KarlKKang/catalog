@@ -96,6 +96,7 @@
 }
 #search-bar.disabled {
 	cursor: wait;
+	pointer-events: none;
 }
 
 #search-bar .icon {
@@ -109,6 +110,7 @@
 }
 #search-bar.disabled .icon {
 	cursor: wait;
+	pointer-events: none;
 }
 #search-bar .icon svg {
     display: block;

@@ -25,6 +25,7 @@
 }
 .checkbox-container.disabled {
 	cursor: wait;
+	pointer-events: none;
 }
 
 .checkbox-container > p {
