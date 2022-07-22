@@ -1,3 +1,4 @@
+import {getMediaSource} from 'hls.js/src/utils/mediasource-helper';
 import {isSupported} from 'hls.js/src/is-supported';
 import Bowser from 'bowser';
 
@@ -10,7 +11,7 @@ declare global {
     }
 }
 
-const USER_AGENT = window.navigator && window.navigator.userAgent || '';
+const USER_AGENT = w.navigator && w.navigator.userAgent || '';
 var IS_CHROMIUM = false;
 var IS_IOS = false;
 var IS_DESKTOP = false;
@@ -28,7 +29,7 @@ if (USER_AGENT !== '') {
     const platformType = bowserParser.getPlatformType();
 
     IS_CHROMIUM = engineName === 'Blink' || !!w.chrome;
-    IS_IOS = (osName === 'iOS') || (browserName === 'Safari' && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))) /* iPad in desktop mode */;
+    IS_IOS = (osName === 'iOS') || (browserName === 'Safari' && (('ontouchstart' in w) || (navigator.maxTouchPoints > 0))) /* iPad in desktop mode */;
     IS_DESKTOP = platformType === 'desktop' && (osName === 'Linux' || osName === 'Windows' || osName === 'macOS') && !IS_IOS;
     IS_IE = browserName === 'Internet Explorer';
     IS_FIREFOX = engineName === 'Gecko';
@@ -43,16 +44,18 @@ let videoElem = createElement('video') as HTMLVideoElement;
 var NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != "") && (audioElem.canPlayType('application/vnd.apple.mpegurl') != "") && IS_SAFARI;
 var USE_MSE = isSupported() && !NATIVE_HLS;
 
-var CAN_PLAY_ALAC: boolean;
-var CAN_PLAY_FLAC: boolean;
+var CAN_PLAY_ALAC = false;
+var CAN_PLAY_FLAC = false;
 var CAN_PLAY_MP3 = (audioElem.canPlayType('audio/mpeg') != "")  && !IS_IE;
-var CAN_PLAY_AVC_AAC: boolean;
+var CAN_PLAY_AVC_AAC = false;
 
 if (USE_MSE) {
-    let mediaSource = w.MediaSource || w.WebKitMediaSource;
-    CAN_PLAY_ALAC = mediaSource.isTypeSupported('audio/mp4; codecs="alac"');
-    CAN_PLAY_FLAC = mediaSource.isTypeSupported('audio/mp4; codecs="flac"');
-    CAN_PLAY_AVC_AAC = mediaSource.isTypeSupported('video/mp4; codecs="avc1.640032,mp4a.40.2"');
+    let mediaSource = getMediaSource();
+    if (mediaSource !== undefined) {
+        CAN_PLAY_ALAC = mediaSource.isTypeSupported('audio/mp4; codecs="alac"');
+        CAN_PLAY_FLAC = mediaSource.isTypeSupported('audio/mp4; codecs="flac"');
+        CAN_PLAY_AVC_AAC = mediaSource.isTypeSupported('video/mp4; codecs="avc1.640032,mp4a.40.2"');
+    }
     //CAN_PLAY_MP3 = mediaSource.isTypeSupported('audio/mpeg'); //Firefox fails this test, but can still play mp3 in MSE.
 } else {
     CAN_PLAY_ALAC = audioElem.canPlayType('audio/mp4; codecs="alac"') != "";

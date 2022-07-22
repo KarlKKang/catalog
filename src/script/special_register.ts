@@ -26,7 +26,6 @@ addEventListener(w, 'load', function(){
 	clearCookies();
 	
 	if (getHref()!='https://featherine.com/special_register' && !DEVELOPMENT) {
-		window.location.replace('https://featherine.com/special_register');
 		redirect('https://featherine.com/special_register', true);
 		return;
 	}

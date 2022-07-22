@@ -16,6 +16,7 @@ import {
 	addEventsListener,
 	removeEventsListener,
 	d,
+	w,
 	remove
 } from '../main';
 import type Hls from 'hls.js';
@@ -477,7 +478,7 @@ function attachEventListeners (that: VideojsModInstance) {
 
 	function changeProgress (event: MouseEvent | TouchEvent) {
 		let mouseX;
-		if (window.TouchEvent !== undefined && event instanceof TouchEvent) {
+		if (w.TouchEvent !== undefined && event instanceof TouchEvent) {
 			let touchEvent = event as TouchEvent;
 			let touch = touchEvent.touches[0] || touchEvent.changedTouches[0];
 			if (touch === undefined) {
