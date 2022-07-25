@@ -25,9 +25,6 @@ module.exports = {
 		'confirm_new_email': {
 			import: './src/script/confirm_new_email',
 		},
-		'confirm_special_register': {
-			import: './src/script/confirm_special_register',
-		},
 		'console': {
 			import: './src/script/console',
 		},
@@ -89,12 +86,6 @@ module.exports = {
 			chunks: ['confirm_new_email'],
 			filename: '../confirm_new_email.html',
 			template: 'src/html/confirm_new_email.html'
-		}),
-		new HtmlWebpackPlugin({
-			minify: html_minify_options,
-			chunks: ['confirm_special_register'],
-			filename: '../confirm_special_register.html',
-			template: 'src/html/confirm_special_register.html'
 		}),
 		new HtmlWebpackPlugin({
 			minify: html_minify_options,

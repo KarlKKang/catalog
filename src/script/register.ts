@@ -58,8 +58,6 @@ addEventListener(w, 'load', function(){
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 message.show(message.template.param.expired);
-            } else if (response == 'SPECIAL') {
-                message.show(message.template.param.specialRegistrationOnly);
             } else if (response == 'APPROVED') {
 				addEventListener(usernameInput, 'keydown', function (event) {
 					if ((event as KeyboardEvent).key === "Enter") {

@@ -1,5 +1,4 @@
 import {
-	DEVELOPMENT,
     LOGIN_URL
 } from '../../../env/constant';
 import { paramWithRedirect } from "./helper";
@@ -32,16 +31,6 @@ export const emailChanged = {
     color: 'green',
     url: LOGIN_URL
 };
-export const incompletedInvitation = {
-    title: title.rejected,
-    message: body.incompletedInvitation,
-    url: LOGIN_URL
-};
-export const invitationOnly = {
-    title: title.rejected,
-    message: body.invitationOnly,
-    url: LOGIN_URL
-};
 export const registerComplete = {
     title: title.completed,
     message: body.registerComplete,
@@ -59,11 +48,6 @@ export const passwordChanged = {
     message: body.passwordChanged,
     color: 'green',
     url: LOGIN_URL
-};
-export const specialRegistrationOnly = {
-    title: title.rejected,
-    message: body.specialRegistrationOnly,
-    url: 'special_register'+(DEVELOPMENT?'.html':'')
 };
 export const unrecommendedBrowser = function (redirectURL: string) {
     return {

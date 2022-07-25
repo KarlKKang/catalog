@@ -170,10 +170,10 @@ addEventListener(w, 'load', function(){
 					warningElem.innerHTML = message.template.inline.emailAlreadyRegistered;
 				} else if (response == 'ONGOING') {
 					warningElem.innerHTML = message.template.inline.incompletedInvitation;
+				} else if (response == 'ONGOING EMAIL CHANGE') {
+					warningElem.innerHTML = message.template.inline.incompletedEmailChange;
 				} else if (response == 'ALREADY INVITED') {
 					warningElem.innerHTML = message.template.inline.emailAlreadyInvited;
-				} else if (response == 'SPECIAL') {
-					warningElem.innerHTML = message.template.inline.specialRegistrationOnly;
 				} else if (response == 'CLOSED') {
 					warningElem.innerHTML = message.template.inline.invitationClosed;
 				} else if (response == 'DONE') {
@@ -236,7 +236,7 @@ addEventListener(w, 'load', function(){
 		sendServerRequest('send_email_change.php', {
 			callback: function (response: string) {
 				if (response == 'DUPLICATED') {
-					warningElem.innerHTML = message.template.inline.duplicatedRequest;
+					warningElem.innerHTML = message.template.inline.incompletedEmailChange;
 				} else if (response == 'REJECTED') {
 					warningElem.innerHTML = message.template.inline.incompletedInvitation;
 				} else if (response == 'DONE') {
