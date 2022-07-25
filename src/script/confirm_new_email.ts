@@ -39,8 +39,6 @@ addEventListener(w, 'load', function(){
 		callback: function (response: string) {
 			if (response == 'EXPIRED') {
 				message.show (message.template.param.expired);
-			} else if (response == 'REJECTED') {
-				message.show (message.template.param.incompletedInvitation);
 			} else if (response == 'DONE') {
 				message.show (message.template.param.emailChanged);
 			} else {

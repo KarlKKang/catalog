@@ -22,8 +22,8 @@ module.exports = {
 		'bangumi-hls': {
 			import: './src/script/bangumi-hls',
 		},
-		'confirm_email': {
-			import: './src/script/confirm_email',
+		'confirm_new_email': {
+			import: './src/script/confirm_new_email',
 		},
 		'confirm_special_register': {
 			import: './src/script/confirm_special_register',
@@ -86,9 +86,9 @@ module.exports = {
 		}),
 		new HtmlWebpackPlugin({
 			minify: html_minify_options,
-			chunks: ['confirm_email'],
-			filename: '../confirm_email.html',
-			template: 'src/html/confirm_email.html'
+			chunks: ['confirm_new_email'],
+			filename: '../confirm_new_email.html',
+			template: 'src/html/confirm_new_email.html'
 		}),
 		new HtmlWebpackPlugin({
 			minify: html_minify_options,

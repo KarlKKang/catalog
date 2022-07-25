@@ -237,15 +237,16 @@ addEventListener(w, 'load', function(){
 			callback: function (response: string) {
 				if (response == 'DUPLICATED') {
 					warningElem.innerHTML = message.template.inline.duplicatedRequest;
-					removeClass(warningElem, 'hidden');
+				} else if (response == 'REJECTED') {
+					warningElem.innerHTML = message.template.inline.incompletedInvitation;
 				} else if (response == 'DONE') {
 					warningElem.innerHTML = message.template.inline.emailSent;
-					removeClass(warningElem, 'hidden');
 					changeColor (warningElem, 'green');
 				} else {
 					message.show();
 					return;
 				}
+				removeClass(warningElem, 'hidden');
 				disableAllInputs(false);
 			}
 		});
