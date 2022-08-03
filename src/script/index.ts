@@ -3,7 +3,6 @@ import "core-js";
 import {
 	DEVELOPMENT,
 	navListeners,
-	urlWithParam,
 	TOP_URL,
 	sendServerRequest,
 	message,
@@ -55,11 +54,6 @@ addEventListener(w, 'load', function(){
         redirect(TOP_URL, true);
 		return;
 	}
-		
-	if (getURLParam ('series') != null) {
-        redirect(urlWithParam(DEVELOPMENT?'bangumi.html':(TOP_URL+'/bangumi/')), true);
-        return;
-    }
 
     // Preload module
     lazyloadImportPromise = importLazyload();
@@ -178,7 +172,7 @@ function getURLKeywords () {
     }
 }
 
-function getSeries (callback?: (showSeriesCallback: ()=>void)=>(void | Promise<void>)) {
+function getSeries (callback?: (showSeriesCallback: ()=>void)=>void) {
     sendServerRequest('get_series.php', {
         callback: function (response: string) {
             var parsedResponse: any;
@@ -198,7 +192,8 @@ function getSeries (callback?: (showSeriesCallback: ()=>void)=>(void | Promise<v
                 });
             }
         },
-        content: keywords + pivot + "offset=" + offset
+        content: keywords + pivot + "offset=" + offset,
+        logoutParam: keywords.slice(0, -1)
     });
 }
 

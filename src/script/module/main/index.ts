@@ -109,50 +109,7 @@ export function getURLParam (name: string): string | null {
 	return urlObj.searchParams.get(name);
 }
 ////////////////////////////////////////
-	
-////////////////////////////////////////
-export function getSeriesID (): string | null {
-	var url = getHref() + '?';
-	if (url.startsWith(TOP_URL + '/bangumi/')) {
-		var start = (TOP_URL+'/bangumi/').length;
-		var end = url.indexOf('?');
-		if (start == end) {
-			return null;
-		}
-		return url.slice(start, end);
-	} else {
-		return getURLParam('series');
-	}
-}
-////////////////////////////////////////
 
-////////////////////////////////////////
-export function urlWithParam (url: string) {
-	var ep = getURLParam ('ep');
-	var series = getSeriesID();
-	var format = getURLParam ('format');
-	var keywords = getURLParam ('keywords');
-	if (series === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
-		return url + ((keywords === null)?'':'?keywords='+keywords);
-	} else {
-		if (url == TOP_URL+'/bangumi/') {
-			var separator = '?';
-			url += series;
-			if (ep !== null && ep !== '1') {
-				url += separator + 'ep=' + ep;
-				separator = '&';
-			} 
-			if (format !== null && format !== '1') {
-				url += separator + 'format=' + format;
-			}
-			return url;
-		} else {
-			return url + '?series='+series+((ep !== null && ep !== '1')?('&ep='+ep):'')+((format !== null && format !== '1')?('&format='+format):'');
-		}
-	}
-}
-////////////////////////////////////////
-	
 ////////////////////////////////////////
 function addXHROnError (xmlhttp: XMLHttpRequest) {
 	xmlhttp.onerror = function () {
@@ -160,9 +117,9 @@ function addXHROnError (xmlhttp: XMLHttpRequest) {
 	};
 }
 ////////////////////////////////////////
-	
+
 ////////////////////////////////////////
-function checkXHRStatus (response: XMLHttpRequest): boolean {
+function checkXHRStatus (response: XMLHttpRequest, logoutParam?: string): boolean {
 	var status = response.status;
 	if (response.readyState == 4) {
 		if (status == 200) {
@@ -174,7 +131,7 @@ function checkXHRStatus (response: XMLHttpRequest): boolean {
 				redirect(TOP_URL, true);
 			else {
 				logout(function () {
-					redirect(urlWithParam(LOGIN_URL), true);
+					redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
 				});
 			}	
 		} else if (status == 429) {
@@ -210,7 +167,8 @@ interface SendServerRequestOption {
 	callback?: Function,
 	content?: string,
 	withCredentials?: boolean,
-	method?: 'POST' | 'GET'
+	method?: 'POST' | 'GET',
+	logoutParam?: string
 };
 export function sendServerRequest (uri: string, options: SendServerRequestOption) {
 	if (options.content === undefined) {
@@ -225,7 +183,7 @@ export function sendServerRequest (uri: string, options: SendServerRequestOption
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function () {
-		if (checkXHRStatus(this)) {
+		if (checkXHRStatus(this, options.logoutParam)) {
 			if (options.callback === undefined) {
 				return;
 			}

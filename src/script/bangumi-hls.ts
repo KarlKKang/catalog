@@ -8,7 +8,6 @@ import {
 	message,
 	changeColor,
 	getURLParam,
-	getSeriesID,
 	secToTimestamp,
 	CDN_URL,
 	concatenateSignedURL,
@@ -80,11 +79,8 @@ addEventListener(w, 'load', function(){
     
     // Parse parameters
     let seriesIDParam = getSeriesID();
-    if (seriesIDParam === null) {
+    if (seriesIDParam === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(seriesIDParam)) {
         redirect(TOP_URL, true);
-        return;
-    } else if (!/^[a-zA-Z0-9~_-]{8,}$/.test(seriesIDParam)) {
-		redirect(TOP_URL, true);
         return;
     }
     seriesID = seriesIDParam;
@@ -102,31 +98,30 @@ addEventListener(w, 'load', function(){
 
     // Parse other parameters
     const epIndexParam = getURLParam ('ep');
-    const newURL = DEVELOPMENT?('bangumi.html'+'?series='+seriesID):(TOP_URL+'/bangumi/'+seriesID);
     if (epIndexParam === null) {
         epIndex = 0;
     } else {
-        epIndex = parseInt (epIndexParam);
+        epIndex = parseInt(epIndexParam);
         if (isNaN(epIndex) || epIndex<1) {
-            changeURL(newURL, true);
-            epIndex = 1;
-        } else if (epIndex == 1) {
-			changeURL(newURL, true);
-		}
-        epIndex--;
+            epIndex = 0;
+        } else {
+            epIndex--;
+        }
     }
 
     const formatIndexParam = getURLParam ('format');
 	if (formatIndexParam === null) {
         formatIndex = 0;
     } else {
-        formatIndex = parseInt (formatIndexParam);
+        formatIndex = parseInt(formatIndexParam);
         if (isNaN(formatIndex) || formatIndex<1) {
-			updateURLParam('format', 1);
-            formatIndex = 1;
+            formatIndex = 0;
+        } else {
+            formatIndex--;
         }
-        formatIndex--;
     }
+
+    updateURLParam();
 
     const debugParam = getURLParam ('debug');
 	if (debugParam === '1') {
@@ -149,7 +144,8 @@ addEventListener(w, 'load', function(){
             }
             updatePage(parsedResponse);
         },
-        content: "series="+seriesID+"&ep="+epIndex+'&format='+formatIndex
+        content: 'series='+seriesID+'&ep='+epIndex+'&format='+formatIndex,
+        logoutParam: getLogoutParam()
     });
 });
 
@@ -246,7 +242,8 @@ function updatePage (response: type.BangumiInfo.BangumiInfo) {
                     message.show(message.template.param.server.invalidResponse);
                 }
             },
-            content: "token="+epInfo.authentication_token
+            content: "token="+epInfo.authentication_token,
+            logoutParam: getLogoutParam()
         });
     }, 60*1000);
 
@@ -372,7 +369,7 @@ function updateVideo () {
 
     if (formatIndex >= formats.length) {
         formatIndex = 0;
-        updateURLParam ('format', 1);
+        updateURLParam();
     }
 
     formats.forEach(function(value, index){
@@ -441,7 +438,7 @@ function formatSwitch () {
         callback: function (response: string) {
             let currentTime = video.currentTime;
             let paused = video.paused;
-            updateURLParam ('format', selectedFormat+1);
+            updateURLParam();
 
             let parsedResponse: any;
             try {
@@ -454,7 +451,8 @@ function formatSwitch () {
             let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + videoEPInfo.file_name + '[' + videoEPInfo.formats[selectedFormat] + '].m3u8'), parsedResponse as type.CDNCredentials.CDNCredentials);
             addVideoNode (url, {currentTime: currentTime, play: !paused});
         },
-        content: "token="+videoEPInfo.authentication_token+"&format="+selectedFormat
+        content: "token="+videoEPInfo.authentication_token+"&format="+selectedFormat,
+        logoutParam: getLogoutParam()
     });
 }
 
@@ -1029,7 +1027,8 @@ function addDownloadAccordion () {
                     message.show(message.template.param.server.invalidResponse);
                 }
             },
-            content: "token="+epInfo.authentication_token+'&format='+formatIndex
+            content: "token="+epInfo.authentication_token+'&format='+formatIndex,
+            logoutParam: getLogoutParam()
         });
     });
     appendChild(accordionPanel, downloadButton);
@@ -1043,26 +1042,59 @@ function addDownloadAccordion () {
     appendChild(contentContainer, downloadElem);
 }
 
+function getSeriesID (): string | null {
+	var url = getHref() + '?';
+	if (url.startsWith(TOP_URL + '/bangumi/')) {
+		var start = (TOP_URL+'/bangumi/').length;
+		var end = url.indexOf('?');
+		if (start == end) {
+			return null;
+		}
+		return url.slice(start, end);
+	} else {
+		return getURLParam('series');
+	}
+}
 
-function updateURLParam (key: string, value: number) {
-    var url: string;
-    var separator: '?' | '&' = '?';
+function updateURLParam () {
+    let url: string;
     if (DEVELOPMENT) {
-        url = 'bangumi.html'+'?series='+seriesID+(epIndex==0?'':('&ep='+(epIndex+1)));
-        separator = '&';
+        url = 'bangumi.html' + '?series=' + seriesID;
     } else {
-        url = TOP_URL + '/bangumi/'+seriesID;
-        if (epIndex!=0) {
-            url += '?ep='+(epIndex+1);
-            separator = '&';
-        }
+        url = TOP_URL + '/bangumi/' + seriesID;
     }
 
-    if (key == 'format') {
-        url += (value==1?'':(separator+'format='+value));
+    let query = getCurrentQuery();
+    if (query !== '') {
+        url += (DEVELOPMENT ? '&' : '?') + query;
     }
 
     changeURL(url, true);
+}
+
+function getLogoutParam () {
+    let query = 'series=' + seriesID;
+    let additionalQuery = getCurrentQuery();
+    if (additionalQuery === '') {
+        return query;
+    }
+    return query + '&' + additionalQuery;
+}
+
+function getCurrentQuery () {
+    let query = '';
+    let separator: '' | '&' = '';
+
+    if (epIndex !== 0) {
+        query += 'ep='+(epIndex+1);
+        separator = '&';
+    }
+
+    if (formatIndex !== 0) {
+        query += separator + 'format=' + (formatIndex + 1);
+    }
+
+    return query;
 }
 
 function destroyAll () {

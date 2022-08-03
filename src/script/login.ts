@@ -6,13 +6,13 @@ import {
 	message, 
 	TOP_URL,
 	LOGIN_URL,
-	urlWithParam,
 	passwordStyling,
 	authenticate,
 	disableInput,
 	clearCookies,
 	cssVarWrapper,
 	hashPassword,
+	getURLParam,
 	
 	w,
 	addEventListener,
@@ -107,11 +107,11 @@ async function login () {
                 disableAllInputs(false);
             } else if (response == 'NOT RECOMMENDED') {
                 setTimeout (function () {
-                    message.show(message.template.param.unrecommendedBrowser(urlWithParam(TOP_URL)));
+                    message.show(message.template.param.unrecommendedBrowser(getForwardURL()));
                 }, 500);
             } else if (response == 'APPROVED') {
                 setTimeout (function () {
-					redirect(urlWithParam(TOP_URL), true);
+					redirect(getForwardURL(), true);
                 }, 500);
             } else {
                 message.show ();
@@ -126,5 +126,41 @@ function disableAllInputs (disabled: boolean) {
 	disableInput(passwordInput, disabled);
 	disableInput(usernameInput, disabled);
 	disableInput(rememberMeInput, disabled);
+}
+
+function getForwardURL () {
+	let series = getURLParam('series');
+	if (series !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
+		let url: string;
+		let separator: '?'|'&';
+
+		if (DEVELOPMENT) {
+			url = 'bangumi.html?series=' + series;
+			separator = '&';
+		} else {
+			url = TOP_URL + '/bangumi/' + series;
+			separator = '?';
+		}
+
+		let ep = getURLParam('ep');
+		if (ep !== null && ep !== '1') {
+			url += separator + 'ep=' + ep;
+			separator = '&';
+		} 
+
+		let format = getURLParam ('format');
+		if (format !== null && format !== '1') {
+			url += separator + 'format=' + format;
+		}
+		return url;
+	}
+
+
+	let keywords = getURLParam ('keywords');
+	if (keywords !== null) {
+		return TOP_URL + '?keywords='+keywords;
+	}
+
+	return TOP_URL;
 }
 });
