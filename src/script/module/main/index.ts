@@ -98,8 +98,7 @@ export {
 	appendChild
 };
 
-import * as type from './type';
-export {type};
+import type {CDNCredentials} from '../type';
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
@@ -376,7 +375,7 @@ export function imageProtection (elem: HTMLElement) {
 ////////////////////////////////////////
 	
 ////////////////////////////////////////
-export function concatenateSignedURL (url: string, credentials: type.CDNCredentials.CDNCredentials, resourceURLOverride?: string) {
+export function concatenateSignedURL (url: string, credentials: CDNCredentials.CDNCredentials, resourceURLOverride?: string) {
 	var policyString: string;
 	if (credentials.Policy !== undefined) {
 		var policy = credentials['Policy'];

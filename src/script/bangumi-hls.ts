@@ -42,9 +42,9 @@ import {
     containsClass,
     getComputedStyle,
     appendChild,
-
-    type
 } from './module/main';
+import {BangumiInfo, CDNCredentials} from './module/type';
+import type {LocalImageParam} from './module/type';
 import {default as importLazyload} from './module/lazyload';
 
 
@@ -137,7 +137,7 @@ addEventListener(w, 'load', function(){
             let parsedResponse: any;
             try {
                 parsedResponse = JSON.parse(response);
-                type.BangumiInfo.check(parsedResponse);
+                BangumiInfo.check(parsedResponse);
             } catch (e) {
                 message.show (message.template.param.server.invalidResponse);
                 return;
@@ -166,10 +166,10 @@ var videojsMod: typeof VideojsMod;
 var lazyloadInitialize: ()=>void;
 
 var mediaInstances: Array<VideojsModInstance> = [];
-var epInfo: type.BangumiInfo.VideoEPInfo | type.BangumiInfo.AudioEPInfo | type.BangumiInfo.ImageEPInfo;
+var epInfo: BangumiInfo.VideoEPInfo | BangumiInfo.AudioEPInfo | BangumiInfo.ImageEPInfo;
 var baseURL = '';
 
-function updatePage (response: type.BangumiInfo.BangumiInfo) {
+function updatePage (response: BangumiInfo.BangumiInfo) {
     navListeners();
     removeClass(getBody(), "hidden");
 
@@ -274,7 +274,7 @@ function updatePage (response: type.BangumiInfo.BangumiInfo) {
     }
 }
 
-function updateEPSelector (seriesEP: type.BangumiInfo.SeriesEP) {
+function updateEPSelector (seriesEP: BangumiInfo.SeriesEP) {
     var epButtonWrapper = createElement('div');
     epButtonWrapper.id = 'ep-button-wrapper';
 
@@ -315,7 +315,7 @@ function updateEPSelector (seriesEP: type.BangumiInfo.SeriesEP) {
     });
 }
 
-function updateSeasonSelector (seasons: type.BangumiInfo.Seasons) {
+function updateSeasonSelector (seasons: BangumiInfo.Seasons) {
     var seasonButtonWrapper = createElement('div');
     var seasonSelector = getById('season-selector');
     seasonButtonWrapper.id = 'season-button-wrapper';
@@ -344,7 +344,7 @@ function updateSeasonSelector (seasons: type.BangumiInfo.Seasons) {
 }
 
 function updateVideo () {
-    let videoEPInfo = epInfo as type.BangumiInfo.VideoEPInfo;
+    let videoEPInfo = epInfo as BangumiInfo.VideoEPInfo;
     addClass(mediaHolder, 'video');
 
     // Title
@@ -429,7 +429,7 @@ function updateVideo () {
 }
 
 function formatSwitch () {
-    let videoEPInfo = epInfo as type.BangumiInfo.VideoEPInfo;
+    let videoEPInfo = epInfo as BangumiInfo.VideoEPInfo;
     
     let formatSelector = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement);
     formatIndex = formatSelector.selectedIndex;
@@ -444,12 +444,12 @@ function formatSwitch () {
             let parsedResponse: any;
             try {
                 parsedResponse = JSON.parse(response);
-                type.CDNCredentials.check(parsedResponse);
+                CDNCredentials.check(parsedResponse);
             } catch (e) {
                 message.show(message.template.param.server.invalidResponse);
                 return;
             }
-            let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + videoEPInfo.file_name + '[' + formatSelector.value + '].m3u8'), parsedResponse as type.CDNCredentials.CDNCredentials);
+            let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + videoEPInfo.file_name + '[' + formatSelector.value + '].m3u8'), parsedResponse as CDNCredentials.CDNCredentials);
             addVideoNode (url, {currentTime: currentTime, play: !paused});
         },
         content: "token="+videoEPInfo.authentication_token+"&format="+formatIndex,
@@ -524,7 +524,7 @@ function addVideoNode (url: string, options: {currentTime?: number, play?: boole
 
 var audioReadyCounter = 0;
 function updateAudio () {
-    let audioEPInfo = epInfo as type.BangumiInfo.AudioEPInfo;
+    let audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
 
     addAlbumInfo();
     addDownloadAccordion();
@@ -542,10 +542,10 @@ function updateAudio () {
 }
 
 function addAudioNode (index: number) {
-    let audioEPInfo = epInfo as type.BangumiInfo.AudioEPInfo;
-    let file = audioEPInfo.files[index] as type.BangumiInfo.AudioFile;
+    let audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
+    let file = audioEPInfo.files[index] as BangumiInfo.AudioFile;
 
-    let cdnCredentials = audioEPInfo.cdn_credentials;
+    let credentials = audioEPInfo.cdn_credentials;
 
     const configVideoJSControl = {
         controls: true,
@@ -597,7 +597,7 @@ function addAudioNode (index: number) {
     }
     
     let videoJSControl = videojs(audioNode, configVideoJSControl, function () {
-        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK?'[FLAC]':'') +'.m3u8'), cdnCredentials, baseURL + '_MASTER_*.m3u8'); 
+        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK?'[FLAC]':'') +'.m3u8'), credentials, baseURL + '_MASTER_*.m3u8'); 
 
         if (USE_VIDEOJS) {
             const configVideoJSMedia = {
@@ -693,7 +693,7 @@ function addAudioNode (index: number) {
 }
 
 function addAlbumInfo () {
-    let albumInfo = (epInfo as type.BangumiInfo.AudioEPInfo).album_info;
+    let albumInfo = (epInfo as BangumiInfo.AudioEPInfo).album_info;
     if (albumInfo.album_title!='') {
         let albumTitleElem = createElement('p');
         addClass(albumTitleElem, 'sub-title');
@@ -716,7 +716,7 @@ function addAlbumInfo () {
     }
 }
 
-function getAudioSubtitleNode (file: type.BangumiInfo.AudioFile, FLAC_FALLBACK: boolean) {
+function getAudioSubtitleNode (file: BangumiInfo.AudioFile, FLAC_FALLBACK: boolean) {
     let subtitle = createElement('p');
     addClass(subtitle, 'sub-title');
 
@@ -817,7 +817,7 @@ function audioReady () {
 }
 
 function updateImage () {
-    let ImageEPInfo = epInfo as type.BangumiInfo.ImageEPInfo;
+    let ImageEPInfo = epInfo as BangumiInfo.ImageEPInfo;
     let files = ImageEPInfo.files;
 
     files.forEach(function (file, index) {
@@ -841,7 +841,7 @@ function updateImage () {
         imageNode.dataset.xhrParam = index.toString();
         imageNode.dataset.authenticationToken = epInfo.authentication_token;
         addEventListener(imageNode, 'click', function() {
-            let param: type.LocalImageParam.LocalImageParam = {
+            let param: LocalImageParam.LocalImageParam = {
                 src: baseURL + encodeCFURIComponent(file.file_name),
                 xhrParam: index.toString(),
                 title: getById('title').innerHTML,
@@ -917,7 +917,7 @@ function addAccordionEvent (acc: HTMLElement) {
     });
 }
 
-function displayChapters (chapters: type.BangumiInfo.Chapters) {
+function displayChapters (chapters: BangumiInfo.Chapters) {
     let videoInstance = mediaInstances[0] as VideojsModInstance;
 
     //display chapters

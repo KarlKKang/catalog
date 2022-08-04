@@ -27,9 +27,8 @@ import {
     containsClass,
     d,
     appendChild,
-
-    type
 } from './module/main';
+import {SeriesInfo} from './module/type';
 import {default as importLazyload} from './module/lazyload';
 
 var lazyloadInitialize: ()=>void;
@@ -39,7 +38,7 @@ var searchBarInput: HTMLInputElement;
 
 var containerElem: HTMLElement;
 	
-var offset: type.SeriesInfo.OffsetInfo = 0;
+var offset: SeriesInfo.OffsetInfo = 0;
 	
 var keywords = '';
 var pivot = '';
@@ -89,8 +88,8 @@ addEventListener(w, 'load', function(){
 
 
 
-function showSeries (seriesInfo: type.SeriesInfo.SeriesInfo) {
-    var seriesEntries = seriesInfo.slice(0, -1) as type.SeriesInfo.SeriesEntries;
+function showSeries (seriesInfo: SeriesInfo.SeriesInfo) {
+    var seriesEntries = seriesInfo.slice(0, -1) as SeriesInfo.SeriesEntries;
     for (let seriesEntry of seriesEntries) {
         let seriesNode = createElement('div');
         let thumbnailNode = createElement('div');
@@ -113,10 +112,10 @@ function showSeries (seriesInfo: type.SeriesInfo.SeriesInfo) {
         appendChild(containerElem, seriesNode);
     }
     
-    offset = seriesInfo[seriesInfo.length-1] as type.SeriesInfo.OffsetInfo;
+    offset = seriesInfo[seriesInfo.length-1] as SeriesInfo.OffsetInfo;
     
     if (offset != 'EOF' && keywords != '') {
-        pivot = 'pivot=' + (seriesEntries[seriesEntries.length-1] as type.SeriesInfo.SeriesEntry).id + '&';
+        pivot = 'pivot=' + (seriesEntries[seriesEntries.length-1] as SeriesInfo.SeriesEntry).id + '&';
     } else {
         pivot = '';
     }
@@ -178,17 +177,17 @@ function getSeries (callback?: (showSeriesCallback: ()=>void)=>void) {
             var parsedResponse: any;
             try {
                 parsedResponse = JSON.parse(response);
-                type.SeriesInfo.check(parsedResponse);
+                SeriesInfo.check(parsedResponse);
             } catch (e) {
                 message.show(message.template.param.server.invalidResponse);
                 return;
             }
 
             if (callback === undefined) {
-                showSeries (parsedResponse as type.SeriesInfo.SeriesInfo);
+                showSeries (parsedResponse as SeriesInfo.SeriesInfo);
             } else {
                 callback(function () {
-                    showSeries (parsedResponse as type.SeriesInfo.SeriesInfo);
+                    showSeries (parsedResponse as SeriesInfo.SeriesInfo);
                 });
             }
         },

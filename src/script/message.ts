@@ -18,9 +18,8 @@ import {
 	setTitle,
 	deleteCookie,
 	addClass,
-
-	type
 } from './module/main';
+import {LocalMessageParam} from './module/type';
 
 addEventListener(w, 'load', function(){
 	cssVarWrapper();
@@ -46,13 +45,13 @@ addEventListener(w, 'load', function(){
 	try {
 		paramCookie = decodeURIComponent(paramCookie);
 		parsedParam = JSON.parse(paramCookie);
-		type.LocalMessageParam.check(parsedParam);
+		LocalMessageParam.check(parsedParam);
 	} catch (e) {
 		redirect(TOP_URL, true)
 		return;
 	}
 
-	var param = parsedParam as type.LocalMessageParam.LocalMessageParam;
+	var param = parsedParam as LocalMessageParam.LocalMessageParam;
 	
 	var callback = function () {
 		setTitle(param.htmlTitle);

@@ -17,9 +17,8 @@ import {
 	deleteCookie,
 	setTitle,
 	getById,
-
-	type
 } from './module/main';
+import {LocalImageParam, CDNCredentials} from './module/type';
 
 addEventListener(w, 'load', function(){
 	clearCookies();
@@ -42,12 +41,12 @@ addEventListener(w, 'load', function(){
 	try {
 		paramCookie = decodeURIComponent(paramCookie);
 		parsedCookie = JSON.parse(paramCookie);
-		type.LocalImageParam.check(parsedCookie);
+		LocalImageParam.check(parsedCookie);
 	} catch (e) {
 		redirect(TOP_URL, true);
 		return;
 	}
-	const param = parsedCookie as type.LocalImageParam.LocalImageParam;
+	const param = parsedCookie as LocalImageParam.LocalImageParam;
 
 	const imageLoaderImportPromise = import(
 		/* webpackChunkName: "image_loader" */
@@ -75,11 +74,11 @@ addEventListener(w, 'load', function(){
 			var parsedResponse: any;
 			try {
 				parsedResponse = JSON.parse(response);
-				type.CDNCredentials.check(parsedResponse);
+				CDNCredentials.check(parsedResponse);
 			} catch (e) {
 				message.show(message.template.param.server.invalidResponse);
 			}
-			const credentials = parsedResponse as type.CDNCredentials.CDNCredentials;
+			const credentials = parsedResponse as CDNCredentials.CDNCredentials;
 			const url = concatenateSignedURL(param.src, credentials);
 			
 			imageLoaderImportPromise.then(({default: imageLoader}) => {

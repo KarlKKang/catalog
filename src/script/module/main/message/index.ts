@@ -4,7 +4,7 @@ import {
     LOGIN_URL
 } from '../env/constant';
 import { getHref, redirect, setCookie, getTitle } from '../DOM/document';
-import { LocalMessageParam } from '../type';
+import { LocalMessageParam } from '../../type';
 
 import * as template from "./template";
 export {template};

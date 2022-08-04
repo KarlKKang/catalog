@@ -5,13 +5,12 @@ import {
 	message,
 	concatenateSignedURL,
 
-	type,
-
 	getByClass,
 	containsClass,
 	addClass,
 } from '../main';
 import type ImageLoader from '../image_loader';
+import {CDNCredentials} from '../type';
 
 var loader: typeof ImageLoader;
 export default function (imageLoader: typeof ImageLoader) {
@@ -55,11 +54,11 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 		if (target.dataset.authenticationToken !== undefined) {
 			sendServerRequest('get_image.php', {
 				callback: function (response: string) {
-					var credentials: type.CDNCredentials.CDNCredentials;
+					var credentials: CDNCredentials.CDNCredentials;
 					try {
 						var parsedResponse: any = JSON.parse(response);
-						type.CDNCredentials.check(parsedResponse);
-						credentials = parsedResponse as type.CDNCredentials.CDNCredentials;
+						CDNCredentials.check(parsedResponse);
+						credentials = parsedResponse as CDNCredentials.CDNCredentials;
 					} catch (e) {
 						message.show (message.template.param.server.invalidResponse);
 						return;

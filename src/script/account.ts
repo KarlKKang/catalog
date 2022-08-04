@@ -20,9 +20,9 @@ import {
 	removeClass,
 	getBody,
 	
-	type,
 	disableInput
 } from './module/main';
+import {UserInfo} from './module/type';
 
 addEventListener(w, 'load', function(){
 
@@ -51,16 +51,16 @@ addEventListener(w, 'load', function(){
 			var parsedResponse: any;
 			try {
 				parsedResponse = JSON.parse(response);
-				type.UserInfo.check(parsedResponse);
+				UserInfo.check(parsedResponse);
 			} catch (e) {
 				message.show(message.template.param.server.invalidResponse);
 				return;
 			}
-			showUser(parsedResponse as type.UserInfo.UserInfo);
+			showUser(parsedResponse as UserInfo.UserInfo);
 		}
 	});
 	
-	function showUser (userInfo: type.UserInfo.UserInfo) {
+	function showUser (userInfo: UserInfo.UserInfo) {
 		getById('container').innerHTML = '<p id="title">マイページ</p>'+
 
 			'<p class="sub-title">メールアドレス</p>'+
