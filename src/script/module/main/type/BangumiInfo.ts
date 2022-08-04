@@ -24,10 +24,14 @@ interface EPInfo {
 }
 
 export type Chapters = Array<[string, number]>;
+type VideoFormatInfo = {
+    value: string,
+    tag?: string
+};
 export interface VideoEPInfo extends EPInfo {
     type: 'video',
     title: string,
-    formats: [string, ...string[]],
+    formats: [VideoFormatInfo, ...VideoFormatInfo[]],
     chapters: Chapters,
     file_name: string,
     cdn_credentials: CDNCredentials.CDNCredentials
@@ -75,7 +79,15 @@ function checkVideoEPInfo (epInfo: any) {
     }
 
     for (let format of formats) {
-        if (!isString(format)) {
+        if (!isObject(format)) {
+            throwError();
+        }
+
+        if (!isString(format.value)) {
+            throwError();
+        }
+
+        if (format.tag !== undefined && !isString(format.tag)) {
             throwError();
         }
     }

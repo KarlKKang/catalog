@@ -121,12 +121,12 @@ addEventListener(w, 'load', function(){
         }
     }
 
-    updateURLParam();
-
     const debugParam = getURLParam ('debug');
 	if (debugParam === '1') {
         debug = true;
     } 
+
+    updateURLParam();
 
     contentContainer = getById('content');
     mediaHolder = getById('media-holder');
@@ -362,27 +362,28 @@ function updateVideo () {
     let formatSelector = createElement('div');
     formatSelector.id = 'format-selector';
 
-    let selectMenu = createElement('select');
-    addEventListener(selectMenu, "change", function () {
-        formatSwitch();
-    });
+    let selectMenu = createElement('select') as HTMLSelectElement;
 
     if (formatIndex >= formats.length) {
         formatIndex = 0;
         updateURLParam();
     }
 
-    formats.forEach(function(value, index){
+    formats.forEach(function(format, index){
         let option = createElement('option') as HTMLOptionElement;
 
-        option.value = value;
-        option.innerHTML = value;
+        option.value = format.value;
+        option.innerHTML = (format.tag === undefined) ? format.value : format.tag;
 
         if (index == formatIndex) {
             option.selected = true;
         }
 
         appendChild(selectMenu, option);
+    });
+
+    addEventListener(selectMenu, "change", function () {
+        formatSwitch();
     });
 
     appendChild(formatSelector, selectMenu);
@@ -417,7 +418,7 @@ function updateVideo () {
         videoJS.style.paddingTop = 9/16*100 + '%';
         mediaInstances.push(videojsMod(this, {debug: debug}));
 
-        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + videoEPInfo.file_name + '[' + videoEPInfo.formats[formatIndex] + '].m3u8'), videoEPInfo.cdn_credentials);
+        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + videoEPInfo.file_name + '[' + selectMenu.value + '].m3u8'), videoEPInfo.cdn_credentials);
 
         addVideoNode (url, {/*, currentTime: timestampParam*/});
         if (videoEPInfo.chapters.length > 0) {
@@ -430,9 +431,9 @@ function updateVideo () {
 function formatSwitch () {
     let videoEPInfo = epInfo as type.BangumiInfo.VideoEPInfo;
     
-    let selectedFormat = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement).selectedIndex;
+    let formatSelector = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement);
+    formatIndex = formatSelector.selectedIndex;
     let video = (mediaInstances[0] as VideojsModInstance).media;
-    formatIndex = selectedFormat;
 
     sendServerRequest('format_switch.php', {
         callback: function (response: string) {
@@ -448,10 +449,10 @@ function formatSwitch () {
                 message.show(message.template.param.server.invalidResponse);
                 return;
             }
-            let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + videoEPInfo.file_name + '[' + videoEPInfo.formats[selectedFormat] + '].m3u8'), parsedResponse as type.CDNCredentials.CDNCredentials);
+            let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + videoEPInfo.file_name + '[' + formatSelector.value + '].m3u8'), parsedResponse as type.CDNCredentials.CDNCredentials);
             addVideoNode (url, {currentTime: currentTime, play: !paused});
         },
-        content: "token="+videoEPInfo.authentication_token+"&format="+selectedFormat,
+        content: "token="+videoEPInfo.authentication_token+"&format="+formatIndex,
         logoutParam: getLogoutParam()
     });
 }
@@ -470,8 +471,6 @@ function addVideoNode (url: string, options: {currentTime?: number, play?: boole
 
         if (options.play) {
             videoInstance.play();
-        } else {
-            videoInstance.pause();
         }
     }
 
