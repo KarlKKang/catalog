@@ -171,9 +171,6 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 		if (that._buffering === false) {
 			return;
 		}
-        if (event !== undefined && (event.type == 'playing' || (!media.paused && event.type == 'timeupdate'))) {
-            media.pause();
-        }
         for (var i = media.buffered.length - 1; i >= 0; i--) {
             if (media.buffered.start(i) <= media.currentTime+0.05) {
 				onScreenConsoleOutput ('Checking buffer range :' + media.buffered.start(i) + '-' + media.buffered.end(i) + '. Current time: ' + media.currentTime);
@@ -185,12 +182,16 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
                     if (that._playing && !that._dragging) {
 						media.play();
 					}
+					return;
                 } else {
 					setTimeout(checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
+					break;
 				}
-                break;
             }
         }
+		if (event !== undefined && (event.type == 'playing' || (!media.paused && event.type == 'timeupdate'))) {
+			media.pause();
+		}
     }
 	
     function startBuffer() {
@@ -204,29 +205,30 @@ export default function (instance: videojs.Player, config?: {audio?: boolean, vi
 			checkBuffer();
         }
 
-        if (!that._buffering) {
-            if (media.buffered.length == 0) {
-                addCheckBuffer ();
-				onScreenConsoleOutput ('Buffer empty, start buffering.');
-            } else {
-                for (var i = media.buffered.length - 1; i >= 0; i--) {
-                    if (media.buffered.start(i) <= media.currentTime+0.05) {
-                        if (media.buffered.end(i) < Math.min(media.currentTime+14.9, media.duration-0.1)) {
-                            addCheckBuffer ();
-							onScreenConsoleOutput ('Buffer under threshold, start buffering.');
-                        } else {
-							onScreenConsoleOutput ('Buffer above threshold.');
-                            if (that._playing && media.paused && !that._dragging) {
-								media.play();
-							}
-                        }
-                        break;
+        if (that._buffering) {
+			checkBuffer();
+			return;
+		}
+
+        if (media.buffered.length == 0) {
+            addCheckBuffer ();
+			onScreenConsoleOutput ('Buffer empty, start buffering.');
+        } else {
+            for (var i = media.buffered.length - 1; i >= 0; i--) {
+                if (media.buffered.start(i) <= media.currentTime+0.05) {
+                    if (media.buffered.end(i) < Math.min(media.currentTime+14.9, media.duration-0.1)) {
+                        addCheckBuffer ();
+						onScreenConsoleOutput ('Buffer under threshold, start buffering.');
+                    } else {
+						onScreenConsoleOutput ('Buffer above threshold.');
+                        if (that._playing && !that._dragging) {
+							media.play();
+						}
                     }
+                    return;
                 }
             }
-        } else {
-			checkBuffer();
-		}
+        }
     }
 
 	attachEventListeners(that);
@@ -518,7 +520,7 @@ function attachEventListeners (that: VideojsModInstance) {
 
 	//Activity on media
 	addEventListener(media, 'play', function () {
-		onScreenConsoleOutput ('Playback started.');
+		onScreenConsoleOutput ('Playback started at ' + media.currentTime + '.');
 		removeClass(playButton, 'vjs-paused');
 		addClass(playButton, 'vjs-playing');
 		removeClass(controls, 'vjs-paused');
@@ -542,12 +544,18 @@ function attachEventListeners (that: VideojsModInstance) {
         if (media.currentTime >= media.duration) {
 			addClass(controls, 'vjs-ended');
 			addClass(playButton, 'vjs-ended');
+			if (IS_VIDEO && !that._useNative) {
+				that._playing = false;
+			}
         }
 	});
 
 	addEventListener(media, 'ended', function () {
 		addClass(controls, 'vjs-ended');
 		addClass(playButton, 'vjs-ended');
+		if (IS_VIDEO && !that._useNative) {
+			that._playing = false;
+		}
 	});
 
 	//Redundent
@@ -597,8 +605,9 @@ function attachEventListeners (that: VideojsModInstance) {
 	addEventListener(media, 'waiting', function () {
 		onScreenConsoleOutput ('Playback entered waiting state.');
 		addClass(controls, 'vjs-seeking');
-		if (!that._useNative)
-			media.pause();
+		if (!that._useNative) {
+			that.startBuffer();
+		}
 	});
 
 	//Loading
@@ -742,7 +751,9 @@ function onScreenConsoleOutput (txt: string) {
 
 	var onScreenConsole = getById('on-screen-console');
 	if (onScreenConsole instanceof HTMLTextAreaElement) {
-		var date = new Date();
-		onScreenConsole.value += (date.getHours()<10 ? '0'+date.getHours() : date.getHours()) + ':' + (date.getMinutes()<10 ? '0'+date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds()<10 ? '0'+date.getSeconds() : date.getSeconds()) + '   ' + txt + '\r\n';
+		let date = new Date();
+		let newline = (date.getHours()<10 ? '0'+date.getHours() : date.getHours()) + ':' + (date.getMinutes()<10 ? '0'+date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds()<10 ? '0'+date.getSeconds() : date.getSeconds()) + '   ' + txt + '\r\n';
+		console.log(newline);
+		onScreenConsole.value += newline;
 	}
 }
