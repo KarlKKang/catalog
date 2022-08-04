@@ -1,102 +1,27 @@
 import {
 	SERVER_URL,
-	CDN_URL,
 	DEVELOPMENT,
 	TOP_URL,
 	LOGIN_URL
-} from './env/constant';
+} from '../env/constant';
 
-export {TOP_URL, LOGIN_URL, SERVER_URL, CDN_URL, DEVELOPMENT};
-
-import * as message from './message';
-export {message};
+import * as message from '../message';
 
 //import * as DOM from './DOM';
 import {
-	d, 
 	w, 
-	getBody, 
 	getHref, 
-	getHash, 
 	redirect,
-	changeURL,
-	openWindow,
-	getCookie,
-	setCookie,
 	deleteCookie,
-	getTitle,
-	setTitle,
 	
-	getByIdNative,
 	getById,
-	getDescendantsByClass,
-	getByClass,
-	getDescendantsByClassAt,
-	getByClassAt,
-	getDescendantsByTag,
-	getByTag,
-	getDescendantsByTagAt,
-	getByTagAt,
 	addClass,
 	removeClass,
-	setClass,
 	toggleClass,
 	containsClass,
 	getParent,
-	insertBefore,
-	remove,
-	createElement,
-	createTextNode,
 	addEventListener,
-	addEventsListener,
-	removeEventListener,
-	removeEventsListener,
-	getComputedStyle,
-	appendChild
-} from './DOM';
-//export {DOM};
-export {
-	d, 
-	w, 
-	getBody, 
-	getHref, 
-	getHash, 
-	redirect,
-	changeURL,
-	openWindow,
-	getCookie,
-	setCookie,
-	deleteCookie,
-	getTitle,
-	setTitle,
-	
-	getByIdNative,
-	getById,
-	getDescendantsByClass,
-	getByClass,
-	getDescendantsByClassAt,
-	getByClassAt,
-	getDescendantsByTag,
-	getByTag,
-	getDescendantsByTagAt,
-	getByTagAt,
-	addClass,
-	removeClass,
-	setClass,
-	toggleClass,
-	containsClass,
-	getParent,
-	insertBefore,
-	remove,
-	createElement,
-	createTextNode,
-	addEventListener,
-	addEventsListener,
-	removeEventListener,
-	removeEventsListener,
-	getComputedStyle,
-	appendChild
-};
+} from '../DOM';
 
 import type {CDNCredentials} from '../type';
 

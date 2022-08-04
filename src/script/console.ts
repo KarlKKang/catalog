@@ -2,10 +2,13 @@
 import "core-js";
 import {
 	DEVELOPMENT,
+} from './module/env/constant';
+import {
 	sendServerRequest,
 	clearCookies,
 	hashPassword,
-	
+} from './module/main';
+import {
 	w,
 	addEventListener,
 	getHref,
@@ -19,7 +22,7 @@ import {
 	addClass,
 	containsClass,
 	getByClass
-} from './module/main';
+} from './module/DOM';
 
 addEventListener(w, 'load', function(){
 	clearCookies();

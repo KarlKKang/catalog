@@ -2,17 +2,20 @@
 import "core-js";
 import {
 	DEVELOPMENT,
-	sendServerRequest,
-	message,
-	getURLParam,
 	LOGIN_URL,
+} from './module/env/constant';
+import {
+	sendServerRequest,
+	getURLParam,
 	clearCookies,
-	
+} from './module/main';
+import {
 	w,
 	addEventListener,
 	getHref,
 	redirect,
-} from './module/main';
+} from './module/DOM';
+import * as message from './module/message';
 
 addEventListener(w, 'load', function(){
 	clearCookies();

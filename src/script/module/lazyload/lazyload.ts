@@ -2,15 +2,16 @@
 import 'intersection-observer';
 import {
 	sendServerRequest,
-	message,
 	concatenateSignedURL,
-
+} from '../main';
+import {
 	getByClass,
 	containsClass,
 	addClass,
-} from '../main';
-import type ImageLoader from '../image_loader';
+} from '../DOM';
+import * as message from '../message';
 import {CDNCredentials} from '../type';
+import type ImageLoader from '../image_loader';
 
 var loader: typeof ImageLoader;
 export default function (imageLoader: typeof ImageLoader) {

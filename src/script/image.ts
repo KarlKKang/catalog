@@ -3,12 +3,14 @@ import "core-js";
 import {
 	DEVELOPMENT,
 	TOP_URL,
+} from './module/env/constant';
+import {
 	sendServerRequest,
-	message,
 	concatenateSignedURL,
 	clearCookies,
 	removeRightClick,
-
+} from './module/main';
+import {
 	w,
 	addEventListener,
 	getHref,
@@ -17,7 +19,8 @@ import {
 	deleteCookie,
 	setTitle,
 	getById,
-} from './module/main';
+} from './module/DOM';
+import * as message from './module/message';
 import {LocalImageParam, CDNCredentials} from './module/type';
 
 addEventListener(w, 'load', function(){

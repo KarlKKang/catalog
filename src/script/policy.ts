@@ -2,10 +2,13 @@
 import "core-js";
 import {
 	DEVELOPMENT,
+} from './module/env/constant';
+import {
 	authenticate,
 	clearCookies,
 	cssVarWrapper,
-	
+} from './module/main';
+import {
 	w,
 	addEventListener,
 	getHref,
@@ -14,7 +17,7 @@ import {
 	getBody,
 	getHash,
 	getByIdNative
-} from './module/main';
+} from './module/DOM';
 
 addEventListener(w, 'load', function(){
 	cssVarWrapper();

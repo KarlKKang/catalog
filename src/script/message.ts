@@ -3,11 +3,14 @@ import "core-js";
 import {
 	DEVELOPMENT,
 	TOP_URL,
+} from './module/env/constant';
+import {
 	logout,
 	clearCookies,
 	cssVarWrapper,
 	changeColor,
-
+} from './module/main';
+import {
 	w,
 	addEventListener,
 	getCookie,
@@ -18,7 +21,7 @@ import {
 	setTitle,
 	deleteCookie,
 	addClass,
-} from './module/main';
+} from './module/DOM';
 import {LocalMessageParam} from './module/type';
 
 addEventListener(w, 'load', function(){

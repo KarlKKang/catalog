@@ -2,7 +2,7 @@ import {getMediaSource} from 'hls.js/src/utils/mediasource-helper';
 import {isSupported} from 'hls.js/src/is-supported';
 import Bowser from 'bowser';
 
-import {w, createElement} from '../main';
+import {w, createElement} from '../DOM';
 
 declare global {
     interface Window {

@@ -2,17 +2,19 @@
 import "core-js";
 import {
 	DEVELOPMENT,
-	navListeners,
 	TOP_URL,
+    CDN_URL,
+} from './module/env/constant';
+import {
+	navListeners,
 	sendServerRequest,
-	message,
 	getURLParam,
-	CDN_URL,
     clearCookies,
     cssVarWrapper,
     disableInput,
-
-    w,
+} from './module/main';
+import {
+	w,
     addEventListener,
     getHref,
     redirect,
@@ -27,7 +29,8 @@ import {
     containsClass,
     d,
     appendChild,
-} from './module/main';
+} from './module/DOM';
+import * as message from './module/message';
 import {SeriesInfo} from './module/type';
 import {default as importLazyload} from './module/lazyload';
 

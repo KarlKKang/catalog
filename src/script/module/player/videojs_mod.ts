@@ -2,8 +2,8 @@
 import {
     secToTimestamp,
 	removeRightClick,
-	message,
-
+} from '../main';
+import {
 	getById,
 	insertBefore,
 	addEventListener,
@@ -18,7 +18,8 @@ import {
 	d,
 	w,
 	remove
-} from '../main';
+} from '../DOM';
+import * as message from '../message';
 import type Hls from 'hls.js';
 import type {default as videojs} from 'video.js';
 import {IS_IOS} from './browser';

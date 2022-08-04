@@ -1,11 +1,12 @@
 // JavaScript Document
 import "core-js";
 import {
-	DEVELOPMENT, 
-	sendServerRequest, 
-	message, 
+	DEVELOPMENT,
 	TOP_URL,
 	LOGIN_URL,
+} from './module/env/constant';
+import {
+	sendServerRequest, 
 	passwordStyling,
 	authenticate,
 	disableInput,
@@ -13,7 +14,8 @@ import {
 	cssVarWrapper,
 	hashPassword,
 	getURLParam,
-	
+} from './module/main';
+import {
 	w,
 	addEventListener,
 	getHref,
@@ -22,7 +24,8 @@ import {
 	removeClass,
 	getBody,
 	getDescendantsByTagAt
-} from './module/main';
+} from './module/DOM';
+import * as message from './module/message';
 
 addEventListener(w, 'load', function(){
 	cssVarWrapper();

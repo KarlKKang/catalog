@@ -2,15 +2,18 @@
 import "core-js";
 import {
 	DEVELOPMENT,
+	LOGIN_URL,
+} from './module/env/constant';
+import {
 	getURLParam,
 	sendServerRequest,
-	message,
-	LOGIN_URL,
 	passwordStyling,
 	clearCookies,
 	cssVarWrapper,
 	hashPassword,
-	
+	disableInput
+} from './module/main';
+import {
 	w,
 	addEventListener,
 	getHref,
@@ -20,8 +23,8 @@ import {
 	getBody,
 	getByClassAt,
 	openWindow,
-	disableInput
-} from './module/main';
+} from './module/DOM';
+import * as message from './module/message';
 
 addEventListener(w, 'load', function(){
 	cssVarWrapper();

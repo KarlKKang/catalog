@@ -1,7 +1,4 @@
-import {
-	message
-} from '../main';
-
+import * as message from '../message';
 import type {default as LazyloadInitialize} from './lazyload';
 import type {default as ImageLoader} from '../image_loader';
 

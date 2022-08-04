@@ -1,16 +1,19 @@
 // JavaScript Document
 import "core-js";
 import {
-	DEVELOPMENT, 
+	DEVELOPMENT
+} from './module/env/constant';
+import {
 	navListeners, 
 	passwordStyling,
 	sendServerRequest,
-	message,
 	changeColor,
 	clearCookies,
 	cssVarWrapper,
 	hashPassword,
-
+	disableInput
+} from './module/main';
+import {
 	w,
 	addEventListener,
 	getHref,
@@ -19,9 +22,8 @@ import {
 	addClass,
 	removeClass,
 	getBody,
-	
-	disableInput
-} from './module/main';
+} from './module/DOM';
+import * as message from './module/message';
 import {UserInfo} from './module/type';
 
 addEventListener(w, 'load', function(){

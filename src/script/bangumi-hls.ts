@@ -1,23 +1,25 @@
 // JavaScript Document
 import "core-js";
 import {
-    DEVELOPMENT,
+	DEVELOPMENT,
+    TOP_URL,
+	CDN_URL,
+    SERVER_URL,
+} from './module/env/constant';
+import {
 	navListeners,
-	TOP_URL,
 	sendServerRequest,
-	message,
 	changeColor,
 	getURLParam,
 	secToTimestamp,
-	CDN_URL,
 	concatenateSignedURL,
 	encodeCFURIComponent,
     clearCookies,
     cssVarWrapper,
     removeRightClick,
-    SERVER_URL,
-
-    w,
+} from './module/main';
+import {
+	w,
     addEventListener,
     getHref,
     redirect,
@@ -42,7 +44,8 @@ import {
     containsClass,
     getComputedStyle,
     appendChild,
-} from './module/main';
+} from './module/DOM';
+import * as message from './module/message';
 import {BangumiInfo, CDNCredentials} from './module/type';
 import type {LocalImageParam} from './module/type';
 import {default as importLazyload} from './module/lazyload';

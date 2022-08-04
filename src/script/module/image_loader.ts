@@ -1,13 +1,15 @@
 import type {WebpMachine} from 'webp-hero/dist-cjs';
-
 import {
-    DEVELOPMENT,
+	DEVELOPMENT
+} from './env/constant';
+import {
     imageProtection,
-    message,
-
-    appendChild,
-    createElement
 } from './main'
+import {
+	appendChild,
+    createElement
+} from './DOM';
+import * as message from './message';
 
 var webpMachine: WebpMachine | null = null;
 var webpMachineActive = false;
