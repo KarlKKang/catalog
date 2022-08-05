@@ -19,8 +19,8 @@ module.exports = {
 		'account': {
 			import: './src/script/account',
 		},
-		'bangumi-hls': {
-			import: './src/script/bangumi-hls',
+		'bangumi': {
+			import: './src/script/bangumi',
 		},
 		'confirm_new_email': {
 			import: './src/script/confirm_new_email',
@@ -77,7 +77,7 @@ module.exports = {
 		}),
 		new HtmlWebpackPlugin({
 			minify: html_minify_options,
-			chunks: ['bangumi-hls'],
+			chunks: ['bangumi'],
 			filename: '../bangumi.html',
 			template: 'src/html/bangumi.html'
 		}),

@@ -18,6 +18,7 @@ var IS_DESKTOP = false;
 var IS_IE = false;
 var IS_FIREFOX = false;
 var IS_SAFARI = false;
+var IS_LINUX = false;
 //var IS_APPLE = false;
 
 if (USER_AGENT !== '') {
@@ -35,6 +36,7 @@ if (USER_AGENT !== '') {
     IS_FIREFOX = engineName === 'Gecko';
 
     IS_SAFARI = IS_IOS || browserName === 'Safari';
+    IS_LINUX = osName === 'Linux';
     //IS_APPLE = (osName === 'iOS') || (osName === 'macOS');
 }
 
@@ -69,6 +71,7 @@ export {IS_IOS};
 export {IS_DESKTOP};
 export {IS_IE};
 export {IS_FIREFOX};
+export {IS_LINUX};
 //export {IS_APPLE};
 
 export {NATIVE_HLS};
