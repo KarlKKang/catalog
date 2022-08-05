@@ -1,21 +1,21 @@
 // JavaScript Document
 import "core-js";
 import {
-	DEVELOPMENT,
+    DEVELOPMENT,
     TOP_URL,
-	CDN_URL,
+    CDN_URL,
 } from '../module/env/constant';
 import {
-	navListeners,
-	sendServerRequest,
-	changeColor,
-	getURLParam,
-	encodeCFURIComponent,
+    navListeners,
+    sendServerRequest,
+    changeColor,
+    getURLParam,
+    encodeCFURIComponent,
     clearCookies,
     cssVarWrapper,
 } from '../module/main';
 import {
-	w,
+    w,
     addEventListener,
     getHref,
     redirect,
@@ -30,8 +30,8 @@ import {
     appendChild,
 } from '../module/DOM';
 import * as message from '../module/message';
-import {BangumiInfo} from '../module/type';
-import {updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, getFormatIndex} from './helper';
+import { BangumiInfo } from '../module/type';
+import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, getFormatIndex } from './helper';
 
 
 var seriesID: string;
@@ -54,16 +54,16 @@ var imageImportPromise: Promise<typeof import(
 
 var debug = DEVELOPMENT;
 
-addEventListener(w, 'load', function(){
-	cssVarWrapper();
-	clearCookies();
-	
-	if (!getHref().startsWith(TOP_URL + '/bangumi') && !DEVELOPMENT) {
-        redirect(TOP_URL, true);
-		return;
-	}
+addEventListener(w, 'load', function () {
+    cssVarWrapper();
+    clearCookies();
 
-    
+    if (!getHref().startsWith(TOP_URL + '/bangumi') && !DEVELOPMENT) {
+        redirect(TOP_URL, true);
+        return;
+    }
+
+
     // Parse parameters
     let seriesIDParam = getSeriesID();
     if (seriesIDParam === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(seriesIDParam)) {
@@ -92,7 +92,7 @@ addEventListener(w, 'load', function(){
         epIndex = 0;
     } else {
         epIndex = parseInt(epIndexParam);
-        if (isNaN(epIndex) || epIndex<1) {
+        if (isNaN(epIndex) || epIndex < 1) {
             epIndex = 0;
         } else {
             epIndex--;
@@ -100,7 +100,7 @@ addEventListener(w, 'load', function(){
     }
 
     const debugParam = getURLParam('debug');
-	if (debugParam === '1') {
+    if (debugParam === '1') {
         debug = true;
     }
 
@@ -119,7 +119,7 @@ addEventListener(w, 'load', function(){
             }
             updatePage(parsedResponse);
         },
-        content: 'series='+seriesID+'&ep='+epIndex+'&format='+getFormatIndex(),
+        content: 'series=' + seriesID + '&ep=' + epIndex + '&format=' + getFormatIndex(),
         logoutParam: getLogoutParam(seriesID, epIndex)
     });
 });
@@ -129,7 +129,7 @@ const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE9
 const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
 var EPSelectorHeight: number;
 
-function updatePage (response: BangumiInfo.BangumiInfo) {
+function updatePage(response: BangumiInfo.BangumiInfo) {
     navListeners();
     removeClass(getBody(), "hidden");
 
@@ -144,18 +144,18 @@ function updatePage (response: BangumiInfo.BangumiInfo) {
     } else {
         titleElem.innerHTML = title;
         setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | featherine');
-    } 
-    
+    }
+
     if (debug) {
-        let onScreenConsole = createElement('textarea') as HTMLTextAreaElement; 
+        let onScreenConsole = createElement('textarea') as HTMLTextAreaElement;
         onScreenConsole.id = 'on-screen-console';
         onScreenConsole.readOnly = true;
         onScreenConsole.rows = 20;
         appendChild(getById('main'), onScreenConsole);
     }
 
-    updateEPSelector (response.series_ep);
-    updateSeasonSelector (response.seasons);
+    updateEPSelector(response.series_ep);
+    updateSeasonSelector(response.seasons);
 
     let ageRestricted = epInfo.age_restricted;
 
@@ -163,7 +163,7 @@ function updatePage (response: BangumiInfo.BangumiInfo) {
         var warningParent = getById('warning');
         var warningTitle = getById('warning-title');
         var warningBody = getById('warning-body');
-        changeColor (warningTitle, 'red');
+        changeColor(warningTitle, 'red');
         if (ageRestricted.toLowerCase() == 'r15+') {
             warningTitle.innerHTML = '「R15+指定」<br>年齢認証';
         } else if (ageRestricted.toLowerCase() == 'r18+') {
@@ -172,8 +172,8 @@ function updatePage (response: BangumiInfo.BangumiInfo) {
             warningTitle.innerHTML = '年齢認証';
         }
         warningBody.innerHTML = 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？';
-        
-        var warningButtonGroup = getById('warning-button-group'); 
+
+        var warningButtonGroup = getById('warning-button-group');
         var warningButtonYes = createElement('button');
         var warningButtonNo = createElement('button');
         warningButtonYes.innerHTML = 'はい';
@@ -195,42 +195,42 @@ function updatePage (response: BangumiInfo.BangumiInfo) {
     }
 
     /////////////////////////////////////////////device_authenticate/////////////////////////////////////////////
-    setInterval (function () {
+    setInterval(function () {
         sendServerRequest('device_authenticate.php', {
             callback: function (authResult: string) {
                 if (authResult != 'APPROVED') {
                     message.show(message.template.param.server.invalidResponse);
                 }
             },
-            content: "token="+epInfo.authentication_token,
+            content: "token=" + epInfo.authentication_token,
             logoutParam: getLogoutParam(seriesID, epIndex)
         });
-    }, 60*1000);
+    }, 60 * 1000);
 
     /////////////////////////////////////////////Add Media/////////////////////////////////////////////
     let type = epInfo.type;
     let seriesOverride = epInfo.series_override;
-    let baseURL = CDN_URL + '/' + (seriesOverride===undefined?seriesID:seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
+    let baseURL = CDN_URL + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
 
     let mediaHolder = getById('media-holder');
 
     if (type === 'video') {
-        videoImportPromise.then(({default: module}) => {
+        videoImportPromise.then(({ default: module }) => {
             module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, contentContainer, debug);
-        }).catch((e) => { 
+        }).catch((e) => {
             message.show(message.template.param.moduleImportError(e));
         });
     } else {
         if (type === 'audio') {
-            audioImportPromise.then(({default: module}) => {
+            audioImportPromise.then(({ default: module }) => {
                 module(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, contentContainer, debug);
-            }).catch((e) => { 
+            }).catch((e) => {
                 message.show(message.template.param.moduleImportError(e));
             });
         } else {
-            imageImportPromise.then(({default: module}) => {
+            imageImportPromise.then(({ default: module }) => {
                 module(epInfo as BangumiInfo.ImageEPInfo, baseURL, mediaHolder);
-            }).catch((e) => { 
+            }).catch((e) => {
                 message.show(message.template.param.moduleImportError(e));
             });
         }
@@ -238,11 +238,11 @@ function updatePage (response: BangumiInfo.BangumiInfo) {
     }
 }
 
-function updateEPSelector (seriesEP: BangumiInfo.SeriesEP) {
+function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     var epButtonWrapper = createElement('div');
     epButtonWrapper.id = 'ep-button-wrapper';
 
-    seriesEP.forEach(function(value, index) {
+    seriesEP.forEach(function (value, index) {
         let epButton = createElement('div');
         let epText = createElement('p');
 
@@ -252,9 +252,9 @@ function updateEPSelector (seriesEP: BangumiInfo.SeriesEP) {
             addClass(epButton, 'current-ep');
         }
 
-        let targetEP = index+1;
+        let targetEP = index + 1;
         appendChild(epButton, epText);
-        addEventListener(epButton, 'click', function () {goToEP(seriesID, targetEP);});
+        addEventListener(epButton, 'click', function () { goToEP(seriesID, targetEP); });
 
         appendChild(epButtonWrapper, epButton);
     });
@@ -270,7 +270,7 @@ function updateEPSelector (seriesEP: BangumiInfo.SeriesEP) {
     addEventListener(showMoreButton, 'click', toggleEPSelector);
     styleEPSelector();
 
-    addEventListener(w, 'resize', function(){
+    addEventListener(w, 'resize', function () {
         var currentMaxHeight = epButtonWrapper.style.maxHeight;
         epButtonWrapper.style.maxHeight = ''; //Resetting max-height can mitigate a bug in IE browser where the scrollHeight attribute is not accurate.
         EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10;
@@ -279,7 +279,7 @@ function updateEPSelector (seriesEP: BangumiInfo.SeriesEP) {
     });
 }
 
-function updateSeasonSelector (seasons: BangumiInfo.Seasons) {
+function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
     var seasonButtonWrapper = createElement('div');
     var seasonSelector = getById('season-selector');
     seasonButtonWrapper.id = 'season-button-wrapper';
@@ -293,7 +293,7 @@ function updateSeasonSelector (seasons: BangumiInfo.Seasons) {
                 seasonText.innerHTML = season.season_name;
                 appendChild(seasonButton, seasonText);
                 let targetSeries = season.id;
-                addEventListener(seasonButton, 'click', function () {goToEP(targetSeries, 1);});
+                addEventListener(seasonButton, 'click', function () { goToEP(targetSeries, 1); });
             } else {
                 seasonText.innerHTML = season.season_name;
                 appendChild(seasonButton, seasonText);
@@ -307,39 +307,39 @@ function updateSeasonSelector (seasons: BangumiInfo.Seasons) {
     }
 }
 
-function goToEP (dest_series: string, dest_ep: number) {
+function goToEP(dest_series: string, dest_ep: number) {
     var url: string;
     if (DEVELOPMENT) {
-        url = 'bangumi.html'+'?series='+dest_series+(dest_ep==1?'':('&ep='+dest_ep));
+        url = 'bangumi.html' + '?series=' + dest_series + (dest_ep == 1 ? '' : ('&ep=' + dest_ep));
     } else {
-        url = TOP_URL+'/bangumi/'+dest_series+(dest_ep==1?'':('?ep='+dest_ep));
+        url = TOP_URL + '/bangumi/' + dest_series + (dest_ep == 1 ? '' : ('?ep=' + dest_ep));
     }
     redirect(url);
 }
 
-function getSeriesID (): string | null {
-	var url = getHref() + '?';
-	if (url.startsWith(TOP_URL + '/bangumi/')) {
-		var start = (TOP_URL+'/bangumi/').length;
-		var end = url.indexOf('?');
-		if (start == end) {
-			return null;
-		}
-		return url.slice(start, end);
-	} else {
-		return getURLParam('series');
-	}
+function getSeriesID(): string | null {
+    var url = getHref() + '?';
+    if (url.startsWith(TOP_URL + '/bangumi/')) {
+        var start = (TOP_URL + '/bangumi/').length;
+        var end = url.indexOf('?');
+        if (start == end) {
+            return null;
+        }
+        return url.slice(start, end);
+    } else {
+        return getURLParam('series');
+    }
 }
 
-function styleEPSelector () {
-    if (EPSelectorHeight/w.innerHeight > 0.50) {
+function styleEPSelector() {
+    if (EPSelectorHeight / w.innerHeight > 0.50) {
         foldEPSelector();
     } else {
         unfoldEPSelector();
     }
 }
 
-function foldEPSelector () {
+function foldEPSelector() {
     var showMoreButton = getById('show-more-button');
     var epButtonWrapper = getById('ep-button-wrapper');
 
@@ -355,7 +355,7 @@ function foldEPSelector () {
     removeClass(showMoreButton, 'hidden');
 }
 
-function unfoldEPSelector () {
+function unfoldEPSelector() {
     var showMoreButton = getById('show-more-button');
     var epButtonWrapper = getById('ep-button-wrapper');
     if (containsClass(showMoreButton, 'hidden')) {
@@ -366,7 +366,7 @@ function unfoldEPSelector () {
     addClass(showMoreButton, 'hidden');
 }
 
-function toggleEPSelector () {
+function toggleEPSelector() {
     var showMoreButton = getById('show-more-button');
     var epButtonWrapper = getById('ep-button-wrapper');
     const CLIPPED = !containsClass(epButtonWrapper, 'expanded');

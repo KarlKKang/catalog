@@ -26,20 +26,20 @@ import {
 } from './module/DOM';
 import * as message from './module/message';
 
-addEventListener(w, 'load', function(){
+addEventListener(w, 'load', function () {
 	cssVarWrapper();
 	clearCookies();
-	
+
 	if (!getHref().startsWith('https://featherine.com/register') && !DEVELOPMENT) {
 		redirect(LOGIN_URL, true);
 		return;
 	}
-		
+
 	var submitButton = getById('submit-button') as HTMLButtonElement;
 	var usernameInput = getById('username') as HTMLInputElement;
 	var passwordInput = getById('password') as HTMLInputElement;
 	var passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
-	
+
 	var param = getURLParam('p');
 	var signature = getURLParam('signature');
 
@@ -57,24 +57,24 @@ addEventListener(w, 'load', function(){
 		return;
 	}
 
-    sendServerRequest('register.php', {
-        callback: function (response: string) {
-            if (response == 'EXPIRED') {
-                message.show(message.template.param.expired);
-            } else if (response == 'APPROVED') {
+	sendServerRequest('register.php', {
+		callback: function (response: string) {
+			if (response == 'EXPIRED') {
+				message.show(message.template.param.expired);
+			} else if (response == 'APPROVED') {
 				addEventListener(usernameInput, 'keydown', function (event) {
 					if ((event as KeyboardEvent).key === "Enter") {
-						register ();
+						register();
 					}
 				});
 				addEventListener(passwordInput, 'keydown', function (event) {
 					if ((event as KeyboardEvent).key === "Enter") {
-						register ();
+						register();
 					}
 				});
 				addEventListener(passwordConfirmInput, 'keydown', function (event) {
 					if ((event as KeyboardEvent).key === "Enter") {
-						register ();
+						register();
 					}
 				});
 
@@ -93,24 +93,24 @@ addEventListener(w, 'load', function(){
 				});
 
 				addEventListener(submitButton, 'click', function () {
-					register ();
+					register();
 				});
 
 				passwordStyling(passwordInput);
 				passwordStyling(passwordConfirmInput);
 
-                removeClass(getBody(), "hidden");
-            } else {
-                message.show();
-            }
-        },
-        content: "p="+param+"&signature="+signature,
-        withCredentials: false
-    });
+				removeClass(getBody(), "hidden");
+			} else {
+				message.show();
+			}
+		},
+		content: "p=" + param + "&signature=" + signature,
+		withCredentials: false
+	});
 
-	async function register () {
+	async function register() {
 		disableAllInputs(true);
-		
+
 		var warningElem = getById('warning');
 
 		var username = usernameInput.value;
@@ -124,12 +124,12 @@ addEventListener(w, 'load', function(){
 			return;
 		}
 
-		if (password=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
+		if (password == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
 			warningElem.innerHTML = message.template.inline.invalidPasswordFormat;
 			removeClass(warningElem, "hidden");
 			disableAllInputs(false);
 			return;
-		} else if (password!=passwordConfirm) {
+		} else if (password != passwordConfirm) {
 			warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
 			removeClass(warningElem, "hidden");
 			disableAllInputs(false);
@@ -145,23 +145,23 @@ addEventListener(w, 'load', function(){
 
 		sendServerRequest('register.php', {
 			callback: function (response: string) {
-                if (response == 'EXPIRED') {
+				if (response == 'EXPIRED') {
 					message.show(message.template.param.expired);
-                } else if (response == 'USERNAME DUPLICATED') {
-                    warningElem.innerHTML = message.template.inline.usernameTaken;
-                    removeClass(warningElem, "hidden");
-                    disableAllInputs(false);
-                } else if (response == 'DONE') {
-                    message.show(message.template.param.registerComplete);
-                } else {
-                    message.show();
-                }
+				} else if (response == 'USERNAME DUPLICATED') {
+					warningElem.innerHTML = message.template.inline.usernameTaken;
+					removeClass(warningElem, "hidden");
+					disableAllInputs(false);
+				} else if (response == 'DONE') {
+					message.show(message.template.param.registerComplete);
+				} else {
+					message.show();
+				}
 			},
-			content: "p="+param+"&signature="+signature+"&user="+encodeURIComponent(JSON.stringify(user)),
+			content: "p=" + param + "&signature=" + signature + "&user=" + encodeURIComponent(JSON.stringify(user)),
 			withCredentials: false
 		});
 	}
-	
+
 	function disableAllInputs(disabled: boolean) {
 		submitButton.disabled = disabled;
 		disableInput(usernameInput, disabled);

@@ -1,6 +1,6 @@
 import {
-	concatenateSignedURL,
-	encodeCFURIComponent,
+    concatenateSignedURL,
+    encodeCFURIComponent,
 } from '../module/main';
 import {
     addEventListener,
@@ -12,17 +12,17 @@ import {
     appendChild,
 } from '../module/DOM';
 import * as message from '../module/message';
-import type {BangumiInfo} from '../module/type';
+import type { BangumiInfo } from '../module/type';
 
-import {videojs, browser, videojsMod} from '../module/player';
-import type {VideojsModInstance} from '../module/player';
+import { videojs, browser, videojsMod } from '../module/player';
+import type { VideojsModInstance } from '../module/player';
 
-import {parseCharacters} from './helper';
-import {showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, destroyAll, getDownloadAccordion} from './media_helper';
+import { parseCharacters } from './helper';
+import { showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, destroyAll, getDownloadAccordion } from './media_helper';
 
 var seriesID: string;
-var epIndex: number; 
-var epInfo: BangumiInfo.AudioEPInfo; 
+var epIndex: number;
+var epInfo: BangumiInfo.AudioEPInfo;
 var baseURL: string;
 var mediaHolder: HTMLElement;
 var contentContainer: HTMLElement;
@@ -36,9 +36,9 @@ var hlsImportPromise = import(
 );
 
 export default function (
-    _seriesID: string, 
-    _epIndex: number, 
-    _epInfo: BangumiInfo.AudioEPInfo, 
+    _seriesID: string,
+    _epIndex: number,
+    _epInfo: BangumiInfo.AudioEPInfo,
     _baseURL: string,
     _mediaHolder: HTMLElement,
     _contentContainer: HTMLElement,
@@ -68,13 +68,13 @@ export default function (
     }
 
     for (var i = 0; i < audioEPInfo.files.length; i++) {
-        if (!addAudioNode (i)) {
+        if (!addAudioNode(i)) {
             return;
         }
     }
 }
 
-function addAudioNode (index: number) {
+function addAudioNode(index: number) {
     let audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
     let file = audioEPInfo.files[index] as BangumiInfo.AudioFile;
 
@@ -90,7 +90,7 @@ function addAudioNode (index: number) {
             pictureInPictureToggle: false
         }
     } as const;
-    
+
     let configHls = {
         enableWebVTT: false,
         enableIMSC1: false,
@@ -102,13 +102,13 @@ function addAudioNode (index: number) {
         maxBufferSize: 0,
         maxBufferHole: 0,
         debug: false,
-        xhrSetup: function(xhr: XMLHttpRequest) {
+        xhrSetup: function (xhr: XMLHttpRequest) {
             xhr.withCredentials = true;
         }
     };
 
-    let audioNode = createElement('audio'); 
-    audioNode.id = 'track'+index;
+    let audioNode = createElement('audio');
+    audioNode.id = 'track' + index;
 
     addClass(audioNode, "vjs-default-skin");
     addClass(audioNode, "video-js");
@@ -118,7 +118,7 @@ function addAudioNode (index: number) {
 
     appendChild(mediaHolder, getAudioSubtitleNode(file, FLAC_FALLBACK));
     appendChild(mediaHolder, audioNode);
-    
+
     const IS_FLAC = (file.format.toLowerCase() == 'flac' || FLAC_FALLBACK);
     const USE_VIDEOJS = browser.USE_MSE && IS_FLAC;
 
@@ -129,9 +129,9 @@ function addAudioNode (index: number) {
         addClass(mediaHolder, 'hidden');
         return false;
     }
-    
+
     let videoJSControl = videojs(audioNode, configVideoJSControl, function () {
-        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK?'[FLAC]':'') +'.m3u8'), credentials, baseURL + '_MASTER_*.m3u8'); 
+        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8'), credentials, baseURL + '_MASTER_*.m3u8');
 
         if (USE_VIDEOJS) {
             const configVideoJSMedia = {
@@ -146,33 +146,33 @@ function addAudioNode (index: number) {
                     //nativeVideoTracks: false
                 },
             } as const;
-            let videoJSMediaNode = createElement('audio') as HTMLAudioElement; 
+            let videoJSMediaNode = createElement('audio') as HTMLAudioElement;
             videoJSMediaNode.style.display = 'none';
             appendChild(mediaHolder, videoJSMediaNode);
 
             let videoJSMedia = videojs(videoJSMediaNode, configVideoJSMedia, function () {
 
-                let audioInstance =  videojsMod (videoJSControl, {
+                let audioInstance = videojsMod(videoJSControl, {
                     videojsMediaOverrideInstance: videoJSMedia,
                     audio: true,
                     debug: debug
                 });
 
                 mediaInstances[index] = audioInstance;
-                
+
 
                 setMediaTitle(audioInstance);
 
-                audioReadyCounter ++;
+                audioReadyCounter++;
                 if (audioReadyCounter == audioEPInfo.files.length) {
                     audioReady();
                 }
 
-                videoJSMedia.on('error', function() {
+                videoJSMedia.on('error', function () {
                     if (browser.IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
                         showMediaMessage(incompatibleTitle, '<p>Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix + '</p>', 'red');
                     } else {
-                        showPlaybackError('Index ' + index + ': ' + 'videojs: '+JSON.stringify(videoJSMedia.error()));
+                        showPlaybackError('Index ' + index + ': ' + 'videojs: ' + JSON.stringify(videoJSMedia.error()));
                         addClass(mediaHolder, 'hidden');
                         destroyAll(mediaInstances);
                     }
@@ -181,14 +181,14 @@ function addAudioNode (index: number) {
                 audioInstance.attachVideojs(url);
             });
         } else {
-            let audioInstance = videojsMod (videoJSControl, {audio: true, debug: debug});
+            let audioInstance = videojsMod(videoJSControl, { audio: true, debug: debug });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
             if (browser.USE_MSE) {
                 if (browser.IS_CHROMIUM) {
                     showMediaMessage('不具合があります', '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>', 'orange');
                 }
-                hlsImportPromise.then(({default: Hls}) => {
+                hlsImportPromise.then(({ default: Hls }) => {
                     let hls = new Hls(configHls);
                     hls.on(Hls.Events.ERROR, function (_, data) {
                         if (data.fatal) {
@@ -198,58 +198,58 @@ function addAudioNode (index: number) {
                         }
                     });
                     hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                        audioReadyCounter ++;
+                        audioReadyCounter++;
                         if (audioReadyCounter == audioEPInfo.files.length) {
                             audioReady();
                         }
                     });
                     audioInstance.attachHls(Hls, hls, url);
-                }).catch((e) => { 
+                }).catch((e) => {
                     message.show(message.template.param.moduleImportError(e));
                     return;
                 });;
             } else if (browser.NATIVE_HLS) {
                 let audioMedia = audioInstance.media;
-                
+
                 addEventListener(audioMedia, 'error', function () {
                     showPlaybackError();
                     addClass(mediaHolder, 'hidden');
                     destroyAll(mediaInstances);
                 });
                 addEventListener(audioMedia, 'loadedmetadata', function () {
-                    audioReadyCounter ++;
+                    audioReadyCounter++;
                     if (audioReadyCounter == audioEPInfo.files.length) {
                         audioReady();
                     }
-                });        
+                });
                 audioInstance.attachNative(url);
             }
         }
     });
 
-    function setMediaTitle (audioInstance: VideojsModInstance) {
-        audioInstance.media.title = ((file.title=='')?'':(parseCharacters(file.title) + ' | ')) + getTitle();
+    function setMediaTitle(audioInstance: VideojsModInstance) {
+        audioInstance.media.title = ((file.title == '') ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();
     }
 
     return true;
 }
 
-function addAlbumInfo () {
+function addAlbumInfo() {
     let albumInfo = (epInfo as BangumiInfo.AudioEPInfo).album_info;
-    if (albumInfo.album_title!='') {
+    if (albumInfo.album_title != '') {
         let albumTitleElem = createElement('p');
         addClass(albumTitleElem, 'sub-title');
         addClass(albumTitleElem, 'center-align');
         albumTitleElem.innerHTML = albumInfo.album_title;
         insertBefore(albumTitleElem, getById('message'));
-        if (albumInfo.album_artist!='') {
+        if (albumInfo.album_artist != '') {
             let albumArtist = createElement('p');
             addClass(albumArtist, 'artist');
             addClass(albumArtist, 'center-align');
             albumArtist.innerHTML = albumInfo.album_artist;
             insertBefore(albumArtist, getById('message'));
         }
-    } else if (albumInfo.album_artist!='') {
+    } else if (albumInfo.album_artist != '') {
         let titleElem = getById('title');
         let artistElem = createElement('span');
         addClass(artistElem, 'artist');
@@ -258,7 +258,7 @@ function addAlbumInfo () {
     }
 }
 
-function getAudioSubtitleNode (file: BangumiInfo.AudioFile, FLAC_FALLBACK: boolean) {
+function getAudioSubtitleNode(file: BangumiInfo.AudioFile, FLAC_FALLBACK: boolean) {
     let subtitle = createElement('p');
     addClass(subtitle, 'sub-title');
 
@@ -282,7 +282,7 @@ function getAudioSubtitleNode (file: BangumiInfo.AudioFile, FLAC_FALLBACK: boole
 
         let format = createElement('span');
         addClass(format, 'format');
-        format.innerHTML = FLAC_FALLBACK?'FLAC':file.format;
+        format.innerHTML = FLAC_FALLBACK ? 'FLAC' : file.format;
 
         let samplerate = file.samplerate;
         if (samplerate != '') {
@@ -318,7 +318,7 @@ function getAudioSubtitleNode (file: BangumiInfo.AudioFile, FLAC_FALLBACK: boole
                         break;
                     case '32':
                         bitdepthText = '32bit';
-                        break;	
+                        break;
                 }
                 if (bitdepthText == '32bit' && FLAC_FALLBACK) {
                     bitdepthText = '24bit';
@@ -333,17 +333,17 @@ function getAudioSubtitleNode (file: BangumiInfo.AudioFile, FLAC_FALLBACK: boole
     return subtitle;
 }
 
-function audioReady () {
-    function pauseAll (currentIndex: number) {
+function audioReady() {
+    function pauseAll(currentIndex: number) {
         for (var j = 0; j < mediaInstances.length; j++) {
             if (j != currentIndex) {
                 (mediaInstances[j] as VideojsModInstance).pause();
             }
         }
     }
-    function playNext (currentIndex: number) {
-        if (currentIndex < mediaInstances.length-1) {
-            (mediaInstances[currentIndex+1] as VideojsModInstance).play();
+    function playNext(currentIndex: number) {
+        if (currentIndex < mediaInstances.length - 1) {
+            (mediaInstances[currentIndex + 1] as VideojsModInstance).play();
         }
     }
 

@@ -1,19 +1,19 @@
-import type {WebpMachine} from 'webp-hero/dist-cjs';
+import type { WebpMachine } from 'webp-hero/dist-cjs';
 import {
 	DEVELOPMENT
 } from './env/constant';
 import {
-    imageProtection,
+	imageProtection,
 } from './main'
 import {
 	appendChild,
-    createElement
+	createElement
 } from './DOM';
 import * as message from './message';
 
 var webpMachine: WebpMachine | null = null;
 var webpMachineActive = false;
-type webpMachineQueueItem = {container: HTMLElement, image: HTMLImageElement, webpData: Uint8Array, onload: (() => void) | undefined, onerror: () => void};
+type webpMachineQueueItem = { container: HTMLElement, image: HTMLImageElement, webpData: Uint8Array, onload: (() => void) | undefined, onerror: () => void };
 var webpMachineQueue: webpMachineQueueItem[] = [];
 var webpSupported: boolean;
 
@@ -25,7 +25,7 @@ export default function (container: HTMLElement, src: string, alt: string, onloa
 	const image = new Image();
 	image.alt = alt;
 
-	function finalizeErrorImage () {
+	function finalizeErrorImage() {
 		if (DEVELOPMENT) {
 			console.log('Unrecoverable error occured when loading the image.');
 		}
@@ -33,10 +33,10 @@ export default function (container: HTMLElement, src: string, alt: string, onloa
 		appendChild(container, image);
 	}
 
-	function errorHandler () {
+	function errorHandler() {
 		// Convert Blob to Uint8Array
 		var reader = new FileReader();
-		reader.onload = function() {
+		reader.onload = function () {
 			const base64URL = reader.result;
 			if (!(base64URL instanceof ArrayBuffer) || !isWebp) {
 				finalizeErrorImage();
@@ -108,22 +108,22 @@ export default function (container: HTMLElement, src: string, alt: string, onloa
 async function startWebpMachine() {
 	if (webpMachine === null) {
 		try {
-			let {WebpMachine, detectWebpSupport} = await import(
+			let { WebpMachine, detectWebpSupport } = await import(
 				/* webpackChunkName: "webp-hero" */
 				/* webpackExports: ["WebpMachine", "detectWebpSupport"] */
 				'webp-hero/dist-cjs'
 			);
 			webpMachine = new WebpMachine();
 			webpSupported = await detectWebpSupport();
-		} catch(e: unknown) {
-			message.show (message.template.param.moduleImportError(e));
-            return;
+		} catch (e: unknown) {
+			message.show(message.template.param.moduleImportError(e));
+			return;
 		}
 	}
 
 
 	let queueNext = webpMachineQueue.shift();
-	while(queueNext !== undefined) {
+	while (queueNext !== undefined) {
 		if (webpSupported) {
 			queueNext.onerror();
 		} else {
@@ -134,10 +134,10 @@ async function startWebpMachine() {
 	webpMachineActive = false;
 }
 
-async function drawWebp (webpMachine: WebpMachine, queueItem: webpMachineQueueItem) {
+async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueItem) {
 	const canvas = createElement('canvas') as HTMLCanvasElement;
 	try {
-		await webpMachine.decodeToCanvas(canvas, queueItem.webpData); 
+		await webpMachine.decodeToCanvas(canvas, queueItem.webpData);
 	} catch (_) {
 		if (DEVELOPMENT) {
 			console.log('Failed to polyfill webp. Appended back to the queue to retry.');
@@ -150,7 +150,7 @@ async function drawWebp (webpMachine: WebpMachine, queueItem: webpMachineQueueIt
 	canvas.style.removeProperty("width"); // webp-hero will add incorrect width and height properties
 	canvas.style.removeProperty("height");
 	imageProtection(canvas);
-    appendChild(queueItem.container, canvas);
+	appendChild(queueItem.container, canvas);
 	const onload = queueItem.onload;
 	if (onload !== undefined) {
 		onload();

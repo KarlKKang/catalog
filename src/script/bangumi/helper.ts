@@ -1,5 +1,5 @@
 import {
-	DEVELOPMENT,
+    DEVELOPMENT,
     TOP_URL,
 } from '../module/env/constant';
 import {
@@ -10,13 +10,13 @@ import {
     getComputedStyle,
 } from '../module/DOM';
 
-export function getContentBoxHeight (elem: HTMLElement): number {
+export function getContentBoxHeight(elem: HTMLElement): number {
     var height = elem.scrollHeight;
     height -= parseFloat(getComputedStyle(elem, 'padding-top')) + parseFloat(getComputedStyle(elem, 'padding-bottom'));
     return height;
 }
 
-export function updateURLParam (seriesID: string, epIndex: number, formatIndex: number): void {
+export function updateURLParam(seriesID: string, epIndex: number, formatIndex: number): void {
     let url: string;
     if (DEVELOPMENT) {
         url = 'bangumi.html' + '?series=' + seriesID;
@@ -32,7 +32,7 @@ export function updateURLParam (seriesID: string, epIndex: number, formatIndex: 
     changeURL(url, true);
 }
 
-export function getLogoutParam (seriesID: string, epIndex: number): string {
+export function getLogoutParam(seriesID: string, epIndex: number): string {
     let query = 'series=' + seriesID;
     let additionalQuery = getQuery(epIndex, getFormatIndex());
     if (additionalQuery === '') {
@@ -41,15 +41,15 @@ export function getLogoutParam (seriesID: string, epIndex: number): string {
     return query + '&' + additionalQuery;
 }
 
-function getQuery (epIndex: number, formatIndex: number): string {
+function getQuery(epIndex: number, formatIndex: number): string {
     let query = '';
     let separator: '' | '&' = '';
 
     if (epIndex !== 0) {
-        query += 'ep='+(epIndex+1);
+        query += 'ep=' + (epIndex + 1);
         separator = '&';
     }
-    
+
     if (formatIndex !== 0) {
         query += separator + 'format=' + (formatIndex + 1);
     }
@@ -57,7 +57,7 @@ function getQuery (epIndex: number, formatIndex: number): string {
     return query;
 }
 
-export function parseCharacters (txt: string) {
+export function parseCharacters(txt: string) {
     txt = txt.replace(/<.*?>/g, '');
     txt = txt.replace(/&gt;/g, '>');
     txt = txt.replace(/&lt;/g, '<');
@@ -65,14 +65,14 @@ export function parseCharacters (txt: string) {
     return txt;
 }
 
-export function getFormatIndex (): number {
+export function getFormatIndex(): number {
     const formatIndexParam = getURLParam('format');
     let formatIndex: number;
-	if (formatIndexParam === null) {
+    if (formatIndexParam === null) {
         formatIndex = 0;
     } else {
         formatIndex = parseInt(formatIndexParam);
-        if (isNaN(formatIndex) || formatIndex<1) {
+        if (isNaN(formatIndex) || formatIndex < 1) {
             formatIndex = 0;
         } else {
             formatIndex--;

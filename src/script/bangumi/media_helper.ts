@@ -2,8 +2,8 @@ import {
     SERVER_URL,
 } from '../module/env/constant';
 import {
-	sendServerRequest,
-	changeColor,
+    sendServerRequest,
+    changeColor,
 } from '../module/main';
 import {
     addEventListener,
@@ -15,27 +15,27 @@ import {
     appendChild,
 } from '../module/DOM';
 import * as message from '../module/message';
-import {getContentBoxHeight, getFormatIndex, getLogoutParam} from './helper';
+import { getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
 
-import type {VideojsModInstance} from '../module/player';
+import type { VideojsModInstance } from '../module/player';
 
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザでご覧いただくか、デスクトップでファイルをダウンロードし、ローカルで再生してください。';
 
-export function showPlaybackError (detail?: string) {
-    showMediaMessage (message.template.title.defaultError, '<p>再生中にエラーが発生しました。' + message.template.body.defaultErrorSuffix + (detail===undefined?'':('<br>Error detail: '+detail)) + '</p>', 'red');
+export function showPlaybackError(detail?: string) {
+    showMediaMessage(message.template.title.defaultError, '<p>再生中にエラーが発生しました。' + message.template.body.defaultErrorSuffix + (detail === undefined ? '' : ('<br>Error detail: ' + detail)) + '</p>', 'red');
 }
 
-export function showHLSCompatibilityError () {
+export function showHLSCompatibilityError() {
     showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + incompatibleSuffix + '</p>', 'red');
 }
 
-export function showCodecCompatibilityError (IS_LINUX: boolean) {
-    showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix + (IS_LINUX ? 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。': '') + '</p>', 'red');
+export function showCodecCompatibilityError(IS_LINUX: boolean) {
+    showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix + (IS_LINUX ? 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。' : '') + '</p>', 'red');
 }
 
-export function showMediaMessage (title: string, messageTxt: string, titleColor: string) {
+export function showMediaMessage(title: string, messageTxt: string, titleColor: string) {
     var messageTitle = getById('message-title');
     changeColor(messageTitle, titleColor);
     messageTitle.innerHTML = title;
@@ -43,13 +43,13 @@ export function showMediaMessage (title: string, messageTxt: string, titleColor:
     removeClass(getById('message'), 'hidden');
 }
 
-export function destroyAll (mediaInstances: Array<VideojsModInstance>) {
+export function destroyAll(mediaInstances: Array<VideojsModInstance>) {
     for (let mediaInstance of mediaInstances) {
         mediaInstance.destroy();
     }
 }
 
-export function getDownloadAccordion (token: string, seriesID: string, epIndex: number): HTMLElement {
+export function getDownloadAccordion(token: string, seriesID: string, epIndex: number): HTMLElement {
 
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
@@ -64,7 +64,7 @@ export function getDownloadAccordion (token: string, seriesID: string, epIndex: 
         '<li>ZIPファイルをダウンロード後、5分以内にスクリプトを起動してください。</li>' +
         '<li>インターネット接続が良好であることを確認してください。</li>' +
         '<li>IDMなどの拡張機能を使用している場合、ZIPファイルのダウンロードに問題が発生する可能性があります。ダウンロードする前に、そのような拡張機能を無効にしてください。</li>' +
-    '</ul>';
+        '</ul>';
 
     const downloadButton = createElement('button') as HTMLButtonElement;
     downloadButton.id = 'download-button';
@@ -80,7 +80,7 @@ export function getDownloadAccordion (token: string, seriesID: string, epIndex: 
     iframe.id = 'download-iframe';
     iframe.height = '0';
     iframe.width = '0';
-    
+
     addEventListener(downloadButton, 'click', function () {
         downloadButton.disabled = true;
         sendServerRequest('start_download.php', {
@@ -95,7 +95,7 @@ export function getDownloadAccordion (token: string, seriesID: string, epIndex: 
                     message.show(message.template.param.server.invalidResponse);
                 }
             },
-            content: "token="+token+'&format='+getFormatIndex(),
+            content: "token=" + token + '&format=' + getFormatIndex(),
             logoutParam: getLogoutParam(seriesID, epIndex)
         });
     });
@@ -110,8 +110,8 @@ export function getDownloadAccordion (token: string, seriesID: string, epIndex: 
     return downloadElem;
 }
 
-export function addAccordionEvent (acc: HTMLElement): void {
-    addEventListener(acc, "click", function() {
+export function addAccordionEvent(acc: HTMLElement): void {
+    addEventListener(acc, "click", function () {
         toggleClass(acc, "active");
         let panel = acc.nextElementSibling;
         if (panel === null) {

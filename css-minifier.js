@@ -12,9 +12,9 @@ module.exports = function (srcDir, destDir, srcFilename, destFilename) {
             return;
         }
         postcss([
-            cssnano({ 
+            cssnano({
                 preset: [
-                    'cssnano-preset-advanced', 
+                    'cssnano-preset-advanced',
                     {
                         autoprefixer: {
                             add: true,
@@ -29,28 +29,28 @@ module.exports = function (srcDir, destDir, srcFilename, destFilename) {
                         discardUnused: false,
                         reduceIdents: false
                     }
-                ] 
+                ]
             })
-        ]).process(data, {from: srcDir + srcFilename, to: destDir + destFilename}).then(result => {
+        ]).process(data, { from: srcDir + srcFilename, to: destDir + destFilename }).then(result => {
             result.warnings().forEach(warn => {
                 console.warn(warn.toString())
             });
-            writeFile (destDir + destFilename, result.css);
+            writeFile(destDir + destFilename, result.css);
         });
     });
 }
 
-function writeFile (file, data) {
-	fs.readFile(file, 'utf8', (err_r, read) => {
-		if (err_r || data != read) {
-			fs.writeFile(file, data, err_w => {
-				if (err_w) {
-					console.error(err_w);
-				}
-				console.log('Successfully written ' + file);
-			});
-		} else {
-			console.log(file + ' not modified');
-		}
-	});
+function writeFile(file, data) {
+    fs.readFile(file, 'utf8', (err_r, read) => {
+        if (err_r || data != read) {
+            fs.writeFile(file, data, err_w => {
+                if (err_w) {
+                    console.error(err_w);
+                }
+                console.log('Successfully written ' + file);
+            });
+        } else {
+            console.log(file + ' not modified');
+        }
+    });
 }

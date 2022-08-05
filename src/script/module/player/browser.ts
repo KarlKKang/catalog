@@ -1,8 +1,8 @@
-import {getMediaSource} from 'hls.js/src/utils/mediasource-helper';
-import {isSupported} from 'hls.js/src/is-supported';
+import { getMediaSource } from 'hls.js/src/utils/mediasource-helper';
+import { isSupported } from 'hls.js/src/is-supported';
 import Bowser from 'bowser';
 
-import {w, createElement} from '../DOM';
+import { w, createElement } from '../DOM';
 
 declare global {
     interface Window {
@@ -48,7 +48,7 @@ var USE_MSE = isSupported() && !NATIVE_HLS;
 
 var CAN_PLAY_ALAC = false;
 var CAN_PLAY_FLAC = false;
-var CAN_PLAY_MP3 = (audioElem.canPlayType('audio/mpeg') != "")  && !IS_IE;
+var CAN_PLAY_MP3 = (audioElem.canPlayType('audio/mpeg') != "") && !IS_IE;
 var CAN_PLAY_AVC_AAC = false;
 
 if (USE_MSE) {
@@ -66,17 +66,17 @@ if (USE_MSE) {
     //CAN_PLAY_MP3 = audioElem.canPlayType('audio/mpeg') != "";
 }
 
-export {IS_CHROMIUM};
-export {IS_IOS};
-export {IS_DESKTOP};
-export {IS_IE};
-export {IS_FIREFOX};
-export {IS_LINUX};
+export { IS_CHROMIUM };
+export { IS_IOS };
+export { IS_DESKTOP };
+export { IS_IE };
+export { IS_FIREFOX };
+export { IS_LINUX };
 //export {IS_APPLE};
 
-export {NATIVE_HLS};
-export {USE_MSE};
-export {CAN_PLAY_ALAC};
-export {CAN_PLAY_FLAC};
-export {CAN_PLAY_MP3};
-export {CAN_PLAY_AVC_AAC};
+export { NATIVE_HLS };
+export { USE_MSE };
+export { CAN_PLAY_ALAC };
+export { CAN_PLAY_FLAC };
+export { CAN_PLAY_MP3 };
+export { CAN_PLAY_AVC_AAC };

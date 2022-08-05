@@ -10,7 +10,7 @@ import {
 	addClass,
 } from '../DOM';
 import * as message from '../message';
-import {CDNCredentials} from '../type';
+import { CDNCredentials } from '../type';
 import type ImageLoader from '../image_loader';
 
 var loader: typeof ImageLoader;
@@ -23,7 +23,7 @@ export default function (imageLoader: typeof ImageLoader) {
 		rootMargin: '0px 0px 50% 0px',
 		threshold: [0]
 	};
-	
+
 	for (let elem of elems) {
 		if (elem instanceof HTMLElement && !containsClass(elem, 'listening')) {
 			let observer = new IntersectionObserver(observerCallback, options);
@@ -40,8 +40,8 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 		return;
 	}
 	const target = entry.target as HTMLElement;
-	
-	if(entry['isIntersecting'] === true) {
+
+	if (entry['isIntersecting'] === true) {
 		observer.unobserve(target);
 
 		const src = target.dataset.src;
@@ -61,7 +61,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 						CDNCredentials.check(parsedResponse);
 						credentials = parsedResponse as CDNCredentials.CDNCredentials;
 					} catch (e) {
-						message.show (message.template.param.server.invalidResponse);
+						message.show(message.template.param.server.invalidResponse);
 						return;
 					}
 
@@ -70,7 +70,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 						addClass(target, 'complete');
 					});
 				},
-				content: "token="+target.dataset.authenticationToken+"&p="+target.dataset.xhrParam
+				content: "token=" + target.dataset.authenticationToken + "&p=" + target.dataset.xhrParam
 			});
 		} else {
 			loader(target, src, alt, function () {

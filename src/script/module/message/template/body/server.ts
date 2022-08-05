@@ -1,4 +1,4 @@
-import {defaultErrorSuffix} from "../comm";
+import { defaultErrorSuffix } from "../comm";
 
 export const invalidResponse = `サーバーが無効な応答を返しました。${defaultErrorSuffix}`;
 export const connectionError = `数分待ってから、もう一度お試しください。${defaultErrorSuffix}`;

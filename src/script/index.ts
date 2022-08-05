@@ -1,20 +1,20 @@
 // JavaScript Document
 import "core-js";
 import {
-	DEVELOPMENT,
-	TOP_URL,
+    DEVELOPMENT,
+    TOP_URL,
     CDN_URL,
 } from './module/env/constant';
 import {
-	navListeners,
-	sendServerRequest,
-	getURLParam,
+    navListeners,
+    sendServerRequest,
+    getURLParam,
     clearCookies,
     cssVarWrapper,
     disableInput,
 } from './module/main';
 import {
-	w,
+    w,
     addEventListener,
     getHref,
     redirect,
@@ -31,42 +31,42 @@ import {
     appendChild,
 } from './module/DOM';
 import * as message from './module/message';
-import {SeriesInfo} from './module/type';
-import {default as importLazyload} from './module/lazyload';
+import { SeriesInfo } from './module/type';
+import { default as importLazyload } from './module/lazyload';
 
-var lazyloadInitialize: ()=>void;
+var lazyloadInitialize: () => void;
 
 var searchBar: HTMLElement;
 var searchBarInput: HTMLInputElement;
 
 var containerElem: HTMLElement;
-	
+
 var offset: SeriesInfo.OffsetInfo = 0;
-	
+
 var keywords = '';
 var pivot = '';
 
 var lazyloadImportPromise: ReturnType<typeof importLazyload>;
 
-addEventListener(w, 'load', function(){
+addEventListener(w, 'load', function () {
     cssVarWrapper();
-	clearCookies();
-	
-	if (!getHref().startsWith('https://featherine.com') && !DEVELOPMENT) {
+    clearCookies();
+
+    if (!getHref().startsWith('https://featherine.com') && !DEVELOPMENT) {
         redirect(TOP_URL, true);
-		return;
-	}
+        return;
+    }
 
     // Preload module
     lazyloadImportPromise = importLazyload();
-	
-	searchBar = getById('search-bar');
+
+    searchBar = getById('search-bar');
     searchBarInput = getDescendantsByTag(searchBar, 'input')[0] as HTMLInputElement;
 
     containerElem = getById('container');
-	
-	getURLKeywords();
-    getSeries(function(showSeriesCallback) {
+
+    getURLKeywords();
+    getSeries(function (showSeriesCallback) {
         lazyloadImportPromise.then((module) => {
             lazyloadInitialize = module;
             showSeriesCallback();
@@ -91,7 +91,7 @@ addEventListener(w, 'load', function(){
 
 
 
-function showSeries (seriesInfo: SeriesInfo.SeriesInfo) {
+function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
     var seriesEntries = seriesInfo.slice(0, -1) as SeriesInfo.SeriesEntries;
     for (let seriesEntry of seriesEntries) {
         let seriesNode = createElement('div');
@@ -109,16 +109,16 @@ function showSeries (seriesInfo: SeriesInfo.SeriesInfo) {
         thumbnailNode.dataset.alt = 'thumbnail: ' + seriesEntry.thumbnail;
         titleNode.innerHTML = seriesEntry.title;
 
-        addEventListener(seriesNode, 'click', function(){goToSeries (seriesEntry.id);});
+        addEventListener(seriesNode, 'click', function () { goToSeries(seriesEntry.id); });
         addClass(seriesNode, 'series')
 
         appendChild(containerElem, seriesNode);
     }
-    
-    offset = seriesInfo[seriesInfo.length-1] as SeriesInfo.OffsetInfo;
-    
+
+    offset = seriesInfo[seriesInfo.length - 1] as SeriesInfo.OffsetInfo;
+
     if (offset != 'EOF' && keywords != '') {
-        pivot = 'pivot=' + (seriesEntries[seriesEntries.length-1] as SeriesInfo.SeriesEntry).id + '&';
+        pivot = 'pivot=' + (seriesEntries[seriesEntries.length - 1] as SeriesInfo.SeriesEntry).id + '&';
     } else {
         pivot = '';
     }
@@ -129,41 +129,41 @@ function showSeries (seriesInfo: SeriesInfo.SeriesInfo) {
     infiniteScrolling();
 }
 
-function goToSeries (id: string) {
+function goToSeries(id: string) {
     var url;
     if (DEVELOPMENT) {
-        url = 'bangumi.html'+'?series='+id;
+        url = 'bangumi.html' + '?series=' + id;
     } else {
-        url = TOP_URL+'/bangumi/'+id;
+        url = TOP_URL + '/bangumi/' + id;
     }
     redirect(url);
 }
 
-function search () {
+function search() {
     disableSearchBarInput(true);
-    
+
     addClass(getById('position-detector'), 'loading');
 
     var searchBarInputValue = searchBarInput.value.substring(0, 50);
-    
+
     if (searchBarInputValue == '') {
         keywords = "";
         changeURL(TOP_URL);
     } else {
-        keywords = "keywords="+encodeURIComponent(searchBarInputValue);
+        keywords = "keywords=" + encodeURIComponent(searchBarInputValue);
         changeURL(TOP_URL + '?' + keywords);
         keywords += '&';
     }
     requestSearchResults();
 }
 
-addEventListener(w, 'popstate', function(){
+addEventListener(w, 'popstate', function () {
     getURLKeywords();
     requestSearchResults();
 });
 
-function getURLKeywords () {
-    var urlParam = getURLParam ('keywords');
+function getURLKeywords() {
+    var urlParam = getURLParam('keywords');
     if (urlParam == null) {
         keywords = "";
         searchBarInput.value = '';
@@ -174,7 +174,7 @@ function getURLKeywords () {
     }
 }
 
-function getSeries (callback?: (showSeriesCallback: ()=>void)=>void) {
+function getSeries(callback?: (showSeriesCallback: () => void) => void) {
     sendServerRequest('get_series.php', {
         callback: function (response: string) {
             var parsedResponse: any;
@@ -187,10 +187,10 @@ function getSeries (callback?: (showSeriesCallback: ()=>void)=>void) {
             }
 
             if (callback === undefined) {
-                showSeries (parsedResponse as SeriesInfo.SeriesInfo);
+                showSeries(parsedResponse as SeriesInfo.SeriesInfo);
             } else {
                 callback(function () {
-                    showSeries (parsedResponse as SeriesInfo.SeriesInfo);
+                    showSeries(parsedResponse as SeriesInfo.SeriesInfo);
                 });
             }
         },
@@ -199,25 +199,25 @@ function getSeries (callback?: (showSeriesCallback: ()=>void)=>void) {
     });
 }
 
-function infiniteScrolling () {
+function infiniteScrolling() {
     var detector = getById('position-detector');
     var boundingRect = detector.getBoundingClientRect();
     var viewportHeight = Math.max(d.documentElement.clientHeight || 0, w.innerHeight || 0);
 
-    if (boundingRect.top-256-24<=viewportHeight*1.5 && offset != 'EOF' && !containsClass(detector, 'loading')) { 
+    if (boundingRect.top - 256 - 24 <= viewportHeight * 1.5 && offset != 'EOF' && !containsClass(detector, 'loading')) {
         addClass(detector, 'loading');
         getSeries();
     }
 }
 
-function requestSearchResults () {
+function requestSearchResults() {
     offset = 0;
     pivot = '';
 
     getSeries(function (showSeriesCallback) {
         addClass(containerElem, 'transparent');
-        setTimeout (function () {
-            containerElem.innerHTML='';
+        setTimeout(function () {
+            containerElem.innerHTML = '';
             showSeriesCallback();
             removeClass(containerElem, 'transparent');
             disableSearchBarInput(false);
@@ -225,7 +225,7 @@ function requestSearchResults () {
     });
 }
 
-function disableSearchBarInput (disabled: boolean) {
+function disableSearchBarInput(disabled: boolean) {
     disableInput(searchBarInput, disabled);
     if (disabled) {
         addClass(searchBar, 'disabled');

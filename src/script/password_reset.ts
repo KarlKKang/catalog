@@ -24,21 +24,21 @@ import {
 } from './module/DOM';
 import * as message from './module/message';
 
-addEventListener(w, 'load', function(){
+addEventListener(w, 'load', function () {
 	cssVarWrapper();
 	clearCookies();
 
-	
+
 	if (!getHref().startsWith('https://login.featherine.com/password_reset') && !DEVELOPMENT) {
 		redirect(LOGIN_URL, true);
 		return;
 	}
-	
-	
+
+
 	var newPasswordInput = getById('new-password') as HTMLInputElement;
 	var newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
 	var submitButton = getById('submit-button') as HTMLButtonElement;
-	
+
 	var user = getURLParam('user');
 	var signature = getURLParam('signature');
 	var expires = getURLParam('expires');
@@ -51,7 +51,7 @@ addEventListener(w, 'load', function(){
 		}
 		return;
 	}
-	
+
 	if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
 		redirect(LOGIN_URL, true);
 		return;
@@ -62,25 +62,25 @@ addEventListener(w, 'load', function(){
 		return;
 	}
 
-    sendServerRequest('reset_password.php', {
-        callback: function (response: string) {
-            if (response == 'EXPIRED') {
-                message.show(message.template.param.expired);
+	sendServerRequest('reset_password.php', {
+		callback: function (response: string) {
+			if (response == 'EXPIRED') {
+				message.show(message.template.param.expired);
 				return;
-            } else if (response != 'APPROVED') {
-                message.show();
+			} else if (response != 'APPROVED') {
+				message.show();
 				return;
-            }
+			}
 
 			addEventListener(newPasswordInput, 'keydown', function (event) {
 				if ((event as KeyboardEvent).key === "Enter") {
-					submitRequest ();
+					submitRequest();
 				}
 			});
 
 			addEventListener(newPasswordConfirmInput, 'keydown', function (event) {
 				if ((event as KeyboardEvent).key === "Enter") {
-					submitRequest ();
+					submitRequest();
 				}
 			});
 
@@ -92,26 +92,26 @@ addEventListener(w, 'load', function(){
 			passwordStyling(newPasswordConfirmInput);
 
 			removeClass(getBody(), "hidden");
-        },
-        content: "user="+user+"&signature="+signature+"&expires="+expires,
-        withCredentials: false
-    });
+		},
+		content: "user=" + user + "&signature=" + signature + "&expires=" + expires,
+		withCredentials: false
+	});
 
 
-	async function submitRequest () {
+	async function submitRequest() {
 		var warningElem = getById('warning');
-		
+
 		disableAllInputs(true);
 
 		var newPassword = newPasswordInput.value;
 		var newPasswordConfirm = newPasswordConfirmInput.value;
 
-		if (newPassword=='' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
+		if (newPassword == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
 			warningElem.innerHTML = message.template.inline.invalidPasswordFormat;
 			removeClass(warningElem, "hidden");
 			disableAllInputs(false);
 			return;
-		} else if (newPassword!=newPasswordConfirm) {
+		} else if (newPassword != newPasswordConfirm) {
 			warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
 			removeClass(warningElem, "hidden");
 			disableAllInputs(false);
@@ -122,19 +122,19 @@ addEventListener(w, 'load', function(){
 
 		sendServerRequest('reset_password.php', {
 			callback: function (response: string) {
-                if (response == 'EXPIRED') {
+				if (response == 'EXPIRED') {
 					message.show(message.template.param.expired);
-                } else if (response == 'DONE') {
-                    message.show(message.template.param.passwordChanged);
-                } else {
-                    message.show();
-                }
+				} else if (response == 'DONE') {
+					message.show(message.template.param.passwordChanged);
+				} else {
+					message.show();
+				}
 			},
-			content: "user="+user+"&signature="+signature+"&expires="+expires+"&new="+newPassword,
+			content: "user=" + user + "&signature=" + signature + "&expires=" + expires + "&new=" + newPassword,
 			withCredentials: false
 		});
 	}
-	
+
 	function disableAllInputs(disabled: boolean) {
 		submitButton.disabled = disabled;
 		disableInput(newPasswordInput, disabled);

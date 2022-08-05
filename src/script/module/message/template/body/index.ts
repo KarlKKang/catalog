@@ -1,6 +1,6 @@
-import {defaultErrorSuffix, browserCompatibilitySuffix} from "../comm";
-export {passwordChanged} from "../comm";
-export {defaultErrorSuffix, browserCompatibilitySuffix};
+import { defaultErrorSuffix, browserCompatibilitySuffix } from "../comm";
+export { passwordChanged } from "../comm";
+export { defaultErrorSuffix, browserCompatibilitySuffix };
 
 export const unknownError = `不明なエラーが発生しました。${defaultErrorSuffix}`;
 export const expired = 'もう一度やり直してください。';

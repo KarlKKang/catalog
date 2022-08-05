@@ -1,36 +1,36 @@
-import {throwError, isObject, isString, isArray, isNumber} from './helper';
+import { throwError, isObject, isString, isArray, isNumber } from './helper';
 
 interface CDNPolicy {
-	Statement: [{
-		Resource: string,
-		Condition: {
-			DateLessThan: {
-				"AWS:EpochTime": number
-			},
-			DateGreaterThan?: {
-				"AWS:EpochTime": number
-			},
-			IpAddress?: {
-				"AWS:SourceIp": string
-			}
-		}
-	}]
+    Statement: [{
+        Resource: string,
+        Condition: {
+            DateLessThan: {
+                "AWS:EpochTime": number
+            },
+            DateGreaterThan?: {
+                "AWS:EpochTime": number
+            },
+            IpAddress?: {
+                "AWS:SourceIp": string
+            }
+        }
+    }]
 };
 interface BaseCDNCredentials {
-	Signature: string,
-	"Key-Pair-Id": string
+    Signature: string,
+    "Key-Pair-Id": string
 };
 interface CDNCredentialsWithPolicy extends BaseCDNCredentials {
-	Policy: CDNPolicy
-	Expires: undefined
+    Policy: CDNPolicy
+    Expires: undefined
 };
 interface CDNCredentialsWithExpires extends BaseCDNCredentials {
-	Expires: number
-	Policy: undefined
+    Expires: number
+    Policy: undefined
 };
 export type CDNCredentials = CDNCredentialsWithPolicy | CDNCredentialsWithExpires;
 
-function checkCDNPolicy (policy: any) {
+function checkCDNPolicy(policy: any) {
     if (!isObject(policy)) {
         throwError();
     }
@@ -49,7 +49,7 @@ function checkCDNPolicy (policy: any) {
         throwError();
     }
 
-    var condition: {[key: string]: any} = statement.Condition;
+    var condition: { [key: string]: any } = statement.Condition;
     var dateLessThan: any = condition.DateLessThan;
     if (!isObject(dateLessThan)) {
         throwError();
@@ -78,26 +78,26 @@ function checkCDNPolicy (policy: any) {
     }
 }
 
-export function check (credentials: any) {
+export function check(credentials: any) {
 
-	if (!isObject(credentials)) {
-		throwError();
-	}
+    if (!isObject(credentials)) {
+        throwError();
+    }
 
-	if (!isString(credentials.Signature)) {
-		throwError();
-	}
+    if (!isString(credentials.Signature)) {
+        throwError();
+    }
 
-	if (!isString(credentials["Key-Pair-Id"])) {
-		throwError();
-	}
+    if (!isString(credentials["Key-Pair-Id"])) {
+        throwError();
+    }
 
     let policy = credentials.Policy;
-	if (policy === undefined) {
-		if (!isNumber(credentials.Expires)) {
-			throwError();
-		}
-	} else {
-		checkCDNPolicy(policy);
-	}
+    if (policy === undefined) {
+        if (!isNumber(credentials.Expires)) {
+            throwError();
+        }
+    } else {
+        checkCDNPolicy(policy);
+    }
 }

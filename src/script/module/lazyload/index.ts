@@ -1,13 +1,13 @@
 import * as message from '../message';
-import type {default as LazyloadInitialize} from './lazyload';
-import type {default as ImageLoader} from '../image_loader';
+import type { default as LazyloadInitialize } from './lazyload';
+import type { default as ImageLoader } from '../image_loader';
 
 export default async function () {
     var lazyloadInitialize: typeof LazyloadInitialize;
     var imageLoader: typeof ImageLoader;
 
     try {
-        [{default: lazyloadInitialize}, {default: imageLoader}] = await Promise.all([
+        [{ default: lazyloadInitialize }, { default: imageLoader }] = await Promise.all([
             import(
                 /* webpackChunkName: "lazyload" */
                 /* webpackExports: ["default"] */

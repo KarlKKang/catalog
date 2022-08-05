@@ -1,4 +1,4 @@
-import {throwError, isObject, isString, isArray, isNumber, isBoolean} from './helper';
+import { throwError, isObject, isString, isArray, isNumber, isBoolean } from './helper';
 import * as CDNCredentials from './CDNCredentials';
 
 export type AudioFile = {
@@ -52,7 +52,7 @@ export interface ImageEPInfo extends EPInfo {
     files: [ImageFile, ...ImageFile[]]
 }
 
-export type Seasons = {id: string, season_name: string}[];
+export type Seasons = { id: string, season_name: string }[];
 export type SeriesEP = [string, ...string[]];
 
 export type BangumiInfo = {
@@ -63,7 +63,7 @@ export type BangumiInfo = {
     ep_info: VideoEPInfo | AudioEPInfo | ImageEPInfo
 }
 
-function checkVideoEPInfo (epInfo: any) {
+function checkVideoEPInfo(epInfo: any) {
 
     if (!isString(epInfo.title)) {
         throwError();
@@ -118,7 +118,7 @@ function checkVideoEPInfo (epInfo: any) {
     CDNCredentials.check(epInfo.cdn_credentials);
 }
 
-function checkAudioFile (audioFile: any) {
+function checkAudioFile(audioFile: any) {
     if (!isObject(audioFile)) {
         throwError();
     }
@@ -152,7 +152,7 @@ function checkAudioFile (audioFile: any) {
     }
 }
 
-function checkAudioEPInfo (epInfo: any) {
+function checkAudioEPInfo(epInfo: any) {
 
     let albumInfo = epInfo.album_info;
     if (!isObject(albumInfo)) {
@@ -179,7 +179,7 @@ function checkAudioEPInfo (epInfo: any) {
     CDNCredentials.check(epInfo.cdn_credentials);
 }
 
-function checkImageFile (imageFile: any) {
+function checkImageFile(imageFile: any) {
     if (!isObject(imageFile)) {
         throwError();
     }
@@ -193,7 +193,7 @@ function checkImageFile (imageFile: any) {
     }
 }
 
-function checkImageEPInfo (epInfo: any) {
+function checkImageEPInfo(epInfo: any) {
 
     let files = epInfo.files;
     if (!isArray(files)) {
@@ -209,7 +209,7 @@ function checkImageEPInfo (epInfo: any) {
     }
 }
 
-function checkEPInfo (epInfo: any) {
+function checkEPInfo(epInfo: any) {
     if (!isObject(epInfo)) {
         throwError();
     }
@@ -246,7 +246,7 @@ function checkEPInfo (epInfo: any) {
     }
 }
 
-function checkSeason (season: any) {
+function checkSeason(season: any) {
     if (!isObject(season)) {
         throwError();
     }
@@ -260,13 +260,13 @@ function checkSeason (season: any) {
     }
 }
 
-function checkSeriesEP (seriesEP: any) {
+function checkSeriesEP(seriesEP: any) {
     if (!isString(seriesEP)) {
         throwError();
     }
 }
 
-export function check (bangumiInfo: any) {
+export function check(bangumiInfo: any) {
     if (!isObject(bangumiInfo)) {
         throwError();
     }

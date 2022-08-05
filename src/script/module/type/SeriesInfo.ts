@@ -1,4 +1,4 @@
-import {throwError, isObject, isString, isArray, isNumber} from './helper';
+import { throwError, isObject, isString, isArray, isNumber } from './helper';
 
 export interface SeriesEntry {
     title: string,
@@ -8,11 +8,11 @@ export interface SeriesEntry {
 
 export type SeriesEntries = SeriesEntry[];
 
-export type OffsetInfo =  "EOF" | number;
+export type OffsetInfo = "EOF" | number;
 
 export type SeriesInfo = [...SeriesEntries, OffsetInfo];
 
-export function check (seriesInfo: any) {
+export function check(seriesInfo: any) {
     if (!isArray(seriesInfo)) {
         throwError();
     }
@@ -21,7 +21,7 @@ export function check (seriesInfo: any) {
         throwError();
     }
 
-    var offsetInfo = seriesInfo[seriesInfo.length-1];
+    var offsetInfo = seriesInfo[seriesInfo.length - 1];
 
     if (!isNumber(offsetInfo) && offsetInfo !== "EOF") {
         throwError();

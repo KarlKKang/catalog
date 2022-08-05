@@ -22,18 +22,18 @@ import {
 } from './module/DOM';
 import * as message from './module/message';
 
-addEventListener(w, 'load', function(){
+addEventListener(w, 'load', function () {
 	cssVarWrapper();
 	clearCookies();
-	
+
 	if (!getHref().startsWith('https://featherine.com/info') && !DEVELOPMENT) {
 		redirect('https://featherine.com/info', true);
 		return;
 	}
-		
+
 	sendServerRequest('get_info.php', {
-        callback: function (response: string) {
-            if (response.startsWith('INFOBODY:') && response.endsWith('EOF')) {
+		callback: function (response: string) {
+			if (response.startsWith('INFOBODY:') && response.endsWith('EOF')) {
 				getById('content').innerHTML = response.slice(9, -3);
 				navListeners();
 				removeClass(getBody(), "hidden");
@@ -49,7 +49,7 @@ addEventListener(w, 'load', function(){
 			} else {
 				message.show(message.template.param.server.invalidResponse);
 			}
-        },
+		},
 		method: 'GET'
 	});
 });

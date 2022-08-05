@@ -22,12 +22,12 @@ import {
 	deleteCookie,
 	addClass,
 } from './module/DOM';
-import {LocalMessageParam} from './module/type';
+import { LocalMessageParam } from './module/type';
 
-addEventListener(w, 'load', function(){
+addEventListener(w, 'load', function () {
 	cssVarWrapper();
 	clearCookies();
-	
+
 	var paramCookie = getCookie('local-message-param');
 	var titleElem = getById('title');
 	var messageElem = getById('message');
@@ -55,7 +55,7 @@ addEventListener(w, 'load', function(){
 	}
 
 	var param = parsedParam as LocalMessageParam.LocalMessageParam;
-	
+
 	var callback = function () {
 		setTitle(param.htmlTitle);
 		titleElem.innerHTML = param.title;
@@ -73,14 +73,14 @@ addEventListener(w, 'load', function(){
 				redirect(url, true);
 			})
 		}
-		
+
 		removeClass(getBody(), "hidden");
 	};
 
 	if (param.logout === true) {
-		logout (callback);
+		logout(callback);
 		return;
 	}
-	
-	callback ();
+
+	callback();
 });

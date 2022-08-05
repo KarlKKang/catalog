@@ -20,5 +20,5 @@ export const usernameEmpty = 'ユーザー名を空欄にすることはでき�
 export const usernameUnchanged = '新しいユーザー名は元のユーザー名と同じです。';
 export const usernameChanged = 'ユーザー名を変更しました。';
 export const usernameTaken = 'このユーザーネームはすでに使われています。別のユーザー名を入力してください。';
-    
+
 export const loginFailed = 'アカウントIDかパスワードが正しくありません。';

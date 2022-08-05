@@ -1,10 +1,10 @@
 import {
-	TOP_URL,
+    TOP_URL,
     LOGIN_URL
 } from '../../../env/constant';
 import { getHref } from '../../../DOM/document';
 
-export function paramWithRedirect<T extends string> (message: T): {readonly message: T, readonly url?: typeof LOGIN_URL | typeof TOP_URL, readonly logout?: boolean} {
+export function paramWithRedirect<T extends string>(message: T): { readonly message: T, readonly url?: typeof LOGIN_URL | typeof TOP_URL, readonly logout?: boolean } {
     const href = getHref();
     if (href == TOP_URL) {
         return {

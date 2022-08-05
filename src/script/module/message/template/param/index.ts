@@ -17,7 +17,7 @@ export const cssVarError = function (e: string) {
     };
 };
 export const lazyloadSrcMissing = paramWithRedirect(body.lazyloadSrcMissing);
-export const javascriptError = function(e: string) {
+export const javascriptError = function (e: string) {
     return paramWithRedirect(body.javascriptError(e))
 };
 export const expired = {
@@ -53,7 +53,7 @@ export const unrecommendedBrowser = function (redirectURL: string) {
     return {
         title: title.unrecommendedBrowser,
         message: body.unrecommendedBrowser,
-        color: 'orange', 
+        color: 'orange',
         url: redirectURL
     } as const;
 };

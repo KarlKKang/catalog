@@ -1,9 +1,9 @@
 import {
-	DEVELOPMENT,
+    DEVELOPMENT,
     TOP_URL,
 } from '../module/env/constant';
 import {
-	encodeCFURIComponent,
+    encodeCFURIComponent,
     removeRightClick,
 } from '../module/main';
 import {
@@ -16,13 +16,13 @@ import {
     setCookie,
     appendChild,
 } from '../module/DOM';
-import {default as importLazyload} from '../module/lazyload';
-import type {BangumiInfo, LocalImageParam} from '../module/type';
+import { default as importLazyload } from '../module/lazyload';
+import type { BangumiInfo, LocalImageParam } from '../module/type';
 
 var lazyloadImportPromise = importLazyload();
 
 export default function (
-    epInfo: BangumiInfo.ImageEPInfo, 
+    epInfo: BangumiInfo.ImageEPInfo,
     baseURL: string,
     mediaHolder: HTMLElement,
 ) {
@@ -48,7 +48,7 @@ export default function (
         imageNode.dataset.alt = getById('title').innerHTML;
         imageNode.dataset.xhrParam = index.toString();
         imageNode.dataset.authenticationToken = epInfo.authentication_token;
-        addEventListener(imageNode, 'click', function() {
+        addEventListener(imageNode, 'click', function () {
             let param: LocalImageParam.LocalImageParam = {
                 src: baseURL + encodeCFURIComponent(file.file_name),
                 xhrParam: index.toString(),

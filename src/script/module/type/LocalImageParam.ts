@@ -1,13 +1,13 @@
-import {throwError, isObject, isString} from './helper';
+import { throwError, isObject, isString } from './helper';
 
 export interface LocalImageParam {
 	src: string,
-	title: string, 
+	title: string,
 	authenticationToken: string,
 	xhrParam: string
 }
 
-export function check (param: any) {
+export function check(param: any) {
 	if (!isObject(param)) {
 		throwError();
 	}

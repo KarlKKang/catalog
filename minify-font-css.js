@@ -45,6 +45,6 @@ const entries = [
 
 for (let entry of entries) {
 	for (let font of entry.fonts) {
-		minifier(srcDir+entry.dir+'/', srcDir+'dist/'+entry.dir+'/', font+'.css');
+		minifier(srcDir + entry.dir + '/', srcDir + 'dist/' + entry.dir + '/', font + '.css');
 	}
 }

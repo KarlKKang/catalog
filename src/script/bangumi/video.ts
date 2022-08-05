@@ -1,8 +1,8 @@
 import {
-	sendServerRequest,
-	secToTimestamp,
-	concatenateSignedURL,
-	encodeCFURIComponent,
+    sendServerRequest,
+    secToTimestamp,
+    concatenateSignedURL,
+    encodeCFURIComponent,
 } from '../module/main';
 import {
     addEventListener,
@@ -19,18 +19,18 @@ import {
     appendChild,
 } from '../module/DOM';
 import * as message from '../module/message';
-import {CDNCredentials} from '../module/type';
-import type {BangumiInfo} from '../module/type';
+import { CDNCredentials } from '../module/type';
+import type { BangumiInfo } from '../module/type';
 
-import {videojs, browser, videojsMod} from '../module/player';
-import type {VideojsModInstance} from '../module/player';
+import { videojs, browser, videojsMod } from '../module/player';
+import type { VideojsModInstance } from '../module/player';
 
-import {updateURLParam, getLogoutParam, getFormatIndex} from './helper';
-import {destroyAll, showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent} from './media_helper';
+import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
+import { destroyAll, showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent } from './media_helper';
 
 var seriesID: string;
-var epIndex: number; 
-var epInfo: BangumiInfo.VideoEPInfo; 
+var epIndex: number;
+var epInfo: BangumiInfo.VideoEPInfo;
 var baseURL: string;
 var mediaHolder: HTMLElement;
 var contentContainer: HTMLElement;
@@ -42,9 +42,9 @@ var hlsImportPromise = import(
 );
 
 export default function (
-    _seriesID: string, 
-    _epIndex: number, 
-    _epInfo: BangumiInfo.VideoEPInfo, 
+    _seriesID: string,
+    _epIndex: number,
+    _epInfo: BangumiInfo.VideoEPInfo,
     _baseURL: string,
     _mediaHolder: HTMLElement,
     _contentContainer: HTMLElement,
@@ -62,7 +62,7 @@ export default function (
     addClass(mediaHolder, 'video');
 
     // Title
-    if (epInfo.title!='') {
+    if (epInfo.title != '') {
         let title = createElement('p');
         addClass(title, 'sub-title');
         addClass(title, 'center-align');
@@ -83,8 +83,8 @@ export default function (
         formatIndex = 0;
     }
     updateURLParam(seriesID, epIndex, formatIndex);
-    
-    formats.forEach(function(format, index){
+
+    formats.forEach(function (format, index) {
         let option = createElement('option') as HTMLOptionElement;
 
         option.value = format.value;
@@ -102,7 +102,7 @@ export default function (
 
     // Download Accordion
     if (browser.IS_DESKTOP) {
-        appendChild( contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex) );
+        appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
     }
 
     // Video Node
@@ -116,7 +116,7 @@ export default function (
         addClass(mediaHolder, 'hidden');
         return;
     }
-    
+
     var videoJS = createElement('video-js');
 
     addClass(videoJS, 'vjs-big-play-centered');
@@ -130,9 +130,9 @@ export default function (
     } as const;
 
     videojs(videoJS, config, function () {
-        videoJS.style.paddingTop = 9/16*100 + '%';
+        videoJS.style.paddingTop = 9 / 16 * 100 + '%';
 
-        let mediaInstance = videojsMod(this, {debug: debug});
+        let mediaInstance = videojsMod(this, { debug: debug });
 
         addEventListener(selectMenu, "change", function () {
             formatSwitch(mediaInstance);
@@ -140,15 +140,15 @@ export default function (
 
         let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + selectMenu.value + '].m3u8'), epInfo.cdn_credentials);
 
-        addVideoNode (url, mediaInstance, {/*, currentTime: timestampParam*/});
+        addVideoNode(url, mediaInstance, {/*, currentTime: timestampParam*/ });
         if (epInfo.chapters.length > 0) {
-            displayChapters (epInfo.chapters, mediaInstance);
+            displayChapters(epInfo.chapters, mediaInstance);
         }
         //updateURLTimestamp();
     });
 }
 
-function formatSwitch (mediaInstance: VideojsModInstance) {    
+function formatSwitch(mediaInstance: VideojsModInstance) {
     let formatSelector = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement);
     let formatIndex = formatSelector.selectedIndex;
     let video = mediaInstance.media;
@@ -169,25 +169,25 @@ function formatSwitch (mediaInstance: VideojsModInstance) {
                 return;
             }
             let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + formatSelector.value + '].m3u8'), parsedResponse as CDNCredentials.CDNCredentials);
-            addVideoNode (url, mediaInstance, {currentTime: currentTime, play: !paused});
+            addVideoNode(url, mediaInstance, { currentTime: currentTime, play: !paused });
         },
-        content: "token="+epInfo.authentication_token+"&format="+formatIndex,
+        content: "token=" + epInfo.authentication_token + "&format=" + formatIndex,
         logoutParam: getLogoutParam(seriesID, epIndex)
     });
 }
 
-function addVideoNode (
-    url: string, 
-    mediaInstance: VideojsModInstance, 
-    options: {currentTime?: number, play?: boolean}
+function addVideoNode(
+    url: string,
+    mediaInstance: VideojsModInstance,
+    options: { currentTime?: number, play?: boolean }
 ) {
-    
+
     destroyAll([mediaInstance]);
-    
+
     let videoMedia = mediaInstance.media;
     videoMedia.title = getTitle();
 
-    function videoReady () {
+    function videoReady() {
         if (options.currentTime !== undefined) {
             videoMedia.currentTime = options.currentTime;
         }
@@ -213,12 +213,12 @@ function addVideoNode (
             maxBufferSize: 0,
             maxBufferHole: 0,
             debug: debug,
-            xhrSetup: function(xhr: XMLHttpRequest) {
+            xhrSetup: function (xhr: XMLHttpRequest) {
                 xhr.withCredentials = true;
             }
         }
 
-        hlsImportPromise.then(({default: Hls}) => {
+        hlsImportPromise.then(({ default: Hls }) => {
             let hls = new Hls(config);
 
             hls.on(Hls.Events.ERROR, function (_, data) {
@@ -233,7 +233,7 @@ function addVideoNode (
             });
 
             mediaInstance.attachHls(Hls, hls, url);
-        }).catch((e) => { 
+        }).catch((e) => {
             message.show(message.template.param.moduleImportError(e));
             return;
         });;
@@ -244,14 +244,14 @@ function addVideoNode (
             destroyAll([mediaInstance]);
         });
         addEventListener(videoMedia, 'loadedmetadata', function () {
-            videoReady ();
+            videoReady();
         });
         mediaInstance.attachNative(url);
     }
 }
 
-function displayChapters (chapters: BangumiInfo.Chapters, mediaInstance: VideojsModInstance) {
-    var accordion = createElement('button'); 
+function displayChapters(chapters: BangumiInfo.Chapters, mediaInstance: VideojsModInstance) {
+    var accordion = createElement('button');
     addClass(accordion, 'accordion');
     accordion.innerHTML = 'CHAPTERS';
 
@@ -265,7 +265,7 @@ function displayChapters (chapters: BangumiInfo.Chapters, mediaInstance: Videojs
         let timestamp = createElement('span');
         let cueText = createTextNode('\xa0\xa0' + chapter[0]);
         let startTime = chapter[1];
-        timestamp.innerHTML = secToTimestamp (startTime);
+        timestamp.innerHTML = secToTimestamp(startTime);
         addEventListener(timestamp, 'click', function () {
             mediaInstance.seek(startTime);
             mediaInstance.controls.focus();
@@ -284,14 +284,14 @@ function displayChapters (chapters: BangumiInfo.Chapters, mediaInstance: Videojs
     appendChild(mediaHolder, chaptersNode);
 
     var updateChapterDisplay = function () {
-        var chapterElements = getDescendantsByTag(accordionPanel, 'p'); 
+        var chapterElements = getDescendantsByTag(accordionPanel, 'p');
         var currentTime = video.currentTime;
-        chapters.forEach(function(chapter, index) {
+        chapters.forEach(function (chapter, index) {
             let chapterElement = chapterElements[index] as HTMLElement;
             if (currentTime >= chapter[1]) {
-                if (index == chapters.length-1) {
+                if (index == chapters.length - 1) {
                     setClass(chapterElement, 'current-chapter');
-                } else if (currentTime < chapters[index+1]![1]) {
+                } else if (currentTime < chapters[index + 1]![1]) {
                     setClass(chapterElement, 'current-chapter');
                 } else {
                     setClass(chapterElement, 'inactive-chapter');
@@ -303,6 +303,6 @@ function displayChapters (chapters: BangumiInfo.Chapters, mediaInstance: Videojs
     };
 
     //video.addEventListener ('timeupdate', updateChapterDisplay);
-    setInterval (updateChapterDisplay, 500);
+    setInterval(updateChapterDisplay, 500);
     addEventsListener(video, ['play', 'pause', 'seeking', 'seeked'], updateChapterDisplay);
 }

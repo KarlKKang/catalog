@@ -9,11 +9,11 @@ import * as message from '../message';
 
 //import * as DOM from './DOM';
 import {
-	w, 
-	getHref, 
+	w,
+	getHref,
 	redirect,
 	deleteCookie,
-	
+
 	getById,
 	addClass,
 	removeClass,
@@ -23,27 +23,27 @@ import {
 	addEventListener,
 } from '../DOM';
 
-import type {CDNCredentials} from '../type';
+import type { CDNCredentials } from '../type';
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function getURLParam (name: string): string | null {
+export function getURLParam(name: string): string | null {
 	var urlObj = new URL(getHref());
 	return urlObj.searchParams.get(name);
 }
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-function addXHROnError (xmlhttp: XMLHttpRequest) {
+function addXHROnError(xmlhttp: XMLHttpRequest) {
 	xmlhttp.onerror = function () {
-		message.show (message.template.param.server.connectionError);
+		message.show(message.template.param.server.connectionError);
 	};
 }
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-function checkXHRStatus (response: XMLHttpRequest, logoutParam?: string): boolean {
+function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean {
 	var status = response.status;
 	if (response.readyState == 4) {
 		if (status == 200) {
@@ -57,27 +57,27 @@ function checkXHRStatus (response: XMLHttpRequest, logoutParam?: string): boolea
 				logout(function () {
 					redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
 				});
-			}	
+			}
 		} else if (status == 429) {
-			message.show (message.template.param.server.status429);
+			message.show(message.template.param.server.status429);
 		} else if (status == 503) {
-			message.show (message.template.param.server.status503);
+			message.show(message.template.param.server.status503);
 		} else if (status == 500 || status == 400) {
 			var responseText = response.responseText;
 			if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
-				message.show (message.template.param.server.status400And500(responseText));
+				message.show(message.template.param.server.status400And500(responseText));
 			}
 			else {
-				message.show ();
+				message.show();
 			}
 		} else if (status == 403) {
 			if (response.responseText != 'CRAWLER') {
-				message.show (message.template.param.server.status403);
+				message.show(message.template.param.server.status403);
 			}
 		} else if (status == 404 && response.responseText == 'REJECTED') {
 			redirect(TOP_URL);
 		} else {
-			message.show (message.template.param.server.connectionError);
+			message.show(message.template.param.server.connectionError);
 		}
 		return false;
 	} else {
@@ -85,7 +85,7 @@ function checkXHRStatus (response: XMLHttpRequest, logoutParam?: string): boolea
 	}
 }
 ////////////////////////////////////////
-	
+
 ////////////////////////////////////////
 interface SendServerRequestOption {
 	callback?: Function,
@@ -94,7 +94,7 @@ interface SendServerRequestOption {
 	method?: 'POST' | 'GET',
 	logoutParam?: string
 };
-export function sendServerRequest (uri: string, options: SendServerRequestOption) {
+export function sendServerRequest(uri: string, options: SendServerRequestOption) {
 	if (options.content === undefined) {
 		options.content = '';
 	}
@@ -104,7 +104,7 @@ export function sendServerRequest (uri: string, options: SendServerRequestOption
 	if (options.method === undefined) {
 		options.method = 'POST';
 	}
-	
+
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function () {
 		if (checkXHRStatus(this, options.logoutParam)) {
@@ -123,16 +123,16 @@ export function sendServerRequest (uri: string, options: SendServerRequestOption
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function authenticate (callback: {successful?: Function, failed?: Function}) {
-	var successful: Function = function () {return;};
-	var failed: Function = function () {return;};
+export function authenticate(callback: { successful?: Function, failed?: Function }) {
+	var successful: Function = function () { return; };
+	var failed: Function = function () { return; };
 	if (callback.successful !== undefined) {
 		successful = callback.successful;
 	}
 	if (callback.failed !== undefined) {
 		failed = callback.failed;
 	}
-	
+
 	sendServerRequest('get_authentication_state.php', {
 		callback: function (response: string) {
 			if (response == "APPROVED") {
@@ -148,46 +148,46 @@ export function authenticate (callback: {successful?: Function, failed?: Functio
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function logout (callback: Function) {
+export function logout(callback: Function) {
 	if (callback === undefined) {
-		callback = function () {return;};
+		callback = function () { return; };
 	}
-	
+
 	sendServerRequest('logout.php', {
 		callback: function (response: string) {
-            if (response=='PARTIAL' || response=='DONE') {
-                if (DEVELOPMENT) {
-                    console.log(response);
-                }
-                callback ();
-            } else {
-                message.show();
-            }
+			if (response == 'PARTIAL' || response == 'DONE') {
+				if (DEVELOPMENT) {
+					console.log(response);
+				}
+				callback();
+			} else {
+				message.show();
+			}
 		}
 	});
 }
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function passwordStyling (element: HTMLInputElement) {
-	function inputChangeHandler () {
+export function passwordStyling(element: HTMLInputElement) {
+	function inputChangeHandler() {
 		if (element.value === '') {
 			removeClass(element, 'password-font');
 		} else {
 			addClass(element, 'password-font');
 		}
 	}
-	
+
 	var descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value"); //The object returned is mutable but mutating it has no effect on the original property's configuration.
 	if (descriptor !== undefined && descriptor.configurable) { // 'undefined' in Chrome prior to Chrome 43 (https://developer.chrome.com/blog/DOM-attributes-now-on-the-prototype-chain/), not configurable in Safari 9.
 		var originalSet = descriptor.set;
 
 		// define our own setter
-		descriptor.set = function() {
+		descriptor.set = function () {
 			originalSet!.apply(this, arguments as any);
 			inputChangeHandler();
 		}
-	
+
 		Object.defineProperty(element, "value", descriptor);
 	}
 
@@ -197,61 +197,61 @@ export function passwordStyling (element: HTMLInputElement) {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-function navUpdate () {
+function navUpdate() {
 	var navBtn = getById('nav-btn');
 	toggleClass(navBtn, 'active');
 	var menu = getById('nav-menu');
-	
+
 	if (containsClass(navBtn, 'active')) {
 		removeClass(menu, 'invisible');
 		removeClass(menu, 'transparent');
 	} else {
 		addClass(menu, 'transparent');
-		setTimeout (function () {
+		setTimeout(function () {
 			addClass(menu, 'invisible');
 		}, 300);
 	}
 }
 ////////////////////////////////////////
-	
+
 ////////////////////////////////////////
-export function navListeners () {
+export function navListeners() {
 	getById('nav-menu-content').innerHTML = '<p><span id="nav-menu-content-1">ライブラリ／LIBRARY</span></p>' +
-			'<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>' +
-			'<p><span id="nav-menu-content-3">ご利用ガイド／INFO</span></p>' +
-			'<p><span id="nav-menu-content-4">ログアウト／LOG OUT</span></p>';
-	
+		'<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>' +
+		'<p><span id="nav-menu-content-3">ご利用ガイド／INFO</span></p>' +
+		'<p><span id="nav-menu-content-4">ログアウト／LOG OUT</span></p>';
+
 	addEventListener(getById('nav-btn'), 'click', function () {
-		navUpdate ();
+		navUpdate();
 	});
-	
+
 	addEventListener(getById('nav-menu-content-1'), 'click', function () {
 		redirect(TOP_URL);
 	});
 
 	addEventListener(getById('nav-menu-content-2'), 'click', function () {
-		redirect(DEVELOPMENT?'account.html':(TOP_URL+'/account'));
+		redirect(DEVELOPMENT ? 'account.html' : (TOP_URL + '/account'));
 	});
 
 	addEventListener(getById('nav-menu-content-3'), 'click', function () {
-		redirect(DEVELOPMENT?'info.html':(TOP_URL+'/info'));
+		redirect(DEVELOPMENT ? 'info.html' : (TOP_URL + '/info'));
 	});
 
 	addEventListener(getById('nav-menu-content-4'), 'click', function () {
-		logout(function () {redirect(LOGIN_URL);});
+		logout(function () { redirect(LOGIN_URL); });
 	});
 }
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function secToTimestamp (sec: number) {
+export function secToTimestamp(sec: number) {
 	if (isNaN(sec)) {
 		return '--:--';
 	}
-	var hour = Math.floor(sec/60/60);
-	sec = sec - hour*60*60;
-	var min = Math.floor(sec/60);
-	sec = sec - min*60;
+	var hour = Math.floor(sec / 60 / 60);
+	sec = sec - hour * 60 * 60;
+	var min = Math.floor(sec / 60);
+	sec = sec - min * 60;
 
 	sec = Math.floor(sec);
 	var secText = sec.toString();
@@ -263,22 +263,22 @@ export function secToTimestamp (sec: number) {
 	if (hour > 0 && min < 10) {
 		minText = '0' + minText;
 	}
-	
-	return ((hour==0)?'':(hour + ':')) + minText + ':' + secText;
+
+	return ((hour == 0) ? '' : (hour + ':')) + minText + ':' + secText;
 }
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export  function changeColor (elem: HTMLElement, color: string) {
+export function changeColor(elem: HTMLElement, color: string) {
 	removeClass(elem, 'color-red');
 	removeClass(elem, 'color-green');
 	removeClass(elem, 'color-orange');
-	addClass(elem, 'color-'+color);
+	addClass(elem, 'color-' + color);
 }
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function imageProtection (elem: HTMLElement) {
+export function imageProtection(elem: HTMLElement) {
 	removeRightClick(elem);
 	addEventListener(elem, 'dragstart', e => {
 		e.preventDefault();
@@ -290,7 +290,7 @@ export function imageProtection (elem: HTMLElement) {
 		}
 	});
 
-	addEventListener(elem, 'touchstart', e=> {
+	addEventListener(elem, 'touchstart', e => {
 		var event = e as TouchEvent;
 		if (event.changedTouches[0] !== undefined && event.changedTouches[0].force > 0.1) {
 			event.preventDefault();
@@ -298,13 +298,13 @@ export function imageProtection (elem: HTMLElement) {
 	});
 }
 ////////////////////////////////////////
-	
+
 ////////////////////////////////////////
-export function concatenateSignedURL (url: string, credentials: CDNCredentials.CDNCredentials, resourceURLOverride?: string) {
+export function concatenateSignedURL(url: string, credentials: CDNCredentials.CDNCredentials, resourceURLOverride?: string) {
 	var policyString: string;
 	if (credentials.Policy !== undefined) {
 		var policy = credentials['Policy'];
-		policy['Statement'][0]['Resource'] = (resourceURLOverride===undefined)?url:resourceURLOverride;
+		policy['Statement'][0]['Resource'] = (resourceURLOverride === undefined) ? url : resourceURLOverride;
 		policyString = JSON.stringify(policy);
 		policyString = w.btoa(policyString);
 		policyString = policyString.replace(/\+/g, "-");
@@ -317,15 +317,15 @@ export function concatenateSignedURL (url: string, credentials: CDNCredentials.C
 	return url + '?' + policyString + '&Signature=' + credentials['Signature'] + '&Key-Pair-Id=' + credentials['Key-Pair-Id'];
 }
 ////////////////////////////////////////
-	
+
 ////////////////////////////////////////
-export function encodeCFURIComponent (uri: string) {
+export function encodeCFURIComponent(uri: string) {
 	return encodeURIComponent(uri).replace(/%20/g, "+");
 }
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function disableInput (inputElement: HTMLInputElement, disabled: boolean) {
+export function disableInput(inputElement: HTMLInputElement, disabled: boolean) {
 	inputElement.disabled = disabled;
 	if (disabled) {
 		addClass(getParent(inputElement), 'disabled');
@@ -334,9 +334,9 @@ export function disableInput (inputElement: HTMLInputElement, disabled: boolean)
 	}
 }
 ////////////////////////////////////////
-	
+
 ////////////////////////////////////////
-export function clearCookies () {
+export function clearCookies() {
 	if (getHref() != TOP_URL + '/message' && !DEVELOPMENT) {
 		deleteCookie('local-message-param');
 	}
@@ -347,20 +347,20 @@ export function clearCookies () {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function cssVarWrapper () {
+export function cssVarWrapper() {
 	const showMessage = !getHref().endsWith('/message') && !DEVELOPMENT;
 	import(
 		/* webpackChunkName: "css-vars-ponyfill" */
 		/* webpackExports: ["default"] */
 		'css-vars-ponyfill'
-	).then(({default: cssVars}) => {
+	).then(({ default: cssVars }) => {
 		cssVars({
-			onError: function(errorMessage) {
+			onError: function (errorMessage) {
 				if (showMessage) {
 					message.show(message.template.param.cssVarError(errorMessage));
 				}
 			},
-			onWarning: function(errorMessage) {
+			onWarning: function (errorMessage) {
 				console.log(errorMessage);
 			},
 			include: "link[rel=stylesheet]",
@@ -377,10 +377,10 @@ export function cssVarWrapper () {
 ////////////////////////////////////////
 import type Sha512 from 'node-forge/lib/sha512';
 var sha512: typeof Sha512 | null = null;
-export async function hashPassword (password: string) {
+export async function hashPassword(password: string) {
 	if (sha512 === null) {
 		try {
-			({default: sha512} = await import(
+			({ default: sha512 } = await import(
 				/* webpackChunkName: "sha512" */
 				/* webpackExports: ["default"] */
 				'node-forge/lib/sha512'
@@ -389,7 +389,7 @@ export async function hashPassword (password: string) {
 			message.show(message.template.param.moduleImportError(e));
 		}
 	}
-	
+
 	var hash = (sha512 as typeof Sha512).sha256.create();
 	hash.update(password);
 	return hash.digest().toHex();
@@ -397,6 +397,6 @@ export async function hashPassword (password: string) {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function removeRightClick (elem: HTMLElement) {
+export function removeRightClick(elem: HTMLElement) {
 	addEventListener(elem, 'contextmenu', event => event.preventDefault());
 }

@@ -1,5 +1,5 @@
 declare module 'node-forge/lib/sha512' {
-    
+
     type Byte = number;
     type Bytes = string;
     type Hex = string;

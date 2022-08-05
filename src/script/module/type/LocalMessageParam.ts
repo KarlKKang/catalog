@@ -1,14 +1,14 @@
-import {throwError, isObject, isString, isBoolean} from './helper';
-export interface LocalMessageParam{
-    message: string, 
-    title: string, 
+import { throwError, isObject, isString, isBoolean } from './helper';
+export interface LocalMessageParam {
+    message: string,
+    title: string,
     color: string,
-    logout: boolean, 
+    logout: boolean,
     url: string | null,
     htmlTitle: string
 };
 
-export function check (localMessageParam: any) {
+export function check(localMessageParam: any) {
     if (!isObject(localMessageParam)) {
         throwError();
     }
