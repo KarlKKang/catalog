@@ -1,0 +1,6 @@
+* text=auto
+*.ttf binary
+*.otf binary
+*.png binary
+*.ico binary
+*.svg binary
