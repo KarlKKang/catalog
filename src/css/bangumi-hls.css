@@ -2,177 +2,186 @@
 /* CSS Document */
 
 .symbol {
-	font-family: SegMDL2;
+    font-family: SegMDL2;
 }
 
 #title {
-	text-align: center;
-	margin: 2em 5% 0px 5%;
-	font-size: x-large;
-	font-weight: 500;
+    text-align: center;
+    margin: 2em 5% 0px 5%;
+    font-size: x-large;
+    font-weight: 500;
 }
 
-#ep-selector, #season-selector {
-	position: relative;
-	margin: 0px;
-	padding: 0px;
-	width: 100%;
+#ep-selector,
+#season-selector {
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
 }
 
 #season-button-wrapper {
-	display: flex;
-  	flex-wrap: wrap;
-	justify-content: center;
-	margin: 0px 0px -0.5em 0px; /*Offset #season-button-wrapper > div > p margin for underline spacing.*/
-	padding: 2em 5% 0px 5%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0px 0px -0.5em 0px;
+    /*Offset #season-button-wrapper > div > p margin for underline spacing.*/
+    padding: 2em 5% 0px 5%;
 }
 
-#season-button-wrapper > div > p {
-	padding: 0px;
-	margin: 0.5em 0px;
+#season-button-wrapper>div>p {
+    padding: 0px;
+    margin: 0.5em 0px;
 }
 
-#season-button-wrapper > div {
-	height: auto;
+#season-button-wrapper>div {
+    height: auto;
     transition: .4s ease-out;
-	margin: 0px 1.5em;
-	cursor: pointer;
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
-	border-bottom-color: var(--text-color-transparent);
+    margin: 0px 1.5em;
+    cursor: pointer;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--text-color-transparent);
 }
 
-#season-button-wrapper > div > p {
-	transition: .4s ease-out;
-	color: var(--alt-text-color);
+#season-button-wrapper>div>p {
+    transition: .4s ease-out;
+    color: var(--alt-text-color);
 }
 
-#season-button-wrapper > div:hover {
-	border-bottom-color: var(--text-color);
+#season-button-wrapper>div:hover {
+    border-bottom-color: var(--text-color);
 }
 
-#season-button-wrapper > div:hover > p {
-	color: var(--text-color);
+#season-button-wrapper>div:hover>p {
+    color: var(--text-color);
 }
 
-#season-button-wrapper > div.current-season {
-	cursor: auto;
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
-	border-bottom-color: var(--text-color);
+#season-button-wrapper>div.current-season {
+    cursor: auto;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--text-color);
 }
 
-#season-button-wrapper > div.current-season > p {
-	color: var(--text-color);
-	font-weight: 500;
+#season-button-wrapper>div.current-season>p {
+    color: var(--text-color);
+    font-weight: 500;
 }
 
 #ep-button-wrapper {
-	display: flex;
-  	flex-wrap: wrap;
-	justify-content: center;
-	margin: 0px;
-	padding: 2em 5%;
-	overflow-y: hidden;
-	box-sizing: content-box;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0px;
+    padding: 2em 5%;
+    overflow-y: hidden;
+    box-sizing: content-box;
 }
 
 #ep-button-wrapper.expanded {
-	padding-bottom: 4.5em; /*Repel the show-more-button*/
+    padding-bottom: 4.5em;
+    /*Repel the show-more-button*/
 }
 
-#ep-button-wrapper > div {
-	position: relative;
-	height: auto;
-	background-color: var(--foreground-color);
-	box-shadow: var(--shadow);
+#ep-button-wrapper>div {
+    position: relative;
+    height: auto;
+    background-color: var(--foreground-color);
+    box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
-	padding: 0.6em 1em;
-	margin: 12px;
-	cursor: pointer;
+    padding: 0.6em 1em;
+    margin: 12px;
+    cursor: pointer;
 }
 
 @supports (margin: min(2%, 12px)) {
-	#ep-button-wrapper {
-		transition: max-height .4s ease-out, padding-bottom .4s ease-out; /*This animation is broken on some legacy browsers (IE)*/
-	}
+    #ep-button-wrapper {
+        transition: max-height .4s ease-out, padding-bottom .4s ease-out;
+        /*This animation is broken on some legacy browsers (IE)*/
+    }
 
-	#ep-button-wrapper > div {
-		margin: min(2%, 12px);
-	}
+    #ep-button-wrapper>div {
+        margin: min(2%, 12px);
+    }
 }
 
-#ep-button-wrapper > div:hover {
-	box-shadow: var(--shadow-hover);
-	z-index: 0;
+#ep-button-wrapper>div:hover {
+    box-shadow: var(--shadow-hover);
+    z-index: 0;
 }
 
-#ep-button-wrapper > div.current-ep > p {
-	font-weight: 500;
-	text-decoration: underline;
+#ep-button-wrapper>div.current-ep>p {
+    font-weight: 500;
+    text-decoration: underline;
 }
 
-#ep-button-wrapper > div > * {
-	margin: 0px;
-	padding: 0px;
+#ep-button-wrapper>div>* {
+    margin: 0px;
+    padding: 0px;
 }
 
 #show-more-button {
-	background: linear-gradient(to bottom, var(--background-color-transparent) 0%,var(--background-color) 1.5em);
-	width: 100%;
-	margin: -4.5em 0px 0px 0px; /*Total height = padding-top 1.5em + padding-bottom 2em + line-height 1em*/
-	padding: 1.5em 0px 2em 0px; /*padding-top for gradient, padding bottom to fill in #ep-button-wrapper padding*/
-	text-align: center;
-	position: relative;
-	text-decoration: none;
-	line-height: 1; /*Line height 1em*/
+    background: linear-gradient(to bottom, var(--background-color-transparent) 0%, var(--background-color) 1.5em);
+    width: 100%;
+    margin: -4.5em 0px 0px 0px;
+    /*Total height = padding-top 1.5em + padding-bottom 2em + line-height 1em*/
+    padding: 1.5em 0px 2em 0px;
+    /*padding-top for gradient, padding bottom to fill in #ep-button-wrapper padding*/
+    text-align: center;
+    position: relative;
+    text-decoration: none;
+    line-height: 1;
+    /*Line height 1em*/
 }
 
-#show-more-button, #show-more-button * {
-	color: var(--link-text-color);
+#show-more-button,
+#show-more-button * {
+    color: var(--link-text-color);
 }
 
-#show-more-button:hover{
-	cursor: pointer;
+#show-more-button:hover {
+    cursor: pointer;
 }
 
 hr {
-	margin: 0px auto;
-	height: 1px;
-	width: 80%;
-	max-width: 1280px;
-	border-width: 0;
-	background-color: var(--horizontal-line-background-color);
+    margin: 0px auto;
+    height: 1px;
+    width: 80%;
+    max-width: 1280px;
+    border-width: 0;
+    background-color: var(--horizontal-line-background-color);
 }
 
-#content, #warning {
-	margin: 2em auto 10vh auto;
-	padding: 0px;
-	width: 80%;
-	max-width: 1280px;
+#content,
+#warning {
+    margin: 2em auto 10vh auto;
+    padding: 0px;
+    width: 80%;
+    max-width: 1280px;
 }
 
 #format-selector {
-	max-width: 200px;
+    max-width: 200px;
     width: 70%;
-	position: relative;
-	margin: 0px 0px 18px 0px;
+    position: relative;
+    margin: 0px 0px 18px 0px;
 }
 
 #format-selector:after {
-	content: '\E70D';
-	font-family: SegMDL2;
-	font-size: 0.9em;
-	color: var(--alt-text-color);
-	top: 10px;
-	right: 11px;
-	position: absolute;
-	pointer-events: none;
+    content: '\E70D';
+    font-family: SegMDL2;
+    font-size: 0.9em;
+    color: var(--alt-text-color);
+    top: 10px;
+    right: 11px;
+    position: absolute;
+    pointer-events: none;
 }
 
 select {
-	border: none;
-	border-radius: 0px;
+    border: none;
+    border-radius: 0px;
     font-size: 0.9em;
     margin: 0px;
     width: 100%;
@@ -181,165 +190,179 @@ select {
     -webkit-appearance: none;
     appearance: none;
     height: 34px;
-	line-height: 22px;
+    line-height: 22px;
     background-color: var(--foreground-color);
     box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 }
+
 select::-ms-expand {
     display: none;
 }
-select:hover{
+
+select:hover {
     box-shadow: var(--shadow-hover);
 }
 
 #media-holder {
-	margin: 0px 0px 32px 0px;
-}
-#media-holder.video, #message {
-	margin: 0px 0px 18px 0px;
+    margin: 0px 0px 32px 0px;
 }
 
-#media-holder > .video-js {
-	width: 100%;
-	margin: 0px 0px 18px 0px;
-	background-color: #000;
+#media-holder.video,
+#message {
+    margin: 0px 0px 18px 0px;
 }
 
-#media-holder > .video-js > video, #media-holder > .video-js > audio { /* Hide mouse-over tooltips */
-	pointer-events: none;
+#media-holder>.video-js {
+    width: 100%;
+    margin: 0px 0px 18px 0px;
+    background-color: #000;
 }
 
-#media-holder > .lazyload {
-	width: 100%;
-	margin: 0px 0px 18px 0px;
+#media-holder>.video-js>video,
+#media-holder>.video-js>audio {
+    /* Hide mouse-over tooltips */
+    pointer-events: none;
 }
 
-#media-holder > .lazyload, #media-holder > .video-js {
-	box-shadow: var(--shadow);
+#media-holder>.lazyload {
+    width: 100%;
+    margin: 0px 0px 18px 0px;
+}
+
+#media-holder>.lazyload,
+#media-holder>.video-js {
+    box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 }
 
-#media-holder > .lazyload:hover , #media-holder > .video-js:hover {
-	box-shadow: var(--shadow-hover);
+#media-holder>.lazyload:hover,
+#media-holder>.video-js:hover {
+    box-shadow: var(--shadow-hover);
 }
 
-#media-holder > .lazyload {
-	position: relative;
-	padding-bottom: 56.25%;
+#media-holder>.lazyload {
+    position: relative;
+    padding-bottom: 56.25%;
 }
 
-#media-holder > .lazyload:hover {
-	cursor: pointer;
+#media-holder>.lazyload:hover {
+    cursor: pointer;
 }
 
-#media-holder > .lazyload > .overlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+#media-holder>.lazyload>.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .sub-title {
-	font-size: large;
-	font-weight: 500;
-	width: 100%;
-	margin: 32px 0px 18px 0px;
+    font-size: large;
+    font-weight: 500;
+    width: 100%;
+    margin: 32px 0px 18px 0px;
 }
 
 .sub-title * {
-	font-size: large;
-	font-weight: 500;
+    font-size: large;
+    font-weight: 500;
 }
 
 .artist {
-	color: var(--alt-text-color);
-	font-size: medium;
-	font-weight: 300;
+    color: var(--alt-text-color);
+    font-size: medium;
+    font-weight: 300;
 }
 
-.sub-title > .format {
-	color: var(--alt-text-color);
-	font-size: small;
-	font-weight: 300;
+.sub-title>.format {
+    color: var(--alt-text-color);
+    font-size: small;
+    font-weight: 300;
 }
 
-#title > .artist {
-	font-size: large;
+#title>.artist {
+    font-size: large;
 }
 
-.sub-title.center-align, .artist.center-align {
-	text-align: center;
+.sub-title.center-align,
+.artist.center-align {
+    text-align: center;
 }
 
 p.artist {
-	width: 100%;
-	margin: -1em 0px 1em 0px;
+    width: 100%;
+    margin: -1em 0px 1em 0px;
 }
 
-#warning, #message {
-	padding: 2em;
-	background-color: var(--foreground-color);
-	box-shadow: var(--shadow);
+#warning,
+#message {
+    padding: 2em;
+    background-color: var(--foreground-color);
+    box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
-	box-sizing: border-box;
+    box-sizing: border-box;
 }
 
-#warning-title, #message-title {
-	text-align: center;
-	margin: 0px 0px 1em 0px;
-	padding: 0px;
-	font-size: x-large;
-	font-weight: 500;
+#warning-title,
+#message-title {
+    text-align: center;
+    margin: 0px 0px 1em 0px;
+    padding: 0px;
+    font-size: x-large;
+    font-weight: 500;
 }
 
-#warning-body{
-	margin: 1em 0px;
-	padding: 0px;
-	text-align: center;
+#warning-body {
+    margin: 1em 0px;
+    padding: 0px;
+    text-align: center;
 }
 
 #message-body {
-	margin: 1em 0px 0px 0px;
-	padding: 0px;
-	text-align: center;
+    margin: 1em 0px 0px 0px;
+    padding: 0px;
+    text-align: center;
 }
 
-#message-body > p { /*margin and padding already done in #message-body wrapper*/
-	margin: 0px;
-	padding: 0px;
+#message-body>p {
+    /*margin and padding already done in #message-body wrapper*/
+    margin: 0px;
+    padding: 0px;
 }
 
 .button {
-	height: 40px;
-	box-shadow: var(--shadow);
+    height: 40px;
+    box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
-	background: var(--foreground-color);
-	width: 150px;
-	max-width: 100%;
-	position: relative;
+    background: var(--foreground-color);
+    width: 150px;
+    max-width: 100%;
+    position: relative;
 }
 
-#warning-button-group > .button {
-	margin: 1em 3% 0px 3%;
+#warning-button-group>.button {
+    margin: 1em 3% 0px 3%;
 }
 
-#warning:hover, #message:hover, .button:enabled:hover {
-	box-shadow: var(--shadow-hover);
+#warning:hover,
+#message:hover,
+.button:enabled:hover {
+    box-shadow: var(--shadow-hover);
 }
 
 #warning-button-group {
-	margin: -0.5em 0px 0px 0px;
-	display: flex;
-  	flex-wrap: wrap;
-	justify-content: center;
+    margin: -0.5em 0px 0px 0px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 #on-screen-console {
-	margin: -1px 0px 10% 0px;
-	width: 100%;
-	box-sizing: border-box;
+    margin: -1px 0px 10% 0px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /*#loader {
@@ -367,83 +390,89 @@ p.artist {
 /**Accodions/
 /* Style the buttons that are used to open and close the accordion panel */
 .accordion {
-	background-color: var(--foreground-color);
-	font-size: medium;
-	cursor: pointer;
-	padding: 1em 2em 1em 1em; /*Right 2em padding to avoid overflow into the icon section*/
-	margin: 0px;
-	width: 100%;
-	text-align: left;
-	border: none;
-	outline: none;
-	box-shadow: var(--shadow);
-	transition: box-shadow .4s ease-out;
-	overflow-wrap: anywhere;
+    background-color: var(--foreground-color);
+    font-size: medium;
+    cursor: pointer;
+    padding: 1em 2em 1em 1em;
+    /*Right 2em padding to avoid overflow into the icon section*/
+    margin: 0px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    box-shadow: var(--shadow);
+    transition: box-shadow .4s ease-out;
+    overflow-wrap: anywhere;
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .accordion:hover {
-	box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-hover);
 }
 
 /* Style the accordion panel. Note: hidden by default */
 .panel {
-	padding: 0 1em;
-	margin: 0px;
-	background-color: var(--foreground-color);
-	max-height: 0;
-	overflow: hidden;
-	transition: max-height 0.2s ease-out, padding 0.2s ease-out, box-shadow .4s ease-out;
-	box-shadow: var(--shadow);
+    padding: 0 1em;
+    margin: 0px;
+    background-color: var(--foreground-color);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out, padding 0.2s ease-out, box-shadow .4s ease-out;
+    box-shadow: var(--shadow);
 }
 
 .accordion:after {
-	content: '\002B'; /* Unicode character for "plus" sign (+) */
-	font-size: 1em;
-	color: var(--alt-text-color);
-	float: right;
-	margin: 0px -1em 0px 0px; /*Offset into the padding region to avoid collision with accodion text*/
+    content: '\002B';
+    /* Unicode character for "plus" sign (+) */
+    font-size: 1em;
+    color: var(--alt-text-color);
+    float: right;
+    margin: 0px -1em 0px 0px;
+    /*Offset into the padding region to avoid collision with accodion text*/
 }
 
 .accordion.active:after {
-	content: "\2212"; /* Unicode character for "minus" sign (-) */
+    content: "\2212";
+    /* Unicode character for "minus" sign (-) */
 }
 
 .panel:hover {
-	box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-hover);
 }
 
 /*Chapters*/
-.chapters > .panel > p {
-	transition: .4s ease-out;
+.chapters>.panel>p {
+    transition: .4s ease-out;
 }
 
-.chapters > .panel > p > span {
-	cursor: pointer;
-	color: var(--link-text-color);
+.chapters>.panel>p>span {
+    cursor: pointer;
+    color: var(--link-text-color);
 }
 
-.chapters > .panel > .current-chapter {
-	color: var(--text-color);
-	font-weight: 500;
+.chapters>.panel>.current-chapter {
+    color: var(--text-color);
+    font-weight: 500;
 }
 
-.chapters > .panel > .inactive-chapter {
-	color: var(--alt-text-color);
+.chapters>.panel>.inactive-chapter {
+    color: var(--alt-text-color);
 }
 
 /*Download*/
 .download {
-	text-align: center;
+    text-align: center;
 }
+
 #download-button {
-	margin-bottom: 1em;
+    margin-bottom: 1em;
 }
-.download > .panel > ul {
-	padding: 0px 0px 0px 2em;
-	text-align: left;
+
+.download>.panel>ul {
+    padding: 0px 0px 0px 2em;
+    text-align: left;
 }
 
 #download-iframe {
-	display: none;
+    display: none;
 }

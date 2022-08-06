@@ -1,9 +1,10 @@
 @charset "utf-8";
+
 /* CSS Document */
 textarea {
-	background: transparent;
+    background: transparent;
 }
 
 .changed {
-	background-color: yellow;
+    background-color: yellow;
 }

@@ -3,9 +3,9 @@ const common = require('./webpack.common.js');
 const path = require('path');
 
 module.exports = merge(common, {
-	mode: 'development',
-	devtool: 'source-map',
-	output: {
-		path: path.resolve(__dirname, 'dev/script'),
-	}
+    mode: 'development',
+    devtool: 'source-map',
+    output: {
+        path: path.resolve(__dirname, 'dev/script'),
+    }
 });

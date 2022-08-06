@@ -2,73 +2,76 @@
 /* CSS Document */
 
 :lang(en) {
-	font-family: roboto,'Noto Sans Myanmar UI',arial,sans-serif;
-	font-weight: 300;
+    font-family: roboto, 'Noto Sans Myanmar UI', arial, sans-serif;
+    font-weight: 300;
 }
+
 :lang(zh-Hans) {
-	font-family: 'Noto Sans SC','PingFang SC','Helvetica Neue','Helvetica','Arial',sans-serif;
-	font-weight: 300;
+    font-family: 'Noto Sans SC', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 300;
 }
+
 :lang(zh-Hant) {
-	font-family: 'Noto Sans TC','PingFang TC','Helvetica Neue','Helvetica','Arial',sans-serif;
-	font-weight: 300;
+    font-family: 'Noto Sans TC', 'PingFang TC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 300;
 }
 
 #container {
-	width: 1000px;
-	max-width: 90%;
-	margin: 5vh 0px;
-	padding: 1em 0px;
-	position: relative;
-	left: 50%;
-	transform: translate(-50%, 0%);
-	background-color: var(--foreground-color);
-	box-shadow: var(--shadow);
+    width: 1000px;
+    max-width: 90%;
+    margin: 5vh 0px;
+    padding: 1em 0px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    background-color: var(--foreground-color);
+    box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 }
 
 #container:hover {
-	box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-hover);
 }
 
 #content {
-	margin: 0px 2em;
+    margin: 0px 2em;
 }
 
 #title {
-	text-align: center;
-	margin: 0px;
-	padding: 1em 0px;
-	font-size: x-large;
-	font-weight: 500;
+    text-align: center;
+    margin: 0px;
+    padding: 1em 0px;
+    font-size: x-large;
+    font-weight: 500;
 }
 
 #date {
-	font-size: small;
-	color: var(--alt-text-color);
-	text-align: center;
+    font-size: small;
+    color: var(--alt-text-color);
+    text-align: center;
 }
 
 .sub-title {
-	font-size: large;
-	font-weight: 400;
+    font-size: large;
+    font-weight: 400;
 }
 
 hr {
-	margin: 2em 0px;
-	height: 1px;
-	border-width: 0;
-	background-color: var(--horizontal-line-foreground-color);
+    margin: 2em 0px;
+    height: 1px;
+    border-width: 0;
+    background-color: var(--horizontal-line-foreground-color);
 }
 
 .line-break {
-  	margin: 2em;
+    margin: 2em;
 }
 
-.important, .important > p {
-	color: var(--red-color);
+.important,
+.important>p {
+    color: var(--red-color);
 }
 
-.important > p {
-	font-weight: 500;
+.important>p {
+    font-weight: 500;
 }

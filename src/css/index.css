@@ -2,82 +2,88 @@
 /* CSS Document */
 
 #container {
-	display: flex;
-  	flex-wrap: wrap;
-	justify-content: center;
-	padding: 0px;
-	margin: 5vh 5%;
-	transition: opacity .4s ease-out;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0px;
+    margin: 5vh 5%;
+    transition: opacity .4s ease-out;
 }
 
-#container > div {
-	position: relative;
-	width: 256px;
-	max-width: calc(50% - 2 * 12px);
-	height: auto;
-	background-color: var(--foreground-color);
-	box-shadow: var(--shadow);
+#container>div {
+    position: relative;
+    width: 256px;
+    max-width: calc(50% - 2 * 12px);
+    height: auto;
+    background-color: var(--foreground-color);
+    box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
-	margin: 12px;
-	cursor: pointer;
-	align-self: flex-start;
+    margin: 12px;
+    cursor: pointer;
+    align-self: flex-start;
 }
 
 @supports (max-width: calc(50% - 2 * min(2%, 12px))) and (margin: min(2%, 12px)) {
-	#container > div {
-		max-width: calc(50% - 2 * min(2%, 12px));
-		margin: min(2%, 12px);
-	}
+    #container>div {
+        max-width: calc(50% - 2 * min(2%, 12px));
+        margin: min(2%, 12px);
+    }
 }
 
-#container > div:hover {
-	box-shadow: var(--shadow-hover);
+#container>div:hover {
+    box-shadow: var(--shadow-hover);
 }
 
-#container > div > * {
-	width: 100%;
+#container>div>* {
+    width: 100%;
 }
 
-#container > div > div {
-	position: relative;
-	padding-bottom: 141.4213562%;
-	margin: 0px;
+#container>div>div {
+    position: relative;
+    padding-bottom: 141.4213562%;
+    margin: 0px;
 }
 
-#container > div > div.complete {
-	background-color: rgb(255,255,255);
+#container>div>div.complete {
+    background-color: rgb(255, 255, 255);
 }
 
 @media only screen and (prefers-color-scheme: dark) {
-	#container > div > div > img, #container > div > div > canvas {
-		filter: brightness(0.95) contrast(0.96);
-		-webkit-filter: brightness(0.95) contrast(0.96);
-	}
+
+    #container>div>div>img,
+    #container>div>div>canvas {
+        filter: brightness(0.95) contrast(0.96);
+        -webkit-filter: brightness(0.95) contrast(0.96);
+    }
 }
 
 @media only screen and (hover: hover) and (pointer: fine) {
-    #container > div > div > img, #container > div > div > canvas {
-		transition: opacity .4s ease-out;
-	}
-	#container > div:hover > div > img, #container > div:hover > div > canvas {
-		opacity: 0.9;
-	}
+
+    #container>div>div>img,
+    #container>div>div>canvas {
+        transition: opacity .4s ease-out;
+    }
+
+    #container>div:hover>div>img,
+    #container>div:hover>div>canvas {
+        opacity: 0.9;
+    }
 }
 
-#container > div > p {
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
-	width: 90%;
-	margin: 10% 5%;
-	padding: 0px;
-	word-break: normal;
-	text-overflow: ellipsis;
-	overflow: hidden;
+#container>div>p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    width: 90%;
+    margin: 10% 5%;
+    padding: 0px;
+    word-break: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .keyword {
-	display: none;
+    display: none;
 }
 
 #search-bar {
@@ -88,48 +94,53 @@
     box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
     margin: 5vh auto 0px auto;
-	width: 75%;
-	max-width: 1000px;
+    width: 75%;
+    max-width: 1000px;
 }
+
 #search-bar:not(.disabled):hover {
-	box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-hover);
 }
+
 #search-bar.disabled {
-	cursor: wait;
+    cursor: wait;
 }
 
 #search-bar .icon {
-	margin: 0px;
+    margin: 0px;
     padding: 0 10px;
     height: 50px;
     width: 24px;
     display: flex;
     align-items: center;
-	cursor: pointer;
+    cursor: pointer;
 }
+
 #search-bar.disabled .icon {
-	cursor: wait;
+    cursor: wait;
 }
+
 #search-bar .icon svg {
     display: block;
     fill: var(--alt-text-color);
     height: 24px;
     width: 24px;
 }
+
 #search-bar .input-field {
     flex: 1;
     background-color: transparent;
-	height: 100%;
-	margin: 0px;
+    height: 100%;
+    margin: 0px;
 }
 
-.input-field > input {
-	padding-left: 0px;
+.input-field>input {
+    padding-left: 0px;
 }
 
 #position-detector {
-	width: 100%;
-	height: 0px;
-	margin: 0px;
-	padding: 0px;
+    width: 100%;
+    height: 0px;
+    margin: 0px;
+    padding: 0px;
 }

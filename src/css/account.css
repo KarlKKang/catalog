@@ -2,73 +2,75 @@
 /* CSS Document */
 
 #container {
-	width: 1000px;
-	max-width: 90%;
-	margin: 0px;
-	padding: 1em 0px 5vh 0px;
-	position: absolute;
-	left: 50%;
-	transform: translate(-50%, 0%);
+    width: 1000px;
+    max-width: 90%;
+    margin: 0px;
+    padding: 1em 0px 5vh 0px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
 }
 
 #title {
-	text-align: center;
-	margin: 0px;
-	padding: 1em 0px;
-	font-size: x-large;
-	font-weight: 500;
+    text-align: center;
+    margin: 0px;
+    padding: 1em 0px;
+    font-size: x-large;
+    font-weight: 500;
 }
 
 .sub-title {
-	margin: 0px;
-	padding: 1em 0px;
-	font-size: large;
-	font-weight: 500;
+    margin: 0px;
+    padding: 1em 0px;
+    font-size: large;
+    font-weight: 500;
 }
 
 hr {
-	margin: 2em 0px 1.5em 0px;
-	height: 1px;
-	border-width: 0;
-	background-color: var(--horizontal-line-background-color);
+    margin: 2em 0px 1.5em 0px;
+    height: 1px;
+    border-width: 0;
+    background-color: var(--horizontal-line-background-color);
 }
 
 .warning {
-	padding: 0px;
-	margin: 1em 0px;
+    padding: 0px;
+    margin: 1em 0px;
 }
 
-.input-field, .button {
-	margin: 1em 0px;
-	height: 40px;
-	box-shadow: var(--shadow);
+.input-field,
+.button {
+    margin: 1em 0px;
+    height: 40px;
+    box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
-	background: var(--foreground-color);
+    background: var(--foreground-color);
 }
 
 .button {
-	width: 150px;
-	position: relative;
+    width: 150px;
+    position: relative;
 }
 
 .input-field {
-	width: 300px;
+    width: 300px;
 }
 
-.input-field:not(.disabled):hover, .button:enabled:hover {
-	box-shadow: var(--shadow-hover);
+.input-field:not(.disabled):hover,
+.button:enabled:hover {
+    box-shadow: var(--shadow-hover);
 }
 
-.note > ul {
-	padding: 0px 0px 0px 1em;
+.note>ul {
+    padding: 0px 0px 0px 1em;
 }
 
-.note > ul > li {
-	font-size: small;
-	color: var(--alt-text-color);
+.note>ul>li {
+    font-size: small;
+    color: var(--alt-text-color);
 }
 
 #invite-count-text {
-	padding: 1em 0px;
-	margin: 0px;
+    padding: 1em 0px;
+    margin: 0px;
 }

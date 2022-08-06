@@ -1,66 +1,68 @@
 <!doctype html>
 <html lang="ja">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>featherine</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>featherine</title>
 
-<link rel="apple-touch-icon" sizes="57x57" href="/icon/apple-touch-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="/icon/apple-touch-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="/icon/apple-touch-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="/icon/apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="/icon/apple-touch-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="/icon/apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="/icon/apple-touch-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/icon/apple-touch-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/icon/android-chrome-192x192.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
-<link rel="manifest" href="/icon/site.webmanifest">
-<link rel="mask-icon" href="/icon/safari-pinned-tab.svg" color="#5bbad5">
-<link rel="shortcut icon" href="/icon/favicon.ico">
-<meta name="msapplication-TileColor" content="#2b5797">
-<meta name="msapplication-TileImage" content="/icon/mstile-144x144.png">
-<meta name="msapplication-config" content="/icon/browserconfig.xml">
+    <link rel="apple-touch-icon" sizes="57x57" href="/icon/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/icon/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/icon/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/icon/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/icon/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/icon/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icon/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
+    <link rel="manifest" href="/icon/site.webmanifest">
+    <link rel="mask-icon" href="/icon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/icon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2b5797">
+    <meta name="msapplication-TileImage" content="/icon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/icon/browserconfig.xml">
 
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fcfcfc">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#282931">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fcfcfc">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#282931">
 
-<link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Light.css">
-<link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Medium.css">
-<link rel="stylesheet" type="text/css" href="/font/Segoe/SegMDL2.css">
-<link rel="stylesheet" type="text/css" href="/css/main.css">
-<link rel="stylesheet" type="text/css" href="/css/bangumi-hls.css">
-<link rel="stylesheet" type="text/css" href="/css/video-js.min.css">
-<link rel="stylesheet" type="text/css" href="/css/videojs_mod.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Light.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Medium.css">
+    <link rel="stylesheet" type="text/css" href="/font/Segoe/SegMDL2.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/bangumi-hls.css">
+    <link rel="stylesheet" type="text/css" href="/css/video-js.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/videojs_mod.css">
 </head>
 
 <body class="hidden">
-	<div id="header"></div>
-	<div id="nav-btn"><span></span></div>
-	<div id="nav-menu" class="invisible transparent">
+    <div id="header"></div>
+    <div id="nav-btn"><span></span></div>
+    <div id="nav-menu" class="invisible transparent">
         <div id="nav-menu-content"></div>
     </div>
-	
-	<div id="main">
-		<p id="title"></p>
-		<div id="season-selector"></div>
-		<div id="ep-selector"></div>
-		<hr>
-		<div id="warning" class="hidden">
-			<p id="warning-title"></p>
-			<p id="warning-body"></p>
-			<div id="warning-button-group"></div>
-		</div>
-		<div id="content">
-			<div id="message" class="hidden">
-				<p id="message-title"></p>
-				<div id="message-body"></div>
-			</div>
-			<div id="media-holder"></div>
-		</div>
-	</div>
+
+    <div id="main">
+        <p id="title"></p>
+        <div id="season-selector"></div>
+        <div id="ep-selector"></div>
+        <hr>
+        <div id="warning" class="hidden">
+            <p id="warning-title"></p>
+            <p id="warning-body"></p>
+            <div id="warning-button-group"></div>
+        </div>
+        <div id="content">
+            <div id="message" class="hidden">
+                <p id="message-title"></p>
+                <div id="message-body"></div>
+            </div>
+            <div id="media-holder"></div>
+        </div>
+    </div>
 </body>
+
 </html>
