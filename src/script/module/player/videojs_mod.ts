@@ -173,7 +173,7 @@ export default function (instance: videojs.Player, config?: { audio?: boolean, v
             return;
         }
         for (var i = media.buffered.length - 1; i >= 0; i--) {
-            if (media.buffered.start(i) <= media.currentTime + 0.05) {
+            if (media.buffered.start(i) <= media.currentTime + 0.1) {
                 onScreenConsoleOutput('Checking buffer range :' + media.buffered.start(i) + '-' + media.buffered.end(i) + '. Current time: ' + media.currentTime);
                 if (media.buffered.end(i) >= Math.min(media.currentTime + 15, media.duration - 0.1)) {
                     removeEventsListener(media, ['progress', 'play', 'timeupdate'], checkBuffer);
@@ -216,7 +216,7 @@ export default function (instance: videojs.Player, config?: { audio?: boolean, v
             onScreenConsoleOutput('Buffer empty, start buffering.');
         } else {
             for (var i = media.buffered.length - 1; i >= 0; i--) {
-                if (media.buffered.start(i) <= media.currentTime + 0.05) {
+                if (media.buffered.start(i) <= media.currentTime + 0.1) {
                     if (media.buffered.end(i) < Math.min(media.currentTime + 14.9, media.duration - 0.1)) {
                         addCheckBuffer();
                         onScreenConsoleOutput('Buffer under threshold, start buffering.');
@@ -537,12 +537,13 @@ function attachEventListeners(that: VideojsModInstance) {
     });
 
     addEventListener(media, 'pause', function () {
-        onScreenConsoleOutput('Playback paused.');
+        onScreenConsoleOutput('Playback paused at ' + media.currentTime + '.');
         removeClass(playButton, 'vjs-playing');
         addClass(playButton, 'vjs-paused');
         removeClass(controls, 'vjs-playing');
         addClass(controls, 'vjs-paused');
-        if (media.currentTime >= media.duration) {
+        if (media.currentTime >= media.duration - 0.1) {
+            onScreenConsoleOutput('Playback ended.');
             addClass(controls, 'vjs-ended');
             addClass(playButton, 'vjs-ended');
             if (IS_VIDEO && !that._useNative) {
@@ -552,6 +553,7 @@ function attachEventListeners(that: VideojsModInstance) {
     });
 
     addEventListener(media, 'ended', function () {
+        onScreenConsoleOutput('Playback ended.');
         addClass(controls, 'vjs-ended');
         addClass(playButton, 'vjs-ended');
         if (IS_VIDEO && !that._useNative) {
@@ -604,16 +606,24 @@ function attachEventListeners(that: VideojsModInstance) {
     });
 
     addEventListener(media, 'waiting', function () {
-        onScreenConsoleOutput('Playback entered waiting state.');
-        addClass(controls, 'vjs-seeking');
-        if (!that._useNative) {
-            that.startBuffer();
+        onScreenConsoleOutput('Playback entered waiting state at ' + media.currentTime + '.');
+        if (media.currentTime >= media.duration - 0.1) {
+            that.pause();
+        } else {
+            addClass(controls, 'vjs-seeking');
+            if (!that._useNative) {
+                that.startBuffer();
+            }
         }
     });
 
     //Loading
     addEventListener(media, 'canplaythrough', function () {
-        onScreenConsoleOutput('Playback can play through.');
+        onScreenConsoleOutput('Playback can play through at ' + media.currentTime + '.');
+        if (containsClass(controls, 'vjs-ended')) {
+            removeClass(controls, 'vjs-ended');
+            removeClass(playButton, 'vjs-ended');
+        }
         if (that._useNative) {
             removeClass(controls, 'vjs-seeking');
         } else {
