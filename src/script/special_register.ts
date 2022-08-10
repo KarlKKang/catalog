@@ -18,7 +18,9 @@ import {
     removeClass,
     getBody,
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { emailSent } from './module/message/template/param';
+import { invalidEmailFormat, emailAlreadyRegistered, emailAlreadyInvited, invitationClosed, invitationOnly } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
@@ -51,7 +53,7 @@ addEventListener(w, 'load', function () {
         var email = emailInput.value;
 
         if (email == '' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
-            warningElem.innerHTML = message.template.inline.invalidEmailFormat;
+            warningElem.innerHTML = invalidEmailFormat;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);
             return;
@@ -60,20 +62,20 @@ addEventListener(w, 'load', function () {
         sendServerRequest('send_invite.php', {
             callback: function (response: string) {
                 if (response == 'INVALID FORMAT') {
-                    warningElem.innerHTML = message.template.inline.invalidEmailFormat;
+                    warningElem.innerHTML = invalidEmailFormat;
                 } else if (response == 'ALREADY REGISTERED') {
-                    warningElem.innerHTML = message.template.inline.emailAlreadyRegistered;
+                    warningElem.innerHTML = emailAlreadyRegistered;
                 } else if (response == 'ALREADY INVITED') {
-                    warningElem.innerHTML = message.template.inline.emailAlreadyInvited;
+                    warningElem.innerHTML = emailAlreadyInvited;
                 } else if (response == 'CLOSED') {
-                    warningElem.innerHTML = message.template.inline.invitationClosed;
+                    warningElem.innerHTML = invitationClosed;
                 } else if (response == 'NORMAL') {
-                    warningElem.innerHTML = message.template.inline.invitationOnly;
+                    warningElem.innerHTML = invitationOnly;
                 } else if (response == 'DONE') {
-                    message.show(message.template.param.emailSent);
+                    showMessage(emailSent);
                     return;
                 } else {
-                    message.show();
+                    showMessage();
                     return;
                 }
                 removeClass(warningElem, 'hidden');

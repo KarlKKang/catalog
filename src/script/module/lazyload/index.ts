@@ -1,4 +1,5 @@
-import * as message from '../message';
+import { show as showMessage } from '../message';
+import { moduleImportError }from '../message/template/param';
 import type { default as LazyloadInitialize } from './lazyload';
 import type { default as ImageLoader } from '../image_loader';
 
@@ -20,7 +21,7 @@ export default async function () {
             ),
         ]);
     } catch (e) {
-        message.show(message.template.param.moduleImportError(e));
+        showMessage(moduleImportError(e));
     }
 
     return function () {

@@ -20,7 +20,9 @@ import {
     setTitle,
     getById,
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { moduleImportError } from './module/message/template/param';
+import { invalidResponse } from './module/message/template/param/server';
 import { LocalImageParam, CDNCredentials } from './module/type';
 
 addEventListener(w, 'load', function () {
@@ -61,7 +63,7 @@ addEventListener(w, 'load', function () {
         sendServerRequest('device_authenticate.php', {
             callback: function (response: string) {
                 if (response != 'APPROVED') {
-                    message.show();
+                    showMessage();
                 }
             },
             content: "token=" + param.authenticationToken
@@ -81,7 +83,7 @@ addEventListener(w, 'load', function () {
                 parsedResponse = JSON.parse(response);
                 CDNCredentials.check(parsedResponse);
             } catch (e) {
-                message.show(message.template.param.server.invalidResponse);
+                showMessage(invalidResponse);
             }
             const credentials = parsedResponse as CDNCredentials.CDNCredentials;
             const url = concatenateSignedURL(param.src, credentials);
@@ -89,7 +91,7 @@ addEventListener(w, 'load', function () {
             imageLoaderImportPromise.then(({ default: imageLoader }) => {
                 imageLoader(container, url, 'image from ' + param.title);
             }).catch((e) => {
-                message.show(message.template.param.moduleImportError(e));
+                showMessage(moduleImportError(e));
             });
         },
         content: "token=" + param.authenticationToken + '&p=' + param.xhrParam

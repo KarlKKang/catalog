@@ -6,8 +6,9 @@ import {
 import { getHref, redirect, setCookie, getTitle } from '../DOM/document';
 import { LocalMessageParam } from '../type';
 
-import * as template from "./template";
-export { template };
+import { defaultError } from "./template/title";
+import { unknownError } from "./template/body";
+
 
 interface MessageParam {
     message?: string,
@@ -30,10 +31,10 @@ export function show(param?: MessageParam) {
     }
 
     if (param.title === undefined) {
-        param.title = template.title.defaultError;
+        param.title = defaultError;
     }
     if (param.message === undefined) {
-        param.message = template.body.unknownError;
+        param.message = unknownError;
     }
     if (param.color === undefined) {
         param.color = 'red';

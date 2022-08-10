@@ -11,7 +11,8 @@ import {
     getTitle,
     appendChild,
 } from '../module/DOM';
-import * as message from '../module/message';
+import { show as showMessage } from '../module/message';
+import { moduleImportError } from '../module/message/template/param';
 import type { BangumiInfo } from '../module/type';
 
 import { videojs, browser, videojsMod } from '../module/player';
@@ -205,7 +206,7 @@ function addAudioNode(index: number) {
                     });
                     audioInstance.attachHls(Hls, hls, url);
                 }).catch((e) => {
-                    message.show(message.template.param.moduleImportError(e));
+                    showMessage(moduleImportError(e));
                     return;
                 });;
             } else if (browser.NATIVE_HLS) {

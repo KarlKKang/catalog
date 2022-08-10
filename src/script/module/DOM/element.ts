@@ -1,5 +1,6 @@
 import { w, d } from './document';
-import * as message from '../message';
+import { show as showMessage } from '../message';
+import { javascriptError } from '../message/template/param';
 
 
 export function getByIdNative(id: string) {
@@ -9,7 +10,7 @@ export function getByIdNative(id: string) {
 export function getById(id: string) {
     let elem = getByIdNative(id);
     if (elem === null) {
-        message.show(message.template.param.javascriptError(`Element with ID '${id}' not found.`));
+        showMessage(javascriptError(`Element with ID '${id}' not found.`));
     }
     return elem as HTMLElement;
 }
@@ -25,7 +26,7 @@ export function getByClass(className: string) {
 export function getDescendantsByClassAt(parent: Element | Document, className: string, index: number) {
     var elems = getDescendantsByClass(parent, className);
     if (elems[index] === undefined) {
-        message.show(message.template.param.javascriptError(`Element with class '${className}' at index ${index} not found.`));
+        showMessage(javascriptError(`Element with class '${className}' at index ${index} not found.`));
     }
     return elems[index] as Element;
 }
@@ -33,7 +34,7 @@ export function getDescendantsByClassAt(parent: Element | Document, className: s
 export function getByClassAt(className: string, index: number) {
     var elems = getByClass(className);
     if (elems[index] === undefined) {
-        message.show(message.template.param.javascriptError(`Element with class '${className}' at index ${index} not found.`));
+        showMessage(javascriptError(`Element with class '${className}' at index ${index} not found.`));
     }
     return elems[index] as Element;
 }
@@ -49,7 +50,7 @@ export function getByTag(tagName: string) {
 export function getDescendantsByTagAt(parent: Element | Document, tagName: string, index: number) {
     var elems = getDescendantsByTag(parent, tagName);
     if (elems[index] === undefined) {
-        message.show(message.template.param.javascriptError(`Element with tag '${tagName}' at index ${index} not found.`));
+        showMessage(javascriptError(`Element with tag '${tagName}' at index ${index} not found.`));
     }
     return elems[index] as Element;
 }
@@ -57,7 +58,7 @@ export function getDescendantsByTagAt(parent: Element | Document, tagName: strin
 export function getByTagAt(tagName: string, index: number) {
     var elems = getByTag(tagName);
     if (elems[index] === undefined) {
-        message.show(message.template.param.javascriptError(`Element with tag '${tagName}' at index ${index} not found.`));
+        showMessage(javascriptError(`Element with tag '${tagName}' at index ${index} not found.`));
     }
     return elems[index] as Element;
 }
@@ -85,7 +86,7 @@ export function containsClass(elem: Element, className: string) {
 export function getParent(elem: Element) {
     var parent = elem.parentElement;
     if (parent === null) {
-        message.show(message.template.param.javascriptError('parentElement not found.'));
+        showMessage(javascriptError('parentElement not found.'));
     }
     return parent as HTMLElement;
 }

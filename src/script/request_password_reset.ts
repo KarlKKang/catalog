@@ -22,7 +22,9 @@ import {
     removeClass,
     getBody,
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { emailSent } from './module/message/template/param';
+import { invalidEmailFormat } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
@@ -69,7 +71,7 @@ addEventListener(w, 'load', function () {
 
         var email = emailInput.value;
         if (email == '' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
-            warningElem.innerHTML = message.template.inline.invalidEmailFormat;
+            warningElem.innerHTML = invalidEmailFormat;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);
             return;
@@ -78,13 +80,13 @@ addEventListener(w, 'load', function () {
         sendServerRequest('send_password_reset.php', {
             callback: function (response: string) {
                 if (response == 'INVALID FORMAT') {
-                    warningElem.innerHTML = message.template.inline.invalidEmailFormat;
+                    warningElem.innerHTML = invalidEmailFormat;
                     removeClass(warningElem, "hidden");
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    message.show(message.template.param.emailSent);
+                    showMessage(emailSent);
                 } else {
-                    message.show();
+                    showMessage();
                 }
             },
             content: "email=" + email,

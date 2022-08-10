@@ -25,7 +25,9 @@ import {
     getBody,
     getDescendantsByTagAt
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { loginFailed } from './module/message/template/inline';
+import { unrecommendedBrowser } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
@@ -79,14 +81,14 @@ addEventListener(w, 'load', function () {
         var password = passwordInput.value;
 
         if (email == '' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
-            warningElem.innerHTML = message.template.inline.loginFailed;
+            warningElem.innerHTML = loginFailed;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         }
 
         if (password == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
-            warningElem.innerHTML = message.template.inline.loginFailed;
+            warningElem.innerHTML = loginFailed;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
@@ -105,19 +107,19 @@ addEventListener(w, 'load', function () {
         sendServerRequest('login.php', {
             callback: function (response: string) {
                 if (response.includes('FAILED')) {
-                    warningElem.innerHTML = message.template.inline.loginFailed;
+                    warningElem.innerHTML = loginFailed;
                     removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
                 } else if (response == 'NOT RECOMMENDED') {
                     setTimeout(function () {
-                        message.show(message.template.param.unrecommendedBrowser(getForwardURL()));
+                        showMessage(unrecommendedBrowser(getForwardURL()));
                     }, 500);
                 } else if (response == 'APPROVED') {
                     setTimeout(function () {
                         redirect(getForwardURL(), true);
                     }, 500);
                 } else {
-                    message.show();
+                    showMessage();
                 }
             },
             content: "p=" + encodeURIComponent(paramString)

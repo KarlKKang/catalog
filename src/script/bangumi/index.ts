@@ -29,7 +29,9 @@ import {
     containsClass,
     appendChild,
 } from '../module/DOM';
-import * as message from '../module/message';
+import { show as showMessage } from '../module/message';
+import { moduleImportError } from '../module/message/template/param';
+import { invalidResponse } from '../module/message/template/param/server';
 import { BangumiInfo } from '../module/type';
 import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, getFormatIndex } from './helper';
 
@@ -114,7 +116,7 @@ addEventListener(w, 'load', function () {
                 parsedResponse = JSON.parse(response);
                 BangumiInfo.check(parsedResponse);
             } catch (e) {
-                message.show(message.template.param.server.invalidResponse);
+                showMessage(invalidResponse);
                 return;
             }
             updatePage(parsedResponse);
@@ -199,7 +201,7 @@ function updatePage(response: BangumiInfo.BangumiInfo) {
         sendServerRequest('device_authenticate.php', {
             callback: function (authResult: string) {
                 if (authResult != 'APPROVED') {
-                    message.show(message.template.param.server.invalidResponse);
+                    showMessage(invalidResponse);
                 }
             },
             content: "token=" + epInfo.authentication_token,
@@ -218,20 +220,20 @@ function updatePage(response: BangumiInfo.BangumiInfo) {
         videoImportPromise.then(({ default: module }) => {
             module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, contentContainer, debug);
         }).catch((e) => {
-            message.show(message.template.param.moduleImportError(e));
+            showMessage(moduleImportError(e));
         });
     } else {
         if (type === 'audio') {
             audioImportPromise.then(({ default: module }) => {
                 module(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, contentContainer, debug);
             }).catch((e) => {
-                message.show(message.template.param.moduleImportError(e));
+                showMessage(moduleImportError(e));
             });
         } else {
             imageImportPromise.then(({ default: module }) => {
                 module(epInfo as BangumiInfo.ImageEPInfo, baseURL, mediaHolder);
             }).catch((e) => {
-                message.show(message.template.param.moduleImportError(e));
+                showMessage(moduleImportError(e));
             });
         }
         updateURLParam(seriesID, epIndex, 0);

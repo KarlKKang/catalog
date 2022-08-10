@@ -14,7 +14,10 @@ import {
     toggleClass,
     appendChild,
 } from '../module/DOM';
-import * as message from '../module/message';
+import { show as showMessage } from '../module/message';
+import { invalidResponse } from '../module/message/template/param/server';
+import { defaultError } from '../module/message/template/title';
+import { defaultErrorSuffix } from '../module/message/template/body';
 import { getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
 
 import type { VideojsModInstance } from '../module/player';
@@ -24,7 +27,7 @@ export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザでご覧いただくか、デスクトップでファイルをダウンロードし、ローカルで再生してください。';
 
 export function showPlaybackError(detail?: string) {
-    showMediaMessage(message.template.title.defaultError, '<p>再生中にエラーが発生しました。' + message.template.body.defaultErrorSuffix + (detail === undefined ? '' : ('<br>Error detail: ' + detail)) + '</p>', 'red');
+    showMediaMessage(defaultError, '<p>再生中にエラーが発生しました。' + defaultErrorSuffix + (detail === undefined ? '' : ('<br>Error detail: ' + detail)) + '</p>', 'red');
 }
 
 export function showHLSCompatibilityError() {
@@ -92,7 +95,7 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {
-                    message.show(message.template.param.server.invalidResponse);
+                    showMessage(invalidResponse);
                 }
             },
             content: "token=" + token + '&format=' + getFormatIndex(),

@@ -57,5 +57,3 @@ export const unrecommendedBrowser = function (redirectURL: string) {
         url: redirectURL
     } as const;
 };
-
-export * as server from "./server";

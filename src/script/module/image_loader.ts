@@ -9,7 +9,8 @@ import {
     appendChild,
     createElement
 } from './DOM';
-import * as message from './message';
+import { show as showMessage } from './message';
+import { moduleImportError } from './message/template/param';
 
 var webpMachine: WebpMachine | null = null;
 var webpMachineActive = false;
@@ -116,7 +117,7 @@ async function startWebpMachine() {
             webpMachine = new WebpMachine();
             webpSupported = await detectWebpSupport();
         } catch (e: unknown) {
-            message.show(message.template.param.moduleImportError(e));
+            showMessage(moduleImportError(e));
             return;
         }
     }

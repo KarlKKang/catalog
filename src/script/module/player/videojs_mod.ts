@@ -19,7 +19,8 @@ import {
     w,
     remove
 } from '../DOM';
-import * as message from '../message';
+import { show as showMessage } from '../message';
+import { javascriptError } from '../message/template/param';
 import type Hls from 'hls.js';
 import type { default as videojs } from 'video.js';
 import { IS_IOS } from './browser';
@@ -485,7 +486,7 @@ function attachEventListeners(that: VideojsModInstance) {
             let touchEvent = event as TouchEvent;
             let touch = touchEvent.touches[0] || touchEvent.changedTouches[0];
             if (touch === undefined) {
-                message.show(message.template.param.javascriptError('Failed to get TouchEvent data.'));
+                showMessage(javascriptError('Failed to get TouchEvent data.'));
             }
             mouseX = (touch as Touch).clientX;
         } else {

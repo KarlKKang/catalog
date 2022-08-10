@@ -23,7 +23,25 @@ import {
     removeClass,
     getBody,
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { invalidResponse } from './module/message/template/param/server';
+import { 
+    invitationNotQualified, 
+    invalidEmailFormat, 
+    emailAlreadyRegistered, 
+    incompletedInvitation, 
+    incompletedEmailChange, 
+    emailAlreadyInvited, 
+    invitationClosed, 
+    emailSent, 
+    invalidPasswordFormat, 
+    passwordConfirmationMismatch, 
+    passwordChanged, 
+    usernameEmpty, 
+    usernameUnchanged, 
+    usernameChanged, 
+    usernameTaken 
+} from './module/message/template/inline';
 import { UserInfo } from './module/type';
 
 addEventListener(w, 'load', function () {
@@ -55,7 +73,7 @@ addEventListener(w, 'load', function () {
                 parsedResponse = JSON.parse(response);
                 UserInfo.check(parsedResponse);
             } catch (e) {
-                message.show(message.template.param.server.invalidResponse);
+                showMessage(invalidResponse);
                 return;
             }
             showUser(parsedResponse as UserInfo.UserInfo);
@@ -156,7 +174,7 @@ addEventListener(w, 'load', function () {
         var warningElem = getById('invite-warning');
         changeColor(warningElem, 'red');
         if (receiver == '' || !/^[^\s@]+@[^\s@]+$/.test(receiver)) {
-            warningElem.innerHTML = message.template.inline.invalidEmailFormat;
+            warningElem.innerHTML = invalidEmailFormat;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
@@ -165,24 +183,24 @@ addEventListener(w, 'load', function () {
         sendServerRequest('send_invite.php', {
             callback: function (response: string) {
                 if (response == 'NOT QUALIFIED') {
-                    warningElem.innerHTML = message.template.inline.invitationNotQualified;
+                    warningElem.innerHTML = invitationNotQualified;
                 } else if (response == 'INVALID FORMAT') {
-                    warningElem.innerHTML = message.template.inline.invalidEmailFormat;
+                    warningElem.innerHTML = invalidEmailFormat;
                 } else if (response == 'ALREADY REGISTERED') {
-                    warningElem.innerHTML = message.template.inline.emailAlreadyRegistered;
+                    warningElem.innerHTML = emailAlreadyRegistered;
                 } else if (response == 'ONGOING') {
-                    warningElem.innerHTML = message.template.inline.incompletedInvitation;
+                    warningElem.innerHTML = incompletedInvitation;
                 } else if (response == 'ONGOING EMAIL CHANGE') {
-                    warningElem.innerHTML = message.template.inline.incompletedEmailChange;
+                    warningElem.innerHTML = incompletedEmailChange;
                 } else if (response == 'ALREADY INVITED') {
-                    warningElem.innerHTML = message.template.inline.emailAlreadyInvited;
+                    warningElem.innerHTML = emailAlreadyInvited;
                 } else if (response == 'CLOSED') {
-                    warningElem.innerHTML = message.template.inline.invitationClosed;
+                    warningElem.innerHTML = invitationClosed;
                 } else if (response == 'DONE') {
-                    warningElem.innerHTML = message.template.inline.emailSent;
+                    warningElem.innerHTML = emailSent;
                     changeColor(warningElem, 'green');
                 } else {
-                    message.show();
+                    showMessage();
                     return;
                 }
                 removeClass(warningElem, 'hidden');
@@ -202,12 +220,12 @@ addEventListener(w, 'load', function () {
         changeColor(warningElem, 'red');
 
         if (newPassword == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
-            warningElem.innerHTML = message.template.inline.invalidPasswordFormat;
+            warningElem.innerHTML = invalidPasswordFormat;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         } else if (newPassword != newPasswordConfirm) {
-            warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
+            warningElem.innerHTML = passwordConfirmationMismatch;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
@@ -218,12 +236,12 @@ addEventListener(w, 'load', function () {
         sendServerRequest('change_password.php', {
             callback: function (response: string) {
                 if (response == 'DONE') {
-                    warningElem.innerHTML = message.template.inline.passwordChanged;
+                    warningElem.innerHTML = passwordChanged;
                     removeClass(warningElem, 'hidden');
                     changeColor(warningElem, 'green');
                     disableAllInputs(false);
                 } else {
-                    message.show();
+                    showMessage();
                 }
             },
             content: "new=" + newPassword
@@ -238,14 +256,14 @@ addEventListener(w, 'load', function () {
         sendServerRequest('send_email_change.php', {
             callback: function (response: string) {
                 if (response == 'DUPLICATED') {
-                    warningElem.innerHTML = message.template.inline.incompletedEmailChange;
+                    warningElem.innerHTML = incompletedEmailChange;
                 } else if (response == 'REJECTED') {
-                    warningElem.innerHTML = message.template.inline.incompletedInvitation;
+                    warningElem.innerHTML = incompletedInvitation;
                 } else if (response == 'DONE') {
-                    warningElem.innerHTML = message.template.inline.emailSent;
+                    warningElem.innerHTML = emailSent;
                     changeColor(warningElem, 'green');
                 } else {
-                    message.show();
+                    showMessage();
                     return;
                 }
                 removeClass(warningElem, 'hidden');
@@ -261,12 +279,12 @@ addEventListener(w, 'load', function () {
         changeColor(warningElem, 'red');
 
         if (newUsername == '') {
-            warningElem.innerHTML = message.template.inline.usernameEmpty;
+            warningElem.innerHTML = usernameEmpty;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         } else if (newUsername == currentUsername) {
-            warningElem.innerHTML = message.template.inline.usernameUnchanged;
+            warningElem.innerHTML = usernameUnchanged;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
@@ -275,15 +293,15 @@ addEventListener(w, 'load', function () {
         sendServerRequest('change_username.php', {
             callback: function (response: string) {
                 if (response == 'DONE') {
-                    warningElem.innerHTML = message.template.inline.usernameChanged;
+                    warningElem.innerHTML = usernameChanged;
                     removeClass(warningElem, 'hidden');
                     changeColor(warningElem, 'green');
                     currentUsername = newUsername
                 } else if (response == 'DUPLICATED') {
-                    warningElem.innerHTML = message.template.inline.usernameTaken;
+                    warningElem.innerHTML = usernameTaken;
                     removeClass(warningElem, 'hidden');
                 } else {
-                    message.show();
+                    showMessage();
                     return;
                 }
                 disableAllInputs(false);

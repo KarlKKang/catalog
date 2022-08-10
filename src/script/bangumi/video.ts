@@ -18,7 +18,9 @@ import {
     addEventsListener,
     appendChild,
 } from '../module/DOM';
-import * as message from '../module/message';
+import { show as showMessage } from '../module/message';
+import { moduleImportError } from '../module/message/template/param';
+import { invalidResponse } from '../module/message/template/param/server';
 import { CDNCredentials } from '../module/type';
 import type { BangumiInfo } from '../module/type';
 
@@ -165,7 +167,7 @@ function formatSwitch(mediaInstance: VideojsModInstance) {
                 parsedResponse = JSON.parse(response);
                 CDNCredentials.check(parsedResponse);
             } catch (e) {
-                message.show(message.template.param.server.invalidResponse);
+                showMessage(invalidResponse);
                 return;
             }
             let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + formatSelector.value + '].m3u8'), parsedResponse as CDNCredentials.CDNCredentials);
@@ -234,9 +236,9 @@ function addVideoNode(
 
             mediaInstance.attachHls(Hls, hls, url);
         }).catch((e) => {
-            message.show(message.template.param.moduleImportError(e));
+            showMessage(moduleImportError(e));
             return;
-        });;
+        });
     } else if (browser.NATIVE_HLS) {
         addEventListener(videoMedia, 'error', function () {
             showPlaybackError();

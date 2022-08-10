@@ -30,7 +30,8 @@ import {
     d,
     appendChild,
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { invalidResponse } from './module/message/template/param/server';
 import { SeriesInfo } from './module/type';
 import { default as importLazyload } from './module/lazyload';
 
@@ -182,7 +183,7 @@ function getSeries(callback?: (showSeriesCallback: () => void) => void) {
                 parsedResponse = JSON.parse(response);
                 SeriesInfo.check(parsedResponse);
             } catch (e) {
-                message.show(message.template.param.server.invalidResponse);
+                showMessage(invalidResponse);
                 return;
             }
 

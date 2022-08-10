@@ -20,7 +20,8 @@ import {
     getHash,
     getByIdNative
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { invalidResponse } from './module/message/template/param/server';
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
@@ -47,7 +48,7 @@ addEventListener(w, 'load', function () {
                     }
                 }
             } else {
-                message.show(message.template.param.server.invalidResponse);
+                showMessage(invalidResponse);
             }
         },
         method: 'GET'

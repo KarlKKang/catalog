@@ -5,7 +5,9 @@ import {
     LOGIN_URL
 } from '../env/constant';
 
-import * as message from '../message';
+import { show as showMessage } from '../message';
+import { cssVarError, moduleImportError } from '../message/template/param';
+import { connectionError, status403, status429, status503, status400And500 } from '../message/template/param/server';
 
 //import * as DOM from './DOM';
 import {
@@ -37,7 +39,7 @@ export function getURLParam(name: string): string | null {
 ////////////////////////////////////////
 function addXHROnError(xmlhttp: XMLHttpRequest) {
     xmlhttp.onerror = function () {
-        message.show(message.template.param.server.connectionError);
+        showMessage(connectionError);
     };
 }
 ////////////////////////////////////////
@@ -59,25 +61,25 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
                 });
             }
         } else if (status == 429) {
-            message.show(message.template.param.server.status429);
+            showMessage(status429);
         } else if (status == 503) {
-            message.show(message.template.param.server.status503);
+            showMessage(status503);
         } else if (status == 500 || status == 400) {
             var responseText = response.responseText;
             if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
-                message.show(message.template.param.server.status400And500(responseText));
+                showMessage(status400And500(responseText));
             }
             else {
-                message.show();
+                showMessage();
             }
         } else if (status == 403) {
             if (response.responseText != 'CRAWLER') {
-                message.show(message.template.param.server.status403);
+                showMessage(status403);
             }
         } else if (status == 404 && response.responseText == 'REJECTED') {
             redirect(TOP_URL);
         } else {
-            message.show(message.template.param.server.connectionError);
+            showMessage(connectionError);
         }
         return false;
     } else {
@@ -140,7 +142,7 @@ export function authenticate(callback: { successful?: Function, failed?: Functio
             } else if (response == "FAILED") {
                 failed();
             } else {
-                message.show();
+                showMessage();
             }
         }
     });
@@ -161,7 +163,7 @@ export function logout(callback: Function) {
                 }
                 callback();
             } else {
-                message.show();
+                showMessage();
             }
         }
     });
@@ -348,7 +350,7 @@ export function clearCookies() {
 
 ////////////////////////////////////////
 export function cssVarWrapper() {
-    const showMessage = !getHref().endsWith('/message') && !DEVELOPMENT;
+    const showErrorMessage = !getHref().endsWith('/message') && !DEVELOPMENT;
     import(
         /* webpackChunkName: "css-vars-ponyfill" */
         /* webpackExports: ["default"] */
@@ -356,8 +358,8 @@ export function cssVarWrapper() {
     ).then(({ default: cssVars }) => {
         cssVars({
             onError: function (errorMessage) {
-                if (showMessage) {
-                    message.show(message.template.param.cssVarError(errorMessage));
+                if (showErrorMessage) {
+                    showMessage(cssVarError(errorMessage));
                 }
             },
             onWarning: function (errorMessage) {
@@ -367,8 +369,8 @@ export function cssVarWrapper() {
             exclude: '[href*="/font/"]'
         });
     }).catch((e) => {
-        if (showMessage) {
-            message.show(message.template.param.moduleImportError(e));
+        if (showErrorMessage) {
+            showMessage(moduleImportError(e));
         }
     });
 }
@@ -386,7 +388,7 @@ export async function hashPassword(password: string) {
                 'node-forge/lib/sha512'
             ));
         } catch (e) {
-            message.show(message.template.param.moduleImportError(e));
+            showMessage(moduleImportError(e));
         }
     }
 

@@ -27,5 +27,3 @@ export const lazyloadSrcMissing = `lazyload：画像のsrc属性が必要です�
 export const javascriptError = function (e: string) {
     return `Error detail: ${e}<br>${defaultErrorSuffix}`;
 };
-
-export * as server from "./server";

@@ -22,7 +22,9 @@ import {
     removeClass,
     getBody,
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { invalidPasswordFormat, passwordConfirmationMismatch } from './module/message/template/inline';
+import { expired, passwordChanged } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
@@ -65,10 +67,10 @@ addEventListener(w, 'load', function () {
     sendServerRequest('reset_password.php', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                message.show(message.template.param.expired);
+                showMessage(expired);
                 return;
             } else if (response != 'APPROVED') {
-                message.show();
+                showMessage();
                 return;
             }
 
@@ -107,12 +109,12 @@ addEventListener(w, 'load', function () {
         var newPasswordConfirm = newPasswordConfirmInput.value;
 
         if (newPassword == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
-            warningElem.innerHTML = message.template.inline.invalidPasswordFormat;
+            warningElem.innerHTML = invalidPasswordFormat;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);
             return;
         } else if (newPassword != newPasswordConfirm) {
-            warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
+            warningElem.innerHTML = passwordConfirmationMismatch;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);
             return;
@@ -123,11 +125,11 @@ addEventListener(w, 'load', function () {
         sendServerRequest('reset_password.php', {
             callback: function (response: string) {
                 if (response == 'EXPIRED') {
-                    message.show(message.template.param.expired);
+                    showMessage(expired);
                 } else if (response == 'DONE') {
-                    message.show(message.template.param.passwordChanged);
+                    showMessage(passwordChanged);
                 } else {
-                    message.show();
+                    showMessage();
                 }
             },
             content: "user=" + user + "&signature=" + signature + "&expires=" + expires + "&new=" + newPassword,

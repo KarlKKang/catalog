@@ -20,7 +20,9 @@ import {
     removeClass,
     getBody,
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { invalidEmailFormat, emailAlreadyInvitedOrRegistered } from './module/message/template/inline';
+import { expired, emailSent } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
@@ -54,7 +56,7 @@ addEventListener(w, 'load', function () {
     sendServerRequest('verify_email_change.php', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                message.show(message.template.param.expired);
+                showMessage(expired);
             } else if (response == 'APPROVED') {
                 addEventListener(newEmailInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === "Enter") {
@@ -67,7 +69,7 @@ addEventListener(w, 'load', function () {
                 });
                 removeClass(getBody(), "hidden");
             } else {
-                message.show();
+                showMessage();
             }
         },
         content: "p=" + param + "&signature=" + signature,
@@ -82,7 +84,7 @@ addEventListener(w, 'load', function () {
         var newEmail = newEmailInput.value;
 
         if (newEmail == '' || !/^[^\s@]+@[^\s@]+$/.test(newEmail)) {
-            warningElem.innerHTML = message.template.inline.invalidEmailFormat;
+            warningElem.innerHTML = invalidEmailFormat;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);
             return;
@@ -91,19 +93,19 @@ addEventListener(w, 'load', function () {
         sendServerRequest('verify_email_change.php', {
             callback: function (response: string) {
                 if (response == 'EXPIRED') {
-                    message.show(message.template.param.expired);
+                    showMessage(expired);
                 } else if (response == 'DUPLICATED') {
-                    warningElem.innerHTML = message.template.inline.emailAlreadyInvitedOrRegistered;
+                    warningElem.innerHTML = emailAlreadyInvitedOrRegistered;
                     removeClass(warningElem, "hidden");
                     disableAllInputs(false);
                 } else if (response == 'INVALID FORMAT') {
-                    warningElem.innerHTML = message.template.inline.invalidEmailFormat;
+                    warningElem.innerHTML = invalidEmailFormat;
                     removeClass(warningElem, "hidden");
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    message.show(message.template.param.emailSent);
+                    showMessage(emailSent);
                 } else {
-                    message.show();
+                    showMessage();
                 }
             },
             content: "p=" + param + "&signature=" + signature + "&new=" + newEmail,

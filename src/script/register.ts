@@ -24,7 +24,9 @@ import {
     getByClassAt,
     openWindow,
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { expired, registerComplete } from './module/message/template/param';
+import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
@@ -60,7 +62,7 @@ addEventListener(w, 'load', function () {
     sendServerRequest('register.php', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                message.show(message.template.param.expired);
+                showMessage(expired);
             } else if (response == 'APPROVED') {
                 addEventListener(usernameInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === "Enter") {
@@ -101,7 +103,7 @@ addEventListener(w, 'load', function () {
 
                 removeClass(getBody(), "hidden");
             } else {
-                message.show();
+                showMessage();
             }
         },
         content: "p=" + param + "&signature=" + signature,
@@ -118,19 +120,19 @@ addEventListener(w, 'load', function () {
         var passwordConfirm = passwordConfirmInput.value;
 
         if (username == '') {
-            warningElem.innerHTML = message.template.inline.usernameEmpty;
+            warningElem.innerHTML = usernameEmpty;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);
             return;
         }
 
         if (password == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
-            warningElem.innerHTML = message.template.inline.invalidPasswordFormat;
+            warningElem.innerHTML = invalidPasswordFormat;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);
             return;
         } else if (password != passwordConfirm) {
-            warningElem.innerHTML = message.template.inline.passwordConfirmationMismatch;
+            warningElem.innerHTML = passwordConfirmationMismatch;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);
             return;
@@ -146,15 +148,15 @@ addEventListener(w, 'load', function () {
         sendServerRequest('register.php', {
             callback: function (response: string) {
                 if (response == 'EXPIRED') {
-                    message.show(message.template.param.expired);
+                    showMessage(expired);
                 } else if (response == 'USERNAME DUPLICATED') {
-                    warningElem.innerHTML = message.template.inline.usernameTaken;
+                    warningElem.innerHTML = usernameTaken;
                     removeClass(warningElem, "hidden");
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    message.show(message.template.param.registerComplete);
+                    showMessage(registerComplete);
                 } else {
-                    message.show();
+                    showMessage();
                 }
             },
             content: "p=" + param + "&signature=" + signature + "&user=" + encodeURIComponent(JSON.stringify(user)),

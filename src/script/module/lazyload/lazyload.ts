@@ -9,7 +9,9 @@ import {
     containsClass,
     addClass,
 } from '../DOM';
-import * as message from '../message';
+import { show as showMessage } from '../message';
+import { lazyloadSrcMissing, javascriptError } from '../message/template/param';
+import { invalidResponse } from '../message/template/param/server';
 import { CDNCredentials } from '../type';
 import type ImageLoader from '../image_loader';
 
@@ -36,7 +38,7 @@ export default function (imageLoader: typeof ImageLoader) {
 function observerCallback(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
     const entry = entries[0];
     if (entry === undefined) {
-        message.show(message.template.param.javascriptError('IntersectionObserverEntry is undefined.'));
+        showMessage(javascriptError('IntersectionObserverEntry is undefined.'));
         return;
     }
     const target = entry.target as HTMLElement;
@@ -46,7 +48,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 
         const src = target.dataset.src;
         if (src === undefined) {
-            message.show(message.template.param.lazyloadSrcMissing);
+            showMessage(lazyloadSrcMissing);
             return;
         }
 
@@ -61,7 +63,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                         CDNCredentials.check(parsedResponse);
                         credentials = parsedResponse as CDNCredentials.CDNCredentials;
                     } catch (e) {
-                        message.show(message.template.param.server.invalidResponse);
+                        showMessage(invalidResponse);
                         return;
                     }
 

@@ -15,7 +15,8 @@ import {
     getHref,
     redirect,
 } from './module/DOM';
-import * as message from './module/message';
+import { show as showMessage } from './module/message';
+import { expired, emailChanged}  from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
     clearCookies();
@@ -41,11 +42,11 @@ addEventListener(w, 'load', function () {
     sendServerRequest('change_email.php', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                message.show(message.template.param.expired);
+                showMessage(expired);
             } else if (response == 'DONE') {
-                message.show(message.template.param.emailChanged);
+                showMessage(emailChanged);
             } else {
-                message.show();
+                showMessage();
             }
         },
         content: "p=" + param + "&signature=" + signature,
