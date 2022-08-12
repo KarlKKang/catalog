@@ -81,13 +81,12 @@ function addSeries(button: Element) {
     var id = (getDescendantsByClassAt(record, 'id', 0) as HTMLTextAreaElement).value;
     var title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
     var thumbnail = (getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value;
-    var isPublic = (getDescendantsByClassAt(record, 'public', 0) as HTMLInputElement).checked;
     var series_id = (getDescendantsByClassAt(record, 'series-id', 0) as HTMLTextAreaElement).value;
     var season_name = (getDescendantsByClassAt(record, 'season-name', 0) as HTMLTextAreaElement).value;
     var season_order = (getDescendantsByClassAt(record, 'season-order', 0) as HTMLTextAreaElement).value;
     var keywords = (getDescendantsByClassAt(record, 'keywords', 0) as HTMLTextAreaElement).value;
 
-    var parsedRecord = parseSeriesRecord(id, title, thumbnail, isPublic, series_id, season_name, season_order, keywords);
+    var parsedRecord = parseSeriesRecord(id, title, thumbnail, false, series_id, season_name, season_order, keywords);
     if (!parsedRecord) {
         return;
     }
