@@ -20,7 +20,6 @@ import {
     getDescendantsByClassAt,
     getDescendantsByTag,
     addClass,
-    containsClass,
     getByClass
 } from './module/DOM';
 
@@ -44,22 +43,28 @@ addEventListener(w, 'load', function () {
                 redirect('https://featherine.com', true);
             } else {
                 addEventListener(getById('get-series-table'), 'click', function () {
-                    getSeriesTable();
+                    getTable('series');
                 });
                 addEventListener(getById('get-account-table'), 'click', function () {
-                    getAccountTable();
+                    getTable('account');
                 });
                 addEventListener(getById('get-invite-table'), 'click', function () {
-                    getInviteTable();
+                    getTable('invite');
+                });
+                addEventListener(getById('get-news-table'), 'click', function () {
+                    getTable('news');
                 });
                 addEventListener(getById('get-log-table'), 'click', function () {
-                    getLogTable();
+                    getTable('log');
                 });
                 addEventListener(getById('generate-id'), 'click', function () {
                     generate('id');
                 });
                 addEventListener(getById('generate-series-id'), 'click', function () {
                     generate('series_id');
+                });
+                addEventListener(getById('generate-news-id'), 'click', function () {
+                    generate('news_id');
                 });
                 addEventListener(getById('clear-cdn-cache'), 'click', function () {
                     clearCDNCache();
@@ -68,13 +73,13 @@ addEventListener(w, 'load', function () {
                     clearKeyCache();
                 });
                 addEventListener(getById('rebuild-index'), 'click', function () {
-                    rebuildIndex();
+                    rebuild('index');
                 });
                 addEventListener(getById('rebuild-search-index'), 'click', function () {
-                    rebuildSearchIndex();
+                    rebuild('search_index');
                 });
                 addEventListener(getById('rebuild-all'), 'click', function () {
-                    rebuildAll();
+                    rebuild('all');
                 });
                 addEventListener(getById('verify'), 'click', function () {
                     verify();
@@ -91,15 +96,15 @@ addEventListener(w, 'load', function () {
                 removeClass(getBody(), "hidden");
             }
         },
-        content: "p=" + encodeURIComponent(JSON.stringify({ 'command': 'authenticate' }))
+        content: "p=" + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
     });
 
-    /*------------------------------------------------------------------------------------Series Functions------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------Get Table Functions------------------------------------------------------------------------------------*/
 
-    function getSeriesTable() {
+    function getTable(type: string) {
         let param = {
-            'command': 'get',
-            'table': 'series'
+            command: 'get',
+            type: type
         };
         let paramString = JSON.stringify(param);
 
@@ -110,6 +115,8 @@ addEventListener(w, 'load', function () {
             content: "p=" + encodeURIComponent(paramString)
         });
     }
+
+    /*------------------------------------------------------------------------------------Series Functions------------------------------------------------------------------------------------*/
 
     function modifySeries(button: Element) {
         var record = getParent(getParent(button));
@@ -129,7 +136,7 @@ addEventListener(w, 'load', function () {
 
         var param = {
             command: 'modify',
-            table: 'series',
+            type: 'series',
             ...parsedRecord
         };
 
@@ -158,9 +165,9 @@ addEventListener(w, 'load', function () {
         } while (confirm != "delete");
 
         var param = {
-            'command': 'delete',
-            'table': 'series',
-            'id': id
+            command: 'delete',
+            type: 'series',
+            id: id
         };
 
         sendServerRequest('console.php', {
@@ -186,7 +193,7 @@ addEventListener(w, 'load', function () {
         }
         var param = {
             command: 'insert',
-            table: 'series',
+            type: 'series',
             ...parsedRecord
         }
 
@@ -270,36 +277,22 @@ addEventListener(w, 'load', function () {
         }
 
         return {
-            'id': id,
-            'title': title,
-            'thumbnail': thumbnail,
-            'public': isPublic,
-            'series_id': series_id_parsed,
-            'season_name': season_name_parsed,
-            'season_order': season_order_parsed,
-            'keywords': keywords
+            id: id,
+            title: title,
+            thumbnail: thumbnail,
+            public: isPublic,
+            series_id: series_id_parsed,
+            season_name: season_name_parsed,
+            season_order: season_order_parsed,
+            keywords: keywords
         };
     }
 
-    function generate(type: string) {
+    function updateSeriesTime(id: string) {
         var param = {
-            'command': 'generate',
-            'type': type
-        };
-
-        sendServerRequest('console.php', {
-            callback: function (response: string) {
-                setOutput(response, 'id-output');
-            },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
-        });
-    }
-
-
-    function updateTime(id: string) {
-        var param = {
-            'command': 'updatetime',
-            'id': id
+            command: 'updatetime',
+            type: 'series',
+            id: id
         };
 
         sendServerRequest('console.php', {
@@ -309,20 +302,6 @@ addEventListener(w, 'load', function () {
     }
 
     /*------------------------------------------------------------------------------------Account Functions------------------------------------------------------------------------------------*/
-
-    function getAccountTable() {
-        var param = {
-            'command': 'get',
-            'table': 'account'
-        };
-
-        sendServerRequest('console.php', {
-            callback: function (response: string) {
-                setOutput(response);
-            },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
-        });
-    }
 
     async function addAccount(button: Element) {
         var record = getParent(getParent(button));
@@ -362,7 +341,7 @@ addEventListener(w, 'load', function () {
 
         var param = {
             command: 'insert',
-            table: 'account',
+            type: 'account',
             ...parsedRecord
         };
 
@@ -413,7 +392,7 @@ addEventListener(w, 'load', function () {
 
         var param = {
             command: 'modify',
-            table: 'account',
+            type: 'account',
             original_email: originalEmail,
             ...parsedRecord
         };
@@ -490,12 +469,12 @@ addEventListener(w, 'load', function () {
         }
 
         return {
-            'email': email,
-            'username': username,
-            'password': password_parsed,
-            'user_group': user_group_parsed,
-            'status': status_parsed,
-            'available_invite': available_invite_parsed
+            email: email,
+            username: username,
+            password: password_parsed,
+            user_group: user_group_parsed,
+            status: status_parsed,
+            available_invite: available_invite_parsed
         };
     }
 
@@ -509,9 +488,9 @@ addEventListener(w, 'load', function () {
         } while (confirm != "delete");
 
         var param = {
-            'command': 'delete',
-            'table': 'account',
-            'email': email
+            command: 'delete',
+            type: 'account',
+            email: email
         };
 
         sendServerRequest('console.php', {
@@ -520,33 +499,158 @@ addEventListener(w, 'load', function () {
         });
     }
 
-    /*------------------------------------------------------------------------------------Invite Functions------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------News Functions------------------------------------------------------------------------------------*/
 
-    function getInviteTable() {
+    function modifyNews(button: Element) {
+        var record = getParent(getParent(button));
+        var id = getDescendantsByClassAt(record, 'id', 0).innerHTML;
+        var title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
+        var content = (getDescendantsByClassAt(record, 'content', 0) as HTMLTextAreaElement).value;
+        var isPublic = (getDescendantsByClassAt(record, 'public', 0) as HTMLInputElement).checked;
+
+        var parsedRecord = parseNewsRecord(id, title, content, isPublic);
+        if (!parsedRecord) {
+            return;
+        }
+
         var param = {
-            'command': 'get',
-            'table': 'invite'
+            command: 'modify',
+            type: 'news',
+            ...parsedRecord
+        };
+
+        var confirm;
+        do {
+            confirm = prompt('Type "modify" to confirm.');
+            if (confirm === null) {
+                return;
+            }
+        } while (confirm != "modify");
+
+        sendServerRequest('console.php', {
+            callback: completeCallback,
+            content: "p=" + encodeURIComponent(JSON.stringify(param))
+        });
+    }
+
+    function deleteNews(id: string) {
+
+        var confirm;
+        do {
+            confirm = prompt('Type "delete" to confirm.');
+            if (confirm === null) {
+                return;
+            }
+        } while (confirm != "delete");
+
+        var param = {
+            command: 'delete',
+            type: 'news',
+            id: id
+        };
+
+        sendServerRequest('console.php', {
+            callback: completeCallback,
+            content: "p=" + encodeURIComponent(JSON.stringify(param))
+        });
+    }
+
+    function addNews(button: Element) {
+        var record = getParent(getParent(button));
+        var id = (getDescendantsByClassAt(record, 'id', 0) as HTMLTextAreaElement).value;
+        var title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
+        var content = (getDescendantsByClassAt(record, 'content', 0) as HTMLTextAreaElement).value;
+
+        var parsedRecord = parseNewsRecord(id, title, content, false);
+        if (!parsedRecord) {
+            return;
+        }
+        var param = {
+            command: 'insert',
+            type: 'news',
+            ...parsedRecord
+        }
+
+        var confirm;
+        do {
+            confirm = prompt('Type "insert" to confirm.');
+            if (confirm === null) {
+                return;
+            }
+        } while (confirm != "insert");
+
+        sendServerRequest('console.php', {
+            callback: completeCallback,
+            content: "p=" + encodeURIComponent(JSON.stringify(param))
+        });
+    }
+
+    function parseNewsRecord(id: string, title: string, content: string, isPublic: boolean) {
+        if (id == '') {
+            alert("ERROR: 'id' is required");
+            return false;
+        }
+
+        if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
+            alert("ERROR: Invalid value for 'id'");
+            return false;
+        }
+
+        if (title == '') {
+            alert("ERROR: 'title' is required");
+            return false;
+        }
+
+        return {
+            id: id,
+            title: title,
+            content: content,
+            public: isPublic
+        };
+    }
+
+    function updateNewsTime(id: string) {
+        var param = {
+            command: 'updatetime',
+            type: 'news',
+            id: id
+        };
+
+        sendServerRequest('console.php', {
+            callback: completeCallback,
+            content: "p=" + encodeURIComponent(JSON.stringify(param))
+        });
+    }
+
+    function getNewsContent(button: Element, id: string) {
+        var record = getParent(getParent(button));
+        var contentElem = (getDescendantsByClassAt(record, 'content', 0) as HTMLTextAreaElement);
+
+        var param = {
+            command: 'get',
+            type: 'news-content',
+            id: id
         };
 
         sendServerRequest('console.php', {
             callback: function (response: string) {
-                setOutput(response);
+                contentElem.value = response;
             },
             content: "p=" + encodeURIComponent(JSON.stringify(param))
         });
     }
 
-    /*------------------------------------------------------------------------------------Log Functions------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------Generate Functions------------------------------------------------------------------------------------*/
 
-    function getLogTable() {
+    function generate(type: string) {
         var param = {
-            'command': 'get',
-            'table': 'log'
+            command: 'generate',
+            type: type
         };
 
         sendServerRequest('console.php', {
             callback: function (response: string) {
-                setOutput(response);
+                setOutput(response, 'id-output');
             },
             content: "p=" + encodeURIComponent(JSON.stringify(param))
         });
@@ -555,8 +659,8 @@ addEventListener(w, 'load', function () {
     /*------------------------------------------------------------------------------------Show All Databases------------------------------------------------------------------------------------*/
     function showDatabases() {
         var param = {
-            'command': 'get',
-            'table': 'all'
+            command: 'get',
+            type: 'all'
         };
 
         sendServerRequest('console.php', {
@@ -570,8 +674,8 @@ addEventListener(w, 'load', function () {
     /*------------------------------------------------------------------------------------Run Functions------------------------------------------------------------------------------------*/
     function run(type: string) {
         var param = {
-            'command': 'run',
-            'type': type
+            command: 'run',
+            type: type
         };
 
         sendServerRequest('console.php', {
@@ -599,9 +703,9 @@ addEventListener(w, 'load', function () {
         } while (confirm != "clear");
 
         var param = {
-            'command': 'clear',
-            'type': 'cdn_cache',
-            'dir': dir
+            command: 'clear',
+            type: 'cdn_cache',
+            dir: dir
         };
 
         sendServerRequest('console.php', {
@@ -622,8 +726,8 @@ addEventListener(w, 'load', function () {
         } while (confirm != "clear");
 
         var param = {
-            'command': 'clear',
-            'type': 'key_cache'
+            command: 'clear',
+            type: 'key_cache'
         };
 
         sendServerRequest('console.php', {
@@ -634,7 +738,7 @@ addEventListener(w, 'load', function () {
         });
     }
 
-    function rebuildIndex() {
+    function rebuild(type: string) {
         var confirm;
         do {
             confirm = prompt('Type "rebuild" to confirm rebuilding the index.');
@@ -644,8 +748,8 @@ addEventListener(w, 'load', function () {
         } while (confirm != "rebuild");
 
         var param = {
-            'command': 'rebuild',
-            'type': 'index'
+            command: 'rebuild',
+            type: type
         };
 
         sendServerRequest('console.php', {
@@ -655,51 +759,6 @@ addEventListener(w, 'load', function () {
             content: "p=" + encodeURIComponent(JSON.stringify(param))
         });
     }
-
-    function rebuildSearchIndex() {
-        var confirm;
-        do {
-            confirm = prompt('Type "rebuild" to confirm rebuilding the search index.');
-            if (confirm === null) {
-                return;
-            }
-        } while (confirm != "rebuild");
-
-        var param = {
-            'command': 'rebuild',
-            'type': 'search_index'
-        };
-
-        sendServerRequest('console.php', {
-            callback: function (response: string) {
-                alert(response);
-            },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
-        });
-    }
-
-    function rebuildAll() {
-        var confirm;
-        do {
-            confirm = prompt('Type "rebuild" to confirm rebuilding all index.');
-            if (confirm === null) {
-                return;
-            }
-        } while (confirm != "rebuild");
-
-        var param = {
-            'command': 'rebuild',
-            'type': 'all'
-        };
-
-        sendServerRequest('console.php', {
-            callback: function (response: string) {
-                alert(response);
-            },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
-        });
-    }
-
 
     /*------------------------------------------------------------------------------------Verify Functions------------------------------------------------------------------------------------*/
     function verify() {
@@ -718,8 +777,8 @@ addEventListener(w, 'load', function () {
         } while (confirm != "verify");
 
         var param = {
-            'command': 'verify',
-            'series': id
+            command: 'verify',
+            series: id
         };
 
         sendServerRequest('console.php', {
@@ -736,7 +795,7 @@ addEventListener(w, 'load', function () {
         if (outputElementID === undefined) {
             outputElementID = 'output';
         }
-        var error = response.includes('ERROR:');
+        var error = response.startsWith('ERROR:');
         if (error) {
             alert(response);
         } else {
@@ -754,108 +813,143 @@ addEventListener(w, 'load', function () {
         var buttons = getByClass('add-series');
 
         for (let button of buttons) {
-            if (!containsClass(button, 'initialized')) {
-                addClass(button, 'initialized');
-                addEventListener(button, 'click', function () {
-                    addSeries(button);
-                });
-            }
-        }
-
-        buttons = getByClass('update-time');
-        for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-            if (!containsClass(button, 'initialized')) {
-                addClass(button, 'initialized');
-                addEventListener(button, 'click', function () {
-                    if (button.dataset.id === undefined) {
-                        alert("ERROR: 'id' attribute on the element is undefined.");
-                        return;
-                    }
-                    updateTime(button.dataset.id);
-                });
-            }
-        }
-
-        buttons = getByClass('delete-series');
-        for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-            if (!containsClass(button, 'initialized')) {
-                addClass(button, 'initialized');
-                addEventListener(button, 'click', function () {
-                    if (button.dataset.id === undefined) {
-                        alert("ERROR: 'id' attribute on the element is undefined.");
-                        return;
-                    }
-                    deleteSeries(button.dataset.id);
-                });
-            }
-        }
-
-        buttons = getByClass('add-account');
-        for (let button of buttons) {
-            if (!containsClass(button, 'initialized')) {
-                addClass(button, 'initialized');
-                addEventListener(button, 'click', function () {
-                    addAccount(button);
-                });
-            }
+            removeClass(button, 'add-series');
+            addEventListener(button, 'click', function () {
+                addSeries(button);
+            });
         }
 
         buttons = getByClass('modify-series');
         for (let button of buttons) {
-            if (!containsClass(button, 'initialized')) {
-                addClass(button, 'initialized');
-                addEventListener(button, 'click', function () {
-                    modifySeries(button);
-                });
-            }
+            removeClass(button, 'modify-series');
+            addEventListener(button, 'click', function () {
+                modifySeries(button);
+            });
+        }
+
+        buttons = getByClass('update-series-time');
+        for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+            removeClass(button, 'update-series-time');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                updateSeriesTime(button.dataset.id);
+            });
+        }
+
+        buttons = getByClass('delete-series');
+        for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+            removeClass(button, 'delete-series');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                deleteSeries(button.dataset.id);
+            });
+        }
+
+        buttons = getByClass('add-account');
+        for (let button of buttons) {
+            removeClass(button, 'add-account');
+            addEventListener(button, 'click', function () {
+                addAccount(button);
+            });
         }
 
         buttons = getByClass('modify-account');
         for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-            if (!containsClass(button, 'initialized')) {
-                addClass(button, 'initialized');
-                addEventListener(button, 'click', function () {
-                    if (button.dataset.email === undefined) {
-                        alert("ERROR: 'email' attribute on the element is undefined.");
-                        return;
-                    }
-                    modifyAccount(button, button.dataset.email);
-                });
-            }
+            removeClass(button, 'modify-account');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.email === undefined) {
+                    alert("ERROR: 'email' attribute on the element is undefined.");
+                    return;
+                }
+                modifyAccount(button, button.dataset.email);
+            });
         }
 
         buttons = getByClass('delete-account');
         for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-            if (!containsClass(button, 'initialized')) {
-                addClass(button, 'initialized');
-                addEventListener(button, 'click', function () {
-                    if (button.dataset.email === undefined) {
-                        alert("ERROR: 'email' attribute on the element is undefined.");
-                        return;
-                    }
-                    deleteAccount(button.dataset.email);
-                });
-            }
+            removeClass(button, 'delete-account');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.email === undefined) {
+                    alert("ERROR: 'email' attribute on the element is undefined.");
+                    return;
+                }
+                deleteAccount(button.dataset.email);
+            });
+        }
+
+        buttons = getByClass('add-news');
+
+        for (let button of buttons) {
+            removeClass(button, 'add-news');
+            addEventListener(button, 'click', function () {
+                addNews(button);
+            });
+        }
+
+        buttons = getByClass('modify-news');
+        for (let button of buttons) {
+            removeClass(button, 'modify-news');
+            addEventListener(button, 'click', function () {
+                modifyNews(button);
+            });
+        }
+
+        buttons = getByClass('update-news-time');
+        for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+            removeClass(button, 'update-news-time');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                updateNewsTime(button.dataset.id);
+            });
+        }
+
+        buttons = getByClass('delete-news');
+        for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+            removeClass(button, 'delete-news');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                deleteNews(button.dataset.id);
+            });
+        }
+
+        buttons = getByClass('get-news-content');
+        for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+            removeClass(button, 'get-news-content');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                getNewsContent(button, button.dataset.id);
+            });
         }
 
         var elems = getByClass('onchange');
         for (let elem of elems) {
-            if (!containsClass(elem, 'initialized')) {
-                addClass(elem, 'initialized');
-                addEventListener(elem, 'change', function () {
-                    changed(elem);
-                });
-            }
+            removeClass(elem, 'onchange');
+            addEventListener(elem, 'change', function () {
+                changed(elem);
+            });
         }
 
         elems = getByClass('oninput');
         for (let elem of elems) {
-            if (!containsClass(elem, 'initialized')) {
-                addClass(elem, 'initialized');
-                addEventListener(elem, 'input', function () {
-                    changed(elem);
-                });
-            }
+            removeClass(elem, 'oninput');
+            addEventListener(elem, 'input', function () {
+                changed(elem);
+            });
         }
     }
 });
