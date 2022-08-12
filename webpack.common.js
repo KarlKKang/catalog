@@ -1,8 +1,11 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const html_minify_options = {
+    collapseBooleanAttributes: true,
     collapseWhitespace: true,
-    keepClosingSlash: true,
+    keepClosingSlash: false,
+    quoteCharacter: '"',
+    removeAttributeQuotes: true,
     removeComments: true,
     removeRedundantAttributes: true,
     useShortDoctype: true,

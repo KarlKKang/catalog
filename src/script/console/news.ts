@@ -11,7 +11,7 @@ import {
 
 import { completeCallback, getTable } from './helper';
 
-function newsCompleteCallback (response: string) {
+function newsCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
 }
 
@@ -141,8 +141,7 @@ function updateNewsTime(id: string) {
 }
 
 function getNewsContent(button: Element, id: string) {
-    var record = getParent(getParent(button));
-    var contentElem = (getDescendantsByClassAt(record, 'content', 0) as HTMLTextAreaElement);
+    var contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
 
     var param = {
         command: 'get',
@@ -155,6 +154,31 @@ function getNewsContent(button: Element, id: string) {
             contentElem.value = response;
         },
         content: "p=" + encodeURIComponent(JSON.stringify(param))
+    });
+}
+
+import type { minify } from 'html-minifier-terser';
+var htmlMinifier: typeof minify | null = null;
+async function minifyNewsContent(button: Element) {
+    var contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
+    if (htmlMinifier === null) {
+        ({ minify: htmlMinifier } = await import(
+            /* webpackExports: ["minify"] */
+            'html-minifier-terser/dist/htmlminifier.esm.bundle'
+        ));
+    }
+
+    contentElem.value = await htmlMinifier(contentElem.value, {
+        collapseBooleanAttributes: true,
+        collapseWhitespace: true,
+        keepClosingSlash: false,
+        quoteCharacter: '"',
+        removeAttributeQuotes: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+        sortAttributes: true,
+        sortClassName: true
     });
 }
 
@@ -209,6 +233,14 @@ function updateEventHandlers() {
                 return;
             }
             getNewsContent(button, button.dataset.id);
+        });
+    }
+
+    buttons = getByClass('minify-news-content');
+    for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+        removeClass(button, 'minify-news-content');
+        addEventListener(button, 'click', function () {
+            minifyNewsContent(button);
         });
     }
 }
