@@ -77,14 +77,17 @@ addEventListener(w, 'load', function () {
                     addEventListener(getById('clear-key-cache'), 'click', function () {
                         clearKeyCache();
                     });
-                    addEventListener(getById('rebuild-index'), 'click', function () {
-                        rebuild('index');
+                    addEventListener(getById('rebuild-series'), 'click', function () {
+                        rebuild('series');
                     });
-                    addEventListener(getById('rebuild-search-index'), 'click', function () {
-                        rebuild('search_index');
+                    addEventListener(getById('rebuild-series-search'), 'click', function () {
+                        rebuild('series_search');
                     });
-                    addEventListener(getById('rebuild-all'), 'click', function () {
-                        rebuild('all');
+                    addEventListener(getById('rebuild-series-all'), 'click', function () {
+                        rebuild('series_all');
+                    });
+                    addEventListener(getById('rebuild-news'), 'click', function () {
+                        rebuild('news');
                     });
                     addEventListener(getById('verify'), 'click', function () {
                         verify();
