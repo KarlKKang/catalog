@@ -19,7 +19,7 @@ import {
     getHref,
     redirect,
     getById,
-    getDescendantsByTag,
+    getDescendantsByTagAt,
     getDescendantsByClassAt,
     removeClass,
     getBody,
@@ -39,6 +39,7 @@ var lazyloadInitialize: () => void;
 
 var searchBar: HTMLElement;
 var searchBarInput: HTMLInputElement;
+var positionDetector: HTMLElement;
 
 var containerElem: HTMLElement;
 
@@ -62,15 +63,16 @@ addEventListener(w, 'load', function () {
     lazyloadImportPromise = importLazyload();
 
     searchBar = getById('search-bar');
-    searchBarInput = getDescendantsByTag(searchBar, 'input')[0] as HTMLInputElement;
+    searchBarInput = getDescendantsByTagAt(searchBar, 'input', 0) as HTMLInputElement;
+    positionDetector = getById('position-detector');
 
     containerElem = getById('container');
 
     getURLKeywords();
-    getSeries(function (showSeriesCallback) {
+    getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
         lazyloadImportPromise.then((module) => {
             lazyloadInitialize = module;
-            showSeriesCallback();
+            showSeries(seriesInfo);
             addEventListener(d, 'scroll', infiniteScrolling);
             addEventListener(w, 'resize', infiniteScrolling);
             navListeners();
@@ -126,7 +128,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
 
     lazyloadInitialize();
 
-    removeClass(getById('position-detector'), 'loading');
+    removeClass(positionDetector, 'loading');
     infiniteScrolling();
 }
 
@@ -142,8 +144,7 @@ function goToSeries(id: string) {
 
 function search() {
     disableSearchBarInput(true);
-
-    addClass(getById('position-detector'), 'loading');
+    addClass(positionDetector, 'loading');
 
     var searchBarInputValue = searchBarInput.value.substring(0, 50);
 
@@ -159,6 +160,7 @@ function search() {
 }
 
 addEventListener(w, 'popstate', function () {
+    addClass(positionDetector, 'loading');
     getURLKeywords();
     requestSearchResults();
 });
@@ -175,7 +177,7 @@ function getURLKeywords() {
     }
 }
 
-function getSeries(callback?: (showSeriesCallback: () => void) => void) {
+function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
     sendServerRequest('get_series.php', {
         callback: function (response: string) {
             var parsedResponse: any;
@@ -190,9 +192,7 @@ function getSeries(callback?: (showSeriesCallback: () => void) => void) {
             if (callback === undefined) {
                 showSeries(parsedResponse as SeriesInfo.SeriesInfo);
             } else {
-                callback(function () {
-                    showSeries(parsedResponse as SeriesInfo.SeriesInfo);
-                });
+                callback(parsedResponse as SeriesInfo.SeriesInfo);
             }
         },
         content: keywords + pivot + "offset=" + offset,
@@ -201,12 +201,11 @@ function getSeries(callback?: (showSeriesCallback: () => void) => void) {
 }
 
 function infiniteScrolling() {
-    var detector = getById('position-detector');
-    var boundingRect = detector.getBoundingClientRect();
+    var boundingRect = positionDetector.getBoundingClientRect();
     var viewportHeight = Math.max(d.documentElement.clientHeight || 0, w.innerHeight || 0);
 
-    if (boundingRect.top - 256 - 24 <= viewportHeight * 1.5 && offset != 'EOF' && !containsClass(detector, 'loading')) {
-        addClass(detector, 'loading');
+    if (boundingRect.top - 256 - 24 <= viewportHeight * 1.5 && offset != 'EOF' && !containsClass(positionDetector, 'loading')) {
+        addClass(positionDetector, 'loading');
         getSeries();
     }
 }
@@ -215,11 +214,11 @@ function requestSearchResults() {
     offset = 0;
     pivot = '';
 
-    getSeries(function (showSeriesCallback) {
+    getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
         addClass(containerElem, 'transparent');
         setTimeout(function () {
             containerElem.innerHTML = '';
-            showSeriesCallback();
+            showSeries(seriesInfo);
             removeClass(containerElem, 'transparent');
             disableSearchBarInput(false);
         }, 400);
