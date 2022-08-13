@@ -12,7 +12,7 @@ import {
 } from '../module/DOM';
 import { completeCallback, getTable } from './helper';
 
-function accountCompleteCallback (response: string) {
+function accountCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
 }
 

@@ -27,7 +27,7 @@ export function check(seriesInfo: any) {
         throwError();
     }
 
-    if (offsetInfo !== "EOF" && seriesInfo.length == 1) {
+    if (seriesInfo.length == 1 && offsetInfo !== "EOF") {
         throwError();
     }
 

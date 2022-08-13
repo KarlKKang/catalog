@@ -119,7 +119,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
     offset = seriesInfo[seriesInfo.length - 1] as SeriesInfo.OffsetInfo;
 
     if (offset != 'EOF' && keywords != '') {
-        pivot = 'pivot=' + (seriesEntries[seriesEntries.length - 1] as SeriesInfo.SeriesEntry).id + '&';
+        pivot = 'pivot=' + seriesEntries[seriesEntries.length - 1]!.id + '&';
     } else {
         pivot = '';
     }

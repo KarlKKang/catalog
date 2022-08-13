@@ -10,7 +10,7 @@ import {
 } from '../module/DOM';
 import { completeCallback, getTable } from './helper';
 
-function seriesCompleteCallback (response: string) {
+function seriesCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
 }
 
