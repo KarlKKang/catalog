@@ -23,6 +23,8 @@ import {
     appendChild,
     removeClass,
     getBody,
+    getDescendantsByClass,
+    openWindow,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -69,7 +71,7 @@ function getNewsID(): string | null {
 }
 
 function getNews(newsID: string): void {
-    sendServerRequest('get_news.php', {
+    sendServerRequest('get_news.php' + '?id=' + newsID, {
         callback: function (response: string) {
             var parsedResponse: any;
             try {
@@ -84,7 +86,7 @@ function getNews(newsID: string): void {
             removeClass(getBody(), "hidden");
             scrollToHash();
         },
-        content: 'id=' + newsID,
+        method: 'GET',
         logoutParam: 'news=' + newsID
     });
 }
@@ -125,6 +127,55 @@ function showNews(newsInfo: NewsInfo.NewsInfo): void {
 
     appendChild(outerContainer, container);
     appendChild(getById('main'), outerContainer);
+
+    bindEventListners(contentContainer);
+}
+
+function bindEventListners(contentContainer: HTMLElement): void {
+    var elems = getDescendantsByClass(contentContainer, 'open-window');
+    for (let elem of (elems as HTMLCollectionOf<HTMLElement>)) {
+        addEventListener(elem, 'click', function () {
+            const page = elem.dataset.page;
+
+            if (page === 'news') {
+                const newsID = elem.dataset.newsId;
+                if (newsID !== undefined) {
+                    openWindow(DEVELOPMENT ? ('news.html?id=' + newsID) : (TOP_URL + '/news/' + newsID));
+                }
+                return;
+            }
+
+            if (page === 'bangumi') {
+                let separator: '?' | '&' = '?';
+                const seriesID = elem.dataset.seriesId;
+
+                if (seriesID === undefined) {
+                    return;
+                }
+
+                let url: string;
+                if (DEVELOPMENT) {
+                    url = 'bangumi.html?series=' + seriesID;
+                    separator = '&';
+                } else {
+                    url = TOP_URL + '/bangumi/';
+                }
+
+                const epIndex = elem.dataset.epIndex;
+                if (epIndex !== undefined) {
+                    url += separator + 'ep=' + epIndex;
+                    separator = '&';
+                }
+                const formatIndex = elem.dataset.formatIndex;
+                if (formatIndex !== undefined) {
+                    url += separator + 'format=' + formatIndex;
+                }
+
+                openWindow(url);
+                return;
+            }
+        });
+    }
 }
 
 function getAllNews(): void {
@@ -132,7 +183,7 @@ function getAllNews(): void {
         return;
     }
 
-    sendServerRequest('get_news.php', {
+    sendServerRequest('get_all_news.php', {
         callback: function (response: string) {
             var parsedResponse: any;
             try {
