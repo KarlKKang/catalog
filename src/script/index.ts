@@ -26,21 +26,18 @@ import {
     createElement,
     addClass,
     changeURL,
-    containsClass,
-    d,
     appendChild,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
 import { SeriesInfo } from './module/type';
 import { default as importLazyload } from './module/lazyload';
+import initializeInfiniteScrolling from './module/infinite_scrolling';
 
 var lazyloadInitialize: () => void;
 
 var searchBar: HTMLElement;
 var searchBarInput: HTMLInputElement;
-var positionDetector: HTMLElement;
-
 var containerElem: HTMLElement;
 
 var offset: SeriesInfo.OffsetInfo = 0;
@@ -49,6 +46,7 @@ var keywords = '';
 var pivot = '';
 
 var lazyloadImportPromise: ReturnType<typeof importLazyload>;
+var infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
@@ -64,7 +62,6 @@ addEventListener(w, 'load', function () {
 
     searchBar = getById('search-bar');
     searchBarInput = getDescendantsByTagAt(searchBar, 'input', 0) as HTMLInputElement;
-    positionDetector = getById('position-detector');
 
     containerElem = getById('container');
 
@@ -72,9 +69,8 @@ addEventListener(w, 'load', function () {
     getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
         lazyloadImportPromise.then((module) => {
             lazyloadInitialize = module;
+            infiniteScrolling = initializeInfiniteScrolling(getSeries);
             showSeries(seriesInfo);
-            addEventListener(d, 'scroll', infiniteScrolling);
-            addEventListener(w, 'resize', infiniteScrolling);
             navListeners();
             addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
                 if (!searchBarInput.disabled) {
@@ -90,9 +86,6 @@ addEventListener(w, 'load', function () {
         });
     });
 });
-
-
-
 
 function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
     var seriesEntries = seriesInfo.slice(0, -1) as SeriesInfo.SeriesEntries;
@@ -111,6 +104,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
         thumbnailNode.dataset.src = CDN_URL + '/thumbnails/' + seriesEntry.thumbnail;
         thumbnailNode.dataset.alt = 'thumbnail: ' + seriesEntry.thumbnail;
         titleNode.innerHTML = seriesEntry.title;
+        addClass(titleNode, 'ellipsis-clipping-2');
 
         addEventListener(seriesNode, 'click', function () { goToSeries(seriesEntry.id); });
         addClass(seriesNode, 'series')
@@ -128,8 +122,8 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
 
     lazyloadInitialize();
 
-    removeClass(positionDetector, 'loading');
-    infiniteScrolling();
+    infiniteScrolling.setEnabled(true);
+    infiniteScrolling.updatePosition();
 }
 
 function goToSeries(id: string) {
@@ -144,7 +138,7 @@ function goToSeries(id: string) {
 
 function search() {
     disableSearchBarInput(true);
-    addClass(positionDetector, 'loading');
+    infiniteScrolling.setEnabled(false);
 
     var searchBarInputValue = searchBarInput.value.substring(0, 50);
 
@@ -160,7 +154,7 @@ function search() {
 }
 
 addEventListener(w, 'popstate', function () {
-    addClass(positionDetector, 'loading');
+    infiniteScrolling.setEnabled(false);
     getURLKeywords();
     requestSearchResults();
 });
@@ -178,6 +172,10 @@ function getURLKeywords() {
 }
 
 function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
+    if (offset === 'EOF') {
+        return;
+    }
+
     sendServerRequest('get_series.php', {
         callback: function (response: string) {
             var parsedResponse: any;
@@ -198,16 +196,6 @@ function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
         content: keywords + pivot + "offset=" + offset,
         logoutParam: keywords.slice(0, -1)
     });
-}
-
-function infiniteScrolling() {
-    var boundingRect = positionDetector.getBoundingClientRect();
-    var viewportHeight = Math.max(d.documentElement.clientHeight || 0, w.innerHeight || 0);
-
-    if (boundingRect.top - 256 - 24 <= viewportHeight * 1.5 && offset != 'EOF' && !containsClass(positionDetector, 'loading')) {
-        addClass(positionDetector, 'loading');
-        getSeries();
-    }
 }
 
 function requestSearchResults() {

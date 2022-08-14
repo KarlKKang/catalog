@@ -3,10 +3,11 @@ import {
 } from '../module/main';
 import {
     addEventListener,
-    removeClass,
     getParent,
     getDescendantsByClassAt,
-    getByClass
+    getByClass,
+    containsClass,
+    addClass
 } from '../module/DOM';
 import { completeCallback, getTable } from './helper';
 
@@ -202,43 +203,50 @@ function updateSeriesTime(id: string) {
 
 function updateEventHandlers() {
     var buttons = getByClass('add-series');
-
     for (let button of buttons) {
-        removeClass(button, 'add-series');
-        addEventListener(button, 'click', function () {
-            addSeries(button);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                addSeries(button);
+            });
+        }
     }
 
     buttons = getByClass('modify-series');
     for (let button of buttons) {
-        removeClass(button, 'modify-series');
-        addEventListener(button, 'click', function () {
-            modifySeries(button);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                modifySeries(button);
+            });
+        }
     }
 
     buttons = getByClass('update-series-time');
     for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        removeClass(button, 'update-series-time');
-        addEventListener(button, 'click', function () {
-            if (button.dataset.id === undefined) {
-                alert("ERROR: 'id' attribute on the element is undefined.");
-                return;
-            }
-            updateSeriesTime(button.dataset.id);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                updateSeriesTime(button.dataset.id);
+            });
+        }
     }
 
     buttons = getByClass('delete-series');
     for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        removeClass(button, 'delete-series');
-        addEventListener(button, 'click', function () {
-            if (button.dataset.id === undefined) {
-                alert("ERROR: 'id' attribute on the element is undefined.");
-                return;
-            }
-            deleteSeries(button.dataset.id);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                deleteSeries(button.dataset.id);
+            });
+        }
     }
 }

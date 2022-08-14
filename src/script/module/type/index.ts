@@ -4,3 +4,5 @@ export * as LocalMessageParam from './LocalMessageParam';
 export * as UserInfo from './UserInfo';
 export * as SeriesInfo from './SeriesInfo';
 export * as BangumiInfo from './BangumiInfo';
+export * as AllNewsInfo from './AllNewsInfo';
+export * as NewsInfo from './NewsInfo';

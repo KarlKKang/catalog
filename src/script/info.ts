@@ -4,53 +4,46 @@ import {
     DEVELOPMENT,
 } from './module/env/constant';
 import {
-    navListeners,
-    sendServerRequest,
+    authenticate,
     clearCookies,
     cssVarWrapper,
+    navListeners,
+    scrollToHash,
 } from './module/main';
 import {
     w,
     addEventListener,
     getHref,
     redirect,
-    getById,
     removeClass,
     getBody,
-    getHash,
-    getByIdNative
+    getById,
 } from './module/DOM';
-import { show as showMessage } from './module/message';
-import { invalidResponse } from './module/message/template/param/server';
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (!getHref().startsWith('https://featherine.com/info') && !DEVELOPMENT) {
-        redirect('https://featherine.com/info', true);
+    if (!getHref().startsWith('https://featherine.com/policy') && !DEVELOPMENT) {
+        redirect('https://featherine.com/policy', true);
         return;
     }
 
-    sendServerRequest('get_info.php', {
-        callback: function (response: string) {
-            if (response.startsWith('INFOBODY:') && response.endsWith('EOF')) {
-                getById('content').innerHTML = response.slice(9, -3);
-                navListeners();
+    authenticate({
+        successful:
+            function () {
+                removeClass(getById('main'), 'no-padding');
+                removeClass(getById('header'), 'hidden');
+                removeClass(getById('nav-btn'), 'hidden');
                 removeClass(getBody(), "hidden");
-                var scrollID = getHash();
-                if (scrollID != '') {
-                    var elem = getByIdNative(scrollID);
-                    if (elem !== null) {
-                        elem.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            } else {
-                showMessage(invalidResponse);
-            }
-        },
-        method: 'GET'
+                navListeners();
+                scrollToHash();
+            },
+        failed:
+            function () {
+                removeClass(getBody(), "hidden");
+                scrollToHash();
+            },
     });
+
 });

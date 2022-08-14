@@ -48,6 +48,18 @@ addEventListener(w, 'load', function () {
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
             removeClass(getBody(), "hidden");
+            addEventListener(getByClassAt('link', 0), 'click', function () {
+                openWindow('info');
+            });
+            addEventListener(getByClassAt('link', 1), 'click', function () {
+                openWindow('info#en');
+            });
+            addEventListener(getByClassAt('link', 2), 'click', function () {
+                openWindow('info#zh-Hant');
+            });
+            addEventListener(getByClassAt('link', 3), 'click', function () {
+                openWindow('info#zh-Hans');
+            });
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -82,16 +94,16 @@ addEventListener(w, 'load', function () {
 
 
                 addEventListener(getByClassAt('link', 0), 'click', function () {
-                    openWindow('policy');
+                    openWindow('info');
                 });
                 addEventListener(getByClassAt('link', 1), 'click', function () {
-                    openWindow('policy#en');
+                    openWindow('info#en');
                 });
                 addEventListener(getByClassAt('link', 2), 'click', function () {
-                    openWindow('policy#zh-Hant');
+                    openWindow('info#zh-Hant');
                 });
                 addEventListener(getByClassAt('link', 3), 'click', function () {
-                    openWindow('policy#zh-Hans');
+                    openWindow('info#zh-Hans');
                 });
 
                 addEventListener(submitButton, 'click', function () {

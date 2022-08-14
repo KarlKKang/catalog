@@ -160,6 +160,14 @@ addEventListener(w, 'load', function () {
             return url;
         }
 
+        let news = getURLParam('news');
+        if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
+            if (DEVELOPMENT) {
+                return 'news.html?id=' + news;
+            } else {
+                return TOP_URL + '/news/' + news;
+            }
+        }
 
         let keywords = getURLParam('keywords');
         if (keywords !== null) {

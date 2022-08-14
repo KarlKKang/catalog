@@ -15,3 +15,7 @@
     font-family: 'Noto Sans TC', 'PingFang TC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
 }
+
+p:lang(en) {
+    line-height: 1.5;
+}

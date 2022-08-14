@@ -9,20 +9,23 @@ import { show as showMessage } from '../message';
 import { cssVarError, moduleImportError } from '../message/template/param';
 import { connectionError, status403, status429, status503, status400And500 } from '../message/template/param/server';
 
-//import * as DOM from './DOM';
 import {
     w,
     getHref,
     redirect,
     deleteCookie,
+    getHash,
 
     getById,
+    getByIdNative,
     addClass,
     removeClass,
     toggleClass,
     containsClass,
     getParent,
     addEventListener,
+    createElement,
+    appendChild,
 } from '../DOM';
 
 import type { CDNCredentials } from '../type';
@@ -218,28 +221,51 @@ function navUpdate() {
 
 ////////////////////////////////////////
 export function navListeners() {
-    getById('nav-menu-content').innerHTML = '<p><span id="nav-menu-content-1">ライブラリ／LIBRARY</span></p>' +
-        '<p><span id="nav-menu-content-2">マイページ／ACCOUNT SETTINGS</span></p>' +
-        '<p><span id="nav-menu-content-3">ご利用ガイド／INFO</span></p>' +
-        '<p><span id="nav-menu-content-4">ログアウト／LOG OUT</span></p>';
+    function getNavMenuButton(innerHTML: string) {
+        const navMenuButtonContainer = createElement('p');
+        const navMenuButton = createElement('span');
+        navMenuButton.innerHTML = innerHTML;
+        appendChild(navMenuButtonContainer, navMenuButton);
+        return {
+            container: navMenuButtonContainer,
+            button: navMenuButton
+        };
+    }
+
+    const navMenuButton1 = getNavMenuButton('ライブラリ／LIBRARY');
+    const navMenuButton2 = getNavMenuButton('お知らせ／NEWS');
+    const navMenuButton3 = getNavMenuButton('マイページ／ACCOUNT SETTINGS');
+    const navMenuButton4 = getNavMenuButton('ご利用ガイド／POLICY＆GUIDE');
+    const navMenuButton5 = getNavMenuButton('ログアウト／LOG OUT');
+
+    const navMenuContentContainer = getById('nav-menu-content');
+    appendChild(navMenuContentContainer, navMenuButton1.container);
+    appendChild(navMenuContentContainer, navMenuButton2.container);
+    appendChild(navMenuContentContainer, navMenuButton3.container);
+    appendChild(navMenuContentContainer, navMenuButton4.container);
+    appendChild(navMenuContentContainer, navMenuButton5.container);
 
     addEventListener(getById('nav-btn'), 'click', function () {
         navUpdate();
     });
 
-    addEventListener(getById('nav-menu-content-1'), 'click', function () {
+    addEventListener(navMenuButton1.button, 'click', function () {
         redirect(TOP_URL);
     });
 
-    addEventListener(getById('nav-menu-content-2'), 'click', function () {
+    addEventListener(navMenuButton2.button, 'click', function () {
+        redirect(DEVELOPMENT ? 'news.html' : (TOP_URL + '/news'));
+    });
+
+    addEventListener(navMenuButton3.button, 'click', function () {
         redirect(DEVELOPMENT ? 'account.html' : (TOP_URL + '/account'));
     });
 
-    addEventListener(getById('nav-menu-content-3'), 'click', function () {
+    addEventListener(navMenuButton4.button, 'click', function () {
         redirect(DEVELOPMENT ? 'info.html' : (TOP_URL + '/info'));
     });
 
-    addEventListener(getById('nav-menu-content-4'), 'click', function () {
+    addEventListener(navMenuButton5.button, 'click', function () {
         logout(function () { redirect(LOGIN_URL); });
     });
 }
@@ -401,4 +427,18 @@ export async function hashPassword(password: string) {
 ////////////////////////////////////////
 export function removeRightClick(elem: HTMLElement) {
     addEventListener(elem, 'contextmenu', event => event.preventDefault());
+}
+////////////////////////////////////////
+
+////////////////////////////////////////
+export function scrollToHash() {
+    const scrollID = getHash();
+    if (scrollID !== '') {
+        const elem = getByIdNative(scrollID);
+        if (elem !== null) {
+            setTimeout(function(){
+                window.scrollBy(0, elem.getBoundingClientRect().top - 46);
+            }, 500); //Give UI some time to load.
+        }
+    }
 }

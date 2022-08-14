@@ -3,10 +3,11 @@ import {
 } from '../module/main';
 import {
     addEventListener,
-    removeClass,
     getParent,
     getDescendantsByClassAt,
-    getByClass
+    getByClass,
+    addClass,
+    containsClass
 } from '../module/DOM';
 
 import { completeCallback, getTable } from './helper';
@@ -20,18 +21,32 @@ export function getNewsTable() {
 }
 
 function modifyNews(button: Element) {
-    var record = getParent(getParent(button));
-    var id = getDescendantsByClassAt(record, 'id', 0).innerHTML;
-    var title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
-    var content = (getDescendantsByClassAt(record, 'content', 0) as HTMLTextAreaElement).value;
-    var isPublic = (getDescendantsByClassAt(record, 'public', 0) as HTMLInputElement).checked;
+    var recordElem = getParent(getParent(button));
+    var id = getDescendantsByClassAt(recordElem, 'id', 0).innerHTML;
+    var title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
+    var content = (getDescendantsByClassAt(recordElem, 'content', 0) as HTMLTextAreaElement).value;
+    var isPublic = (getDescendantsByClassAt(recordElem, 'public', 0) as HTMLInputElement).checked;
 
-    var parsedRecord = parseNewsRecord(id, title, content, isPublic);
-    if (!parsedRecord) {
+    const record = parseNewsRecord(id, title, content, isPublic);
+    if (!record) {
         return;
     }
 
-    var param = {
+    const contentChunks = splitContent(record.content);
+
+    const parsedRecord: {
+        id: string,
+        title: string,
+        content?: string,
+        public: boolean,
+        end: boolean
+    } = {
+        ...record,
+        end: contentChunks.length === 0
+    };
+    delete parsedRecord.content;
+
+    const param = {
         command: 'modify',
         type: 'news',
         ...parsedRecord
@@ -46,7 +61,17 @@ function modifyNews(button: Element) {
     } while (confirm != "modify");
 
     sendServerRequest('console.php', {
-        callback: newsCompleteCallback,
+        callback: function (response: string) {
+            if (contentChunks.length === 0) {
+                newsCompleteCallback(response);
+                return;
+            }
+            if (response.startsWith('ERROR:')) {
+                alert(response);
+                return;
+            }
+            appendNews(parsedRecord.id, contentChunks);
+        },
         content: "p=" + encodeURIComponent(JSON.stringify(param))
     });
 }
@@ -74,16 +99,31 @@ function deleteNews(id: string) {
 }
 
 function addNews(button: Element) {
-    var record = getParent(getParent(button));
-    var id = (getDescendantsByClassAt(record, 'id', 0) as HTMLTextAreaElement).value;
-    var title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
-    var content = (getDescendantsByClassAt(record, 'content', 0) as HTMLTextAreaElement).value;
+    var recordElem = getParent(getParent(button));
+    var id = (getDescendantsByClassAt(recordElem, 'id', 0) as HTMLTextAreaElement).value;
+    var title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
+    var content = (getDescendantsByClassAt(recordElem, 'content', 0) as HTMLTextAreaElement).value;
 
-    var parsedRecord = parseNewsRecord(id, title, content, false);
-    if (!parsedRecord) {
+    const record = parseNewsRecord(id, title, content, false);
+    if (!record) {
         return;
     }
-    var param = {
+
+    const contentChunks = splitContent(record.content);
+
+    const parsedRecord: {
+        id: string,
+        title: string,
+        content?: string,
+        public: boolean,
+        end: boolean
+    } = {
+        ...record,
+        end: contentChunks.length === 0
+    };;
+    delete parsedRecord.content;
+
+    const param = {
         command: 'insert',
         type: 'news',
         ...parsedRecord
@@ -98,7 +138,17 @@ function addNews(button: Element) {
     } while (confirm != "insert");
 
     sendServerRequest('console.php', {
-        callback: newsCompleteCallback,
+        callback: function (response: string) {
+            if (contentChunks.length === 0) {
+                newsCompleteCallback(response);
+                return;
+            }
+            if (response.startsWith('ERROR:')) {
+                alert(response);
+                return;
+            }
+            appendNews(parsedRecord.id, contentChunks);
+        },
         content: "p=" + encodeURIComponent(JSON.stringify(param))
     });
 }
@@ -184,63 +234,110 @@ async function minifyNewsContent(button: Element) {
 
 function updateEventHandlers() {
     var buttons = getByClass('add-news');
-
     for (let button of buttons) {
-        removeClass(button, 'add-news');
-        addEventListener(button, 'click', function () {
-            addNews(button);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                addNews(button);
+            });
+        }
     }
 
     buttons = getByClass('modify-news');
     for (let button of buttons) {
-        removeClass(button, 'modify-news');
-        addEventListener(button, 'click', function () {
-            modifyNews(button);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                modifyNews(button);
+            });
+        }
     }
 
     buttons = getByClass('update-news-time');
     for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        removeClass(button, 'update-news-time');
-        addEventListener(button, 'click', function () {
-            if (button.dataset.id === undefined) {
-                alert("ERROR: 'id' attribute on the element is undefined.");
-                return;
-            }
-            updateNewsTime(button.dataset.id);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                updateNewsTime(button.dataset.id);
+            });
+        }
     }
 
     buttons = getByClass('delete-news');
     for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        removeClass(button, 'delete-news');
-        addEventListener(button, 'click', function () {
-            if (button.dataset.id === undefined) {
-                alert("ERROR: 'id' attribute on the element is undefined.");
-                return;
-            }
-            deleteNews(button.dataset.id);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                deleteNews(button.dataset.id);
+            });
+        }
     }
 
     buttons = getByClass('get-news-content');
     for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        removeClass(button, 'get-news-content');
-        addEventListener(button, 'click', function () {
-            if (button.dataset.id === undefined) {
-                alert("ERROR: 'id' attribute on the element is undefined.");
-                return;
-            }
-            getNewsContent(button, button.dataset.id);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.id === undefined) {
+                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    return;
+                }
+                getNewsContent(button, button.dataset.id);
+            });
+        }
     }
 
     buttons = getByClass('minify-news-content');
     for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        removeClass(button, 'minify-news-content');
-        addEventListener(button, 'click', function () {
-            minifyNewsContent(button);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                minifyNewsContent(button);
+            });
+        }
     }
+}
+
+function appendNews(id: string, contentChunks: string[]) {
+    let content = contentChunks.shift()!;
+    let param = {
+        command: 'modify',
+        type: 'news-content-append',
+        id: id,
+        content: content,
+        end: contentChunks.length === 0
+    }
+
+    sendServerRequest('console.php', {
+        callback: function (response: string) {
+            if (contentChunks.length === 0) {
+                newsCompleteCallback(response);
+                return;
+            }
+            if (response.startsWith('ERROR:')) {
+                alert(response);
+                return;
+            }
+            appendNews(id, contentChunks);
+        },
+        content: "p=" + encodeURIComponent(JSON.stringify(param))
+    });
+}
+
+function splitContent(content: string): string[] {
+    var result = [];
+    const chunkSize = 800;
+    while (content.length > 0) {
+        result.push(content.substring(0, chunkSize));
+        content = content.substring(chunkSize);
+    }
+    return result
 }

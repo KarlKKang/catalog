@@ -4,10 +4,10 @@ import {
 import {
     addEventListener,
     getById,
-    removeClass,
     getParent,
     addClass,
-    getByClass
+    getByClass,
+    containsClass
 } from '../module/DOM';
 
 export function getTable(type: string, callback?: () => void) {
@@ -46,18 +46,22 @@ export function setOutput(response: string, callback?: () => void, outputElement
 
         var elems = getByClass('onchange');
         for (let elem of elems) {
-            removeClass(elem, 'onchange');
-            addEventListener(elem, 'change', function () {
-                changed(elem);
-            });
+            if (!containsClass(elem, 'initialized')) {
+                addClass(elem, 'initialized');
+                addEventListener(elem, 'change', function () {
+                    changed(elem);
+                });
+            }
         }
 
         elems = getByClass('oninput');
         for (let elem of elems) {
-            removeClass(elem, 'oninput');
-            addEventListener(elem, 'input', function () {
-                changed(elem);
-            });
+            if (!containsClass(elem, 'initialized')) {
+                addClass(elem, 'initialized');
+                addEventListener(elem, 'input', function () {
+                    changed(elem);
+                });
+            }
         }
     }
     return !error;

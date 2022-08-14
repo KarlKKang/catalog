@@ -71,15 +71,9 @@
 }
 
 #container>div>p {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
     width: 90%;
     margin: 10% 5%;
     padding: 0px;
-    word-break: normal;
-    text-overflow: ellipsis;
-    overflow: hidden;
 }
 
 .keyword {
@@ -89,7 +83,6 @@
 #search-bar {
     background: var(--foreground-color);
     display: flex;
-    align-items: stretch;
     height: 50px;
     box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;

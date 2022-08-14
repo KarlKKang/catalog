@@ -4,11 +4,12 @@ import {
 } from '../module/main';
 import {
     addEventListener,
-    removeClass,
     getParent,
     getDescendantsByClassAt,
     getDescendantsByTag,
-    getByClass
+    getByClass,
+    containsClass,
+    addClass
 } from '../module/DOM';
 import { completeCallback, getTable } from './helper';
 
@@ -219,33 +220,39 @@ function deleteAccount(email: string) {
 function updateEventHandlers() {
     var buttons = getByClass('add-account');
     for (let button of buttons) {
-        removeClass(button, 'add-account');
-        addEventListener(button, 'click', function () {
-            addAccount(button);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                addAccount(button);
+            });
+        }
     }
 
     buttons = getByClass('modify-account');
     for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        removeClass(button, 'modify-account');
-        addEventListener(button, 'click', function () {
-            if (button.dataset.email === undefined) {
-                alert("ERROR: 'email' attribute on the element is undefined.");
-                return;
-            }
-            modifyAccount(button, button.dataset.email);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.email === undefined) {
+                    alert("ERROR: 'email' attribute on the element is undefined.");
+                    return;
+                }
+                modifyAccount(button, button.dataset.email);
+            });
+        }
     }
 
     buttons = getByClass('delete-account');
     for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        removeClass(button, 'delete-account');
-        addEventListener(button, 'click', function () {
-            if (button.dataset.email === undefined) {
-                alert("ERROR: 'email' attribute on the element is undefined.");
-                return;
-            }
-            deleteAccount(button.dataset.email);
-        });
+        if (!containsClass(button, 'initialized')) {
+            addClass(button, 'initialized');
+            addEventListener(button, 'click', function () {
+                if (button.dataset.email === undefined) {
+                    alert("ERROR: 'email' attribute on the element is undefined.");
+                    return;
+                }
+                deleteAccount(button.dataset.email);
+            });
+        }
     }
 }

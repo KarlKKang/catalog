@@ -49,11 +49,11 @@ module.exports = {
         'new_email': {
             import: './src/script/new_email',
         },
+        'news': {
+            import: './src/script/news',
+        },
         'password_reset': {
             import: './src/script/password_reset',
-        },
-        'policy': {
-            import: './src/script/policy',
         },
         'register': {
             import: './src/script/register',
@@ -134,15 +134,15 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             minify: html_minify_options,
-            chunks: ['password_reset'],
-            filename: '../password_reset.html',
-            template: 'src/html/password_reset.html'
+            chunks: ['news'],
+            filename: '../news.html',
+            template: 'src/html/news.html'
         }),
         new HtmlWebpackPlugin({
             minify: html_minify_options,
-            chunks: ['policy'],
-            filename: '../policy.html',
-            template: 'src/html/policy.html'
+            chunks: ['password_reset'],
+            filename: '../password_reset.html',
+            template: 'src/html/password_reset.html'
         }),
         new HtmlWebpackPlugin({
             minify: html_minify_options,
