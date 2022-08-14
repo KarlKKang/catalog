@@ -8,9 +8,13 @@
 .video-js .vjs-current-time,
 .video-js .vjs-duration,
 .video-js .vjs-time-divider {
-    display: block !important;
-    padding: 0px 0.3em !important;
-    min-width: 0em !important;
+    display: block;
+    padding: 0px 0.3em;
+}
+
+.video-js .vjs-time-divider {
+    min-width: 0em;
+    padding: 0px;
 }
 
 .video-js .vjs-remaining-time,
@@ -72,6 +76,11 @@
 .vjs-waiting .vjs-loading-spinner:after {
     -webkit-animation-delay: .44s;
     animation-delay: .44s;
+}
+
+.video-js .vjs-control.vjs-button {
+    width: 15%;
+    max-width: 4em;
 }
 
 .video-js .vjs-control:focus:before,
