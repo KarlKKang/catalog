@@ -92,8 +92,11 @@ addEventListener(w, 'load', function () {
                     addEventListener(getById('verify'), 'click', function () {
                         verify();
                     });
-                    addEventListener(getById('show-databases'), 'click', function () {
-                        showDatabases();
+                    addEventListener(getById('show-all-column'), 'click', function () {
+                        getTable('all_column');
+                    });
+                    addEventListener(getById('show-all-index'), 'click', function () {
+                        getTable('all_index');
                     });
                     addEventListener(getById('run-debug'), 'click', function () {
                         run('debug');
@@ -119,20 +122,6 @@ addEventListener(w, 'load', function () {
         sendServerRequest('console.php', {
             callback: function (response: string) {
                 setOutput(response, undefined, 'id-output');
-            },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
-        });
-    }
-
-    function showDatabases() {
-        var param = {
-            command: 'get',
-            type: 'all'
-        };
-
-        sendServerRequest('console.php', {
-            callback: function (response: string) {
-                setOutput(response);
             },
             content: "p=" + encodeURIComponent(JSON.stringify(param))
         });
