@@ -49,8 +49,8 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (getHref() != 'https://featherine.com/account' && !DEVELOPMENT) {
-        redirect('https://featherine.com/account', true);
+    if (getHref() != 'https://featherine.com/my_account' && !DEVELOPMENT) {
+        redirect('https://featherine.com/my_account', true);
         return;
     }
 

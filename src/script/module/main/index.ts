@@ -254,11 +254,11 @@ export function navListeners() {
     });
 
     addEventListener(navMenuButton2.button, 'click', function () {
-        redirect(DEVELOPMENT ? 'news.html' : (TOP_URL + '/news'));
+        redirect(DEVELOPMENT ? 'news.html' : (TOP_URL + '/news/'));
     });
 
     addEventListener(navMenuButton3.button, 'click', function () {
-        redirect(DEVELOPMENT ? 'account.html' : (TOP_URL + '/account'));
+        redirect(DEVELOPMENT ? 'my_account.html' : (TOP_URL + '/my_account'));
     });
 
     addEventListener(navMenuButton4.button, 'click', function () {

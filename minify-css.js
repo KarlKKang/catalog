@@ -9,7 +9,6 @@ if (dev) {
 }
 
 const entries = [
-    'account.css',
     'bangumi-hls.css',
     'console.css',
     'image.css',
@@ -17,6 +16,7 @@ const entries = [
     'login.css',
     'main.css',
     'message.css',
+    'my_account.css',
     'news.css',
     'portal_form.css',
     'register.css',

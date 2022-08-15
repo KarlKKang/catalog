@@ -60,11 +60,10 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (!getHref().startsWith(TOP_URL + '/bangumi') && !DEVELOPMENT) {
+    if (!getHref().startsWith(TOP_URL + '/bangumi/') && !DEVELOPMENT) {
         redirect(TOP_URL, true);
         return;
     }
-
 
     // Parse parameters
     let seriesIDParam = getSeriesID();
@@ -320,16 +319,13 @@ function goToEP(dest_series: string, dest_ep: number) {
 }
 
 function getSeriesID(): string | null {
-    var url = getHref() + '?';
-    if (url.startsWith(TOP_URL + '/bangumi/')) {
-        var start = (TOP_URL + '/bangumi/').length;
-        var end = url.indexOf('?');
-        if (start == end) {
-            return null;
-        }
-        return url.slice(start, end);
-    } else {
+    if (DEVELOPMENT) {
         return getURLParam('series');
+    } else {
+        const url = getHref() + '?';
+        const start = (TOP_URL + '/bangumi/').length;
+        const end = url.indexOf('?');
+        return url.slice(start, end);
     }
 }
 

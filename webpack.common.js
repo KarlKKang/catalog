@@ -19,9 +19,6 @@ module.exports = {
         '404': {
             import: './src/script/404',
         },
-        'account': {
-            import: './src/script/account',
-        },
         'bangumi': {
             import: './src/script/bangumi',
         },
@@ -45,6 +42,9 @@ module.exports = {
         },
         'message': {
             import: './src/script/message',
+        },
+        'my_account': {
+            import: './src/script/my_account',
         },
         'new_email': {
             import: './src/script/new_email',
@@ -71,12 +71,6 @@ module.exports = {
             chunks: ['404'],
             filename: '../404.html',
             template: 'src/html/404.html'
-        }),
-        new HtmlWebpackPlugin({
-            minify: html_minify_options,
-            chunks: ['account'],
-            filename: '../account.html',
-            template: 'src/html/account.html'
         }),
         new HtmlWebpackPlugin({
             minify: html_minify_options,
@@ -125,6 +119,12 @@ module.exports = {
             chunks: ['message'],
             filename: '../message.html',
             template: 'src/html/message.html'
+        }),
+        new HtmlWebpackPlugin({
+            minify: html_minify_options,
+            chunks: ['my_account'],
+            filename: '../my_account.html',
+            template: 'src/html/my_account.html'
         }),
         new HtmlWebpackPlugin({
             minify: html_minify_options,

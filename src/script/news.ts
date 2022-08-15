@@ -25,13 +25,14 @@ import {
     getBody,
     getDescendantsByClass,
     openWindow,
+    changeURL,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
 import { AllNewsInfo, NewsInfo } from './module/type';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 
-const NEWS_TOP_URL = TOP_URL + '/news';
+const NEWS_TOP_URL = TOP_URL + '/news/';
 var offset: AllNewsInfo.OffsetInfo = 0;
 var infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
@@ -45,28 +46,25 @@ addEventListener(w, 'load', function () {
     }
 
     const newsID = getNewsID();
-    if (newsID === null) {
+    if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {
+        if (getHref() !== NEWS_TOP_URL && !DEVELOPMENT) {
+            changeURL(NEWS_TOP_URL, true);
+        }
         infiniteScrolling = initializeInfiniteScrolling(getAllNews);
         getAllNews();
-    } else if (/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {
-        getNews(newsID);
     } else {
-        redirect(NEWS_TOP_URL, true);
-        return;
+        getNews(newsID);
     }
 });
 
 function getNewsID(): string | null {
-    var url = getHref() + '?';
-    if (url.startsWith(TOP_URL + '/news/')) {
-        var start = (TOP_URL + '/news/').length;
-        var end = url.indexOf('?');
-        if (start == end) {
-            return null;
-        }
-        return url.slice(start, end);
-    } else {
+    if (DEVELOPMENT) {
         return getURLParam('id');
+    } else {
+        const url = getHref() + '?';
+        const start = NEWS_TOP_URL.length;
+        const end = url.indexOf('?');
+        return url.slice(start, end);
     }
 }
 
