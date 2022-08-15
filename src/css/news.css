@@ -51,7 +51,7 @@ html {
     padding: 0px 3% 0px 3%;
     border-right: 1px solid var(--horizontal-line-foreground-color);
     white-space: nowrap;
-    /*color: var(--alt-text-color);*/
+    text-align: center;
 }
 
 #main>div.overview-container>.overview-title {
