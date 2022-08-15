@@ -26,7 +26,7 @@ import {
     getDescendantsByTagAt
 } from './module/DOM';
 import { show as showMessage } from './module/message';
-import { loginFailed } from './module/message/template/inline';
+import { loginFailed, accountDeactivated } from './module/message/template/inline';
 import { unrecommendedBrowser } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
@@ -106,8 +106,12 @@ addEventListener(w, 'load', function () {
 
         sendServerRequest('login.php', {
             callback: function (response: string) {
-                if (response.includes('FAILED')) {
+                if (response == 'FAILED') {
                     warningElem.innerHTML = loginFailed;
+                    removeClass(warningElem, 'hidden');
+                    disableAllInputs(false);
+                } else if (response == 'DEACTIVATED') {
+                    warningElem.innerHTML = accountDeactivated;
                     removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
                 } else if (response == 'NOT RECOMMENDED') {
