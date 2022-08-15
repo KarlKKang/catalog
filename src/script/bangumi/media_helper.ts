@@ -24,7 +24,7 @@ import type { VideojsModInstance } from '../module/player';
 
 
 export const incompatibleTitle = '再生できません';
-export const incompatibleSuffix = '他のブラウザでご覧いただくか、デスクトップでファイルをダウンロードし、ローカルで再生してください。';
+export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
 export function showPlaybackError(detail?: string) {
     showMediaMessage(defaultError, '<p>再生中にエラーが発生しました。' + defaultErrorSuffix + (detail === undefined ? '' : ('<br>Error detail: ' + detail)) + '</p>', 'red');
@@ -36,6 +36,10 @@ export function showHLSCompatibilityError() {
 
 export function showCodecCompatibilityError(IS_LINUX: boolean) {
     showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix + (IS_LINUX ? 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。' : '') + '</p>', 'red');
+}
+
+export function showLegacyBrowserError() {
+    showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは古すぎるため、再生に対応していません。' + incompatibleSuffix + '</p>', 'red');
 }
 
 export function showMediaMessage(title: string, messageTxt: string, titleColor: string) {

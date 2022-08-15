@@ -28,7 +28,7 @@ import { videojs, browser, videojsMod } from '../module/player';
 import type { VideojsModInstance } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { destroyAll, showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent } from './media_helper';
+import { destroyAll, showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showLegacyBrowserError } from './media_helper';
 
 var seriesID: string;
 var epIndex: number;
@@ -108,6 +108,10 @@ export default function (
     }
 
     // Video Node
+    if (browser.IS_LEGACY) {
+        showLegacyBrowserError();
+        return;
+    }
     if (!browser.USE_MSE && !browser.NATIVE_HLS) {
         showHLSCompatibilityError();
         addClass(mediaHolder, 'hidden');

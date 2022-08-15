@@ -20,6 +20,7 @@ var IS_FIREFOX = false;
 var IS_SAFARI = false;
 var IS_LINUX = false;
 //var IS_APPLE = false;
+var IS_LEGACY = true;
 
 if (USER_AGENT !== '') {
     const bowserParser = Bowser.getParser(USER_AGENT);
@@ -38,6 +39,8 @@ if (USER_AGENT !== '') {
     IS_SAFARI = IS_IOS || browserName === 'Safari';
     IS_LINUX = osName === 'Linux';
     //IS_APPLE = (osName === 'iOS') || (osName === 'macOS');
+
+    IS_LEGACY = engineName === 'EdgeHTML' || engineName === 'Trident' || engineName === 'Presto';
 }
 
 let audioElem = createElement('audio') as HTMLAudioElement;
@@ -69,10 +72,10 @@ if (USE_MSE) {
 export { IS_CHROMIUM };
 export { IS_IOS };
 export { IS_DESKTOP };
-export { IS_IE };
 export { IS_FIREFOX };
 export { IS_LINUX };
 //export {IS_APPLE};
+export { IS_LEGACY }
 
 export { NATIVE_HLS };
 export { USE_MSE };

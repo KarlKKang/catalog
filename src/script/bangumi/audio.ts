@@ -19,7 +19,7 @@ import { videojs, browser, videojsMod } from '../module/player';
 import type { VideojsModInstance } from '../module/player';
 
 import { parseCharacters } from './helper';
-import { showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, destroyAll, getDownloadAccordion } from './media_helper';
+import { showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, destroyAll, getDownloadAccordion, showLegacyBrowserError } from './media_helper';
 
 var seriesID: string;
 var epIndex: number;
@@ -62,6 +62,10 @@ export default function (
         appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
     }
 
+    if (browser.IS_LEGACY) {
+        showLegacyBrowserError();
+        return;
+    }
     if (!browser.USE_MSE && !browser.NATIVE_HLS) {
         showHLSCompatibilityError();
         addClass(mediaHolder, 'hidden');
