@@ -26,6 +26,8 @@ import {
     getDescendantsByClass,
     openWindow,
     changeURL,
+    setTitle,
+    getTitle,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -98,6 +100,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo): void {
     titleContainer.id = 'title';
 
     titleContainer.innerHTML = newsInfo.title;
+    setTitle(newsInfo.title + ' | ' + getTitle());
     appendChild(container, titleContainer);
 
     let createTimeContainer = createElement('p');
