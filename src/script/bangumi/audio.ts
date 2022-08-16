@@ -340,11 +340,11 @@ function getAudioSubtitleNode(file: BangumiInfo.AudioFile, FLAC_FALLBACK: boolea
 
 function audioReady() {
     function pauseAll(currentIndex: number) {
-        for (var j = 0; j < mediaInstances.length; j++) {
-            if (j != currentIndex) {
-                (mediaInstances[j] as VideojsModInstance).pause();
+        mediaInstances.forEach(function (mediaInstance, index) {
+            if (index !== currentIndex) {
+                mediaInstance.pause();
             }
-        }
+        });
     }
     function playNext(currentIndex: number) {
         if (currentIndex < mediaInstances.length - 1) {
