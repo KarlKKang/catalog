@@ -28,6 +28,7 @@ import {
     changeURL,
     setTitle,
     getTitle,
+    getHash,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -71,6 +72,7 @@ function getNewsID(): string | null {
 }
 
 function getNews(newsID: string): void {
+    const hash = getHash();
     sendServerRequest('get_news.php' + '?id=' + newsID, {
         callback: function (response: string) {
             var parsedResponse: any;
@@ -87,7 +89,7 @@ function getNews(newsID: string): void {
             scrollToHash();
         },
         method: 'GET',
-        logoutParam: 'news=' + newsID
+        logoutParam: 'news=' + newsID + ((hash === '') ? '' : ('&hash=' + hash))
     });
 }
 

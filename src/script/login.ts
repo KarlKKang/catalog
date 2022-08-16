@@ -166,10 +166,12 @@ addEventListener(w, 'load', function () {
 
         let news = getURLParam('news');
         if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
+            const hash = getURLParam('hash');
+            const hashString = (hash === null) ? '' : ('#' + hash);
             if (DEVELOPMENT) {
-                return 'news.html?id=' + news;
+                return 'news.html?id=' + news + hashString;
             } else {
-                return TOP_URL + '/news/' + news;
+                return TOP_URL + '/news/' + news + hashString;
             }
         }
 
