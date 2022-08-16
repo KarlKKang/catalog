@@ -24,8 +24,8 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (!getHref().startsWith('https://featherine.com/policy') && !DEVELOPMENT) {
-        redirect('https://featherine.com/policy', true);
+    if (!getHref().startsWith('https://featherine.com/info') && !DEVELOPMENT) {
+        redirect('https://featherine.com/info', true);
         return;
     }
 
