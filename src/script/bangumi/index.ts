@@ -104,9 +104,9 @@ function getSeriesID(): string | null {
     if (DEVELOPMENT) {
         return getURLParam('series');
     } else {
-        const url = getHref() + '?';
+        const url = getHref() + '?#';
         const start = (TOP_URL + '/bangumi/').length;
-        const end = url.indexOf('?');
+        const end = Math.min(url.indexOf('?'), url.indexOf('#'));
         return url.slice(start, end);
     }
 }
