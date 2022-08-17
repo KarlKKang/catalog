@@ -21,7 +21,7 @@ import { expired, emailChanged}  from './module/message/template/param';
 addEventListener(w, 'load', function () {
     clearCookies();
 
-    if (!getHref().startsWith('https://featherine.com/confirm_email') && !DEVELOPMENT) {
+    if (!getHref().startsWith('https://featherine.com/confirm_new_email') && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }
