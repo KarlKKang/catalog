@@ -95,8 +95,13 @@ addEventListener(w, 'load', function () {
 
             '<p class="sub-title">ユーザー名</p>' +
             '<p class="warning hidden" id="username-warning"></p>' +
-            '<div class="input-field"><input id="new-username" class="multi-language" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off" maxlength="63"></div>' +
+            '<div class="input-field"><input id="new-username" class="multi-language" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off" maxlength="16"></div>' +
             '<button class="button" id="username-change-button">変更する</button>' +
+            '<div class="note">' +
+            '<ul>' +
+            '<li>ユーザー名は16文字以内で入力して下さい。</li>' +
+            '</ul>' +
+            '</div>' +
 
             '<hr>' +
 
@@ -308,6 +313,9 @@ addEventListener(w, 'load', function () {
                     currentUsername = newUsername
                 } else if (response == 'DUPLICATED') {
                     warningElem.innerHTML = usernameTaken;
+                    removeClass(warningElem, 'hidden');
+                } else if (response == 'EMPTY') {
+                    warningElem.innerHTML = usernameEmpty;
                     removeClass(warningElem, 'hidden');
                 } else {
                     showMessage();

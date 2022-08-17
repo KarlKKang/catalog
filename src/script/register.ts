@@ -166,6 +166,10 @@ addEventListener(w, 'load', function () {
                     warningElem.innerHTML = usernameTaken;
                     removeClass(warningElem, "hidden");
                     disableAllInputs(false);
+                } else if (response == 'USERNAME EMPTY') {
+                    warningElem.innerHTML = usernameEmpty;
+                    removeClass(warningElem, "hidden");
+                    disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage(registerComplete);
                 } else {
