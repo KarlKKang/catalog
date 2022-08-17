@@ -11,7 +11,8 @@ import {
     clearCookies,
     cssVarWrapper,
     hashPassword,
-    disableInput
+    disableInput,
+    PASSWORD_REGEX
 } from './module/main';
 import {
     w,
@@ -138,7 +139,7 @@ addEventListener(w, 'load', function () {
             return;
         }
 
-        if (password == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,64}$/.test(password)) {
+        if (!PASSWORD_REGEX.test(password)) {
             warningElem.innerHTML = invalidPasswordFormat;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);

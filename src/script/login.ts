@@ -14,6 +14,8 @@ import {
     cssVarWrapper,
     hashPassword,
     getURLParam,
+    PASSWORD_REGEX,
+    EMAIL_REGEX,
 } from './module/main';
 import {
     w,
@@ -80,14 +82,14 @@ addEventListener(w, 'load', function () {
         var email = usernameInput.value;
         var password = passwordInput.value;
 
-        if (email == '' || !/^[^\s@]+@[^\s@]+$/.test(email)) {
+        if (!EMAIL_REGEX.test(email)) {
             warningElem.innerHTML = loginFailed;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         }
 
-        if (password == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,64}$/.test(password)) {
+        if (!PASSWORD_REGEX.test(password)) {
             warningElem.innerHTML = loginFailed;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);

@@ -11,7 +11,9 @@ import {
     clearCookies,
     cssVarWrapper,
     hashPassword,
-    disableInput
+    disableInput,
+    PASSWORD_REGEX,
+    EMAIL_REGEX
 } from './module/main';
 import {
     w,
@@ -178,7 +180,7 @@ addEventListener(w, 'load', function () {
 
         var receiver = inviteReceiverEmailInput.value;
         changeColor(warningElem, 'red');
-        if (receiver == '' || !/^[^\s@]+@[^\s@]+$/.test(receiver)) {
+        if (!EMAIL_REGEX.test(receiver)) {
             warningElem.innerHTML = invalidEmailFormat;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
@@ -226,7 +228,7 @@ addEventListener(w, 'load', function () {
 
         changeColor(warningElem, 'red');
 
-        if (newPassword == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,64}$/.test(newPassword)) {
+        if (!PASSWORD_REGEX.test(newPassword)) {
             warningElem.innerHTML = invalidPasswordFormat;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);

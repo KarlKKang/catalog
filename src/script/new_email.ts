@@ -9,7 +9,8 @@ import {
     getURLParam,
     clearCookies,
     cssVarWrapper,
-    disableInput
+    disableInput,
+    EMAIL_REGEX
 } from './module/main';
 import {
     w,
@@ -83,7 +84,7 @@ addEventListener(w, 'load', function () {
         var warningElem = getById('warning');
         var newEmail = newEmailInput.value;
 
-        if (newEmail == '' || !/^[^\s@]+@[^\s@]+$/.test(newEmail)) {
+        if (!EMAIL_REGEX.test(newEmail)) {
             warningElem.innerHTML = invalidEmailFormat;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);

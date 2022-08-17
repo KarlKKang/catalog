@@ -1,6 +1,7 @@
 import {
     sendServerRequest,
     hashPassword,
+    PASSWORD_REGEX,
 } from '../module/main';
 import {
     addEventListener,
@@ -143,7 +144,7 @@ async function parseAccountRecord(email: string, username: string, password: str
     let password_parsed: string | null;
     if (password == '') {
         password_parsed = null;
-    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,64}$/.test(password)) {
+    } else if (!PASSWORD_REGEX.test(password)) {
         alert("ERROR: password requirements not met");
         return false;
     } else {
