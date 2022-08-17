@@ -55,6 +55,7 @@ addEventListener(w, 'load', function () {
     }
 
     var currentUsername: string;
+    var inviteCount: number;
 
     var newUsernameInput: HTMLInputElement;
     var newPasswordInput: HTMLInputElement;
@@ -151,6 +152,7 @@ addEventListener(w, 'load', function () {
 
         getById('email').innerHTML = userInfo.email;
         getById('invite-count').innerHTML = userInfo.invite_quota.toString();
+        inviteCount = userInfo.invite_quota;
         if (userInfo.invite_quota == 0) {
             addClass(getById('invite-input'), 'hidden');
             addClass(inviteButton, 'hidden');
@@ -164,8 +166,17 @@ addEventListener(w, 'load', function () {
 
     function invite() {
         disableAllInputs(true);
-        var receiver = inviteReceiverEmailInput.value;
+
         var warningElem = getById('invite-warning');
+
+        if (inviteCount === 0) {
+            warningElem.innerHTML = invitationNotQualified;
+            removeClass(warningElem, 'hidden');
+            disableAllInputs(false);
+            return;
+        }
+
+        var receiver = inviteReceiverEmailInput.value;
         changeColor(warningElem, 'red');
         if (receiver == '' || !/^[^\s@]+@[^\s@]+$/.test(receiver)) {
             warningElem.innerHTML = invalidEmailFormat;
@@ -191,6 +202,8 @@ addEventListener(w, 'load', function () {
                 } else if (response == 'CLOSED') {
                     warningElem.innerHTML = invitationClosed;
                 } else if (response == 'DONE') {
+                    inviteCount--;
+                    getById('invite-count').innerHTML = inviteCount.toString();
                     warningElem.innerHTML = emailSent;
                     changeColor(warningElem, 'green');
                 } else {

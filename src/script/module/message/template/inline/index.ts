@@ -6,7 +6,7 @@ export const emailAlreadyRegistered = 'このメールアドレスはすでに�
 export const emailAlreadyInvited = 'このメールアドレスはすでに招待されています。';
 export const emailAlreadyInvitedOrRegistered = 'このメールアドレスは、登録または招待されています。';
 export const emailSent = 'メールが送信されました。届くまでに時間がかかる場合があります。';
-export const invitationNotQualified = '招待状が残っていません。';
+export const invitationNotQualified = '使える招待状が残っていません。';
 export const invitationClosed = '現在、新規登録は受け付けておりません。';
 export const invitationOnly = '現在、登録は招待制となっています。';
 
