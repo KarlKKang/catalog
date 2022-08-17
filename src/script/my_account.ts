@@ -26,6 +26,7 @@ import {
     getBody,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
+import { emailSent as emailSentParam } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
 import { 
     invitationNotQualified, 
@@ -35,7 +36,7 @@ import {
     incompletedEmailChange, 
     emailAlreadyInvited, 
     invitationClosed, 
-    emailSent, 
+    emailSent as emailSentInline,
     invalidPasswordFormat, 
     passwordConfirmationMismatch, 
     passwordChanged, 
@@ -57,7 +58,6 @@ addEventListener(w, 'load', function () {
     }
 
     var currentUsername: string;
-    var inviteCount: number;
 
     var newUsernameInput: HTMLInputElement;
     var newPasswordInput: HTMLInputElement;
@@ -159,7 +159,6 @@ addEventListener(w, 'load', function () {
 
         getById('email').innerHTML = userInfo.email;
         getById('invite-count').innerHTML = userInfo.invite_quota.toString();
-        inviteCount = userInfo.invite_quota;
         if (userInfo.invite_quota == 0) {
             addClass(getById('invite-input'), 'hidden');
             addClass(inviteButton, 'hidden');
@@ -175,13 +174,6 @@ addEventListener(w, 'load', function () {
         disableAllInputs(true);
 
         var warningElem = getById('invite-warning');
-
-        if (inviteCount === 0) {
-            warningElem.innerHTML = invitationNotQualified;
-            removeClass(warningElem, 'hidden');
-            disableAllInputs(false);
-            return;
-        }
 
         var receiver = inviteReceiverEmailInput.value;
         changeColor(warningElem, 'red');
@@ -209,10 +201,8 @@ addEventListener(w, 'load', function () {
                 } else if (response == 'CLOSED') {
                     warningElem.innerHTML = invitationClosed;
                 } else if (response == 'DONE') {
-                    inviteCount--;
-                    getById('invite-count').innerHTML = inviteCount.toString();
-                    warningElem.innerHTML = emailSent;
-                    changeColor(warningElem, 'green');
+                    showMessage(emailSentParam(getHref()));
+                    return;
                 } else {
                     showMessage();
                     return;
@@ -274,7 +264,7 @@ addEventListener(w, 'load', function () {
                 } else if (response == 'REJECTED') {
                     warningElem.innerHTML = incompletedInvitation;
                 } else if (response == 'DONE') {
-                    warningElem.innerHTML = emailSent;
+                    warningElem.innerHTML = emailSentInline;
                     changeColor(warningElem, 'green');
                 } else {
                     showMessage();

@@ -37,11 +37,13 @@ export const registerComplete = {
     color: 'green',
     url: LOGIN_URL
 };
-export const emailSent = {
-    title: title.emailSent,
-    message: body.emailSent,
-    color: 'green',
-    url: LOGIN_URL
+export const emailSent = function (url: string) {
+    return {
+        title: title.emailSent,
+        message: body.emailSent,
+        color: 'green',
+        url: url
+    };
 };
 export const passwordChanged = {
     title: title.completed,

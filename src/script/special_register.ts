@@ -1,7 +1,7 @@
 // JavaScript Document
 import "core-js";
 import {
-    DEVELOPMENT,
+    DEVELOPMENT, LOGIN_URL,
 } from './module/env/constant';
 import {
     sendServerRequest,
@@ -73,7 +73,7 @@ addEventListener(w, 'load', function () {
                 } else if (response == 'NORMAL') {
                     warningElem.innerHTML = invitationOnly;
                 } else if (response == 'DONE') {
-                    showMessage(emailSent);
+                    showMessage(emailSent(LOGIN_URL));
                     return;
                 } else {
                     showMessage();

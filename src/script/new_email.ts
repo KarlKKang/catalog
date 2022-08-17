@@ -104,7 +104,7 @@ addEventListener(w, 'load', function () {
                     removeClass(warningElem, "hidden");
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    showMessage(emailSent);
+                    showMessage(emailSent(TOP_URL));
                 } else {
                     showMessage();
                 }
