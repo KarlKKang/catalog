@@ -93,7 +93,7 @@ addEventListener(w, 'load', function () {
 
             '<p class="sub-title">ユーザー名</p>' +
             '<p class="warning hidden" id="username-warning"></p>' +
-            '<div class="input-field"><input id="new-username" class="multi-language" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off"></div>' +
+            '<div class="input-field"><input id="new-username" class="multi-language" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off" maxlength="63"></div>' +
             '<button class="button" id="username-change-button">変更する</button>' +
 
             '<hr>' +
@@ -106,7 +106,7 @@ addEventListener(w, 'load', function () {
             '<div class="note">' +
             '<ul>' +
             '<li>使用出来る文字は、半角数字・半角英字・記号 ` ~ ! @ # $ % ^ &amp; * ( ) - = _ + [ ] { } \\ | ; : &apos; &quot; , . &lt; &gt; / ? です。</li>' +
-            '<li>8文字以上で入力して下さい。</li>' +
+            '<li>8～64文字で入力して下さい。</li>' +
             '<li>大文字、小文字、数字を含める必要があります。</li>' +
             '</ul>' +
             '</div>' +
@@ -116,7 +116,7 @@ addEventListener(w, 'load', function () {
             '<p class="sub-title">ご招待</p>' +
             '<p id="invite-count-text">送信できる招待状の数：<span id="invite-count"></span></p>' +
             '<p class="warning hidden" id="invite-warning"></p>' +
-            '<div class="input-field" id="invite-input"><input id="receiver-email" type="email" placeholder="メールアドレス" autocapitalize="off" autocomplete="off"></div>' +
+            '<div class="input-field" id="invite-input"><input id="receiver-email" type="email" placeholder="メールアドレス" autocapitalize="off" autocomplete="off" maxlength="254"></div>' +
             '<button class="button" id="invite-button">送信する</button>' +
             '<div class="note">' +
             '<ul>' +
@@ -226,7 +226,7 @@ addEventListener(w, 'load', function () {
 
         changeColor(warningElem, 'red');
 
-        if (newPassword == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
+        if (newPassword == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,64}$/.test(newPassword)) {
             warningElem.innerHTML = invalidPasswordFormat;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);

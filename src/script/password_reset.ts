@@ -108,7 +108,7 @@ addEventListener(w, 'load', function () {
         var newPassword = newPasswordInput.value;
         var newPasswordConfirm = newPasswordConfirmInput.value;
 
-        if (newPassword == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(newPassword)) {
+        if (newPassword == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,64}$/.test(newPassword)) {
             warningElem.innerHTML = invalidPasswordFormat;
             removeClass(warningElem, "hidden");
             disableAllInputs(false);

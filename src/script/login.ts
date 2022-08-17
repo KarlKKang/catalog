@@ -87,7 +87,7 @@ addEventListener(w, 'load', function () {
             return;
         }
 
-        if (password == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,}$/.test(password)) {
+        if (password == '' || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,64}$/.test(password)) {
             warningElem.innerHTML = loginFailed;
             removeClass(warningElem, 'hidden');
             disableAllInputs(false);
