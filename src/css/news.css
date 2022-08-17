@@ -20,8 +20,12 @@ p:lang(en) {
     line-height: 1.5;
 }
 
-html {
+html:not(.no-header-padding) {
     scroll-padding-top: 46px;
+}
+
+html.no-header-padding #main {
+    padding: 0px;
 }
 
 #main>div {

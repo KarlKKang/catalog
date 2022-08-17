@@ -164,10 +164,6 @@ select {
     width: 100%;
 }
 
-#main.no-padding {
-    padding: 0px;
-}
-
 #main-note {
     margin: 0px 0px 2em;
     padding: 0px;

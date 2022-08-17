@@ -431,13 +431,13 @@ export function removeRightClick(elem: HTMLElement) {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function scrollToHash() {
+export function scrollToHash(paddingTop: boolean) {
     const scrollID = getHash();
     if (scrollID !== '') {
         const elem = getByIdNative(scrollID);
         if (elem !== null) {
-            setTimeout(function(){
-                window.scrollBy(0, elem.getBoundingClientRect().top - 46);
+            setTimeout(function () {
+                window.scrollBy(0, elem.getBoundingClientRect().top - (paddingTop ? 46 : 0));
             }, 500); //Give UI some time to load.
         }
     }

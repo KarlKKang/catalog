@@ -86,7 +86,7 @@ function getNews(newsID: string): void {
             showNews(parsedResponse as NewsInfo.NewsInfo);
             navListeners();
             removeClass(getBody(), "hidden");
-            scrollToHash();
+            scrollToHash(true);
         },
         method: 'GET',
         logoutParam: 'news=' + newsID + ((hash === '') ? '' : ('&hash=' + hash))
