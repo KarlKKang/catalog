@@ -94,11 +94,6 @@ addEventListener(w, 'load', function () {
             '<p class="warning hidden" id="username-warning"></p>' +
             '<div class="input-field"><input id="new-username" class="multi-language" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off"></div>' +
             '<button class="button" id="username-change-button">変更する</button>' +
-            '<div class="note">' +
-            '<ul>' +
-            '<li>現在、ユーザー名は使用されていません。 新しい機能が実装されたときに使用できるように準備されています。</li>' +
-            '</ul>' +
-            '</div>' +
 
             '<hr>' +
 
@@ -109,9 +104,9 @@ addEventListener(w, 'load', function () {
             '<button class="button" id="password-change-button">変更する</button>' +
             '<div class="note">' +
             '<ul>' +
-            '<li>使用出来る文字は、半角英大文字、半角英小文字、数字、記号 ` ~ ! @ # $ % ^ &amp; * ( ) - = _ + [ ] { } \ | ; : &apos; &quot; , . &lt; &gt; / ? です。</li>' +
-            '<li>8文字以上を含めてください 。</li>' +
-            '<li>大文字、小文字、数字を含めてください。</li>' +
+            '<li>使用出来る文字は、半角数字・半角英字・記号 ` ~ ! @ # $ % ^ &amp; * ( ) - = _ + [ ] { } \\ | ; : &apos; &quot; , . &lt; &gt; / ? です。</li>' +
+            '<li>8文字以上で入力して下さい。</li>' +
+            '<li>大文字、小文字、数字を含める必要があります。</li>' +
             '</ul>' +
             '</div>' +
 
@@ -124,8 +119,7 @@ addEventListener(w, 'load', function () {
             '<button class="button" id="invite-button">送信する</button>' +
             '<div class="note">' +
             '<ul>' +
-            '<li>受け入れなかった招待を含めて、1年に最大5人までしか招待できません。</li>' +
-            '<li>未定の招待がある場合、これ以上招待を送信することはできません。 </li>' +
+            '<li>進行中の招待がある場合は、別の招待状を送ることはできません。</li>' +
             '</ul>' +
             '</div>';
 
