@@ -21,7 +21,6 @@ import {
     getHref,
     redirect,
     getById,
-    addClass,
     removeClass,
     getBody,
 } from './module/DOM';
@@ -159,10 +158,7 @@ addEventListener(w, 'load', function () {
 
         getById('email').innerHTML = userInfo.email;
         getById('invite-count').innerHTML = userInfo.invite_quota.toString();
-        if (userInfo.invite_quota == 0) {
-            addClass(getById('invite-input'), 'hidden');
-            addClass(inviteButton, 'hidden');
-        }
+
         newUsernameInput.value = userInfo.username;
         currentUsername = userInfo.username;
 
