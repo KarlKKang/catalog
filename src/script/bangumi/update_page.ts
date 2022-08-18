@@ -70,10 +70,10 @@ export default function (
     let titleOverride = response.title_override;
     if (titleOverride !== undefined) {
         titleElem.innerHTML = titleOverride;
-        setTitle(parseCharacters(titleOverride) + ' | featherine');
+        setTitle(parseCharacters(titleOverride) + ' | featherine.com');
     } else {
         titleElem.innerHTML = title;
-        setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | featherine');
+        setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | featherine.com');
     }
 
     if (debug) {

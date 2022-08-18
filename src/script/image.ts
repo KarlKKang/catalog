@@ -70,7 +70,7 @@ addEventListener(w, 'load', function () {
         });
     }, 60 * 1000);
 
-    setTitle(param.title + ' | featherine');
+    setTitle(param.title + ' | featherine.com');
 
     var container = getById('image-container');
 
