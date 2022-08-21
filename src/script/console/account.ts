@@ -10,7 +10,8 @@ import {
     getDescendantsByTag,
     getByClass,
     containsClass,
-    addClass
+    addClass,
+    getDataAttribute
 } from '../module/DOM';
 import { completeCallback, getTable } from './helper';
 
@@ -234,11 +235,12 @@ function updateEventHandlers() {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
-                if (button.dataset.email === undefined) {
+                const email = getDataAttribute(button, 'email');
+                if (email === null) {
                     alert("ERROR: 'email' attribute on the element is undefined.");
                     return;
                 }
-                modifyAccount(button, button.dataset.email);
+                modifyAccount(button, email);
             });
         }
     }
@@ -248,11 +250,12 @@ function updateEventHandlers() {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
-                if (button.dataset.email === undefined) {
+                const email = getDataAttribute(button, 'email');
+                if (email === null) {
                     alert("ERROR: 'email' attribute on the element is undefined.");
                     return;
                 }
-                deleteAccount(button.dataset.email);
+                deleteAccount(email);
             });
         }
     }

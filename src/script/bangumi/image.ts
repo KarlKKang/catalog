@@ -15,6 +15,7 @@ import {
     setCookie,
     appendChild,
     getTitle,
+    setDataAttribute,
 } from '../module/DOM';
 import { default as importLazyload } from '../module/lazyload';
 import type { BangumiInfo, LocalImageParam } from '../module/type';
@@ -43,11 +44,11 @@ export default function (
         appendChild(imageNode, overlay);
 
         addClass(imageNode, 'lazyload');
-        imageNode.dataset.crossorigin = 'use-credentials';
-        imageNode.dataset.src = baseURL + encodeCFURIComponent(file.file_name);
-        imageNode.dataset.alt = file.file_name;
-        imageNode.dataset.xhrParam = index.toString();
-        imageNode.dataset.authenticationToken = epInfo.authentication_token;
+        setDataAttribute(imageNode, 'crossorigin', 'use-credentials');
+        setDataAttribute(imageNode, 'src', baseURL + encodeCFURIComponent(file.file_name));
+        setDataAttribute(imageNode, 'alt', file.file_name);
+        setDataAttribute(imageNode, 'xhr-param', index.toString());
+        setDataAttribute(imageNode, 'authentication-token', epInfo.authentication_token);
         addEventListener(imageNode, 'click', function () {
             let param: LocalImageParam.LocalImageParam = {
                 baseURL: baseURL,

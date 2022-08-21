@@ -29,6 +29,7 @@ import {
     setTitle,
     getTitle,
     getHash,
+    getDataAttribute,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -138,11 +139,11 @@ function bindEventListners(contentContainer: HTMLElement): void {
     var elems = getDescendantsByClass(contentContainer, 'open-window');
     for (let elem of (elems as HTMLCollectionOf<HTMLElement>)) {
         addEventListener(elem, 'click', function () {
-            const page = elem.dataset.page;
+            const page = getDataAttribute(elem, 'page');
 
             if (page === 'news') {
-                const newsID = elem.dataset.newsId;
-                if (newsID !== undefined) {
+                const newsID = getDataAttribute(elem, 'news-id');
+                if (newsID !== null) {
                     openWindow(DEVELOPMENT ? ('news.html?id=' + newsID) : (NEWS_TOP_URL + newsID));
                 }
                 return;
@@ -150,9 +151,9 @@ function bindEventListners(contentContainer: HTMLElement): void {
 
             if (page === 'bangumi') {
                 let separator: '?' | '&' = '?';
-                const seriesID = elem.dataset.seriesId;
+                const seriesID = getDataAttribute(elem, 'series-id');
 
-                if (seriesID === undefined) {
+                if (seriesID === null) {
                     return;
                 }
 
@@ -164,13 +165,13 @@ function bindEventListners(contentContainer: HTMLElement): void {
                     url = TOP_URL + '/bangumi/';
                 }
 
-                const epIndex = elem.dataset.epIndex;
-                if (epIndex !== undefined) {
+                const epIndex = getDataAttribute(elem, 'ep-index');
+                if (epIndex !== null) {
                     url += separator + 'ep=' + epIndex;
                     separator = '&';
                 }
-                const formatIndex = elem.dataset.formatIndex;
-                if (formatIndex !== undefined) {
+                const formatIndex = getDataAttribute(elem, 'format-index');
+                if (formatIndex !== null) {
                     url += separator + 'format=' + formatIndex;
                 }
 

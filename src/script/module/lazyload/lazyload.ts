@@ -8,6 +8,7 @@ import {
     getByClass,
     containsClass,
     addClass,
+    getDataAttribute,
 } from '../DOM';
 import { show as showMessage } from '../message';
 import { lazyloadSrcMissing, javascriptError } from '../message/template/param';
@@ -46,15 +47,23 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
     if (entry['isIntersecting'] === true) {
         observer.unobserve(target);
 
-        const src = target.dataset.src;
-        if (src === undefined) {
+        const src = getDataAttribute(target, 'src');
+        if (src === null) {
             showMessage(lazyloadSrcMissing);
             return;
         }
 
-        const alt = target.dataset.alt === undefined ? src : target.dataset.alt;
+        const altAttr = getDataAttribute(target, 'alt');
+        const alt = altAttr === null ? src : altAttr;
 
-        if (target.dataset.authenticationToken !== undefined) {
+        const authenticationToken = getDataAttribute(target, 'authentication-token');
+
+        if (authenticationToken !== null) {
+            const xhrParam = getDataAttribute(target, 'xhr-param');
+            if (xhrParam === null) {
+                showMessage(javascriptError('xhrParam is null.'));
+                return;
+            }
             sendServerRequest('get_image.php', {
                 callback: function (response: string) {
                     var credentials: CDNCredentials.CDNCredentials;
@@ -72,7 +81,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                         addClass(target, 'complete');
                     });
                 },
-                content: "token=" + target.dataset.authenticationToken + "&p=" + target.dataset.xhrParam
+                content: "token=" + authenticationToken + "&p=" + xhrParam
             });
         } else {
             loader(target, src, alt, function () {

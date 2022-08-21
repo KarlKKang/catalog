@@ -7,7 +7,8 @@ import {
     getDescendantsByClassAt,
     getByClass,
     addClass,
-    containsClass
+    containsClass,
+    getDataAttribute
 } from '../module/DOM';
 
 import { completeCallback, getTable } from './helper';
@@ -258,11 +259,12 @@ function updateEventHandlers() {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
-                if (button.dataset.id === undefined) {
+                const id = getDataAttribute(button, 'id');
+                if (id === null) {
                     alert("ERROR: 'id' attribute on the element is undefined.");
                     return;
                 }
-                updateNewsTime(button.dataset.id);
+                updateNewsTime(id);
             });
         }
     }
@@ -272,11 +274,12 @@ function updateEventHandlers() {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
-                if (button.dataset.id === undefined) {
+                const id = getDataAttribute(button, 'id');
+                if (id === null) {
                     alert("ERROR: 'id' attribute on the element is undefined.");
                     return;
                 }
-                deleteNews(button.dataset.id);
+                deleteNews(id);
             });
         }
     }
@@ -286,11 +289,12 @@ function updateEventHandlers() {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
-                if (button.dataset.id === undefined) {
+                const id = getDataAttribute(button, 'id');
+                if (id === null) {
                     alert("ERROR: 'id' attribute on the element is undefined.");
                     return;
                 }
-                getNewsContent(button, button.dataset.id);
+                getNewsContent(button, id);
             });
         }
     }

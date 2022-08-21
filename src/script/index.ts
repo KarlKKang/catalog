@@ -27,6 +27,7 @@ import {
     addClass,
     changeURL,
     appendChild,
+    setDataAttribute,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -101,8 +102,8 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
         addClass(overlay, 'overlay');
         appendChild(thumbnailNode, overlay);
         addClass(thumbnailNode, 'lazyload');
-        thumbnailNode.dataset.src = CDN_URL + '/thumbnails/' + seriesEntry.thumbnail;
-        thumbnailNode.dataset.alt = 'サムネイル：' + seriesEntry.title;
+        setDataAttribute(thumbnailNode, 'src', CDN_URL + '/thumbnails/' + seriesEntry.thumbnail);
+        setDataAttribute(thumbnailNode, 'alt', 'サムネイル：' + seriesEntry.title);
         titleNode.innerHTML = seriesEntry.title;
         addClass(titleNode, 'ellipsis-clipping-2');
 

@@ -7,7 +7,8 @@ import {
     getDescendantsByClassAt,
     getByClass,
     containsClass,
-    addClass
+    addClass,
+    getDataAttribute
 } from '../module/DOM';
 import { completeCallback, getTable } from './helper';
 
@@ -227,11 +228,12 @@ function updateEventHandlers() {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
-                if (button.dataset.id === undefined) {
+                const id = getDataAttribute(button, 'id');
+                if (id === null) {
                     alert("ERROR: 'id' attribute on the element is undefined.");
                     return;
                 }
-                updateSeriesTime(button.dataset.id);
+                updateSeriesTime(id);
             });
         }
     }
@@ -241,11 +243,12 @@ function updateEventHandlers() {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
-                if (button.dataset.id === undefined) {
+                const id = getDataAttribute(button, 'id');
+                if (id === null) {
                     alert("ERROR: 'id' attribute on the element is undefined.");
                     return;
                 }
-                deleteSeries(button.dataset.id);
+                deleteSeries(id);
             });
         }
     }
