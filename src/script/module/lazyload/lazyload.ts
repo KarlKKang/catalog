@@ -11,7 +11,6 @@ import {
     getDataAttribute,
 } from '../DOM';
 import { show as showMessage } from '../message';
-import { lazyloadSrcMissing, javascriptError } from '../message/template/param';
 import { invalidResponse } from '../message/template/param/server';
 import { CDNCredentials } from '../type';
 import type ImageLoader from '../image_loader';
@@ -39,18 +38,16 @@ export default function (imageLoader: typeof ImageLoader) {
 function observerCallback(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
     const entry = entries[0];
     if (entry === undefined) {
-        showMessage(javascriptError('IntersectionObserverEntry is undefined.'));
-        return;
+        throw new Error('IntersectionObserverEntry is undefined.');
     }
-    const target = entry.target as HTMLElement;
+    const target = entry.target;
 
     if (entry['isIntersecting'] === true) {
         observer.unobserve(target);
 
         const src = getDataAttribute(target, 'src');
         if (src === null) {
-            showMessage(lazyloadSrcMissing);
-            return;
+            throw new Error('The "src" attribute is missing on the lazyload element.');
         }
 
         const altAttr = getDataAttribute(target, 'alt');
@@ -61,8 +58,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
         if (authenticationToken !== null) {
             const xhrParam = getDataAttribute(target, 'xhr-param');
             if (xhrParam === null) {
-                showMessage(javascriptError('xhrParam is null.'));
-                return;
+                throw new Error('The "xhr-param" attribute is null on the lazyload element.');
             }
             sendServerRequest('get_image.php', {
                 callback: function (response: string) {

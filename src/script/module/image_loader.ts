@@ -14,11 +14,11 @@ import { moduleImportError } from './message/template/param';
 
 var webpMachine: WebpMachine | null = null;
 var webpMachineActive = false;
-type webpMachineQueueItem = { container: HTMLElement, image: HTMLImageElement, webpData: Uint8Array, onload: (() => void) | undefined, onerror: () => void };
+type webpMachineQueueItem = { container: Element, image: HTMLImageElement, webpData: Uint8Array, onload: (() => void) | undefined, onerror: () => void };
 var webpMachineQueue: webpMachineQueueItem[] = [];
 var webpSupported: boolean;
 
-export default function (container: HTMLElement, src: string, alt: string, onload?: () => void) {
+export default function (container: Element, src: string, alt: string, onload?: () => void) {
 
     let blob: Blob;
     let isWebp: boolean;

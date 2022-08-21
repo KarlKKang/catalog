@@ -1,7 +1,6 @@
 import {
     LOGIN_URL
 } from '../../../env/constant';
-import { paramWithRedirect } from "./helper";
 
 import * as body from "../body";
 import * as title from "../title";
@@ -15,10 +14,6 @@ export const cssVarError = function (e: string) {
     return {
         message: body.cssVarError(e)
     };
-};
-export const lazyloadSrcMissing = paramWithRedirect(body.lazyloadSrcMissing);
-export const javascriptError = function (e: string) {
-    return paramWithRedirect(body.javascriptError(e))
 };
 export const expired = {
     title: title.expired,

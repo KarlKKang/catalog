@@ -21,9 +21,3 @@ export var moduleImportError = function (e: unknown) {
 export const cssVarError = function (e: string) {
     return `cssの解析に失敗しました。${browserCompatibilitySuffix}<br>` + e;
 };
-
-export const lazyloadSrcMissing = `lazyload：画像のsrc属性が必要です。${defaultErrorSuffix}`;
-
-export const javascriptError = function (e: string) {
-    return `Error detail: ${e}<br>${defaultErrorSuffix}`;
-};
