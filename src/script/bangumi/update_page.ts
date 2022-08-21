@@ -2,6 +2,7 @@ import {
     DEVELOPMENT,
     TOP_URL,
     CDN_URL,
+    DOMAIN,
 } from '../module/env/constant';
 import {
     navListeners,
@@ -70,10 +71,10 @@ export default function (
     let titleOverride = response.title_override;
     if (titleOverride !== undefined) {
         titleElem.innerHTML = titleOverride;
-        setTitle(parseCharacters(titleOverride) + ' | featherine.com');
+        setTitle(parseCharacters(titleOverride) + ' | ' + DOMAIN);
     } else {
         titleElem.innerHTML = title;
-        setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | featherine.com');
+        setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | ' + DOMAIN);
     }
 
     if (debug) {

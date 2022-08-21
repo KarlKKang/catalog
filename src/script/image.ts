@@ -3,6 +3,7 @@ import "core-js";
 import {
     DEVELOPMENT,
     TOP_URL,
+    DOMAIN,
 } from './module/env/constant';
 import {
     sendServerRequest,
@@ -70,7 +71,7 @@ addEventListener(w, 'load', function () {
         });
     }, 60 * 1000);
 
-    setTitle(param.title + ' | featherine.com');
+    setTitle(param.title + ' | ' + DOMAIN);
 
     var container = getById('image-container');
 
