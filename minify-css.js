@@ -9,7 +9,7 @@ if (dev) {
 }
 
 const entries = [
-    'bangumi-hls.css',
+    'bangumi.css',
     'console.css',
     'image.css',
     'index.css',
