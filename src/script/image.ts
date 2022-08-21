@@ -3,13 +3,13 @@ import "core-js";
 import {
     DEVELOPMENT,
     TOP_URL,
-    DOMAIN,
 } from './module/env/constant';
 import {
     sendServerRequest,
     concatenateSignedURL,
     clearCookies,
     removeRightClick,
+    encodeCFURIComponent,
 } from './module/main';
 import {
     w,
@@ -71,7 +71,7 @@ addEventListener(w, 'load', function () {
         });
     }, 60 * 1000);
 
-    setTitle(param.title + ' | ' + DOMAIN);
+    setTitle(param.title);
 
     var container = getById('image-container');
 
@@ -87,10 +87,10 @@ addEventListener(w, 'load', function () {
                 showMessage(invalidResponse);
             }
             const credentials = parsedResponse as CDNCredentials.CDNCredentials;
-            const url = concatenateSignedURL(param.src, credentials);
+            const url = concatenateSignedURL(param.baseURL + encodeCFURIComponent(param.fileName), credentials);
 
             imageLoaderImportPromise.then(({ default: imageLoader }) => {
-                imageLoader(container, url, 'image from ' + param.title);
+                imageLoader(container, url, param.fileName);
             }).catch((e) => {
                 showMessage(moduleImportError(e));
             });

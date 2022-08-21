@@ -1,7 +1,8 @@
 import { throwError, isObject, isString } from './helper';
 
 export interface LocalImageParam {
-    src: string,
+    baseURL: string,
+    fileName: string,
     title: string,
     authenticationToken: string,
     xhrParam: string
@@ -12,7 +13,7 @@ export function check(param: any) {
         throwError();
     }
 
-    if (!isString(param.src) || !isString(param.title) || !isString(param.authenticationToken) || !isString(param.xhrParam)) {
+    if (!isString(param.baseURL) || !isString(param.fileName) || !isString(param.title) || !isString(param.authenticationToken) || !isString(param.xhrParam)) {
         throwError();
     }
 }

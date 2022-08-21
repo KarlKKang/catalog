@@ -9,12 +9,12 @@ import {
 import {
     addEventListener,
     redirect,
-    getById,
     createElement,
     addClass,
     openWindow,
     setCookie,
     appendChild,
+    getTitle,
 } from '../module/DOM';
 import { default as importLazyload } from '../module/lazyload';
 import type { BangumiInfo, LocalImageParam } from '../module/type';
@@ -45,14 +45,15 @@ export default function (
         addClass(imageNode, 'lazyload');
         imageNode.dataset.crossorigin = 'use-credentials';
         imageNode.dataset.src = baseURL + encodeCFURIComponent(file.file_name);
-        imageNode.dataset.alt = getById('title').innerHTML;
+        imageNode.dataset.alt = file.file_name;
         imageNode.dataset.xhrParam = index.toString();
         imageNode.dataset.authenticationToken = epInfo.authentication_token;
         addEventListener(imageNode, 'click', function () {
             let param: LocalImageParam.LocalImageParam = {
-                src: baseURL + encodeCFURIComponent(file.file_name),
+                baseURL: baseURL,
+                fileName: file.file_name,
                 xhrParam: index.toString(),
-                title: getById('title').innerHTML,
+                title: getTitle(),
                 authenticationToken: epInfo.authentication_token
             };
             setCookie('local-image-param', JSON.stringify(param), 10);
