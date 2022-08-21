@@ -3,16 +3,17 @@ import "core-js";
 import {
     DEVELOPMENT,
     LOGIN_URL,
+    TOP_URL,
 } from './module/env/constant';
 import {
     sendServerRequest,
     getURLParam,
     clearCookies,
+    checkBaseURL,
 } from './module/main';
 import {
     w,
     addEventListener,
-    getHref,
     redirect,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
@@ -21,7 +22,7 @@ import { expired, emailChanged}  from './module/message/template/param';
 addEventListener(w, 'load', function () {
     clearCookies();
 
-    if (!getHref().startsWith('https://featherine.com/confirm_new_email') && !DEVELOPMENT) {
+    if (!checkBaseURL(TOP_URL + '/confirm_new_email') && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }

@@ -3,6 +3,7 @@ import "core-js";
 import {
     DEVELOPMENT,
     LOGIN_URL,
+    TOP_URL,
 } from './module/env/constant';
 import {
     getURLParam,
@@ -12,12 +13,12 @@ import {
     cssVarWrapper,
     hashPassword,
     disableInput,
-    PASSWORD_REGEX
+    PASSWORD_REGEX,
+    checkBaseURL
 } from './module/main';
 import {
     w,
     addEventListener,
-    getHref,
     redirect,
     getById,
     removeClass,
@@ -33,7 +34,7 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (!getHref().startsWith('https://featherine.com/register') && !DEVELOPMENT) {
+    if (!checkBaseURL(TOP_URL + '/register') && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }

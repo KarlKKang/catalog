@@ -21,12 +21,18 @@ import {
     setTitle,
     deleteCookie,
     addClass,
+    getHref,
 } from './module/DOM';
 import { LocalMessageParam } from './module/type';
 
 addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
+
+    if (getHref() !== TOP_URL + '/message' && !DEVELOPMENT) {
+        redirect(TOP_URL + '/message', true);
+        return;
+    }
 
     var paramCookie = getCookie('local-message-param');
     var titleElem = getById('title');

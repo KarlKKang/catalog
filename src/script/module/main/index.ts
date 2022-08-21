@@ -445,3 +445,9 @@ export function scrollToHash(paddingTop: boolean) {
         }
     }
 }
+////////////////////////////////////////
+
+////////////////////////////////////////
+export function checkBaseURL(baseURL: string) {
+    return getHref() === baseURL || getHref().startsWith(baseURL + '?') || getHref().startsWith(baseURL + '#');
+}

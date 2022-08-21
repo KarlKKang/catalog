@@ -16,11 +16,11 @@ import {
     getURLParam,
     PASSWORD_REGEX,
     EMAIL_REGEX,
+    checkBaseURL,
 } from './module/main';
 import {
     w,
     addEventListener,
-    getHref,
     redirect,
     getById,
     removeClass,
@@ -35,7 +35,7 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (!getHref().startsWith(LOGIN_URL) && !DEVELOPMENT) {
+    if (!checkBaseURL(LOGIN_URL) && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }

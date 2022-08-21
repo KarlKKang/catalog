@@ -28,8 +28,8 @@ import { LocalImageParam, CDNCredentials } from './module/type';
 addEventListener(w, 'load', function () {
     clearCookies();
 
-    if (getHref() != 'https://featherine.com/image' && !DEVELOPMENT) {
-        redirect('https://featherine.com/image', true);
+    if (getHref() !== TOP_URL + '/image' && !DEVELOPMENT) {
+        redirect(TOP_URL + '/image', true);
         return;
     }
 

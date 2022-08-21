@@ -1,10 +1,11 @@
 // JavaScript Document
 import "core-js";
 import {
-    DEVELOPMENT,
+    DEVELOPMENT, TOP_URL,
 } from './module/env/constant';
 import {
     authenticate,
+    checkBaseURL,
     clearCookies,
     cssVarWrapper,
     navListeners,
@@ -13,7 +14,6 @@ import {
 import {
     w,
     addEventListener,
-    getHref,
     redirect,
     removeClass,
     getBody,
@@ -25,8 +25,8 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (!getHref().startsWith('https://featherine.com/info') && !DEVELOPMENT) {
-        redirect('https://featherine.com/info', true);
+    if (!checkBaseURL(TOP_URL + '/info') && !DEVELOPMENT) {
+        redirect(TOP_URL + '/info', true);
         return;
     }
 

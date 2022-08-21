@@ -23,9 +23,10 @@
     align-self: flex-start;
 }
 
-@supports (max-width: calc(50% - 2 * min(2%, 12px))) and (margin: min(2%, 12px)) {
+/* Prefix of calc is not added to @supports conditions by autoprefixer */
+@supports ((max-width:-webkit-calc(50% - min(2%, 12px) * 2)) or (max-width:-moz-calc(50% - min(2%, 12px) * 2)) or (max-width:calc(50% - min(2%, 12px) * 2))) and (margin: min(2%, 12px)) {
     #container>div {
-        max-width: calc(50% - 2 * min(2%, 12px));
+        max-width: calc(50% - min(2%, 12px) * 2);
         margin: min(2%, 12px);
     }
 }
@@ -53,7 +54,6 @@
     #container>div>div>img,
     #container>div>div>canvas {
         filter: brightness(0.95) contrast(0.96);
-        -webkit-filter: brightness(0.95) contrast(0.96);
     }
 }
 

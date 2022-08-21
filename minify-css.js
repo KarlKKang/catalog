@@ -27,4 +27,4 @@ for (let filename of entries) {
     minifier(srcDir, destDir, filename);
 }
 
-minifier('./node_modules/video.js/dist/', destDir, 'video-js.min.css');
+minifier('./node_modules/video.js/dist/', destDir, 'video-js.css');

@@ -10,12 +10,12 @@ import {
     clearCookies,
     cssVarWrapper,
     disableInput,
-    EMAIL_REGEX
+    EMAIL_REGEX,
+    checkBaseURL
 } from './module/main';
 import {
     w,
     addEventListener,
-    getHref,
     redirect,
     getById,
     removeClass,
@@ -29,7 +29,7 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (!getHref().startsWith('https://featherine.com/new_email') && !DEVELOPMENT) {
+    if (!checkBaseURL(TOP_URL + '/new_email') && !DEVELOPMENT) {
         redirect(TOP_URL, true);
         return;
     }

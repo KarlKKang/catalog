@@ -12,12 +12,12 @@ import {
     cssVarWrapper,
     hashPassword,
     disableInput,
-    PASSWORD_REGEX
+    PASSWORD_REGEX,
+    checkBaseURL
 } from './module/main';
 import {
     w,
     addEventListener,
-    getHref,
     redirect,
     getById,
     removeClass,
@@ -32,7 +32,7 @@ addEventListener(w, 'load', function () {
     clearCookies();
 
 
-    if (!getHref().startsWith('https://login.featherine.com/password_reset') && !DEVELOPMENT) {
+    if (!checkBaseURL(LOGIN_URL + '/password_reset') && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }

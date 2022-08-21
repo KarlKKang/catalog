@@ -122,9 +122,9 @@ button {
 button:disabled,
 .input-field>input:disabled {
     color: var(--alt-text-color);
+    /* required on iOS */
     -webkit-text-fill-color: var(--alt-text-color);
     opacity: 1;
-    /* required on iOS */
     cursor: wait;
 }
 
@@ -252,33 +252,6 @@ select {
     opacity: 1;
 }
 
-::-webkit-input-placeholder {
-    /* WebKit, Blink, Edge */
-    color: var(--alt-text-color);
-}
-
-:-moz-placeholder {
-    /* Mozilla Firefox 4 to 18 */
-    color: var(--alt-text-color);
-    opacity: 1;
-}
-
-::-moz-placeholder {
-    /* Mozilla Firefox 19+ */
-    color: var(--alt-text-color);
-    opacity: 1;
-}
-
-:-ms-input-placeholder {
-    /* Internet Explorer 10-11 */
-    color: var(--alt-text-color);
-}
-
-::-ms-input-placeholder {
-    /* Microsoft Edge */
-    color: var(--alt-text-color);
-}
-
 /*////////////////////////////////////////////////////////Navigation button////////////////////////////////////////////////////////*/
 #nav-btn {
     position: fixed;
@@ -300,7 +273,6 @@ select {
     height: 2px;
     background: var(--text-color);
     margin: -1px 0 0 -9px;
-    -webkit-transform-origin: right top;
     transform-origin: right top;
     transition: .3s;
 }
@@ -342,13 +314,11 @@ select {
 }
 
 #nav-btn.active span:before {
-    -webkit-transform: rotate(-45deg);
     transform: rotate(-45deg);
 }
 
 #nav-btn.active span:after {
     width: 18px;
-    -webkit-transform: rotate(-135deg);
     transform: rotate(-135deg);
 }
 
@@ -368,10 +338,10 @@ select {
     background-color: var(--foreground-color);
 }
 
-@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+/* Prefix of backdrop-filter is added to @supports conditions by autoprefixer */
+@supports (backdrop-filter: none) {
     #nav-menu {
         background-color: var(--nav-menu-background-color);
-        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
     }
 }

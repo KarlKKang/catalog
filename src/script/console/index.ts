@@ -1,7 +1,7 @@
 // JavaScript Document
 import "core-js";
 import {
-    DEVELOPMENT,
+    DEVELOPMENT, TOP_URL,
 } from '../module/env/constant';
 import {
     sendServerRequest,
@@ -23,15 +23,15 @@ import { getTable, setOutput } from './helper';
 addEventListener(w, 'load', function () {
     clearCookies();
 
-    if (getHref() != 'https://featherine.com/console' && !DEVELOPMENT) {
-        redirect('https://featherine.com/console', true);
+    if (getHref() !== TOP_URL + '/console' && !DEVELOPMENT) {
+        redirect(TOP_URL + '/console', true);
         return;
     }
 
     sendServerRequest('console.php', {
         callback: function (response: string) {
             if (response != 'APPROVED') {
-                redirect('https://featherine.com', true);
+                redirect(TOP_URL, true);
             } else {
                 Promise.all([
                     import(

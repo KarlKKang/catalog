@@ -1,7 +1,7 @@
 // JavaScript Document
 import "core-js";
 import {
-    DEVELOPMENT
+    DEVELOPMENT, TOP_URL
 } from './module/env/constant';
 import {
     navListeners,
@@ -51,8 +51,8 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (getHref() != 'https://featherine.com/my_account' && !DEVELOPMENT) {
-        redirect('https://featherine.com/my_account', true);
+    if (getHref() !== TOP_URL + '/my_account' && !DEVELOPMENT) {
+        redirect(TOP_URL + '/my_account', true);
         return;
     }
 

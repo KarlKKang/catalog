@@ -12,11 +12,11 @@ import {
     clearCookies,
     cssVarWrapper,
     disableInput,
+    checkBaseURL,
 } from './module/main';
 import {
     w,
     addEventListener,
-    getHref,
     redirect,
     getById,
     getDescendantsByTagAt,
@@ -52,7 +52,7 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (!getHref().startsWith('https://featherine.com') && !DEVELOPMENT) {
+    if (!checkBaseURL(TOP_URL) && !DEVELOPMENT) {
         redirect(TOP_URL, true);
         return;
     }
@@ -102,7 +102,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
         appendChild(thumbnailNode, overlay);
         addClass(thumbnailNode, 'lazyload');
         thumbnailNode.dataset.src = CDN_URL + '/thumbnails/' + seriesEntry.thumbnail;
-        thumbnailNode.dataset.alt = 'thumbnail: ' + seriesEntry.thumbnail;
+        thumbnailNode.dataset.alt = 'サムネイル：' + seriesEntry.title;
         titleNode.innerHTML = seriesEntry.title;
         addClass(titleNode, 'ellipsis-clipping-2');
 

@@ -31,8 +31,8 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (getHref() != 'https://login.featherine.com/request_password_reset' && !DEVELOPMENT) {
-        redirect('https://login.featherine.com/request_password_reset', true);
+    if (getHref() !== LOGIN_URL + '/request_password_reset' && !DEVELOPMENT) {
+        redirect(LOGIN_URL + '/request_password_reset', true);
         return;
     }
 

@@ -1,7 +1,7 @@
 // JavaScript Document
 import "core-js";
 import {
-    DEVELOPMENT, LOGIN_URL,
+    DEVELOPMENT, LOGIN_URL, TOP_URL,
 } from './module/env/constant';
 import {
     sendServerRequest,
@@ -27,8 +27,8 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    if (getHref() != 'https://featherine.com/special_register' && !DEVELOPMENT) {
-        redirect('https://featherine.com/special_register', true);
+    if (getHref() !== TOP_URL + '/special_register' && !DEVELOPMENT) {
+        redirect(TOP_URL + '/special_register', true);
         return;
     }
 
