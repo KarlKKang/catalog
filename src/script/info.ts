@@ -22,13 +22,13 @@ import {
 } from './module/DOM';
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (!checkBaseURL(TOP_URL + '/info') && !DEVELOPMENT) {
         redirect(TOP_URL + '/info', true);
         return;
     }
+
+    cssVarWrapper();
+    clearCookies();
 
     authenticate({
         successful:

@@ -31,13 +31,12 @@ import { expired, registerComplete } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (!checkBaseURL(TOP_URL + '/register') && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }
+
+    clearCookies();
 
     var submitButton = getById('submit-button') as HTMLButtonElement;
     var usernameInput = getById('username') as HTMLInputElement;
@@ -72,6 +71,8 @@ addEventListener(w, 'load', function () {
         redirect(LOGIN_URL, true);
         return;
     }
+
+    cssVarWrapper();
 
     sendServerRequest('register.php', {
         callback: function (response: string) {

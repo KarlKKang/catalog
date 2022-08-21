@@ -26,12 +26,12 @@ import { invalidResponse } from './module/message/template/param/server';
 import { LocalImageParam, CDNCredentials } from './module/type';
 
 addEventListener(w, 'load', function () {
-    clearCookies();
-
     if (getHref() !== TOP_URL + '/image' && !DEVELOPMENT) {
         redirect(TOP_URL + '/image', true);
         return;
     }
+
+    clearCookies();
 
     var paramCookie = getCookie('local-image-param');
 

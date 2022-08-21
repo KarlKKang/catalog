@@ -26,13 +26,12 @@ import { invalidEmailFormat, emailAlreadyInvitedOrRegistered } from './module/me
 import { expired, emailSent } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (!checkBaseURL(TOP_URL + '/new_email') && !DEVELOPMENT) {
         redirect(TOP_URL, true);
         return;
     }
+
+    clearCookies();
 
     var newEmailInput = getById('new-email') as HTMLInputElement;
     var submitButton = getById('submit-button') as HTMLButtonElement;
@@ -53,6 +52,8 @@ addEventListener(w, 'load', function () {
         redirect(TOP_URL, true);
         return;
     }
+
+    cssVarWrapper();
 
     sendServerRequest('verify_email_change.php', {
         callback: function (response: string) {

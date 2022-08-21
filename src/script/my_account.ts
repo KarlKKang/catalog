@@ -47,14 +47,13 @@ import {
 import { UserInfo } from './module/type';
 
 addEventListener(w, 'load', function () {
-
-    cssVarWrapper();
-    clearCookies();
-
     if (getHref() !== TOP_URL + '/my_account' && !DEVELOPMENT) {
         redirect(TOP_URL + '/my_account', true);
         return;
     }
+
+    cssVarWrapper();
+    clearCookies();
 
     var currentUsername: string;
 

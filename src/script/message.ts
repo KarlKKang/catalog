@@ -26,13 +26,12 @@ import {
 import { LocalMessageParam } from './module/type';
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (getHref() !== TOP_URL + '/message' && !DEVELOPMENT) {
         redirect(TOP_URL + '/message', true);
         return;
     }
+
+    clearCookies();
 
     var paramCookie = getCookie('local-message-param');
     var titleElem = getById('title');
@@ -82,6 +81,8 @@ addEventListener(w, 'load', function () {
 
         removeClass(getBody(), "hidden");
     };
+
+    cssVarWrapper();
 
     if (param.logout === true) {
         logout(callback);

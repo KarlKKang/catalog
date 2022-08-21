@@ -24,13 +24,13 @@ import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat, emailAlreadyRegistered, emailAlreadyInvited, invitationClosed, invitationOnly } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (getHref() !== TOP_URL + '/special_register' && !DEVELOPMENT) {
         redirect(TOP_URL + '/special_register', true);
         return;
     }
+
+    cssVarWrapper();
+    clearCookies();
 
     var emailInput = getById('email') as HTMLInputElement;
     var submitButton = getById('submit-button') as HTMLButtonElement;

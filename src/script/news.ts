@@ -40,13 +40,13 @@ var offset: AllNewsInfo.OffsetInfo = 0;
 var infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (!getHref().startsWith(NEWS_TOP_URL) && !DEVELOPMENT) {
         redirect(NEWS_TOP_URL, true);
         return;
     }
+
+    cssVarWrapper();
+    clearCookies();
 
     const newsID = getNewsID();
     if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {

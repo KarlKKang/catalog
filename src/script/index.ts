@@ -49,13 +49,13 @@ var lazyloadImportPromise: ReturnType<typeof importLazyload>;
 var infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (!checkBaseURL(TOP_URL) && !DEVELOPMENT) {
         redirect(TOP_URL, true);
         return;
     }
+
+    cssVarWrapper();
+    clearCookies();
 
     // Preload module
     lazyloadImportPromise = importLazyload();

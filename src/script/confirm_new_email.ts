@@ -17,15 +17,15 @@ import {
     redirect,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
-import { expired, emailChanged}  from './module/message/template/param';
+import { expired, emailChanged } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    clearCookies();
-
     if (!checkBaseURL(TOP_URL + '/confirm_new_email') && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }
+
+    clearCookies();
 
     var param = getURLParam('p');
     var signature = getURLParam('signature');

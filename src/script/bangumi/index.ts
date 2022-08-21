@@ -23,13 +23,12 @@ import { BangumiInfo } from '../module/type';
 import { getLogoutParam, getFormatIndex } from './helper';
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (!getHref().startsWith(TOP_URL + '/bangumi/') && !DEVELOPMENT) {
         redirect(TOP_URL, true);
         return;
     }
+
+    clearCookies();
 
     // Parse parameters
     const seriesIDParam = getSeriesID();
@@ -38,6 +37,8 @@ addEventListener(w, 'load', function () {
         return;
     }
     const seriesID = seriesIDParam;
+
+    cssVarWrapper();
 
     // Preload modules
     let updatePageImportPromise = import(

@@ -32,13 +32,13 @@ import { loginFailed, accountDeactivated } from './module/message/template/inlin
 import { unrecommendedBrowser } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (!checkBaseURL(LOGIN_URL) && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }
+
+    cssVarWrapper();
+    clearCookies();
 
     var submitButton = getById('submit-button') as HTMLButtonElement;
     var passwordInput = getById('current-password') as HTMLInputElement;

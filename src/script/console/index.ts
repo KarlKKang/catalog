@@ -21,12 +21,12 @@ import { moduleImportError } from '../module/message/template/param';
 import { getTable, setOutput } from './helper';
 
 addEventListener(w, 'load', function () {
-    clearCookies();
-
     if (getHref() !== TOP_URL + '/console' && !DEVELOPMENT) {
         redirect(TOP_URL + '/console', true);
         return;
     }
+
+    clearCookies();
 
     sendServerRequest('console.php', {
         callback: function (response: string) {

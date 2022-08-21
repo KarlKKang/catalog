@@ -28,13 +28,13 @@ import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
     if (getHref() !== LOGIN_URL + '/request_password_reset' && !DEVELOPMENT) {
         redirect(LOGIN_URL + '/request_password_reset', true);
         return;
     }
+
+    cssVarWrapper();
+    clearCookies();
 
     var emailInput = getById('email') as HTMLInputElement;
     var submitButton = getById('submit-button') as HTMLButtonElement;

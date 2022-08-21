@@ -28,15 +28,12 @@ import { invalidPasswordFormat, passwordConfirmationMismatch } from './module/me
 import { expired, passwordChanged } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    cssVarWrapper();
-    clearCookies();
-
-
     if (!checkBaseURL(LOGIN_URL + '/password_reset') && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }
 
+    clearCookies();
 
     var newPasswordInput = getById('new-password') as HTMLInputElement;
     var newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
@@ -64,6 +61,8 @@ addEventListener(w, 'load', function () {
         redirect(LOGIN_URL, true);
         return;
     }
+
+    cssVarWrapper();
 
     sendServerRequest('reset_password.php', {
         callback: function (response: string) {
