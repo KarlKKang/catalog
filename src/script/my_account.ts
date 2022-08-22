@@ -110,7 +110,7 @@ addEventListener(w, 'load', function () {
             '<button class="button" id="password-change-button">変更する</button>' +
             '<div class="note">' +
             '<ul>' +
-            '<li>使用出来る文字は、半角数字・半角英字・記号 ` ~ ! @ # $ % ^ &amp; * ( ) - = _ + [ ] { } \\ | ; : &apos; &quot; , . &lt; &gt; / ? です。</li>' +
+            '<li>使用できる文字は、半角数字・半角英字・記号 ` ~ ! @ # $ % ^ &amp; * ( ) - = _ + [ ] { } \\ | ; : &apos; &quot; , . &lt; &gt; / ? です。</li>' +
             '<li>8～64文字で入力して下さい。</li>' +
             '<li>大文字、小文字、数字を含める必要があります。</li>' +
             '</ul>' +

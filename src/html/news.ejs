@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <%= require("./module/main_header.ejs").default({ title: htmlWebpackPlugin.options.title, index: index }) %>
+    <%= require("./module/header_theme.ejs").default() %>
+
+    <link rel="stylesheet" type="text/css" href="/font/Roboto/Roboto-Light.css">
+    <link rel="stylesheet" type="text/css" href="/font/Roboto/Roboto-Regular.css">
+    <link rel="stylesheet" type="text/css" href="/font/Roboto/Roboto-Medium.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Light.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Regular.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Medium.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansSC/NotoSansSC-Light.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansSC/NotoSansSC-Regular.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansSC/NotoSansSC-Medium.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansTC/NotoSansTC-Light.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansTC/NotoSansTC-Regular.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansTC/NotoSansTC-Medium.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/news.css">
+</head>
+
+<body class="hidden">
+    <div id="header"></div>
+    <div id="nav-btn"><span></span></div>
+    <div id="nav-menu" class="invisible transparent">
+        <div id="nav-menu-content"></div>
+    </div>
+
+    <div id="main"></div>
+    <div id="position-detector" class="loading"></div>
+</body>
+
+</html>

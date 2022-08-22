@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <%= require("./module/main_header.ejs").default({ title: htmlWebpackPlugin.options.title, index: index }) %>
+    <%= require("./module/header_theme.ejs").default() %>
+
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Light.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Medium.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/message.css">
+</head>
+
+<body class="hidden">
+    <div id="container">
+        <p id="title"></p>
+        <p id="message"></p>
+        <button id="button"></button>
+    </div>
+</body>
+
+</html>

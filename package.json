@@ -29,6 +29,7 @@
     "babel-loader": "^8.2.5",
     "cssnano": "^5.1.13",
     "cssnano-preset-advanced": "^5.3.8",
+    "ejs-loader": "^0.5.0",
     "html-webpack-plugin": "^5.5.0",
     "postcss": "^8.4.16",
     "terser-webpack-plugin": "^5.3.5",

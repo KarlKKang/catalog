@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <%= require("./module/main_header.ejs").default({ title: htmlWebpackPlugin.options.title, index: index }) %>
+    <%= require("./module/header_theme.ejs").default() %>
+
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Light.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Medium.css">
+    <link rel="stylesheet" type="text/css" href="/font/Segoe/SegMDL2.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/bangumi.css">
+    <link rel="stylesheet" type="text/css" href="/css/video-js.css">
+    <link rel="stylesheet" type="text/css" href="/css/videojs_mod.css">
+</head>
+
+<body class="hidden">
+    <div id="header"></div>
+    <div id="nav-btn"><span></span></div>
+    <div id="nav-menu" class="invisible transparent">
+        <div id="nav-menu-content"></div>
+    </div>
+
+    <div id="main">
+        <p id="title"></p>
+        <div id="season-selector"></div>
+        <div id="ep-selector"></div>
+        <hr>
+        <div id="warning" class="hidden">
+            <p id="warning-title"></p>
+            <p id="warning-body"></p>
+            <div id="warning-button-group"></div>
+        </div>
+        <div id="content">
+            <div id="message" class="hidden">
+                <p id="message-title"></p>
+                <div id="message-body"></div>
+            </div>
+            <div id="media-holder"></div>
+        </div>
+    </div>
+</body>
+
+</html>
