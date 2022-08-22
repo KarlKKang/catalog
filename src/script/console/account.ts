@@ -24,14 +24,14 @@ export function getAccountTable() {
 }
 
 async function addAccount(button: Element) {
-    var record = getParent(getParent(button));
-    var email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
-    var username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
-    var password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
+    const record = getParent(getParent(button));
+    const email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
+    const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
+    const password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
 
-    var selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
-    var user_group = '';
-    for (let selection of selections) {
+    let selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+    let user_group = '';
+    for (const selection of selections) {
         if (selection.checked) {
             user_group = selection.value;
             break;
@@ -39,17 +39,17 @@ async function addAccount(button: Element) {
     }
 
     selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
-    var status = '';
-    for (let selection of selections) {
+    let status = '';
+    for (const selection of selections) {
         if (selection.checked) {
             status = selection.value;
             break;
         }
     }
 
-    var available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
+    const available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
 
-    var parsedRecord = await parseAccountRecord(email, username, password, user_group, status, available_invite);
+    const parsedRecord = await parseAccountRecord(email, username, password, user_group, status, available_invite);
     if (!parsedRecord) {
         return;
     }
@@ -59,13 +59,13 @@ async function addAccount(button: Element) {
         return;
     }
 
-    var param = {
+    const param = {
         command: 'insert',
         type: 'account',
         ...parsedRecord
     };
 
-    var confirm;
+    let confirm;
     do {
         confirm = prompt('Type "insert" to confirm.');
         if (confirm === null) {
@@ -80,14 +80,14 @@ async function addAccount(button: Element) {
 }
 
 async function modifyAccount(button: Element, originalEmail: string) {
-    var record = getParent(getParent(button));
-    var email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
-    var username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
-    var password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
+    const record = getParent(getParent(button));
+    const email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
+    const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
+    const password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
 
-    var selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
-    var user_group = '';
-    for (let selection of selections) {
+    let selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+    let user_group = '';
+    for (const selection of selections) {
         if (selection.checked) {
             user_group = selection.value;
             break;
@@ -95,29 +95,29 @@ async function modifyAccount(button: Element, originalEmail: string) {
     }
 
     selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
-    var status = '';
-    for (let selection of selections) {
+    let status = '';
+    for (const selection of selections) {
         if (selection.checked) {
             status = selection.value;
             break;
         }
     }
 
-    var available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
+    const available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
 
-    var parsedRecord = await parseAccountRecord(email, username, password, user_group, status, available_invite);
+    const parsedRecord = await parseAccountRecord(email, username, password, user_group, status, available_invite);
     if (!parsedRecord) {
         return;
     }
 
-    var param = {
+    const param = {
         command: 'modify',
         type: 'account',
         original_email: originalEmail,
         ...parsedRecord
     };
 
-    var confirm;
+    let confirm;
     do {
         confirm = prompt('Type "modify" to confirm.');
         if (confirm === null) {
@@ -174,12 +174,11 @@ async function parseAccountRecord(email: string, username: string, password: str
         return false;
     }
 
-    let available_invite_parsed: number;
     if (available_invite == '') {
         alert("ERROR: 'available_invite' is required");
         return false;
     }
-    available_invite_parsed = parseInt(available_invite);
+    const available_invite_parsed = parseInt(available_invite);
     if (isNaN(available_invite_parsed)) {
         alert("ERROR: Invalid value for 'available_invite'");
         return false;
@@ -199,7 +198,7 @@ async function parseAccountRecord(email: string, username: string, password: str
 }
 
 function deleteAccount(email: string) {
-    var confirm;
+    let confirm;
     do {
         confirm = prompt('Type "delete" to confirm. Deleting an account is NOT recommended. Use "status" option instead.');
         if (confirm === null) {
@@ -207,7 +206,7 @@ function deleteAccount(email: string) {
         }
     } while (confirm != "delete");
 
-    var param = {
+    const param = {
         command: 'delete',
         type: 'account',
         email: email
@@ -220,8 +219,8 @@ function deleteAccount(email: string) {
 }
 
 function updateEventHandlers() {
-    var buttons = getByClass('add-account');
-    for (let button of buttons) {
+    let buttons = getByClass('add-account');
+    for (const button of buttons) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -231,7 +230,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('modify-account');
-    for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+    for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -246,7 +245,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('delete-account');
-    for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+    for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {

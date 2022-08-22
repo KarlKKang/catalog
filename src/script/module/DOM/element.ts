@@ -5,7 +5,7 @@ export function getByIdNative(id: string) {
 }
 
 export function getById(id: string) {
-    let elem = getByIdNative(id);
+    const elem = getByIdNative(id);
     if (elem === null) {
         throw new Error(`Element with ID '${id}' not found.`);
     }
@@ -104,7 +104,7 @@ export function getAttribute(elem: Element, name: string) {
 }
 
 export function getParent(elem: Element) {
-    var parent = elem.parentElement;
+    const parent = elem.parentElement;
     if (parent === null) {
         throw new Error('parentElement not found.');
     }
@@ -132,7 +132,7 @@ export function addEventListener(elem: Element | Document | Window, event: strin
 }
 
 export function addEventsListener(elem: Element | Document | Window, events: Array<string>, callback: EventListenerOrEventListenerObject, useCapture?: boolean) {
-    for (let event of events) {
+    for (const event of events) {
         addEventListener(elem, event, callback, useCapture);
     }
 }
@@ -142,7 +142,7 @@ export function removeEventListener(elem: Element | Document | Window, event: st
 }
 
 export function removeEventsListener(elem: Element | Document | Window, events: Array<string>, callback: EventListenerOrEventListenerObject, useCapture?: boolean) {
-    for (let event of events) {
+    for (const event of events) {
         removeEventListener(elem, event, callback, useCapture);
     }
 }

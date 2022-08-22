@@ -37,8 +37,8 @@ import { AllNewsInfo, NewsInfo } from './module/type';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
-var offset: AllNewsInfo.OffsetInfo = 0;
-var infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
+let offset: AllNewsInfo.OffsetInfo = 0;
+let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 addEventListener(w, 'load', function () {
     if (!getHref().startsWith(NEWS_TOP_URL) && !DEVELOPMENT) {
@@ -76,7 +76,7 @@ function getNews(newsID: string): void {
     const hash = getHash();
     sendServerRequest('get_news.php' + '?id=' + newsID, {
         callback: function (response: string) {
-            var parsedResponse: any;
+            let parsedResponse: NewsInfo.NewsInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 NewsInfo.check(parsedResponse);
@@ -84,7 +84,7 @@ function getNews(newsID: string): void {
                 showMessage(invalidResponse);
                 return;
             }
-            showNews(parsedResponse as NewsInfo.NewsInfo);
+            showNews(parsedResponse);
             navListeners();
             removeClass(getBody(), "hidden");
             scrollToHash(true);
@@ -95,36 +95,36 @@ function getNews(newsID: string): void {
 }
 
 function showNews(newsInfo: NewsInfo.NewsInfo): void {
-    let outerContainer = createElement('div');
-    let container = createElement('div');
+    const outerContainer = createElement('div');
+    const container = createElement('div');
     container.id = 'content-container';
 
-    let titleContainer = createElement('p');
+    const titleContainer = createElement('p');
     titleContainer.id = 'title';
 
     titleContainer.innerHTML = newsInfo.title;
     setTitle(newsInfo.title + ' | ' + getTitle());
     appendChild(container, titleContainer);
 
-    let createTimeContainer = createElement('p');
+    const createTimeContainer = createElement('p');
     addClass(createTimeContainer, 'date');
 
-    let createTime = new Date(newsInfo.create_time * 1000);
+    const createTime = new Date(newsInfo.create_time * 1000);
     createTimeContainer.innerHTML = '初回掲載日：' + createTime.getFullYear() + '年' + (createTime.getMonth() + 1) + '月' + createTime.getDate() + '日（' + getDayOfWeek(createTime) + '）' + createTime.getHours() + '時' + createTime.getMinutes() + '分' + createTime.getSeconds() + '秒';
     appendChild(container, createTimeContainer);
 
     if (newsInfo.update_time !== null) {
-        let updateTimeContainer = createElement('p');
+        const updateTimeContainer = createElement('p');
         addClass(updateTimeContainer, 'date');
 
-        let updateTime = new Date(newsInfo.update_time * 1000);
+        const updateTime = new Date(newsInfo.update_time * 1000);
         updateTimeContainer.innerHTML = '最終更新日：' + updateTime.getFullYear() + '年' + (updateTime.getMonth() + 1) + '月' + updateTime.getDate() + '日（' + getDayOfWeek(createTime) + '）' + createTime.getHours() + '時' + createTime.getMinutes() + '分' + createTime.getSeconds() + '秒';
         appendChild(container, updateTimeContainer);
     }
 
     appendChild(container, createElement('hr'));
 
-    let contentContainer = createElement('div');
+    const contentContainer = createElement('div');
     contentContainer.id = 'content';
     contentContainer.innerHTML = newsInfo.content;
     appendChild(container, contentContainer);
@@ -136,8 +136,8 @@ function showNews(newsInfo: NewsInfo.NewsInfo): void {
 }
 
 function bindEventListners(contentContainer: HTMLElement): void {
-    var elems = getDescendantsByClass(contentContainer, 'open-window');
-    for (let elem of (elems as HTMLCollectionOf<HTMLElement>)) {
+    const elems = getDescendantsByClass(contentContainer, 'open-window');
+    for (const elem of (elems as HTMLCollectionOf<HTMLElement>)) {
         addEventListener(elem, 'click', function () {
             const page = getDataAttribute(elem, 'page');
 
@@ -189,7 +189,7 @@ function getAllNews(): void {
 
     sendServerRequest('get_all_news.php', {
         callback: function (response: string) {
-            var parsedResponse: any;
+            let parsedResponse: AllNewsInfo.AllNewsInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 AllNewsInfo.check(parsedResponse);
@@ -197,7 +197,7 @@ function getAllNews(): void {
                 showMessage(invalidResponse);
                 return;
             }
-            showAllNews(parsedResponse as AllNewsInfo.AllNewsInfo);
+            showAllNews(parsedResponse);
             navListeners();
             removeClass(getBody(), "hidden");
         },
@@ -206,19 +206,19 @@ function getAllNews(): void {
 }
 
 function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
-    var entries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
-    for (let entry of entries) {
-        let overviewContainer = createElement('div');
+    const entries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
+    for (const entry of entries) {
+        const overviewContainer = createElement('div');
         addClass(overviewContainer, 'overview-container');
 
-        let dateContainer = createElement('div');
+        const dateContainer = createElement('div');
         addClass(dateContainer, 'date');
-        let updateTime = new Date(entry.update_time * 1000);
+        const updateTime = new Date(entry.update_time * 1000);
         dateContainer.innerHTML = updateTime.getFullYear() + '年';
         appendChild(dateContainer, createElement('br'));
         dateContainer.innerHTML += (updateTime.getMonth() + 1) + '月' + updateTime.getDate() + '日';
 
-        let titleContainer = createElement('div');
+        const titleContainer = createElement('div');
         titleContainer.innerHTML = entry.title;
         addClass(titleContainer, 'overview-title');
         addClass(titleContainer, 'ellipsis-clipping-2');
@@ -240,7 +240,7 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
 
 function getDayOfWeek(date: Date): string {
     const index = date.getDay();
-    var result: string;
+    let result: string;
     switch (index) {
         case 1:
             result = '月';

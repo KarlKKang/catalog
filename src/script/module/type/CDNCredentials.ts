@@ -15,19 +15,19 @@ interface CDNPolicy {
             }
         }
     }]
-};
+}
 interface BaseCDNCredentials {
     Signature: string,
     "Key-Pair-Id": string
-};
+}
 interface CDNCredentialsWithPolicy extends BaseCDNCredentials {
     Policy: CDNPolicy
     Expires: undefined
-};
+}
 interface CDNCredentialsWithExpires extends BaseCDNCredentials {
     Expires: number
     Policy: undefined
-};
+}
 export type CDNCredentials = CDNCredentialsWithPolicy | CDNCredentialsWithExpires;
 
 function checkCDNPolicy(policy: any) {
@@ -35,12 +35,12 @@ function checkCDNPolicy(policy: any) {
         throwError();
     }
 
-    var statementArray: any = policy.Statement;
+    const statementArray: any = policy.Statement;
     if (!isArray(statementArray) || statementArray.length != 1) {
         throwError();
     }
 
-    var statement: any = statementArray[0];
+    const statement: any = statementArray[0];
     if (!isObject(statement)) {
         throwError();
     }
@@ -49,8 +49,8 @@ function checkCDNPolicy(policy: any) {
         throwError();
     }
 
-    var condition: { [key: string]: any } = statement.Condition;
-    var dateLessThan: any = condition.DateLessThan;
+    const condition: { [key: string]: any } = statement.Condition;
+    const dateLessThan: any = condition.DateLessThan;
     if (!isObject(dateLessThan)) {
         throwError();
     }
@@ -59,7 +59,7 @@ function checkCDNPolicy(policy: any) {
         throwError();
     }
 
-    var dateGreaterThan: any = condition.DateGreaterThan;
+    const dateGreaterThan: any = condition.DateGreaterThan;
     if (isObject(dateGreaterThan)) {
         if (!isNumber(dateGreaterThan["AWS:EpochTime"])) {
             throwError();
@@ -68,7 +68,7 @@ function checkCDNPolicy(policy: any) {
         throwError();
     }
 
-    var ipAddress: any = condition.IpAddress;
+    const ipAddress: any = condition.IpAddress;
     if (isObject(ipAddress)) {
         if (!isString(ipAddress["AWS:SourceIp"])) {
             throwError();
@@ -92,7 +92,7 @@ export function check(credentials: any) {
         throwError();
     }
 
-    let policy = credentials.Policy;
+    const policy = credentials.Policy;
     if (policy === undefined) {
         if (!isNumber(credentials.Expires)) {
             throwError();

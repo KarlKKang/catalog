@@ -15,20 +15,20 @@ import { invalidResponse } from '../message/template/param/server';
 import { CDNCredentials } from '../type';
 import type ImageLoader from '../image_loader';
 
-var loader: typeof ImageLoader;
+let loader: typeof ImageLoader;
 export default function (imageLoader: typeof ImageLoader) {
     loader = imageLoader;
 
-    var elems = getByClass('lazyload');
+    const elems = getByClass('lazyload');
     const options = {
         root: null,
         rootMargin: '0px 0px 50% 0px',
         threshold: [0]
     };
 
-    for (let elem of elems) {
+    for (const elem of elems) {
         if (elem instanceof HTMLElement && !containsClass(elem, 'listening')) {
-            let observer = new IntersectionObserver(observerCallback, options);
+            const observer = new IntersectionObserver(observerCallback, options);
             observer.observe(elem);
             addClass(elem, 'listening');
         }
@@ -62,11 +62,10 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
             }
             sendServerRequest('get_image.php', {
                 callback: function (response: string) {
-                    var credentials: CDNCredentials.CDNCredentials;
+                    let credentials: CDNCredentials.CDNCredentials;
                     try {
-                        var parsedResponse: any = JSON.parse(response);
-                        CDNCredentials.check(parsedResponse);
-                        credentials = parsedResponse as CDNCredentials.CDNCredentials;
+                        credentials = JSON.parse(response);
+                        CDNCredentials.check(credentials);
                     } catch (e) {
                         showMessage(invalidResponse);
                         return;

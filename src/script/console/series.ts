@@ -21,28 +21,28 @@ export function getSeriesTable() {
 }
 
 function modifySeries(button: Element) {
-    var record = getParent(getParent(button));
-    var id = getDescendantsByClassAt(record, 'id', 0).innerHTML;
-    var title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
-    var thumbnail = (getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value;
-    var isPublic = (getDescendantsByClassAt(record, 'public', 0) as HTMLInputElement).checked;
-    var series_id = (getDescendantsByClassAt(record, 'series-id', 0) as HTMLTextAreaElement).value;
-    var season_name = (getDescendantsByClassAt(record, 'season-name', 0) as HTMLTextAreaElement).value;
-    var season_order = (getDescendantsByClassAt(record, 'season-order', 0) as HTMLTextAreaElement).value;
-    var keywords = (getDescendantsByClassAt(record, 'keywords', 0) as HTMLTextAreaElement).value;
+    const record = getParent(getParent(button));
+    const id = getDescendantsByClassAt(record, 'id', 0).innerHTML;
+    const title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
+    const thumbnail = (getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value;
+    const isPublic = (getDescendantsByClassAt(record, 'public', 0) as HTMLInputElement).checked;
+    const series_id = (getDescendantsByClassAt(record, 'series-id', 0) as HTMLTextAreaElement).value;
+    const season_name = (getDescendantsByClassAt(record, 'season-name', 0) as HTMLTextAreaElement).value;
+    const season_order = (getDescendantsByClassAt(record, 'season-order', 0) as HTMLTextAreaElement).value;
+    const keywords = (getDescendantsByClassAt(record, 'keywords', 0) as HTMLTextAreaElement).value;
 
-    var parsedRecord = parseSeriesRecord(id, title, thumbnail, isPublic, series_id, season_name, season_order, keywords);
+    const parsedRecord = parseSeriesRecord(id, title, thumbnail, isPublic, series_id, season_name, season_order, keywords);
     if (!parsedRecord) {
         return;
     }
 
-    var param = {
+    const param = {
         command: 'modify',
         type: 'series',
         ...parsedRecord
     };
 
-    var confirm;
+    let confirm;
     do {
         confirm = prompt('Type "modify" to confirm.');
         if (confirm === null) {
@@ -58,7 +58,7 @@ function modifySeries(button: Element) {
 
 function deleteSeries(id: string) {
 
-    var confirm;
+    let confirm;
     do {
         confirm = prompt('Type "delete" to confirm.');
         if (confirm === null) {
@@ -66,7 +66,7 @@ function deleteSeries(id: string) {
         }
     } while (confirm != "delete");
 
-    var param = {
+    const param = {
         command: 'delete',
         type: 'series',
         id: id
@@ -79,26 +79,26 @@ function deleteSeries(id: string) {
 }
 
 function addSeries(button: Element) {
-    var record = getParent(getParent(button));
-    var id = (getDescendantsByClassAt(record, 'id', 0) as HTMLTextAreaElement).value;
-    var title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
-    var thumbnail = (getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value;
-    var series_id = (getDescendantsByClassAt(record, 'series-id', 0) as HTMLTextAreaElement).value;
-    var season_name = (getDescendantsByClassAt(record, 'season-name', 0) as HTMLTextAreaElement).value;
-    var season_order = (getDescendantsByClassAt(record, 'season-order', 0) as HTMLTextAreaElement).value;
-    var keywords = (getDescendantsByClassAt(record, 'keywords', 0) as HTMLTextAreaElement).value;
+    const record = getParent(getParent(button));
+    const id = (getDescendantsByClassAt(record, 'id', 0) as HTMLTextAreaElement).value;
+    const title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
+    const thumbnail = (getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value;
+    const series_id = (getDescendantsByClassAt(record, 'series-id', 0) as HTMLTextAreaElement).value;
+    const season_name = (getDescendantsByClassAt(record, 'season-name', 0) as HTMLTextAreaElement).value;
+    const season_order = (getDescendantsByClassAt(record, 'season-order', 0) as HTMLTextAreaElement).value;
+    const keywords = (getDescendantsByClassAt(record, 'keywords', 0) as HTMLTextAreaElement).value;
 
-    var parsedRecord = parseSeriesRecord(id, title, thumbnail, false, series_id, season_name, season_order, keywords);
+    const parsedRecord = parseSeriesRecord(id, title, thumbnail, false, series_id, season_name, season_order, keywords);
     if (!parsedRecord) {
         return;
     }
-    var param = {
+    const param = {
         command: 'insert',
         type: 'series',
         ...parsedRecord
     }
 
-    var confirm;
+    let confirm;
     do {
         confirm = prompt('Type "insert" to confirm.');
         if (confirm === null) {
@@ -190,7 +190,7 @@ function parseSeriesRecord(id: string, title: string, thumbnail: string, isPubli
 }
 
 function updateSeriesTime(id: string) {
-    var param = {
+    const param = {
         command: 'updatetime',
         type: 'series',
         id: id
@@ -203,8 +203,8 @@ function updateSeriesTime(id: string) {
 }
 
 function updateEventHandlers() {
-    var buttons = getByClass('add-series');
-    for (let button of buttons) {
+    let buttons = getByClass('add-series');
+    for (const button of buttons) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -214,7 +214,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('modify-series');
-    for (let button of buttons) {
+    for (const button of buttons) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -224,7 +224,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('update-series-time');
-    for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+    for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -239,7 +239,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('delete-series');
-    for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+    for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {

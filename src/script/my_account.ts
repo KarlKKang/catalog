@@ -27,22 +27,22 @@ import {
 import { show as showMessage } from './module/message';
 import { emailSent as emailSentParam } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
-import { 
-    invitationNotQualified, 
-    invalidEmailFormat, 
-    emailAlreadyRegistered, 
-    incompletedInvitation, 
-    incompletedEmailChange, 
-    emailAlreadyInvited, 
-    invitationClosed, 
+import {
+    invitationNotQualified,
+    invalidEmailFormat,
+    emailAlreadyRegistered,
+    incompletedInvitation,
+    incompletedEmailChange,
+    emailAlreadyInvited,
+    invitationClosed,
     emailSent as emailSentInline,
-    invalidPasswordFormat, 
-    passwordConfirmationMismatch, 
-    passwordChanged, 
-    usernameEmpty, 
-    usernameUnchanged, 
-    usernameChanged, 
-    usernameTaken 
+    invalidPasswordFormat,
+    passwordConfirmationMismatch,
+    passwordChanged,
+    usernameEmpty,
+    usernameUnchanged,
+    usernameChanged,
+    usernameTaken
 } from './module/message/template/inline';
 import { UserInfo } from './module/type';
 
@@ -55,21 +55,21 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    var currentUsername: string;
+    let currentUsername: string;
 
-    var newUsernameInput: HTMLInputElement;
-    var newPasswordInput: HTMLInputElement;
-    var newPasswordComfirmInput: HTMLInputElement;
-    var inviteReceiverEmailInput: HTMLInputElement;
+    let newUsernameInput: HTMLInputElement;
+    let newPasswordInput: HTMLInputElement;
+    let newPasswordComfirmInput: HTMLInputElement;
+    let inviteReceiverEmailInput: HTMLInputElement;
 
-    var emailChangeButton: HTMLButtonElement;
-    var usernameChangeButton: HTMLButtonElement;
-    var passwordChangeButton: HTMLButtonElement;
-    var inviteButton: HTMLButtonElement;
+    let emailChangeButton: HTMLButtonElement;
+    let usernameChangeButton: HTMLButtonElement;
+    let passwordChangeButton: HTMLButtonElement;
+    let inviteButton: HTMLButtonElement;
 
     sendServerRequest('get_account.php', {
         callback: function (response: string) {
-            var parsedResponse: any;
+            let parsedResponse: UserInfo.UserInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 UserInfo.check(parsedResponse);
@@ -77,7 +77,7 @@ addEventListener(w, 'load', function () {
                 showMessage(invalidResponse);
                 return;
             }
-            showUser(parsedResponse as UserInfo.UserInfo);
+            showUser(parsedResponse);
         }
     });
 
@@ -168,9 +168,9 @@ addEventListener(w, 'load', function () {
     function invite() {
         disableAllInputs(true);
 
-        var warningElem = getById('invite-warning');
+        const warningElem = getById('invite-warning');
 
-        var receiver = inviteReceiverEmailInput.value;
+        const receiver = inviteReceiverEmailInput.value;
         changeColor(warningElem, 'red');
         if (!EMAIL_REGEX.test(receiver)) {
             warningElem.innerHTML = invalidEmailFormat;
@@ -212,9 +212,9 @@ addEventListener(w, 'load', function () {
     async function changePassword() {
         disableAllInputs(true);
 
-        var warningElem = getById('password-warning');
-        var newPassword = newPasswordInput.value;
-        var newPasswordConfirm = newPasswordComfirmInput.value;
+        const warningElem = getById('password-warning');
+        let newPassword = newPasswordInput.value;
+        const newPasswordConfirm = newPasswordComfirmInput.value;
 
         changeColor(warningElem, 'red');
 
@@ -249,7 +249,7 @@ addEventListener(w, 'load', function () {
 
     function changeEmail() {
         disableAllInputs(true);
-        var warningElem = getById('email-warning');
+        const warningElem = getById('email-warning');
         changeColor(warningElem, 'red');
 
         sendServerRequest('send_email_change.php', {
@@ -273,8 +273,8 @@ addEventListener(w, 'load', function () {
 
     function changeUsername() {
         disableAllInputs(true);
-        var warningElem = getById('username-warning');
-        var newUsername = newUsernameInput.value;
+        const warningElem = getById('username-warning');
+        const newUsername = newUsernameInput.value;
         changeColor(warningElem, 'red');
 
         if (newUsername == '') {

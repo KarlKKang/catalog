@@ -40,10 +40,10 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    var submitButton = getById('submit-button') as HTMLButtonElement;
-    var passwordInput = getById('current-password') as HTMLInputElement;
-    var usernameInput = getById('username') as HTMLInputElement;
-    var rememberMeInput = getById('remember-me-checkbox') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
+    const passwordInput = getById('current-password') as HTMLInputElement;
+    const usernameInput = getById('username') as HTMLInputElement;
+    const rememberMeInput = getById('remember-me-checkbox') as HTMLInputElement;
 
     authenticate({
         successful:
@@ -77,10 +77,10 @@ addEventListener(w, 'load', function () {
     async function login() {
         disableAllInputs(true);
 
-        var warningElem = getById('warning');
+        const warningElem = getById('warning');
 
-        var email = usernameInput.value;
-        var password = passwordInput.value;
+        const email = usernameInput.value;
+        let password = passwordInput.value;
 
         if (!EMAIL_REGEX.test(email)) {
             warningElem.innerHTML = loginFailed;
@@ -98,13 +98,13 @@ addEventListener(w, 'load', function () {
 
         password = await hashPassword(password);
 
-        var param = {
+        const param = {
             email: email,
             password: password,
             remember_me: rememberMeInput.checked
         };
 
-        var paramString = JSON.stringify(param);
+        const paramString = JSON.stringify(param);
 
         sendServerRequest('login.php', {
             callback: function (response: string) {
@@ -140,7 +140,7 @@ addEventListener(w, 'load', function () {
     }
 
     function getForwardURL() {
-        let series = getURLParam('series');
+        const series = getURLParam('series');
         if (series !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
             let url: string;
             let separator: '?' | '&';
@@ -153,20 +153,20 @@ addEventListener(w, 'load', function () {
                 separator = '?';
             }
 
-            let ep = getURLParam('ep');
+            const ep = getURLParam('ep');
             if (ep !== null && ep !== '1') {
                 url += separator + 'ep=' + ep;
                 separator = '&';
             }
 
-            let format = getURLParam('format');
+            const format = getURLParam('format');
             if (format !== null && format !== '1') {
                 url += separator + 'format=' + format;
             }
             return url;
         }
 
-        let news = getURLParam('news');
+        const news = getURLParam('news');
         if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
             const hash = getURLParam('hash');
             const hashString = (hash === null) ? '' : ('#' + hash);
@@ -177,7 +177,7 @@ addEventListener(w, 'load', function () {
             }
         }
 
-        let keywords = getURLParam('keywords');
+        const keywords = getURLParam('keywords');
         if (keywords !== null) {
             return TOP_URL + '?keywords=' + keywords;
         }

@@ -22,11 +22,11 @@ export function getNewsTable() {
 }
 
 function modifyNews(button: Element) {
-    var recordElem = getParent(getParent(button));
-    var id = getDescendantsByClassAt(recordElem, 'id', 0).innerHTML;
-    var title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
-    var content = (getDescendantsByClassAt(recordElem, 'content', 0) as HTMLTextAreaElement).value;
-    var isPublic = (getDescendantsByClassAt(recordElem, 'public', 0) as HTMLInputElement).checked;
+    const recordElem = getParent(getParent(button));
+    const id = getDescendantsByClassAt(recordElem, 'id', 0).innerHTML;
+    const title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
+    const content = (getDescendantsByClassAt(recordElem, 'content', 0) as HTMLTextAreaElement).value;
+    const isPublic = (getDescendantsByClassAt(recordElem, 'public', 0) as HTMLInputElement).checked;
 
     const record = parseNewsRecord(id, title, content, isPublic);
     if (!record) {
@@ -53,7 +53,7 @@ function modifyNews(button: Element) {
         ...parsedRecord
     };
 
-    var confirm;
+    let confirm;
     do {
         confirm = prompt('Type "modify" to confirm.');
         if (confirm === null) {
@@ -79,7 +79,7 @@ function modifyNews(button: Element) {
 
 function deleteNews(id: string) {
 
-    var confirm;
+    let confirm;
     do {
         confirm = prompt('Type "delete" to confirm.');
         if (confirm === null) {
@@ -87,7 +87,7 @@ function deleteNews(id: string) {
         }
     } while (confirm != "delete");
 
-    var param = {
+    const param = {
         command: 'delete',
         type: 'news',
         id: id
@@ -100,10 +100,10 @@ function deleteNews(id: string) {
 }
 
 function addNews(button: Element) {
-    var recordElem = getParent(getParent(button));
-    var id = (getDescendantsByClassAt(recordElem, 'id', 0) as HTMLTextAreaElement).value;
-    var title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
-    var content = (getDescendantsByClassAt(recordElem, 'content', 0) as HTMLTextAreaElement).value;
+    const recordElem = getParent(getParent(button));
+    const id = (getDescendantsByClassAt(recordElem, 'id', 0) as HTMLTextAreaElement).value;
+    const title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
+    const content = (getDescendantsByClassAt(recordElem, 'content', 0) as HTMLTextAreaElement).value;
 
     const record = parseNewsRecord(id, title, content, false);
     if (!record) {
@@ -121,7 +121,7 @@ function addNews(button: Element) {
     } = {
         ...record,
         end: contentChunks.length === 0
-    };;
+    };
     delete parsedRecord.content;
 
     const param = {
@@ -130,7 +130,7 @@ function addNews(button: Element) {
         ...parsedRecord
     }
 
-    var confirm;
+    let confirm;
     do {
         confirm = prompt('Type "insert" to confirm.');
         if (confirm === null) {
@@ -179,7 +179,7 @@ function parseNewsRecord(id: string, title: string, content: string, isPublic: b
 }
 
 function updateNewsTime(id: string) {
-    var param = {
+    const param = {
         command: 'updatetime',
         type: 'news',
         id: id
@@ -192,9 +192,9 @@ function updateNewsTime(id: string) {
 }
 
 function getNewsContent(button: Element, id: string) {
-    var contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
+    const contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
 
-    var param = {
+    const param = {
         command: 'get',
         type: 'news-content',
         id: id
@@ -209,9 +209,9 @@ function getNewsContent(button: Element, id: string) {
 }
 
 import type { minify } from 'html-minifier-terser';
-var htmlMinifier: typeof minify | null = null;
+let htmlMinifier: typeof minify | null = null;
 async function minifyNewsContent(button: Element) {
-    var contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
+    const contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
     if (htmlMinifier === null) {
         ({ minify: htmlMinifier } = await import(
             /* webpackExports: ["minify"] */
@@ -234,8 +234,8 @@ async function minifyNewsContent(button: Element) {
 }
 
 function updateEventHandlers() {
-    var buttons = getByClass('add-news');
-    for (let button of buttons) {
+    let buttons = getByClass('add-news');
+    for (const button of buttons) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -245,7 +245,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('modify-news');
-    for (let button of buttons) {
+    for (const button of buttons) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -255,7 +255,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('update-news-time');
-    for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+    for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -270,7 +270,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('delete-news');
-    for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+    for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -285,7 +285,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('get-news-content');
-    for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+    for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -300,7 +300,7 @@ function updateEventHandlers() {
     }
 
     buttons = getByClass('minify-news-content');
-    for (let button of (buttons as HTMLCollectionOf<HTMLElement>)) {
+    for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
@@ -311,8 +311,8 @@ function updateEventHandlers() {
 }
 
 function appendNews(id: string, contentChunks: string[]) {
-    let content = contentChunks.shift()!;
-    let param = {
+    const content = contentChunks.shift()!;
+    const param = {
         command: 'modify',
         type: 'news-content-append',
         id: id,
@@ -337,7 +337,7 @@ function appendNews(id: string, contentChunks: string[]) {
 }
 
 function splitContent(content: string): string[] {
-    var result = [];
+    const result = [];
     const chunkSize = 800;
     while (content.length > 0) {
         result.push(content.substring(0, chunkSize));

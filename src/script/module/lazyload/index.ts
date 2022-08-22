@@ -4,8 +4,8 @@ import type { default as LazyloadInitialize } from './lazyload';
 import type { default as ImageLoader } from '../image_loader';
 
 export default async function () {
-    var lazyloadInitialize: typeof LazyloadInitialize;
-    var imageLoader: typeof ImageLoader;
+    let lazyloadInitialize: typeof LazyloadInitialize;
+    let imageLoader: typeof ImageLoader;
 
     try {
         [{ default: lazyloadInitialize }, { default: imageLoader }] = await Promise.all([

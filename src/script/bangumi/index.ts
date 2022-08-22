@@ -42,7 +42,7 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
 
     // Preload modules
-    let importPromises = getImportPromises();
+    const importPromises = getImportPromises();
 
     // Parse other parameters
     const epIndexParam = getURLParam('ep');
@@ -61,7 +61,7 @@ addEventListener(w, 'load', function () {
     //send requests
     sendServerRequest('get_ep.php', {
         callback: function (response: string) {
-            let parsedResponse: any;
+            let parsedResponse: BangumiInfo.BangumiInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 BangumiInfo.check(parsedResponse);

@@ -69,7 +69,7 @@ function checkVideoEPInfo(epInfo: any) {
         throwError();
     }
 
-    let formats = epInfo.formats;
+    const formats = epInfo.formats;
     if (!isArray(formats)) {
         throwError();
     }
@@ -78,7 +78,7 @@ function checkVideoEPInfo(epInfo: any) {
         throwError();
     }
 
-    for (let format of formats) {
+    for (const format of formats) {
         if (!isObject(format)) {
             throwError();
         }
@@ -92,12 +92,12 @@ function checkVideoEPInfo(epInfo: any) {
         }
     }
 
-    let chapters = epInfo.chapters;
+    const chapters = epInfo.chapters;
     if (!isArray(chapters)) {
         throwError();
     }
 
-    for (let chapter of chapters) {
+    for (const chapter of chapters) {
         if (!isArray(chapter)) {
             throwError();
         }
@@ -154,7 +154,7 @@ function checkAudioFile(audioFile: any) {
 
 function checkAudioEPInfo(epInfo: any) {
 
-    let albumInfo = epInfo.album_info;
+    const albumInfo = epInfo.album_info;
     if (!isObject(albumInfo)) {
         throwError();
     }
@@ -163,7 +163,7 @@ function checkAudioEPInfo(epInfo: any) {
         throwError();
     }
 
-    let files = epInfo.files;
+    const files = epInfo.files;
     if (!isArray(files)) {
         throwError();
     }
@@ -172,7 +172,7 @@ function checkAudioEPInfo(epInfo: any) {
         throwError();
     }
 
-    for (let file of files) {
+    for (const file of files) {
         checkAudioFile(file);
     }
 
@@ -195,7 +195,7 @@ function checkImageFile(imageFile: any) {
 
 function checkImageEPInfo(epInfo: any) {
 
-    let files = epInfo.files;
+    const files = epInfo.files;
     if (!isArray(files)) {
         throwError();
     }
@@ -204,7 +204,7 @@ function checkImageEPInfo(epInfo: any) {
         throwError();
     }
 
-    for (let file of files) {
+    for (const file of files) {
         checkImageFile(file);
     }
 }
@@ -214,27 +214,27 @@ function checkEPInfo(epInfo: any) {
         throwError();
     }
 
-    let ageRestricted = epInfo.age_restricted;
+    const ageRestricted = epInfo.age_restricted;
     if (!isString(ageRestricted) && ageRestricted !== false) {
         throwError();
     }
 
-    let authenticationToken = epInfo.authentication_token;
+    const authenticationToken = epInfo.authentication_token;
     if (!isString(authenticationToken)) {
         throwError();
     }
 
-    let dir = epInfo.dir;
+    const dir = epInfo.dir;
     if (!isString(dir)) {
         throwError();
     }
 
-    let seriesOverride = epInfo.series_override;
+    const seriesOverride = epInfo.series_override;
     if (seriesOverride !== undefined && !isString(seriesOverride)) {
         throwError();
     }
 
-    let type = epInfo.type;
+    const type = epInfo.type;
     if (type === 'video') {
         checkVideoEPInfo(epInfo);
     } else if (type === 'audio') {
@@ -271,26 +271,26 @@ export function check(bangumiInfo: any) {
         throwError();
     }
 
-    let title = bangumiInfo.title;
+    const title = bangumiInfo.title;
     if (!isString(title)) {
         throwError();
     }
 
-    let titleOverride = bangumiInfo.title_override;
+    const titleOverride = bangumiInfo.title_override;
     if (titleOverride !== undefined && !isString(titleOverride)) {
         throwError();
     }
 
-    let seasons = bangumiInfo.seasons;
+    const seasons = bangumiInfo.seasons;
     if (!isArray(seasons)) {
         throwError();
     }
 
-    for (let season of seasons) {
+    for (const season of seasons) {
         checkSeason(season);
     }
 
-    let seriesEPs = bangumiInfo.series_ep;
+    const seriesEPs = bangumiInfo.series_ep;
     if (!isArray(seriesEPs)) {
         throwError();
     }
@@ -299,7 +299,7 @@ export function check(bangumiInfo: any) {
         throwError();
     }
 
-    for (let seriesEP of seriesEPs) {
+    for (const seriesEP of seriesEPs) {
         checkSeriesEP(seriesEP);
     }
 

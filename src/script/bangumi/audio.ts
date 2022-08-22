@@ -22,17 +22,17 @@ import { parseCharacters } from './helper';
 import { showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, destroyAll, getDownloadAccordion, showLegacyBrowserError } from './media_helper';
 import type { HlsImportPromise } from './get_import_promises';
 
-var seriesID: string;
-var epIndex: number;
-var epInfo: BangumiInfo.AudioEPInfo;
-var baseURL: string;
-var mediaHolder: HTMLElement;
-var contentContainer: HTMLElement;
-var debug: boolean;
+let seriesID: string;
+let epIndex: number;
+let epInfo: BangumiInfo.AudioEPInfo;
+let baseURL: string;
+let mediaHolder: HTMLElement;
+let contentContainer: HTMLElement;
+let debug: boolean;
 
-var audioReadyCounter = 0;
-var mediaInstances: Array<VideojsModInstance> = [];
-var hlsImportPromise: HlsImportPromise;
+let audioReadyCounter = 0;
+const mediaInstances: Array<VideojsModInstance> = [];
+let hlsImportPromise: HlsImportPromise;
 
 export default function (
     _seriesID: string,
@@ -54,7 +54,7 @@ export default function (
     hlsImportPromise = _hlsImportPromise;
     debug = _debug;
 
-    let audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
+    const audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
 
     addAlbumInfo();
 
@@ -72,7 +72,7 @@ export default function (
         return;
     }
 
-    for (var i = 0; i < audioEPInfo.files.length; i++) {
+    for (let i = 0; i < audioEPInfo.files.length; i++) {
         if (!addAudioNode(i)) {
             return;
         }
@@ -80,10 +80,10 @@ export default function (
 }
 
 function addAudioNode(index: number) {
-    let audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
-    let file = audioEPInfo.files[index] as BangumiInfo.AudioFile;
+    const audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
+    const file = audioEPInfo.files[index] as BangumiInfo.AudioFile;
 
-    let credentials = audioEPInfo.cdn_credentials;
+    const credentials = audioEPInfo.cdn_credentials;
 
     const configVideoJSControl = {
         controls: true,
@@ -96,7 +96,7 @@ function addAudioNode(index: number) {
         }
     } as const;
 
-    let configHls = {
+    const configHls = {
         enableWebVTT: false,
         enableIMSC1: false,
         enableCEA708Captions: false,
@@ -112,7 +112,7 @@ function addAudioNode(index: number) {
         }
     };
 
-    let audioNode = createElement('audio');
+    const audioNode = createElement('audio');
     audioNode.id = 'track' + index;
 
     addClass(audioNode, "vjs-default-skin");
@@ -135,8 +135,8 @@ function addAudioNode(index: number) {
         return false;
     }
 
-    let videoJSControl = videojs(audioNode, configVideoJSControl, function () {
-        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8'), credentials, baseURL + '_MASTER_*.m3u8');
+    const videoJSControl = videojs(audioNode, configVideoJSControl, function () {
+        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8'), credentials, baseURL + '_MASTER_*.m3u8');
 
         if (USE_VIDEOJS) {
             const configVideoJSMedia = {
@@ -151,13 +151,13 @@ function addAudioNode(index: number) {
                     //nativeVideoTracks: false
                 },
             } as const;
-            let videoJSMediaNode = createElement('audio') as HTMLAudioElement;
+            const videoJSMediaNode = createElement('audio') as HTMLAudioElement;
             videoJSMediaNode.style.display = 'none';
             appendChild(mediaHolder, videoJSMediaNode);
 
-            let videoJSMedia = videojs(videoJSMediaNode, configVideoJSMedia, function () {
+            const videoJSMedia = videojs(videoJSMediaNode, configVideoJSMedia, function () {
 
-                let audioInstance = videojsMod(videoJSControl, {
+                const audioInstance = videojsMod(videoJSControl, {
                     videojsMediaOverrideInstance: videoJSMedia,
                     audio: true,
                     debug: debug
@@ -186,7 +186,7 @@ function addAudioNode(index: number) {
                 audioInstance.attachVideojs(url);
             });
         } else {
-            let audioInstance = videojsMod(videoJSControl, { audio: true, debug: debug });
+            const audioInstance = videojsMod(videoJSControl, { audio: true, debug: debug });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
             if (browser.USE_MSE) {
@@ -194,7 +194,7 @@ function addAudioNode(index: number) {
                     showMediaMessage('不具合があります', '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>', 'orange');
                 }
                 hlsImportPromise.then(({ default: Hls }) => {
-                    let hls = new Hls(configHls);
+                    const hls = new Hls(configHls);
                     hls.on(Hls.Events.ERROR, function (_, data) {
                         if (data.fatal) {
                             showPlaybackError('Index ' + index + ': ' + data.details);
@@ -212,9 +212,9 @@ function addAudioNode(index: number) {
                 }).catch((e) => {
                     showMessage(moduleImportError(e));
                     return;
-                });;
+                });
             } else if (browser.NATIVE_HLS) {
-                let audioMedia = audioInstance.media;
+                const audioMedia = audioInstance.media;
 
                 addEventListener(audioMedia, 'error', function () {
                     showPlaybackError();
@@ -240,23 +240,23 @@ function addAudioNode(index: number) {
 }
 
 function addAlbumInfo() {
-    let albumInfo = (epInfo as BangumiInfo.AudioEPInfo).album_info;
+    const albumInfo = (epInfo as BangumiInfo.AudioEPInfo).album_info;
     if (albumInfo.album_title != '') {
-        let albumTitleElem = createElement('p');
+        const albumTitleElem = createElement('p');
         addClass(albumTitleElem, 'sub-title');
         addClass(albumTitleElem, 'center-align');
         albumTitleElem.innerHTML = albumInfo.album_title;
         insertBefore(albumTitleElem, getById('message'));
         if (albumInfo.album_artist != '') {
-            let albumArtist = createElement('p');
+            const albumArtist = createElement('p');
             addClass(albumArtist, 'artist');
             addClass(albumArtist, 'center-align');
             albumArtist.innerHTML = albumInfo.album_artist;
             insertBefore(albumArtist, getById('message'));
         }
     } else if (albumInfo.album_artist != '') {
-        let titleElem = getById('title');
-        let artistElem = createElement('span');
+        const titleElem = getById('title');
+        const artistElem = createElement('span');
         addClass(artistElem, 'artist');
         artistElem.innerHTML = '<br/>' + albumInfo.album_artist;
         appendChild(titleElem, artistElem);
@@ -264,7 +264,7 @@ function addAlbumInfo() {
 }
 
 function getAudioSubtitleNode(file: BangumiInfo.AudioFile, FLAC_FALLBACK: boolean) {
-    let subtitle = createElement('p');
+    const subtitle = createElement('p');
     addClass(subtitle, 'sub-title');
 
     //subtitle
@@ -272,7 +272,7 @@ function getAudioSubtitleNode(file: BangumiInfo.AudioFile, FLAC_FALLBACK: boolea
         subtitle.innerHTML = file.title;
 
         if (file.artist != '') {
-            let artist = createElement('span');
+            const artist = createElement('span');
             addClass(artist, 'artist');
             artist.innerHTML = '／' + file.artist;
             appendChild(subtitle, artist);
@@ -285,11 +285,11 @@ function getAudioSubtitleNode(file: BangumiInfo.AudioFile, FLAC_FALLBACK: boolea
             subtitle.innerHTML += '<br>';
         }
 
-        let format = createElement('span');
+        const format = createElement('span');
         addClass(format, 'format');
         format.innerHTML = FLAC_FALLBACK ? 'FLAC' : file.format;
 
-        let samplerate = file.samplerate;
+        const samplerate = file.samplerate;
         if (samplerate != '') {
             let samplerateText = samplerate;
             switch (samplerate) {
@@ -311,7 +311,7 @@ function getAudioSubtitleNode(file: BangumiInfo.AudioFile, FLAC_FALLBACK: boolea
             }
             format.innerHTML += ' ' + samplerateText;
 
-            let bitdepth = file.bitdepth;
+            const bitdepth = file.bitdepth;
             if (bitdepth != '') {
                 let bitdepthText = bitdepth;
                 switch (bitdepth) {
@@ -353,7 +353,7 @@ function audioReady() {
     }
 
     mediaInstances.forEach(function (instance, index) {
-        let media = instance.media;
+        const media = instance.media;
         addEventListener(media, 'play', function () {
             pauseAll(index);
         });

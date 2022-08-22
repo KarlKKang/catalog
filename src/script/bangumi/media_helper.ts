@@ -43,7 +43,7 @@ export function showLegacyBrowserError() {
 }
 
 export function showMediaMessage(title: string, messageTxt: string, titleColor: string) {
-    var messageTitle = getById('message-title');
+    const messageTitle = getById('message-title');
     changeColor(messageTitle, titleColor);
     messageTitle.innerHTML = title;
     getById('message-body').innerHTML = messageTxt;
@@ -51,7 +51,7 @@ export function showMediaMessage(title: string, messageTxt: string, titleColor: 
 }
 
 export function destroyAll(mediaInstances: Array<VideojsModInstance>) {
-    for (let mediaInstance of mediaInstances) {
+    for (const mediaInstance of mediaInstances) {
         mediaInstance.destroy();
     }
 }
@@ -120,11 +120,11 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
 export function addAccordionEvent(acc: HTMLElement): void {
     addEventListener(acc, "click", function () {
         toggleClass(acc, "active");
-        let panel = acc.nextElementSibling;
+        const panel = acc.nextElementSibling;
         if (panel === null) {
             return;
         }
-        let panelCast = panel as HTMLElement;
+        const panelCast = panel as HTMLElement;
         if (panelCast.style.maxHeight !== '') {
             panelCast.style.maxHeight = '';
             panelCast.style.padding = '0px 1em';

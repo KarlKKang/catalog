@@ -34,7 +34,7 @@ addEventListener(w, 'load', function () {
 
     clearCookies();
 
-    var paramCookie = getCookie('local-image-param');
+    let paramCookie = getCookie('local-image-param');
 
     if (paramCookie === null) {
         redirect(TOP_URL, true);
@@ -43,16 +43,15 @@ addEventListener(w, 'load', function () {
 
     deleteCookie('local-image-param');
 
-    var parsedCookie: any;
+    let param: LocalImageParam.LocalImageParam;
     try {
         paramCookie = decodeURIComponent(paramCookie);
-        parsedCookie = JSON.parse(paramCookie);
-        LocalImageParam.check(parsedCookie);
+        param = JSON.parse(paramCookie);
+        LocalImageParam.check(param);
     } catch (e) {
         redirect(TOP_URL, true);
         return;
     }
-    const param = parsedCookie as LocalImageParam.LocalImageParam;
 
     const imageLoaderImportPromise = import(
         /* webpackExports: ["default"] */
@@ -72,20 +71,21 @@ addEventListener(w, 'load', function () {
 
     setTitle(param.title);
 
-    var container = getById('image-container');
+    const container = getById('image-container');
 
     removeRightClick(container);
 
     sendServerRequest('get_image.php', {
         callback: function (response: string) {
-            var parsedResponse: any;
+            let parsedResponse: CDNCredentials.CDNCredentials;
             try {
                 parsedResponse = JSON.parse(response);
                 CDNCredentials.check(parsedResponse);
             } catch (e) {
                 showMessage(invalidResponse);
+                return;
             }
-            const credentials = parsedResponse as CDNCredentials.CDNCredentials;
+            const credentials = parsedResponse;
             const url = concatenateSignedURL(param.baseURL + encodeCFURIComponent(param.fileName), credentials);
 
             imageLoaderImportPromise.then(({ default: imageLoader }) => {

@@ -12,11 +12,11 @@ import {
 import { show as showMessage } from './message';
 import { moduleImportError } from './message/template/param';
 
-var webpMachine: WebpMachine | null = null;
-var webpMachineActive = false;
+let webpMachine: WebpMachine | null = null;
+let webpMachineActive = false;
 type webpMachineQueueItem = { container: Element, image: HTMLImageElement, webpData: Uint8Array, onload: (() => void) | undefined, onerror: () => void };
-var webpMachineQueue: webpMachineQueueItem[] = [];
-var webpSupported: boolean;
+const webpMachineQueue: webpMachineQueueItem[] = [];
+let webpSupported: boolean;
 
 export default function (container: Element, src: string, alt: string, onload?: () => void) {
 
@@ -36,7 +36,7 @@ export default function (container: Element, src: string, alt: string, onload?: 
 
     function errorHandler() {
         // Convert Blob to Uint8Array
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.onload = function () {
             const base64URL = reader.result;
             if (!(base64URL instanceof ArrayBuffer) || !isWebp) {
@@ -109,7 +109,7 @@ export default function (container: Element, src: string, alt: string, onload?: 
 async function startWebpMachine() {
     if (webpMachine === null) {
         try {
-            let { WebpMachine, detectWebpSupport } = await import(
+            const { WebpMachine, detectWebpSupport } = await import(
                 /* webpackExports: ["WebpMachine", "detectWebpSupport"] */
                 'webp-hero/dist-cjs'
             );

@@ -33,9 +33,9 @@ addEventListener(w, 'load', function () {
 
     clearCookies();
 
-    var paramCookie = getCookie('local-message-param');
-    var titleElem = getById('title');
-    var messageElem = getById('message');
+    let paramCookie = getCookie('local-message-param');
+    const titleElem = getById('title');
+    const messageElem = getById('message');
 
     if (paramCookie === null) {
         if (DEVELOPMENT) {
@@ -49,29 +49,27 @@ addEventListener(w, 'load', function () {
         return;
     }
 
-    var parsedParam: any;
+    let param: LocalMessageParam.LocalMessageParam;
     try {
         paramCookie = decodeURIComponent(paramCookie);
-        parsedParam = JSON.parse(paramCookie);
-        LocalMessageParam.check(parsedParam);
+        param = JSON.parse(paramCookie);
+        LocalMessageParam.check(param);
     } catch (e) {
         redirect(TOP_URL, true)
         return;
     }
 
-    var param = parsedParam as LocalMessageParam.LocalMessageParam;
-
-    var callback = function () {
+    const callback = function () {
         setTitle(param.htmlTitle);
         titleElem.innerHTML = param.title;
         changeColor(titleElem, param.color);
         messageElem.innerHTML = param.message;
-        var button = getById('button');
+        const button = getById('button');
         if (param.url === null) {
             deleteCookie('local-message-param');
             addClass(button, 'hidden');
         } else {
-            let url = param.url;
+            const url = param.url;
             button.innerHTML = '次に進む';
             addEventListener(button, 'click', function () {
                 deleteCookie('local-message-param');

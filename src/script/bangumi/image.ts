@@ -26,18 +26,18 @@ export default function (
     mediaHolder: HTMLElement,
     lazyloadImportPromise: LazyloadImportPromise
 ) {
-    let files = epInfo.files;
+    const files = epInfo.files;
 
     files.forEach(function (file, index) {
         if (file.tag != '') {
-            let subtitle = createElement('p');
+            const subtitle = createElement('p');
             addClass(subtitle, 'sub-title');
             subtitle.innerHTML = file.tag;
             appendChild(mediaHolder, subtitle);
         }
 
-        let imageNode = createElement('div');
-        let overlay = createElement('div');
+        const imageNode = createElement('div');
+        const overlay = createElement('div');
 
         addClass(overlay, 'overlay');
         appendChild(imageNode, overlay);
@@ -49,7 +49,7 @@ export default function (
         setDataAttribute(imageNode, 'xhr-param', index.toString());
         setDataAttribute(imageNode, 'authentication-token', epInfo.authentication_token);
         addEventListener(imageNode, 'click', function () {
-            let param: LocalImageParam.LocalImageParam = {
+            const param: LocalImageParam.LocalImageParam = {
                 baseURL: baseURL,
                 fileName: file.file_name,
                 xhrParam: index.toString(),

@@ -35,13 +35,13 @@ addEventListener(w, 'load', function () {
 
     clearCookies();
 
-    var newPasswordInput = getById('new-password') as HTMLInputElement;
-    var newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
-    var submitButton = getById('submit-button') as HTMLButtonElement;
+    const newPasswordInput = getById('new-password') as HTMLInputElement;
+    const newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
 
-    var user = getURLParam('user');
-    var signature = getURLParam('signature');
-    var expires = getURLParam('expires');
+    const user = getURLParam('user');
+    const signature = getURLParam('signature');
+    const expires = getURLParam('expires');
 
     if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
         if (DEVELOPMENT) {
@@ -101,12 +101,12 @@ addEventListener(w, 'load', function () {
 
 
     async function submitRequest() {
-        var warningElem = getById('warning');
+        const warningElem = getById('warning');
 
         disableAllInputs(true);
 
-        var newPassword = newPasswordInput.value;
-        var newPasswordConfirm = newPasswordConfirmInput.value;
+        let newPassword = newPasswordInput.value;
+        const newPasswordConfirm = newPasswordConfirmInput.value;
 
         if (!PASSWORD_REGEX.test(newPassword)) {
             warningElem.innerHTML = invalidPasswordFormat;

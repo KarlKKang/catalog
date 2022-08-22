@@ -32,8 +32,8 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    var emailInput = getById('email') as HTMLInputElement;
-    var submitButton = getById('submit-button') as HTMLButtonElement;
+    const emailInput = getById('email') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
 
     addEventListener(emailInput, 'keydown', function (event) {
         if ((event as KeyboardEvent).key === "Enter") {
@@ -50,8 +50,8 @@ addEventListener(w, 'load', function () {
     async function register() {
         disableAllInputs(true);
 
-        var warningElem = getById('warning');
-        var email = emailInput.value;
+        const warningElem = getById('warning');
+        const email = emailInput.value;
 
         if (!EMAIL_REGEX.test(email)) {
             warningElem.innerHTML = invalidEmailFormat;

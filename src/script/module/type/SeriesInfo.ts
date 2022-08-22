@@ -4,7 +4,7 @@ export interface SeriesEntry {
     title: string,
     thumbnail: string,
     id: string
-};
+}
 
 export type SeriesEntries = SeriesEntry[];
 
@@ -21,7 +21,7 @@ export function check(seriesInfo: any) {
         throwError();
     }
 
-    var offsetInfo = seriesInfo[seriesInfo.length - 1];
+    const offsetInfo = seriesInfo[seriesInfo.length - 1];
 
     if (!isNumber(offsetInfo) && offsetInfo !== "EOF") {
         throwError();
@@ -31,8 +31,8 @@ export function check(seriesInfo: any) {
         throwError();
     }
 
-    var seriesEntries: any[] = seriesInfo.slice(0, -1);
-    for (let seriesEntry of seriesEntries) {
+    const seriesEntries: any[] = seriesInfo.slice(0, -1);
+    for (const seriesEntry of seriesEntries) {
         if (!isObject(seriesEntry)) {
             throwError();
         }

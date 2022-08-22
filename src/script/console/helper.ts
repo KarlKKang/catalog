@@ -11,11 +11,11 @@ import {
 } from '../module/DOM';
 
 export function getTable(type: string, callback?: () => void) {
-    let param = {
+    const param = {
         command: 'get',
         type: type
     };
-    let paramString = JSON.stringify(param);
+    const paramString = JSON.stringify(param);
 
     sendServerRequest('console.php', {
         callback: function (response: string) {
@@ -29,13 +29,13 @@ export function completeCallback(response: string, callback: () => void) {
     if (setOutput(response, callback)) {
         alert('Operation completed');
     }
-};
+}
 
 export function setOutput(response: string, callback?: () => void, outputElementID?: string) {
     if (outputElementID === undefined) {
         outputElementID = 'output';
     }
-    var error = response.startsWith('ERROR:');
+    const error = response.startsWith('ERROR:');
     if (error) {
         alert(response);
     } else {
@@ -44,8 +44,8 @@ export function setOutput(response: string, callback?: () => void, outputElement
             callback();
         }
 
-        var elems = getByClass('onchange');
-        for (let elem of elems) {
+        let elems = getByClass('onchange');
+        for (const elem of elems) {
             if (!containsClass(elem, 'initialized')) {
                 addClass(elem, 'initialized');
                 addEventListener(elem, 'change', function () {
@@ -55,7 +55,7 @@ export function setOutput(response: string, callback?: () => void, outputElement
         }
 
         elems = getByClass('oninput');
-        for (let elem of elems) {
+        for (const elem of elems) {
             if (!containsClass(elem, 'initialized')) {
                 addClass(elem, 'initialized');
                 addEventListener(elem, 'input', function () {

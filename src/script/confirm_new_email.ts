@@ -27,8 +27,8 @@ addEventListener(w, 'load', function () {
 
     clearCookies();
 
-    var param = getURLParam('p');
-    var signature = getURLParam('signature');
+    const param = getURLParam('p');
+    const signature = getURLParam('signature');
 
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         redirect(LOGIN_URL, true);

@@ -16,7 +16,7 @@ interface MessageParam {
     color?: string,
     logout?: boolean,
     url?: string | null
-};
+}
 
 export function show(param?: MessageParam) {
     if (param === undefined) {
@@ -46,7 +46,7 @@ export function show(param?: MessageParam) {
         param.url = null;
     }
 
-    let cookie: LocalMessageParam.LocalMessageParam = {
+    const cookie: LocalMessageParam.LocalMessageParam = {
         message: param.message,
         title: param.title,
         color: param.color,

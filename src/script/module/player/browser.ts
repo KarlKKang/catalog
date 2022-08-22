@@ -12,15 +12,15 @@ declare global {
 }
 
 const USER_AGENT = w.navigator && w.navigator.userAgent || '';
-var IS_CHROMIUM = false;
-var IS_IOS = false;
-var IS_DESKTOP = false;
-var IS_IE = false;
-var IS_FIREFOX = false;
-var IS_SAFARI = false;
-var IS_LINUX = false;
+let IS_CHROMIUM = false;
+let IS_IOS = false;
+let IS_DESKTOP = false;
+let IS_IE = false;
+let IS_FIREFOX = false;
+let IS_SAFARI = false;
+let IS_LINUX = false;
 //var IS_APPLE = false;
-var IS_LEGACY = true;
+let IS_LEGACY = true;
 
 if (USER_AGENT !== '') {
     const bowserParser = Bowser.getParser(USER_AGENT);
@@ -43,19 +43,19 @@ if (USER_AGENT !== '') {
     IS_LEGACY = engineName === 'EdgeHTML' || engineName === 'Trident' || engineName === 'Presto';
 }
 
-let audioElem = createElement('audio') as HTMLAudioElement;
-let videoElem = createElement('video') as HTMLVideoElement;
+const audioElem = createElement('audio') as HTMLAudioElement;
+const videoElem = createElement('video') as HTMLVideoElement;
 
-var NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != "") && (audioElem.canPlayType('application/vnd.apple.mpegurl') != "") && IS_SAFARI;
-var USE_MSE = isSupported() && !NATIVE_HLS;
+const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != "") && (audioElem.canPlayType('application/vnd.apple.mpegurl') != "") && IS_SAFARI;
+const USE_MSE = isSupported() && !NATIVE_HLS;
 
-var CAN_PLAY_ALAC = false;
-var CAN_PLAY_FLAC = false;
-var CAN_PLAY_MP3 = (audioElem.canPlayType('audio/mpeg') != "") && !IS_IE;
-var CAN_PLAY_AVC_AAC = false;
+let CAN_PLAY_ALAC = false;
+let CAN_PLAY_FLAC = false;
+const CAN_PLAY_MP3 = (audioElem.canPlayType('audio/mpeg') != "") && !IS_IE;
+let CAN_PLAY_AVC_AAC = false;
 
 if (USE_MSE) {
-    let mediaSource = getMediaSource();
+    const mediaSource = getMediaSource();
     if (mediaSource !== undefined) {
         CAN_PLAY_ALAC = mediaSource.isTypeSupported('audio/mp4; codecs="alac"');
         CAN_PLAY_FLAC = mediaSource.isTypeSupported('audio/mp4; codecs="flac"');

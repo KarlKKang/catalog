@@ -11,7 +11,7 @@ import {
 } from '../module/DOM';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
-    var height = elem.scrollHeight;
+    let height = elem.scrollHeight;
     height -= parseFloat(getComputedStyle(elem, 'padding-top')) + parseFloat(getComputedStyle(elem, 'padding-bottom'));
     return height;
 }
@@ -24,7 +24,7 @@ export function updateURLParam(seriesID: string, epIndex: number, formatIndex: n
         url = TOP_URL + '/bangumi/' + seriesID;
     }
 
-    let query = getQuery(epIndex, formatIndex);
+    const query = getQuery(epIndex, formatIndex);
     if (query !== '') {
         url += (DEVELOPMENT ? '&' : '?') + query;
     }
@@ -33,8 +33,8 @@ export function updateURLParam(seriesID: string, epIndex: number, formatIndex: n
 }
 
 export function getLogoutParam(seriesID: string, epIndex: number): string {
-    let query = 'series=' + seriesID;
-    let additionalQuery = getQuery(epIndex, getFormatIndex());
+    const query = 'series=' + seriesID;
+    const additionalQuery = getQuery(epIndex, getFormatIndex());
     if (additionalQuery === '') {
         return query;
     }

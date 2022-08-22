@@ -6,7 +6,7 @@ export interface LocalMessageParam {
     logout: boolean,
     url: string | null,
     htmlTitle: string
-};
+}
 
 export function check(localMessageParam: any) {
     if (!isObject(localMessageParam)) {

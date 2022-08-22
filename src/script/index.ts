@@ -35,19 +35,19 @@ import { SeriesInfo } from './module/type';
 import { default as importLazyload } from './module/lazyload';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 
-var lazyloadInitialize: () => void;
+let lazyloadInitialize: () => void;
 
-var searchBar: HTMLElement;
-var searchBarInput: HTMLInputElement;
-var containerElem: HTMLElement;
+let searchBar: HTMLElement;
+let searchBarInput: HTMLInputElement;
+let containerElem: HTMLElement;
 
-var offset: SeriesInfo.OffsetInfo = 0;
+let offset: SeriesInfo.OffsetInfo = 0;
 
-var keywords = '';
-var pivot = '';
+let keywords = '';
+let pivot = '';
 
-var lazyloadImportPromise: ReturnType<typeof importLazyload>;
-var infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
+let lazyloadImportPromise: ReturnType<typeof importLazyload>;
+let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 addEventListener(w, 'load', function () {
     if (!checkBaseURL(TOP_URL) && !DEVELOPMENT) {
@@ -89,12 +89,12 @@ addEventListener(w, 'load', function () {
 });
 
 function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
-    var seriesEntries = seriesInfo.slice(0, -1) as SeriesInfo.SeriesEntries;
-    for (let seriesEntry of seriesEntries) {
-        let seriesNode = createElement('div');
-        let thumbnailNode = createElement('div');
-        let overlay = createElement('div');
-        let titleNode = createElement('p');
+    const seriesEntries = seriesInfo.slice(0, -1) as SeriesInfo.SeriesEntries;
+    for (const seriesEntry of seriesEntries) {
+        const seriesNode = createElement('div');
+        const thumbnailNode = createElement('div');
+        const overlay = createElement('div');
+        const titleNode = createElement('p');
 
         appendChild(seriesNode, thumbnailNode);
         appendChild(seriesNode, titleNode);
@@ -128,7 +128,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
 }
 
 function goToSeries(id: string) {
-    var url;
+    let url;
     if (DEVELOPMENT) {
         url = 'bangumi.html' + '?series=' + id;
     } else {
@@ -141,7 +141,7 @@ function search() {
     disableSearchBarInput(true);
     infiniteScrolling.setEnabled(false);
 
-    var searchBarInputValue = searchBarInput.value.substring(0, 50);
+    const searchBarInputValue = searchBarInput.value.substring(0, 50);
 
     if (searchBarInputValue == '') {
         keywords = "";
@@ -161,7 +161,7 @@ addEventListener(w, 'popstate', function () {
 });
 
 function getURLKeywords() {
-    var urlParam = getURLParam('keywords');
+    const urlParam = getURLParam('keywords');
     if (urlParam == null) {
         keywords = "";
         searchBarInput.value = '';
@@ -179,7 +179,7 @@ function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
 
     sendServerRequest('get_series.php', {
         callback: function (response: string) {
-            var parsedResponse: any;
+            let parsedResponse: SeriesInfo.SeriesInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 SeriesInfo.check(parsedResponse);
@@ -189,9 +189,9 @@ function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
             }
 
             if (callback === undefined) {
-                showSeries(parsedResponse as SeriesInfo.SeriesInfo);
+                showSeries(parsedResponse);
             } else {
-                callback(parsedResponse as SeriesInfo.SeriesInfo);
+                callback(parsedResponse);
             }
         },
         content: keywords + pivot + "offset=" + offset,

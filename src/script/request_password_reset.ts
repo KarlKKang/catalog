@@ -36,8 +36,8 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
     clearCookies();
 
-    var emailInput = getById('email') as HTMLInputElement;
-    var submitButton = getById('submit-button') as HTMLButtonElement;
+    const emailInput = getById('email') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
 
     addEventListener(emailInput, 'keydown', function (event) {
         if ((event as KeyboardEvent).key === "Enter") {
@@ -68,9 +68,9 @@ addEventListener(w, 'load', function () {
     function submitRequest() {
         disableAllInputs(true);
 
-        var warningElem = getById('warning');
+        const warningElem = getById('warning');
 
-        var email = emailInput.value;
+        const email = emailInput.value;
         if (!EMAIL_REGEX.test(email)) {
             warningElem.innerHTML = invalidEmailFormat;
             removeClass(warningElem, "hidden");

@@ -30,14 +30,14 @@ import {
 
 import type { CDNCredentials } from '../type';
 
-export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+\[\]{}\\|;:'",<.>\/?]{8,64}$/;
+export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+[\]{}\\|;:'",<.>/?]{8,64}$/;
 export const EMAIL_REGEX = /^(?=.{3,254}$)[^\s@]+@[^\s@]+$/;
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
 ////////////////////////////////////////
 export function getURLParam(name: string): string | null {
-    var urlObj = new URL(getHref());
+    const urlObj = new URL(getHref());
     return urlObj.searchParams.get(name);
 }
 ////////////////////////////////////////
@@ -52,7 +52,7 @@ function addXHROnError(xmlhttp: XMLHttpRequest) {
 
 ////////////////////////////////////////
 function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean {
-    var status = response.status;
+    const status = response.status;
     if (response.readyState == 4) {
         if (status == 200) {
             return true;
@@ -71,7 +71,7 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
         } else if (status == 503) {
             showMessage(status503);
         } else if (status == 500 || status == 400) {
-            var responseText = response.responseText;
+            const responseText = response.responseText;
             if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
                 showMessage(status400And500(responseText));
             }
@@ -96,12 +96,12 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
 
 ////////////////////////////////////////
 interface SendServerRequestOption {
-    callback?: Function,
+    callback?: (response: string) => void,
     content?: string,
     withCredentials?: boolean,
     method?: 'POST' | 'GET',
     logoutParam?: string
-};
+}
 export function sendServerRequest(uri: string, options: SendServerRequestOption) {
     if (options.content === undefined) {
         options.content = '';
@@ -113,7 +113,7 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
         options.method = 'POST';
     }
 
-    var xmlhttp = new XMLHttpRequest();
+    const xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
         if (checkXHRStatus(this, options.logoutParam)) {
             if (options.callback === undefined) {
@@ -131,9 +131,9 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function authenticate(callback: { successful?: Function, failed?: Function }) {
-    var successful: Function = function () { return; };
-    var failed: Function = function () { return; };
+export function authenticate(callback: { successful?: () => void, failed?: () => void }) {
+    let successful = function () { return; };
+    let failed = function () { return; };
     if (callback.successful !== undefined) {
         successful = callback.successful;
     }
@@ -156,7 +156,7 @@ export function authenticate(callback: { successful?: Function, failed?: Functio
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function logout(callback: Function) {
+export function logout(callback: () => void,) {
     if (callback === undefined) {
         callback = function () { return; };
     }
@@ -186,13 +186,13 @@ export function passwordStyling(element: HTMLInputElement) {
         }
     }
 
-    var descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value"); //The object returned is mutable but mutating it has no effect on the original property's configuration.
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value"); //The object returned is mutable but mutating it has no effect on the original property's configuration.
     if (descriptor !== undefined && descriptor.configurable) { // 'undefined' in Chrome prior to Chrome 43 (https://developer.chrome.com/blog/DOM-attributes-now-on-the-prototype-chain/), not configurable in Safari 9.
-        var originalSet = descriptor.set;
+        const originalSet = descriptor.set;
 
         // define our own setter
-        descriptor.set = function () {
-            originalSet!.apply(this, arguments as any);
+        descriptor.set = function (...args) {
+            originalSet!.apply(this, args);
             inputChangeHandler();
         }
 
@@ -206,9 +206,9 @@ export function passwordStyling(element: HTMLInputElement) {
 
 ////////////////////////////////////////
 function navUpdate() {
-    var navBtn = getById('nav-btn');
+    const navBtn = getById('nav-btn');
     toggleClass(navBtn, 'active');
-    var menu = getById('nav-menu');
+    const menu = getById('nav-menu');
 
     if (containsClass(navBtn, 'active')) {
         removeClass(menu, 'invisible');
@@ -279,18 +279,18 @@ export function secToTimestamp(sec: number) {
     if (isNaN(sec)) {
         return '--:--';
     }
-    var hour = Math.floor(sec / 60 / 60);
+    const hour = Math.floor(sec / 60 / 60);
     sec = sec - hour * 60 * 60;
-    var min = Math.floor(sec / 60);
+    const min = Math.floor(sec / 60);
     sec = sec - min * 60;
 
     sec = Math.floor(sec);
-    var secText = sec.toString();
+    let secText = sec.toString();
     if (sec < 10) {
         secText = '0' + secText;
     }
 
-    var minText = min.toString();
+    let minText = min.toString();
     if (hour > 0 && min < 10) {
         minText = '0' + minText;
     }
@@ -315,14 +315,14 @@ export function imageProtection(elem: HTMLElement) {
         e.preventDefault();
     });
     addEventListener(elem, 'touchforcechange', e => {
-        var event = e as TouchEvent;
+        const event = e as TouchEvent;
         if (event.changedTouches[0] !== undefined && event.changedTouches[0].force > 0.1) {
             event.preventDefault();
         }
     });
 
     addEventListener(elem, 'touchstart', e => {
-        var event = e as TouchEvent;
+        const event = e as TouchEvent;
         if (event.changedTouches[0] !== undefined && event.changedTouches[0].force > 0.1) {
             event.preventDefault();
         }
@@ -332,14 +332,14 @@ export function imageProtection(elem: HTMLElement) {
 
 ////////////////////////////////////////
 export function concatenateSignedURL(url: string, credentials: CDNCredentials.CDNCredentials, resourceURLOverride?: string) {
-    var policyString: string;
+    let policyString: string;
     if (credentials.Policy !== undefined) {
-        var policy = credentials['Policy'];
+        const policy = credentials['Policy'];
         policy['Statement'][0]['Resource'] = (resourceURLOverride === undefined) ? url : resourceURLOverride;
         policyString = JSON.stringify(policy);
         policyString = w.btoa(policyString);
         policyString = policyString.replace(/\+/g, "-");
-        policyString = policyString.replace(/\=/g, "_");
+        policyString = policyString.replace(/=/g, "_");
         policyString = policyString.replace(/\//g, "~");
         policyString = 'Policy=' + policyString
     } else {
@@ -406,7 +406,7 @@ export function cssVarWrapper() {
 
 ////////////////////////////////////////
 import type Sha512 from 'node-forge/lib/sha512';
-var sha512: typeof Sha512 | null = null;
+let sha512: typeof Sha512 | null = null;
 export async function hashPassword(password: string) {
     if (sha512 === null) {
         try {
@@ -419,7 +419,7 @@ export async function hashPassword(password: string) {
         }
     }
 
-    var hash = (sha512 as typeof Sha512).sha256.create();
+    const hash = (sha512 as typeof Sha512).sha256.create();
     hash.update(password);
     return hash.digest().toHex();
 }

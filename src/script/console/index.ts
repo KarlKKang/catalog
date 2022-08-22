@@ -114,7 +114,7 @@ addEventListener(w, 'load', function () {
     });
 
     function generate(type: string) {
-        var param = {
+        const param = {
             command: 'generate',
             type: type
         };
@@ -128,7 +128,7 @@ addEventListener(w, 'load', function () {
     }
 
     function run(type: string) {
-        var param = {
+        const param = {
             command: 'run',
             type: type
         };
@@ -142,13 +142,13 @@ addEventListener(w, 'load', function () {
     }
 
     function clearCDNCache() {
-        var dir = (getById('clear-cache-dir') as HTMLTextAreaElement).value;
+        const dir = (getById('clear-cache-dir') as HTMLTextAreaElement).value;
         if (!dir.startsWith('/') || dir.includes('..')) {
             alert('ERROR: Invalid format for dir');
             return;
         }
 
-        var confirm;
+        let confirm;
         do {
             confirm = prompt('Type "clear" to confirm deleting cache for the following directory: ' + dir);
             if (confirm === null) {
@@ -156,7 +156,7 @@ addEventListener(w, 'load', function () {
             }
         } while (confirm != "clear");
 
-        var param = {
+        const param = {
             command: 'clear',
             type: 'cdn_cache',
             dir: dir
@@ -171,7 +171,7 @@ addEventListener(w, 'load', function () {
     }
 
     function clearKeyCache() {
-        var confirm;
+        let confirm;
         do {
             confirm = prompt('Type "clear" to confirm deleting expired key cache');
             if (confirm === null) {
@@ -179,7 +179,7 @@ addEventListener(w, 'load', function () {
             }
         } while (confirm != "clear");
 
-        var param = {
+        const param = {
             command: 'clear',
             type: 'key_cache'
         };
@@ -193,7 +193,7 @@ addEventListener(w, 'load', function () {
     }
 
     function rebuild(type: string) {
-        var confirm;
+        let confirm;
         do {
             confirm = prompt('Type "rebuild" to confirm rebuilding the index.');
             if (confirm === null) {
@@ -201,7 +201,7 @@ addEventListener(w, 'load', function () {
             }
         } while (confirm != "rebuild");
 
-        var param = {
+        const param = {
             command: 'rebuild',
             type: type
         };
@@ -215,13 +215,13 @@ addEventListener(w, 'load', function () {
     }
 
     function verify() {
-        var id = (getById('verify-id') as HTMLTextAreaElement).value;
+        const id = (getById('verify-id') as HTMLTextAreaElement).value;
         if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
             alert("ERROR: Invalid value for 'id'");
             return;
         }
 
-        var confirm;
+        let confirm;
         do {
             confirm = prompt('Type "verify" to confirm verifying the series: ' + id);
             if (confirm === null) {
@@ -229,7 +229,7 @@ addEventListener(w, 'load', function () {
             }
         } while (confirm != "verify");
 
-        var param = {
+        const param = {
             command: 'verify',
             series: id
         };

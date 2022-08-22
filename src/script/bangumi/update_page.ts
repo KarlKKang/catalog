@@ -34,10 +34,10 @@ import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImp
 
 const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
 const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
-var EPSelectorHeight: number;
+let EPSelectorHeight: number;
 
-var seriesID: string;
-var epIndex: number;
+let seriesID: string;
+let epIndex: number;
 
 export default function (
     response: BangumiInfo.BangumiInfo,
@@ -55,14 +55,14 @@ export default function (
     navListeners();
     removeClass(getBody(), "hidden");
 
-    const contentContainer = getById('content');;
+    const contentContainer = getById('content');
     const debug = DEVELOPMENT || getURLParam('debug') === '1';
 
-    let epInfo = response.ep_info;
+    const epInfo = response.ep_info;
 
-    let titleElem = getById('title');
-    let title = response.title;
-    let titleOverride = response.title_override;
+    const titleElem = getById('title');
+    const title = response.title;
+    const titleOverride = response.title_override;
     if (titleOverride !== undefined) {
         titleElem.innerHTML = titleOverride;
         setTitle(parseCharacters(titleOverride) + ' | ' + DOMAIN);
@@ -72,7 +72,7 @@ export default function (
     }
 
     if (debug) {
-        let onScreenConsole = createElement('textarea') as HTMLTextAreaElement;
+        const onScreenConsole = createElement('textarea') as HTMLTextAreaElement;
         onScreenConsole.id = 'on-screen-console';
         onScreenConsole.readOnly = true;
         onScreenConsole.rows = 20;
@@ -82,12 +82,12 @@ export default function (
     updateEPSelector(response.series_ep);
     updateSeasonSelector(response.seasons);
 
-    let ageRestricted = epInfo.age_restricted;
+    const ageRestricted = epInfo.age_restricted;
 
     if (ageRestricted) {
-        var warningParent = getById('warning');
-        var warningTitle = getById('warning-title');
-        var warningBody = getById('warning-body');
+        const warningParent = getById('warning');
+        const warningTitle = getById('warning-title');
+        const warningBody = getById('warning-body');
         changeColor(warningTitle, 'red');
         if (ageRestricted.toLowerCase() == 'r15+') {
             warningTitle.innerHTML = '「R15+指定」<br>年齢認証';
@@ -98,9 +98,9 @@ export default function (
         }
         warningBody.innerHTML = 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？';
 
-        var warningButtonGroup = getById('warning-button-group');
-        var warningButtonYes = createElement('button');
-        var warningButtonNo = createElement('button');
+        const warningButtonGroup = getById('warning-button-group');
+        const warningButtonYes = createElement('button');
+        const warningButtonNo = createElement('button');
         warningButtonYes.innerHTML = 'はい';
         warningButtonNo.innerHTML = 'いいえ';
         addClass(warningButtonYes, 'button');
@@ -133,11 +133,11 @@ export default function (
     }, 60 * 1000);
 
     /////////////////////////////////////////////Add Media/////////////////////////////////////////////
-    let type = epInfo.type;
-    let seriesOverride = epInfo.series_override;
-    let baseURL = CDN_URL + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
+    const type = epInfo.type;
+    const seriesOverride = epInfo.series_override;
+    const baseURL = CDN_URL + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
 
-    let mediaHolder = getById('media-holder');
+    const mediaHolder = getById('media-holder');
 
     if (type === 'video') {
         videoImportPromise.then(({ default: module }) => {
@@ -164,12 +164,12 @@ export default function (
 }
 
 function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
-    var epButtonWrapper = createElement('div');
+    const epButtonWrapper = createElement('div');
     epButtonWrapper.id = 'ep-button-wrapper';
 
     seriesEP.forEach(function (value, index) {
-        let epButton = createElement('div');
-        let epText = createElement('p');
+        const epButton = createElement('div');
+        const epText = createElement('p');
 
         epText.innerHTML = value;
 
@@ -177,18 +177,18 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             addClass(epButton, 'current-ep');
         }
 
-        let targetEP = index + 1;
+        const targetEP = index + 1;
         appendChild(epButton, epText);
         addEventListener(epButton, 'click', function () { goToEP(seriesID, targetEP); });
 
         appendChild(epButtonWrapper, epButton);
     });
 
-    let epSelector = getById('ep-selector');
+    const epSelector = getById('ep-selector');
     appendChild(epSelector, epButtonWrapper);
 
     EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10; //Add some extra pixels to compensate for slight variation and error.
-    var showMoreButton = createElement('p');
+    const showMoreButton = createElement('p');
     showMoreButton.id = 'show-more-button';
     addClass(showMoreButton, 'hidden');
     appendChild(epSelector, showMoreButton);
@@ -196,7 +196,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     styleEPSelector();
 
     addEventListener(w, 'resize', function () {
-        var currentMaxHeight = epButtonWrapper.style.maxHeight;
+        const currentMaxHeight = epButtonWrapper.style.maxHeight;
         epButtonWrapper.style.maxHeight = ''; //Resetting max-height can mitigate a bug in IE browser where the scrollHeight attribute is not accurate.
         EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10;
         epButtonWrapper.style.maxHeight = currentMaxHeight;
@@ -205,19 +205,19 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
 }
 
 function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
-    var seasonButtonWrapper = createElement('div');
-    var seasonSelector = getById('season-selector');
+    const seasonButtonWrapper = createElement('div');
+    const seasonSelector = getById('season-selector');
     seasonButtonWrapper.id = 'season-button-wrapper';
 
     if (seasons.length != 0) {
-        for (let season of seasons) {
-            let seasonButton = createElement('div');
-            let seasonText = createElement('p');
+        for (const season of seasons) {
+            const seasonButton = createElement('div');
+            const seasonText = createElement('p');
 
             if (season.id != seriesID) {
                 seasonText.innerHTML = season.season_name;
                 appendChild(seasonButton, seasonText);
-                let targetSeries = season.id;
+                const targetSeries = season.id;
                 addEventListener(seasonButton, 'click', function () { goToEP(targetSeries, 1); });
             } else {
                 seasonText.innerHTML = season.season_name;
@@ -233,7 +233,7 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
 }
 
 function goToEP(dest_series: string, dest_ep: number) {
-    var url: string;
+    let url: string;
     if (DEVELOPMENT) {
         url = 'bangumi.html' + '?series=' + dest_series + (dest_ep == 1 ? '' : ('&ep=' + dest_ep));
     } else {
@@ -251,8 +251,8 @@ function styleEPSelector() {
 }
 
 function foldEPSelector() {
-    var showMoreButton = getById('show-more-button');
-    var epButtonWrapper = getById('ep-button-wrapper');
+    const showMoreButton = getById('show-more-button');
+    const epButtonWrapper = getById('ep-button-wrapper');
 
     if (!containsClass(showMoreButton, 'hidden')) {
         if (containsClass(epButtonWrapper, 'expanded')) {
@@ -267,8 +267,8 @@ function foldEPSelector() {
 }
 
 function unfoldEPSelector() {
-    var showMoreButton = getById('show-more-button');
-    var epButtonWrapper = getById('ep-button-wrapper');
+    const showMoreButton = getById('show-more-button');
+    const epButtonWrapper = getById('ep-button-wrapper');
     if (containsClass(showMoreButton, 'hidden')) {
         return;
     }
@@ -278,8 +278,8 @@ function unfoldEPSelector() {
 }
 
 function toggleEPSelector() {
-    var showMoreButton = getById('show-more-button');
-    var epButtonWrapper = getById('ep-button-wrapper');
+    const showMoreButton = getById('show-more-button');
+    const epButtonWrapper = getById('ep-button-wrapper');
     const CLIPPED = !containsClass(epButtonWrapper, 'expanded');
     showMoreButton.innerHTML = CLIPPED ? showMoreButtonExpandedText : showMoreButtonClippedText;
     if (CLIPPED) {

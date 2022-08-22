@@ -38,13 +38,13 @@ addEventListener(w, 'load', function () {
 
     clearCookies();
 
-    var submitButton = getById('submit-button') as HTMLButtonElement;
-    var usernameInput = getById('username') as HTMLInputElement;
-    var passwordInput = getById('password') as HTMLInputElement;
-    var passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
+    const usernameInput = getById('username') as HTMLInputElement;
+    const passwordInput = getById('password') as HTMLInputElement;
+    const passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
 
-    var param = getURLParam('p');
-    var signature = getURLParam('signature');
+    const param = getURLParam('p');
+    const signature = getURLParam('signature');
 
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
@@ -128,11 +128,11 @@ addEventListener(w, 'load', function () {
     async function register() {
         disableAllInputs(true);
 
-        var warningElem = getById('warning');
+        const warningElem = getById('warning');
 
-        var username = usernameInput.value;
-        var password = passwordInput.value;
-        var passwordConfirm = passwordConfirmInput.value;
+        const username = usernameInput.value;
+        let password = passwordInput.value;
+        const passwordConfirm = passwordConfirmInput.value;
 
         if (username == '') {
             warningElem.innerHTML = usernameEmpty;
@@ -155,7 +155,7 @@ addEventListener(w, 'load', function () {
 
         password = await hashPassword(password);
 
-        var user = {
+        const user = {
             username: username,
             password: password
         };

@@ -33,11 +33,11 @@ addEventListener(w, 'load', function () {
 
     clearCookies();
 
-    var newEmailInput = getById('new-email') as HTMLInputElement;
-    var submitButton = getById('submit-button') as HTMLButtonElement;
+    const newEmailInput = getById('new-email') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
 
-    var param = getURLParam('p');
-    var signature = getURLParam('signature');
+    const param = getURLParam('p');
+    const signature = getURLParam('signature');
 
 
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
@@ -82,8 +82,8 @@ addEventListener(w, 'load', function () {
     function submitRequest() {
         disableAllInputs(true);
 
-        var warningElem = getById('warning');
-        var newEmail = newEmailInput.value;
+        const warningElem = getById('warning');
+        const newEmail = newEmailInput.value;
 
         if (!EMAIL_REGEX.test(newEmail)) {
             warningElem.innerHTML = invalidEmailFormat;

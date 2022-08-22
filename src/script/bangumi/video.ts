@@ -31,15 +31,15 @@ import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
 import { destroyAll, showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showLegacyBrowserError } from './media_helper';
 import type { HlsImportPromise } from './get_import_promises';
 
-var seriesID: string;
-var epIndex: number;
-var epInfo: BangumiInfo.VideoEPInfo;
-var baseURL: string;
-var mediaHolder: HTMLElement;
-var contentContainer: HTMLElement;
-var debug: boolean;
+let seriesID: string;
+let epIndex: number;
+let epInfo: BangumiInfo.VideoEPInfo;
+let baseURL: string;
+let mediaHolder: HTMLElement;
+let contentContainer: HTMLElement;
+let debug: boolean;
 
-var hlsImportPromise: HlsImportPromise;
+let hlsImportPromise: HlsImportPromise;
 
 export default function (
     _seriesID: string,
@@ -65,7 +65,7 @@ export default function (
 
     // Title
     if (epInfo.title != '') {
-        let title = createElement('p');
+        const title = createElement('p');
         addClass(title, 'sub-title');
         addClass(title, 'center-align');
         title.innerHTML = epInfo.title;
@@ -74,12 +74,12 @@ export default function (
 
     // Formats
     let formatIndex = getFormatIndex();
-    let formats = epInfo.formats;
+    const formats = epInfo.formats;
 
-    let formatSelector = createElement('div');
+    const formatSelector = createElement('div');
     formatSelector.id = 'format-selector';
 
-    let selectMenu = createElement('select') as HTMLSelectElement;
+    const selectMenu = createElement('select') as HTMLSelectElement;
 
     if (formatIndex >= formats.length) {
         formatIndex = 0;
@@ -87,7 +87,7 @@ export default function (
     updateURLParam(seriesID, epIndex, formatIndex);
 
     formats.forEach(function (format, index) {
-        let option = createElement('option') as HTMLOptionElement;
+        const option = createElement('option') as HTMLOptionElement;
 
         option.value = format.value;
         option.innerHTML = (format.tag === undefined) ? format.value : format.tag;
@@ -123,7 +123,7 @@ export default function (
         return;
     }
 
-    var videoJS = createElement('video-js');
+    const videoJS = createElement('video-js');
 
     addClass(videoJS, 'vjs-big-play-centered');
     videoJS.lang = 'en';
@@ -138,13 +138,13 @@ export default function (
     videojs(videoJS, config, function () {
         videoJS.style.paddingTop = 9 / 16 * 100 + '%';
 
-        let mediaInstance = videojsMod(this, { debug: debug });
+        const mediaInstance = videojsMod(this, { debug: debug });
 
         addEventListener(selectMenu, "change", function () {
             formatSwitch(mediaInstance);
         });
 
-        let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + selectMenu.value + '].m3u8'), epInfo.cdn_credentials);
+        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + selectMenu.value + '].m3u8'), epInfo.cdn_credentials);
 
         addVideoNode(url, mediaInstance, {/*, currentTime: timestampParam*/ });
         if (epInfo.chapters.length > 0) {
@@ -155,18 +155,18 @@ export default function (
 }
 
 function formatSwitch(mediaInstance: VideojsModInstance) {
-    let formatSelector = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement);
-    let formatIndex = formatSelector.selectedIndex;
-    let video = mediaInstance.media;
+    const formatSelector = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement);
+    const formatIndex = formatSelector.selectedIndex;
+    const video = mediaInstance.media;
 
     updateURLParam(seriesID, epIndex, formatIndex);
 
     sendServerRequest('format_switch.php', {
         callback: function (response: string) {
-            let currentTime = video.currentTime;
-            let paused = video.paused;
+            const currentTime = video.currentTime;
+            const paused = video.paused;
 
-            let parsedResponse: any;
+            let parsedResponse: CDNCredentials.CDNCredentials;
             try {
                 parsedResponse = JSON.parse(response);
                 CDNCredentials.check(parsedResponse);
@@ -174,7 +174,7 @@ function formatSwitch(mediaInstance: VideojsModInstance) {
                 showMessage(invalidResponse);
                 return;
             }
-            let url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + formatSelector.value + '].m3u8'), parsedResponse as CDNCredentials.CDNCredentials);
+            const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + formatSelector.value + '].m3u8'), parsedResponse);
             addVideoNode(url, mediaInstance, { currentTime: currentTime, play: !paused });
         },
         content: "token=" + epInfo.authentication_token + "&format=" + formatIndex,
@@ -190,7 +190,7 @@ function addVideoNode(
 
     destroyAll([mediaInstance]);
 
-    let videoMedia = mediaInstance.media;
+    const videoMedia = mediaInstance.media;
     videoMedia.title = getTitle();
 
     function videoReady() {
@@ -205,7 +205,7 @@ function addVideoNode(
 
     if (browser.USE_MSE) {
 
-        var config = {
+        const config = {
             enableWebVTT: false,
             enableIMSC1: false,
             enableCEA708Captions: false,
@@ -225,7 +225,7 @@ function addVideoNode(
         }
 
         hlsImportPromise.then(({ default: Hls }) => {
-            let hls = new Hls(config);
+            const hls = new Hls(config);
 
             hls.on(Hls.Events.ERROR, function (_, data) {
                 if (data.fatal) {
@@ -257,20 +257,20 @@ function addVideoNode(
 }
 
 function displayChapters(chapters: BangumiInfo.Chapters, mediaInstance: VideojsModInstance) {
-    var accordion = createElement('button');
+    const accordion = createElement('button');
     addClass(accordion, 'accordion');
     accordion.innerHTML = 'CHAPTERS';
 
-    var accordionPanel = createElement('div');
+    const accordionPanel = createElement('div');
     addClass(accordionPanel, 'panel');
 
-    var video = mediaInstance.media;
+    const video = mediaInstance.media;
 
-    for (let chapter of chapters) {
-        let chapterNode = createElement('p');
-        let timestamp = createElement('span');
-        let cueText = createTextNode('\xa0\xa0' + chapter[0]);
-        let startTime = chapter[1];
+    for (const chapter of chapters) {
+        const chapterNode = createElement('p');
+        const timestamp = createElement('span');
+        const cueText = createTextNode('\xa0\xa0' + chapter[0]);
+        const startTime = chapter[1];
         timestamp.innerHTML = secToTimestamp(startTime);
         addEventListener(timestamp, 'click', function () {
             mediaInstance.seek(startTime);
@@ -282,18 +282,18 @@ function displayChapters(chapters: BangumiInfo.Chapters, mediaInstance: VideojsM
         appendChild(accordionPanel, chapterNode);
     }
 
-    var chaptersNode = createElement('div');
+    const chaptersNode = createElement('div');
     addClass(chaptersNode, 'chapters');
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);
     addAccordionEvent(accordion);
     appendChild(mediaHolder, chaptersNode);
 
-    var updateChapterDisplay = function () {
-        var chapterElements = getDescendantsByTag(accordionPanel, 'p');
-        var currentTime = video.currentTime;
+    const updateChapterDisplay = function () {
+        const chapterElements = getDescendantsByTag(accordionPanel, 'p');
+        const currentTime = video.currentTime;
         chapters.forEach(function (chapter, index) {
-            let chapterElement = chapterElements[index] as HTMLElement;
+            const chapterElement = chapterElements[index] as HTMLElement;
             if (currentTime >= chapter[1]) {
                 if (index == chapters.length - 1) {
                     setClass(chapterElement, 'current-chapter');

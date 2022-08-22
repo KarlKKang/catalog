@@ -67,12 +67,12 @@ export type VideojsModInstance = {
     readonly startBuffer: () => void
 }
 
-var DEBUG: boolean;
-var IS_VIDEO: boolean;
+let DEBUG: boolean;
+let IS_VIDEO: boolean;
 
 export default function (instance: videojs.Player, config?: { audio?: boolean, videojsMediaOverrideInstance?: videojs.Player, debug?: boolean }) {
-    let oldControls = instance.el();
-    var controls = oldControls.cloneNode(true) as HTMLElement;
+    const oldControls = instance.el();
+    const controls = oldControls.cloneNode(true) as HTMLElement;
     oldControls.id = '';
 
     insertBefore(controls, oldControls);
@@ -87,7 +87,7 @@ export default function (instance: videojs.Player, config?: { audio?: boolean, v
 
     const videojsMediaOverrideInstance = config.videojsMediaOverrideInstance;
     const media = function () {
-        var nativeMedia: HTMLVideoElement | HTMLAudioElement = (IS_VIDEO ? (getDescendantsByTagAt(controls, 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(controls, 'audio', 0) as HTMLAudioElement));
+        const nativeMedia: HTMLVideoElement | HTMLAudioElement = (IS_VIDEO ? (getDescendantsByTagAt(controls, 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(controls, 'audio', 0) as HTMLAudioElement));
         if (videojsMediaOverrideInstance !== undefined) {
             remove(nativeMedia);
             if (IS_VIDEO) {
@@ -102,7 +102,7 @@ export default function (instance: videojs.Player, config?: { audio?: boolean, v
 
     removeRightClick(controls);
 
-    var that: VideojsModInstance = {
+    const that: VideojsModInstance = {
         _playing: false,
         _buffering: false,
         _dragging: false,
@@ -152,8 +152,8 @@ export default function (instance: videojs.Player, config?: { audio?: boolean, v
                 media.currentTime = timestamp;
                 onScreenConsoleOutput('Skipped buffer flushing.');
             } else {
-                let hlsInstance = that._hls.instance;
-                let hlsConstructor = that._hls.constructor;
+                const hlsInstance = that._hls.instance;
+                const hlsConstructor = that._hls.constructor;
                 hlsInstance.once(hlsConstructor.Events.BUFFER_FLUSHED, function () {
                     media.currentTime = timestamp;
                     hlsInstance.startLoad(timestamp);
@@ -171,7 +171,7 @@ export default function (instance: videojs.Player, config?: { audio?: boolean, v
         if (that._buffering === false) {
             return;
         }
-        for (var i = media.buffered.length - 1; i >= 0; i--) {
+        for (let i = media.buffered.length - 1; i >= 0; i--) {
             if (media.buffered.start(i) <= media.currentTime + 0.1) {
                 onScreenConsoleOutput('Checking buffer range :' + media.buffered.start(i) + '-' + media.buffered.end(i) + '. Current time: ' + media.currentTime);
                 if (media.buffered.end(i) >= Math.min(media.currentTime + 15, media.duration - 0.1)) {
@@ -214,7 +214,7 @@ export default function (instance: videojs.Player, config?: { audio?: boolean, v
             addCheckBuffer();
             onScreenConsoleOutput('Buffer empty, start buffering.');
         } else {
-            for (var i = media.buffered.length - 1; i >= 0; i--) {
+            for (let i = media.buffered.length - 1; i >= 0; i--) {
                 if (media.buffered.start(i) <= media.currentTime + 0.1) {
                     if (media.buffered.end(i) < Math.min(media.currentTime + 14.9, media.duration - 0.1)) {
                         addCheckBuffer();
@@ -340,7 +340,7 @@ export default function (instance: videojs.Player, config?: { audio?: boolean, v
     }
 
     return that;
-};
+}
 
 
 function attachEventListeners(that: VideojsModInstance) {
@@ -425,9 +425,9 @@ function attachEventListeners(that: VideojsModInstance) {
         }
 
         if (DEBUG && IS_VIDEO) {
-            let videoMedia = media as HTMLVideoElement;
+            const videoMedia = media as HTMLVideoElement;
             if (typeof videoMedia.getVideoPlaybackQuality === "function") {
-                var quality = videoMedia.getVideoPlaybackQuality();
+                const quality = videoMedia.getVideoPlaybackQuality();
                 if (quality.droppedVideoFrames && quality.droppedVideoFrames != that._droppedFrames) {
                     onScreenConsoleOutput('Frame drop detected. Total dropped: ' + quality.droppedVideoFrames);
                     that._droppedFrames = quality.droppedVideoFrames;
@@ -459,7 +459,7 @@ function attachEventListeners(that: VideojsModInstance) {
         if (that._dragging) {
             that._dragging = false;
 
-            let currentTime = changeProgress(event as MouseEvent | TouchEvent);
+            const currentTime = changeProgress(event as MouseEvent | TouchEvent);
             that.seek(currentTime);
 
             if (IS_VIDEO && !that._useNative) {
@@ -481,8 +481,8 @@ function attachEventListeners(that: VideojsModInstance) {
     function changeProgress(event: MouseEvent | TouchEvent) {
         let mouseX;
         if (w.TouchEvent !== undefined && event instanceof TouchEvent) {
-            let touchEvent = event as TouchEvent;
-            let touch = touchEvent.touches[0] || touchEvent.changedTouches[0];
+            const touchEvent = event as TouchEvent;
+            const touch = touchEvent.touches[0] || touchEvent.changedTouches[0];
             if (touch === undefined) {
                 throw new Error('Failed to get TouchEvent data.');
             }
@@ -490,12 +490,12 @@ function attachEventListeners(that: VideojsModInstance) {
         } else {
             mouseX = (event as MouseEvent).clientX;
         }
-        let position = progressHolder.getBoundingClientRect();
-        let totalLength = position.right - position.left;
-        let leftPadding = Math.min(Math.max(mouseX - position.left, 0), totalLength);
-        let percentage = leftPadding / totalLength;
-        let currentTime = media.duration * percentage;
-        let currentTimestamp = secToTimestamp(currentTime);
+        const position = progressHolder.getBoundingClientRect();
+        const totalLength = position.right - position.left;
+        const leftPadding = Math.min(Math.max(mouseX - position.left, 0), totalLength);
+        const percentage = leftPadding / totalLength;
+        const currentTime = media.duration * percentage;
+        const currentTimestamp = secToTimestamp(currentTime);
 
         if (progressMouseDisplay !== undefined && progressTooltip !== undefined) {
             progressMouseDisplay.style.left = leftPadding + 'px';
@@ -588,10 +588,10 @@ function attachEventListeners(that: VideojsModInstance) {
     }, true);
 
     //Load progress
-    let loadProgress = getDescendantsByClassAt(progressHolder, 'vjs-load-progress', 0) as HTMLElement;
+    const loadProgress = getDescendantsByClassAt(progressHolder, 'vjs-load-progress', 0) as HTMLElement;
     function updateLoadProgress() {
         let bufferEnd = 0;
-        for (var i = media.buffered.length - 1; i >= 0; i--) {
+        for (let i = media.buffered.length - 1; i >= 0; i--) {
             if (media.buffered.start(i) <= media.currentTime) {
                 bufferEnd = media.buffered.end(i);
                 break;
@@ -637,7 +637,7 @@ function attachEventListeners(that: VideojsModInstance) {
 
     //Fullscreen
     const IOS_FULLSCREEN = IS_IOS && videoMedia.webkitEnterFullscreen;
-    let requestFullscreen = function () {
+    const requestFullscreen = function () {
         if (IOS_FULLSCREEN) {
             videoMedia.webkitEnterFullscreen!();
         } else {
@@ -647,12 +647,12 @@ function attachEventListeners(that: VideojsModInstance) {
         controls.focus();
     };
 
-    let exitFullscreen = function () {
+    const exitFullscreen = function () {
         screenfull.exit();
         controls.focus();
     };
 
-    let toggleFullscreen = function () {
+    const toggleFullscreen = function () {
         if (containsClass(controls, 'vjs-fullscreen')) {
             exitFullscreen();
         } else {
@@ -660,7 +660,7 @@ function attachEventListeners(that: VideojsModInstance) {
         }
     };
 
-    let fullscreenButton = getDescendantsByClassAt(controlBar, 'vjs-fullscreen-control', 0) as HTMLButtonElement;
+    const fullscreenButton = getDescendantsByClassAt(controlBar, 'vjs-fullscreen-control', 0) as HTMLButtonElement;
 
     if (screenfull.isEnabled || IOS_FULLSCREEN) {
         removeClass(fullscreenButton, 'vjs-disabled');
@@ -672,8 +672,8 @@ function attachEventListeners(that: VideojsModInstance) {
         }, true);
 
         if (!IOS_FULLSCREEN) {
-            let fullscreenChange = function () {
-                let elemInFS = screenfull.element;
+            const fullscreenChange = function () {
+                const elemInFS = screenfull.element;
                 if (elemInFS === undefined) {
                     removeClass(controls, 'vjs-fullscreen');
                     fullscreenButton.title = 'Fullscreen';
@@ -690,9 +690,9 @@ function attachEventListeners(that: VideojsModInstance) {
     }
 
     //Picture in picture
-    let PIPButton = getDescendantsByClass(controlBar, 'vjs-picture-in-picture-control')[0];
+    const PIPButton = getDescendantsByClass(controlBar, 'vjs-picture-in-picture-control')[0];
     if (PIPButton !== undefined) {
-        let PIPButtonCast = PIPButton as HTMLButtonElement;
+        const PIPButtonCast = PIPButton as HTMLButtonElement;
         if (d.pictureInPictureEnabled) {
             removeClass(PIPButtonCast, 'vjs-disabled');
             PIPButtonCast.disabled = false;
@@ -731,7 +731,7 @@ function attachEventListeners(that: VideojsModInstance) {
     });
 
     addEventListener(controls, 'keydown', function (event) {
-        let key = (event as KeyboardEvent).key;
+        const key = (event as KeyboardEvent).key;
         if (key === ' ' || key === 'Spacebar') {
             togglePlayback();
             event.preventDefault();
@@ -759,10 +759,10 @@ function onScreenConsoleOutput(txt: string) {
         return;
     }
 
-    var onScreenConsole = getById('on-screen-console');
+    const onScreenConsole = getById('on-screen-console');
     if (onScreenConsole instanceof HTMLTextAreaElement) {
-        let date = new Date();
-        let newline = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()) + '   ' + txt + '\r\n';
+        const date = new Date();
+        const newline = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()) + '   ' + txt + '\r\n';
         console.log(newline);
         onScreenConsole.value += newline;
     }

@@ -6,9 +6,9 @@ import {
     d,
 } from './DOM';
 
-var positionDetector: HTMLElement;
-var callback: () => void;
-var isEnabled: boolean = false;
+let positionDetector: HTMLElement;
+let callback: () => void;
+let isEnabled = false;
 
 export default function (listener: () => void) {
     positionDetector = getById('position-detector');
@@ -28,8 +28,8 @@ function updatePosition() {
         return;
     }
 
-    var boundingRect = positionDetector.getBoundingClientRect();
-    var viewportHeight = Math.max(d.documentElement.clientHeight || 0, w.innerHeight || 0);
+    const boundingRect = positionDetector.getBoundingClientRect();
+    const viewportHeight = Math.max(d.documentElement.clientHeight || 0, w.innerHeight || 0);
 
     if (boundingRect.top - 256 - 24 <= viewportHeight * 1.5 && isEnabled) {
         isEnabled = false;

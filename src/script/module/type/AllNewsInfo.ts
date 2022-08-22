@@ -24,7 +24,7 @@ export function check(allNewsInfo: any) {
         throwError();
     }
 
-    var offsetInfo = allNewsInfo[allNewsInfo.length - 1];
+    const offsetInfo = allNewsInfo[allNewsInfo.length - 1];
 
     if (!isNumber(offsetInfo) && offsetInfo !== "EOF") {
         throwError();
@@ -34,8 +34,8 @@ export function check(allNewsInfo: any) {
         throwError();
     }
 
-    var allNewsInfoEntries: any[] = allNewsInfo.slice(0, -1);
-    for (let allNewsInfoEntry of allNewsInfoEntries) {
+    const allNewsInfoEntries: any[] = allNewsInfo.slice(0, -1);
+    for (const allNewsInfoEntry of allNewsInfoEntries) {
         if (!isObject(allNewsInfoEntry)) {
             throwError();
         }
