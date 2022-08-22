@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 import os
 import sys
 from fontTools.subset import main as pyftsubset
