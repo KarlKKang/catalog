@@ -57,7 +57,7 @@ export default function (
 
     const contentContainer = getById('content');;
     const debug = DEVELOPMENT || getURLParam('debug') === '1';
-    
+
     let epInfo = response.ep_info;
 
     let titleElem = getById('title');

@@ -1,0 +1,9 @@
+{
+    "html.format.wrapLineLength": 0,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "html.format.templating": true
+}
