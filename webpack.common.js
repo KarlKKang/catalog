@@ -229,7 +229,7 @@ module.exports = {
         }),
     ],
     output: {
-        filename: '[name].js',
+        filename: '[id].js',
         publicPath: '/script/',
         clean: true,
     },

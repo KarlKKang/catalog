@@ -10,12 +10,10 @@ export default async function () {
     try {
         [{ default: lazyloadInitialize }, { default: imageLoader }] = await Promise.all([
             import(
-                /* webpackChunkName: "lazyload" */
                 /* webpackExports: ["default"] */
                 './lazyload'
             ),
             import(
-                /* webpackChunkName: "image_loader" */
                 /* webpackExports: ["default"] */
                 '../image_loader'
             ),

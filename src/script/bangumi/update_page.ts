@@ -28,8 +28,9 @@ import {
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
-import type { BangumiInfo } from '../module/type';
 import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight } from './helper';
+import type { BangumiInfo } from '../module/type';
+import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImportPromise, LazyloadImportPromise } from './get_import_promises';
 
 const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
 const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
@@ -42,18 +43,11 @@ export default function (
     response: BangumiInfo.BangumiInfo,
     _seriesID: string,
     _epIndex: number,
-    videoImportPromise: Promise<typeof import(
-        /* webpackExports: ["default"] */
-        './video'
-    )>,
-    audioImportPromise: Promise<typeof import(
-        /* webpackExports: ["default"] */
-        './audio'
-    )>,
-    imageImportPromise: Promise<typeof import(
-        /* webpackExports: ["default"] */
-        './image'
-    )>
+    videoImportPromise: VideoImportPromise,
+    audioImportPromise: AudioImportPromise,
+    imageImportPromise: ImageImportPromise,
+    hlsImportPromise: HlsImportPromise,
+    lazyloadImportPromise: LazyloadImportPromise
 ) {
     seriesID = _seriesID;
     epIndex = _epIndex;
@@ -147,20 +141,20 @@ export default function (
 
     if (type === 'video') {
         videoImportPromise.then(({ default: module }) => {
-            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, contentContainer, debug);
+            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, contentContainer, hlsImportPromise, debug);
         }).catch((e) => {
             showMessage(moduleImportError(e));
         });
     } else {
         if (type === 'audio') {
             audioImportPromise.then(({ default: module }) => {
-                module(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, contentContainer, debug);
+                module(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, contentContainer, hlsImportPromise, debug);
             }).catch((e) => {
                 showMessage(moduleImportError(e));
             });
         } else {
             imageImportPromise.then(({ default: module }) => {
-                module(epInfo as BangumiInfo.ImageEPInfo, baseURL, mediaHolder);
+                module(epInfo as BangumiInfo.ImageEPInfo, baseURL, mediaHolder, lazyloadImportPromise);
             }).catch((e) => {
                 showMessage(moduleImportError(e));
             });

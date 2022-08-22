@@ -29,6 +29,7 @@ import type { VideojsModInstance } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
 import { destroyAll, showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showLegacyBrowserError } from './media_helper';
+import type { HlsImportPromise } from './get_import_promises';
 
 var seriesID: string;
 var epIndex: number;
@@ -38,10 +39,7 @@ var mediaHolder: HTMLElement;
 var contentContainer: HTMLElement;
 var debug: boolean;
 
-var hlsImportPromise = import(
-    /* webpackExports: ["default"] */
-    'hls.js'
-);
+var hlsImportPromise: HlsImportPromise;
 
 export default function (
     _seriesID: string,
@@ -50,6 +48,7 @@ export default function (
     _baseURL: string,
     _mediaHolder: HTMLElement,
     _contentContainer: HTMLElement,
+    _hlsImportPromise: HlsImportPromise,
     _debug: boolean
 ) {
 
@@ -59,6 +58,7 @@ export default function (
     baseURL = _baseURL;
     mediaHolder = _mediaHolder;
     contentContainer = _contentContainer;
+    hlsImportPromise = _hlsImportPromise;
     debug = _debug;
 
     addClass(mediaHolder, 'video');

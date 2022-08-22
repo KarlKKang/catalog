@@ -17,15 +17,14 @@ import {
     getTitle,
     setDataAttribute,
 } from '../module/DOM';
-import { default as importLazyload } from '../module/lazyload';
 import type { BangumiInfo, LocalImageParam } from '../module/type';
-
-var lazyloadImportPromise = importLazyload();
+import type { LazyloadImportPromise } from './get_import_promises';
 
 export default function (
     epInfo: BangumiInfo.ImageEPInfo,
     baseURL: string,
     mediaHolder: HTMLElement,
+    lazyloadImportPromise: LazyloadImportPromise
 ) {
     let files = epInfo.files;
 

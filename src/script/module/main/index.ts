@@ -381,7 +381,6 @@ export function clearCookies() {
 export function cssVarWrapper() {
     const showErrorMessage = !getHref().endsWith('/message') && !DEVELOPMENT;
     import(
-        /* webpackChunkName: "css-vars-ponyfill" */
         /* webpackExports: ["default"] */
         'css-vars-ponyfill'
     ).then(({ default: cssVars }) => {
@@ -412,7 +411,6 @@ export async function hashPassword(password: string) {
     if (sha512 === null) {
         try {
             ({ default: sha512 } = await import(
-                /* webpackChunkName: "sha512" */
                 /* webpackExports: ["default"] */
                 'node-forge/lib/sha512'
             ));

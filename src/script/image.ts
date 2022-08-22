@@ -55,7 +55,6 @@ addEventListener(w, 'load', function () {
     const param = parsedCookie as LocalImageParam.LocalImageParam;
 
     const imageLoaderImportPromise = import(
-        /* webpackChunkName: "image_loader" */
         /* webpackExports: ["default"] */
         './module/image_loader'
     );

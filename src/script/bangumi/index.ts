@@ -21,6 +21,7 @@ import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { BangumiInfo } from '../module/type';
 import { getLogoutParam, getFormatIndex } from './helper';
+import { default as getImportPromises } from './get_import_promises';
 
 addEventListener(w, 'load', function () {
     if (!getHref().startsWith(TOP_URL + '/bangumi/') && !DEVELOPMENT) {
@@ -41,22 +42,7 @@ addEventListener(w, 'load', function () {
     cssVarWrapper();
 
     // Preload modules
-    let updatePageImportPromise = import(
-        /* webpackExports: ["default"] */
-        './update_page'
-    );
-    let imageImportPromise = import(
-        /* webpackExports: ["default"] */
-        './image'
-    );
-    let videoImportPromise = import(
-        /* webpackExports: ["default"] */
-        './video'
-    );
-    let audioImportPromise = import(
-        /* webpackExports: ["default"] */
-        './audio'
-    );
+    let importPromises = getImportPromises();
 
     // Parse other parameters
     const epIndexParam = getURLParam('ep');
@@ -83,14 +69,16 @@ addEventListener(w, 'load', function () {
                 showMessage(invalidResponse);
                 return;
             }
-            updatePageImportPromise.then(({ default: updatePage }) => {
+            importPromises.updatePage.then(({ default: updatePage }) => {
                 updatePage(
                     parsedResponse,
                     seriesID,
                     epIndex,
-                    videoImportPromise,
-                    audioImportPromise,
-                    imageImportPromise
+                    importPromises.video,
+                    importPromises.audio,
+                    importPromises.image,
+                    importPromises.hls,
+                    importPromises.lazyload
                 );
             }).catch((e) => {
                 showMessage(moduleImportError(e));

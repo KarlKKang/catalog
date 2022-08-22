@@ -20,6 +20,7 @@ import type { VideojsModInstance } from '../module/player';
 
 import { parseCharacters } from './helper';
 import { showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, destroyAll, getDownloadAccordion, showLegacyBrowserError } from './media_helper';
+import type { HlsImportPromise } from './get_import_promises';
 
 var seriesID: string;
 var epIndex: number;
@@ -31,10 +32,7 @@ var debug: boolean;
 
 var audioReadyCounter = 0;
 var mediaInstances: Array<VideojsModInstance> = [];
-var hlsImportPromise = import(
-    /* webpackExports: ["default"] */
-    'hls.js'
-);
+var hlsImportPromise: HlsImportPromise;
 
 export default function (
     _seriesID: string,
@@ -43,6 +41,7 @@ export default function (
     _baseURL: string,
     _mediaHolder: HTMLElement,
     _contentContainer: HTMLElement,
+    _hlsImportPromise: HlsImportPromise,
     _debug: boolean
 ) {
 
@@ -52,6 +51,7 @@ export default function (
     baseURL = _baseURL;
     mediaHolder = _mediaHolder;
     contentContainer = _contentContainer;
+    hlsImportPromise = _hlsImportPromise;
     debug = _debug;
 
     let audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
