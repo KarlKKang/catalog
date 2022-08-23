@@ -71,7 +71,9 @@ addEventListener(w, 'load', function () {
         lazyloadImportPromise.then((module) => {
             lazyloadInitialize = module;
             infiniteScrolling = initializeInfiniteScrolling(getSeries);
-            showSeries(seriesInfo);
+            if (!showSeries(seriesInfo)) {
+                return;
+            }
             navListeners();
             addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
                 if (!searchBarInput.disabled) {
@@ -88,9 +90,10 @@ addEventListener(w, 'load', function () {
     });
 });
 
-function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
-    offset = seriesInfo.pop() as SeriesInfo.OffsetInfo;
-    for (const seriesEntry of seriesInfo as SeriesInfo.SeriesEntries) {
+function showSeries(seriesInfo: SeriesInfo.SeriesInfo): boolean {
+    offset = seriesInfo[seriesInfo.length - 1] as SeriesInfo.OffsetInfo;
+    const SeriesEntries = seriesInfo.slice(0, -1) as SeriesInfo.SeriesEntries;
+    for (const seriesEntry of SeriesEntries) {
         const seriesNode = createElement('div');
         const thumbnailNode = createElement('div');
         const overlay = createElement('div');
@@ -114,7 +117,12 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
     }
 
     if (offset != 'EOF' && keywords != '') {
-        pivot = 'pivot=' + (seriesInfo.pop() as SeriesInfo.SeriesEntry).id + '&';
+        const pivotSeries = SeriesEntries[SeriesEntries.length - 1];
+        if (pivotSeries === undefined) {
+            showMessage(invalidResponse);
+            return false;
+        }
+        pivot = 'pivot=' + pivotSeries.id + '&';
     } else {
         pivot = '';
     }
@@ -123,6 +131,8 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
 
     infiniteScrolling.setEnabled(true);
     infiniteScrolling.updatePosition();
+
+    return true;
 }
 
 function goToSeries(id: string) {
@@ -205,7 +215,9 @@ function requestSearchResults() {
         addClass(containerElem, 'transparent');
         setTimeout(function () {
             containerElem.innerHTML = '';
-            showSeries(seriesInfo);
+            if (!showSeries(seriesInfo)) {
+                return;
+            }
             removeClass(containerElem, 'transparent');
             disableSearchBarInput(false);
         }, 400);

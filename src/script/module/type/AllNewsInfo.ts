@@ -30,11 +30,7 @@ export function check(allNewsInfo: any) {
         throwError();
     }
 
-    if (allNewsInfo.length == 1 && offsetInfo !== "EOF") {
-        throwError();
-    }
-
-    const allNewsInfoEntries: any[] = allNewsInfo.slice(0, -1);
+    const allNewsInfoEntries = allNewsInfo.slice(0, -1);
     for (const allNewsInfoEntry of allNewsInfoEntries) {
         if (!isObject(allNewsInfoEntry)) {
             throwError();

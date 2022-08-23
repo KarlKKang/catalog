@@ -27,11 +27,7 @@ export function check(seriesInfo: any) {
         throwError();
     }
 
-    if (seriesInfo.length == 1 && offsetInfo !== "EOF") {
-        throwError();
-    }
-
-    const seriesEntries: any[] = seriesInfo.slice(0, -1);
+    const seriesEntries = seriesInfo.slice(0, -1);
     for (const seriesEntry of seriesEntries) {
         if (!isObject(seriesEntry)) {
             throwError();

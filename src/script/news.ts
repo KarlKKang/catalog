@@ -206,8 +206,9 @@ function getAllNews(): void {
 }
 
 function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
-    const entries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
-    for (const entry of entries) {
+    offset = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.OffsetInfo;
+    const allNewsInfoEntries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
+    for (const entry of allNewsInfoEntries) {
         const overviewContainer = createElement('div');
         addClass(overviewContainer, 'overview-container');
 
@@ -232,8 +233,6 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
 
         appendChild(getById('main'), overviewContainer);
     }
-    offset = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.OffsetInfo;
-
     infiniteScrolling.setEnabled(true);
     infiniteScrolling.updatePosition();
 }

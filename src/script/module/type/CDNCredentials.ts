@@ -35,12 +35,12 @@ function checkCDNPolicy(policy: any) {
         throwError();
     }
 
-    const statementArray: any = policy.Statement;
+    const statementArray = policy.Statement;
     if (!isArray(statementArray) || statementArray.length != 1) {
         throwError();
     }
 
-    const statement: any = statementArray[0];
+    const statement = statementArray[0];
     if (!isObject(statement)) {
         throwError();
     }
@@ -49,8 +49,8 @@ function checkCDNPolicy(policy: any) {
         throwError();
     }
 
-    const condition: { [key: string]: any } = statement.Condition;
-    const dateLessThan: any = condition.DateLessThan;
+    const condition = statement.Condition;
+    const dateLessThan = condition.DateLessThan;
     if (!isObject(dateLessThan)) {
         throwError();
     }
@@ -59,7 +59,7 @@ function checkCDNPolicy(policy: any) {
         throwError();
     }
 
-    const dateGreaterThan: any = condition.DateGreaterThan;
+    const dateGreaterThan = condition.DateGreaterThan;
     if (isObject(dateGreaterThan)) {
         if (!isNumber(dateGreaterThan["AWS:EpochTime"])) {
             throwError();
@@ -68,7 +68,7 @@ function checkCDNPolicy(policy: any) {
         throwError();
     }
 
-    const ipAddress: any = condition.IpAddress;
+    const ipAddress = condition.IpAddress;
     if (isObject(ipAddress)) {
         if (!isString(ipAddress["AWS:SourceIp"])) {
             throwError();
