@@ -66,11 +66,15 @@ export default function (container: Element, src: string, alt: string, onload?: 
     image.onload = function () {
         const canvas = createElement('canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
+        if (ctx === null) {
+            finalizeErrorImage();
+            return;
+        }
 
         canvas.width = image.width;
         canvas.height = image.height;
         try {
-            ctx!.drawImage(image, 0, 0);
+            ctx.drawImage(image, 0, 0);
         } catch (_) {
             finalizeErrorImage();
             return;

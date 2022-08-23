@@ -295,9 +295,10 @@ function displayChapters(chapters: BangumiInfo.Chapters, mediaInstance: VideojsM
         chapters.forEach(function (chapter, index) {
             const chapterElement = chapterElements[index] as HTMLElement;
             if (currentTime >= chapter[1]) {
-                if (index == chapters.length - 1) {
+                const nextChapter = chapters[index + 1];
+                if (nextChapter === undefined) {
                     setClass(chapterElement, 'current-chapter');
-                } else if (currentTime < chapters[index + 1]![1]) {
+                } else if (currentTime < nextChapter[1]) {
                     setClass(chapterElement, 'current-chapter');
                 } else {
                     setClass(chapterElement, 'inactive-chapter');

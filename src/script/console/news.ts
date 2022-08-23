@@ -34,6 +34,7 @@ function modifyNews(button: Element) {
     }
 
     const contentChunks = splitContent(record.content);
+    const nextChunk = contentChunks.shift();
 
     const parsedRecord: {
         id: string,
@@ -43,7 +44,7 @@ function modifyNews(button: Element) {
         end: boolean
     } = {
         ...record,
-        end: contentChunks.length === 0
+        end: nextChunk === undefined
     };
     delete parsedRecord.content;
 
@@ -63,7 +64,7 @@ function modifyNews(button: Element) {
 
     sendServerRequest('console.php', {
         callback: function (response: string) {
-            if (contentChunks.length === 0) {
+            if (nextChunk === undefined) {
                 newsCompleteCallback(response);
                 return;
             }
@@ -71,7 +72,7 @@ function modifyNews(button: Element) {
                 alert(response);
                 return;
             }
-            appendNews(parsedRecord.id, contentChunks);
+            appendNews(parsedRecord.id, nextChunk, contentChunks);
         },
         content: "p=" + encodeURIComponent(JSON.stringify(param))
     });
@@ -111,6 +112,7 @@ function addNews(button: Element) {
     }
 
     const contentChunks = splitContent(record.content);
+    const nextChunk = contentChunks.shift();
 
     const parsedRecord: {
         id: string,
@@ -120,7 +122,7 @@ function addNews(button: Element) {
         end: boolean
     } = {
         ...record,
-        end: contentChunks.length === 0
+        end: nextChunk === undefined
     };
     delete parsedRecord.content;
 
@@ -140,7 +142,7 @@ function addNews(button: Element) {
 
     sendServerRequest('console.php', {
         callback: function (response: string) {
-            if (contentChunks.length === 0) {
+            if (nextChunk === undefined) {
                 newsCompleteCallback(response);
                 return;
             }
@@ -148,7 +150,7 @@ function addNews(button: Element) {
                 alert(response);
                 return;
             }
-            appendNews(parsedRecord.id, contentChunks);
+            appendNews(parsedRecord.id, nextChunk, contentChunks);
         },
         content: "p=" + encodeURIComponent(JSON.stringify(param))
     });
@@ -310,19 +312,20 @@ function updateEventHandlers() {
     }
 }
 
-function appendNews(id: string, contentChunks: string[]) {
-    const content = contentChunks.shift()!;
+function appendNews(id: string, contentChunk: string, remainingContentChunks: string[]) {
+    const nextChunk = remainingContentChunks.shift();
+
     const param = {
         command: 'modify',
         type: 'news-content-append',
         id: id,
-        content: content,
-        end: contentChunks.length === 0
+        content: contentChunk,
+        end: nextChunk === undefined
     }
 
     sendServerRequest('console.php', {
         callback: function (response: string) {
-            if (contentChunks.length === 0) {
+            if (nextChunk === undefined) {
                 newsCompleteCallback(response);
                 return;
             }
@@ -330,7 +333,7 @@ function appendNews(id: string, contentChunks: string[]) {
                 alert(response);
                 return;
             }
-            appendNews(id, contentChunks);
+            appendNews(id, nextChunk, remainingContentChunks);
         },
         content: "p=" + encodeURIComponent(JSON.stringify(param))
     });

@@ -636,10 +636,11 @@ function attachEventListeners(that: VideojsModInstance) {
     });
 
     //Fullscreen
-    const IOS_FULLSCREEN = IS_IOS && videoMedia.webkitEnterFullscreen;
+    const webkitEnterFullscreen = videoMedia.webkitEnterFullscreen;
+    const IOS_FULLSCREEN = IS_IOS && webkitEnterFullscreen !== undefined;
     const requestFullscreen = function () {
         if (IOS_FULLSCREEN) {
-            videoMedia.webkitEnterFullscreen!();
+            webkitEnterFullscreen();
         } else {
             screenfull.request(controls);
         }

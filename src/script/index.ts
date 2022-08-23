@@ -89,8 +89,8 @@ addEventListener(w, 'load', function () {
 });
 
 function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
-    const seriesEntries = seriesInfo.slice(0, -1) as SeriesInfo.SeriesEntries;
-    for (const seriesEntry of seriesEntries) {
+    offset = seriesInfo.pop() as SeriesInfo.OffsetInfo;
+    for (const seriesEntry of seriesInfo as SeriesInfo.SeriesEntries) {
         const seriesNode = createElement('div');
         const thumbnailNode = createElement('div');
         const overlay = createElement('div');
@@ -113,10 +113,8 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo) {
         appendChild(containerElem, seriesNode);
     }
 
-    offset = seriesInfo[seriesInfo.length - 1] as SeriesInfo.OffsetInfo;
-
     if (offset != 'EOF' && keywords != '') {
-        pivot = 'pivot=' + seriesEntries[seriesEntries.length - 1]!.id + '&';
+        pivot = 'pivot=' + (seriesInfo.pop() as SeriesInfo.SeriesEntry).id + '&';
     } else {
         pivot = '';
     }
