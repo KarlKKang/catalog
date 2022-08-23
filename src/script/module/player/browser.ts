@@ -4,12 +4,14 @@ import Bowser from 'bowser';
 
 import { w, createElement } from '../DOM';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
     interface Window {
         chrome: any,
         WebKitMediaSource: any
     }
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const USER_AGENT = w.navigator && w.navigator.userAgent || '';
 let IS_CHROMIUM = false;
