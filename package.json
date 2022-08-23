@@ -12,8 +12,8 @@
     "build-dev:js": "webpack --config webpack.dev.js",
     "build:css": "node minify-css.js",
     "build-dev:css": "npm run build:css -- dev",
-    "build-dev": "npm run build-dev:css && npm run type-check && npm run build-dev:js",
-    "build": "npm run build:css && npm run type-check && npm run build:js",
+    "build-dev": "npm run build-dev:css && npm run lint && npm run type-check && npm run build-dev:js",
+    "build": "npm run build:css && npm run lint && npm run type-check && npm run build:js",
     "start-server": "npx http-server dev -g -b -c-1 -S -C cert.pem",
     "lint": "./node_modules/.bin/eslint src/script/ --ext .ts",
     "lint:fix": "npm run lint -- --fix"
