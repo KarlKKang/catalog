@@ -447,5 +447,18 @@ export function scrollToHash(paddingTop: boolean) {
 
 ////////////////////////////////////////
 export function checkBaseURL(baseURL: string) {
-    return getHref() === baseURL || getHref().startsWith(baseURL + '?') || getHref().startsWith(baseURL + '#');
+    const href = getHref();
+    let protocol = '';
+    if (baseURL.startsWith('https://')) {
+        protocol = 'https://';
+    } else if (baseURL.startsWith('http://')) {
+        protocol = 'http://';
+    }
+    const baseURLWithoutProtocol = baseURL.substring(protocol.length);
+    if (!baseURLWithoutProtocol.includes('/')) { // If is a root URL
+        if (href === baseURL + '/' || href.startsWith(baseURL + '/?') || href.startsWith(baseURL + '/#')) {
+            return true;
+        }
+    }
+    return href === baseURL || href.startsWith(baseURL + '?') || href.startsWith(baseURL + '#');
 }
