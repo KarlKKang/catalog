@@ -56,15 +56,17 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
     if (response.readyState == 4) {
         if (status == 200) {
             return true;
-        } else if (status == 401) {
-            if (response.responseText == 'SESSION ENDED')
+        } else if (status == 403) {
+            if (response.responseText == 'SESSION ENDED') {
                 redirect(TOP_URL);
-            else if (response.responseText == 'INSUFFICIENT PERMISSIONS')
+            } else if (response.responseText == 'INSUFFICIENT PERMISSIONS') {
                 redirect(TOP_URL, true);
-            else {
+            } else if (response.responseText == 'UNAUTHORIZED') {
                 logout(function () {
                     redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
                 });
+            } else if (response.responseText != 'CRAWLER') {
+                showMessage(status403);
             }
         } else if (status == 429) {
             showMessage(status429);
@@ -77,10 +79,6 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
             }
             else {
                 showMessage();
-            }
-        } else if (status == 403) {
-            if (response.responseText != 'CRAWLER') {
-                showMessage(status403);
             }
         } else if (status == 404 && response.responseText == 'REJECTED') {
             redirect(TOP_URL);
