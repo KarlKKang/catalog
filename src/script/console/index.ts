@@ -92,8 +92,14 @@ addEventListener(w, 'load', function () {
                     addEventListener(getById('run-debug'), 'click', function () {
                         run('debug');
                     });
-                    addEventListener(getById('run-benchmark'), 'click', function () {
-                        run('benchmark');
+                    addEventListener(getById('run-benchmark-hash'), 'click', function () {
+                        run('benchmark_hash');
+                    });
+                    addEventListener(getById('run-benchmark-signature'), 'click', function () {
+                        run('benchmark_signature');
+                    });
+                    addEventListener(getById('run-benchmark-key-pair'), 'click', function () {
+                        run('benchmark_key_pair');
                     });
                     removeClass(getBody(), "hidden");
                 }).catch((e) => {
