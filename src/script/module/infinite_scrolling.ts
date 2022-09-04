@@ -35,7 +35,6 @@ function updatePosition() {
     const boundingRect = positionDetector.getBoundingClientRect();
     const viewportHeight = Math.max(d.documentElement.clientHeight || 0, w.innerHeight || 0);
 
-    console.log(boundingRect.top);
     if (boundingRect.top + _offset <= viewportHeight * 1.5) {
         isEnabled = false;
         callback();
