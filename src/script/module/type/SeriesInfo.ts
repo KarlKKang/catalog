@@ -8,9 +8,9 @@ export interface SeriesEntry {
 
 export type SeriesEntries = SeriesEntry[];
 
-export type OffsetInfo = "EOF" | number;
+export type PivotInfo = "EOF" | number;
 
-export type SeriesInfo = [...SeriesEntries, OffsetInfo];
+export type SeriesInfo = [...SeriesEntries, PivotInfo];
 
 export function check(seriesInfo: any) {
     if (!isArray(seriesInfo)) {
@@ -21,9 +21,9 @@ export function check(seriesInfo: any) {
         throwError();
     }
 
-    const offsetInfo = seriesInfo[seriesInfo.length - 1];
+    const pivotInfo = seriesInfo[seriesInfo.length - 1];
 
-    if (!isNumber(offsetInfo) && offsetInfo !== "EOF") {
+    if (!isNumber(pivotInfo) && pivotInfo !== "EOF") {
         throwError();
     }
 

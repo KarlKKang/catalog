@@ -41,10 +41,8 @@ let searchBar: HTMLElement;
 let searchBarInput: HTMLInputElement;
 let containerElem: HTMLElement;
 
-let offset: SeriesInfo.OffsetInfo = 0;
-
+let pivot: SeriesInfo.PivotInfo = 0;
 let keywords = '';
-let pivot = '';
 
 let lazyloadImportPromise: ReturnType<typeof importLazyload>;
 let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
@@ -70,10 +68,10 @@ addEventListener(w, 'load', function () {
     getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
         lazyloadImportPromise.then((module) => {
             lazyloadInitialize = module;
-            infiniteScrolling = initializeInfiniteScrolling(getSeries);
-            if (!showSeries(seriesInfo)) {
-                return;
-            }
+            infiniteScrolling = initializeInfiniteScrolling(getSeries, - 256 - 24);
+            addClass(getBody(), "invisible"); // Infinite scrolling does not work when element 'display' property is set to 'none'.
+            removeClass(getBody(), "hidden");
+            showSeries(seriesInfo);
             navListeners();
             addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
                 if (!searchBarInput.disabled) {
@@ -85,13 +83,13 @@ addEventListener(w, 'load', function () {
                     search();
                 }
             });
-            removeClass(getBody(), "hidden");
+            removeClass(getBody(), "invisible");
         });
     });
 });
 
-function showSeries(seriesInfo: SeriesInfo.SeriesInfo): boolean {
-    offset = seriesInfo[seriesInfo.length - 1] as SeriesInfo.OffsetInfo;
+function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
+    pivot = seriesInfo[seriesInfo.length - 1] as SeriesInfo.PivotInfo;
     const SeriesEntries = seriesInfo.slice(0, -1) as SeriesInfo.SeriesEntries;
     for (const seriesEntry of SeriesEntries) {
         const seriesNode = createElement('div');
@@ -116,23 +114,10 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo): boolean {
         appendChild(containerElem, seriesNode);
     }
 
-    if (offset != 'EOF' && keywords != '') {
-        const pivotSeries = SeriesEntries[SeriesEntries.length - 1];
-        if (pivotSeries === undefined) {
-            showMessage(invalidResponse);
-            return false;
-        }
-        pivot = 'pivot=' + pivotSeries.id + '&';
-    } else {
-        pivot = '';
-    }
-
     lazyloadInitialize();
 
     infiniteScrolling.setEnabled(true);
     infiniteScrolling.updatePosition();
-
-    return true;
 }
 
 function goToSeries(id: string) {
@@ -181,7 +166,7 @@ function getURLKeywords() {
 }
 
 function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
-    if (offset === 'EOF') {
+    if (pivot === 'EOF') {
         return;
     }
 
@@ -202,22 +187,19 @@ function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
                 callback(parsedResponse);
             }
         },
-        content: keywords + pivot + "offset=" + offset,
+        content: keywords + "pivot=" + pivot,
         logoutParam: keywords.slice(0, -1)
     });
 }
 
 function requestSearchResults() {
-    offset = 0;
-    pivot = '';
+    pivot = 0;
 
     getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
         addClass(containerElem, 'transparent');
         setTimeout(function () {
             containerElem.innerHTML = '';
-            if (!showSeries(seriesInfo)) {
-                return;
-            }
+            showSeries(seriesInfo);
             removeClass(containerElem, 'transparent');
             disableSearchBarInput(false);
         }, 400);

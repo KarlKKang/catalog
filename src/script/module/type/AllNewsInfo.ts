@@ -8,11 +8,11 @@ type AllNewsInfoEntry = {
 
 export type AllNewsInfoEntries = AllNewsInfoEntry[];
 
-export type OffsetInfo = number | 'EOF';
+export type PivotInfo = number | 'EOF';
 
 export type AllNewsInfo = [
-    ...AllNewsInfoEntry[],
-    OffsetInfo
+    ...AllNewsInfoEntries,
+    PivotInfo
 ];
 
 export function check(allNewsInfo: any) {
@@ -24,9 +24,9 @@ export function check(allNewsInfo: any) {
         throwError();
     }
 
-    const offsetInfo = allNewsInfo[allNewsInfo.length - 1];
+    const pivotInfo = allNewsInfo[allNewsInfo.length - 1];
 
-    if (!isNumber(offsetInfo) && offsetInfo !== "EOF") {
+    if (!isNumber(pivotInfo) && pivotInfo !== "EOF") {
         throwError();
     }
 

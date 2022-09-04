@@ -9,10 +9,14 @@ import {
 let positionDetector: HTMLElement;
 let callback: () => void;
 let isEnabled = false;
+let _offset = 0;
 
-export default function (listener: () => void) {
+export default function (listener: () => void, offset?: number) {
     positionDetector = getById('position-detector');
     callback = listener;
+    if (offset !== undefined) {
+        _offset = offset;
+    }
 
     addEventListener(d, 'scroll', updatePosition);
     addEventListener(w, 'resize', updatePosition);
@@ -31,7 +35,8 @@ function updatePosition() {
     const boundingRect = positionDetector.getBoundingClientRect();
     const viewportHeight = Math.max(d.documentElement.clientHeight || 0, w.innerHeight || 0);
 
-    if (boundingRect.top - 256 - 24 <= viewportHeight * 1.5 && isEnabled) {
+    console.log(boundingRect.top);
+    if (boundingRect.top + _offset <= viewportHeight * 1.5) {
         isEnabled = false;
         callback();
     }

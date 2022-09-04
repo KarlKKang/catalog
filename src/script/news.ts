@@ -37,7 +37,7 @@ import { AllNewsInfo, NewsInfo } from './module/type';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
-let offset: AllNewsInfo.OffsetInfo = 0;
+let pivot: AllNewsInfo.PivotInfo = 0;
 let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 addEventListener(w, 'load', function () {
@@ -183,7 +183,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
 }
 
 function getAllNews(): void {
-    if (offset === 'EOF') {
+    if (pivot === 'EOF') {
         return;
     }
 
@@ -197,16 +197,18 @@ function getAllNews(): void {
                 showMessage(invalidResponse);
                 return;
             }
+            addClass(getBody(), "invisible"); // Infinite scrolling does not work when element 'display' property is set to 'none'.
+            removeClass(getBody(), "hidden");
             showAllNews(parsedResponse);
             navListeners();
-            removeClass(getBody(), "hidden");
+            removeClass(getBody(), "invisible");
         },
-        content: 'offset=' + offset
+        content: 'pivot=' + pivot
     });
 }
 
 function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
-    offset = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.OffsetInfo;
+    pivot = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.PivotInfo;
     const allNewsInfoEntries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
     for (const entry of allNewsInfoEntries) {
         const overviewContainer = createElement('div');

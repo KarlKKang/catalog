@@ -77,17 +77,8 @@ addEventListener(w, 'load', function () {
                     addEventListener(getById('clear-key-cache'), 'click', function () {
                         clearKeyCache();
                     });
-                    addEventListener(getById('rebuild-series'), 'click', function () {
-                        rebuild('series');
-                    });
                     addEventListener(getById('rebuild-series-search'), 'click', function () {
                         rebuild('series_search');
-                    });
-                    addEventListener(getById('rebuild-series-all'), 'click', function () {
-                        rebuild('series_all');
-                    });
-                    addEventListener(getById('rebuild-news'), 'click', function () {
-                        rebuild('news');
                     });
                     addEventListener(getById('verify'), 'click', function () {
                         verify();
