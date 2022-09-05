@@ -90,16 +90,19 @@ addEventListener(w, 'load', function () {
                         getTable('all_index');
                     });
                     addEventListener(getById('run-debug'), 'click', function () {
-                        run('debug');
+                        misc('run', 'debug');
                     });
                     addEventListener(getById('run-benchmark-hash'), 'click', function () {
-                        run('benchmark_hash');
+                        misc('benchmark', 'hash');
                     });
                     addEventListener(getById('run-benchmark-signature'), 'click', function () {
-                        run('benchmark_signature');
+                        misc('benchmark', 'signature');
                     });
                     addEventListener(getById('run-benchmark-key-pair'), 'click', function () {
-                        run('benchmark_key_pair');
+                        misc('benchmark', 'key_pair');
+                    });
+                    addEventListener(getById('run-benchmark-match-str'), 'click', function () {
+                        misc('benchmark', 'match_str');
                     });
                     removeClass(getBody(), "hidden");
                 }).catch((e) => {
@@ -124,9 +127,9 @@ addEventListener(w, 'load', function () {
         });
     }
 
-    function run(type: string) {
+    function misc(command: string, type: string) {
         const param = {
-            command: 'run',
+            command: command,
             type: type
         };
 
