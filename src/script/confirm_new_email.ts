@@ -17,7 +17,7 @@ import {
     redirect,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
-import { expired, emailChanged } from './module/message/template/param';
+import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
     if (!checkBaseURL(TOP_URL + '/confirm_new_email') && !DEVELOPMENT) {
@@ -44,6 +44,8 @@ addEventListener(w, 'load', function () {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(expired);
+            } else if (response == 'DUPLICATED') {
+                showMessage(emailAlreadyRegistered);
             } else if (response == 'DONE') {
                 showMessage(emailChanged);
             } else {

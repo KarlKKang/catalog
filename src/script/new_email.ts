@@ -22,7 +22,7 @@ import {
     getBody,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
-import { invalidEmailFormat, emailAlreadyInvitedOrRegistered } from './module/message/template/inline';
+import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
 import { expired, emailSent } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
@@ -97,7 +97,7 @@ addEventListener(w, 'load', function () {
                 if (response == 'EXPIRED') {
                     showMessage(expired);
                 } else if (response == 'DUPLICATED') {
-                    warningElem.innerHTML = emailAlreadyInvitedOrRegistered;
+                    warningElem.innerHTML = emailAlreadyRegistered;
                     removeClass(warningElem, "hidden");
                     disableAllInputs(false);
                 } else if (response == 'INVALID FORMAT') {

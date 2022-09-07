@@ -20,6 +20,11 @@ export const expired = {
     message: body.expired,
     url: LOGIN_URL
 };
+export const emailAlreadyRegistered = {
+    title: title.failed,
+    message: body.emailAlreadyRegistered,
+    url: LOGIN_URL
+}
 export const emailChanged = {
     title: title.completed,
     message: body.emailChanged,

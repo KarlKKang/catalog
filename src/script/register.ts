@@ -27,7 +27,7 @@ import {
     openWindow,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
-import { expired, registerComplete } from './module/message/template/param';
+import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
@@ -78,6 +78,8 @@ addEventListener(w, 'load', function () {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(expired);
+            } else if (response == 'ALREADY REGISTERED') {
+                showMessage(emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
                 addEventListener(usernameInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === "Enter") {
@@ -172,6 +174,8 @@ addEventListener(w, 'load', function () {
                     warningElem.innerHTML = usernameEmpty;
                     removeClass(warningElem, "hidden");
                     disableAllInputs(false);
+                } else if (response == 'ALREADY REGISTERED') {
+                    showMessage(emailAlreadyRegistered);
                 } else if (response == 'DONE') {
                     showMessage(registerComplete);
                 } else {

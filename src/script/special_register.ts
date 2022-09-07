@@ -21,7 +21,7 @@ import {
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
-import { invalidEmailFormat, emailAlreadyRegistered, emailAlreadyInvited, invitationClosed, invitationOnly } from './module/message/template/inline';
+import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitationOnly } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
     if (getHref() !== TOP_URL + '/special_register' && !DEVELOPMENT) {
@@ -66,8 +66,6 @@ addEventListener(w, 'load', function () {
                     warningElem.innerHTML = invalidEmailFormat;
                 } else if (response == 'ALREADY REGISTERED') {
                     warningElem.innerHTML = emailAlreadyRegistered;
-                } else if (response == 'ALREADY INVITED') {
-                    warningElem.innerHTML = emailAlreadyInvited;
                 } else if (response == 'CLOSED') {
                     warningElem.innerHTML = invitationClosed;
                 } else if (response == 'NORMAL') {

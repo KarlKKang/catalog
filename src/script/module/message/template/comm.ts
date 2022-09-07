@@ -5,3 +5,4 @@ export const browserCompatibilitySuffix = '別のブラウザで、もう一度�
 
 export const passwordChanged = 'パスワードを変更しました。';
 export const incompletedInvitation = '完了していない招待状があります。終了までしばらくお待ちください。';
+export const emailAlreadyRegistered = 'このメールアドレスはすでに登録済みです。';

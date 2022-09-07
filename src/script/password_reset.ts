@@ -24,7 +24,7 @@ import {
     getBody,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
-import { invalidPasswordFormat, passwordConfirmationMismatch } from './module/message/template/inline';
+import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
 import { expired, passwordChanged } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
@@ -126,6 +126,10 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 if (response == 'EXPIRED') {
                     showMessage(expired);
+                } else if (response == 'SAME') {
+                    warningElem.innerHTML = passwordUnchanged;
+                    removeClass(warningElem, "hidden");
+                    disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage(passwordChanged);
                 } else {

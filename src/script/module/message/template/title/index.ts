@@ -1,5 +1,6 @@
 export { defaultErrorTitle as defaultError } from "../comm";
 
+export const failed = '失敗しました';
 export const expired = '期限が切れています';
 export const completed = '完了しました';
 export const rejected = 'リクエストは拒否されました';

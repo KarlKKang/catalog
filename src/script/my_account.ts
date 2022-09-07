@@ -31,9 +31,6 @@ import {
     invitationNotQualified,
     invalidEmailFormat,
     emailAlreadyRegistered,
-    incompletedInvitation,
-    incompletedEmailChange,
-    emailAlreadyInvited,
     invitationClosed,
     emailSent as emailSentInline,
     invalidPasswordFormat,
@@ -187,12 +184,6 @@ addEventListener(w, 'load', function () {
                     warningElem.innerHTML = invalidEmailFormat;
                 } else if (response == 'ALREADY REGISTERED') {
                     warningElem.innerHTML = emailAlreadyRegistered;
-                } else if (response == 'ONGOING') {
-                    warningElem.innerHTML = incompletedInvitation;
-                } else if (response == 'ONGOING EMAIL CHANGE') {
-                    warningElem.innerHTML = incompletedEmailChange;
-                } else if (response == 'ALREADY INVITED') {
-                    warningElem.innerHTML = emailAlreadyInvited;
                 } else if (response == 'CLOSED') {
                     warningElem.innerHTML = invitationClosed;
                 } else if (response == 'DONE') {
@@ -254,11 +245,7 @@ addEventListener(w, 'load', function () {
 
         sendServerRequest('send_email_change.php', {
             callback: function (response: string) {
-                if (response == 'DUPLICATED') {
-                    warningElem.innerHTML = incompletedEmailChange;
-                } else if (response == 'REJECTED') {
-                    warningElem.innerHTML = incompletedInvitation;
-                } else if (response == 'DONE') {
+                if (response == 'DONE') {
                     warningElem.innerHTML = emailSentInline;
                     changeColor(warningElem, 'green');
                 } else {

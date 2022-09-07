@@ -79,7 +79,7 @@ async function addAccount(button: Element) {
     });
 }
 
-async function modifyAccount(button: Element, originalEmail: string) {
+async function modifyAccount(button: Element, id: string) {
     const record = getParent(getParent(button));
     const email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
     const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
@@ -113,7 +113,7 @@ async function modifyAccount(button: Element, originalEmail: string) {
     const param = {
         command: 'modify',
         type: 'account',
-        original_email: originalEmail,
+        id: id,
         ...parsedRecord
     };
 
@@ -197,7 +197,7 @@ async function parseAccountRecord(email: string, username: string, password: str
     };
 }
 
-function deleteAccount(email: string) {
+function deleteAccount(id: string) {
     let confirm;
     do {
         confirm = prompt('Type "delete" to confirm. Deleting an account is NOT recommended. Use "status" option instead.');
@@ -209,7 +209,7 @@ function deleteAccount(email: string) {
     const param = {
         command: 'delete',
         type: 'account',
-        email: email
+        id: id
     };
 
     sendServerRequest('console.php', {
@@ -234,12 +234,12 @@ function updateEventHandlers() {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
-                const email = getDataAttribute(button, 'email');
-                if (email === null) {
+                const id = getDataAttribute(button, 'user');
+                if (id === null) {
                     alert("ERROR: 'email' attribute on the element is undefined.");
                     return;
                 }
-                modifyAccount(button, email);
+                modifyAccount(button, id);
             });
         }
     }
@@ -249,12 +249,12 @@ function updateEventHandlers() {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
             addEventListener(button, 'click', function () {
-                const email = getDataAttribute(button, 'email');
-                if (email === null) {
+                const id = getDataAttribute(button, 'user');
+                if (id === null) {
                     alert("ERROR: 'email' attribute on the element is undefined.");
                     return;
                 }
-                deleteAccount(email);
+                deleteAccount(id);
             });
         }
     }
