@@ -62,6 +62,9 @@ addEventListener(w, 'load', function () {
                     addEventListener(getById('get-log-table'), 'click', function () {
                         getTable('log');
                     });
+                    addEventListener(getById('get-download-table'), 'click', function () {
+                        getTable('download');
+                    });
                     addEventListener(getById('generate-id'), 'click', function () {
                         generate('id');
                     });
