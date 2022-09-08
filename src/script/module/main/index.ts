@@ -62,9 +62,7 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
             } else if (response.responseText == 'INSUFFICIENT PERMISSIONS') {
                 redirect(TOP_URL, true);
             } else if (response.responseText == 'UNAUTHORIZED') {
-                logout(function () {
-                    redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
-                });
+                redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
             } else if (response.responseText != 'CRAWLER') {
                 showMessage(status403);
             }

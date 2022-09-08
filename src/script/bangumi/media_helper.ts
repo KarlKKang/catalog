@@ -1,5 +1,5 @@
 import {
-    SERVER_URL,
+    CDN_URL,
 } from '../module/env/constant';
 import {
     sendServerRequest,
@@ -95,7 +95,7 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
                 if (response == 'UNAVAILABLE') {
                     addClass(downloadButton, 'hidden');
                     removeClass(warning, 'hidden');
-                } else if (response.startsWith(SERVER_URL)) {
+                } else if (response.startsWith(CDN_URL)) {
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {
