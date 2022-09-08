@@ -107,6 +107,12 @@ addEventListener(w, 'load', function () {
                     addEventListener(getById('run-benchmark-match-str'), 'click', function () {
                         misc('benchmark', 'match_str');
                     });
+                    addEventListener(getById('run-benchmark-random'), 'click', function () {
+                        misc('benchmark', 'random');
+                    });
+                    addEventListener(getById('run-benchmark-password-hash'), 'click', function () {
+                        misc('benchmark', 'password_hash');
+                    });
                     removeClass(getBody(), "hidden");
                 }).catch((e) => {
                     showMessage(moduleImportError(e));
