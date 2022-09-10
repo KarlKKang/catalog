@@ -26,9 +26,8 @@ import screenfull from 'screenfull';
 
 declare global {
     interface HTMLVideoElement {
-        webkitEnterFullscreen?: () => void,
+        readonly webkitEnterFullscreen?: () => void,
         autoPictureInPicture?: boolean,
-        playsinline?: boolean,
     }
 
     interface HTMLMediaElement {
@@ -639,7 +638,7 @@ function attachEventListeners(that: VideojsModInstance) {
     const IOS_FULLSCREEN = IS_IOS && videoMedia.webkitEnterFullscreen !== undefined;
     const requestFullscreen = function () {
         if (IOS_FULLSCREEN) {
-            videoMedia.webkitEnterFullscreen!();
+            videoMedia.webkitEnterFullscreen();
         } else {
             screenfull.request(controls);
         }
