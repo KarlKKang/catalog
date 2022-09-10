@@ -74,7 +74,7 @@ module.exports = {
             template: 'src/html/404.ejs',
             title: '404 | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -84,7 +84,7 @@ module.exports = {
             template: 'src/html/bangumi.ejs',
             title: 'featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -94,7 +94,7 @@ module.exports = {
             template: 'src/html/confirm_new_email.ejs',
             title: 'メールアドレス変更 | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -104,7 +104,7 @@ module.exports = {
             template: 'src/html/console.ejs',
             title: 'console | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -114,7 +114,7 @@ module.exports = {
             template: 'src/html/image.ejs',
             title: 'featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -124,7 +124,7 @@ module.exports = {
             template: 'src/html/index.ejs',
             title: 'featherine.com',
             templateParameters: {
-                index : true
+                index: true
             }
         }),
         new HtmlWebpackPlugin({
@@ -134,7 +134,7 @@ module.exports = {
             template: 'src/html/info.ejs',
             title: 'ご利用ガイド | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -144,7 +144,7 @@ module.exports = {
             template: 'src/html/login.ejs',
             title: 'ログイン | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -154,7 +154,7 @@ module.exports = {
             template: 'src/html/message.ejs',
             title: 'featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -164,7 +164,7 @@ module.exports = {
             template: 'src/html/my_account.ejs',
             title: 'マイページ | featherine.com',
             templateParameters: {
-                index : true
+                index: true
             }
         }),
         new HtmlWebpackPlugin({
@@ -174,7 +174,7 @@ module.exports = {
             template: 'src/html/new_email.ejs',
             title: 'メールアドレス変更 | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -184,7 +184,7 @@ module.exports = {
             template: 'src/html/news.ejs',
             title: 'お知らせ | featherine.com',
             templateParameters: {
-                index : true
+                index: true
             }
         }),
         new HtmlWebpackPlugin({
@@ -194,7 +194,7 @@ module.exports = {
             template: 'src/html/password_reset.ejs',
             title: 'パスワード再発行 | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -204,7 +204,7 @@ module.exports = {
             template: 'src/html/register.ejs',
             title: '新規登録 | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -214,7 +214,7 @@ module.exports = {
             template: 'src/html/request_password_reset.ejs',
             title: 'パスワード再発行 | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
         new HtmlWebpackPlugin({
@@ -224,7 +224,7 @@ module.exports = {
             template: 'src/html/special_register.ejs',
             title: '新規登録 | featherine.com',
             templateParameters: {
-                index : false
+                index: false
             }
         }),
     ],
@@ -284,7 +284,7 @@ module.exports = {
                                 "@babel/preset-env",
                                 {
                                     "useBuiltIns": "entry",
-                                    "corejs": "3.24"
+                                    "corejs": "3.25"
                                 }
                             ],
                             "@babel/preset-typescript"
