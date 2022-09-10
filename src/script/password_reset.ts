@@ -40,6 +40,7 @@ addEventListener(w, 'load', function () {
     const submitButton = getById('submit-button') as HTMLButtonElement;
 
     const user = getURLParam('user');
+    const keyID = getURLParam('key-id');
     const signature = getURLParam('signature');
     const expires = getURLParam('expires');
 
@@ -49,6 +50,11 @@ addEventListener(w, 'load', function () {
         } else {
             redirect(LOGIN_URL, true);
         }
+        return;
+    }
+
+    if (keyID === null || !/^[a-zA-Z0-9~_-]+$/.test(keyID)) {
+        redirect(LOGIN_URL, true);
         return;
     }
 
@@ -95,7 +101,7 @@ addEventListener(w, 'load', function () {
 
             removeClass(getBody(), "hidden");
         },
-        content: "user=" + user + "&signature=" + signature + "&expires=" + expires,
+        content: "user=" + user + "&key-id=" + keyID + "&signature=" + signature + "&expires=" + expires,
         withCredentials: false
     });
 
@@ -136,7 +142,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "user=" + user + "&signature=" + signature + "&expires=" + expires + "&new=" + newPassword,
+            content: "user=" + user + "&key-id=" + keyID + "&signature=" + signature + "&expires=" + expires + "&new=" + newPassword,
             withCredentials: false
         });
     }
