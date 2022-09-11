@@ -28,13 +28,17 @@ addEventListener(w, 'load', function () {
     clearCookies();
 
     const param = getURLParam('p');
+    const keyID = getURLParam('key-id');
     const signature = getURLParam('signature');
 
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         redirect(LOGIN_URL, true);
         return;
     }
-
+    if (keyID == null || !/^[a-zA-Z0-9~_-]+$/.test(keyID)) {
+        redirect(TOP_URL, true);
+        return;
+    }
     if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
         redirect(LOGIN_URL, true);
         return;
@@ -52,7 +56,7 @@ addEventListener(w, 'load', function () {
                 showMessage();
             }
         },
-        content: "p=" + param + "&signature=" + signature,
+        content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature,
         withCredentials: false
     });
 

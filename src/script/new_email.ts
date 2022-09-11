@@ -37,6 +37,7 @@ addEventListener(w, 'load', function () {
     const submitButton = getById('submit-button') as HTMLButtonElement;
 
     const param = getURLParam('p');
+    const keyID = getURLParam('key-id');
     const signature = getURLParam('signature');
 
 
@@ -46,6 +47,10 @@ addEventListener(w, 'load', function () {
         } else {
             redirect(TOP_URL, true);
         }
+        return;
+    }
+    if (keyID == null || !/^[a-zA-Z0-9~_-]+$/.test(keyID)) {
+        redirect(TOP_URL, true);
         return;
     }
     if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
@@ -74,7 +79,7 @@ addEventListener(w, 'load', function () {
                 showMessage();
             }
         },
-        content: "p=" + param + "&signature=" + signature,
+        content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature,
         withCredentials: false
     });
 
@@ -110,7 +115,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "p=" + param + "&signature=" + signature + "&new=" + newEmail,
+            content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature + "&new=" + newEmail,
             withCredentials: false
         });
     }
