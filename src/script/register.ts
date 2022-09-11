@@ -44,6 +44,7 @@ addEventListener(w, 'load', function () {
     const passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
 
     const param = getURLParam('p');
+    const keyID = getURLParam('key-id');
     const signature = getURLParam('signature');
 
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
@@ -64,6 +65,11 @@ addEventListener(w, 'load', function () {
         } else {
             redirect(LOGIN_URL, true);
         }
+        return;
+    }
+
+    if (keyID === null || !/^[a-zA-Z0-9~_-]+$/.test(keyID)) {
+        redirect(LOGIN_URL, true);
         return;
     }
 
@@ -123,7 +129,7 @@ addEventListener(w, 'load', function () {
                 showMessage();
             }
         },
-        content: "p=" + param + "&signature=" + signature,
+        content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature,
         withCredentials: false
     });
 
@@ -182,7 +188,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "p=" + param + "&signature=" + signature + "&user=" + encodeURIComponent(JSON.stringify(user)),
+            content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature + "&user=" + encodeURIComponent(JSON.stringify(user)),
             withCredentials: false
         });
     }
