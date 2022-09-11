@@ -92,6 +92,9 @@ addEventListener(w, 'load', function () {
                     addEventListener(getById('show-all-index'), 'click', function () {
                         getTable('all_index');
                     });
+                    addEventListener(getById('show-create-table'), 'click', function () {
+                        getTable('create_table');
+                    });
                     addEventListener(getById('run-debug'), 'click', function () {
                         misc('run', 'debug');
                     });
