@@ -15,7 +15,19 @@ import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import type { BangumiInfo } from '../module/type';
 
-import { videojs, browser, videojsMod } from '../module/player';
+import {
+    IS_DESKTOP,
+    IS_LEGACY,
+    IS_LINUX,
+    IS_FIREFOX,
+    IS_CHROMIUM,
+    USE_MSE,
+    NATIVE_HLS,
+    CAN_PLAY_ALAC,
+    CAN_PLAY_FLAC,
+    CAN_PLAY_MP3,
+} from '../module/browser';
+import { videojs, videojsMod } from '../module/player';
 import type { VideojsModInstance } from '../module/player';
 
 import { parseCharacters } from './helper';
@@ -58,15 +70,15 @@ export default function (
 
     addAlbumInfo();
 
-    if (browser.IS_DESKTOP) {
+    if (IS_DESKTOP) {
         appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
     }
 
-    if (browser.IS_LEGACY) {
+    if (IS_LEGACY) {
         showLegacyBrowserError();
         return;
     }
-    if (!browser.USE_MSE && !browser.NATIVE_HLS) {
+    if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
         addClass(mediaHolder, 'hidden');
         return;
@@ -119,18 +131,18 @@ function addAudioNode(index: number) {
     addClass(audioNode, "video-js");
     audioNode.lang = 'en';
 
-    const FLAC_FALLBACK = (file.flac_fallback && !browser.CAN_PLAY_ALAC);
+    const FLAC_FALLBACK = (file.flac_fallback && !CAN_PLAY_ALAC);
 
     appendChild(mediaHolder, getAudioSubtitleNode(file, FLAC_FALLBACK));
     appendChild(mediaHolder, audioNode);
 
     const IS_FLAC = (file.format.toLowerCase() == 'flac' || FLAC_FALLBACK);
-    const USE_VIDEOJS = browser.USE_MSE && IS_FLAC;
+    const USE_VIDEOJS = USE_MSE && IS_FLAC;
 
     const IS_MP3 = file.format.toLowerCase() == 'mp3';
 
-    if ((IS_FLAC && !browser.CAN_PLAY_FLAC) || (IS_MP3 && !browser.CAN_PLAY_MP3)) { //ALAC has already fallen back to FLAC if not supported.
-        showCodecCompatibilityError(browser.IS_LINUX);
+    if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { //ALAC has already fallen back to FLAC if not supported.
+        showCodecCompatibilityError(IS_LINUX);
         addClass(mediaHolder, 'hidden');
         return false;
     }
@@ -174,7 +186,7 @@ function addAudioNode(index: number) {
                 }
 
                 videoJSMedia.on('error', function () {
-                    if (browser.IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
+                    if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
                         showMediaMessage(incompatibleTitle, '<p>Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix + '</p>', 'red');
                     } else {
                         showPlaybackError('Index ' + index + ': ' + 'videojs: ' + JSON.stringify(videoJSMedia.error()));
@@ -189,8 +201,8 @@ function addAudioNode(index: number) {
             const audioInstance = videojsMod(videoJSControl, { audio: true, debug: debug });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
-            if (browser.USE_MSE) {
-                if (browser.IS_CHROMIUM) {
+            if (USE_MSE) {
+                if (IS_CHROMIUM) {
                     showMediaMessage('不具合があります', '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>', 'orange');
                 }
                 hlsImportPromise.then(({ default: Hls }) => {
@@ -213,7 +225,7 @@ function addAudioNode(index: number) {
                     showMessage(moduleImportError(e));
                     return;
                 });
-            } else if (browser.NATIVE_HLS) {
+            } else if (NATIVE_HLS) {
                 const audioMedia = audioInstance.media;
 
                 addEventListener(audioMedia, 'error', function () {

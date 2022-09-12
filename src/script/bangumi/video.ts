@@ -24,7 +24,15 @@ import { invalidResponse } from '../module/message/template/param/server';
 import { CDNCredentials } from '../module/type';
 import type { BangumiInfo } from '../module/type';
 
-import { videojs, browser, videojsMod } from '../module/player';
+import {
+    IS_DESKTOP,
+    IS_LEGACY,
+    IS_LINUX,
+    USE_MSE,
+    NATIVE_HLS,
+    CAN_PLAY_AVC_AAC,
+} from '../module/browser';
+import { videojs, videojsMod } from '../module/player';
 import type { VideojsModInstance } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
@@ -103,22 +111,22 @@ export default function (
     insertBefore(formatSelector, getById('message'));
 
     // Download Accordion
-    if (browser.IS_DESKTOP) {
+    if (IS_DESKTOP) {
         appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
     }
 
     // Video Node
-    if (browser.IS_LEGACY) {
+    if (IS_LEGACY) {
         showLegacyBrowserError();
         return;
     }
-    if (!browser.USE_MSE && !browser.NATIVE_HLS) {
+    if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
         addClass(mediaHolder, 'hidden');
         return;
     }
-    if (!browser.CAN_PLAY_AVC_AAC) {
-        showCodecCompatibilityError(browser.IS_LINUX);
+    if (!CAN_PLAY_AVC_AAC) {
+        showCodecCompatibilityError(IS_LINUX);
         addClass(mediaHolder, 'hidden');
         return;
     }
@@ -203,7 +211,7 @@ function addVideoNode(
         }
     }
 
-    if (browser.USE_MSE) {
+    if (USE_MSE) {
 
         const config = {
             enableWebVTT: false,
@@ -243,7 +251,7 @@ function addVideoNode(
             showMessage(moduleImportError(e));
             return;
         });
-    } else if (browser.NATIVE_HLS) {
+    } else if (NATIVE_HLS) {
         addEventListener(videoMedia, 'error', function () {
             showPlaybackError();
             addClass(mediaHolder, 'hidden');
