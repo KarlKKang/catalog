@@ -238,25 +238,11 @@ module.exports = {
         concatenateModules: true,
         flagIncludedChunks: true,
         removeAvailableModules: true,
+        usedExports: true,
         splitChunks: {
             maxSize: 1000 * 1000,
-            chunks: 'all',
-            /*cacheGroups: {
-                polyfill: {
-                    test: /[\\/]node_modules[\\/](core-js|@babel)[\\/]/,
-                    name: 'polyfill',
-                    chunks: 'all',
-                    reuseExistingChunk: true
-                }, 
-                main: {
-                    test: /[\\/]src[\\/]script[\\/]module[\\/]main/,
-                    name: 'main',
-                    chunks: 'all',
-                    reuseExistingChunk: true
-                }
-            }*/
+            chunks: 'all'
         },
-        //usedExports: 'global',
     },
     node: {
         global: false // Fix __webpack_require__ is undefined in Chrome prior to version 71.
@@ -284,7 +270,8 @@ module.exports = {
                                 "@babel/preset-env",
                                 {
                                     "useBuiltIns": "entry",
-                                    "corejs": "3.25"
+                                    "corejs": "3.25",
+                                    "modules": false
                                 }
                             ],
                             "@babel/preset-typescript"
