@@ -127,24 +127,32 @@ export function createTextNode(text: string) {
     return d.createTextNode(text);
 }
 
-export function addEventListener(elem: Element | Document | Window, event: string, callback: EventListenerOrEventListenerObject, useCapture?: boolean) {
+export function addEventListener(elem: Element | Document | Window, event: string, callback: EventListener, useCapture?: boolean) {
     elem.addEventListener(event, callback, useCapture);
 }
 
-export function addEventsListener(elem: Element | Document | Window, events: Array<string>, callback: EventListenerOrEventListenerObject, useCapture?: boolean) {
+export function addEventsListener(elem: Element | Document | Window, events: Array<string>, callback: EventListener, useCapture?: boolean) {
     for (const event of events) {
         addEventListener(elem, event, callback, useCapture);
     }
 }
 
-export function removeEventListener(elem: Element | Document | Window, event: string, callback: EventListenerOrEventListenerObject, useCapture?: boolean) {
+export function removeEventListener(elem: Element | Document | Window, event: string, callback: EventListener, useCapture?: boolean) {
     elem.removeEventListener(event, callback, useCapture);
 }
 
-export function removeEventsListener(elem: Element | Document | Window, events: Array<string>, callback: EventListenerOrEventListenerObject, useCapture?: boolean) {
+export function removeEventsListener(elem: Element | Document | Window, events: Array<string>, callback: EventListener, useCapture?: boolean) {
     for (const event of events) {
         removeEventListener(elem, event, callback, useCapture);
     }
+}
+
+export function addEventListenerOnce(elem: Element | Document | Window, event: string, callback: EventListener, useCapture?: boolean) {
+    const callbackOnce = function (this: any, arg: Event) {
+        removeEventListener(elem, event, callbackOnce, useCapture);
+        callback.call(this, arg);
+    };
+    addEventListener(elem, event, callbackOnce, useCapture);
 }
 
 export function getComputedStyle(elem: HTMLElement, property: string) {

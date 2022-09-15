@@ -32,12 +32,13 @@ import {
     NATIVE_HLS,
     CAN_PLAY_AVC_AAC,
 } from '../module/browser';
-import { videojs, videojsMod } from '../module/player';
-import type { VideojsModInstance } from '../module/player';
+import { default as videojs } from 'video.js';
+import { Player, HlsPlayer } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { destroyAll, showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showLegacyBrowserError } from './media_helper';
+import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showLegacyBrowserError } from './media_helper';
 import type { HlsImportPromise } from './get_import_promises';
+import type { ErrorData, Events } from 'hls.js';
 
 let seriesID: string;
 let epIndex: number;
@@ -45,9 +46,8 @@ let epInfo: BangumiInfo.VideoEPInfo;
 let baseURL: string;
 let mediaHolder: HTMLElement;
 let contentContainer: HTMLElement;
-let debug: boolean;
-
 let hlsImportPromise: HlsImportPromise;
+let debug: boolean;
 
 export default function (
     _seriesID: string,
@@ -143,36 +143,29 @@ export default function (
         fluid: true,
     } as const;
 
-    videojs(videoJS, config, function () {
+    const videojsInstance = videojs(videoJS, config, function () {
         videoJS.style.paddingTop = 9 / 16 * 100 + '%';
-
-        const mediaInstance = videojsMod(this, { debug: debug });
-
-        addEventListener(selectMenu, "change", function () {
-            formatSwitch(mediaInstance);
-        });
-
         const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + selectMenu.value + '].m3u8'), epInfo.cdn_credentials);
-
-        addVideoNode(url, mediaInstance, {/*, currentTime: timestampParam*/ });
-        if (epInfo.chapters.length > 0) {
-            displayChapters(epInfo.chapters, mediaInstance);
-        }
-        //updateURLTimestamp();
+        addVideoNode(url, videojsInstance, function (mediaInstance: Player) {
+            mediaInstance.media.title = getTitle();
+            addEventListener(selectMenu, "change", function () { formatSwitch(mediaInstance); });
+            if (epInfo.chapters.length > 0) {
+                displayChapters(epInfo.chapters, mediaInstance);
+            }
+        });
     });
 }
 
-function formatSwitch(mediaInstance: VideojsModInstance) {
+function formatSwitch(mediaInstance: Player) {
     const formatSelector = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement);
     const formatIndex = formatSelector.selectedIndex;
-    const video = mediaInstance.media;
 
     updateURLParam(seriesID, epIndex, formatIndex);
 
     sendServerRequest('format_switch.php', {
         callback: function (response: string) {
-            const currentTime = video.currentTime;
-            const paused = video.paused;
+            const currentTime = mediaInstance.media.currentTime;
+            const paused = mediaInstance.paused;
 
             let parsedResponse: CDNCredentials.CDNCredentials;
             try {
@@ -183,36 +176,18 @@ function formatSwitch(mediaInstance: VideojsModInstance) {
                 return;
             }
             const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + formatSelector.value + '].m3u8'), parsedResponse);
-            addVideoNode(url, mediaInstance, { currentTime: currentTime, play: !paused });
+            mediaInstance.load(url, {
+                play: !paused,
+                startTime: currentTime
+            });
         },
         content: "token=" + epInfo.authentication_token + "&format=" + formatIndex,
         logoutParam: getLogoutParam(seriesID, epIndex)
     });
 }
 
-function addVideoNode(
-    url: string,
-    mediaInstance: VideojsModInstance,
-    options: { currentTime?: number, play?: boolean }
-) {
-
-    destroyAll([mediaInstance]);
-
-    const videoMedia = mediaInstance.media;
-    videoMedia.title = getTitle();
-
-    function videoReady() {
-        if (options.currentTime !== undefined) {
-            videoMedia.currentTime = options.currentTime;
-        }
-
-        if (options.play) {
-            mediaInstance.play();
-        }
-    }
-
+function addVideoNode(url: string, videojsInstance: videojs.Player, onattached: (mediaInstance: Player) => void) {
     if (USE_MSE) {
-
         const config = {
             enableWebVTT: false,
             enableIMSC1: false,
@@ -234,37 +209,39 @@ function addVideoNode(
 
         hlsImportPromise.then(({ default: Hls }) => {
             const hls = new Hls(config);
-
-            hls.on(Hls.Events.ERROR, function (_, data) {
-                if (data.fatal) {
-                    showPlaybackError(data.details);
-                    addClass(mediaHolder, 'hidden');
-                    destroyAll([mediaInstance]);
+            const mediaInstance = new HlsPlayer(videojsInstance, hls, Hls, {
+                debug: debug
+            });
+            mediaInstance.load(url, {
+                onerror: function (_: Events.ERROR, data: ErrorData) {
+                    if (data.fatal) {
+                        showPlaybackError(data.details);
+                        addClass(mediaHolder, 'hidden');
+                        mediaInstance.destroy();
+                    }
                 }
             });
-            hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                videoReady();
-            });
-
-            mediaInstance.attachHls(Hls, hls, url);
+            onattached(mediaInstance);
         }).catch((e) => {
             showMessage(moduleImportError(e));
             return;
         });
     } else if (NATIVE_HLS) {
-        addEventListener(videoMedia, 'error', function () {
-            showPlaybackError();
-            addClass(mediaHolder, 'hidden');
-            destroyAll([mediaInstance]);
+        const mediaInstance = new Player(videojsInstance, {
+            debug: debug
         });
-        addEventListener(videoMedia, 'loadedmetadata', function () {
-            videoReady();
-        });
-        mediaInstance.attachNative(url);
+        mediaInstance.load(url, {
+            onerror: function () {
+                showPlaybackError();
+                addClass(mediaHolder, 'hidden');
+                mediaInstance.destroy();
+            }
+        })
+        onattached(mediaInstance);
     }
 }
 
-function displayChapters(chapters: BangumiInfo.Chapters, mediaInstance: VideojsModInstance) {
+function displayChapters(chapters: BangumiInfo.Chapters, mediaInstance: Player) {
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
     accordion.innerHTML = 'CHAPTERS';

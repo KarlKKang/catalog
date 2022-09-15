@@ -20,9 +20,6 @@ import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
 import { getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
 
-import type { VideojsModInstance } from '../module/player';
-
-
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
@@ -48,12 +45,6 @@ export function showMediaMessage(title: string, messageTxt: string, titleColor: 
     messageTitle.innerHTML = title;
     getById('message-body').innerHTML = messageTxt;
     removeClass(getById('message'), 'hidden');
-}
-
-export function destroyAll(mediaInstances: Array<VideojsModInstance>) {
-    for (const mediaInstance of mediaInstances) {
-        mediaInstance.destroy();
-    }
 }
 
 export function getDownloadAccordion(token: string, seriesID: string, epIndex: number): HTMLElement {

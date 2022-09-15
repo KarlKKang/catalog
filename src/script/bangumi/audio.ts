@@ -27,11 +27,11 @@ import {
     CAN_PLAY_FLAC,
     CAN_PLAY_MP3,
 } from '../module/browser';
-import { videojs, videojsMod } from '../module/player';
-import type { VideojsModInstance } from '../module/player';
+import { default as videojs } from 'video.js';
+import { Player, HlsPlayer, VideojsPlayer } from '../module/player';
 
 import { parseCharacters } from './helper';
-import { showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, destroyAll, getDownloadAccordion, showLegacyBrowserError } from './media_helper';
+import { showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showLegacyBrowserError } from './media_helper';
 import type { HlsImportPromise } from './get_import_promises';
 
 let seriesID: string;
@@ -43,7 +43,7 @@ let contentContainer: HTMLElement;
 let debug: boolean;
 
 let audioReadyCounter = 0;
-const mediaInstances: Array<VideojsModInstance> = [];
+const mediaInstances: Array<Player> = [];
 let hlsImportPromise: HlsImportPromise;
 
 export default function (
@@ -168,83 +168,87 @@ function addAudioNode(index: number) {
             appendChild(mediaHolder, videoJSMediaNode);
 
             const videoJSMedia = videojs(videoJSMediaNode, configVideoJSMedia, function () {
-
-                const audioInstance = videojsMod(videoJSControl, {
-                    videojsMediaOverrideInstance: videoJSMedia,
+                const audioInstance = new VideojsPlayer(videoJSControl, videoJSMedia, {
                     audio: true,
                     debug: debug
                 });
-
-                mediaInstances[index] = audioInstance;
-
-
-                setMediaTitle(audioInstance);
-
-                audioReadyCounter++;
-                if (audioReadyCounter == audioEPInfo.files.length) {
-                    audioReady();
-                }
-
-                videoJSMedia.on('error', function () {
-                    if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
-                        showMediaMessage(incompatibleTitle, '<p>Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix + '</p>', 'red');
-                    } else {
-                        showPlaybackError('Index ' + index + ': ' + 'videojs: ' + JSON.stringify(videoJSMedia.error()));
-                        addClass(mediaHolder, 'hidden');
-                        destroyAll(mediaInstances);
+                audioInstance.load(url, {
+                    onerror: function () {
+                        if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
+                            showMediaMessage(incompatibleTitle, '<p>Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix + '</p>', 'red');
+                        } else {
+                            showPlaybackError('Index ' + index + ': ' + 'videojs: ' + JSON.stringify(videoJSMedia.error()));
+                            addClass(mediaHolder, 'hidden');
+                            destroyAll();
+                        }
+                    },
+                    onload: function () {
+                        audioReadyCounter++;
+                        if (audioReadyCounter == audioEPInfo.files.length) {
+                            audioReady();
+                        }
                     }
                 });
-
-                audioInstance.attachVideojs(url);
+                mediaInstances[index] = audioInstance;
+                setMediaTitle(audioInstance);
             });
         } else {
-            const audioInstance = videojsMod(videoJSControl, { audio: true, debug: debug });
-            mediaInstances[index] = audioInstance;
-            setMediaTitle(audioInstance);
             if (USE_MSE) {
                 if (IS_CHROMIUM) {
                     showMediaMessage('不具合があります', '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>', 'orange');
                 }
                 hlsImportPromise.then(({ default: Hls }) => {
                     const hls = new Hls(configHls);
-                    hls.on(Hls.Events.ERROR, function (_, data) {
-                        if (data.fatal) {
-                            showPlaybackError('Index ' + index + ': ' + data.details);
-                            addClass(mediaHolder, 'hidden');
-                            destroyAll(mediaInstances);
+                    const audioInstance = new HlsPlayer(videoJSControl, hls, Hls, {
+                        audio: true,
+                        debug: debug
+                    });
+                    audioInstance.load(url, {
+                        onerror: function (_, data) {
+                            if (data.fatal) {
+                                showPlaybackError('Index ' + index + ': ' + data.details);
+                                addClass(mediaHolder, 'hidden');
+                                destroyAll();
+                            }
+                        },
+                        onload: function () {
+                            audioReadyCounter++;
+                            if (audioReadyCounter == audioEPInfo.files.length) {
+                                audioReady();
+                            }
                         }
                     });
-                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                        audioReadyCounter++;
-                        if (audioReadyCounter == audioEPInfo.files.length) {
-                            audioReady();
-                        }
-                    });
-                    audioInstance.attachHls(Hls, hls, url);
+                    mediaInstances[index] = audioInstance;
+                    setMediaTitle(audioInstance);
                 }).catch((e) => {
                     showMessage(moduleImportError(e));
                     return;
                 });
             } else if (NATIVE_HLS) {
-                const audioMedia = audioInstance.media;
-
-                addEventListener(audioMedia, 'error', function () {
-                    showPlaybackError();
-                    addClass(mediaHolder, 'hidden');
-                    destroyAll(mediaInstances);
+                const audioInstance = new Player(videoJSControl, {
+                    audio: true,
+                    debug: debug
                 });
-                addEventListener(audioMedia, 'loadedmetadata', function () {
-                    audioReadyCounter++;
-                    if (audioReadyCounter == audioEPInfo.files.length) {
-                        audioReady();
+                audioInstance.load(url, {
+                    onerror: function () {
+                        showPlaybackError();
+                        addClass(mediaHolder, 'hidden');
+                        destroyAll();
+                    },
+                    onload: function () {
+                        audioReadyCounter++;
+                        if (audioReadyCounter == audioEPInfo.files.length) {
+                            audioReady();
+                        }
                     }
                 });
-                audioInstance.attachNative(url);
+                mediaInstances[index] = audioInstance;
+                setMediaTitle(audioInstance);
             }
         }
     });
 
-    function setMediaTitle(audioInstance: VideojsModInstance) {
+    function setMediaTitle(audioInstance: Player) {
         audioInstance.media.title = ((file.title == '') ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();
     }
 
@@ -360,7 +364,7 @@ function audioReady() {
     }
     function playNext(currentIndex: number) {
         if (currentIndex < mediaInstances.length - 1) {
-            (mediaInstances[currentIndex + 1] as VideojsModInstance).play();
+            (mediaInstances[currentIndex + 1] as Player).play();
         }
     }
 
@@ -373,4 +377,10 @@ function audioReady() {
             playNext(index);
         });
     });
+}
+
+function destroyAll() {
+    for (const mediaInstance of mediaInstances) {
+        mediaInstance.destroy();
+    }
 }
