@@ -24,7 +24,7 @@ export function updateURLParam(seriesID: string, epIndex: number, formatIndex: n
         url = TOP_URL + '/bangumi/' + seriesID;
     }
 
-    const query = getQuery(epIndex, formatIndex);
+    const query = createQuery(epIndex, formatIndex);
     if (query !== '') {
         url += (DEVELOPMENT ? '&' : '?') + query;
     }
@@ -34,14 +34,14 @@ export function updateURLParam(seriesID: string, epIndex: number, formatIndex: n
 
 export function getLogoutParam(seriesID: string, epIndex: number): string {
     const query = 'series=' + seriesID;
-    const additionalQuery = getQuery(epIndex, getFormatIndex());
+    const additionalQuery = createQuery(epIndex, getFormatIndex());
     if (additionalQuery === '') {
         return query;
     }
     return query + '&' + additionalQuery;
 }
 
-function getQuery(epIndex: number, formatIndex: number): string {
+function createQuery(epIndex: number, formatIndex: number): string {
     let query = '';
     let separator: '' | '&' = '';
 

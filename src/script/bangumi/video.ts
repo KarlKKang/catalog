@@ -118,16 +118,17 @@ export default function (
     // Video Node
     if (IS_LEGACY) {
         showLegacyBrowserError();
+        addEventListener(selectMenu, "change", function () { formatSwitch(); });
         return;
     }
     if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
-        addClass(mediaHolder, 'hidden');
+        addEventListener(selectMenu, "change", function () { formatSwitch(); });
         return;
     }
     if (!CAN_PLAY_AVC_AAC) {
         showCodecCompatibilityError(IS_LINUX);
-        addClass(mediaHolder, 'hidden');
+        addEventListener(selectMenu, "change", function () { formatSwitch(); });
         return;
     }
 
@@ -156,11 +157,15 @@ export default function (
     });
 }
 
-function formatSwitch(mediaInstance: Player) {
+function formatSwitch(mediaInstance?: Player) {
     const formatSelector = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement);
     const formatIndex = formatSelector.selectedIndex;
 
     updateURLParam(seriesID, epIndex, formatIndex);
+
+    if (mediaInstance === undefined) {
+        return;
+    }
 
     sendServerRequest('format_switch.php', {
         callback: function (response: string) {
