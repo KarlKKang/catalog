@@ -35,27 +35,27 @@ declare global {
 }
 
 export class Player {
-    protected readonly DEBUG: boolean;
+    private readonly DEBUG: boolean;
     protected readonly IS_VIDEO: boolean;
 
     public readonly controls: HTMLElement;
-    protected readonly controlBar: HTMLElement;
-    protected readonly playButton: HTMLElement;
-    protected readonly currentTimeDisplay: HTMLElement;
-    protected readonly progressControl: HTMLElement;
-    protected readonly progressHolder: HTMLElement;
-    protected readonly progressBar: HTMLElement;
-    protected readonly progressMouseDisplay: HTMLElement | undefined;
-    protected readonly durationDisplay: HTMLElement;
+    private readonly controlBar: HTMLElement;
+    private readonly playButton: HTMLElement;
+    private readonly currentTimeDisplay: HTMLElement;
+    private readonly progressControl: HTMLElement;
+    private readonly progressHolder: HTMLElement;
+    private readonly progressBar: HTMLElement;
+    private readonly progressMouseDisplay: HTMLElement | undefined;
+    private readonly durationDisplay: HTMLElement;
 
     protected attached = false;
 
     protected playing = false;
     protected dragging = false;
 
-    protected inactiveCountdown = 12; // 3000 / 250
-    protected droppedFrames = 0;
-    protected corruptedFrames = 0;
+    private inactiveCountdown = 12; // 3000 / 250
+    private droppedFrames = 0;
+    private corruptedFrames = 0;
 
     public get media(): HTMLVideoElement | HTMLAudioElement {
         return this.IS_VIDEO ? (getDescendantsByTagAt(this.controls, 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(this.controls, 'audio', 0) as HTMLAudioElement);

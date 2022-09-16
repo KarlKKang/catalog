@@ -65,7 +65,7 @@ export abstract class NonNativePlayer extends Player {
         }
     }.bind(this);
 
-    protected startBuffer(this: NonNativePlayer) {
+    private startBuffer(this: NonNativePlayer) {
         if (this.buffering) {
             this.checkBuffer();
             return;
