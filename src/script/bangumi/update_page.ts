@@ -29,7 +29,7 @@ import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight } from './helper';
-import type { BangumiInfo } from '../module/type';
+import type * as BangumiInfo from '../module/type/BangumiInfo';
 import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImportPromise, LazyloadImportPromise } from './get_import_promises';
 
 const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';

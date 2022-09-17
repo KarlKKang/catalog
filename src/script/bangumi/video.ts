@@ -21,8 +21,8 @@ import {
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
-import { CDNCredentials } from '../module/type';
-import type { BangumiInfo } from '../module/type';
+import * as CDNCredentials from '../module/type/CDNCredentials';
+import type { VideoEPInfo, Chapters } from '../module/type/BangumiInfo';
 
 import {
     IS_DESKTOP,
@@ -42,7 +42,7 @@ import type { ErrorData, Events } from 'hls.js';
 
 let seriesID: string;
 let epIndex: number;
-let epInfo: BangumiInfo.VideoEPInfo;
+let epInfo: VideoEPInfo;
 let baseURL: string;
 let mediaHolder: HTMLElement;
 let contentContainer: HTMLElement;
@@ -52,7 +52,7 @@ let debug: boolean;
 export default function (
     _seriesID: string,
     _epIndex: number,
-    _epInfo: BangumiInfo.VideoEPInfo,
+    _epInfo: VideoEPInfo,
     _baseURL: string,
     _mediaHolder: HTMLElement,
     _contentContainer: HTMLElement,
@@ -246,7 +246,7 @@ function addVideoNode(url: string, videojsInstance: videojs.Player, onattached: 
     }
 }
 
-function displayChapters(chapters: BangumiInfo.Chapters, mediaInstance: Player) {
+function displayChapters(chapters: Chapters, mediaInstance: Player) {
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
     accordion.innerHTML = 'CHAPTERS';

@@ -24,7 +24,8 @@ import {
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
-import { LocalImageParam, CDNCredentials } from './module/type';
+import * as LocalImageParam from './module/type/LocalImageParam';
+import * as CDNCredentials from './module/type/CDNCredentials';
 
 addEventListener(w, 'load', function () {
     if (getHref() !== TOP_URL + '/image' && !DEVELOPMENT) {

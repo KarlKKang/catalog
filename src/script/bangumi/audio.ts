@@ -13,7 +13,7 @@ import {
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
-import type { BangumiInfo } from '../module/type';
+import type { AudioEPInfo, AudioFile } from '../module/type/BangumiInfo';
 
 import {
     IS_DESKTOP,
@@ -36,7 +36,7 @@ import type { HlsImportPromise } from './get_import_promises';
 
 let seriesID: string;
 let epIndex: number;
-let epInfo: BangumiInfo.AudioEPInfo;
+let epInfo: AudioEPInfo;
 let baseURL: string;
 let mediaHolder: HTMLElement;
 let contentContainer: HTMLElement;
@@ -49,7 +49,7 @@ let hlsImportPromise: HlsImportPromise;
 export default function (
     _seriesID: string,
     _epIndex: number,
-    _epInfo: BangumiInfo.AudioEPInfo,
+    _epInfo: AudioEPInfo,
     _baseURL: string,
     _mediaHolder: HTMLElement,
     _contentContainer: HTMLElement,
@@ -66,7 +66,7 @@ export default function (
     hlsImportPromise = _hlsImportPromise;
     debug = _debug;
 
-    const audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
+    const audioEPInfo = epInfo as AudioEPInfo;
 
     addAlbumInfo();
 
@@ -92,8 +92,8 @@ export default function (
 }
 
 function addAudioNode(index: number) {
-    const audioEPInfo = epInfo as BangumiInfo.AudioEPInfo;
-    const file = audioEPInfo.files[index] as BangumiInfo.AudioFile;
+    const audioEPInfo = epInfo as AudioEPInfo;
+    const file = audioEPInfo.files[index] as AudioFile;
 
     const credentials = audioEPInfo.cdn_credentials;
 
@@ -256,7 +256,7 @@ function addAudioNode(index: number) {
 }
 
 function addAlbumInfo() {
-    const albumInfo = (epInfo as BangumiInfo.AudioEPInfo).album_info;
+    const albumInfo = (epInfo as AudioEPInfo).album_info;
     if (albumInfo.album_title != '') {
         const albumTitleElem = createElement('p');
         addClass(albumTitleElem, 'sub-title');
@@ -279,7 +279,7 @@ function addAlbumInfo() {
     }
 }
 
-function getAudioSubtitleNode(file: BangumiInfo.AudioFile, FLAC_FALLBACK: boolean) {
+function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
     const subtitle = createElement('p');
     addClass(subtitle, 'sub-title');
 

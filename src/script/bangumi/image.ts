@@ -17,11 +17,12 @@ import {
     getTitle,
     setDataAttribute,
 } from '../module/DOM';
-import type { BangumiInfo, LocalImageParam } from '../module/type';
+import type { ImageEPInfo } from '../module/type/BangumiInfo';
+import type { LocalImageParam } from '../module/type/LocalImageParam';
 import type { LazyloadImportPromise } from './get_import_promises';
 
 export default function (
-    epInfo: BangumiInfo.ImageEPInfo,
+    epInfo: ImageEPInfo,
     baseURL: string,
     mediaHolder: HTMLElement,
     lazyloadImportPromise: LazyloadImportPromise
@@ -49,7 +50,7 @@ export default function (
         setDataAttribute(imageNode, 'xhr-param', index.toString());
         setDataAttribute(imageNode, 'authentication-token', epInfo.authentication_token);
         addEventListener(imageNode, 'click', function () {
-            const param: LocalImageParam.LocalImageParam = {
+            const param: LocalImageParam = {
                 baseURL: baseURL,
                 fileName: file.file_name,
                 xhrParam: index.toString(),

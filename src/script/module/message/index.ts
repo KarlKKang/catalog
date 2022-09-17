@@ -4,7 +4,7 @@ import {
     LOGIN_URL
 } from '../env/constant';
 import { getHref, redirect, setCookie, getTitle } from '../DOM/document';
-import { LocalMessageParam } from '../type';
+import type { LocalMessageParam } from '../type/LocalMessageParam';
 
 import { defaultError } from "./template/title";
 import { unknownError } from "./template/body";
@@ -46,7 +46,7 @@ export function show(param?: MessageParam) {
         param.url = null;
     }
 
-    const cookie: LocalMessageParam.LocalMessageParam = {
+    const cookie: LocalMessageParam = {
         message: param.message,
         title: param.title,
         color: param.color,

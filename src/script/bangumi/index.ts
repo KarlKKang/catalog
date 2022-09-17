@@ -19,7 +19,7 @@ import {
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
-import { BangumiInfo } from '../module/type';
+import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam, getFormatIndex } from './helper';
 import { default as getImportPromises } from './get_import_promises';
 

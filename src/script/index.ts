@@ -31,7 +31,7 @@ import {
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
-import { SeriesInfo } from './module/type';
+import * as SeriesInfo from './module/type/SeriesInfo';
 import { default as importLazyload } from './module/lazyload';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 

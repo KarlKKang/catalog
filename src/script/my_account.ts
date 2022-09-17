@@ -41,7 +41,7 @@ import {
     usernameChanged,
     usernameTaken
 } from './module/message/template/inline';
-import { UserInfo } from './module/type';
+import * as UserInfo from './module/type/UserInfo';
 
 addEventListener(w, 'load', function () {
     if (getHref() !== TOP_URL + '/my_account' && !DEVELOPMENT) {

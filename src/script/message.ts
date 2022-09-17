@@ -23,7 +23,7 @@ import {
     addClass,
     getHref,
 } from './module/DOM';
-import { LocalMessageParam } from './module/type';
+import * as LocalMessageParam from './module/type/LocalMessageParam';
 
 addEventListener(w, 'load', function () {
     if (getHref() !== TOP_URL + '/message' && !DEVELOPMENT) {

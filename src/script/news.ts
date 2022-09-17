@@ -33,7 +33,8 @@ import {
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
-import { AllNewsInfo, NewsInfo } from './module/type';
+import * as AllNewsInfo from './module/type/AllNewsInfo';
+import * as NewsInfo from './module/type/NewsInfo';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';

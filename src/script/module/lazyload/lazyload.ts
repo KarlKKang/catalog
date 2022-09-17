@@ -12,7 +12,7 @@ import {
 } from '../DOM';
 import { show as showMessage } from '../message';
 import { invalidResponse } from '../message/template/param/server';
-import { CDNCredentials } from '../type';
+import * as CDNCredentials from '../type/CDNCredentials';
 import type ImageLoader from '../image_loader';
 
 let loader: typeof ImageLoader;

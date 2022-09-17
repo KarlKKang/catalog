@@ -28,7 +28,7 @@ import {
     appendChild,
 } from '../DOM';
 
-import type { CDNCredentials } from '../type';
+import type { CDNCredentials } from '../type/CDNCredentials';
 
 export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+[\]{}\\|;:'",<.>/?]{8,64}$/;
 export const EMAIL_REGEX = /^(?=.{3,254}$)[^\s@]+@[^\s@]+$/;
@@ -327,7 +327,7 @@ export function imageProtection(elem: HTMLElement) {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function concatenateSignedURL(url: string, credentials: CDNCredentials.CDNCredentials, resourceURLOverride?: string) {
+export function concatenateSignedURL(url: string, credentials: CDNCredentials, resourceURLOverride?: string) {
     let policyString: string;
     if (credentials.Policy !== undefined) {
         const policy = credentials['Policy'];
