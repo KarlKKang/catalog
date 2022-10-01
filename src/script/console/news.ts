@@ -210,6 +210,7 @@ function getNewsContent(button: Element, id: string) {
     });
 }
 
+import { htmlMinifyOptions } from '../../../build_config.cjs';
 import type { minify } from 'html-minifier-terser';
 let htmlMinifier: typeof minify | null = null;
 async function minifyNewsContent(button: Element) {
@@ -221,18 +222,7 @@ async function minifyNewsContent(button: Element) {
         ));
     }
 
-    contentElem.value = await htmlMinifier(contentElem.value, {
-        collapseBooleanAttributes: true,
-        collapseWhitespace: true,
-        keepClosingSlash: false,
-        quoteCharacter: '"',
-        removeAttributeQuotes: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        sortAttributes: true,
-        sortClassName: true
-    });
+    contentElem.value = await htmlMinifier(contentElem.value, htmlMinifyOptions);
 }
 
 function updateEventHandlers() {

@@ -1,0 +1,71 @@
+@charset "utf-8";
+/* CSS Document */
+
+* {
+    font-family: 'Noto Sans JP', '游ゴシック体', '游ゴシック', 'Yu Gothic', 'メイリオ', Meiryo, sans-serif;
+    font-weight: 300;
+    outline: none;
+}
+
+:lang(en) {
+    font-family: roboto, 'Noto Sans Myanmar UI', arial, sans-serif;
+    font-weight: 300;
+}
+
+:lang(zh-Hans) {
+    font-family: 'Noto Sans SC', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 300;
+}
+
+:lang(zh-Hant) {
+    font-family: 'Noto Sans TC', 'PingFang TC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 300;
+}
+
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
+    cursor: pointer;
+    color: rgba(16, 105, 201, 1);
+    text-decoration: none;
+}
+
+#container {
+    margin: 5vh 0px;
+    padding: 2em;
+    position: relative;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+@supports (transform: translate(-50%, 0%)) {
+    #container {
+        width: 1000px;
+        max-width: 90%;
+        left: 50%;
+        transform: translate(-50%, 0%);
+        background-color: rgba(252, 252, 252, 1);
+        box-shadow: 0 0 17px 0 rgba(32, 52, 76, .15);
+        transition: box-shadow .4s ease-out;
+    }
+}
+
+#container>ul {
+    display: inline-block;
+    padding: 0px 0px 0px 0px;
+}
+
+.title {
+    margin: 1em 0px 1em 0px;
+    padding: 0px;
+    font-size: x-large;
+    font-weight: 500;
+    color: rgba(255, 0, 0, 1);
+}
+
+.message {
+    margin: 1em 0px 0px 0px;
+    padding: 0px;
+}

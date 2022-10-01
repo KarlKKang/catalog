@@ -1,5 +1,5 @@
 const { merge } = require('webpack-merge');
-const common = require('./webpack.common.js');
+const common = require('./webpack.common.cjs');
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require('path');
 
@@ -25,7 +25,7 @@ module.exports = merge(common, {
                     format: null,
                     //toplevel: false,
                     nameCache: null,
-                    ie8: false,
+                    ie8: true,
                     keep_classnames: undefined,
                     keep_fnames: false,
                     safari10: true,

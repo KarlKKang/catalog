@@ -2,3 +2,6 @@
 <meta name="robots" content="<%= data.index ? "nofollow, noarchive, nosnippet" : "noindex, nofollow" %>">
 <title><%= data.title %></title>
 <%= require("./header_icon.ejs").default() %>
+<% if(!data.legacy){ %>
+<script src="/script_legacy/browser.js"></script>
+<% } %>

@@ -1,25 +1,10 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
-
-const html_minify_options = {
-    collapseBooleanAttributes: true,
-    collapseWhitespace: true,
-    keepClosingSlash: false,
-    quoteCharacter: '"',
-    removeAttributeQuotes: true,
-    removeComments: true,
-    removeRedundantAttributes: true,
-    useShortDoctype: true,
-    sortAttributes: true,
-    sortClassName: true
-};
+const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
 
 module.exports = {
     target: 'browserslist',
     entry: {
-        '404': {
-            import: './src/script/404',
-        },
         'bangumi': {
             import: './src/script/bangumi',
         },
@@ -68,17 +53,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
-            chunks: ['404'],
-            filename: '../404.html',
-            template: 'src/html/404.ejs',
-            title: '404 | featherine.com',
-            templateParameters: {
-                index: false
-            }
-        }),
-        new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['bangumi'],
             filename: '../bangumi.html',
             template: 'src/html/bangumi.ejs',
@@ -88,7 +63,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['confirm_new_email'],
             filename: '../confirm_new_email.html',
             template: 'src/html/confirm_new_email.ejs',
@@ -98,7 +73,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['console'],
             filename: '../console.html',
             template: 'src/html/console.ejs',
@@ -108,7 +83,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['image'],
             filename: '../image.html',
             template: 'src/html/image.ejs',
@@ -118,7 +93,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['index'],
             filename: '../index.html',
             template: 'src/html/index.ejs',
@@ -128,7 +103,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['info'],
             filename: '../info.html',
             template: 'src/html/info.ejs',
@@ -138,7 +113,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['login'],
             filename: '../login.html',
             template: 'src/html/login.ejs',
@@ -148,7 +123,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['message'],
             filename: '../message.html',
             template: 'src/html/message.ejs',
@@ -158,7 +133,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['my_account'],
             filename: '../my_account.html',
             template: 'src/html/my_account.ejs',
@@ -168,7 +143,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['new_email'],
             filename: '../new_email.html',
             template: 'src/html/new_email.ejs',
@@ -178,7 +153,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['news'],
             filename: '../news.html',
             template: 'src/html/news.ejs',
@@ -188,7 +163,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['password_reset'],
             filename: '../password_reset.html',
             template: 'src/html/password_reset.ejs',
@@ -198,7 +173,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['register'],
             filename: '../register.html',
             template: 'src/html/register.ejs',
@@ -208,7 +183,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['request_password_reset'],
             filename: '../request_password_reset.html',
             template: 'src/html/request_password_reset.ejs',
@@ -218,7 +193,7 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
-            minify: html_minify_options,
+            minify: htmlMinifyOptions,
             chunks: ['special_register'],
             filename: '../special_register.html',
             template: 'src/html/special_register.ejs',
@@ -232,6 +207,7 @@ module.exports = {
         filename: '[id].js',
         publicPath: '/script/',
         clean: true,
+        chunkLoadingGlobal: 'loader'
     },
     optimization: {
         runtimeChunk: 'single',

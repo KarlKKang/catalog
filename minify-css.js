@@ -1,9 +1,7 @@
-const minifier = require('./css-minifier');
+import minifier from './css-minifier.js';
 
 const dev = process.argv[2] === 'dev';
-
-const srcDir = './src/css/';
-var destDir = './dist/css/';
+let destDir = './dist/css/';
 if (dev) {
     destDir = './dev/css/';
 }
@@ -23,8 +21,8 @@ const entries = [
     'videojs_mod.css',
 ];
 
-for (let filename of entries) {
-    minifier(srcDir, destDir, filename);
+for (const filename of entries) {
+    minifier('./src/css/', destDir, filename);
 }
 
 minifier('./node_modules/video.js/dist/', destDir, 'video-js.css');

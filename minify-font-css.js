@@ -1,4 +1,4 @@
-const minifier = require('./css-minifier');
+import minifier from './css-minifier.js';
 
 const srcDir = './src/font/';
 
@@ -43,8 +43,8 @@ const entries = [
     }
 ];
 
-for (let entry of entries) {
-    for (let font of entry.fonts) {
+for (const entry of entries) {
+    for (const font of entry.fonts) {
         minifier(srcDir + entry.dir + '/', srcDir + 'dist/' + entry.dir + '/', font + '.css');
     }
 }

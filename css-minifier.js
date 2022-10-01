@@ -1,16 +1,12 @@
-const fs = require('fs');
-const postcss = require('postcss');
-const cssnano = require('cssnano');
+import postcss from 'postcss';
+import cssnano from 'cssnano';
+import * as fs from './file_system.js';
 
-module.exports = function (srcDir, destDir, srcFilename, destFilename) {
+export default function (srcDir, destDir, srcFilename, destFilename) {
     if (destFilename === undefined) {
         destFilename = srcFilename
     }
-    fs.readFile(srcDir + srcFilename, 'utf8', (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
+    fs.read(srcDir + srcFilename, function (data) {
         postcss([
             cssnano({
                 preset: [
@@ -35,22 +31,7 @@ module.exports = function (srcDir, destDir, srcFilename, destFilename) {
             result.warnings().forEach(warn => {
                 console.warn(warn.toString())
             });
-            writeFile(destDir + destFilename, result.css);
+            fs.write(destDir + destFilename, result.css);
         });
-    });
-}
-
-function writeFile(file, data) {
-    fs.readFile(file, 'utf8', (err_r, read) => {
-        if (err_r || data != read) {
-            fs.writeFile(file, data, err_w => {
-                if (err_w) {
-                    console.error(err_w);
-                }
-                console.log('Successfully written ' + file);
-            });
-        } else {
-            console.log(file + ' not modified');
-        }
     });
 }
