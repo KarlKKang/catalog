@@ -22,7 +22,17 @@
         }
     }, true);
 
-    if (!window.HTMLScriptElement || !HTMLScriptElement.prototype) {
+    if (!window.Function || !Function.prototype.bind) {
+        window.location.replace(URL);
+        return;
+    }
+
+    if (!window.XMLHttpRequest || !('withCredentials' in new XMLHttpRequest())) {
+        window.location.replace(URL);
+        return;
+    }
+
+    if (!window.HTMLScriptElement) {
         window.location.replace(URL);
         return;
     }
