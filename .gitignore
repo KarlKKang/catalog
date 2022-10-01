@@ -12,6 +12,7 @@ __pycache__
 /src/font/dist/
 /src/font/**/*.css
 /dist/script/*
+/dist/script_legacy/*
 /dist/css/*
 /dist/font/*
 /dist/*.html
