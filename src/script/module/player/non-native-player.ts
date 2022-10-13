@@ -5,9 +5,21 @@ import {
     addEventsListener,
     removeEventsListener,
 } from '../DOM';
+import type { default as videojs } from 'video.js';
 
 export abstract class NonNativePlayer extends Player {
     private buffering = false;
+
+    constructor(
+        instance: videojs.Player,
+        config?: {
+            audio?: boolean,
+            debug?: boolean
+        }
+    ) {
+        super(instance, config);
+        this.checkBuffer = this.checkBuffer.bind(this);
+    }
 
     protected abstract override attach(this: NonNativePlayer, onload?: (...args: any[]) => void, onerror?: (...args: any[]) => void): void;
     public abstract override load(
@@ -63,7 +75,7 @@ export abstract class NonNativePlayer extends Player {
         if (event !== undefined && (event.type == 'playing' || (!this.media.paused && event.type == 'timeupdate'))) {
             this.media.pause();
         }
-    }.bind(this);
+    }
 
     private startBuffer(this: NonNativePlayer) {
         if (this.buffering) {
