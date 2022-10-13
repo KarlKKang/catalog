@@ -1,5 +1,5 @@
-supports es5
-# supports es6 and supports es6-module and supports es6-class and supports const and supports let and supports arrow-functions
+# supports es5
+supports es6 and supports es6-module and supports const and supports let and supports arrow-functions
 
 [legacy]
 since 2000

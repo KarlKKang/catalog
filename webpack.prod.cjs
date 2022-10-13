@@ -13,7 +13,7 @@ module.exports = merge(common, {
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                    ecma: 5,
+                    ecma: 2015,
                     parse: {},
                     compress: {
                         passes: 5
@@ -25,7 +25,7 @@ module.exports = merge(common, {
                     format: null,
                     //toplevel: false,
                     nameCache: null,
-                    ie8: true,
+                    ie8: false,
                     keep_classnames: undefined,
                     keep_fnames: false,
                     safari10: true,
