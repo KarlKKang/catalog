@@ -37,9 +37,8 @@
         return;
     }
 
-    /* ESM detection
     if (!('noModule' in HTMLScriptElement.prototype)) {
         window.location.replace(URL);
         return;
-    }*/
+    }
 })();
