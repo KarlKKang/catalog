@@ -178,9 +178,9 @@ function addAudioNode(index: number) {
                             showMediaMessage(incompatibleTitle, '<p>Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix + '</p>', 'red');
                         } else {
                             showPlaybackError('Index ' + index + ': ' + 'videojs: ' + JSON.stringify(videoJSMedia.error()));
-                            addClass(mediaHolder, 'hidden');
-                            destroyAll();
                         }
+                        addClass(mediaHolder, 'hidden');
+                        destroyAll();
                     },
                     onload: function () {
                         audioReadyCounter++;
