@@ -17,7 +17,3 @@ export const moduleImportError = function (e: unknown) {
     }
     return `モジュールの読み込みに失敗しました。${defaultErrorSuffix}<br>` + message;
 };
-
-export const cssVarError = function (e: string) {
-    return `cssの解析に失敗しました。${browserCompatibilitySuffix}<br>` + e;
-};

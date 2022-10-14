@@ -7,7 +7,6 @@ import {
     authenticate,
     checkBaseURL,
     clearCookies,
-    cssVarWrapper,
     navListeners,
     scrollToHash,
 } from './module/main';
@@ -27,7 +26,6 @@ addEventListener(w, 'load', function () {
         return;
     }
 
-    cssVarWrapper();
     clearCookies();
 
     authenticate({

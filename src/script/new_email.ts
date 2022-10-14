@@ -8,7 +8,6 @@ import {
     sendServerRequest,
     getURLParam,
     clearCookies,
-    cssVarWrapper,
     disableInput,
     EMAIL_REGEX,
     checkBaseURL
@@ -57,8 +56,6 @@ addEventListener(w, 'load', function () {
         redirect(TOP_URL, true);
         return;
     }
-
-    cssVarWrapper();
 
     sendServerRequest('verify_email_change.php', {
         callback: function (response: string) {

@@ -6,7 +6,6 @@ import {
 import {
     sendServerRequest,
     clearCookies,
-    cssVarWrapper,
     disableInput,
     EMAIL_REGEX
 } from './module/main';
@@ -29,7 +28,6 @@ addEventListener(w, 'load', function () {
         return;
     }
 
-    cssVarWrapper();
     clearCookies();
 
     const emailInput = getById('email') as HTMLInputElement;

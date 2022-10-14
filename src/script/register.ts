@@ -10,7 +10,6 @@ import {
     sendServerRequest,
     passwordStyling,
     clearCookies,
-    cssVarWrapper,
     hashPassword,
     disableInput,
     PASSWORD_REGEX,
@@ -77,8 +76,6 @@ addEventListener(w, 'load', function () {
         redirect(LOGIN_URL, true);
         return;
     }
-
-    cssVarWrapper();
 
     sendServerRequest('register.php', {
         callback: function (response: string) {

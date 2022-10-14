@@ -9,7 +9,6 @@ import {
     sendServerRequest,
     changeColor,
     clearCookies,
-    cssVarWrapper,
     hashPassword,
     disableInput,
     PASSWORD_REGEX,
@@ -49,7 +48,6 @@ addEventListener(w, 'load', function () {
         return;
     }
 
-    cssVarWrapper();
     clearCookies();
 
     let currentUsername: string;

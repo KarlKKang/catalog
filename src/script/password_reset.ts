@@ -9,7 +9,6 @@ import {
     getURLParam,
     passwordStyling,
     clearCookies,
-    cssVarWrapper,
     hashPassword,
     disableInput,
     PASSWORD_REGEX,
@@ -67,8 +66,6 @@ addEventListener(w, 'load', function () {
         redirect(LOGIN_URL, true);
         return;
     }
-
-    cssVarWrapper();
 
     sendServerRequest('reset_password.php', {
         callback: function (response: string) {

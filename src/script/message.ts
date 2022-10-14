@@ -7,7 +7,6 @@ import {
 import {
     logout,
     clearCookies,
-    cssVarWrapper,
     changeColor,
 } from './module/main';
 import {
@@ -79,8 +78,6 @@ addEventListener(w, 'load', function () {
 
         removeClass(getBody(), "hidden");
     };
-
-    cssVarWrapper();
 
     if (param.logout === true) {
         logout(callback);

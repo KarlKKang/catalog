@@ -38,7 +38,6 @@
     "babel-loader": "^8.2.5",
     "bowser": "^2.11.0",
     "core-js": "^3.25.5",
-    "css-vars-ponyfill": "^2.4.8",
     "cssnano": "^5.1.13",
     "cssnano-preset-advanced": "^5.3.8",
     "ejs-loader": "^0.5.0",

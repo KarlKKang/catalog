@@ -10,11 +10,6 @@ export const moduleImportError = function (e: unknown) {
         message: body.moduleImportError(e)
     };
 };
-export const cssVarError = function (e: string) {
-    return {
-        message: body.cssVarError(e)
-    };
-};
 export const expired = {
     title: title.expired,
     message: body.expired,

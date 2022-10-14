@@ -41,4 +41,9 @@
         window.location.replace(URL);
         return;
     }
+
+    if (!window.CSS || !window.CSS.supports || !window.CSS.supports('(--a: 0)')) { // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
+        window.location.replace(URL);
+        return;
+    }
 })();

@@ -11,7 +11,6 @@ import {
     authenticate,
     disableInput,
     clearCookies,
-    cssVarWrapper,
     hashPassword,
     getURLParam,
     PASSWORD_REGEX,
@@ -37,7 +36,6 @@ addEventListener(w, 'load', function () {
         return;
     }
 
-    cssVarWrapper();
     clearCookies();
 
     const submitButton = getById('submit-button') as HTMLButtonElement;

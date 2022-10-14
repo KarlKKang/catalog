@@ -6,7 +6,7 @@ import {
 } from '../env/constant';
 
 import { show as showMessage } from '../message';
-import { cssVarError, moduleImportError } from '../message/template/param';
+import { moduleImportError } from '../message/template/param';
 import { connectionError, status403, status429, status503, status400And500 } from '../message/template/param/server';
 
 import {
@@ -361,33 +361,6 @@ export function clearCookies() {
     if (getHref() != TOP_URL + '/image' && !DEVELOPMENT) {
         deleteCookie('local-image-param');
     }
-}
-////////////////////////////////////////
-
-////////////////////////////////////////
-export function cssVarWrapper() {
-    const showErrorMessage = !getHref().endsWith('/message') && !DEVELOPMENT;
-    import(
-        /* webpackExports: ["default"] */
-        'css-vars-ponyfill'
-    ).then(({ default: cssVars }) => {
-        cssVars({
-            onError: function (errorMessage) {
-                if (showErrorMessage) {
-                    showMessage(cssVarError(errorMessage));
-                }
-            },
-            onWarning: function (errorMessage) {
-                console.log(errorMessage);
-            },
-            include: "link[rel=stylesheet]",
-            exclude: '[href*="/font/"]'
-        });
-    }).catch((e) => {
-        if (showErrorMessage) {
-            showMessage(moduleImportError(e));
-        }
-    });
 }
 ////////////////////////////////////////
 

@@ -8,7 +8,6 @@ import {
     sendServerRequest,
     getURLParam,
     clearCookies,
-    cssVarWrapper,
 } from '../module/main';
 import {
     w,
@@ -38,8 +37,6 @@ addEventListener(w, 'load', function () {
         return;
     }
     const seriesID = seriesIDParam;
-
-    cssVarWrapper();
 
     // Preload modules
     const importPromises = getImportPromises();

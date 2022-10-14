@@ -7,7 +7,6 @@ import {
 import {
     sendServerRequest,
     clearCookies,
-    cssVarWrapper,
     getURLParam,
     scrollToHash,
     navListeners,
@@ -47,7 +46,6 @@ addEventListener(w, 'load', function () {
         return;
     }
 
-    cssVarWrapper();
     clearCookies();
 
     const newsID = getNewsID();

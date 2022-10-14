@@ -10,7 +10,6 @@ import {
     sendServerRequest,
     getURLParam,
     clearCookies,
-    cssVarWrapper,
     disableInput,
     checkBaseURL,
 } from './module/main';
@@ -53,7 +52,6 @@ addEventListener(w, 'load', function () {
         return;
     }
 
-    cssVarWrapper();
     clearCookies();
 
     // Preload module
