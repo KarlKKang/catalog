@@ -111,6 +111,10 @@ export function getParent(elem: Element) {
     return parent;
 }
 
+export function prependChild(parent: Node, child: Node) {
+    parent.insertBefore(child, parent.firstChild);
+}
+
 export function insertBefore(newNode: Node, beforeNode: Element) {
     getParent(beforeNode).insertBefore(newNode, beforeNode);
 }

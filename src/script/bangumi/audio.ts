@@ -7,9 +7,9 @@ import {
     getById,
     createElement,
     addClass,
-    insertBefore,
     getTitle,
     appendChild,
+    prependChild,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -31,7 +31,7 @@ import { default as videojs } from 'video.js';
 import { Player, HlsPlayer, VideojsPlayer } from '../module/player';
 
 import { parseCharacters } from './helper';
-import { showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showLegacyBrowserError } from './media_helper';
+import { showErrorMessage, showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showLegacyBrowserError } from './media_helper';
 import type { HlsImportPromise } from './get_import_promises';
 
 let seriesID: string;
@@ -39,7 +39,6 @@ let epIndex: number;
 let epInfo: AudioEPInfo;
 let baseURL: string;
 let mediaHolder: HTMLElement;
-let contentContainer: HTMLElement;
 let debug: boolean;
 
 let audioReadyCounter = 0;
@@ -52,7 +51,6 @@ export default function (
     _epInfo: AudioEPInfo,
     _baseURL: string,
     _mediaHolder: HTMLElement,
-    _contentContainer: HTMLElement,
     _hlsImportPromise: HlsImportPromise,
     _debug: boolean
 ) {
@@ -62,7 +60,6 @@ export default function (
     epInfo = _epInfo;
     baseURL = _baseURL;
     mediaHolder = _mediaHolder;
-    contentContainer = _contentContainer;
     hlsImportPromise = _hlsImportPromise;
     debug = _debug;
 
@@ -71,7 +68,7 @@ export default function (
     addAlbumInfo();
 
     if (IS_DESKTOP) {
-        appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
+        appendChild(getById('content'), getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
     }
 
     if (IS_LEGACY) {
@@ -80,7 +77,6 @@ export default function (
     }
     if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
-        addClass(mediaHolder, 'hidden');
         return;
     }
 
@@ -143,7 +139,6 @@ function addAudioNode(index: number) {
 
     if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { //ALAC has already fallen back to FLAC if not supported.
         showCodecCompatibilityError(IS_LINUX);
-        addClass(mediaHolder, 'hidden');
         return false;
     }
 
@@ -175,11 +170,10 @@ function addAudioNode(index: number) {
                 audioInstance.load(url, {
                     onerror: function () {
                         if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
-                            showMediaMessage(incompatibleTitle, '<p>Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix + '</p>', 'red');
+                            showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
                         } else {
                             showPlaybackError('Index ' + index + ': ' + 'videojs: ' + JSON.stringify(videoJSMedia.error()));
                         }
-                        addClass(mediaHolder, 'hidden');
                         destroyAll();
                     },
                     onload: function () {
@@ -195,7 +189,7 @@ function addAudioNode(index: number) {
         } else {
             if (USE_MSE) {
                 if (IS_CHROMIUM) {
-                    showMediaMessage('不具合があります', '<p>Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a></p>', 'orange');
+                    showChromiumCompatibilityWarning();
                 }
                 hlsImportPromise.then(({ default: Hls }) => {
                     const hls = new Hls(configHls);
@@ -207,7 +201,6 @@ function addAudioNode(index: number) {
                         onerror: function (_, data) {
                             if (data.fatal) {
                                 showPlaybackError('Index ' + index + ': ' + data.details);
-                                addClass(mediaHolder, 'hidden');
                                 destroyAll();
                             }
                         },
@@ -232,7 +225,6 @@ function addAudioNode(index: number) {
                 audioInstance.load(url, {
                     onerror: function () {
                         showPlaybackError();
-                        addClass(mediaHolder, 'hidden');
                         destroyAll();
                     },
                     onload: function () {
@@ -256,20 +248,21 @@ function addAudioNode(index: number) {
 }
 
 function addAlbumInfo() {
+    const contentContainer = getById('content');
     const albumInfo = (epInfo as AudioEPInfo).album_info;
     if (albumInfo.album_title != '') {
         const albumTitleElem = createElement('p');
         addClass(albumTitleElem, 'sub-title');
         addClass(albumTitleElem, 'center-align');
         albumTitleElem.innerHTML = albumInfo.album_title;
-        insertBefore(albumTitleElem, getById('message'));
         if (albumInfo.album_artist != '') {
             const albumArtist = createElement('p');
             addClass(albumArtist, 'artist');
             addClass(albumArtist, 'center-align');
             albumArtist.innerHTML = albumInfo.album_artist;
-            insertBefore(albumArtist, getById('message'));
+            prependChild(contentContainer, albumArtist);
         }
+        prependChild(contentContainer, albumTitleElem);
     } else if (albumInfo.album_artist != '') {
         const titleElem = getById('title');
         const artistElem = createElement('span');
@@ -383,4 +376,13 @@ function destroyAll() {
     for (const mediaInstance of mediaInstances) {
         mediaInstance.destroy();
     }
+}
+
+let chromiumWarningDisplayed = false;
+function showChromiumCompatibilityWarning() {
+    if (chromiumWarningDisplayed) {
+        return;
+    }
+    chromiumWarningDisplayed = true;
+    showMediaMessage('不具合があります', 'Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a>', 'orange');
 }

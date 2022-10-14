@@ -9,7 +9,6 @@ import {
     getById,
     createElement,
     addClass,
-    insertBefore,
     getDescendantsByTagAt,
     getTitle,
     setClass,
@@ -17,6 +16,8 @@ import {
     createTextNode,
     addEventsListener,
     appendChild,
+    prependChild,
+    insertBefore,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -45,7 +46,6 @@ let epIndex: number;
 let epInfo: VideoEPInfo;
 let baseURL: string;
 let mediaHolder: HTMLElement;
-let contentContainer: HTMLElement;
 let hlsImportPromise: HlsImportPromise;
 let debug: boolean;
 
@@ -55,7 +55,6 @@ export default function (
     _epInfo: VideoEPInfo,
     _baseURL: string,
     _mediaHolder: HTMLElement,
-    _contentContainer: HTMLElement,
     _hlsImportPromise: HlsImportPromise,
     _debug: boolean
 ) {
@@ -65,11 +64,11 @@ export default function (
     epInfo = _epInfo;
     baseURL = _baseURL;
     mediaHolder = _mediaHolder;
-    contentContainer = _contentContainer;
     hlsImportPromise = _hlsImportPromise;
     debug = _debug;
 
     addClass(mediaHolder, 'video');
+    const contentContainer = getById('content');
 
     // Title
     if (epInfo.title != '') {
@@ -77,7 +76,7 @@ export default function (
         addClass(title, 'sub-title');
         addClass(title, 'center-align');
         title.innerHTML = epInfo.title;
-        insertBefore(title, getById('message'));
+        prependChild(contentContainer, title);
     }
 
     // Formats
@@ -108,7 +107,7 @@ export default function (
     });
 
     appendChild(formatSelector, selectMenu);
-    insertBefore(formatSelector, getById('message'));
+    insertBefore(formatSelector, mediaHolder);
 
     // Download Accordion
     if (IS_DESKTOP) {
@@ -221,7 +220,6 @@ function addVideoNode(url: string, videojsInstance: videojs.Player, onattached: 
                 onerror: function (_: Events.ERROR, data: ErrorData) {
                     if (data.fatal) {
                         showPlaybackError(data.details);
-                        addClass(mediaHolder, 'hidden');
                         mediaInstance.destroy();
                     }
                 }
@@ -238,7 +236,6 @@ function addVideoNode(url: string, videojsInstance: videojs.Player, onattached: 
         mediaInstance.load(url, {
             onerror: function () {
                 showPlaybackError();
-                addClass(mediaHolder, 'hidden');
                 mediaInstance.destroy();
             }
         })

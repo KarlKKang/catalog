@@ -156,16 +156,19 @@ hr {
 #content,
 #warning {
     margin: 2em auto 10vh auto;
-    padding: 0px;
     width: 80%;
     max-width: 1280px;
+}
+
+#content {
+    padding: 0px;
 }
 
 #format-selector {
     max-width: 200px;
     width: 70%;
     position: relative;
-    margin: 0px 0px 18px 0px;
+    margin: 0px 0px 1em 0px;
 }
 
 #format-selector:after {
@@ -203,17 +206,17 @@ select:hover {
 }
 
 #media-holder {
-    margin: 0px 0px 32px 0px;
+    margin: 0px 0px 2em 0px;
 }
 
 #media-holder.video,
 #message {
-    margin: 0px 0px 18px 0px;
+    margin: 0px 0px 1em 0px;
 }
 
 #media-holder>.video-js {
     width: 100%;
-    margin: 0px 0px 18px 0px;
+    margin: 0px 0px 16px 0px;
     background-color: #000;
 }
 
@@ -225,7 +228,7 @@ select:hover {
 
 #media-holder>.lazyload {
     width: 100%;
-    margin: 0px 0px 18px 0px;
+    margin: 0px 0px 1em 0px;
 }
 
 #media-holder>.lazyload,
@@ -260,7 +263,7 @@ select:hover {
     font-size: large;
     font-weight: 500;
     width: 100%;
-    margin: 32px 0px 18px 0px;
+    margin: 32px 0px 16px 0px;
 }
 
 .sub-title * {
@@ -294,8 +297,8 @@ p.artist {
     margin: -1em 0px 1em 0px;
 }
 
-#warning,
-#message {
+.message {
+    margin: 1em 0px;
     padding: 2em;
     background-color: var(--foreground-color);
     box-shadow: var(--shadow);
@@ -303,8 +306,7 @@ p.artist {
     box-sizing: border-box;
 }
 
-#warning-title,
-#message-title {
+.message-title {
     text-align: center;
     margin: 0px 0px 1em 0px;
     padding: 0px;
@@ -312,13 +314,7 @@ p.artist {
     font-weight: 500;
 }
 
-#warning-body {
-    margin: 1em 0px;
-    padding: 0px;
-    text-align: center;
-}
-
-#message-body {
+.message-body {
     margin: 1em 0px 0px 0px;
     padding: 0px;
     text-align: center;
@@ -344,14 +340,13 @@ p.artist {
     margin: 1em 3% 0px 3%;
 }
 
-#warning:hover,
-#message:hover,
+.message:hover,
 .button:enabled:hover {
     box-shadow: var(--shadow-hover);
 }
 
 #warning-button-group {
-    margin: -0.5em 0px 0px 0px;
+    margin: 0px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;

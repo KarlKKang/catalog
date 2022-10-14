@@ -3,10 +3,14 @@ import {
     TOP_URL,
 } from '../module/env/constant';
 import {
+    changeColor,
     getURLParam,
 } from '../module/main';
 import {
+    addClass,
+    appendChild,
     changeURL,
+    createElement,
     getComputedStyle,
 } from '../module/DOM';
 
@@ -79,4 +83,19 @@ export function getFormatIndex(): number {
         }
     }
     return formatIndex;
+}
+
+export function createMessageElem(title: string, body: string, titleColor: string) {
+    const container = createElement('div');
+    const titleElem = createElement('p');
+    const bodyElem = createElement('div');
+    addClass(container, 'message');
+    addClass(titleElem, 'message-title');
+    addClass(bodyElem, 'message-body');
+    titleElem.innerHTML = title;
+    bodyElem.innerHTML = body;
+    changeColor(titleElem, titleColor);
+    appendChild(container, titleElem);
+    appendChild(container, bodyElem);
+    return container;
 }

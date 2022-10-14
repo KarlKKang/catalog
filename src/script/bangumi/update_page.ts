@@ -7,7 +7,6 @@ import {
 import {
     navListeners,
     sendServerRequest,
-    changeColor,
     getURLParam,
     encodeCFURIComponent,
 } from '../module/main';
@@ -24,11 +23,12 @@ import {
     remove,
     containsClass,
     appendChild,
+    insertBefore,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
-import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight } from './helper';
+import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
 import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImportPromise, LazyloadImportPromise } from './get_import_promises';
 
@@ -85,20 +85,17 @@ export default function (
     const ageRestricted = epInfo.age_restricted;
 
     if (ageRestricted) {
-        const warningParent = getById('warning');
-        const warningTitle = getById('warning-title');
-        const warningBody = getById('warning-body');
-        changeColor(warningTitle, 'red');
+        let warningTitle = '年齢認証';
         if (ageRestricted.toLowerCase() == 'r15+') {
-            warningTitle.innerHTML = '「R15+指定」<br>年齢認証';
+            warningTitle = '「R15+指定」<br>年齢認証';
         } else if (ageRestricted.toLowerCase() == 'r18+') {
-            warningTitle.innerHTML = '「R18+指定」<br>年齢認証';
-        } else {
-            warningTitle.innerHTML = '年齢認証';
+            warningTitle = '「R18+指定」<br>年齢認証';
         }
-        warningBody.innerHTML = 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？';
+        const warningElem = createMessageElem(warningTitle, 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？', 'red');
+        warningElem.id = 'warning';
 
-        const warningButtonGroup = getById('warning-button-group');
+        const warningButtonGroup = createElement('div');
+        warningButtonGroup.id = 'warning-button-group';
         const warningButtonYes = createElement('button');
         const warningButtonNo = createElement('button');
         warningButtonYes.innerHTML = 'はい';
@@ -108,15 +105,16 @@ export default function (
         appendChild(warningButtonGroup, warningButtonYes);
         appendChild(warningButtonGroup, warningButtonNo);
         addEventListener(warningButtonYes, 'click', function () {
-            addClass(warningParent, 'hidden');
+            addClass(warningElem, 'hidden');
             removeClass(contentContainer, 'hidden');
         });
         addEventListener(warningButtonNo, 'click', function () {
             redirect(TOP_URL);
         });
+        appendChild(warningElem, warningButtonGroup);
 
         addClass(contentContainer, 'hidden');
-        removeClass(warningParent, 'hidden');
+        insertBefore(warningElem, contentContainer);
     }
 
     /////////////////////////////////////////////device_authenticate/////////////////////////////////////////////
@@ -141,14 +139,14 @@ export default function (
 
     if (type === 'video') {
         videoImportPromise.then(({ default: module }) => {
-            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, contentContainer, hlsImportPromise, debug);
+            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, debug);
         }).catch((e) => {
             showMessage(moduleImportError(e));
         });
     } else {
         if (type === 'audio') {
             audioImportPromise.then(({ default: module }) => {
-                module(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, contentContainer, hlsImportPromise, debug);
+                module(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, hlsImportPromise, debug);
             }).catch((e) => {
                 showMessage(moduleImportError(e));
             });

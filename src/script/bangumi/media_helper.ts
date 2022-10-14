@@ -13,38 +13,55 @@ import {
     addClass,
     toggleClass,
     appendChild,
+    insertBefore,
+    prependChild,
+    getByIdNative,
+    getDescendantsByClassAt,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
 import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
-import { getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
+import { createMessageElem, getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
 export function showPlaybackError(detail?: string) {
-    showMediaMessage(defaultError, '<p>再生中にエラーが発生しました。' + defaultErrorSuffix + (detail === undefined ? '' : ('<br>Error detail: ' + detail)) + '</p>', 'red');
+    showErrorMessage(defaultError, '再生中にエラーが発生しました。' + defaultErrorSuffix + (detail === undefined ? '' : ('<br>Error detail: ' + detail)));
 }
 
 export function showHLSCompatibilityError() {
-    showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + incompatibleSuffix + '</p>', 'red');
+    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + incompatibleSuffix);
 }
 
 export function showCodecCompatibilityError(IS_LINUX: boolean) {
-    showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix + (IS_LINUX ? 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。' : '') + '</p>', 'red');
+    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix + (IS_LINUX ? 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。' : ''));
 }
 
 export function showLegacyBrowserError() {
-    showMediaMessage(incompatibleTitle, '<p>お使いのブラウザは古すぎるため、再生に対応していません。' + incompatibleSuffix + '</p>', 'red');
+    showErrorMessage(incompatibleTitle, 'お使いのブラウザは古すぎるため、再生に対応していません。' + incompatibleSuffix);
 }
 
-export function showMediaMessage(title: string, messageTxt: string, titleColor: string) {
-    const messageTitle = getById('message-title');
-    changeColor(messageTitle, titleColor);
-    messageTitle.innerHTML = title;
-    getById('message-body').innerHTML = messageTxt;
-    removeClass(getById('message'), 'hidden');
+export function showErrorMessage(title: string, body: string) {
+    let messageElem = getByIdNative('error');
+    const mediaHolder = getById('media-holder');
+    if (messageElem === null) {
+        messageElem = createMessageElem(title, body, 'red');
+        messageElem.id = 'error';
+        insertBefore(messageElem, mediaHolder);
+    } else {
+        const titleElem = getDescendantsByClassAt(messageElem, 'message-title', 0);
+        const bodyElem = getDescendantsByClassAt(messageElem, 'message-body', 0);
+        titleElem.innerHTML = title;
+        bodyElem.innerHTML = body;
+    }
+    addClass(mediaHolder, 'hidden');
+}
+
+export function showMediaMessage(title: string, body: string, titleColor: string) {
+    const messageElem = createMessageElem(title, body, titleColor);
+    prependChild(getById('media-holder'), messageElem);
 }
 
 export function getDownloadAccordion(token: string, seriesID: string, epIndex: number): HTMLElement {
