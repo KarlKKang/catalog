@@ -128,21 +128,16 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
 
 ////////////////////////////////////////
 export function authenticate(callback: { successful?: () => void, failed?: () => void }) {
-    let successful = function () { return; };
-    let failed = function () { return; };
-    if (callback.successful !== undefined) {
-        successful = callback.successful;
-    }
-    if (callback.failed !== undefined) {
-        failed = callback.failed;
-    }
-
     sendServerRequest('get_authentication_state.php', {
         callback: function (response: string) {
             if (response == "APPROVED") {
-                successful();
+                if (callback.successful !== undefined) {
+                    callback.successful();
+                }
             } else if (response == "FAILED") {
-                failed();
+                if (callback.failed !== undefined) {
+                    callback.failed();
+                }
             } else {
                 showMessage();
             }
@@ -153,10 +148,6 @@ export function authenticate(callback: { successful?: () => void, failed?: () =>
 
 ////////////////////////////////////////
 export function logout(callback: () => void,) {
-    if (callback === undefined) {
-        callback = function () { return; };
-    }
-
     sendServerRequest('logout.php', {
         callback: function (response: string) {
             if (response == 'PARTIAL' || response == 'DONE') {
