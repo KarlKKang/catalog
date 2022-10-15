@@ -1,49 +1,24 @@
 import { getMediaSource } from 'hls.js/src/utils/mediasource-helper';
 import { isSupported } from 'hls.js/src/is-supported';
-import Bowser from 'bowser';
+import videojs from 'video.js';
 
 import { w, createElement } from '../DOM';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
     interface Window {
-        chrome: any,
-        WebKitMediaSource: any
+        chrome: any
     }
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-const USER_AGENT = w.navigator && w.navigator.userAgent || '';
-let IS_CHROMIUM = false;
-let IS_IOS = false;
-let IS_DESKTOP = false;
-let IS_IE = false;
-let IS_FIREFOX = false;
-let IS_SAFARI = false;
-let IS_LINUX = false;
-//var IS_APPLE = false;
-let IS_LEGACY = true;
+interface VjsBrowser extends videojs.Browser { IS_FIREFOX?: boolean }
+const vjsBrowser: VjsBrowser = videojs.browser;
 
-if (USER_AGENT !== '') {
-    const bowserParser = Bowser.getParser(USER_AGENT);
-
-    const browserName = bowserParser.getBrowserName();
-    const osName = bowserParser.getOSName();
-    const engineName = bowserParser.getEngineName();
-    const platformType = bowserParser.getPlatformType();
-
-    IS_CHROMIUM = engineName === 'Blink' || !!w.chrome;
-    IS_IOS = (osName === 'iOS') || (browserName === 'Safari' && (('ontouchstart' in w) || (navigator.maxTouchPoints > 0))) /* iPad in desktop mode */;
-    IS_DESKTOP = platformType === 'desktop' && (osName === 'Linux' || osName === 'Windows' || osName === 'macOS') && !IS_IOS;
-    IS_IE = browserName === 'Internet Explorer';
-    IS_FIREFOX = engineName === 'Gecko';
-
-    IS_SAFARI = IS_IOS || browserName === 'Safari';
-    IS_LINUX = osName === 'Linux';
-    //IS_APPLE = (osName === 'iOS') || (osName === 'macOS');
-
-    IS_LEGACY = engineName === 'EdgeHTML' || engineName === 'Trident' || engineName === 'Presto';
-}
+const IS_IOS = vjsBrowser.IS_IOS;
+const IS_SAFARI = vjsBrowser.IS_SAFARI || IS_IOS;
+const IS_CHROMIUM = !!w.chrome;
+const IS_FIREFOX = vjsBrowser.IS_FIREFOX;
 
 const audioElem = createElement('audio') as HTMLAudioElement;
 const videoElem = createElement('video') as HTMLVideoElement;
@@ -53,7 +28,7 @@ const USE_MSE = isSupported() && !NATIVE_HLS;
 
 let CAN_PLAY_ALAC = false;
 let CAN_PLAY_FLAC = false;
-const CAN_PLAY_MP3 = (audioElem.canPlayType('audio/mpeg') != '') && !IS_IE;
+const CAN_PLAY_MP3 = audioElem.canPlayType('audio/mpeg') != '';
 let CAN_PLAY_AVC_AAC = false;
 
 if (USE_MSE) {
@@ -73,11 +48,7 @@ if (USE_MSE) {
 
 export { IS_CHROMIUM };
 export { IS_IOS };
-export { IS_DESKTOP };
 export { IS_FIREFOX };
-export { IS_LINUX };
-//export {IS_APPLE};
-export { IS_LEGACY }
 
 export { NATIVE_HLS };
 export { USE_MSE };

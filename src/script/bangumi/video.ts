@@ -26,18 +26,16 @@ import * as CDNCredentials from '../module/type/CDNCredentials';
 import type { VideoEPInfo, Chapters } from '../module/type/BangumiInfo';
 
 import {
-    IS_DESKTOP,
-    IS_LEGACY,
-    IS_LINUX,
     USE_MSE,
     NATIVE_HLS,
     CAN_PLAY_AVC_AAC,
-} from '../module/browser';
+    IS_IOS,
+} from '../module/player/browser';
 import { default as videojs } from 'video.js';
 import { Player, HlsPlayer } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showLegacyBrowserError } from './media_helper';
+import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent } from './media_helper';
 import type { HlsImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from 'hls.js';
 
@@ -110,23 +108,16 @@ export default function (
     insertBefore(formatSelector, mediaHolder);
 
     // Download Accordion
-    if (IS_DESKTOP) {
-        appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
-    }
+    appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex, IS_IOS));
 
     // Video Node
-    if (IS_LEGACY) {
-        showLegacyBrowserError();
-        addEventListener(selectMenu, 'change', function () { formatSwitch(); });
-        return;
-    }
     if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
         addEventListener(selectMenu, 'change', function () { formatSwitch(); });
         return;
     }
     if (!CAN_PLAY_AVC_AAC) {
-        showCodecCompatibilityError(IS_LINUX);
+        showCodecCompatibilityError();
         addEventListener(selectMenu, 'change', function () { formatSwitch(); });
         return;
     }

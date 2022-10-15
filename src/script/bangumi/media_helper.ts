@@ -35,12 +35,8 @@ export function showHLSCompatibilityError() {
     showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + incompatibleSuffix);
 }
 
-export function showCodecCompatibilityError(IS_LINUX: boolean) {
-    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix + (IS_LINUX ? 'Linuxをお使いの方は、対応するメディアコーデックパッケージのインストールをお試しください。' : ''));
-}
-
-export function showLegacyBrowserError() {
-    showErrorMessage(incompatibleTitle, 'お使いのブラウザは古すぎるため、再生に対応していません。' + incompatibleSuffix);
+export function showCodecCompatibilityError() {
+    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix);
 }
 
 export function showErrorMessage(title: string, body: string) {
@@ -64,7 +60,7 @@ export function showMediaMessage(title: string, body: string, titleColor: string
     prependChild(getById('media-holder'), messageElem);
 }
 
-export function getDownloadAccordion(token: string, seriesID: string, epIndex: number): HTMLElement {
+export function getDownloadAccordion(token: string, seriesID: string, epIndex: number, IS_IOS: boolean): HTMLElement {
 
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
@@ -88,7 +84,7 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
     const warning = createElement('p');
     changeColor(warning, 'red');
     addClass(warning, 'hidden');
-    warning.innerHTML = 'お使いの端末はダウンロードに対応していません。';
+    warning.innerHTML = 'お使いの端末はダウンロードに対応していません。ダウンロードはパソコンからのみ可能です。';
     appendChild(accordionPanel, warning);
 
     const iframe = createElement('iframe') as HTMLIFrameElement;
@@ -96,13 +92,22 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
     iframe.height = '0';
     iframe.width = '0';
 
+    function unavailableCallback() {
+        addClass(downloadButton, 'hidden');
+        removeClass(warning, 'hidden');
+        accordionPanel.style.maxHeight = getContentBoxHeight(accordionPanel) + 'px';
+    }
+
     addEventListener(downloadButton, 'click', function () {
+        if (IS_IOS) {
+            unavailableCallback();
+            return;
+        }
         downloadButton.disabled = true;
         sendServerRequest('start_download.php', {
             callback: function (response: string) {
                 if (response == 'UNAVAILABLE') {
-                    addClass(downloadButton, 'hidden');
-                    removeClass(warning, 'hidden');
+                    unavailableCallback();
                 } else if (response.startsWith(CDN_URL)) {
                     iframe.src = response;
                     downloadButton.disabled = false;

@@ -16,9 +16,6 @@ import { moduleImportError } from '../module/message/template/param';
 import type { AudioEPInfo, AudioFile } from '../module/type/BangumiInfo';
 
 import {
-    IS_DESKTOP,
-    IS_LEGACY,
-    IS_LINUX,
     IS_FIREFOX,
     IS_CHROMIUM,
     USE_MSE,
@@ -26,12 +23,13 @@ import {
     CAN_PLAY_ALAC,
     CAN_PLAY_FLAC,
     CAN_PLAY_MP3,
-} from '../module/browser';
+    IS_IOS,
+} from '../module/player/browser';
 import { default as videojs } from 'video.js';
 import { Player, HlsPlayer, VideojsPlayer } from '../module/player';
 
 import { parseCharacters } from './helper';
-import { showErrorMessage, showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showLegacyBrowserError } from './media_helper';
+import { showErrorMessage, showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion } from './media_helper';
 import type { HlsImportPromise } from './get_import_promises';
 
 let seriesID: string;
@@ -66,15 +64,8 @@ export default function (
     const audioEPInfo = epInfo as AudioEPInfo;
 
     addAlbumInfo();
+    appendChild(getById('content'), getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex, IS_IOS));
 
-    if (IS_DESKTOP) {
-        appendChild(getById('content'), getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
-    }
-
-    if (IS_LEGACY) {
-        showLegacyBrowserError();
-        return;
-    }
     if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
         return;
@@ -138,7 +129,7 @@ function addAudioNode(index: number) {
     const IS_MP3 = file.format.toLowerCase() == 'mp3';
 
     if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { //ALAC has already fallen back to FLAC if not supported.
-        showCodecCompatibilityError(IS_LINUX);
+        showCodecCompatibilityError();
         return false;
     }
 

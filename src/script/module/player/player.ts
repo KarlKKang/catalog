@@ -20,7 +20,7 @@ import {
     addEventListenerOnce
 } from '../DOM';
 import type { default as videojs } from 'video.js';
-import { IS_IOS } from '../browser';
+import { IS_IOS } from './browser';
 import screenfull from 'screenfull';
 
 declare global {

@@ -36,7 +36,6 @@
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "babel-loader": "^8.2.5",
-    "bowser": "^2.11.0",
     "core-js": "^3.25.5",
     "cssnano": "^5.1.13",
     "cssnano-preset-advanced": "^5.3.8",
