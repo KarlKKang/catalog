@@ -195,7 +195,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
 
     addEventListener(w, 'resize', function () {
         const currentMaxHeight = epButtonWrapper.style.maxHeight;
-        epButtonWrapper.style.maxHeight = ''; //Resetting max-height can mitigate a bug in IE browser where the scrollHeight attribute is not accurate.
+        epButtonWrapper.style.maxHeight = ''; //Resetting max-height can mitigate a bug in legacy browsers (Firefox) where the scrollHeight attribute is not accurate.
         EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10;
         epButtonWrapper.style.maxHeight = currentMaxHeight;
         styleEPSelector();

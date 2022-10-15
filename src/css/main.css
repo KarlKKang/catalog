@@ -99,8 +99,8 @@ button,
 }
 
 button {
+    /* Set color on 'input' elements will override placeholder color in some older browsers */
     color: var(--text-color);
-    /* Set color on 'input' elements will override placeholder color in IE */
     cursor: pointer;
     text-align: center;
     padding: 0px 1em;
@@ -355,9 +355,11 @@ select {
     overflow-y: scroll;
     max-height: calc(100% - 46px);
 
-    /* Hide scrollbar for IE, Edge and Firefox */
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    /* Hide scrollbar for Edge and Firefox */
+    -ms-overflow-style: none;
+    /* Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
