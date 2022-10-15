@@ -1,6 +1,6 @@
 import { getMediaSource } from 'hls.js/src/utils/mediasource-helper';
 import { isSupported } from 'hls.js/src/is-supported';
-import videojs from 'video.js';
+import { default as videojs } from 'video.js';
 
 import { w, createElement } from '../DOM';
 
