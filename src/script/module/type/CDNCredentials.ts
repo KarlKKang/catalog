@@ -16,19 +16,12 @@ interface CDNPolicy {
         }
     }]
 }
-interface BaseCDNCredentials {
+
+export type CDNCredentials = {
     Signature: string,
-    'Key-Pair-Id': string
-}
-interface CDNCredentialsWithPolicy extends BaseCDNCredentials {
+    'Key-Pair-Id': string,
     Policy: CDNPolicy
-    Expires: undefined
-}
-interface CDNCredentialsWithExpires extends BaseCDNCredentials {
-    Expires: number
-    Policy: undefined
-}
-export type CDNCredentials = CDNCredentialsWithPolicy | CDNCredentialsWithExpires;
+};
 
 function checkCDNPolicy(policy: any) {
     if (!isObject(policy)) {
@@ -92,12 +85,5 @@ export function check(credentials: any) {
         throwError();
     }
 
-    const policy = credentials.Policy;
-    if (policy === undefined) {
-        if (!isNumber(credentials.Expires)) {
-            throwError();
-        }
-    } else {
-        checkCDNPolicy(policy);
-    }
+    checkCDNPolicy(credentials.Policy);
 }

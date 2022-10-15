@@ -319,20 +319,14 @@ export function imageProtection(elem: HTMLElement) {
 
 ////////////////////////////////////////
 export function concatenateSignedURL(url: string, credentials: CDNCredentials, resourceURLOverride?: string) {
-    let policyString: string;
-    if (credentials.Policy !== undefined) {
-        const policy = credentials['Policy'];
-        policy['Statement'][0]['Resource'] = (resourceURLOverride === undefined) ? url : resourceURLOverride;
-        policyString = JSON.stringify(policy);
-        policyString = w.btoa(policyString);
-        policyString = policyString.replace(/\+/g, '-');
-        policyString = policyString.replace(/=/g, '_');
-        policyString = policyString.replace(/\//g, '~');
-        policyString = 'Policy=' + policyString
-    } else {
-        policyString = 'Expires=' + credentials['Expires']
-    }
-    return url + '?' + policyString + '&Signature=' + credentials['Signature'] + '&Key-Pair-Id=' + credentials['Key-Pair-Id'];
+    const policy = credentials['Policy'];
+    policy['Statement'][0]['Resource'] = (resourceURLOverride === undefined) ? url : resourceURLOverride;
+    let policyString = JSON.stringify(policy);
+    policyString = w.btoa(policyString);
+    policyString = policyString.replace(/\+/g, '-');
+    policyString = policyString.replace(/=/g, '_');
+    policyString = policyString.replace(/\//g, '~');
+    return url + '?Policy=' + policyString + '&Signature=' + credentials['Signature'] + '&Key-Pair-Id=' + credentials['Key-Pair-Id'];
 }
 ////////////////////////////////////////
 
