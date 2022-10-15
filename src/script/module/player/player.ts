@@ -241,7 +241,7 @@ export class Player {
         }.bind(this), true);
 
         //Progress bar & frame drop monitor
-        setInterval(function (this: Player) {
+        setInterval(() => {
             if (!this.dragging && this.media.duration) {
                 const currentTimestamp = secToTimestamp(this.media.currentTime).toString();
                 if (this.currentTimeDisplay.innerHTML !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
@@ -274,7 +274,7 @@ export class Player {
                     }
                 }
             }
-        }.bind(this), 250);
+        }, 250);
 
 
         //Progress bar
@@ -338,7 +338,7 @@ export class Player {
 
         //Load progress
         const loadProgress = getDescendantsByClassAt(this.progressHolder, 'vjs-load-progress', 0) as HTMLElement;
-        const updateLoadProgress = function (this: Player) {
+        const updateLoadProgress = () => {
             let bufferEnd = 0;
             for (let i = this.media.buffered.length - 1; i >= 0; i--) {
                 if (this.media.buffered.start(i) <= this.media.currentTime) {
@@ -347,7 +347,7 @@ export class Player {
                 }
             }
             (loadProgress as HTMLElement).style.width = Math.min(Math.round(bufferEnd / this.media.duration * 100), 100) + '%';
-        }.bind(this);
+        };
         addEventListener(this.media, 'progress', function () {
             updateLoadProgress();
             setTimeout(updateLoadProgress, 1000);
