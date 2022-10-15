@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,
@@ -85,7 +85,7 @@ function getNews(newsID: string): void {
             }
             showNews(parsedResponse);
             navListeners();
-            removeClass(getBody(), "hidden");
+            removeClass(getBody(), 'hidden');
             scrollToHash(true);
         },
         method: 'GET',
@@ -196,11 +196,11 @@ function getAllNews(): void {
                 showMessage(invalidResponse);
                 return;
             }
-            addClass(getBody(), "invisible"); // Infinite scrolling does not work when element 'display' property is set to 'none'.
-            removeClass(getBody(), "hidden");
+            addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
+            removeClass(getBody(), 'hidden');
             showAllNews(parsedResponse);
             navListeners();
-            removeClass(getBody(), "invisible");
+            removeClass(getBody(), 'invisible');
         },
         content: 'pivot=' + pivot
     });

@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,
@@ -38,7 +38,7 @@ addEventListener(w, 'load', function () {
     const submitButton = getById('submit-button') as HTMLButtonElement;
 
     addEventListener(emailInput, 'keydown', function (event) {
-        if ((event as KeyboardEvent).key === "Enter") {
+        if ((event as KeyboardEvent).key === 'Enter') {
             submitRequest();
         }
     });
@@ -58,7 +58,7 @@ addEventListener(w, 'load', function () {
             },
         failed:
             function () {
-                removeClass(getBody(), "hidden");
+                removeClass(getBody(), 'hidden');
             },
     });
 
@@ -71,7 +71,7 @@ addEventListener(w, 'load', function () {
         const email = emailInput.value;
         if (!EMAIL_REGEX.test(email)) {
             warningElem.innerHTML = invalidEmailFormat;
-            removeClass(warningElem, "hidden");
+            removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         }
@@ -80,7 +80,7 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 if (response == 'INVALID FORMAT') {
                     warningElem.innerHTML = invalidEmailFormat;
-                    removeClass(warningElem, "hidden");
+                    removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage(emailSent(LOGIN_URL));
@@ -88,7 +88,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "email=" + email,
+            content: 'email=' + email,
             withCredentials: false
         })
     }

@@ -6,8 +6,8 @@ import {
 import { getHref, redirect, setCookie, getTitle } from '../DOM/document';
 import type { LocalMessageParam } from '../type/LocalMessageParam';
 
-import { defaultError } from "./template/title";
-import { unknownError } from "./template/body";
+import { defaultError } from './template/title';
+import { unknownError } from './template/body';
 
 
 interface MessageParam {

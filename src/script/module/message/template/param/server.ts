@@ -1,6 +1,6 @@
-import { paramWithRedirect } from "./helper";
-import * as body from "../body/server";
-import * as title from "../title/server";
+import { paramWithRedirect } from './helper';
+import * as body from '../body/server';
+import * as title from '../title/server';
 
 export const invalidResponse = paramWithRedirect(body.invalidResponse);
 export const connectionError = {

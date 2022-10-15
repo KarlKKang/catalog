@@ -21,7 +21,7 @@ export function getTable(type: string, callback?: () => void) {
         callback: function (response: string) {
             setOutput(response, callback);
         },
-        content: "p=" + encodeURIComponent(paramString)
+        content: 'p=' + encodeURIComponent(paramString)
     });
 }
 

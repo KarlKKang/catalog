@@ -60,7 +60,7 @@ function modifyNews(button: Element) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != "modify");
+    } while (confirm != 'modify');
 
     sendServerRequest('console.php', {
         callback: function (response: string) {
@@ -74,7 +74,7 @@ function modifyNews(button: Element) {
             }
             appendNews(parsedRecord.id, nextChunk, contentChunks);
         },
-        content: "p=" + encodeURIComponent(JSON.stringify(param))
+        content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -86,7 +86,7 @@ function deleteNews(id: string) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != "delete");
+    } while (confirm != 'delete');
 
     const param = {
         command: 'delete',
@@ -96,7 +96,7 @@ function deleteNews(id: string) {
 
     sendServerRequest('console.php', {
         callback: newsCompleteCallback,
-        content: "p=" + encodeURIComponent(JSON.stringify(param))
+        content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -138,7 +138,7 @@ function addNews(button: Element) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != "insert");
+    } while (confirm != 'insert');
 
     sendServerRequest('console.php', {
         callback: function (response: string) {
@@ -152,23 +152,23 @@ function addNews(button: Element) {
             }
             appendNews(parsedRecord.id, nextChunk, contentChunks);
         },
-        content: "p=" + encodeURIComponent(JSON.stringify(param))
+        content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
 function parseNewsRecord(id: string, title: string, content: string, isPublic: boolean) {
     if (id == '') {
-        alert("ERROR: 'id' is required");
+        alert('ERROR: "id" is required');
         return false;
     }
 
     if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
-        alert("ERROR: Invalid value for 'id'");
+        alert('ERROR: Invalid value for "id"');
         return false;
     }
 
     if (title == '') {
-        alert("ERROR: 'title' is required");
+        alert('ERROR: "title" is required');
         return false;
     }
 
@@ -189,7 +189,7 @@ function updateNewsTime(id: string) {
 
     sendServerRequest('console.php', {
         callback: newsCompleteCallback,
-        content: "p=" + encodeURIComponent(JSON.stringify(param))
+        content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -206,7 +206,7 @@ function getNewsContent(button: Element, id: string) {
         callback: function (response: string) {
             contentElem.value = response;
         },
-        content: "p=" + encodeURIComponent(JSON.stringify(param))
+        content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -253,7 +253,7 @@ function updateEventHandlers() {
             addEventListener(button, 'click', function () {
                 const id = getDataAttribute(button, 'id');
                 if (id === null) {
-                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    alert('ERROR: "id" attribute on the element is undefined.');
                     return;
                 }
                 updateNewsTime(id);
@@ -268,7 +268,7 @@ function updateEventHandlers() {
             addEventListener(button, 'click', function () {
                 const id = getDataAttribute(button, 'id');
                 if (id === null) {
-                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    alert('ERROR: "id" attribute on the element is undefined.');
                     return;
                 }
                 deleteNews(id);
@@ -283,7 +283,7 @@ function updateEventHandlers() {
             addEventListener(button, 'click', function () {
                 const id = getDataAttribute(button, 'id');
                 if (id === null) {
-                    alert("ERROR: 'id' attribute on the element is undefined.");
+                    alert('ERROR: "id" attribute on the element is undefined.');
                     return;
                 }
                 getNewsContent(button, id);
@@ -325,7 +325,7 @@ function appendNews(id: string, contentChunk: string, remainingContentChunks: st
             }
             appendNews(id, nextChunk, remainingContentChunks);
         },
-        content: "p=" + encodeURIComponent(JSON.stringify(param))
+        content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 

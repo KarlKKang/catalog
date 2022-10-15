@@ -262,7 +262,7 @@ export class Player {
             }
 
             if (this.DEBUG && this.IS_VIDEO) {
-                if (typeof (this.media as HTMLVideoElement).getVideoPlaybackQuality === "function") {
+                if (typeof (this.media as HTMLVideoElement).getVideoPlaybackQuality === 'function') {
                     const quality = (this.media as HTMLVideoElement).getVideoPlaybackQuality();
                     if (quality.droppedVideoFrames && quality.droppedVideoFrames != this.droppedFrames) {
                         this.onScreenConsoleOutput('Frame drop detected. Total dropped: ' + quality.droppedVideoFrames);

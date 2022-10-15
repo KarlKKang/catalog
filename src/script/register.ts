@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     LOGIN_URL,
@@ -48,7 +48,7 @@ addEventListener(w, 'load', function () {
 
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            removeClass(getBody(), "hidden");
+            removeClass(getBody(), 'hidden');
             addEventListener(getByClassAt('link', 0), 'click', function () {
                 openWindow('info');
             });
@@ -85,17 +85,17 @@ addEventListener(w, 'load', function () {
                 showMessage(emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
                 addEventListener(usernameInput, 'keydown', function (event) {
-                    if ((event as KeyboardEvent).key === "Enter") {
+                    if ((event as KeyboardEvent).key === 'Enter') {
                         register();
                     }
                 });
                 addEventListener(passwordInput, 'keydown', function (event) {
-                    if ((event as KeyboardEvent).key === "Enter") {
+                    if ((event as KeyboardEvent).key === 'Enter') {
                         register();
                     }
                 });
                 addEventListener(passwordConfirmInput, 'keydown', function (event) {
-                    if ((event as KeyboardEvent).key === "Enter") {
+                    if ((event as KeyboardEvent).key === 'Enter') {
                         register();
                     }
                 });
@@ -121,12 +121,12 @@ addEventListener(w, 'load', function () {
                 passwordStyling(passwordInput);
                 passwordStyling(passwordConfirmInput);
 
-                removeClass(getBody(), "hidden");
+                removeClass(getBody(), 'hidden');
             } else {
                 showMessage();
             }
         },
-        content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature,
+        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature,
         withCredentials: false
     });
 
@@ -141,19 +141,19 @@ addEventListener(w, 'load', function () {
 
         if (username == '') {
             warningElem.innerHTML = usernameEmpty;
-            removeClass(warningElem, "hidden");
+            removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         }
 
         if (!PASSWORD_REGEX.test(password)) {
             warningElem.innerHTML = invalidPasswordFormat;
-            removeClass(warningElem, "hidden");
+            removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         } else if (password != passwordConfirm) {
             warningElem.innerHTML = passwordConfirmationMismatch;
-            removeClass(warningElem, "hidden");
+            removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         }
@@ -171,11 +171,11 @@ addEventListener(w, 'load', function () {
                     showMessage(expired);
                 } else if (response == 'USERNAME DUPLICATED') {
                     warningElem.innerHTML = usernameTaken;
-                    removeClass(warningElem, "hidden");
+                    removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
                 } else if (response == 'USERNAME EMPTY') {
                     warningElem.innerHTML = usernameEmpty;
-                    removeClass(warningElem, "hidden");
+                    removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
                 } else if (response == 'ALREADY REGISTERED') {
                     showMessage(emailAlreadyRegistered);
@@ -185,7 +185,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature + "&user=" + encodeURIComponent(JSON.stringify(user)),
+            content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&user=' + encodeURIComponent(JSON.stringify(user)),
             withCredentials: false
         });
     }

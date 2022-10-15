@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,
@@ -66,7 +66,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "token=" + param.authenticationToken
+            content: 'token=' + param.authenticationToken
         });
     }, 60 * 1000);
 
@@ -95,6 +95,6 @@ addEventListener(w, 'load', function () {
                 showMessage(moduleImportError(e));
             });
         },
-        content: "token=" + param.authenticationToken + '&p=' + param.xhrParam
+        content: 'token=' + param.authenticationToken + '&p=' + param.xhrParam
     });
 });

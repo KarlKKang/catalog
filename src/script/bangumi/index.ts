@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,

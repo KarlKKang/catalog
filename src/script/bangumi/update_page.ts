@@ -53,7 +53,7 @@ export default function (
     epIndex = _epIndex;
 
     navListeners();
-    removeClass(getBody(), "hidden");
+    removeClass(getBody(), 'hidden');
 
     const contentContainer = getById('content');
     const debug = DEVELOPMENT || getURLParam('debug') === '1';
@@ -125,7 +125,7 @@ export default function (
                     showMessage(invalidResponse);
                 }
             },
-            content: "token=" + epInfo.authentication_token,
+            content: 'token=' + epInfo.authentication_token,
             logoutParam: getLogoutParam(seriesID, epIndex)
         });
     }, 60 * 1000);
@@ -254,12 +254,12 @@ function foldEPSelector() {
 
     if (!containsClass(showMoreButton, 'hidden')) {
         if (containsClass(epButtonWrapper, 'expanded')) {
-            epButtonWrapper.style.maxHeight = EPSelectorHeight + "px";
+            epButtonWrapper.style.maxHeight = EPSelectorHeight + 'px';
         }
         return;
     }
     showMoreButton.innerHTML = showMoreButtonClippedText;
-    epButtonWrapper.style.maxHeight = "50vh";
+    epButtonWrapper.style.maxHeight = '50vh';
     removeClass(epButtonWrapper, 'expanded');
     removeClass(showMoreButton, 'hidden');
 }
@@ -270,7 +270,7 @@ function unfoldEPSelector() {
     if (containsClass(showMoreButton, 'hidden')) {
         return;
     }
-    epButtonWrapper.style.maxHeight = "";
+    epButtonWrapper.style.maxHeight = '';
     removeClass(epButtonWrapper, 'expanded');
     addClass(showMoreButton, 'hidden');
 }
@@ -281,10 +281,10 @@ function toggleEPSelector() {
     const CLIPPED = !containsClass(epButtonWrapper, 'expanded');
     showMoreButton.innerHTML = CLIPPED ? showMoreButtonExpandedText : showMoreButtonClippedText;
     if (CLIPPED) {
-        epButtonWrapper.style.maxHeight = EPSelectorHeight + "px";
+        epButtonWrapper.style.maxHeight = EPSelectorHeight + 'px';
         addClass(epButtonWrapper, 'expanded');
     } else {
-        epButtonWrapper.style.maxHeight = "50vh";
+        epButtonWrapper.style.maxHeight = '50vh';
         removeClass(epButtonWrapper, 'expanded');
     }
 }

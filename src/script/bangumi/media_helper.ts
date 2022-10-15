@@ -110,7 +110,7 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
                     showMessage(invalidResponse);
                 }
             },
-            content: "token=" + token + '&format=' + getFormatIndex(),
+            content: 'token=' + token + '&format=' + getFormatIndex(),
             logoutParam: getLogoutParam(seriesID, epIndex)
         });
     });
@@ -126,8 +126,8 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
 }
 
 export function addAccordionEvent(acc: HTMLElement): void {
-    addEventListener(acc, "click", function () {
-        toggleClass(acc, "active");
+    addEventListener(acc, 'click', function () {
+        toggleClass(acc, 'active');
         const panel = acc.nextElementSibling;
         if (panel === null) {
             return;
@@ -137,7 +137,7 @@ export function addAccordionEvent(acc: HTMLElement): void {
             panelCast.style.maxHeight = '';
             panelCast.style.padding = '0px 1em';
         } else {
-            panelCast.style.maxHeight = getContentBoxHeight(panelCast) + "px";
+            panelCast.style.maxHeight = getContentBoxHeight(panelCast) + 'px';
             panelCast.style.padding = '1em';
         }
     });

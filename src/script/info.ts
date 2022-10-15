@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT, TOP_URL,
 } from './module/env/constant';
@@ -34,13 +34,13 @@ addEventListener(w, 'load', function () {
                 removeClass(d.documentElement, 'no-header-padding');
                 removeClass(getById('header'), 'hidden');
                 removeClass(getById('nav-btn'), 'hidden');
-                removeClass(getBody(), "hidden");
+                removeClass(getBody(), 'hidden');
                 navListeners();
                 scrollToHash(true);
             },
         failed:
             function () {
-                removeClass(getBody(), "hidden");
+                removeClass(getBody(), 'hidden');
                 scrollToHash(false);
             },
     });

@@ -8,7 +8,7 @@ export interface SeriesEntry {
 
 export type SeriesEntries = SeriesEntry[];
 
-export type PivotInfo = "EOF" | number;
+export type PivotInfo = 'EOF' | number;
 
 export type SeriesInfo = [...SeriesEntries, PivotInfo];
 
@@ -23,7 +23,7 @@ export function check(seriesInfo: any) {
 
     const pivotInfo = seriesInfo[seriesInfo.length - 1];
 
-    if (!isNumber(pivotInfo) && pivotInfo !== "EOF") {
+    if (!isNumber(pivotInfo) && pivotInfo !== 'EOF') {
         throwError();
     }
 

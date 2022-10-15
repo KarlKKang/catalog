@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT, TOP_URL,
 } from '../module/env/constant';
@@ -116,13 +116,13 @@ addEventListener(w, 'load', function () {
                     addEventListener(getById('run-benchmark-password-hash'), 'click', function () {
                         misc('benchmark', 'password_hash');
                     });
-                    removeClass(getBody(), "hidden");
+                    removeClass(getBody(), 'hidden');
                 }).catch((e) => {
                     showMessage(moduleImportError(e));
                 });
             }
         },
-        content: "p=" + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
+        content: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
     });
 
     function generate(type: string) {
@@ -135,7 +135,7 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 setOutput(response, undefined, 'id-output');
             },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
+            content: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
@@ -149,7 +149,7 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 setOutput(response);
             },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
+            content: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
@@ -166,7 +166,7 @@ addEventListener(w, 'load', function () {
             if (confirm === null) {
                 return;
             }
-        } while (confirm != "clear");
+        } while (confirm != 'clear');
 
         const param = {
             command: 'clear',
@@ -178,7 +178,7 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 alert(response);
             },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
+            content: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
@@ -189,7 +189,7 @@ addEventListener(w, 'load', function () {
             if (confirm === null) {
                 return;
             }
-        } while (confirm != "clear");
+        } while (confirm != 'clear');
 
         const param = {
             command: 'clear',
@@ -200,7 +200,7 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 alert(response);
             },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
+            content: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
@@ -211,7 +211,7 @@ addEventListener(w, 'load', function () {
             if (confirm === null) {
                 return;
             }
-        } while (confirm != "rebuild");
+        } while (confirm != 'rebuild');
 
         const param = {
             command: 'rebuild',
@@ -222,14 +222,14 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 alert(response);
             },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
+            content: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
     function verify() {
         const id = (getById('verify-id') as HTMLTextAreaElement).value;
         if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
-            alert("ERROR: Invalid value for 'id'");
+            alert('ERROR: Invalid value for "id"');
             return;
         }
 
@@ -239,7 +239,7 @@ addEventListener(w, 'load', function () {
             if (confirm === null) {
                 return;
             }
-        } while (confirm != "verify");
+        } while (confirm != 'verify');
 
         const param = {
             command: 'verify',
@@ -250,7 +250,7 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 alert(response);
             },
-            content: "p=" + encodeURIComponent(JSON.stringify(param))
+            content: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 

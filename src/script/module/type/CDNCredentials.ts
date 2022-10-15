@@ -5,20 +5,20 @@ interface CDNPolicy {
         Resource: string,
         Condition: {
             DateLessThan: {
-                "AWS:EpochTime": number
+                'AWS:EpochTime': number
             },
             DateGreaterThan?: {
-                "AWS:EpochTime": number
+                'AWS:EpochTime': number
             },
             IpAddress?: {
-                "AWS:SourceIp": string
+                'AWS:SourceIp': string
             }
         }
     }]
 }
 interface BaseCDNCredentials {
     Signature: string,
-    "Key-Pair-Id": string
+    'Key-Pair-Id': string
 }
 interface CDNCredentialsWithPolicy extends BaseCDNCredentials {
     Policy: CDNPolicy
@@ -55,13 +55,13 @@ function checkCDNPolicy(policy: any) {
         throwError();
     }
 
-    if (!isNumber(dateLessThan["AWS:EpochTime"])) {
+    if (!isNumber(dateLessThan['AWS:EpochTime'])) {
         throwError();
     }
 
     const dateGreaterThan = condition.DateGreaterThan;
     if (isObject(dateGreaterThan)) {
-        if (!isNumber(dateGreaterThan["AWS:EpochTime"])) {
+        if (!isNumber(dateGreaterThan['AWS:EpochTime'])) {
             throwError();
         }
     } else if (dateGreaterThan !== undefined) {
@@ -70,7 +70,7 @@ function checkCDNPolicy(policy: any) {
 
     const ipAddress = condition.IpAddress;
     if (isObject(ipAddress)) {
-        if (!isString(ipAddress["AWS:SourceIp"])) {
+        if (!isString(ipAddress['AWS:SourceIp'])) {
             throwError();
         }
     } else if (ipAddress !== undefined) {
@@ -88,7 +88,7 @@ export function check(credentials: any) {
         throwError();
     }
 
-    if (!isString(credentials["Key-Pair-Id"])) {
+    if (!isString(credentials['Key-Pair-Id'])) {
         throwError();
     }
 

@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT, TOP_URL
 } from './module/env/constant';
@@ -157,7 +157,7 @@ addEventListener(w, 'load', function () {
         currentUsername = userInfo.username;
 
         navListeners();
-        removeClass(getBody(), "hidden");
+        removeClass(getBody(), 'hidden');
     }
 
     function invite() {
@@ -194,7 +194,7 @@ addEventListener(w, 'load', function () {
                 removeClass(warningElem, 'hidden');
                 disableAllInputs(false);
             },
-            content: "receiver=" + encodeURIComponent(receiver)
+            content: 'receiver=' + encodeURIComponent(receiver)
         });
     }
 
@@ -232,7 +232,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "new=" + newPassword
+            content: 'new=' + newPassword
         });
     }
 
@@ -293,7 +293,7 @@ addEventListener(w, 'load', function () {
                 }
                 disableAllInputs(false);
             },
-            content: "new=" + newUsername
+            content: 'new=' + newUsername
         });
     }
 

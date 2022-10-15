@@ -97,7 +97,7 @@ function addAudioNode(index: number) {
         controls: true,
         autoplay: false,
         fluid: true,
-        aspectRatio: "1:0",
+        aspectRatio: '1:0',
         controlBar: {
             fullscreenToggle: false,
             pictureInPictureToggle: false
@@ -123,8 +123,8 @@ function addAudioNode(index: number) {
     const audioNode = createElement('audio');
     audioNode.id = 'track' + index;
 
-    addClass(audioNode, "vjs-default-skin");
-    addClass(audioNode, "video-js");
+    addClass(audioNode, 'vjs-default-skin');
+    addClass(audioNode, 'video-js');
     audioNode.lang = 'en';
 
     const FLAC_FALLBACK = (file.flac_fallback && !CAN_PLAY_ALAC);

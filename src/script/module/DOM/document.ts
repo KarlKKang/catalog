@@ -47,7 +47,7 @@ export function openWindow(url: string) {
 }
 
 export function getCookie(name: string) {
-    name = name + "=";
+    name = name + '=';
     // var decodedCookie = decodeURIComponent(document.cookie);
     const decodedCookies = d.cookie;
     const cookies = decodedCookies.split(';');

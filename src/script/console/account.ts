@@ -55,7 +55,7 @@ async function addAccount(button: Element) {
     }
 
     if (parsedRecord.password === null) {
-        alert("ERROR: 'password' is required");
+        alert('ERROR: "password" is required');
         return;
     }
 
@@ -71,11 +71,11 @@ async function addAccount(button: Element) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != "insert");
+    } while (confirm != 'insert');
 
     sendServerRequest('console.php', {
         callback: accountCompleteCallback,
-        content: "p=" + encodeURIComponent(JSON.stringify(param))
+        content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -123,22 +123,22 @@ async function modifyAccount(button: Element, id: string) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != "modify");
+    } while (confirm != 'modify');
 
     sendServerRequest('console.php', {
         callback: accountCompleteCallback,
-        content: "p=" + encodeURIComponent(JSON.stringify(param))
+        content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
 async function parseAccountRecord(email: string, username: string, password: string, user_group: string, status: string, available_invite: string) {
     if (email == '') {
-        alert("ERROR: 'email' is required");
+        alert('ERROR: "email" is required');
         return false;
     }
 
     if (username == '') {
-        alert("ERROR: 'username' is required");
+        alert('ERROR: "username" is required');
         return false;
     }
 
@@ -146,7 +146,7 @@ async function parseAccountRecord(email: string, username: string, password: str
     if (password == '') {
         password_parsed = null;
     } else if (!PASSWORD_REGEX.test(password)) {
-        alert("ERROR: password requirements not met");
+        alert('ERROR: password requirements not met');
         return false;
     } else {
         password_parsed = await hashPassword(password);
@@ -158,7 +158,7 @@ async function parseAccountRecord(email: string, username: string, password: str
     } else if (user_group == 'user') {
         user_group_parsed = 1;
     } else {
-        alert("ERROR: Invalid value for 'user_group'");
+        alert('ERROR: Invalid value for "user_group"');
         return false;
     }
 
@@ -170,20 +170,20 @@ async function parseAccountRecord(email: string, username: string, password: str
     } else if (status == 'banned') {
         status_parsed = 2;
     } else {
-        alert("ERROR: Invalid value for 'status'");
+        alert('ERROR: Invalid value for "status"');
         return false;
     }
 
     if (available_invite == '') {
-        alert("ERROR: 'available_invite' is required");
+        alert('ERROR: "available_invite" is required');
         return false;
     }
     const available_invite_parsed = parseInt(available_invite);
     if (isNaN(available_invite_parsed)) {
-        alert("ERROR: Invalid value for 'available_invite'");
+        alert('ERROR: Invalid value for "available_invite"');
         return false;
     } else if (available_invite_parsed > 255 || available_invite_parsed < 0) {
-        alert("ERROR: 'available_invite' should be in range 0-255");
+        alert('ERROR: "available_invite" should be in range 0-255');
         return false;
     }
 
@@ -204,7 +204,7 @@ function deleteAccount(id: string) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != "delete");
+    } while (confirm != 'delete');
 
     const param = {
         command: 'delete',
@@ -214,7 +214,7 @@ function deleteAccount(id: string) {
 
     sendServerRequest('console.php', {
         callback: accountCompleteCallback,
-        content: "p=" + encodeURIComponent(JSON.stringify(param))
+        content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -236,7 +236,7 @@ function updateEventHandlers() {
             addEventListener(button, 'click', function () {
                 const id = getDataAttribute(button, 'user');
                 if (id === null) {
-                    alert("ERROR: 'email' attribute on the element is undefined.");
+                    alert('ERROR: "email" attribute on the element is undefined.');
                     return;
                 }
                 modifyAccount(button, id);
@@ -251,7 +251,7 @@ function updateEventHandlers() {
             addEventListener(button, 'click', function () {
                 const id = getDataAttribute(button, 'user');
                 if (id === null) {
-                    alert("ERROR: 'email' attribute on the element is undefined.");
+                    alert('ERROR: "email" attribute on the element is undefined.');
                     return;
                 }
                 deleteAccount(id);

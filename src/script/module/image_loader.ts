@@ -91,8 +91,8 @@ export default function (container: Element, src: string, alt: string, onload?: 
 
 
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", src);
-    xhr.responseType = "blob";
+    xhr.open('GET', src);
+    xhr.responseType = 'blob';
 
     xhr.onerror = finalizeErrorImage;
     xhr.onreadystatechange = function () {
@@ -151,8 +151,8 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
     } finally {
         webpMachine.clearCache();
     }
-    canvas.style.removeProperty("width"); // webp-hero will add incorrect width and height properties
-    canvas.style.removeProperty("height");
+    canvas.style.removeProperty('width'); // webp-hero will add incorrect width and height properties
+    canvas.style.removeProperty('height');
     imageProtection(canvas);
     appendChild(queueItem.container, canvas);
     const onload = queueItem.onload;

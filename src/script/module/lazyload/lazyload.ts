@@ -76,7 +76,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                         addClass(target, 'complete');
                     });
                 },
-                content: "token=" + authenticationToken + "&p=" + xhrParam
+                content: 'token=' + authenticationToken + '&p=' + xhrParam
             });
         } else {
             loader(target, src, alt, function () {

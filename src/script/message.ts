@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,
@@ -41,7 +41,7 @@ addEventListener(w, 'load', function () {
             changeColor(titleElem, 'orange');
             titleElem.innerHTML = 'タイトルTitle';
             messageElem.innerHTML = 'メッセージMessageメッセージMessageメッセージMessageメッセージMessageメッセージMessage';
-            removeClass(getBody(), "hidden");
+            removeClass(getBody(), 'hidden');
         } else {
             redirect(TOP_URL, true);
         }
@@ -76,7 +76,7 @@ addEventListener(w, 'load', function () {
             })
         }
 
-        removeClass(getBody(), "hidden");
+        removeClass(getBody(), 'hidden');
     };
 
     if (param.logout === true) {

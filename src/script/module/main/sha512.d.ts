@@ -3,7 +3,7 @@ declare module 'node-forge/lib/sha512' {
     type Byte = number;
     type Bytes = string;
     type Hex = string;
-    type Encoding = "raw" | "utf8";
+    type Encoding = 'raw' | 'utf8';
 
     namespace util {
         class ByteStringBuffer {

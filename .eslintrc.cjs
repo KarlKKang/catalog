@@ -13,14 +13,9 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended'
   ],
-  overrides: [
-    {
-      files: ['src/script/**/*.ts'],
-      rules: {
-        '@typescript-eslint/no-explicit-any': 'off'
-      }
-    }
-  ],
+  overrides: [],
   rules: {
+    "quotes": ["error", "single"],
+    '@typescript-eslint/no-explicit-any': 'off'
   }
 }

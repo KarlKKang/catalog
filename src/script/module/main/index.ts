@@ -119,8 +119,8 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
         }
     };
     addXHROnError(xmlhttp);
-    xmlhttp.open(options.method, SERVER_URL + "/" + uri, true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.open(options.method, SERVER_URL + '/' + uri, true);
+    xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.withCredentials = options.withCredentials;
     xmlhttp.send(options.content);
 }
@@ -130,11 +130,11 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
 export function authenticate(callback: { successful?: () => void, failed?: () => void }) {
     sendServerRequest('get_authentication_state.php', {
         callback: function (response: string) {
-            if (response == "APPROVED") {
+            if (response == 'APPROVED') {
                 if (callback.successful !== undefined) {
                     callback.successful();
                 }
-            } else if (response == "FAILED") {
+            } else if (response == 'FAILED') {
                 if (callback.failed !== undefined) {
                     callback.failed();
                 }
@@ -173,7 +173,7 @@ export function passwordStyling(element: HTMLInputElement) {
         }
     }
 
-    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value"); //The object returned is mutable but mutating it has no effect on the original property's configuration.
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value'); //The object returned is mutable but mutating it has no effect on the original property's configuration.
     if (descriptor !== undefined && descriptor.configurable) { // 'undefined' in Chrome prior to Chrome 43 (https://developer.chrome.com/blog/DOM-attributes-now-on-the-prototype-chain/), not configurable in Safari 9.
         const originalSet = descriptor.set;
         if (originalSet !== undefined) {
@@ -182,7 +182,7 @@ export function passwordStyling(element: HTMLInputElement) {
                 originalSet.apply(this, args);
                 inputChangeHandler();
             }
-            Object.defineProperty(element, "value", descriptor);
+            Object.defineProperty(element, 'value', descriptor);
         }
     }
 
@@ -325,9 +325,9 @@ export function concatenateSignedURL(url: string, credentials: CDNCredentials, r
         policy['Statement'][0]['Resource'] = (resourceURLOverride === undefined) ? url : resourceURLOverride;
         policyString = JSON.stringify(policy);
         policyString = w.btoa(policyString);
-        policyString = policyString.replace(/\+/g, "-");
-        policyString = policyString.replace(/=/g, "_");
-        policyString = policyString.replace(/\//g, "~");
+        policyString = policyString.replace(/\+/g, '-');
+        policyString = policyString.replace(/=/g, '_');
+        policyString = policyString.replace(/\//g, '~');
         policyString = 'Policy=' + policyString
     } else {
         policyString = 'Expires=' + credentials['Expires']
@@ -338,7 +338,7 @@ export function concatenateSignedURL(url: string, credentials: CDNCredentials, r
 
 ////////////////////////////////////////
 export function encodeCFURIComponent(uri: string) {
-    return encodeURIComponent(uri).replace(/%20/g, "+");
+    return encodeURIComponent(uri).replace(/%20/g, '+');
 }
 ////////////////////////////////////////
 

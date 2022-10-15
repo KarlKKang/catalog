@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,
@@ -51,12 +51,12 @@ addEventListener(w, 'load', function () {
         failed:
             function () {
                 addEventListener(usernameInput, 'keydown', function (event) {
-                    if ((event as KeyboardEvent).key === "Enter") {
+                    if ((event as KeyboardEvent).key === 'Enter') {
                         login();
                     }
                 });
                 addEventListener(passwordInput, 'keydown', function (event) {
-                    if ((event as KeyboardEvent).key === "Enter") {
+                    if ((event as KeyboardEvent).key === 'Enter') {
                         login();
                     }
                 })
@@ -68,7 +68,7 @@ addEventListener(w, 'load', function () {
                     redirect(DEVELOPMENT ? 'request_password_reset.html' : (LOGIN_URL + '/request_password_reset'), true);
                 });
                 passwordStyling(passwordInput);
-                removeClass(getBody(), "hidden");
+                removeClass(getBody(), 'hidden');
             }
     });
 
@@ -126,7 +126,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "p=" + encodeURIComponent(paramString)
+            content: 'p=' + encodeURIComponent(paramString)
         });
     }
 

@@ -1,4 +1,4 @@
-import { NonNativePlayer } from "./non-native-player";
+import { NonNativePlayer } from './non-native-player';
 import type { default as videojs } from 'video.js';
 import {
     getDescendantsByTagAt,

@@ -1,4 +1,4 @@
-export { defaultErrorTitle as defaultError } from "../comm";
+export { defaultErrorTitle as defaultError } from '../comm';
 
 export const failed = '失敗しました';
 export const expired = '期限が切れています';

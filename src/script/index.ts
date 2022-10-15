@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,
@@ -67,8 +67,8 @@ addEventListener(w, 'load', function () {
         lazyloadImportPromise.then((module) => {
             lazyloadInitialize = module;
             infiniteScrolling = initializeInfiniteScrolling(getSeries, - 256 - 24);
-            addClass(getBody(), "invisible"); // Infinite scrolling does not work when element 'display' property is set to 'none'.
-            removeClass(getBody(), "hidden");
+            addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
+            removeClass(getBody(), 'hidden');
             showSeries(seriesInfo);
             navListeners();
             addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
@@ -77,11 +77,11 @@ addEventListener(w, 'load', function () {
                 }
             });
             addEventListener(searchBarInput, 'keyup', function (event) {
-                if ((event as KeyboardEvent).key === "Enter") {
+                if ((event as KeyboardEvent).key === 'Enter') {
                     search();
                 }
             });
-            removeClass(getBody(), "invisible");
+            removeClass(getBody(), 'invisible');
         });
     });
 });
@@ -135,10 +135,10 @@ function search() {
     const searchBarInputValue = searchBarInput.value.substring(0, 50);
 
     if (searchBarInputValue == '') {
-        keywords = "";
+        keywords = '';
         changeURL(TOP_URL);
     } else {
-        keywords = "keywords=" + encodeURIComponent(searchBarInputValue);
+        keywords = 'keywords=' + encodeURIComponent(searchBarInputValue);
         changeURL(TOP_URL + '?' + keywords);
         keywords += '&';
     }
@@ -154,12 +154,12 @@ addEventListener(w, 'popstate', function () {
 function getURLKeywords() {
     const urlParam = getURLParam('keywords');
     if (urlParam == null) {
-        keywords = "";
+        keywords = '';
         searchBarInput.value = '';
     } else {
         keywords = decodeURIComponent(urlParam).substring(0, 50);
         searchBarInput.value = keywords;
-        keywords = "keywords=" + encodeURIComponent(keywords) + "&";
+        keywords = 'keywords=' + encodeURIComponent(keywords) + '&';
     }
 }
 
@@ -185,7 +185,7 @@ function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
                 callback(parsedResponse);
             }
         },
-        content: keywords + "pivot=" + pivot,
+        content: keywords + 'pivot=' + pivot,
         logoutParam: keywords.slice(0, -1)
     });
 }

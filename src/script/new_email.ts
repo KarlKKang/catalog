@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,
@@ -42,7 +42,7 @@ addEventListener(w, 'load', function () {
 
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            removeClass(getBody(), "hidden");
+            removeClass(getBody(), 'hidden');
         } else {
             redirect(TOP_URL, true);
         }
@@ -63,7 +63,7 @@ addEventListener(w, 'load', function () {
                 showMessage(expired);
             } else if (response == 'APPROVED') {
                 addEventListener(newEmailInput, 'keydown', function (event) {
-                    if ((event as KeyboardEvent).key === "Enter") {
+                    if ((event as KeyboardEvent).key === 'Enter') {
                         submitRequest();
                     }
                 });
@@ -71,12 +71,12 @@ addEventListener(w, 'load', function () {
                 addEventListener(submitButton, 'click', function () {
                     submitRequest();
                 });
-                removeClass(getBody(), "hidden");
+                removeClass(getBody(), 'hidden');
             } else {
                 showMessage();
             }
         },
-        content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature,
+        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature,
         withCredentials: false
     });
 
@@ -89,7 +89,7 @@ addEventListener(w, 'load', function () {
 
         if (!EMAIL_REGEX.test(newEmail)) {
             warningElem.innerHTML = invalidEmailFormat;
-            removeClass(warningElem, "hidden");
+            removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         }
@@ -100,11 +100,11 @@ addEventListener(w, 'load', function () {
                     showMessage(expired);
                 } else if (response == 'DUPLICATED') {
                     warningElem.innerHTML = emailAlreadyRegistered;
-                    removeClass(warningElem, "hidden");
+                    removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
                 } else if (response == 'INVALID FORMAT') {
                     warningElem.innerHTML = invalidEmailFormat;
-                    removeClass(warningElem, "hidden");
+                    removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage(emailSent(TOP_URL));
@@ -112,7 +112,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature + "&new=" + newEmail,
+            content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&new=' + newEmail,
             withCredentials: false
         });
     }

@@ -2,8 +2,8 @@ import {
     LOGIN_URL
 } from '../../../env/constant';
 
-import * as body from "../body";
-import * as title from "../title";
+import * as body from '../body';
+import * as title from '../title';
 
 export const moduleImportError = function (e: unknown) {
     return {

@@ -1,4 +1,4 @@
-export { passwordChanged, incompletedInvitation, emailAlreadyRegistered } from "../comm";
+export { passwordChanged, incompletedInvitation, emailAlreadyRegistered } from '../comm';
 
 export const invalidEmailFormat = '有効なメールアドレスを入力してください。';
 

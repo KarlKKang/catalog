@@ -26,7 +26,7 @@ export function check(allNewsInfo: any) {
 
     const pivotInfo = allNewsInfo[allNewsInfo.length - 1];
 
-    if (!isNumber(pivotInfo) && pivotInfo !== "EOF") {
+    if (!isNumber(pivotInfo) && pivotInfo !== 'EOF') {
         throwError();
     }
 

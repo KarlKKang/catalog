@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT, LOGIN_URL, TOP_URL,
 } from './module/env/constant';
@@ -34,7 +34,7 @@ addEventListener(w, 'load', function () {
     const submitButton = getById('submit-button') as HTMLButtonElement;
 
     addEventListener(emailInput, 'keydown', function (event) {
-        if ((event as KeyboardEvent).key === "Enter") {
+        if ((event as KeyboardEvent).key === 'Enter') {
             register();
         }
     });
@@ -43,7 +43,7 @@ addEventListener(w, 'load', function () {
         register();
     });
 
-    removeClass(getBody(), "hidden");
+    removeClass(getBody(), 'hidden');
 
     async function register() {
         disableAllInputs(true);
@@ -53,7 +53,7 @@ addEventListener(w, 'load', function () {
 
         if (!EMAIL_REGEX.test(email)) {
             warningElem.innerHTML = invalidEmailFormat;
-            removeClass(warningElem, "hidden");
+            removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         }
@@ -78,7 +78,7 @@ addEventListener(w, 'load', function () {
                 removeClass(warningElem, 'hidden');
                 disableAllInputs(false);
             },
-            content: "special=1&receiver=" + encodeURIComponent(email),
+            content: 'special=1&receiver=' + encodeURIComponent(email),
             withCredentials: false
         });
     }

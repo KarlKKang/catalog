@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     LOGIN_URL,
@@ -45,7 +45,7 @@ addEventListener(w, 'load', function () {
 
     if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
         if (DEVELOPMENT) {
-            removeClass(getBody(), "hidden");
+            removeClass(getBody(), 'hidden');
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -78,13 +78,13 @@ addEventListener(w, 'load', function () {
             }
 
             addEventListener(newPasswordInput, 'keydown', function (event) {
-                if ((event as KeyboardEvent).key === "Enter") {
+                if ((event as KeyboardEvent).key === 'Enter') {
                     submitRequest();
                 }
             });
 
             addEventListener(newPasswordConfirmInput, 'keydown', function (event) {
-                if ((event as KeyboardEvent).key === "Enter") {
+                if ((event as KeyboardEvent).key === 'Enter') {
                     submitRequest();
                 }
             });
@@ -96,9 +96,9 @@ addEventListener(w, 'load', function () {
             passwordStyling(newPasswordInput);
             passwordStyling(newPasswordConfirmInput);
 
-            removeClass(getBody(), "hidden");
+            removeClass(getBody(), 'hidden');
         },
-        content: "user=" + user + "&key-id=" + keyID + "&signature=" + signature + "&expires=" + expires,
+        content: 'user=' + user + '&key-id=' + keyID + '&signature=' + signature + '&expires=' + expires,
         withCredentials: false
     });
 
@@ -113,12 +113,12 @@ addEventListener(w, 'load', function () {
 
         if (!PASSWORD_REGEX.test(newPassword)) {
             warningElem.innerHTML = invalidPasswordFormat;
-            removeClass(warningElem, "hidden");
+            removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         } else if (newPassword != newPasswordConfirm) {
             warningElem.innerHTML = passwordConfirmationMismatch;
-            removeClass(warningElem, "hidden");
+            removeClass(warningElem, 'hidden');
             disableAllInputs(false);
             return;
         }
@@ -131,7 +131,7 @@ addEventListener(w, 'load', function () {
                     showMessage(expired);
                 } else if (response == 'SAME') {
                     warningElem.innerHTML = passwordUnchanged;
-                    removeClass(warningElem, "hidden");
+                    removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage(passwordChanged);
@@ -139,7 +139,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                 }
             },
-            content: "user=" + user + "&key-id=" + keyID + "&signature=" + signature + "&expires=" + expires + "&new=" + newPassword,
+            content: 'user=' + user + '&key-id=' + keyID + '&signature=' + signature + '&expires=' + expires + '&new=' + newPassword,
             withCredentials: false
         });
     }

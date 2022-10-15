@@ -1,5 +1,5 @@
 // JavaScript Document
-import "core-js";
+import 'core-js';
 import {
     DEVELOPMENT,
     LOGIN_URL,
@@ -56,7 +56,7 @@ addEventListener(w, 'load', function () {
                 showMessage();
             }
         },
-        content: "p=" + param + "&key-id=" + keyID + "&signature=" + signature,
+        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature,
         withCredentials: false
     });
 

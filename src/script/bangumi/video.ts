@@ -117,17 +117,17 @@ export default function (
     // Video Node
     if (IS_LEGACY) {
         showLegacyBrowserError();
-        addEventListener(selectMenu, "change", function () { formatSwitch(); });
+        addEventListener(selectMenu, 'change', function () { formatSwitch(); });
         return;
     }
     if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
-        addEventListener(selectMenu, "change", function () { formatSwitch(); });
+        addEventListener(selectMenu, 'change', function () { formatSwitch(); });
         return;
     }
     if (!CAN_PLAY_AVC_AAC) {
         showCodecCompatibilityError(IS_LINUX);
-        addEventListener(selectMenu, "change", function () { formatSwitch(); });
+        addEventListener(selectMenu, 'change', function () { formatSwitch(); });
         return;
     }
 
@@ -148,7 +148,7 @@ export default function (
         const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + selectMenu.value + '].m3u8'), epInfo.cdn_credentials);
         addVideoNode(url, videojsInstance, function (mediaInstance: Player) {
             mediaInstance.media.title = getTitle();
-            addEventListener(selectMenu, "change", function () { formatSwitch(mediaInstance); });
+            addEventListener(selectMenu, 'change', function () { formatSwitch(mediaInstance); });
             if (epInfo.chapters.length > 0) {
                 displayChapters(epInfo.chapters, mediaInstance);
             }
@@ -185,7 +185,7 @@ function formatSwitch(mediaInstance?: Player) {
                 startTime: currentTime
             });
         },
-        content: "token=" + epInfo.authentication_token + "&format=" + formatIndex,
+        content: 'token=' + epInfo.authentication_token + '&format=' + formatIndex,
         logoutParam: getLogoutParam(seriesID, epIndex)
     });
 }

@@ -48,12 +48,12 @@ if (USER_AGENT !== '') {
 const audioElem = createElement('audio') as HTMLAudioElement;
 const videoElem = createElement('video') as HTMLVideoElement;
 
-const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != "") && (audioElem.canPlayType('application/vnd.apple.mpegurl') != "") && IS_SAFARI;
+const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_SAFARI;
 const USE_MSE = isSupported() && !NATIVE_HLS;
 
 let CAN_PLAY_ALAC = false;
 let CAN_PLAY_FLAC = false;
-const CAN_PLAY_MP3 = (audioElem.canPlayType('audio/mpeg') != "") && !IS_IE;
+const CAN_PLAY_MP3 = (audioElem.canPlayType('audio/mpeg') != '') && !IS_IE;
 let CAN_PLAY_AVC_AAC = false;
 
 if (USE_MSE) {
@@ -65,9 +65,9 @@ if (USE_MSE) {
     }
     //CAN_PLAY_MP3 = mediaSource.isTypeSupported('audio/mpeg'); //Firefox fails this test, but can still play mp3 in MSE.
 } else {
-    CAN_PLAY_ALAC = audioElem.canPlayType('audio/mp4; codecs="alac"') != "";
-    CAN_PLAY_FLAC = audioElem.canPlayType('audio/mp4; codecs="flac"') != "";
-    CAN_PLAY_AVC_AAC = audioElem.canPlayType('video/mp4; codecs="avc1.640032,mp4a.40.2"') != "";
+    CAN_PLAY_ALAC = audioElem.canPlayType('audio/mp4; codecs="alac"') != '';
+    CAN_PLAY_FLAC = audioElem.canPlayType('audio/mp4; codecs="flac"') != '';
+    CAN_PLAY_AVC_AAC = audioElem.canPlayType('video/mp4; codecs="avc1.640032,mp4a.40.2"') != '';
     //CAN_PLAY_MP3 = audioElem.canPlayType('audio/mpeg') != "";
 }
 
