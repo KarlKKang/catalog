@@ -95,7 +95,9 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
     function unavailableCallback() {
         addClass(downloadButton, 'hidden');
         removeClass(warning, 'hidden');
-        accordionPanel.style.maxHeight = getContentBoxHeight(accordionPanel) + 'px';
+        accordionPanel.style.maxHeight = ''; //See update_page.ts.
+        const contentHeight = getContentBoxHeight(accordionPanel);
+        accordionPanel.style.maxHeight = contentHeight + 'px';
     }
 
     addEventListener(downloadButton, 'click', function () {
