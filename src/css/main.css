@@ -356,10 +356,10 @@ select {
     max-height: calc(100% - 46px);
 
     /* Hide scrollbar for Edge and Firefox */
-    -ms-overflow-style: none;
     /* Edge */
-    scrollbar-width: none;
+    -ms-overflow-style: none;
     /* Firefox */
+    scrollbar-width: none;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
