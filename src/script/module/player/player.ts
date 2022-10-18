@@ -54,6 +54,7 @@ export class Player {
     protected dragging = false;
 
     private inactiveTimeout = 12; // 3000 / 250
+    private draggingPreviewTimeout = 6; // 1500 / 250
     private droppedFrames = 0;
     private corruptedFrames = 0;
 
@@ -245,6 +246,9 @@ export class Player {
                 return;
             }
             if (this.dragging) {
+                if (this.draggingPreviewTimeout > 0) {
+                    this.draggingPreviewTimeout--;
+                }
                 return;
             }
 
@@ -259,7 +263,7 @@ export class Player {
             }
 
             if (this.inactiveTimeout > 0) {
-                this.inactiveTimeout -= 1;
+                this.inactiveTimeout--;
                 if (this.inactiveTimeout == 0) {
                     removeClass(this.controls, 'vjs-user-active');
                     addClass(this.controls, 'vjs-user-inactive');
@@ -285,6 +289,7 @@ export class Player {
         //Progress bar
         addEventsListener(this.progressControl, ['mousedown', 'touchstart'], function (this: Player, event: Event) {
             this.dragging = true;
+            this.draggingPreviewTimeout = 6;
             if (!this.media.paused) {
                 this.media.pause();
                 this.playing = true;
@@ -555,7 +560,11 @@ export class Player {
             }
         }
         if (this.dragging) {
-            //media.currentTime = currentTime;
+            if (this.draggingPreviewTimeout === 0) {
+                this.seek(currentTime);
+                this.draggingPreviewTimeout = 6;
+                console.log('seeked');
+            }
             this.currentTimeDisplay.innerHTML = currentTimestamp;
             this.progressBar.style.width = percentage * 100 + '%';
         }
