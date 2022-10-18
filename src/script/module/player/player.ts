@@ -227,8 +227,7 @@ export class Player {
         }.bind(this));
 
         //Play button
-        addEventListener(this.playButton, 'click', function (this: Player, event: Event) {
-            event.stopPropagation();
+        addEventListener(this.playButton, 'click', function (this: Player) {
             if (containsClass(this.controls, 'vjs-ended')) {
                 removeClass(this.controls, 'vjs-ended');
                 removeClass(this.playButton, 'vjs-ended');
@@ -238,32 +237,36 @@ export class Player {
                 this.togglePlayback();
             }
             this.playButton.blur();
-        }.bind(this), true);
+        }.bind(this));
 
         //Progress bar & frame drop monitor
         setInterval(() => {
-            if (!this.dragging && this.media.duration) {
-                const currentTimestamp = secToTimestamp(this.media.currentTime).toString();
-                if (this.currentTimeDisplay.innerHTML !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
-                    this.currentTimeDisplay.innerHTML = currentTimestamp;
-                }
-                this.progressBar.style.width = Math.min(this.media.currentTime / this.media.duration * 100, 100) + '%';
-                if (this.IS_VIDEO) {
-                    if (this.playing) {
-                        if (this.inactiveCountdown > 0) {
-                            this.inactiveCountdown -= 1;
-                            if (this.inactiveCountdown == 0) {
-                                removeClass(this.controls, 'vjs-user-active');
-                                addClass(this.controls, 'vjs-user-inactive');
-                            }
-                        }
-                    } else {
-                        this.resetToActive();
-                    }
+            if (!this.media.duration) {
+                return;
+            }
+            if (this.dragging) {
+                return;
+            }
+
+            const currentTimestamp = secToTimestamp(this.media.currentTime).toString();
+            if (this.currentTimeDisplay.innerHTML !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
+                this.currentTimeDisplay.innerHTML = currentTimestamp;
+            }
+            this.progressBar.style.width = Math.min(this.media.currentTime / this.media.duration * 100, 100) + '%';
+
+            if (!this.IS_VIDEO) {
+                return;
+            }
+
+            if (this.inactiveCountdown > 0) {
+                this.inactiveCountdown -= 1;
+                if (this.inactiveCountdown == 0) {
+                    removeClass(this.controls, 'vjs-user-active');
+                    addClass(this.controls, 'vjs-user-inactive');
                 }
             }
 
-            if (this.DEBUG && this.IS_VIDEO) {
+            if (this.DEBUG) {
                 if (typeof (this.media as HTMLVideoElement).getVideoPlaybackQuality === 'function') {
                     const quality = (this.media as HTMLVideoElement).getVideoPlaybackQuality();
                     if (quality.droppedVideoFrames && quality.droppedVideoFrames != this.droppedFrames) {
@@ -326,8 +329,26 @@ export class Player {
     }
 
     private attachVideoEventListeners(this: Player) {
+        //Catch events on control bar
+        addEventsListener(this.controlBar, ['click', 'touchstart', 'touchend'], function (event: Event) {
+            event.stopPropagation();
+        });
+
         //UI activity
-        addEventsListener(this.controls, ['mousemove', 'click', 'touchstart', 'touchmove', 'touchend'], this.resetToActive.bind(this), true);
+        addEventsListener(this.controls, ['mousemove', 'touchmove'], this.resetToActive.bind(this), true);
+        let activeClick = false;
+        addEventListener(this.controls, 'click', function (this: Player) {
+            activeClick = containsClass(this.controls, 'vjs-user-active') || containsClass(this.controls, 'vjs-paused');
+            this.resetToActive();
+        }.bind(this), true);
+        addEventListener(this.controls, 'click', function (this: Player) {
+            if (!containsClass(this.controls, 'vjs-has-started')) {
+                addClass(this.controls, 'vjs-has-started');
+                this.play();
+            } else if (activeClick) {
+                this.togglePlayback();
+            }
+        }.bind(this));
 
         //Big play button
         const bigPlayButton = getDescendantsByClassAt(this.controls, 'vjs-big-play-button', 0) as HTMLElement;
@@ -336,7 +357,7 @@ export class Player {
             addClass(this.controls, 'vjs-has-started');
             this.play();
             bigPlayButton.blur();
-        }.bind(this), true);
+        }.bind(this));
 
         //Load progress
         const loadProgress = getDescendantsByClassAt(this.progressHolder, 'vjs-load-progress', 0) as HTMLElement;
@@ -399,10 +420,9 @@ export class Player {
             removeClass(fullscreenButton, 'vjs-disabled');
             fullscreenButton.disabled = false;
 
-            addEventListener(fullscreenButton, 'click', function (event) {
-                event.stopPropagation();
+            addEventListener(fullscreenButton, 'click', function () {
                 toggleFullscreen();
-            }, true);
+            });
 
             if (!IOS_FULLSCREEN) {
                 screenfull.on('change', function (this: Player) {
@@ -428,15 +448,14 @@ export class Player {
                 removeClass(PIPButton, 'vjs-disabled');
                 PIPButton.disabled = false;
 
-                addEventListener(PIPButton, 'click', function (this: Player, event: Event) {
-                    event.stopPropagation();
+                addEventListener(PIPButton, 'click', function (this: Player) {
                     if (containsClass(this.controls, 'vjs-picture-in-picture')) {
                         d.exitPictureInPicture();
                     } else {
                         (this.media as HTMLVideoElement).requestPictureInPicture();
                     }
                     PIPButton.blur();
-                }.bind(this), true);
+                }.bind(this));
 
                 addEventListener(this.media, 'enterpictureinpicture', function (this: Player) {
                     addClass(this.controls, 'vjs-picture-in-picture');
@@ -453,14 +472,7 @@ export class Player {
             }
         }
 
-        //Hotkeys		
-        addEventListener(this.controls, 'click', function (this: Player) {
-            if (!containsClass(this.controls, 'vjs-has-started')) {
-                addClass(this.controls, 'vjs-has-started');
-                this.play();
-            }
-        }.bind(this));
-
+        //Hotkeys
         addEventListener(this.controls, 'keydown', function (this: Player, event: Event) {
             const key = (event as KeyboardEvent).key;
             if (key === ' ' || key === 'Spacebar') {
@@ -573,6 +585,10 @@ export class Player {
 
     protected onended(this: Player): void {
         this.onScreenConsoleOutput('Playback ended.');
+        removeClass(this.playButton, 'vjs-playing');
+        addClass(this.playButton, 'vjs-paused');
+        removeClass(this.controls, 'vjs-playing');
+        addClass(this.controls, 'vjs-paused');
         addClass(this.controls, 'vjs-ended');
         addClass(this.playButton, 'vjs-ended');
     }
