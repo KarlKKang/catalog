@@ -53,7 +53,7 @@ export class Player {
     protected playing = false;
     protected dragging = false;
 
-    private inactiveCountdown = 12; // 3000 / 250
+    private inactiveTimeout = 12; // 3000 / 250
     private droppedFrames = 0;
     private corruptedFrames = 0;
 
@@ -213,7 +213,7 @@ export class Player {
     }
 
     private resetToActive(this: Player) {
-        this.inactiveCountdown = 12;
+        this.inactiveTimeout = 12;
         removeClass(this.controls, 'vjs-user-inactive');
         addClass(this.controls, 'vjs-user-active');
     }
@@ -258,9 +258,9 @@ export class Player {
                 return;
             }
 
-            if (this.inactiveCountdown > 0) {
-                this.inactiveCountdown -= 1;
-                if (this.inactiveCountdown == 0) {
+            if (this.inactiveTimeout > 0) {
+                this.inactiveTimeout -= 1;
+                if (this.inactiveTimeout == 0) {
                     removeClass(this.controls, 'vjs-user-active');
                     addClass(this.controls, 'vjs-user-inactive');
                 }
