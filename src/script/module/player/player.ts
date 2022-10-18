@@ -249,16 +249,18 @@ export class Player {
                 }
                 this.progressBar.style.width = Math.min(this.media.currentTime / this.media.duration * 100, 100) + '%';
                 if (this.IS_VIDEO) {
-                    if (this.inactiveCountdown > 0) {
-                        this.inactiveCountdown -= 1;
-                        if (this.inactiveCountdown == 0) {
-                            removeClass(this.controls, 'vjs-user-active');
-                            addClass(this.controls, 'vjs-user-inactive');
+                    if (this.playing) {
+                        if (this.inactiveCountdown > 0) {
+                            this.inactiveCountdown -= 1;
+                            if (this.inactiveCountdown == 0) {
+                                removeClass(this.controls, 'vjs-user-active');
+                                addClass(this.controls, 'vjs-user-inactive');
+                            }
                         }
+                    } else {
+                        this.resetToActive();
                     }
                 }
-            } else {
-                this.resetToActive();
             }
 
             if (this.DEBUG && this.IS_VIDEO) {
@@ -325,7 +327,7 @@ export class Player {
 
     private attachVideoEventListeners(this: Player) {
         //UI activity
-        addEventsListener(this.controls, ['mousemove', 'click', 'touchstart', 'touchmove', 'touchend'], this.resetToActive.bind(this));
+        addEventsListener(this.controls, ['mousemove', 'click', 'touchstart', 'touchmove', 'touchend'], this.resetToActive.bind(this), true);
 
         //Big play button
         const bigPlayButton = getDescendantsByClassAt(this.controls, 'vjs-big-play-button', 0) as HTMLElement;
@@ -463,6 +465,7 @@ export class Player {
             const key = (event as KeyboardEvent).key;
             if (key === ' ' || key === 'Spacebar') {
                 this.togglePlayback();
+                this.resetToActive(); // 'keydown' is not a trigger for 'resetToActive'
                 event.preventDefault();
             } else if (key === 'f' || key === 'F') {
                 toggleFullscreen();
@@ -480,7 +483,7 @@ export class Player {
                 this.seek(this.media.currentTime - 15);
                 event.preventDefault();
             }
-        }.bind(this), true);
+        }.bind(this));
     }
 
     protected onloadedmetadata(this: Player): void {
