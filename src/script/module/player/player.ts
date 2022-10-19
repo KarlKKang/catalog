@@ -301,7 +301,7 @@ export class Player {
             this.progressUpdate(event as MouseEvent | TouchEvent);
         }.bind(this));
 
-        addEventsListener(d, ['mouseup', 'touchend'], function (this: Player, event: Event) {
+        addEventsListener(d, ['mouseup', 'touchend', 'touchcancel'], function (this: Player, event: Event) {
             if (this.dragging) {
                 this.ondragended(event as MouseEvent | TouchEvent);
             }
@@ -334,23 +334,22 @@ export class Player {
     }
 
     private attachVideoEventListeners(this: Player) {
-        //Catch events on control bar
-        addEventsListener(this.controlBar, ['click', 'touchstart', 'touchend'], function (event: Event) {
+        //Catch events on control bar, otherwise bubbling events on the parent (constrols) will be fired.
+        addEventListener(this.controlBar, 'click', function (event: Event) {
             event.stopPropagation();
         });
 
         //UI activity
-        addEventsListener(this.controls, ['mousemove', 'touchmove'], this.resetToActive.bind(this), true);
-        let activeClick = false;
-        addEventListener(this.controls, 'click', function (this: Player) {
-            activeClick = containsClass(this.controls, 'vjs-user-active') || containsClass(this.controls, 'vjs-paused');
+        addEventsListener(this.controls, ['mousemove', 'touchmove', 'click'], this.resetToActive.bind(this), true);
+        let touchClick = false;
+        addEventListener(this.controls, 'touchend', function (this: Player) {
+            touchClick = true;
+            setTimeout(function () { touchClick = false; }, 300);
             this.resetToActive();
         }.bind(this), true);
         addEventListener(this.controls, 'click', function (this: Player) {
-            if (!containsClass(this.controls, 'vjs-has-started')) {
+            if (!touchClick) {
                 addClass(this.controls, 'vjs-has-started');
-                this.play();
-            } else if (activeClick) {
                 this.togglePlayback();
             }
         }.bind(this));
