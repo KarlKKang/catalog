@@ -45,28 +45,26 @@
     margin: 0px;
 }
 
-#container>div>div.complete {
-    background-color: rgb(255, 255, 255);
-}
-
-@media only screen and (prefers-color-scheme: dark) {
-
-    #container>div>div>img,
-    #container>div>div>canvas {
-        filter: brightness(0.95) contrast(0.96);
-    }
-}
-
 @media only screen and (hover: hover) and (pointer: fine) {
-
-    #container>div>div>img,
-    #container>div>div>canvas {
+    #container>div>div>.overlay {
+        background-color: rgb(255, 255, 255);
         transition: opacity .4s ease-out;
+        opacity: 0;
     }
 
-    #container>div:hover>div>img,
-    #container>div:hover>div>canvas {
-        opacity: 0.9;
+    #container>div:hover>div>.overlay {
+        opacity: 0.1;
+    }
+
+    @media only screen and (prefers-color-scheme: dark) {
+        #container>div>div>.overlay {
+            background-color: rgb(0, 0, 0);
+            opacity: 0.1;
+        }
+
+        #container>div:hover>div>.overlay {
+            opacity: 0;
+        }
     }
 }
 
