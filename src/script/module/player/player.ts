@@ -562,7 +562,6 @@ export class Player {
             if (this.draggingPreviewTimeout === 0) {
                 this.seek(currentTime);
                 this.draggingPreviewTimeout = 6;
-                console.log('seeked');
             }
             this.currentTimeDisplay.innerHTML = currentTimestamp;
             this.progressBar.style.width = percentage * 100 + '%';
