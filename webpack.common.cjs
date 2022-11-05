@@ -225,9 +225,6 @@ module.exports = {
             chunks: 'all'
         },
     },
-    node: {
-        global: false // Fix __webpack_require__ is undefined in Chrome prior to version 71.
-    },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.json']
     },
