@@ -29,6 +29,7 @@ import {
 import { show as showMessage } from './module/message';
 import { loginFailed, accountDeactivated } from './module/message/template/inline';
 import { unrecommendedBrowser } from './module/message/template/param';
+import { UNRECOMMENDED_BROWSER } from './module/browser';
 
 addEventListener(w, 'load', function () {
     if (!checkBaseURL(LOGIN_URL) && !DEVELOPMENT) {
@@ -95,10 +96,6 @@ addEventListener(w, 'load', function () {
         }
 
         password = await hashPassword(password);
-        const browserModule = import(
-            /* webpackExports: ["UNRECOMMENDED_BROWSER"] */
-            './module/browser'
-        );
 
         const param = {
             email: email,
@@ -119,15 +116,11 @@ addEventListener(w, 'load', function () {
                     removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
                 } else if (response == 'APPROVED') {
-                    browserModule.then(({ UNRECOMMENDED_BROWSER }) => {
-                        if (UNRECOMMENDED_BROWSER) {
-                            showMessage(unrecommendedBrowser(getForwardURL()));
-                        } else {
-                            redirect(getForwardURL(), true);
-                        }
-                    }).catch(() => {
+                    if (UNRECOMMENDED_BROWSER) {
+                        showMessage(unrecommendedBrowser(getForwardURL()));
+                    } else {
                         redirect(getForwardURL(), true);
-                    });
+                    }
                 } else {
                     showMessage();
                 }
