@@ -43,10 +43,6 @@ if (ua !== null) {
 
     const SUPPORTED_BLINK = engineName === 'blink' && engineVersion >= 62;
     UNRECOMMENDED_BROWSER = (!SUPPORTED_BLINK && !IS_SAFARI) || browserName.includes('wechat') || browserName === 'ucbrowser';
-    console.log('IS_SAFARI: ' + IS_SAFARI);
-    console.log('IS_IOS: ' + IS_IOS);
-    console.log('IS_FIREFOX: ' + IS_FIREFOX);
-    console.log('UNRECOMMENDED_BROWSER: ' + UNRECOMMENDED_BROWSER);
 }
 
 const audioElem = createElement('audio') as HTMLAudioElement;
