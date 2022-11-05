@@ -3,12 +3,10 @@ import {
 } from '../module/env/constant';
 import {
     sendServerRequest,
-    changeColor,
 } from '../module/main';
 import {
     addEventListener,
     getById,
-    removeClass,
     createElement,
     addClass,
     toggleClass,
@@ -23,6 +21,7 @@ import { invalidResponse } from '../module/message/template/param/server';
 import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
 import { createMessageElem, getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
+import { IS_MACOS, IS_WINDOWS } from '../module/browser';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -60,7 +59,7 @@ export function showMediaMessage(title: string, body: string, titleColor: string
     prependChild(getById('media-holder'), messageElem);
 }
 
-export function getDownloadAccordion(token: string, seriesID: string, epIndex: number, IS_IOS: boolean): HTMLElement {
+export function getDownloadAccordion(token: string, seriesID: string, epIndex: number): HTMLElement {
 
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
@@ -70,54 +69,61 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
     addClass(accordionPanel, 'panel');
 
     accordionPanel.innerHTML = '<ul>' +
-        '<li>まず、下の「ダウンロード」ボタンをクリックして、必要なツールやスクリプトが入ったZIPファイルをダウンロードしてください。</li>' +
-        '<li>このZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順に従ってください。</li>' +
-        '<li>ZIPファイルをダウンロード後、5分以内にスクリプトを起動してください。</li>' +
-        '<li>インターネット接続が良好であることを確認してください。</li>' +
-        '<li>IDMなどの拡張機能を使用している場合、ZIPファイルのダウンロードに問題が発生する可能性があります。ダウンロードする前に、そのような拡張機能を無効にしてください。</li>' +
+        '<li>下の「ダウンロード」ボタンをクリックすると、必要なツールやスクリプトが入ったZIPファイルのダウンロードが開始されます。</li>' +
+        '<li>ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。</li>' +
+        '<li>ZIPファイル内のスクリプトの有効期限は、ダウンロード後5分です。有効期限内にスクリプトを実行してください。</li>' +
+        '<li>スクリプトの実行には、Windows 10、Mac OS X 10.9、Linux 3.2.0以上を搭載したパソコンが必要です。</li>' +
+        '<li>インターネット接続が良好であることをご確認してください。</li>' +
         '</ul>';
+
+    const osSelector = createElement('div');
+    osSelector.id = 'os-selector';
+    addClass(osSelector, 'select');
+    const selectMenu = createElement('select') as HTMLSelectElement;
+    const optionWindows = createElement('option') as HTMLOptionElement;
+    const optionMac = createElement('option') as HTMLOptionElement;
+    const optionLinux = createElement('option') as HTMLOptionElement;
+    optionWindows.value = '1';
+    optionMac.value = '2';
+    optionLinux.value = '0';
+    optionWindows.innerHTML = 'Windows 10 / 11';
+    optionMac.innerHTML = 'Mac OS X 10.9 +';
+    optionLinux.innerHTML = 'Linux 3.2.0 +';
+    if (IS_WINDOWS) {
+        optionWindows.selected = true;
+    } else if (IS_MACOS) {
+        optionMac.selected = true;
+    } else {
+        optionLinux.selected = true;
+    }
+    appendChild(selectMenu, optionWindows);
+    appendChild(selectMenu, optionMac);
+    appendChild(selectMenu, optionLinux);
+    appendChild(osSelector, selectMenu);
+    appendChild(accordionPanel, osSelector);
 
     const downloadButton = createElement('button') as HTMLButtonElement;
     downloadButton.id = 'download-button';
     addClass(downloadButton, 'button');
     downloadButton.innerHTML = 'ダウンロード';
-    const warning = createElement('p');
-    changeColor(warning, 'red');
-    addClass(warning, 'hidden');
-    warning.innerHTML = 'お使いの端末はダウンロードに対応していません。ダウンロードはパソコンからのみ可能です。';
-    appendChild(accordionPanel, warning);
 
     const iframe = createElement('iframe') as HTMLIFrameElement;
     iframe.id = 'download-iframe';
     iframe.height = '0';
     iframe.width = '0';
 
-    function unavailableCallback() {
-        addClass(downloadButton, 'hidden');
-        removeClass(warning, 'hidden');
-        accordionPanel.style.maxHeight = ''; //See update_page.ts.
-        const contentHeight = getContentBoxHeight(accordionPanel);
-        accordionPanel.style.maxHeight = contentHeight + 'px';
-    }
-
     addEventListener(downloadButton, 'click', function () {
-        if (IS_IOS) {
-            unavailableCallback();
-            return;
-        }
         downloadButton.disabled = true;
         sendServerRequest('start_download.php', {
             callback: function (response: string) {
-                if (response == 'UNAVAILABLE') {
-                    unavailableCallback();
-                } else if (response.startsWith(CDN_URL)) {
+                if (response.startsWith(CDN_URL)) {
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {
                     showMessage(invalidResponse);
                 }
             },
-            content: 'token=' + token + '&format=' + getFormatIndex(),
+            content: 'token=' + token + '&format=' + getFormatIndex() + '&os=' + selectMenu.value,
             logoutParam: getLogoutParam(seriesID, epIndex)
         });
     });

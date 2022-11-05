@@ -167,7 +167,7 @@ hr {
     margin: 0px 0px 1em 0px;
 }
 
-#format-selector:after {
+.select:after {
     content: '\E70D';
     font-family: SegMDL2;
     font-size: 0.9em;
@@ -455,6 +455,15 @@ p.artist {
 
 #download-button {
     margin-bottom: 1em;
+}
+
+#os-selector {
+    max-width: 150px;
+    width: 100%;
+    position: relative;
+    margin: 0px 0px 1em 0px;
+    left: 50%;
+    transform: translate(-50%, 0%);
 }
 
 .download>.panel>ul {

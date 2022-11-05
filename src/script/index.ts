@@ -33,6 +33,7 @@ import { invalidResponse } from './module/message/template/param/server';
 import * as SeriesInfo from './module/type/SeriesInfo';
 import { default as importLazyload } from './module/lazyload';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
+import isbot from 'isbot';
 
 let lazyloadInitialize: () => void;
 
@@ -53,6 +54,10 @@ addEventListener(w, 'load', function () {
     }
 
     clearCookies();
+
+    if (navigator !== undefined && isbot(navigator.userAgent)) {
+        return;
+    }
 
     // Preload module
     lazyloadImportPromise = importLazyload();

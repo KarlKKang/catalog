@@ -41,6 +41,7 @@ import {
     usernameTaken
 } from './module/message/template/inline';
 import * as UserInfo from './module/type/UserInfo';
+import isbot from 'isbot';
 
 addEventListener(w, 'load', function () {
     if (getHref() !== TOP_URL + '/my_account' && !DEVELOPMENT) {
@@ -49,6 +50,10 @@ addEventListener(w, 'load', function () {
     }
 
     clearCookies();
+
+    if (navigator !== undefined && isbot(navigator.userAgent)) {
+        return;
+    }
 
     let currentUsername: string;
 

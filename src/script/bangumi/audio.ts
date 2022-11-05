@@ -23,8 +23,7 @@ import {
     CAN_PLAY_ALAC,
     CAN_PLAY_FLAC,
     CAN_PLAY_MP3,
-    IS_IOS,
-} from '../module/player/browser';
+} from '../module/browser';
 import { default as videojs } from 'video.js';
 import { Player, HlsPlayer, VideojsPlayer } from '../module/player';
 
@@ -64,7 +63,7 @@ export default function (
     const audioEPInfo = epInfo as AudioEPInfo;
 
     addAlbumInfo();
-    appendChild(getById('content'), getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex, IS_IOS));
+    appendChild(getById('content'), getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
 
     if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();

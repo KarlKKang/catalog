@@ -35,6 +35,7 @@ import { invalidResponse } from './module/message/template/param/server';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
+import isbot from 'isbot';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo = 0;
@@ -47,6 +48,10 @@ addEventListener(w, 'load', function () {
     }
 
     clearCookies();
+
+    if (navigator !== undefined && isbot(navigator.userAgent)) {
+        return;
+    }
 
     const newsID = getNewsID();
     if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {

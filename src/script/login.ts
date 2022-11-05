@@ -95,6 +95,10 @@ addEventListener(w, 'load', function () {
         }
 
         password = await hashPassword(password);
+        const browserModule = import(
+            /* webpackExports: ["UNRECOMMENDED_BROWSER"] */
+            './module/browser'
+        );
 
         const param = {
             email: email,
@@ -114,14 +118,16 @@ addEventListener(w, 'load', function () {
                     warningElem.innerHTML = accountDeactivated;
                     removeClass(warningElem, 'hidden');
                     disableAllInputs(false);
-                } else if (response == 'NOT RECOMMENDED') {
-                    setTimeout(function () {
-                        showMessage(unrecommendedBrowser(getForwardURL()));
-                    }, 500);
                 } else if (response == 'APPROVED') {
-                    setTimeout(function () {
+                    browserModule.then(({ UNRECOMMENDED_BROWSER }) => {
+                        if (UNRECOMMENDED_BROWSER) {
+                            showMessage(unrecommendedBrowser(getForwardURL()));
+                        } else {
+                            redirect(getForwardURL(), true);
+                        }
+                    }).catch(() => {
                         redirect(getForwardURL(), true);
-                    }, 500);
+                    });
                 } else {
                     showMessage();
                 }

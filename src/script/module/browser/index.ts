@@ -1,6 +1,6 @@
 import { getMediaSource } from 'hls.js/src/utils/mediasource-helper';
 import { isSupported } from 'hls.js/src/is-supported';
-import { default as videojs } from 'video.js';
+import { UAParser } from 'ua-parser-js';
 
 import { w, createElement } from '../DOM';
 
@@ -12,13 +12,42 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-interface VjsBrowser extends videojs.Browser { IS_FIREFOX?: boolean }
-const vjsBrowser: VjsBrowser = videojs.browser;
+const ua: UAParser.IResult | null = function () {
+    try {
+        return UAParser(typeof navigator !== 'undefined' ? navigator.userAgent.toLowerCase() : '');
+    }
+    catch (e) {
+        return null;
+    }
+}();
 
-const IS_IOS = vjsBrowser.IS_IOS;
-const IS_SAFARI = vjsBrowser.IS_SAFARI || IS_IOS;
+let IS_IOS = false;
+let IS_SAFARI = false;
 const IS_CHROMIUM = !!w.chrome;
-const IS_FIREFOX = vjsBrowser.IS_FIREFOX;
+let IS_FIREFOX = false;
+let IS_WINDOWS = false;
+let IS_MACOS = false;
+let UNRECOMMENDED_BROWSER = false;
+
+if (ua !== null) {
+    const browserName = ua.browser.name ? ua.browser.name.toLowerCase() : '';
+    const osName = ua.os.name ? ua.os.name.toLowerCase() : '';
+    const engineName = ua.engine.name ? ua.engine.name.toLowerCase() : '';
+    const engineVersion = ua.engine.version ? parseFloat(ua.engine.version) : NaN;
+
+    IS_IOS = browserName === 'mobile safari' || osName === 'ios' || (browserName === 'safari' && 'ontouchend' in document);
+    IS_SAFARI = IS_IOS || browserName === 'safari';
+    IS_FIREFOX = browserName.includes('firefox') && !IS_IOS;
+    IS_WINDOWS = osName === 'windows';
+    IS_MACOS = osName === 'mac os';
+
+    const SUPPORTED_BLINK = engineName === 'blink' && engineVersion >= 62;
+    UNRECOMMENDED_BROWSER = (!SUPPORTED_BLINK && !IS_SAFARI) || browserName.includes('wechat') || browserName === 'ucbrowser';
+    console.log('IS_SAFARI: ' + IS_SAFARI);
+    console.log('IS_IOS: ' + IS_IOS);
+    console.log('IS_FIREFOX: ' + IS_FIREFOX);
+    console.log('UNRECOMMENDED_BROWSER: ' + UNRECOMMENDED_BROWSER);
+}
 
 const audioElem = createElement('audio') as HTMLAudioElement;
 const videoElem = createElement('video') as HTMLVideoElement;
@@ -39,16 +68,21 @@ if (USE_MSE) {
         CAN_PLAY_AVC_AAC = mediaSource.isTypeSupported('video/mp4; codecs="avc1.640032,mp4a.40.2"');
     }
     //CAN_PLAY_MP3 = mediaSource.isTypeSupported('audio/mpeg'); //Firefox fails this test, but can still play mp3 in MSE.
-} else {
+} else if (NATIVE_HLS) {
     CAN_PLAY_ALAC = audioElem.canPlayType('audio/mp4; codecs="alac"') != '';
     CAN_PLAY_FLAC = audioElem.canPlayType('audio/mp4; codecs="flac"') != '';
     CAN_PLAY_AVC_AAC = audioElem.canPlayType('video/mp4; codecs="avc1.640032,mp4a.40.2"') != '';
     //CAN_PLAY_MP3 = audioElem.canPlayType('audio/mpeg') != "";
 }
 
+UNRECOMMENDED_BROWSER = UNRECOMMENDED_BROWSER || !CAN_PLAY_AVC_AAC || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
+
 export { IS_CHROMIUM };
 export { IS_IOS };
 export { IS_FIREFOX };
+export { IS_WINDOWS };
+export { IS_MACOS };
+export { UNRECOMMENDED_BROWSER };
 
 export { NATIVE_HLS };
 export { USE_MSE };

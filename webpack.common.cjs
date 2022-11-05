@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const path = require('path');
 const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
 
@@ -202,6 +203,10 @@ module.exports = {
                 index: false
             }
         }),
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            reportFilename: '../../webpack-bundle-analyzer-report.html'
+        })
     ],
     output: {
         filename: '[id].js',

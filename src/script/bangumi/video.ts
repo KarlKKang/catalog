@@ -29,8 +29,7 @@ import {
     USE_MSE,
     NATIVE_HLS,
     CAN_PLAY_AVC_AAC,
-    IS_IOS,
-} from '../module/player/browser';
+} from '../module/browser';
 import { default as videojs } from 'video.js';
 import { Player, HlsPlayer } from '../module/player';
 
@@ -83,6 +82,7 @@ export default function (
 
     const formatSelector = createElement('div');
     formatSelector.id = 'format-selector';
+    addClass(formatSelector, 'select');
 
     const selectMenu = createElement('select') as HTMLSelectElement;
 
@@ -108,7 +108,7 @@ export default function (
     insertBefore(formatSelector, mediaHolder);
 
     // Download Accordion
-    appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex, IS_IOS));
+    appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
 
     // Video Node
     if (!USE_MSE && !NATIVE_HLS) {
