@@ -17,7 +17,7 @@ import type { AudioEPInfo, AudioFile } from '../module/type/BangumiInfo';
 
 import {
     IS_FIREFOX,
-    IS_CHROMIUM,
+    /*IS_CHROMIUM,*/
     USE_MSE,
     NATIVE_HLS,
     CAN_PLAY_ALAC,
@@ -28,7 +28,9 @@ import { default as videojs } from 'video.js';
 import { Player, HlsPlayer, VideojsPlayer } from '../module/player';
 
 import { parseCharacters } from './helper';
-import { showErrorMessage, showMediaMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion } from './media_helper';
+import {
+    showErrorMessage, /*showMediaMessage,*/ showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion
+} from './media_helper';
 import type { HlsImportPromise } from './get_import_promises';
 
 let seriesID: string;
@@ -178,9 +180,9 @@ function addAudioNode(index: number) {
             });
         } else {
             if (USE_MSE) {
-                if (IS_CHROMIUM) {
+                /*if (IS_CHROMIUM) {
                     showChromiumCompatibilityWarning();
-                }
+                }*/
                 hlsImportPromise.then(({ default: Hls }) => {
                     const hls = new Hls(configHls);
                     const audioInstance = new HlsPlayer(videoJSControl, hls, Hls, {
@@ -367,7 +369,7 @@ function destroyAll() {
         mediaInstance.destroy();
     }
 }
-
+/*
 let chromiumWarningDisplayed = false;
 function showChromiumCompatibilityWarning() {
     if (chromiumWarningDisplayed) {
@@ -375,4 +377,4 @@ function showChromiumCompatibilityWarning() {
     }
     chromiumWarningDisplayed = true;
     showMediaMessage('不具合があります', 'Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a>', 'orange');
-}
+}*/
