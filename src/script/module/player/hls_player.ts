@@ -1,8 +1,8 @@
 import { NonNativePlayer } from './non-native-player';
 import { remove } from '../DOM';
-import type Hls from 'hls.js';
+import type Hls from '../../../../custom_modules/hls.js';
 import type { default as videojs } from 'video.js';
-import type { Events, ErrorData, FragChangedData, ManifestParsedData } from 'hls.js';
+import type { Events, ErrorData, FragChangedData, ManifestParsedData } from '../../../../custom_modules/hls.js';
 
 export class HlsPlayer extends NonNativePlayer {
     private readonly hlsInstance: Hls;
