@@ -21,7 +21,7 @@ import { invalidResponse } from '../module/message/template/param/server';
 import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
 import { createMessageElem, getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
-import { IS_MACOS, IS_WINDOWS } from '../module/browser';
+import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -91,7 +91,7 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
     optionLinux.innerHTML = 'Linux 3.2.0 +';
     if (IS_WINDOWS) {
         optionWindows.selected = true;
-    } else if (IS_MACOS) {
+    } else if (IS_MACOS || IS_IOS) {
         optionMac.selected = true;
     } else {
         optionLinux.selected = true;
