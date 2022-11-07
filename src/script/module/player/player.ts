@@ -55,6 +55,7 @@ export class Player {
     protected playing = false;
     protected dragging = false;
 
+    protected timer: NodeJS.Timer | undefined;
     private inactiveTimeout = 12; // 3000 / 250
     private draggingPreviewTimeout = 4; // 1000 / 250
     private droppedFrames = 0;
@@ -164,6 +165,7 @@ export class Player {
     }
 
     public destroy(this: Player) {
+        this.timer && clearInterval(this.timer);
         this.pause();
         this.media.removeAttribute('src');
         this.media.load();
@@ -241,50 +243,7 @@ export class Player {
         }.bind(this));
 
         //Progress bar & frame drop monitor
-        setInterval(() => {
-            if (!this.media.duration) {
-                return;
-            }
-            if (this.dragging) {
-                if (this.draggingPreviewTimeout > 0) {
-                    this.draggingPreviewTimeout--;
-                }
-                return;
-            }
-
-            const currentTimestamp = secToTimestamp(this.media.currentTime).toString();
-            if (this.currentTimeDisplay.innerHTML !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
-                this.currentTimeDisplay.innerHTML = currentTimestamp;
-            }
-            this.progressBar.style.width = Math.min(this.media.currentTime / this.media.duration * 100, 100) + '%';
-
-            if (!this.IS_VIDEO) {
-                return;
-            }
-
-            if (this.inactiveTimeout > 0) {
-                this.inactiveTimeout--;
-                if (this.inactiveTimeout == 0) {
-                    removeClass(this.controls, 'vjs-user-active');
-                    addClass(this.controls, 'vjs-user-inactive');
-                }
-            }
-
-            if (this.DEBUG) {
-                if (typeof (this.media as HTMLVideoElement).getVideoPlaybackQuality === 'function') {
-                    const quality = (this.media as HTMLVideoElement).getVideoPlaybackQuality();
-                    if (quality.droppedVideoFrames && quality.droppedVideoFrames != this.droppedFrames) {
-                        this.onScreenConsoleOutput('Frame drop detected. Total dropped: ' + quality.droppedVideoFrames);
-                        this.droppedFrames = quality.droppedVideoFrames;
-                    }
-                    if (quality.corruptedVideoFrames && quality.corruptedVideoFrames != this.corruptedFrames) {
-                        this.onScreenConsoleOutput('Frame corruption detected. Total corrupted: ' + quality.corruptedVideoFrames);
-                        this.corruptedFrames = quality.corruptedVideoFrames;
-                    }
-                }
-            }
-        }, 250);
-
+        this.timer = setInterval(this.intervalCallback.bind(this), 250);
 
         //Progress bar
         addEventsListener(this.progressControl, ['mousedown', 'touchstart'], function (this: Player, event: Event) {
@@ -499,6 +458,50 @@ export class Player {
                 event.preventDefault();
             }
         }.bind(this));
+    }
+
+    private intervalCallback(this: Player): void {
+        if (!this.media.duration) {
+            return;
+        }
+        if (this.dragging) {
+            if (this.draggingPreviewTimeout > 0) {
+                this.draggingPreviewTimeout--;
+            }
+            return;
+        }
+
+        const currentTimestamp = secToTimestamp(this.media.currentTime).toString();
+        if (this.currentTimeDisplay.innerHTML !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
+            this.currentTimeDisplay.innerHTML = currentTimestamp;
+        }
+        this.progressBar.style.width = Math.min(this.media.currentTime / this.media.duration * 100, 100) + '%';
+
+        if (!this.IS_VIDEO) {
+            return;
+        }
+
+        if (this.inactiveTimeout > 0) {
+            this.inactiveTimeout--;
+            if (this.inactiveTimeout == 0) {
+                removeClass(this.controls, 'vjs-user-active');
+                addClass(this.controls, 'vjs-user-inactive');
+            }
+        }
+
+        if (this.DEBUG) {
+            if (typeof (this.media as HTMLVideoElement).getVideoPlaybackQuality === 'function') {
+                const quality = (this.media as HTMLVideoElement).getVideoPlaybackQuality();
+                if (quality.droppedVideoFrames && quality.droppedVideoFrames != this.droppedFrames) {
+                    this.onScreenConsoleOutput('Frame drop detected. Total dropped: ' + quality.droppedVideoFrames);
+                    this.droppedFrames = quality.droppedVideoFrames;
+                }
+                if (quality.corruptedVideoFrames && quality.corruptedVideoFrames != this.corruptedFrames) {
+                    this.onScreenConsoleOutput('Frame corruption detected. Total corrupted: ' + quality.corruptedVideoFrames);
+                    this.corruptedFrames = quality.corruptedVideoFrames;
+                }
+            }
+        }
     }
 
     protected onloadedmetadata(this: Player): void {

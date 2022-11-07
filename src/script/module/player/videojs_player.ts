@@ -81,6 +81,7 @@ export class VideojsPlayer extends NonNativePlayer {
     }
 
     public destroy(this: VideojsPlayer) {
+        this.timer && clearInterval(this.timer);
         this.videojsInstance.dispose();
         remove(this.controls);
     }

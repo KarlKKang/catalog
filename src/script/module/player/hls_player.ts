@@ -82,6 +82,7 @@ export class HlsPlayer extends NonNativePlayer {
     }
 
     public destroy(this: HlsPlayer) {
+        this.timer && clearInterval(this.timer);
         this.hlsInstance.destroy();
         remove(this.controls);
     }
