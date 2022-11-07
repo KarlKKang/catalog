@@ -120,7 +120,7 @@ export function insertBefore(newNode: Node, beforeNode: Element) {
 }
 
 export function remove(elem: Element) {
-    getParent(elem).removeChild(elem);
+    elem.remove();
 }
 
 export function createElement(tag: string) {
