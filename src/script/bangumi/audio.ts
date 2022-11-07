@@ -184,8 +184,7 @@ function addAudioNode(index: number) {
                     showChromiumCompatibilityWarning();
                 }*/
                 hlsImportPromise.then(({ default: Hls }) => {
-                    const hls = new Hls(configHls);
-                    const audioInstance = new HlsPlayer(videoJSControl, hls, Hls, {
+                    const audioInstance = new HlsPlayer(videoJSControl, Hls, configHls, {
                         audio: true,
                         debug: debug
                     });

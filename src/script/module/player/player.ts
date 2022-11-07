@@ -38,6 +38,8 @@ export class Player {
     private readonly DEBUG: boolean;
     protected readonly IS_VIDEO: boolean;
 
+    public readonly media: HTMLVideoElement | HTMLAudioElement;
+
     public readonly controls: HTMLElement;
     private readonly controlBar: HTMLElement;
     private readonly playButton: HTMLElement;
@@ -57,10 +59,6 @@ export class Player {
     private draggingPreviewTimeout = 4; // 1000 / 250
     private droppedFrames = 0;
     private corruptedFrames = 0;
-
-    public get media(): HTMLVideoElement | HTMLAudioElement {
-        return this.IS_VIDEO ? (getDescendantsByTagAt(this.controls, 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(this.controls, 'audio', 0) as HTMLAudioElement);
-    }
 
     public get paused(): boolean {
         return !this.playing && this.media.paused;
@@ -96,6 +94,8 @@ export class Player {
         this.IS_VIDEO = !(config.audio === true);
         this.DEBUG = config.debug === true;
 
+        this.media = this.IS_VIDEO ? (getDescendantsByTagAt(this.controls, 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(this.controls, 'audio', 0) as HTMLAudioElement);
+
         removeRightClick(this.controls);
     }
 
@@ -130,8 +130,8 @@ export class Player {
         this: Player,
         url: string,
         config?: {
-            play?: boolean,
-            startTime?: number,
+            play?: boolean | undefined,
+            startTime?: number | undefined,
             onload?: (...args: any[]) => void,
             onerror?: (...args: any[]) => void
         }
@@ -358,7 +358,6 @@ export class Player {
         const bigPlayButton = getDescendantsByClassAt(this.controls, 'vjs-big-play-button', 0) as HTMLElement;
         addEventListener(bigPlayButton, 'click', function (this: Player, event: Event) {
             event.stopPropagation();
-            addClass(this.controls, 'vjs-has-started');
             this.play();
             bigPlayButton.blur();
         }.bind(this));
@@ -572,6 +571,7 @@ export class Player {
 
     protected onplay(this: Player): void {
         this.onScreenConsoleOutput('Playback started at ' + this.media.currentTime + '.');
+        addClass(this.controls, 'vjs-has-started');
         removeClass(this.playButton, 'vjs-paused');
         addClass(this.playButton, 'vjs-playing');
         removeClass(this.controls, 'vjs-paused');

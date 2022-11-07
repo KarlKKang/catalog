@@ -18,12 +18,15 @@ import {
     appendChild,
     prependChild,
     insertBefore,
+    removeClass,
+    getByIdNative,
+    remove,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import * as CDNCredentials from '../module/type/CDNCredentials';
-import type { VideoEPInfo, Chapters } from '../module/type/BangumiInfo';
+import type { VideoEPInfo, VideoFormatInfo } from '../module/type/BangumiInfo';
 
 import {
     USE_MSE,
@@ -45,6 +48,9 @@ let baseURL: string;
 let mediaHolder: HTMLElement;
 let hlsImportPromise: HlsImportPromise;
 let debug: boolean;
+
+let currentFormat: VideoFormatInfo;
+let currentMediaInstance: Player | undefined;
 
 export default function (
     _seriesID: string,
@@ -99,6 +105,7 @@ export default function (
 
         if (index == formatIndex) {
             option.selected = true;
+            currentFormat = format;
         }
 
         appendChild(selectMenu, option);
@@ -111,57 +118,23 @@ export default function (
     appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
 
     // Video Node
-    if (!USE_MSE && !NATIVE_HLS) {
-        showHLSCompatibilityError();
-        addEventListener(selectMenu, 'change', function () { formatSwitch(); });
-        return;
-    }
-    if (!CAN_PLAY_AVC_AAC) {
-        showCodecCompatibilityError();
-        addEventListener(selectMenu, 'change', function () { formatSwitch(); });
-        return;
-    }
-
-    const videoJS = createElement('video-js');
-
-    addClass(videoJS, 'vjs-big-play-centered');
-    videoJS.lang = 'en';
-    appendChild(mediaHolder, videoJS);
-
-    const config = {
-        controls: true,
-        autoplay: false,
-        fluid: true,
-    } as const;
-
-    const videojsInstance = videojs(videoJS, config, function () {
-        videoJS.style.paddingTop = 9 / 16 * 100 + '%';
-        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + selectMenu.value + '].m3u8'), epInfo.cdn_credentials);
-        addVideoNode(url, videojsInstance, function (mediaInstance: Player) {
-            mediaInstance.media.title = getTitle();
-            addEventListener(selectMenu, 'change', function () { formatSwitch(mediaInstance); });
-            if (epInfo.chapters.length > 0) {
-                displayChapters(epInfo.chapters, mediaInstance);
-            }
-        });
-    });
+    addEventListener(selectMenu, 'change', formatSwitch);
+    addVideoNode();
 }
 
-function formatSwitch(mediaInstance?: Player) {
+function formatSwitch() {
     const formatSelector = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement);
     const formatIndex = formatSelector.selectedIndex;
 
-    updateURLParam(seriesID, epIndex, formatIndex);
-
-    if (mediaInstance === undefined) {
+    const format = epInfo.formats[formatIndex];
+    if (format === undefined) {
         return;
     }
+    currentFormat = format;
+    updateURLParam(seriesID, epIndex, formatIndex);
 
     sendServerRequest('format_switch.php', {
         callback: function (response: string) {
-            const currentTime = mediaInstance.media.currentTime;
-            const paused = mediaInstance.paused;
-
             let parsedResponse: CDNCredentials.CDNCredentials;
             try {
                 parsedResponse = JSON.parse(response);
@@ -170,71 +143,135 @@ function formatSwitch(mediaInstance?: Player) {
                 showMessage(invalidResponse);
                 return;
             }
-            const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + formatSelector.value + '].m3u8'), parsedResponse);
-            mediaInstance.load(url, {
-                play: !paused,
-                startTime: currentTime
-            });
+            epInfo.cdn_credentials = parsedResponse;
+
+            let config: {
+                play?: boolean | undefined,
+                startTime?: number | undefined,
+            } | undefined;
+
+            if (currentMediaInstance !== undefined) {
+                const currentTime = currentMediaInstance.media.currentTime;
+                const paused = currentMediaInstance.paused;
+
+                config = {
+                    play: !paused,
+                    startTime: currentTime
+                }
+
+                currentMediaInstance.destroy();
+            }
+
+            mediaHolder.innerHTML = '';
+            const errorMsgElem = getByIdNative('error');
+            errorMsgElem && remove(errorMsgElem);
+            removeClass(mediaHolder, 'hidden');
+            addVideoNode(config);
         },
         content: 'token=' + epInfo.authentication_token + '&format=' + formatIndex,
         logoutParam: getLogoutParam(seriesID, epIndex)
     });
 }
 
-function addVideoNode(url: string, videojsInstance: videojs.Player, onattached: (mediaInstance: Player) => void) {
-    if (USE_MSE) {
-        const config = {
-            enableWebVTT: false,
-            enableIMSC1: false,
-            enableCEA708Captions: false,
-            lowLatencyMode: false,
-            enableWorker: false,
-            maxFragLookUpTolerance: 0.0,
-            testBandwidth: false,
-            backBufferLength: 30,
-            maxBufferLength: 45,
-            maxMaxBufferLength: 90,
-            maxBufferSize: 0,
-            maxBufferHole: 0,
-            debug: debug,
-            xhrSetup: function (xhr: XMLHttpRequest) {
-                xhr.withCredentials = true;
-            }
-        }
+function addVideoNode(config?: {
+    play?: boolean | undefined,
+    startTime?: number | undefined,
+}) {
+    if (!USE_MSE && !NATIVE_HLS) {
+        showHLSCompatibilityError();
+        return;
+    }
+    if (!CAN_PLAY_AVC_AAC) {
+        showCodecCompatibilityError();
+        return;
+    }
 
-        hlsImportPromise.then(({ default: Hls }) => {
-            const hls = new Hls(config);
-            const mediaInstance = new HlsPlayer(videojsInstance, hls, Hls, {
+    const _config = config ?? {};
+
+    function _onInit(mediaInstance: Player) {
+        mediaInstance.media.title = getTitle();
+        if (epInfo.chapters.length > 0) {
+            displayChapters(mediaInstance);
+        }
+    }
+
+    const videoJS = createElement('video-js');
+
+    addClass(videoJS, 'vjs-big-play-centered');
+    videoJS.lang = 'en';
+    appendChild(mediaHolder, videoJS);
+
+    const vjsConfig = {
+        controls: true,
+        autoplay: false,
+        fluid: true,
+    };
+
+    const videojsInstance = videojs(videoJS, vjsConfig, function () {
+        videoJS.style.paddingTop = 9 / 16 * 100 + '%';
+        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '].m3u8'), epInfo.cdn_credentials);
+
+        if (USE_MSE) {
+            const hlsConfig = {
+                enableWebVTT: false,
+                enableIMSC1: false,
+                enableCEA708Captions: false,
+                lowLatencyMode: false,
+                enableWorker: false,
+                maxFragLookUpTolerance: 0.0,
+                testBandwidth: false,
+                backBufferLength: 30,
+                maxBufferLength: 45,
+                maxMaxBufferLength: 90,
+                maxBufferSize: 0,
+                maxBufferHole: 0,
+                debug: debug,
+                xhrSetup: function (xhr: XMLHttpRequest) {
+                    xhr.withCredentials = true;
+                }
+            }
+
+            hlsImportPromise.then(({ default: Hls }) => {
+                const mediaInstance = new HlsPlayer(videojsInstance, Hls, hlsConfig, {
+                    debug: debug
+                });
+                currentMediaInstance = mediaInstance;
+                mediaInstance.load(url, {
+                    onerror: function (_: Events.ERROR, data: ErrorData) {
+                        if (data.fatal) {
+                            showPlaybackError(data.details);
+                            currentMediaInstance = undefined;
+                            mediaInstance.destroy();
+                        }
+                    },
+                    play: _config.play,
+                    startTime: _config.startTime
+                });
+                _onInit(mediaInstance);
+            }).catch((e) => {
+                showMessage(moduleImportError(e));
+                return;
+            });
+        } else if (NATIVE_HLS) {
+            const mediaInstance = new Player(videojsInstance, {
                 debug: debug
             });
+            currentMediaInstance = mediaInstance;
             mediaInstance.load(url, {
-                onerror: function (_: Events.ERROR, data: ErrorData) {
-                    if (data.fatal) {
-                        showPlaybackError(data.details);
-                        mediaInstance.destroy();
-                    }
-                }
+                onerror: function () {
+                    showPlaybackError();
+                    currentMediaInstance = undefined;
+                    mediaInstance.destroy();
+                },
+                play: _config.play,
+                startTime: _config.startTime
             });
-            onattached(mediaInstance);
-        }).catch((e) => {
-            showMessage(moduleImportError(e));
-            return;
-        });
-    } else if (NATIVE_HLS) {
-        const mediaInstance = new Player(videojsInstance, {
-            debug: debug
-        });
-        mediaInstance.load(url, {
-            onerror: function () {
-                showPlaybackError();
-                mediaInstance.destroy();
-            }
-        })
-        onattached(mediaInstance);
-    }
+            _onInit(mediaInstance);
+        }
+    });
 }
 
-function displayChapters(chapters: Chapters, mediaInstance: Player) {
+function displayChapters(mediaInstance: Player) {
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
     accordion.innerHTML = 'CHAPTERS';
@@ -242,9 +279,7 @@ function displayChapters(chapters: Chapters, mediaInstance: Player) {
     const accordionPanel = createElement('div');
     addClass(accordionPanel, 'panel');
 
-    const video = mediaInstance.media;
-
-    for (const chapter of chapters) {
+    for (const chapter of epInfo.chapters) {
         const chapterNode = createElement('p');
         const timestamp = createElement('span');
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
@@ -267,13 +302,14 @@ function displayChapters(chapters: Chapters, mediaInstance: Player) {
     addAccordionEvent(accordion);
     appendChild(mediaHolder, chaptersNode);
 
-    const updateChapterDisplay = function () {
-        const chapterElements = getDescendantsByTag(accordionPanel, 'p');
+    const video = mediaInstance.media;
+    const chapterElements = getDescendantsByTag(accordionPanel, 'p');
+    function updateChapterDisplay() {
         const currentTime = video.currentTime;
-        chapters.forEach(function (chapter, index) {
+        epInfo.chapters.forEach(function (chapter, index) {
             const chapterElement = chapterElements[index] as HTMLElement;
             if (currentTime >= chapter[1]) {
-                const nextChapter = chapters[index + 1];
+                const nextChapter = epInfo.chapters[index + 1];
                 if (nextChapter === undefined) {
                     setClass(chapterElement, 'current-chapter');
                 } else if (currentTime < nextChapter[1]) {
@@ -285,9 +321,6 @@ function displayChapters(chapters: Chapters, mediaInstance: Player) {
                 setClass(chapterElement, 'inactive-chapter');
             }
         });
-    };
-
-    //video.addEventListener ('timeupdate', updateChapterDisplay);
-    setInterval(updateChapterDisplay, 500);
-    addEventsListener(video, ['play', 'pause', 'seeking', 'seeked'], updateChapterDisplay);
+    }
+    addEventsListener(video, ['play', 'pause', 'seeking', 'seeked', 'timeupdate'], updateChapterDisplay);
 }

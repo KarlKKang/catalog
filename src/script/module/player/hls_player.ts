@@ -2,7 +2,7 @@ import { NonNativePlayer } from './non-native-player';
 import { remove } from '../DOM';
 import type Hls from '../../../../custom_modules/hls.js';
 import type { default as videojs } from 'video.js';
-import type { Events, ErrorData, FragChangedData, ManifestParsedData } from '../../../../custom_modules/hls.js';
+import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig } from '../../../../custom_modules/hls.js';
 
 export class HlsPlayer extends NonNativePlayer {
     private readonly hlsInstance: Hls;
@@ -11,15 +11,15 @@ export class HlsPlayer extends NonNativePlayer {
 
     constructor(
         instance: videojs.Player,
-        hlsInstance: Hls,
         hlsConstructor: typeof Hls,
+        hlsConfig: Partial<HlsConfig>,
         config?: {
             audio?: boolean,
             debug?: boolean
         }
     ) {
         super(instance, config);
-        this.hlsInstance = hlsInstance;
+        this.hlsInstance = new hlsConstructor(hlsConfig);
         this.hlsConstructor = hlsConstructor;
     }
 
@@ -49,8 +49,8 @@ export class HlsPlayer extends NonNativePlayer {
         this: HlsPlayer,
         url: string,
         config?: {
-            play?: boolean,
-            startTime?: number,
+            play?: boolean | undefined,
+            startTime?: number | undefined,
             onload?: (...args: any[]) => void,
             onerror?: (...args: any[]) => void
         }

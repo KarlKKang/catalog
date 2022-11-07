@@ -6,6 +6,7 @@ import {
 } from '../DOM';
 
 export class VideojsPlayer extends NonNativePlayer {
+    public override readonly media: HTMLVideoElement | HTMLAudioElement;
     private readonly videojsInstance: videojs.Player;
 
     constructor(
@@ -18,20 +19,14 @@ export class VideojsPlayer extends NonNativePlayer {
     ) {
         super(controlInstance, config);
         this.videojsInstance = mediaInstance;
-    }
 
-    public override get media(): HTMLVideoElement | HTMLAudioElement {
-        if (this.IS_VIDEO) {
-            return getDescendantsByTagAt(this.videojsInstance.el(), 'video', 0) as HTMLVideoElement;
-        } else {
-            return getDescendantsByTagAt(this.videojsInstance.el(), 'audio', 0) as HTMLAudioElement
-        }
+        remove(super.media);
+        this.media = this.IS_VIDEO ? (getDescendantsByTagAt(this.videojsInstance.el(), 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(this.videojsInstance.el(), 'audio', 0) as HTMLAudioElement);
     }
 
     protected attach(this: VideojsPlayer, onload?: (...args: any[]) => void, onerror?: (...args: any[]) => void): void {
         this.preattach();
 
-        remove(super.media);
         this.videojsInstance.on('error', function (this: any, ...args: any[]) {
             if (onerror !== undefined) {
                 onerror.apply(this, args);
@@ -50,8 +45,8 @@ export class VideojsPlayer extends NonNativePlayer {
         this: VideojsPlayer,
         url: string,
         config?: {
-            play?: boolean,
-            startTime?: number,
+            play?: boolean | undefined,
+            startTime?: number | undefined,
             onload?: (...args: any[]) => void,
             onerror?: (...args: any[]) => void
         }

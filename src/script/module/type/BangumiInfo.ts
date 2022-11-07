@@ -23,8 +23,8 @@ interface EPInfo {
     series_override?: string,
 }
 
-export type Chapters = Array<[string, number]>;
-type VideoFormatInfo = {
+type Chapters = Array<[string, number]>;
+export type VideoFormatInfo = {
     value: string,
     tag?: string
 };
