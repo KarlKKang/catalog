@@ -287,7 +287,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
 
         const format = createElement('span');
         addClass(format, 'format');
-        format.innerHTML = FLAC_FALLBACK ? 'FLAC' : file.format;
+        format.textContent = FLAC_FALLBACK ? 'FLAC' : file.format;
 
         const samplerate = file.samplerate;
         if (samplerate != '') {
@@ -309,7 +309,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
                     samplerateText = '192.0kHz';
                     break;
             }
-            format.innerHTML += ' ' + samplerateText;
+            format.textContent += ' ' + samplerateText;
 
             const bitdepth = file.bitdepth;
             if (bitdepth != '') {
@@ -328,7 +328,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
                 if (bitdepthText == '32bit' && FLAC_FALLBACK) {
                     bitdepthText = '24bit';
                 }
-                format.innerHTML += '/' + bitdepthText;
+                format.textContent += '/' + bitdepthText;
             }
         }
 

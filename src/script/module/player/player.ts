@@ -38,7 +38,8 @@ export class Player {
     private readonly DEBUG: boolean;
     protected readonly IS_VIDEO: boolean;
 
-    public readonly media: HTMLVideoElement | HTMLAudioElement;
+    protected _media: HTMLVideoElement | HTMLAudioElement;
+    public get media() { return this._media; }
 
     public readonly controls: HTMLElement;
     private readonly controlBar: HTMLElement;
@@ -95,7 +96,7 @@ export class Player {
         this.IS_VIDEO = !(config.audio === true);
         this.DEBUG = config.debug === true;
 
-        this.media = this.IS_VIDEO ? (getDescendantsByTagAt(this.controls, 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(this.controls, 'audio', 0) as HTMLAudioElement);
+        this._media = this.IS_VIDEO ? (getDescendantsByTagAt(this.controls, 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(this.controls, 'audio', 0) as HTMLAudioElement);
 
         removeRightClick(this.controls);
     }
@@ -226,7 +227,7 @@ export class Player {
         addEventListener(this.media, 'loadedmetadata', this.onloadedmetadata.bind(this));
 
         addEventListener(this.media, 'durationchange', function (this: Player) {
-            this.durationDisplay.innerHTML = secToTimestamp(this.media.duration);
+            this.durationDisplay.textContent = secToTimestamp(this.media.duration);
         }.bind(this));
 
         //Play button
@@ -472,8 +473,8 @@ export class Player {
         }
 
         const currentTimestamp = secToTimestamp(this.media.currentTime).toString();
-        if (this.currentTimeDisplay.innerHTML !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
-            this.currentTimeDisplay.innerHTML = currentTimestamp;
+        if (this.currentTimeDisplay.textContent !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
+            this.currentTimeDisplay.textContent = currentTimestamp;
         }
         this.progressBar.style.width = Math.min(this.media.currentTime / this.media.duration * 100, 100) + '%';
 
@@ -508,7 +509,7 @@ export class Player {
         if (this.IS_VIDEO) {
             this.controls.style.removeProperty('padding-top');
         }
-        this.durationDisplay.innerHTML = secToTimestamp(this.media.duration);
+        this.durationDisplay.textContent = secToTimestamp(this.media.duration);
         if (containsClass(this.controls, 'vjs-ended')) {
             removeClass(this.controls, 'vjs-ended');
             removeClass(this.playButton, 'vjs-ended');
@@ -550,7 +551,7 @@ export class Player {
         if (this.progressMouseDisplay !== undefined) {
             const progressTooltip = getDescendantsByClassAt(this.progressMouseDisplay, 'vjs-time-tooltip', 0) as HTMLElement;
             this.progressMouseDisplay.style.left = leftPadding + 'px';
-            progressTooltip.innerHTML = currentTimestamp;
+            progressTooltip.textContent = currentTimestamp;
             progressTooltip.style.right = -progressTooltip.offsetWidth / 2 + 'px';
             if (currentTime > this.media.currentTime) {
                 removeClass(this.progressMouseDisplay, 'backward');
@@ -565,7 +566,7 @@ export class Player {
                 this.seek(currentTime);
                 this.draggingPreviewTimeout = 4;
             }
-            this.currentTimeDisplay.innerHTML = currentTimestamp;
+            this.currentTimeDisplay.textContent = currentTimestamp;
             this.progressBar.style.width = percentage * 100 + '%';
         }
 

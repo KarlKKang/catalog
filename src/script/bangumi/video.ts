@@ -162,7 +162,7 @@ function formatSwitch() {
                 currentMediaInstance.destroy();
             }
 
-            mediaHolder.innerHTML = '';
+            mediaHolder.textContent = '';
             const errorMsgElem = getByIdNative('error');
             errorMsgElem && remove(errorMsgElem);
             removeClass(mediaHolder, 'hidden');
@@ -274,7 +274,7 @@ function addVideoNode(config?: {
 function displayChapters(mediaInstance: Player) {
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
-    accordion.innerHTML = 'CHAPTERS';
+    accordion.textContent = 'CHAPTERS';
 
     const accordionPanel = createElement('div');
     addClass(accordionPanel, 'panel');
@@ -284,7 +284,7 @@ function displayChapters(mediaInstance: Player) {
         const timestamp = createElement('span');
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
         const startTime = chapter[1];
-        timestamp.innerHTML = secToTimestamp(startTime);
+        timestamp.textContent = secToTimestamp(startTime);
         addEventListener(timestamp, 'click', function () {
             mediaInstance.seek(startTime);
             mediaInstance.controls.focus();

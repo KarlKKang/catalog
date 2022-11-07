@@ -6,7 +6,6 @@ import {
 } from '../DOM';
 
 export class VideojsPlayer extends NonNativePlayer {
-    public override readonly media: HTMLVideoElement | HTMLAudioElement;
     private readonly videojsInstance: videojs.Player;
 
     constructor(
@@ -20,8 +19,8 @@ export class VideojsPlayer extends NonNativePlayer {
         super(controlInstance, config);
         this.videojsInstance = mediaInstance;
 
-        remove(super.media);
-        this.media = this.IS_VIDEO ? (getDescendantsByTagAt(this.videojsInstance.el(), 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(this.videojsInstance.el(), 'audio', 0) as HTMLAudioElement);
+        remove(this._media);
+        this._media = this.IS_VIDEO ? (getDescendantsByTagAt(this.videojsInstance.el(), 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(this.videojsInstance.el(), 'audio', 0) as HTMLAudioElement);
     }
 
     protected attach(this: VideojsPlayer, onload?: (...args: any[]) => void, onerror?: (...args: any[]) => void): void {
