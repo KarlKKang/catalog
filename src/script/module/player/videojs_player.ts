@@ -27,14 +27,10 @@ export class VideojsPlayer extends NonNativePlayer {
         this.preattach();
 
         this.videojsInstance.on('error', function (this: any, ...args: any[]) {
-            if (onerror !== undefined) {
-                onerror.apply(this, args);
-            }
+            onerror && onerror.apply(this, args);
         });
         this.videojsInstance.on('loadedmetadata', function (this: any, ...args: any[]) {
-            if (onload !== undefined) {
-                onload.apply(this, args);
-            }
+            onload && onload.apply(this, args);
         });
         this.videojsInstance.volume(1);
         this.onScreenConsoleOutput('Videojs is attached.');
@@ -50,9 +46,7 @@ export class VideojsPlayer extends NonNativePlayer {
             onerror?: (...args: any[]) => void
         }
     ): void {
-        if (config === undefined) {
-            config = {};
-        }
+        config = config ?? {};
 
         if (!this.attached) {
             this.attach(config.onload, config.onerror);

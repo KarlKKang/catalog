@@ -89,9 +89,7 @@ export class Player {
         this.progressMouseDisplay = getDescendantsByClass(this.progressHolder, 'vjs-mouse-display')[0] as HTMLElement | undefined;
         this.durationDisplay = getDescendantsByClassAt(getDescendantsByClassAt(this.controlBar, 'vjs-duration', 0), 'vjs-duration-display', 0) as HTMLElement;
 
-        if (config === undefined) {
-            config = {};
-        }
+        config = config ?? {};
 
         this.IS_VIDEO = !(config.audio === true);
         this.DEBUG = config.debug === true;
@@ -115,14 +113,10 @@ export class Player {
 
         this.media.crossOrigin = 'use-credentials';
         addEventListener(this.media, 'error', function (this: any, event) {
-            if (onerror !== undefined) {
-                onerror.call(this, event);
-            }
+            onerror && onerror.call(this, event);
         });
         addEventListener(this.media, 'loadedmetadata', function (this: any, event) {
-            if (onload !== undefined) {
-                onload.call(this, event);
-            }
+            onload && onload.call(this, event);
         });
         this.media.volume = 1;
         this.onScreenConsoleOutput('Native HLS is attached.');
@@ -138,9 +132,7 @@ export class Player {
             onerror?: (...args: any[]) => void
         }
     ): void {
-        if (config === undefined) {
-            config = {};
-        }
+        config = config ?? {};
 
         if (!this.attached) {
             this.attach(config.onload, config.onerror);

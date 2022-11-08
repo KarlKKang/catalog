@@ -9,14 +9,12 @@ import {
 let positionDetector: HTMLElement;
 let callback: () => void;
 let isEnabled = false;
-let _offset = 0;
+let _offset: number;
 
 export default function (listener: () => void, offset?: number) {
     positionDetector = getById('position-detector');
     callback = listener;
-    if (offset !== undefined) {
-        _offset = offset;
-    }
+    _offset = offset ?? 0;
 
     addEventListener(d, 'scroll', updatePosition);
     addEventListener(w, 'resize', updatePosition);

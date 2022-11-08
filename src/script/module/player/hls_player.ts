@@ -27,14 +27,10 @@ export class HlsPlayer extends NonNativePlayer {
         this.preattach();
 
         this.hlsInstance.on(this.hlsConstructor.Events.ERROR, function (this: any, event: Events.ERROR, data: ErrorData) {
-            if (onerror !== undefined) {
-                onerror.call(this, event, data);
-            }
+            onerror && onerror.call(this, event, data);
         });
         this.hlsInstance.on(this.hlsConstructor.Events.MANIFEST_PARSED, function (this: any, event: Events.MANIFEST_PARSED, data: ManifestParsedData) {
-            if (onload !== undefined) {
-                onload.call(this, event, data);
-            }
+            onload && onload.call(this, event, data);
         });
         this.hlsInstance.on(this.hlsConstructor.Events.FRAG_CHANGED, function (this: HlsPlayer, _: Events.FRAG_CHANGED, data: FragChangedData) {
             this.fragStart = data.frag.startDTS;
@@ -55,9 +51,7 @@ export class HlsPlayer extends NonNativePlayer {
             onerror?: (...args: any[]) => void
         }
     ): void {
-        if (config === undefined) {
-            config = {};
-        }
+        config = config ?? {};
 
         if (!this.attached) {
             this.attach(config.onload, config.onerror);

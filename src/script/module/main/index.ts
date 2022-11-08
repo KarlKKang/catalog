@@ -99,30 +99,17 @@ interface SendServerRequestOption {
     logoutParam?: string
 }
 export function sendServerRequest(uri: string, options: SendServerRequestOption) {
-    if (options.content === undefined) {
-        options.content = '';
-    }
-    if (options.withCredentials === undefined) {
-        options.withCredentials = true;
-    }
-    if (options.method === undefined) {
-        options.method = 'POST';
-    }
-
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
         if (checkXHRStatus(this, options.logoutParam)) {
-            if (options.callback === undefined) {
-                return;
-            }
-            options.callback(this.responseText);
+            options.callback && options.callback(this.responseText);
         }
     };
     addXHROnError(xmlhttp);
-    xmlhttp.open(options.method, SERVER_URL + '/' + uri, true);
+    xmlhttp.open(options.method ?? 'POST', SERVER_URL + '/' + uri, true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xmlhttp.withCredentials = options.withCredentials;
-    xmlhttp.send(options.content);
+    xmlhttp.withCredentials = options.withCredentials ?? true;
+    xmlhttp.send(options.content ?? '');
 }
 ////////////////////////////////////////
 
@@ -131,13 +118,9 @@ export function authenticate(callback: { successful?: () => void, failed?: () =>
     sendServerRequest('get_authentication_state.php', {
         callback: function (response: string) {
             if (response == 'APPROVED') {
-                if (callback.successful !== undefined) {
-                    callback.successful();
-                }
+                callback.successful && callback.successful();
             } else if (response == 'FAILED') {
-                if (callback.failed !== undefined) {
-                    callback.failed();
-                }
+                callback.failed && callback.failed();
             } else {
                 showMessage();
             }
@@ -320,7 +303,7 @@ export function imageProtection(elem: HTMLElement) {
 ////////////////////////////////////////
 export function concatenateSignedURL(url: string, credentials: CDNCredentials, resourceURLOverride?: string) {
     const policy = credentials['Policy'];
-    policy['Statement'][0]['Resource'] = (resourceURLOverride === undefined) ? url : resourceURLOverride;
+    policy['Statement'][0]['Resource'] = resourceURLOverride ?? url;
     let policyString = JSON.stringify(policy);
     policyString = w.btoa(policyString);
     policyString = policyString.replace(/\+/g, '-');

@@ -84,9 +84,7 @@ export default function (container: Element, src: string, alt: string, onload?: 
 
         imageProtection(canvas);
         appendChild(container, canvas);
-        if (onload !== undefined) {
-            onload();
-        }
+        onload && onload();
     }
 
 
@@ -156,7 +154,5 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
     imageProtection(canvas);
     appendChild(queueItem.container, canvas);
     const onload = queueItem.onload;
-    if (onload !== undefined) {
-        onload();
-    }
+    onload && onload();
 }

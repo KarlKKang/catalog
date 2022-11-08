@@ -30,21 +30,11 @@ export function show(param?: MessageParam) {
         }
     }
 
-    if (param.title === undefined) {
-        param.title = defaultError;
-    }
-    if (param.message === undefined) {
-        param.message = unknownError;
-    }
-    if (param.color === undefined) {
-        param.color = 'red';
-    }
-    if (param.logout === undefined) {
-        param.logout = false;
-    }
-    if (param.url === undefined) {
-        param.url = null;
-    }
+    param.title = param.title ?? defaultError;
+    param.message = param.message ?? unknownError;
+    param.color = param.color ?? 'red';
+    param.logout = param.logout ?? false;
+    param.url = param.url ?? null;
 
     const cookie: LocalMessageParam = {
         message: param.message,
