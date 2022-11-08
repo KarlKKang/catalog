@@ -142,11 +142,15 @@ export class Player {
         const startTime = config.startTime;
 
         const callback = function (this: Player) {
-            if (startTime !== undefined) {
-                this.seek(startTime);
-            }
             if (play) {
-                this.play();
+                this.media.play().catch(() => {
+                    if (startTime !== undefined) {
+                        this.seek(startTime); // If the play promise is rejected, currentTime will be reset to 0 on older versions of Safari.
+                    }
+                });
+            }
+            if (startTime !== undefined) {
+                this.seek(startTime); // Calling the play method will reset the currentTime to 0 on older versions of Safari. So it should be set after calling the play().
             }
         }.bind(this);
 

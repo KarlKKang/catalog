@@ -151,15 +151,13 @@ function formatSwitch() {
             } | undefined;
 
             if (currentMediaInstance !== undefined) {
-                const currentTime = currentMediaInstance.media.currentTime;
-                const paused = currentMediaInstance.paused;
-
                 config = {
-                    play: !paused,
-                    startTime: currentTime
+                    play: !currentMediaInstance.paused,
+                    startTime: currentMediaInstance.media.currentTime
                 }
 
                 currentMediaInstance.destroy();
+                currentMediaInstance = undefined;
             }
 
             mediaHolder.textContent = '';
