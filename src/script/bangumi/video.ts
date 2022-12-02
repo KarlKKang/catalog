@@ -218,10 +218,9 @@ function addVideoNode(config?: {
                 enableWorker: false,
                 maxFragLookUpTolerance: 0.0,
                 testBandwidth: false,
-                backBufferLength: 30,
-                maxBufferLength: 45,
+                backBufferLength: 0,
+                maxBufferLength: 30,
                 maxMaxBufferLength: 90,
-                maxBufferSize: 0,
                 maxBufferHole: 0,
                 debug: debug,
                 xhrSetup: function (xhr: XMLHttpRequest) {
