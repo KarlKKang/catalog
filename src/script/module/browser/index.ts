@@ -48,8 +48,9 @@ if (ua !== null) {
 const audioElem = createElement('audio') as HTMLAudioElement;
 const videoElem = createElement('video') as HTMLVideoElement;
 
-const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_SAFARI;
-const USE_MSE = isSupported() && !NATIVE_HLS;
+const USE_MSE = isSupported() && !IS_IOS;
+const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && !USE_MSE;
+
 
 let CAN_PLAY_ALAC = false;
 let CAN_PLAY_FLAC = false;

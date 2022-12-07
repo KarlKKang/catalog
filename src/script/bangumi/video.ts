@@ -220,7 +220,7 @@ function addVideoNode(config?: {
                 testBandwidth: false,
                 backBufferLength: 0,
                 maxBufferLength: 30,
-                maxMaxBufferLength: 90,
+                maxBufferSize: 0,
                 maxBufferHole: 0,
                 debug: debug,
                 xhrSetup: function (xhr: XMLHttpRequest) {

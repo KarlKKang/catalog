@@ -104,6 +104,8 @@ function addAudioNode(index: number) {
         enableWorker: false,
         maxFragLookUpTolerance: 0.0,
         testBandwidth: false,
+        maxBufferLength: 15,
+        maxBufferSize: 0,
         maxBufferHole: 0,
         debug: false,
         xhrSetup: function (xhr: XMLHttpRequest) {
