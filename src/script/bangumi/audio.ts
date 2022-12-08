@@ -104,6 +104,7 @@ function addAudioNode(index: number) {
         enableWorker: false,
         maxFragLookUpTolerance: 0.0,
         testBandwidth: false,
+        backBufferLength: 0,
         maxBufferLength: 15,
         maxBufferSize: 0,
         maxBufferHole: 0,
