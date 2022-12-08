@@ -221,7 +221,7 @@ function addVideoNode(config?: {
                 backBufferLength: 0,
                 maxBufferLength: 15,
                 maxBufferSize: (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000,
-                maxBufferHole: 0,
+                maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Although the value 0.5 is the default in the documentation, this option somehow must be explictly set to take effect.
                 debug: debug,
                 xhrSetup: function (xhr: XMLHttpRequest) {
                     xhr.withCredentials = true;
@@ -249,7 +249,7 @@ function addVideoNode(config?: {
                 showMessage(moduleImportError(e));
                 return;
             });
-        } else if (NATIVE_HLS) {
+        } else {
             const mediaInstance = new Player(videojsInstance, {
                 debug: debug
             });

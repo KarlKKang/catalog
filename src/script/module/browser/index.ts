@@ -48,8 +48,8 @@ if (ua !== null) {
 const audioElem = createElement('audio') as HTMLAudioElement;
 const videoElem = createElement('video') as HTMLVideoElement;
 
-const USE_MSE = isSupported() && !IS_IOS;
-const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && !USE_MSE;
+const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_IOS;
+const USE_MSE = isSupported() && !NATIVE_HLS;
 
 
 let CAN_PLAY_ALAC = false;

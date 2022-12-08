@@ -305,7 +305,6 @@ export class Player {
         }.bind(this), true);
         addEventListener(this.controls, 'click', function (this: Player) {
             if (!touchClick) {
-                addClass(this.controls, 'vjs-has-started');
                 this.togglePlayback();
             }
         }.bind(this));
@@ -322,11 +321,12 @@ export class Player {
         const loadProgress = getDescendantsByClassAt(this.progressHolder, 'vjs-load-progress', 0) as HTMLElement;
         const updateLoadProgress = () => {
             let bufferEnd = 0;
-            for (let i = this.media.buffered.length - 1; i >= 0; i--) {
-                if (this.media.buffered.start(i) <= this.media.currentTime) {
-                    bufferEnd = this.media.buffered.end(i);
+            const bufferedRange = this.getBufferedRange();
+            for (const buffer of bufferedRange) {
+                if (buffer.start > this.media.currentTime) {
                     break;
                 }
+                bufferEnd = buffer.end;
             }
             (loadProgress as HTMLElement).style.width = Math.min(Math.round(bufferEnd / this.media.duration * 100), 100) + '%';
         };
@@ -608,6 +608,27 @@ export class Player {
     protected oncanplaythrough(this: Player): void {
         this.onScreenConsoleOutput('Playback can play through at ' + this.media.currentTime + '.');
         removeClass(this.controls, 'vjs-seeking');
+    }
+
+    protected getBufferedRange(this: Player): { start: number, end: number }[] {
+        const bufferedRange = [];
+        let currentBuffer: null | { start: number, end: number } = null;
+        for (let i = 0; i < this.media.buffered.length; i++) {
+            const nextBufferStart = this.media.buffered.start(i);
+            if (currentBuffer === null) {
+                currentBuffer = { start: nextBufferStart, end: this.media.buffered.end(i) };
+            } else {
+                if (nextBufferStart - 0.5 <= currentBuffer.end) { // This value should match `maxBufferHole` in hls.js config.
+                    this.onScreenConsoleOutput('Buffer hole detected: ' + currentBuffer.end + '-' + nextBufferStart + '. Duration: ' + (nextBufferStart - currentBuffer.end));
+                    currentBuffer.end = this.media.buffered.end(i);
+                } else {
+                    bufferedRange.push(currentBuffer);
+                    currentBuffer = { start: nextBufferStart, end: this.media.buffered.end(i) };
+                }
+            }
+        }
+        currentBuffer && bufferedRange.push(currentBuffer);
+        return bufferedRange;
     }
 
     protected onScreenConsoleOutput(this: Player, txt: string) {

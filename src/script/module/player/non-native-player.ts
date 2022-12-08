@@ -4,6 +4,7 @@ import {
     removeClass,
     addEventsListener,
     removeEventsListener,
+    containsClass,
 } from '../DOM';
 import type { default as videojs } from 'video.js';
 
@@ -36,6 +37,12 @@ export abstract class NonNativePlayer extends Player {
 
     public override play(this: NonNativePlayer) {
         if (this.IS_VIDEO) {
+            if (!containsClass(this.controls, 'vjs-has-started')) {
+                this.onScreenConsoleOutput('Initial play triggered.');
+                this.media.play().catch(() => this.onScreenConsoleOutput('Initial play promise rejected. (This is harmless)')); // Some browsers will reject the initial play request if it is not from a user action.
+                this.media.pause();
+                this.media.currentTime = 0;
+            }
             this.onplay();
         } else {
             this.media.play();
@@ -54,10 +61,12 @@ export abstract class NonNativePlayer extends Player {
         if (this.buffering === false) {
             return;
         }
-        for (let i = this.media.buffered.length - 1; i >= 0; i--) {
-            if (this.media.buffered.start(i) <= this.media.currentTime + 0.1) {
-                this.onScreenConsoleOutput('Checking buffer range :' + this.media.buffered.start(i) + '-' + this.media.buffered.end(i) + '. Current time: ' + this.media.currentTime);
-                if (this.media.buffered.end(i) >= Math.min(this.media.currentTime + 15, this.media.duration - 0.1)) {
+
+        const bufferedRange = this.getBufferedRange();
+        for (const buffer of bufferedRange) {
+            if (this.media.currentTime < buffer.end) {
+                this.onScreenConsoleOutput('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this.media.currentTime);
+                if (buffer.start <= this.media.currentTime + 0.1 && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - 0.1)) {
                     removeEventsListener(this.media, ['progress', 'play', 'timeupdate'], this.checkBuffer);
                     removeClass(this.controls, 'vjs-seeking');
                     this.buffering = false;
@@ -66,12 +75,12 @@ export abstract class NonNativePlayer extends Player {
                         this.media.play();
                     }
                     return;
-                } else {
-                    setTimeout(this.checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
-                    break;
                 }
+                break;
             }
         }
+
+        setTimeout(this.checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
         if (event !== undefined && (event.type == 'playing' || (!this.media.paused && event.type == 'timeupdate'))) {
             this.media.pause();
         }
@@ -93,13 +102,14 @@ export abstract class NonNativePlayer extends Player {
             this.checkBuffer();
         }.bind(this);
 
-        if (this.media.buffered.length == 0) {
+        const bufferedRange = this.getBufferedRange();
+        if (bufferedRange.length == 0) {
             addCheckBuffer();
             this.onScreenConsoleOutput('Buffer empty, start buffering.');
         } else {
-            for (let i = this.media.buffered.length - 1; i >= 0; i--) {
-                if (this.media.buffered.start(i) <= this.media.currentTime + 0.1) {
-                    if (this.media.buffered.end(i) < Math.min(this.media.currentTime + 14.9, this.media.duration - 0.1)) {
+            for (const buffer of bufferedRange) {
+                if (this.media.currentTime < buffer.end) {
+                    if (buffer.start > this.media.currentTime + 0.1 || buffer.end < Math.min(this.media.currentTime + 14.9, this.media.duration - 0.1)) {
                         addCheckBuffer();
                         this.onScreenConsoleOutput('Buffer under threshold, start buffering.');
                     } else {
@@ -111,6 +121,8 @@ export abstract class NonNativePlayer extends Player {
                     return;
                 }
             }
+            addCheckBuffer();
+            this.onScreenConsoleOutput('No buffer beyond current position, start buffering.');
         }
     }
 

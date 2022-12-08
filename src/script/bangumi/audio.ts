@@ -17,7 +17,6 @@ import type { AudioEPInfo, AudioFile } from '../module/type/BangumiInfo';
 
 import {
     IS_FIREFOX,
-    /*IS_CHROMIUM,*/
     USE_MSE,
     NATIVE_HLS,
     CAN_PLAY_ALAC,
@@ -29,7 +28,7 @@ import { Player, HlsPlayer, VideojsPlayer } from '../module/player';
 
 import { parseCharacters } from './helper';
 import {
-    showErrorMessage, /*showMediaMessage,*/ showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion
+    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion
 } from './media_helper';
 import type { HlsImportPromise } from './get_import_promises';
 
@@ -107,7 +106,6 @@ function addAudioNode(index: number) {
         backBufferLength: 0,
         maxBufferLength: 15,
         maxBufferSize: 0,
-        maxBufferHole: 0,
         debug: false,
         xhrSetup: function (xhr: XMLHttpRequest) {
             xhr.withCredentials = true;
@@ -182,9 +180,6 @@ function addAudioNode(index: number) {
             });
         } else {
             if (USE_MSE) {
-                /*if (IS_CHROMIUM) {
-                    showChromiumCompatibilityWarning();
-                }*/
                 hlsImportPromise.then(({ default: Hls }) => {
                     const audioInstance = new HlsPlayer(videoJSControl, Hls, configHls, {
                         audio: true,
@@ -210,7 +205,7 @@ function addAudioNode(index: number) {
                     showMessage(moduleImportError(e));
                     return;
                 });
-            } else if (NATIVE_HLS) {
+            } else {
                 const audioInstance = new Player(videoJSControl, {
                     audio: true,
                     debug: debug
@@ -370,12 +365,3 @@ function destroyAll() {
         mediaInstance.destroy();
     }
 }
-/*
-let chromiumWarningDisplayed = false;
-function showChromiumCompatibilityWarning() {
-    if (chromiumWarningDisplayed) {
-        return;
-    }
-    chromiumWarningDisplayed = true;
-    showMediaMessage('不具合があります', 'Chromiumベースのブラウザで、MP3ファイルをシークできない問題があります。SafariやFirefoxでお試しいただくか、ファイルをダウンロードしてローカルで再生してください。<br>バグの追跡：<a class="link" href="https://github.com/video-dev/hls.js/issues/4543" target="_blank" rel="noopener noreferrer">https://github.com/video-dev/hls.js/issues/4543</a>', 'orange');
-}*/
