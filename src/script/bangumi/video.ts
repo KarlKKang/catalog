@@ -219,8 +219,8 @@ function addVideoNode(config?: {
                 maxFragLookUpTolerance: 0.0,
                 testBandwidth: false,
                 backBufferLength: 0,
-                maxBufferLength: 15,
-                maxBufferSize: (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000,
+                maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
+                maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
                 maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Although the value 0.5 is the default in the documentation, this option somehow must be explictly set to take effect.
                 debug: debug,
                 xhrSetup: function (xhr: XMLHttpRequest) {
