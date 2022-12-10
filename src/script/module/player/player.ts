@@ -223,7 +223,9 @@ export class Player {
         addEventListener(this.media, 'loadedmetadata', this.onloadedmetadata.bind(this));
 
         addEventListener(this.media, 'durationchange', function (this: Player) {
-            this.durationDisplay.textContent = secToTimestamp(this.media.duration);
+            const duration = this.media.duration;
+            this.durationDisplay.textContent = secToTimestamp(duration);
+            this.currentTimeDisplay.textContent = secToTimestamp(this.media.currentTime, duration);
         }.bind(this));
 
         //Play button
@@ -458,7 +460,8 @@ export class Player {
     }
 
     private intervalCallback(this: Player): void {
-        if (!this.media.duration) {
+        const duration = this.media.duration;
+        if (!duration) {
             return;
         }
         if (this.dragging) {
@@ -468,11 +471,11 @@ export class Player {
             return;
         }
 
-        const currentTimestamp = secToTimestamp(this.media.currentTime).toString();
+        const currentTimestamp = secToTimestamp(this.media.currentTime, duration);
         if (this.currentTimeDisplay.textContent !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
             this.currentTimeDisplay.textContent = currentTimestamp;
         }
-        this.progressBar.style.width = Math.min(this.media.currentTime / this.media.duration * 100, 100) + '%';
+        this.progressBar.style.width = Math.min(this.media.currentTime / duration * 100, 100) + '%';
 
         if (!this.IS_VIDEO) {
             return;
@@ -541,8 +544,9 @@ export class Player {
         const totalLength = position.right - position.left;
         const leftPadding = Math.min(Math.max(mouseX - position.left, 0), totalLength);
         const percentage = leftPadding / totalLength;
-        const currentTime = this.media.duration * percentage;
-        const currentTimestamp = secToTimestamp(currentTime);
+        const duration = this.media.duration;
+        const currentTime = duration * percentage;
+        const currentTimestamp = secToTimestamp(currentTime, duration);
 
         if (this.progressMouseDisplay !== undefined) {
             const progressTooltip = getDescendantsByClassAt(this.progressMouseDisplay, 'vjs-time-tooltip', 0) as HTMLElement;
