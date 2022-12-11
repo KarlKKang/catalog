@@ -210,14 +210,14 @@ select:hover {
     margin: 0px 0px 1em 0px;
 }
 
-#media-holder>.video-js {
+#media-holder>.player {
     width: 100%;
     margin: 0px 0px 16px 0px;
     background-color: #000;
 }
 
-#media-holder>.video-js>video,
-#media-holder>.video-js>audio {
+#media-holder>.player>video,
+#media-holder>.player>audio {
     /* Hide mouse-over tooltips */
     pointer-events: none;
 }
@@ -228,13 +228,13 @@ select:hover {
 }
 
 #media-holder>.lazyload,
-#media-holder>.video-js {
+#media-holder>.player {
     box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
 }
 
 #media-holder>.lazyload:hover,
-#media-holder>.video-js:hover {
+#media-holder>.player:hover {
     box-shadow: var(--shadow-hover);
 }
 

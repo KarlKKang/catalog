@@ -18,11 +18,9 @@ const entries = [
     'news.css',
     'portal_form.css',
     'register.css',
-    'videojs_mod.css',
+    'player.css',
 ];
 
 for (const filename of entries) {
     minifier('./src/css/', destDir, filename);
 }
-
-minifier('./node_modules/video.js/dist/', destDir, 'video-js.css');

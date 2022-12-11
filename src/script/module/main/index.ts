@@ -247,7 +247,7 @@ export function navListeners() {
 ////////////////////////////////////////
 export function secToTimestamp(sec: number, templateSec?: number) {
     if (isNaN(sec)) {
-        return '--:--';
+        return '0:00';
     }
 
     if (templateSec === undefined || isNaN(templateSec) || templateSec < sec) {

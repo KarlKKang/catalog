@@ -43,6 +43,7 @@ export class Player {
     private readonly controlBar: HTMLElement;
     private readonly playButton: HTMLElement;
     private readonly currentTimeDisplay: HTMLElement;
+    private readonly currentTimeDisplayText: HTMLElement;
     private readonly progressControl: HTMLElement;
     private readonly progressHolder: HTMLElement;
     private readonly loadProgress: HTMLElement;
@@ -50,6 +51,8 @@ export class Player {
     private readonly progressMouseDisplay: HTMLElement;
     private readonly timeTooltip: HTMLElement;
     private readonly durationDisplay: HTMLElement;
+    private readonly durationDisplayText: HTMLElement;
+    private readonly timeDivider: HTMLElement;
     private readonly PIPButton: HTMLButtonElement | undefined;
     private readonly fullscreenButton: HTMLButtonElement;
 
@@ -81,23 +84,23 @@ export class Player {
         // Container
         const controls = container;
         this.controls = controls;
-        addClass(controls, 'video-js');
+        addClass(controls, 'player');
         controls.lang = 'en';
         controls.tabIndex = -1;
         controls.translate = false;
-        addVjsClasses(controls, ['big-play-centered', 'fluid', 'controls-enabled', 'paused', 'user-active']);
-        this.IS_VIDEO || addVjsClass(controls, 'audio');
+        addPlayerClasses(controls, ['big-play-centered', 'fluid', 'controls-enabled', 'paused', 'user-active']);
+        this.IS_VIDEO || addPlayerClass(controls, 'audio');
 
         // Media
         const media = createElement(this.IS_VIDEO ? 'video' : 'audio') as HTMLVideoElement | HTMLAudioElement;
         this._media = media;
         media.tabIndex = -1;
-        addVjsClass(media, 'tech');
+        addPlayerClass(media, 'tech');
         appendChild(controls, media);
 
         // Loading spinner
         const loadingSpinner = createElement('div');
-        addVjsClass(loadingSpinner, 'loading-spinner');
+        addPlayerClass(loadingSpinner, 'loading-spinner');
         loadingSpinner.dir = 'ltr';
         this.IS_VIDEO && appendChild(controls, loadingSpinner);
 
@@ -106,15 +109,15 @@ export class Player {
         this.bigPlayButton = bigPlayButton;
         bigPlayButton.type = 'button';
         bigPlayButton.title = 'Play Video';
-        addVjsClass(bigPlayButton, 'big-play-button');
-        addVjsPlaceholder(bigPlayButton);
+        addPlayerClass(bigPlayButton, 'big-play-button');
+        addPlayerPlaceholder(bigPlayButton);
         this.IS_VIDEO && appendChild(controls, bigPlayButton);
 
         // Control bar
         const controlBar = createElement('div');
         this.controlBar = controlBar;
         controlBar.dir = 'ltr';
-        addVjsClass(controlBar, 'control-bar');
+        addPlayerClass(controlBar, 'control-bar');
         appendChild(controls, controlBar);
 
         // Play button
@@ -122,24 +125,26 @@ export class Player {
         this.playButton = playButton;
         playButton.type = 'button';
         playButton.title = 'Play';
-        addVjsClasses(playButton, ['play-control', 'control', 'button', 'paused']);
-        addVjsPlaceholder(playButton);
+        addPlayerClasses(playButton, ['play-control', 'control', 'button', 'paused']);
+        addPlayerPlaceholder(playButton);
         appendChild(controlBar, playButton);
 
         // Current time display
         const currentTimeDisplay = createElement('div');
-        addVjsClasses(currentTimeDisplay, ['current-time', 'time-control', 'control']);
+        this.currentTimeDisplay = currentTimeDisplay;
+        addPlayerClasses(currentTimeDisplay, ['current-time', 'time-control', 'control']);
         appendChild(controlBar, currentTimeDisplay);
 
         const currentTimeDisplayText = createElement('span');
-        this.currentTimeDisplay = currentTimeDisplayText;
-        currentTimeDisplayText.textContent = '--:--';
-        addVjsClass(currentTimeDisplayText, 'current-time-display');
+        this.currentTimeDisplayText = currentTimeDisplayText;
+        currentTimeDisplayText.textContent = '0:00';
+        addPlayerClass(currentTimeDisplayText, 'current-time-display');
         appendChild(currentTimeDisplay, currentTimeDisplayText);
 
         // Time divider
         const timeDivier = createElement('div');
-        addVjsClasses(timeDivier, ['time-control', 'time-divider']);
+        this.timeDivider = timeDivier;
+        addPlayerClasses(timeDivier, ['time-control', 'time-divider']);
         appendChild(controlBar, timeDivier);
 
         const timeDividerText = createElement('span');
@@ -148,51 +153,58 @@ export class Player {
 
         // Duration display
         const durationDisplay = createElement('div');
-        addVjsClasses(durationDisplay, ['duration', 'time-control', 'control']);
+        this.durationDisplay = durationDisplay;
+        addPlayerClasses(durationDisplay, ['duration', 'time-control', 'control']);
         appendChild(controlBar, durationDisplay);
 
         const durationDisplayText = createElement('div');
-        this.durationDisplay = durationDisplayText;
-        durationDisplayText.textContent = '--:--';
-        addVjsClass(durationDisplayText, 'duration-display');
+        this.durationDisplayText = durationDisplayText;
+        durationDisplayText.textContent = '0:00';
+        addPlayerClass(durationDisplayText, 'duration-display');
         appendChild(durationDisplay, durationDisplayText);
+
+        if (w.innerWidth < 275) {
+            addClass(currentTimeDisplay, 'hidden');
+            addClass(timeDivier, 'hidden');
+            addClass(durationDisplay, 'hidden');
+        }
 
         // Progress control
         const progressControl = createElement('div');
         this.progressControl = progressControl;
-        addVjsClasses(progressControl, ['progress-control', 'control']);
+        addPlayerClasses(progressControl, ['progress-control', 'control']);
         appendChild(controlBar, progressControl);
 
         const progressHolder = createElement('div');
         this.progressHolder = progressHolder;
         progressHolder.tabIndex = 0;
-        addVjsClasses(progressHolder, ['progress-holder', 'slider', 'slider-horizontal']);
+        addPlayerClasses(progressHolder, ['progress-holder', 'slider', 'slider-horizontal']);
         appendChild(progressControl, progressHolder);
 
         // Load progress
         const loadProgress = createElement('div');
         this.loadProgress = loadProgress;
-        addVjsClass(loadProgress, 'load-progress');
+        addPlayerClass(loadProgress, 'load-progress');
         loadProgress.style.width = '0%';
         appendChild(progressHolder, loadProgress);
 
         // Mouse display
         const mouseDisplay = createElement('div');
         this.progressMouseDisplay = mouseDisplay;
-        addVjsClass(mouseDisplay, 'mouse-display');
+        addPlayerClass(mouseDisplay, 'mouse-display');
         appendChild(progressHolder, mouseDisplay);
 
         // Time tooltip
         const timeTooltip = createElement('div');
         this.timeTooltip = timeTooltip;
-        timeTooltip.textContent = '--:--';
-        addVjsClass(timeTooltip, 'time-tooltip');
+        timeTooltip.textContent = '0:00';
+        addPlayerClass(timeTooltip, 'time-tooltip');
         appendChild(mouseDisplay, timeTooltip);
 
         // Play progress
         const playProgress = createElement('div');
         this.progressBar = playProgress;
-        addVjsClasses(playProgress, ['play-progress', 'slider-bar']);
+        addPlayerClasses(playProgress, ['play-progress', 'slider-bar']);
         playProgress.style.width = '0%';
         appendChild(progressHolder, playProgress);
 
@@ -202,8 +214,8 @@ export class Player {
             this.PIPButton = PIPbutton;
             PIPbutton.type = 'button';
             PIPbutton.title = 'Picture-in-Picture';
-            addVjsClasses(PIPbutton, ['picture-in-picture-control', 'control', 'button']);
-            addVjsPlaceholder(PIPbutton);
+            addPlayerClasses(PIPbutton, ['picture-in-picture-control', 'control', 'button']);
+            addPlayerPlaceholder(PIPbutton);
             this.IS_VIDEO && appendChild(controlBar, PIPbutton);
         }
 
@@ -212,8 +224,8 @@ export class Player {
         this.fullscreenButton = fullscreenButton;
         fullscreenButton.type = 'button';
         fullscreenButton.title = 'Fullscreen';
-        addVjsClasses(fullscreenButton, ['fullscreen-control', 'control', 'button']);
-        addVjsPlaceholder(fullscreenButton);
+        addPlayerClasses(fullscreenButton, ['fullscreen-control', 'control', 'button']);
+        addPlayerPlaceholder(fullscreenButton);
         this.IS_VIDEO && appendChild(controlBar, fullscreenButton);
 
         this.DEBUG = config.debug === true;
@@ -326,7 +338,7 @@ export class Player {
     }
 
     private togglePlayback(this: Player) {
-        if (containsClass(this.controls, 'vjs-playing')) {
+        if (containsClass(this.controls, 'player-playing')) {
             this.pause();
         } else {
             this.play();
@@ -335,25 +347,35 @@ export class Player {
 
     private resetToActive(this: Player) {
         this.inactiveTimeout = 12;
-        removeClass(this.controls, 'vjs-user-inactive');
-        addClass(this.controls, 'vjs-user-active');
+        removeClass(this.controls, 'player-user-inactive');
+        addClass(this.controls, 'player-user-active');
     }
 
     private attachEventListeners(this: Player) {
         //Fluid resize and duration
+        addEventListener(w, 'resize', function (this: Player) {
+            let func = removeClass;
+            if (w.innerWidth < 275) {
+                func = addClass
+            }
+            func(this.currentTimeDisplay, 'hidden');
+            func(this.timeDivider, 'hidden');
+            func(this.durationDisplay, 'hidden');
+        }.bind(this));
+
         addEventListener(this.media, 'loadedmetadata', this.onloadedmetadata.bind(this));
 
         addEventListener(this.media, 'durationchange', function (this: Player) {
             const duration = this.media.duration;
-            this.durationDisplay.textContent = secToTimestamp(duration);
-            this.currentTimeDisplay.textContent = secToTimestamp(this.media.currentTime, duration);
+            this.durationDisplayText.textContent = secToTimestamp(duration);
+            this.currentTimeDisplayText.textContent = secToTimestamp(this.media.currentTime, duration);
         }.bind(this));
 
         //Play button
         addEventListener(this.playButton, 'click', function (this: Player) {
-            if (containsClass(this.controls, 'vjs-ended')) {
-                removeClass(this.controls, 'vjs-ended');
-                removeClass(this.playButton, 'vjs-ended');
+            if (containsClass(this.controls, 'player-ended')) {
+                removeClass(this.controls, 'player-ended');
+                removeClass(this.playButton, 'player-ended');
                 this.seek(0);
                 this.play();
             } else {
@@ -374,8 +396,8 @@ export class Player {
                 this.playing = true;
             }
 
-            removeClass(this.controls, 'vjs-ended');
-            removeClass(this.playButton, 'vjs-ended');
+            removeClass(this.controls, 'player-ended');
+            removeClass(this.playButton, 'player-ended');
 
             this.progressUpdate(event as MouseEvent | TouchEvent);
         }.bind(this));
@@ -488,7 +510,7 @@ export class Player {
         }.bind(this);
 
         const toggleFullscreen = function (this: Player) {
-            if (containsClass(this.controls, 'vjs-fullscreen')) {
+            if (containsClass(this.controls, 'player-fullscreen')) {
                 exitFullscreen();
             } else {
                 requestFullscreen();
@@ -496,7 +518,7 @@ export class Player {
         }.bind(this);
 
         if (screenfull.isEnabled || IOS_FULLSCREEN) {
-            removeClass(this.fullscreenButton, 'vjs-disabled');
+            removeClass(this.fullscreenButton, 'player-disabled');
             this.fullscreenButton.disabled = false;
 
             addEventListener(this.fullscreenButton, 'click', function () {
@@ -507,16 +529,16 @@ export class Player {
                 screenfull.on('change', function (this: Player) {
                     const elemInFS = screenfull.element;
                     if (elemInFS === undefined) {
-                        removeClass(this.controls, 'vjs-fullscreen');
+                        removeClass(this.controls, 'player-fullscreen');
                         this.fullscreenButton.title = 'Fullscreen';
                     } else if (elemInFS.isSameNode(this.controls) || elemInFS.isSameNode(this.media)) {
-                        addClass(this.controls, 'vjs-fullscreen');
+                        addClass(this.controls, 'player-fullscreen');
                         this.fullscreenButton.title = 'Exit Fullscreen';
                     }
                 }.bind(this));
             }
         } else {
-            addClass(this.fullscreenButton, 'vjs-disabled');
+            addClass(this.fullscreenButton, 'player-disabled');
             this.fullscreenButton.disabled = true;
         }
 
@@ -524,7 +546,7 @@ export class Player {
         const PIPButton = this.PIPButton;
         if (PIPButton !== undefined) {
             addEventListener(PIPButton, 'click', function (this: Player) {
-                if (containsClass(this.controls, 'vjs-picture-in-picture')) {
+                if (containsClass(this.controls, 'player-picture-in-picture')) {
                     d.exitPictureInPicture();
                 } else {
                     (this.media as HTMLVideoElement).requestPictureInPicture();
@@ -533,12 +555,12 @@ export class Player {
             }.bind(this));
 
             addEventListener(this.media, 'enterpictureinpicture', function (this: Player) {
-                addClass(this.controls, 'vjs-picture-in-picture');
+                addClass(this.controls, 'player-picture-in-picture');
                 PIPButton.title = 'Exit Picture-in-Picture';
             }.bind(this));
 
             addEventListener(this.media, 'leavepictureinpicture', function (this: Player) {
-                removeClass(this.controls, 'vjs-picture-in-picture');
+                removeClass(this.controls, 'player-picture-in-picture');
                 PIPButton.title = 'Picture-in-Picture';
             }.bind(this));
         }
@@ -582,8 +604,8 @@ export class Player {
         }
 
         const currentTimestamp = secToTimestamp(this.media.currentTime, duration);
-        if (this.currentTimeDisplay.textContent !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
-            this.currentTimeDisplay.textContent = currentTimestamp;
+        if (this.currentTimeDisplayText.textContent !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
+            this.currentTimeDisplayText.textContent = currentTimestamp;
         }
         this.progressBar.style.width = Math.min(this.media.currentTime / duration * 100, 100) + '%';
 
@@ -594,8 +616,8 @@ export class Player {
         if (this.inactiveTimeout > 0) {
             this.inactiveTimeout--;
             if (this.inactiveTimeout == 0) {
-                removeClass(this.controls, 'vjs-user-active');
-                addClass(this.controls, 'vjs-user-inactive');
+                removeClass(this.controls, 'player-user-active');
+                addClass(this.controls, 'player-user-inactive');
             }
         }
 
@@ -616,12 +638,13 @@ export class Player {
 
     protected onloadedmetadata(this: Player): void {
         if (this.IS_VIDEO) {
-            this.controls.style.removeProperty('padding-top');
+            const videoMedia = this.media as HTMLVideoElement;
+            this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
         }
-        this.durationDisplay.textContent = secToTimestamp(this.media.duration);
-        if (containsClass(this.controls, 'vjs-ended')) {
-            removeClass(this.controls, 'vjs-ended');
-            removeClass(this.playButton, 'vjs-ended');
+        this.durationDisplayText.textContent = secToTimestamp(this.media.duration);
+        if (containsClass(this.controls, 'player-ended')) {
+            removeClass(this.controls, 'player-ended');
+            removeClass(this.playButton, 'player-ended');
         }
     }
 
@@ -639,9 +662,8 @@ export class Player {
     }
 
     private progressUpdate(this: Player, event: MouseEvent | TouchEvent): number {
-        const isTouch = w.TouchEvent !== undefined && event instanceof TouchEvent;
         let mouseX;
-        if (isTouch) {
+        if (w.TouchEvent !== undefined && event instanceof TouchEvent) {
             const touchEvent = event as TouchEvent;
             const touch = touchEvent.touches[0] || touchEvent.changedTouches[0];
             if (touch === undefined) {
@@ -659,7 +681,7 @@ export class Player {
         const currentTime = duration * percentage;
         const currentTimestamp = secToTimestamp(currentTime, duration);
 
-        if (!isTouch) {
+        if (window.matchMedia('only screen and (hover: none), only screen and(pointer: none), only screen and(pointer: coarse)')) {
             this.progressMouseDisplay.style.left = leftPadding + 'px';
             this.timeTooltip.textContent = currentTimestamp;
             this.timeTooltip.style.right = -this.timeTooltip.offsetWidth / 2 + 'px';
@@ -676,52 +698,52 @@ export class Player {
                 this.seek(currentTime);
                 this.draggingPreviewTimeout = 4;
             }
-            this.currentTimeDisplay.textContent = currentTimestamp;
+            this.currentTimeDisplayText.textContent = currentTimestamp;
             this.progressBar.style.width = percentage * 100 + '%';
         }
-
+        event.preventDefault(); // If touch events are not stopped then subsequent mouse event will be fired.
         return currentTime;
     }
 
     protected onplay(this: Player): void {
         this.onScreenConsoleOutput('Playback started at ' + this.media.currentTime + '.');
-        addClass(this.controls, 'vjs-has-started');
-        removeClass(this.playButton, 'vjs-paused');
-        addClass(this.playButton, 'vjs-playing');
-        removeClass(this.controls, 'vjs-paused');
-        addClass(this.controls, 'vjs-playing');
-        if (containsClass(this.controls, 'vjs-ended')) {
-            removeClass(this.controls, 'vjs-ended');
-            removeClass(this.playButton, 'vjs-ended');
+        addClass(this.controls, 'player-has-started');
+        removeClass(this.playButton, 'player-paused');
+        addClass(this.playButton, 'player-playing');
+        removeClass(this.controls, 'player-paused');
+        addClass(this.controls, 'player-playing');
+        if (containsClass(this.controls, 'player-ended')) {
+            removeClass(this.controls, 'player-ended');
+            removeClass(this.playButton, 'player-ended');
         }
     }
 
     protected onpause(this: Player): void {
         this.onScreenConsoleOutput('Playback paused at ' + this.media.currentTime + '.');
-        removeClass(this.playButton, 'vjs-playing');
-        addClass(this.playButton, 'vjs-paused');
-        removeClass(this.controls, 'vjs-playing');
-        addClass(this.controls, 'vjs-paused');
+        removeClass(this.playButton, 'player-playing');
+        addClass(this.playButton, 'player-paused');
+        removeClass(this.controls, 'player-playing');
+        addClass(this.controls, 'player-paused');
     }
 
     protected onended(this: Player): void {
         this.onScreenConsoleOutput('Playback ended.');
-        removeClass(this.playButton, 'vjs-playing');
-        addClass(this.playButton, 'vjs-paused');
-        removeClass(this.controls, 'vjs-playing');
-        addClass(this.controls, 'vjs-paused');
-        addClass(this.controls, 'vjs-ended');
-        addClass(this.playButton, 'vjs-ended');
+        removeClass(this.playButton, 'player-playing');
+        addClass(this.playButton, 'player-paused');
+        removeClass(this.controls, 'player-playing');
+        addClass(this.controls, 'player-paused');
+        addClass(this.controls, 'player-ended');
+        addClass(this.playButton, 'player-ended');
     }
 
     protected onwaiting(this: Player): void {
         this.onScreenConsoleOutput('Playback entered waiting state at ' + this.media.currentTime + '.');
-        addClass(this.controls, 'vjs-seeking');
+        addClass(this.controls, 'player-seeking');
     }
 
     protected oncanplaythrough(this: Player): void {
         this.onScreenConsoleOutput('Playback can play through at ' + this.media.currentTime + '.');
-        removeClass(this.controls, 'vjs-seeking');
+        removeClass(this.controls, 'player-seeking');
     }
 
     protected getBufferedRange(this: Player): { start: number, end: number }[] {
@@ -760,19 +782,19 @@ export class Player {
     }
 }
 
-function addVjsClass(elem: Element, className: string) {
-    addClass(elem, 'vjs-' + className);
+function addPlayerClass(elem: Element, className: string) {
+    addClass(elem, 'player-' + className);
 }
 
-function addVjsClasses(elem: Element, classNames: string[]) {
+function addPlayerClasses(elem: Element, classNames: string[]) {
     for (const className of classNames) {
-        addClass(elem, 'vjs-' + className);
+        addClass(elem, 'player-' + className);
     }
 }
 
-function addVjsPlaceholder(elem: HTMLElement) {
+function addPlayerPlaceholder(elem: HTMLElement) {
     const placeholder = createElement('span');
     placeholder.ariaHidden = 'true';
-    addVjsClass(placeholder, 'icon-placeholder');
+    addPlayerClass(placeholder, 'icon-placeholder');
     appendChild(elem, placeholder);
 }
