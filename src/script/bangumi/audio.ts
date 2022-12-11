@@ -158,6 +158,9 @@ function addAudioNode(index: number) {
             });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
+        }).catch((e) => {
+            showMessage(moduleImportError(e));
+            return;
         });
     } else {
         if (USE_MSE) {
