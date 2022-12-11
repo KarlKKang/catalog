@@ -1,11 +1,9 @@
 import { Player } from './player';
 import {
-    addClass,
-    removeClass,
     addEventsListener,
     removeEventsListener,
-    containsClass,
 } from '../DOM';
+import { addPlayerClass, containsPlayerClass, removePlayerClass } from './helper';
 
 export abstract class NonNativePlayer extends Player {
     private buffering = false;
@@ -36,7 +34,7 @@ export abstract class NonNativePlayer extends Player {
 
     public override play(this: NonNativePlayer) {
         if (this.IS_VIDEO) {
-            if (!containsClass(this.controls, 'player-has-started')) {
+            if (!containsPlayerClass(this.controls, 'has-started')) {
                 this.onScreenConsoleOutput('Initial play triggered.');
                 this.media.play().catch(() => this.onScreenConsoleOutput('Initial play promise rejected. (This is harmless)')); // Some browsers will reject the initial play request if it is not from a user action.
                 this.media.pause();
@@ -67,7 +65,7 @@ export abstract class NonNativePlayer extends Player {
                 this.onScreenConsoleOutput('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this.media.currentTime);
                 if (buffer.start <= this.media.currentTime + 0.1 && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - 0.1)) {
                     removeEventsListener(this.media, ['progress', 'play', 'timeupdate'], this.checkBuffer);
-                    removeClass(this.controls, 'player-seeking');
+                    removePlayerClass(this.controls, 'seeking');
                     this.buffering = false;
                     this.onScreenConsoleOutput('Buffer complete!');
                     if (this.playing && !this.dragging) {
@@ -96,7 +94,7 @@ export abstract class NonNativePlayer extends Player {
                 media.pause();
             }*/
             this.buffering = true;
-            addClass(this.controls, 'player-seeking');
+            addPlayerClass(this.controls, 'seeking');
             addEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
             this.checkBuffer();
         }.bind(this);
@@ -170,7 +168,7 @@ export abstract class NonNativePlayer extends Player {
         this.onScreenConsoleOutput('Playback can play through at ' + this.media.currentTime + '.');
 
         if (!this.buffering) {
-            removeClass(this.controls, 'player-seeking');
+            removePlayerClass(this.controls, 'seeking');
         }
         if (this.playing) {
             this.play();

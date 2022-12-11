@@ -8,7 +8,6 @@ import {
     addEventListener,
     addClass,
     removeClass,
-    containsClass,
     addEventsListener,
     d,
     w,
@@ -21,6 +20,7 @@ import {
 } from '../DOM';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
+import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClass } from './helper';
 
 declare global {
     interface HTMLVideoElement {
@@ -340,7 +340,7 @@ export class Player {
     }
 
     private togglePlayback(this: Player) {
-        if (containsClass(this.controls, 'player-playing')) {
+        if (containsPlayerClass(this.controls, 'playing')) {
             this.pause();
         } else {
             this.play();
@@ -349,8 +349,8 @@ export class Player {
 
     private resetToActive(this: Player) {
         this.inactiveTimeout = 12;
-        removeClass(this.controls, 'player-user-inactive');
-        addClass(this.controls, 'player-user-active');
+        removePlayerClass(this.controls, 'user-inactive');
+        addPlayerClass(this.controls, 'user-active');
     }
 
     private attachEventListeners(this: Player) {
@@ -375,9 +375,9 @@ export class Player {
 
         //Play button
         addEventListener(this.playButton, 'click', function (this: Player) {
-            if (containsClass(this.controls, 'player-ended')) {
-                removeClass(this.controls, 'player-ended');
-                removeClass(this.playButton, 'player-ended');
+            if (containsPlayerClass(this.controls, 'ended')) {
+                removePlayerClass(this.controls, 'ended');
+                removePlayerClass(this.playButton, 'ended');
                 this.seek(0);
                 this.play();
             } else {
@@ -398,8 +398,8 @@ export class Player {
                 this.playing = true;
             }
 
-            removeClass(this.controls, 'player-ended');
-            removeClass(this.playButton, 'player-ended');
+            removePlayerClass(this.controls, 'ended');
+            removePlayerClass(this.playButton, 'ended');
 
             this.progressUpdate(event as MouseEvent | TouchEvent);
         }.bind(this));
@@ -511,7 +511,7 @@ export class Player {
         }.bind(this);
 
         const toggleFullscreen = function (this: Player) {
-            if (containsClass(this.controls, 'player-fullscreen')) {
+            if (containsPlayerClass(this.controls, 'fullscreen')) {
                 exitFullscreen();
             } else {
                 requestFullscreen();
@@ -519,7 +519,7 @@ export class Player {
         }.bind(this);
 
         if (screenfull.isEnabled || IOS_FULLSCREEN) {
-            removeClass(this.fullscreenButton, 'player-disabled');
+            removePlayerClass(this.fullscreenButton, 'disabled');
             this.fullscreenButton.disabled = false;
 
             addEventListener(this.fullscreenButton, 'click', function () {
@@ -530,16 +530,16 @@ export class Player {
                 screenfull.on('change', function (this: Player) {
                     const elemInFS = screenfull.element;
                     if (elemInFS === undefined) {
-                        removeClass(this.controls, 'player-fullscreen');
+                        removePlayerClass(this.controls, 'fullscreen');
                         this.fullscreenButton.title = 'Fullscreen';
                     } else if (elemInFS.isSameNode(this.controls) || elemInFS.isSameNode(this.media)) {
-                        addClass(this.controls, 'player-fullscreen');
+                        addPlayerClass(this.controls, 'fullscreen');
                         this.fullscreenButton.title = 'Exit Fullscreen';
                     }
                 }.bind(this));
             }
         } else {
-            addClass(this.fullscreenButton, 'player-disabled');
+            addPlayerClass(this.fullscreenButton, 'disabled');
             this.fullscreenButton.disabled = true;
         }
 
@@ -547,7 +547,7 @@ export class Player {
         const PIPButton = this.PIPButton;
         if (PIPButton !== undefined) {
             addEventListener(PIPButton, 'click', function (this: Player) {
-                if (containsClass(this.controls, 'player-picture-in-picture')) {
+                if (containsPlayerClass(this.controls, 'picture-in-picture')) {
                     d.exitPictureInPicture();
                 } else {
                     (this.media as HTMLVideoElement).requestPictureInPicture();
@@ -556,12 +556,12 @@ export class Player {
             }.bind(this));
 
             addEventListener(this.media, 'enterpictureinpicture', function (this: Player) {
-                addClass(this.controls, 'player-picture-in-picture');
+                addPlayerClass(this.controls, 'picture-in-picture');
                 PIPButton.title = 'Exit Picture-in-Picture';
             }.bind(this));
 
             addEventListener(this.media, 'leavepictureinpicture', function (this: Player) {
-                removeClass(this.controls, 'player-picture-in-picture');
+                removePlayerClass(this.controls, 'picture-in-picture');
                 PIPButton.title = 'Picture-in-Picture';
             }.bind(this));
         }
@@ -617,8 +617,8 @@ export class Player {
         if (this.inactiveTimeout > 0) {
             this.inactiveTimeout--;
             if (this.inactiveTimeout == 0) {
-                removeClass(this.controls, 'player-user-active');
-                addClass(this.controls, 'player-user-inactive');
+                removePlayerClass(this.controls, 'user-active');
+                addPlayerClass(this.controls, 'user-inactive');
             }
         }
 
@@ -643,9 +643,9 @@ export class Player {
             this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
         }
         this.durationDisplayText.textContent = secToTimestamp(this.media.duration);
-        if (containsClass(this.controls, 'player-ended')) {
-            removeClass(this.controls, 'player-ended');
-            removeClass(this.playButton, 'player-ended');
+        if (containsPlayerClass(this.controls, 'ended')) {
+            removePlayerClass(this.controls, 'ended');
+            removePlayerClass(this.playButton, 'ended');
         }
     }
 
@@ -708,43 +708,43 @@ export class Player {
 
     protected onplay(this: Player): void {
         this.onScreenConsoleOutput('Playback started at ' + this.media.currentTime + '.');
-        addClass(this.controls, 'player-has-started');
-        removeClass(this.playButton, 'player-paused');
-        addClass(this.playButton, 'player-playing');
-        removeClass(this.controls, 'player-paused');
-        addClass(this.controls, 'player-playing');
-        if (containsClass(this.controls, 'player-ended')) {
-            removeClass(this.controls, 'player-ended');
-            removeClass(this.playButton, 'player-ended');
+        addPlayerClass(this.controls, 'has-started');
+        removePlayerClass(this.playButton, 'paused');
+        addPlayerClass(this.playButton, 'playing');
+        removePlayerClass(this.controls, 'paused');
+        addPlayerClass(this.controls, 'playing');
+        if (containsPlayerClass(this.controls, 'ended')) {
+            removePlayerClass(this.controls, 'ended');
+            removePlayerClass(this.playButton, 'ended');
         }
     }
 
     protected onpause(this: Player): void {
         this.onScreenConsoleOutput('Playback paused at ' + this.media.currentTime + '.');
-        removeClass(this.playButton, 'player-playing');
-        addClass(this.playButton, 'player-paused');
-        removeClass(this.controls, 'player-playing');
-        addClass(this.controls, 'player-paused');
+        removePlayerClass(this.playButton, 'playing');
+        addPlayerClass(this.playButton, 'paused');
+        removePlayerClass(this.controls, 'playing');
+        addPlayerClass(this.controls, 'paused');
     }
 
     protected onended(this: Player): void {
         this.onScreenConsoleOutput('Playback ended.');
-        removeClass(this.playButton, 'player-playing');
-        addClass(this.playButton, 'player-paused');
-        removeClass(this.controls, 'player-playing');
-        addClass(this.controls, 'player-paused');
-        addClass(this.controls, 'player-ended');
-        addClass(this.playButton, 'player-ended');
+        removePlayerClass(this.playButton, 'playing');
+        addPlayerClass(this.playButton, 'paused');
+        removePlayerClass(this.controls, 'playing');
+        addPlayerClass(this.controls, 'paused');
+        addPlayerClass(this.controls, 'ended');
+        addPlayerClass(this.playButton, 'ended');
     }
 
     protected onwaiting(this: Player): void {
         this.onScreenConsoleOutput('Playback entered waiting state at ' + this.media.currentTime + '.');
-        addClass(this.controls, 'player-seeking');
+        addPlayerClass(this.controls, 'seeking');
     }
 
     protected oncanplaythrough(this: Player): void {
         this.onScreenConsoleOutput('Playback can play through at ' + this.media.currentTime + '.');
-        removeClass(this.controls, 'player-seeking');
+        removePlayerClass(this.controls, 'seeking');
     }
 
     protected getBufferedRange(this: Player): { start: number, end: number }[] {
@@ -780,16 +780,6 @@ export class Player {
             console.log(newline);
             onScreenConsole.value += newline;
         }
-    }
-}
-
-function addPlayerClass(elem: Element, className: string) {
-    addClass(elem, 'player-' + className);
-}
-
-function addPlayerClasses(elem: Element, classNames: string[]) {
-    for (const className of classNames) {
-        addClass(elem, 'player-' + className);
     }
 }
 
