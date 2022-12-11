@@ -390,6 +390,23 @@ export class Player {
             this.progressUpdate(event as MouseEvent | TouchEvent);
         }.bind(this));
 
+        //Load progress
+        const updateLoadProgress = () => {
+            let bufferEnd = 0;
+            const bufferedRange = this.getBufferedRange();
+            for (const buffer of bufferedRange) {
+                if (buffer.start > this.media.currentTime) {
+                    break;
+                }
+                bufferEnd = buffer.end;
+            }
+            this.loadProgress.style.width = Math.min(Math.round(bufferEnd / this.media.duration * 100), 100) + '%';
+        };
+        addEventListener(this.media, 'progress', function () {
+            updateLoadProgress();
+            setTimeout(updateLoadProgress, 1000);
+        });
+
         //Activity on media
         addEventListener(this.media, 'play', this.onplay.bind(this));
 
@@ -439,23 +456,7 @@ export class Player {
             this.bigPlayButton.blur();
         }.bind(this));
 
-        //Load progress
-        const updateLoadProgress = () => {
-            let bufferEnd = 0;
-            const bufferedRange = this.getBufferedRange();
-            for (const buffer of bufferedRange) {
-                if (buffer.start > this.media.currentTime) {
-                    break;
-                }
-                bufferEnd = buffer.end;
-            }
-            this.loadProgress.style.width = Math.min(Math.round(bufferEnd / this.media.duration * 100), 100) + '%';
-        };
-        addEventListener(this.media, 'progress', function () {
-            updateLoadProgress();
-            setTimeout(updateLoadProgress, 1000);
-        });
-
+        //Buffering
         addEventListener(this.media, 'waiting', function (this: Player) {
             if (this.media.currentTime >= this.media.duration - 0.1) {
                 this.onScreenConsoleOutput('Playback entered waiting state before ended at ' + this.media.currentTime + '.');
