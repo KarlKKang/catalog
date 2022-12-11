@@ -128,7 +128,7 @@ export default function (
             content: 'token=' + epInfo.authentication_token,
             logoutParam: getLogoutParam(seriesID, epIndex)
         });
-    }, 60 * 1000);
+    }, 30 * 1000);
 
     /////////////////////////////////////////////Add Media/////////////////////////////////////////////
     const type = epInfo.type;
