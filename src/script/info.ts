@@ -18,6 +18,7 @@ import {
     getBody,
     getById,
     d,
+    showElement,
 } from './module/DOM';
 
 addEventListener(w, 'load', function () {
@@ -32,15 +33,15 @@ addEventListener(w, 'load', function () {
         successful:
             function () {
                 removeClass(d.documentElement, 'no-header-padding');
-                removeClass(getById('header'), 'hidden');
-                removeClass(getById('nav-btn'), 'hidden');
-                removeClass(getBody(), 'hidden');
+                showElement(getById('header'));
+                showElement(getById('nav-btn'));
+                showElement(getBody());
                 navListeners();
                 scrollToHash(true);
             },
         failed:
             function () {
-                removeClass(getBody(), 'hidden');
+                showElement(getBody());
                 scrollToHash(false);
             },
     });

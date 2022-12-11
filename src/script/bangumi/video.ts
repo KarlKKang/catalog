@@ -18,9 +18,9 @@ import {
     appendChild,
     prependChild,
     insertBefore,
-    removeClass,
     getByIdNative,
     remove,
+    showElement,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -162,7 +162,7 @@ function formatSwitch() {
             mediaHolder.textContent = '';
             const errorMsgElem = getByIdNative('error');
             errorMsgElem && remove(errorMsgElem);
-            removeClass(mediaHolder, 'hidden');
+            showElement(mediaHolder);
             addVideoNode(config);
         },
         content: 'token=' + epInfo.authentication_token + '&format=' + formatIndex,

@@ -19,8 +19,8 @@ import {
     redirect,
     getById,
     getDescendantsByTagAt,
-    removeClass,
     getBody,
+    showElement,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
@@ -58,7 +58,7 @@ addEventListener(w, 'load', function () {
             },
         failed:
             function () {
-                removeClass(getBody(), 'hidden');
+                showElement(getBody());
             },
     });
 
@@ -71,7 +71,7 @@ addEventListener(w, 'load', function () {
         const email = emailInput.value;
         if (!EMAIL_REGEX.test(email)) {
             warningElem.innerHTML = invalidEmailFormat;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
@@ -80,7 +80,7 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 if (response == 'INVALID FORMAT') {
                     warningElem.innerHTML = invalidEmailFormat;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage(emailSent(LOGIN_URL));

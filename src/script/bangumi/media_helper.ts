@@ -15,6 +15,7 @@ import {
     prependChild,
     getByIdNative,
     getDescendantsByClassAt,
+    hideElement,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -51,7 +52,7 @@ export function showErrorMessage(title: string, body: string) {
         titleElem.innerHTML = title;
         bodyElem.innerHTML = body;
     }
-    addClass(mediaHolder, 'hidden');
+    hideElement(mediaHolder);
 }
 
 export function showMediaMessage(title: string, body: string, titleColor: string) {

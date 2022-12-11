@@ -27,6 +27,7 @@ import {
     changeURL,
     appendChild,
     setDataAttribute,
+    showElement,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -73,7 +74,7 @@ addEventListener(w, 'load', function () {
             lazyloadInitialize = module;
             infiniteScrolling = initializeInfiniteScrolling(getSeries, - 256 - 24);
             addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
-            removeClass(getBody(), 'hidden');
+            showElement(getBody());
             showSeries(seriesInfo);
             navListeners();
             addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {

@@ -15,8 +15,8 @@ import {
     getHref,
     redirect,
     getById,
-    removeClass,
     getBody,
+    showElement,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
@@ -43,7 +43,7 @@ addEventListener(w, 'load', function () {
         register();
     });
 
-    removeClass(getBody(), 'hidden');
+    showElement(getBody());
 
     async function register() {
         disableAllInputs(true);
@@ -53,7 +53,7 @@ addEventListener(w, 'load', function () {
 
         if (!EMAIL_REGEX.test(email)) {
             warningElem.innerHTML = invalidEmailFormat;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
@@ -75,7 +75,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                     return;
                 }
-                removeClass(warningElem, 'hidden');
+                showElement(warningElem);
                 disableAllInputs(false);
             },
             content: 'special=1&receiver=' + encodeURIComponent(email),

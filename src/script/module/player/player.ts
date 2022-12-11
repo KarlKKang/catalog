@@ -15,7 +15,9 @@ import {
     remove,
     addEventListenerOnce,
     createElement,
-    appendChild
+    appendChild,
+    hideElement,
+    showElement
 } from '../DOM';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
@@ -164,9 +166,9 @@ export class Player {
         appendChild(durationDisplay, durationDisplayText);
 
         if (w.innerWidth < 275) {
-            addClass(currentTimeDisplay, 'hidden');
-            addClass(timeDivier, 'hidden');
-            addClass(durationDisplay, 'hidden');
+            hideElement(currentTimeDisplay);
+            hideElement(timeDivier);
+            hideElement(durationDisplay);
         }
 
         // Progress control
@@ -354,13 +356,13 @@ export class Player {
     private attachEventListeners(this: Player) {
         //Fluid resize and duration
         addEventListener(w, 'resize', function (this: Player) {
-            let func = removeClass;
+            let func = showElement;
             if (w.innerWidth < 275) {
-                func = addClass
+                func = hideElement
             }
-            func(this.currentTimeDisplay, 'hidden');
-            func(this.timeDivider, 'hidden');
-            func(this.durationDisplay, 'hidden');
+            func(this.currentTimeDisplay);
+            func(this.timeDivider);
+            func(this.durationDisplay);
         }.bind(this));
 
         addEventListener(this.media, 'loadedmetadata', this.onloadedmetadata.bind(this));
@@ -793,7 +795,7 @@ function addPlayerClasses(elem: Element, classNames: string[]) {
 
 function addPlayerPlaceholder(elem: HTMLElement) {
     const placeholder = createElement('span');
-    placeholder.ariaHidden = 'true';
+    // placeholder.ariaHidden = 'true';
     addPlayerClass(placeholder, 'icon-placeholder');
     appendChild(elem, placeholder);
 }

@@ -166,3 +166,15 @@ export function getComputedStyle(elem: HTMLElement, property: string) {
 export function appendChild(parent: Node, child: Node) {
     parent.appendChild(child);
 }
+
+export function hideElement(elem: HTMLElement) {
+    addClass(elem, 'hidden');
+}
+
+export function showElement(elem: HTMLElement) {
+    removeClass(elem, 'hidden');
+}
+
+export function isHidden(elem: HTMLElement) {
+    return containsClass(elem, 'hidden');
+}

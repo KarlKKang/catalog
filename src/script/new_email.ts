@@ -17,8 +17,8 @@ import {
     addEventListener,
     redirect,
     getById,
-    removeClass,
     getBody,
+    showElement,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
@@ -42,7 +42,7 @@ addEventListener(w, 'load', function () {
 
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            removeClass(getBody(), 'hidden');
+            showElement(getBody());
         } else {
             redirect(TOP_URL, true);
         }
@@ -71,7 +71,7 @@ addEventListener(w, 'load', function () {
                 addEventListener(submitButton, 'click', function () {
                     submitRequest();
                 });
-                removeClass(getBody(), 'hidden');
+                showElement(getBody());
             } else {
                 showMessage();
             }
@@ -89,7 +89,7 @@ addEventListener(w, 'load', function () {
 
         if (!EMAIL_REGEX.test(newEmail)) {
             warningElem.innerHTML = invalidEmailFormat;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
@@ -100,11 +100,11 @@ addEventListener(w, 'load', function () {
                     showMessage(expired);
                 } else if (response == 'DUPLICATED') {
                     warningElem.innerHTML = emailAlreadyRegistered;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'INVALID FORMAT') {
                     warningElem.innerHTML = invalidEmailFormat;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
                     showMessage(emailSent(TOP_URL));

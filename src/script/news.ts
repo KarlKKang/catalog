@@ -29,6 +29,7 @@ import {
     getTitle,
     getHash,
     getDataAttribute,
+    showElement,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -90,7 +91,7 @@ function getNews(newsID: string): void {
             }
             showNews(parsedResponse);
             navListeners();
-            removeClass(getBody(), 'hidden');
+            showElement(getBody());
             scrollToHash(true);
         },
         method: 'GET',
@@ -202,7 +203,7 @@ function getAllNews(): void {
                 return;
             }
             addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
-            removeClass(getBody(), 'hidden');
+            showElement(getBody());
             showAllNews(parsedResponse);
             navListeners();
             removeClass(getBody(), 'invisible');

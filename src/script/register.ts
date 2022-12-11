@@ -20,10 +20,10 @@ import {
     addEventListener,
     redirect,
     getById,
-    removeClass,
     getBody,
     getByClassAt,
     openWindow,
+    showElement,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
@@ -48,7 +48,7 @@ addEventListener(w, 'load', function () {
 
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            removeClass(getBody(), 'hidden');
+            showElement(getBody());
             addEventListener(getByClassAt('link', 0), 'click', function () {
                 openWindow('info');
             });
@@ -121,7 +121,7 @@ addEventListener(w, 'load', function () {
                 passwordStyling(passwordInput);
                 passwordStyling(passwordConfirmInput);
 
-                removeClass(getBody(), 'hidden');
+                showElement(getBody());
             } else {
                 showMessage();
             }
@@ -141,19 +141,19 @@ addEventListener(w, 'load', function () {
 
         if (username == '') {
             warningElem.innerHTML = usernameEmpty;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
 
         if (!PASSWORD_REGEX.test(password)) {
             warningElem.innerHTML = invalidPasswordFormat;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         } else if (password != passwordConfirm) {
             warningElem.innerHTML = passwordConfirmationMismatch;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
@@ -171,11 +171,11 @@ addEventListener(w, 'load', function () {
                     showMessage(expired);
                 } else if (response == 'USERNAME DUPLICATED') {
                     warningElem.innerHTML = usernameTaken;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'USERNAME EMPTY') {
                     warningElem.innerHTML = usernameEmpty;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'ALREADY REGISTERED') {
                     showMessage(emailAlreadyRegistered);

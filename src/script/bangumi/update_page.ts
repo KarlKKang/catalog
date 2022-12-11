@@ -24,6 +24,9 @@ import {
     containsClass,
     appendChild,
     insertBefore,
+    showElement,
+    hideElement,
+    isHidden,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -54,7 +57,7 @@ export default function (
     epIndex = _epIndex;
 
     navListeners();
-    removeClass(getBody(), 'hidden');
+    showElement(getBody());
 
     const contentContainer = getById('content');
     const debug = DEVELOPMENT || getURLParam('debug') === '1';
@@ -106,15 +109,15 @@ export default function (
         appendChild(warningButtonGroup, warningButtonYes);
         appendChild(warningButtonGroup, warningButtonNo);
         addEventListener(warningButtonYes, 'click', function () {
-            addClass(warningElem, 'hidden');
-            removeClass(contentContainer, 'hidden');
+            hideElement(warningElem);
+            showElement(contentContainer);
         });
         addEventListener(warningButtonNo, 'click', function () {
             redirect(TOP_URL);
         });
         appendChild(warningElem, warningButtonGroup);
 
-        addClass(contentContainer, 'hidden');
+        hideElement(contentContainer);
         insertBefore(warningElem, contentContainer);
     }
 
@@ -189,7 +192,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10; //Add some extra pixels to compensate for slight variation and error.
     const showMoreButton = createElement('p');
     showMoreButton.id = 'show-more-button';
-    addClass(showMoreButton, 'hidden');
+    hideElement(showMoreButton);
     appendChild(epSelector, showMoreButton);
     addEventListener(showMoreButton, 'click', toggleEPSelector);
     styleEPSelector();
@@ -253,7 +256,7 @@ function foldEPSelector() {
     const showMoreButton = getById('show-more-button');
     const epButtonWrapper = getById('ep-button-wrapper');
 
-    if (!containsClass(showMoreButton, 'hidden')) {
+    if (!isHidden(showMoreButton)) {
         if (containsClass(epButtonWrapper, 'expanded')) {
             epButtonWrapper.style.maxHeight = EPSelectorHeight + 'px';
         }
@@ -262,18 +265,18 @@ function foldEPSelector() {
     showMoreButton.innerHTML = showMoreButtonClippedText;
     epButtonWrapper.style.maxHeight = '50vh';
     removeClass(epButtonWrapper, 'expanded');
-    removeClass(showMoreButton, 'hidden');
+    showElement(showMoreButton);
 }
 
 function unfoldEPSelector() {
     const showMoreButton = getById('show-more-button');
     const epButtonWrapper = getById('ep-button-wrapper');
-    if (containsClass(showMoreButton, 'hidden')) {
+    if (isHidden(showMoreButton)) {
         return;
     }
     epButtonWrapper.style.maxHeight = '';
     removeClass(epButtonWrapper, 'expanded');
-    addClass(showMoreButton, 'hidden');
+    hideElement(showMoreButton);
 }
 
 function toggleEPSelector() {

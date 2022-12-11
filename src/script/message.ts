@@ -14,13 +14,13 @@ import {
     addEventListener,
     getCookie,
     getById,
-    removeClass,
     getBody,
     redirect,
     setTitle,
     deleteCookie,
-    addClass,
     getHref,
+    hideElement,
+    showElement,
 } from './module/DOM';
 import * as LocalMessageParam from './module/type/LocalMessageParam';
 
@@ -41,7 +41,7 @@ addEventListener(w, 'load', function () {
             changeColor(titleElem, 'orange');
             titleElem.innerHTML = 'タイトルTitle';
             messageElem.innerHTML = 'メッセージMessageメッセージMessageメッセージMessageメッセージMessageメッセージMessage';
-            removeClass(getBody(), 'hidden');
+            showElement(getBody());
         } else {
             redirect(TOP_URL, true);
         }
@@ -66,7 +66,7 @@ addEventListener(w, 'load', function () {
         const button = getById('button');
         if (param.url === null) {
             deleteCookie('local-message-param');
-            addClass(button, 'hidden');
+            hideElement(button);
         } else {
             const url = param.url;
             button.innerHTML = '次に進む';
@@ -76,7 +76,7 @@ addEventListener(w, 'load', function () {
             })
         }
 
-        removeClass(getBody(), 'hidden');
+        showElement(getBody());
     };
 
     if (param.logout === true) {

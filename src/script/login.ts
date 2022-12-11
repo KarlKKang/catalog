@@ -22,9 +22,9 @@ import {
     addEventListener,
     redirect,
     getById,
-    removeClass,
     getBody,
-    getDescendantsByTagAt
+    getDescendantsByTagAt,
+    showElement
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { loginFailed, accountDeactivated } from './module/message/template/inline';
@@ -69,7 +69,7 @@ addEventListener(w, 'load', function () {
                     redirect(DEVELOPMENT ? 'request_password_reset.html' : (LOGIN_URL + '/request_password_reset'), true);
                 });
                 passwordStyling(passwordInput);
-                removeClass(getBody(), 'hidden');
+                showElement(getBody());
             }
     });
 
@@ -83,14 +83,14 @@ addEventListener(w, 'load', function () {
 
         if (!EMAIL_REGEX.test(email)) {
             warningElem.innerHTML = loginFailed;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
 
         if (!PASSWORD_REGEX.test(password)) {
             warningElem.innerHTML = loginFailed;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
@@ -109,11 +109,11 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 if (response == 'FAILED') {
                     warningElem.innerHTML = loginFailed;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DEACTIVATED') {
                     warningElem.innerHTML = accountDeactivated;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'APPROVED') {
                     if (UNRECOMMENDED_BROWSER) {

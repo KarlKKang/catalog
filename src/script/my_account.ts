@@ -20,8 +20,8 @@ import {
     getHref,
     redirect,
     getById,
-    removeClass,
     getBody,
+    showElement,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { emailSent as emailSentParam } from './module/message/template/param';
@@ -162,7 +162,7 @@ addEventListener(w, 'load', function () {
         currentUsername = userInfo.username;
 
         navListeners();
-        removeClass(getBody(), 'hidden');
+        showElement(getBody());
     }
 
     function invite() {
@@ -174,7 +174,7 @@ addEventListener(w, 'load', function () {
         changeColor(warningElem, 'red');
         if (!EMAIL_REGEX.test(receiver)) {
             warningElem.innerHTML = invalidEmailFormat;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
@@ -196,7 +196,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                     return;
                 }
-                removeClass(warningElem, 'hidden');
+                showElement(warningElem);
                 disableAllInputs(false);
             },
             content: 'receiver=' + encodeURIComponent(receiver)
@@ -214,12 +214,12 @@ addEventListener(w, 'load', function () {
 
         if (!PASSWORD_REGEX.test(newPassword)) {
             warningElem.innerHTML = invalidPasswordFormat;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         } else if (newPassword != newPasswordConfirm) {
             warningElem.innerHTML = passwordConfirmationMismatch;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
@@ -230,7 +230,7 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 if (response == 'DONE') {
                     warningElem.innerHTML = passwordChanged;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                     changeColor(warningElem, 'green');
                     disableAllInputs(false);
                 } else {
@@ -255,7 +255,7 @@ addEventListener(w, 'load', function () {
                     showMessage();
                     return;
                 }
-                removeClass(warningElem, 'hidden');
+                showElement(warningElem);
                 disableAllInputs(false);
             }
         });
@@ -269,12 +269,12 @@ addEventListener(w, 'load', function () {
 
         if (newUsername == '') {
             warningElem.innerHTML = usernameEmpty;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         } else if (newUsername == currentUsername) {
             warningElem.innerHTML = usernameUnchanged;
-            removeClass(warningElem, 'hidden');
+            showElement(warningElem);
             disableAllInputs(false);
             return;
         }
@@ -283,15 +283,15 @@ addEventListener(w, 'load', function () {
             callback: function (response: string) {
                 if (response == 'DONE') {
                     warningElem.innerHTML = usernameChanged;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                     changeColor(warningElem, 'green');
                     currentUsername = newUsername
                 } else if (response == 'DUPLICATED') {
                     warningElem.innerHTML = usernameTaken;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                 } else if (response == 'EMPTY') {
                     warningElem.innerHTML = usernameEmpty;
-                    removeClass(warningElem, 'hidden');
+                    showElement(warningElem);
                 } else {
                     showMessage();
                     return;

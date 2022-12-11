@@ -13,8 +13,8 @@ import {
     getHref,
     redirect,
     getById,
-    removeClass,
     getBody,
+    showElement,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -116,7 +116,7 @@ addEventListener(w, 'load', function () {
                     addEventListener(getById('run-benchmark-password-hash'), 'click', function () {
                         misc('benchmark', 'password_hash');
                     });
-                    removeClass(getBody(), 'hidden');
+                    showElement(getBody());
                 }).catch((e) => {
                     showMessage(moduleImportError(e));
                 });
