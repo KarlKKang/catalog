@@ -6,19 +6,18 @@ import {
     removeEventsListener,
     containsClass,
 } from '../DOM';
-import type { default as videojs } from 'video.js';
 
 export abstract class NonNativePlayer extends Player {
     private buffering = false;
 
     constructor(
-        instance: videojs.Player,
+        container: HTMLDivElement,
         config?: {
             audio?: boolean,
             debug?: boolean
         }
     ) {
-        super(instance, config);
+        super(container, config);
         this.checkBuffer = this.checkBuffer.bind(this);
     }
 

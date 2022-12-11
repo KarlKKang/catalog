@@ -75,6 +75,7 @@ addEventListener(w, 'load', function () {
                     importPromises.audio,
                     importPromises.image,
                     importPromises.hls,
+                    importPromises.videojs,
                     importPromises.lazyload
                 );
             }).catch((e) => {

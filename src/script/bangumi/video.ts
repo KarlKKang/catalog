@@ -33,7 +33,6 @@ import {
     NATIVE_HLS,
     CAN_PLAY_AVC_AAC,
 } from '../module/browser';
-import { default as videojs } from 'video.js';
 import { Player, HlsPlayer } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
@@ -193,79 +192,68 @@ function addVideoNode(config?: {
         }
     }
 
-    const videoJS = createElement('video-js');
 
-    addClass(videoJS, 'vjs-big-play-centered');
-    videoJS.lang = 'en';
-    appendChild(mediaHolder, videoJS);
+    const playerContainer = createElement('div') as HTMLDivElement;
+    appendChild(mediaHolder, playerContainer);
+    playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
+    const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '].m3u8'), epInfo.cdn_credentials);
 
-    const vjsConfig = {
-        controls: true,
-        autoplay: false,
-        fluid: true,
-    };
-
-    const videojsInstance = videojs(videoJS, vjsConfig, function () {
-        videoJS.style.paddingTop = 9 / 16 * 100 + '%';
-        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '].m3u8'), epInfo.cdn_credentials);
-
-        if (USE_MSE) {
-            const hlsConfig = {
-                enableWebVTT: false,
-                enableIMSC1: false,
-                enableCEA708Captions: false,
-                lowLatencyMode: false,
-                enableWorker: false,
-                maxFragLookUpTolerance: 0.0,
-                testBandwidth: false,
-                backBufferLength: 0,
-                maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
-                maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
-                maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Although the value 0.5 is the default in the documentation, this option somehow must be explictly set to take effect.
-                debug: debug,
-                xhrSetup: function (xhr: XMLHttpRequest) {
-                    xhr.withCredentials = true;
-                }
+    if (USE_MSE) {
+        const hlsConfig = {
+            enableWebVTT: false,
+            enableIMSC1: false,
+            enableCEA708Captions: false,
+            lowLatencyMode: false,
+            enableWorker: false,
+            maxFragLookUpTolerance: 0.0,
+            testBandwidth: false,
+            backBufferLength: 0,
+            maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
+            maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
+            maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Although the value 0.5 is the default in the documentation, this option somehow must be explictly set to take effect.
+            debug: debug,
+            xhrSetup: function (xhr: XMLHttpRequest) {
+                xhr.withCredentials = true;
             }
+        }
 
-            hlsImportPromise.then(({ default: Hls }) => {
-                const mediaInstance = new HlsPlayer(videojsInstance, Hls, hlsConfig, {
-                    debug: debug
-                });
-                currentMediaInstance = mediaInstance;
-                mediaInstance.load(url, {
-                    onerror: function (_: Events.ERROR, data: ErrorData) {
-                        if (data.fatal) {
-                            showPlaybackError(data.details);
-                            currentMediaInstance = undefined;
-                            mediaInstance.destroy();
-                        }
-                    },
-                    play: _config.play,
-                    startTime: _config.startTime
-                });
-                _onInit(mediaInstance);
-            }).catch((e) => {
-                showMessage(moduleImportError(e));
-                return;
-            });
-        } else {
-            const mediaInstance = new Player(videojsInstance, {
+        hlsImportPromise.then(({ default: Hls }) => {
+            const mediaInstance = new HlsPlayer(playerContainer, Hls, hlsConfig, {
                 debug: debug
             });
             currentMediaInstance = mediaInstance;
             mediaInstance.load(url, {
-                onerror: function () {
-                    showPlaybackError();
-                    currentMediaInstance = undefined;
-                    mediaInstance.destroy();
+                onerror: function (_: Events.ERROR, data: ErrorData) {
+                    if (data.fatal) {
+                        showPlaybackError(data.details);
+                        currentMediaInstance = undefined;
+                        mediaInstance.destroy();
+                    }
                 },
                 play: _config.play,
                 startTime: _config.startTime
             });
             _onInit(mediaInstance);
-        }
-    });
+        }).catch((e) => {
+            showMessage(moduleImportError(e));
+            return;
+        });
+    } else {
+        const mediaInstance = new Player(playerContainer, {
+            debug: debug
+        });
+        currentMediaInstance = mediaInstance;
+        mediaInstance.load(url, {
+            onerror: function () {
+                showPlaybackError();
+                currentMediaInstance = undefined;
+                mediaInstance.destroy();
+            },
+            play: _config.play,
+            startTime: _config.startTime
+        });
+        _onInit(mediaInstance);
+    }
 }
 
 function displayChapters(mediaInstance: Player) {

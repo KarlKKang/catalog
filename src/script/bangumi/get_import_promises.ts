@@ -21,6 +21,10 @@ export type HlsImportPromise = Promise<typeof import(
     /* webpackExports: ["default"] */
     '../../../custom_modules/hls.js'
 )>;
+export type VideojsImportPromise = Promise<typeof import(
+    /* webpackExports: ["default"] */
+    'video.js'
+)>;
 
 type AllPromises = {
     updatePage: UpdatePageImportPromise,
@@ -28,7 +32,8 @@ type AllPromises = {
     audio: AudioImportPromise,
     video: VideoImportPromise,
     lazyload: LazyloadImportPromise,
-    hls: HlsImportPromise
+    hls: HlsImportPromise,
+    videojs: VideojsImportPromise
 }
 
 export default function (): AllPromises {
@@ -53,6 +58,10 @@ export default function (): AllPromises {
         hls: import(
             /* webpackExports: ["default"] */
             '../../../custom_modules/hls.js' // This includes a temporary bug fix for encrypted mp3 buffer timestamp.
+        ),
+        videojs: import(
+            /* webpackExports: ["default"] */
+            'video.js'
         )
     };
 }

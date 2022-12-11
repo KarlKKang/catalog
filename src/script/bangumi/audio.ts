@@ -23,14 +23,13 @@ import {
     CAN_PLAY_FLAC,
     CAN_PLAY_MP3,
 } from '../module/browser';
-import { default as videojs } from 'video.js';
 import { Player, HlsPlayer, VideojsPlayer } from '../module/player';
 
 import { parseCharacters } from './helper';
 import {
     showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion
 } from './media_helper';
-import type { HlsImportPromise } from './get_import_promises';
+import type { HlsImportPromise, VideojsImportPromise } from './get_import_promises';
 
 let seriesID: string;
 let epIndex: number;
@@ -42,6 +41,7 @@ let debug: boolean;
 let audioReadyCounter = 0;
 const mediaInstances: Array<Player> = [];
 let hlsImportPromise: HlsImportPromise;
+let videojsImportPromise: VideojsImportPromise;
 
 export default function (
     _seriesID: string,
@@ -50,6 +50,7 @@ export default function (
     _baseURL: string,
     _mediaHolder: HTMLElement,
     _hlsImportPromise: HlsImportPromise,
+    _videojsImportPromise: VideojsImportPromise,
     _debug: boolean
 ) {
 
@@ -59,6 +60,7 @@ export default function (
     baseURL = _baseURL;
     mediaHolder = _mediaHolder;
     hlsImportPromise = _hlsImportPromise;
+    videojsImportPromise = _videojsImportPromise;
     debug = _debug;
 
     const audioEPInfo = epInfo as AudioEPInfo;
@@ -84,17 +86,6 @@ function addAudioNode(index: number) {
 
     const credentials = audioEPInfo.cdn_credentials;
 
-    const configVideoJSControl = {
-        controls: true,
-        autoplay: false,
-        fluid: true,
-        aspectRatio: '1:0',
-        controlBar: {
-            fullscreenToggle: false,
-            pictureInPictureToggle: false
-        }
-    } as const;
-
     const configHls = {
         enableWebVTT: false,
         enableIMSC1: false,
@@ -112,17 +103,9 @@ function addAudioNode(index: number) {
         }
     };
 
-    const audioNode = createElement('audio');
-    audioNode.id = 'track' + index;
-
-    addClass(audioNode, 'vjs-default-skin');
-    addClass(audioNode, 'video-js');
-    audioNode.lang = 'en';
-
     const FLAC_FALLBACK = (file.flac_fallback && !CAN_PLAY_ALAC);
 
     appendChild(mediaHolder, getAudioSubtitleNode(file, FLAC_FALLBACK));
-    appendChild(mediaHolder, audioNode);
 
     const IS_FLAC = (file.format.toLowerCase() == 'flac' || FLAC_FALLBACK);
     const USE_VIDEOJS = USE_MSE && IS_FLAC;
@@ -134,39 +117,61 @@ function addAudioNode(index: number) {
         return false;
     }
 
-    const videoJSControl = videojs(audioNode, configVideoJSControl, function () {
-        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8'), credentials, baseURL + '_MASTER_*.m3u8');
+    const playerContainer = createElement('div') as HTMLDivElement;
+    appendChild(mediaHolder, playerContainer);
+    const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8'), credentials, baseURL + '_MASTER_*.m3u8');
 
-        if (USE_VIDEOJS) {
-            const configVideoJSMedia = {
-                controls: false,
-                autoplay: false,
-                html5: {
-                    vhs: {
-                        overrideNative: true,
-                        withCredentials: true
-                    },
-                    nativeAudioTracks: false,
-                    //nativeVideoTracks: false
+    if (USE_VIDEOJS) {
+        const configVideoJSMedia = {
+            controls: false,
+            autoplay: false,
+            html5: {
+                vhs: {
+                    overrideNative: true,
+                    withCredentials: true
                 },
-            } as const;
-            const videoJSMediaNode = createElement('audio') as HTMLAudioElement;
-            videoJSMediaNode.style.display = 'none';
-            appendChild(mediaHolder, videoJSMediaNode);
+                nativeAudioTracks: false,
+                //nativeVideoTracks: false
+            },
+        } as const;
 
-            const videoJSMedia = videojs(videoJSMediaNode, configVideoJSMedia, function () {
-                const audioInstance = new VideojsPlayer(videoJSControl, videoJSMedia, {
+        videojsImportPromise.then(({ default: videojs }) => {
+            const audioInstance = new VideojsPlayer(playerContainer, videojs, configVideoJSMedia, {
+                audio: true,
+                debug: debug
+            });
+            audioInstance.load(url, {
+                onerror: function () {
+                    if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
+                        showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
+                    } else {
+                        showPlaybackError('Index ' + index);
+                    }
+                    destroyAll();
+                },
+                onload: function () {
+                    audioReadyCounter++;
+                    if (audioReadyCounter == audioEPInfo.files.length) {
+                        audioReady();
+                    }
+                }
+            });
+            mediaInstances[index] = audioInstance;
+            setMediaTitle(audioInstance);
+        });
+    } else {
+        if (USE_MSE) {
+            hlsImportPromise.then(({ default: Hls }) => {
+                const audioInstance = new HlsPlayer(playerContainer, Hls, configHls, {
                     audio: true,
                     debug: debug
                 });
                 audioInstance.load(url, {
-                    onerror: function () {
-                        if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
-                            showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
-                        } else {
-                            showPlaybackError('Index ' + index + ': ' + 'videojs: ' + JSON.stringify(videoJSMedia.error()));
+                    onerror: function (_, data) {
+                        if (data.fatal) {
+                            showPlaybackError('Index ' + index + ': ' + data.details);
+                            destroyAll();
                         }
-                        destroyAll();
                     },
                     onload: function () {
                         audioReadyCounter++;
@@ -177,56 +182,31 @@ function addAudioNode(index: number) {
                 });
                 mediaInstances[index] = audioInstance;
                 setMediaTitle(audioInstance);
+            }).catch((e) => {
+                showMessage(moduleImportError(e));
+                return;
             });
         } else {
-            if (USE_MSE) {
-                hlsImportPromise.then(({ default: Hls }) => {
-                    const audioInstance = new HlsPlayer(videoJSControl, Hls, configHls, {
-                        audio: true,
-                        debug: debug
-                    });
-                    audioInstance.load(url, {
-                        onerror: function (_, data) {
-                            if (data.fatal) {
-                                showPlaybackError('Index ' + index + ': ' + data.details);
-                                destroyAll();
-                            }
-                        },
-                        onload: function () {
-                            audioReadyCounter++;
-                            if (audioReadyCounter == audioEPInfo.files.length) {
-                                audioReady();
-                            }
-                        }
-                    });
-                    mediaInstances[index] = audioInstance;
-                    setMediaTitle(audioInstance);
-                }).catch((e) => {
-                    showMessage(moduleImportError(e));
-                    return;
-                });
-            } else {
-                const audioInstance = new Player(videoJSControl, {
-                    audio: true,
-                    debug: debug
-                });
-                audioInstance.load(url, {
-                    onerror: function () {
-                        showPlaybackError();
-                        destroyAll();
-                    },
-                    onload: function () {
-                        audioReadyCounter++;
-                        if (audioReadyCounter == audioEPInfo.files.length) {
-                            audioReady();
-                        }
+            const audioInstance = new Player(playerContainer, {
+                audio: true,
+                debug: debug
+            });
+            audioInstance.load(url, {
+                onerror: function () {
+                    showPlaybackError();
+                    destroyAll();
+                },
+                onload: function () {
+                    audioReadyCounter++;
+                    if (audioReadyCounter == audioEPInfo.files.length) {
+                        audioReady();
                     }
-                });
-                mediaInstances[index] = audioInstance;
-                setMediaTitle(audioInstance);
-            }
+                }
+            });
+            mediaInstances[index] = audioInstance;
+            setMediaTitle(audioInstance);
         }
-    });
+    }
 
     function setMediaTitle(audioInstance: Player) {
         audioInstance.media.title = ((file.title == '') ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();

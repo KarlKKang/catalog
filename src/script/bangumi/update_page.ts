@@ -30,7 +30,7 @@ import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
-import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImportPromise, LazyloadImportPromise } from './get_import_promises';
+import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImportPromise, LazyloadImportPromise, VideojsImportPromise } from './get_import_promises';
 
 const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
 const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
@@ -47,6 +47,7 @@ export default function (
     audioImportPromise: AudioImportPromise,
     imageImportPromise: ImageImportPromise,
     hlsImportPromise: HlsImportPromise,
+    videojsImportPromise: VideojsImportPromise,
     lazyloadImportPromise: LazyloadImportPromise
 ) {
     seriesID = _seriesID;
@@ -146,7 +147,7 @@ export default function (
     } else {
         if (type === 'audio') {
             audioImportPromise.then(({ default: module }) => {
-                module(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, hlsImportPromise, debug);
+                module(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, hlsImportPromise, videojsImportPromise, debug);
             }).catch((e) => {
                 showMessage(moduleImportError(e));
             });

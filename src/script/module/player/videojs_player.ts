@@ -1,7 +1,7 @@
 import { NonNativePlayer } from './non-native-player';
 import type { default as videojs } from 'video.js';
 import {
-    getDescendantsByTagAt,
+    prependChild,
     remove,
 } from '../DOM';
 
@@ -9,18 +9,18 @@ export class VideojsPlayer extends NonNativePlayer {
     private readonly videojsInstance: videojs.Player;
 
     constructor(
-        controlInstance: videojs.Player,
-        mediaInstance: videojs.Player,
+        container: HTMLDivElement,
+        videojsConstructor: typeof videojs,
+        videojsConfig: videojs.PlayerOptions,
         config?: {
             audio?: boolean,
             debug?: boolean
         }
     ) {
-        super(controlInstance, config);
-        this.videojsInstance = mediaInstance;
-
-        remove(this._media);
-        this._media = this.IS_VIDEO ? (getDescendantsByTagAt(this.videojsInstance.el(), 'video', 0) as HTMLVideoElement) : (getDescendantsByTagAt(this.videojsInstance.el(), 'audio', 0) as HTMLAudioElement);
+        super(container, config);
+        this.videojsInstance = videojsConstructor(this._media, videojsConfig);
+        prependChild(container, this._media);
+        remove(this.videojsInstance.el());
     }
 
     protected attach(this: VideojsPlayer, onload?: (...args: any[]) => void, onerror?: (...args: any[]) => void): void {

@@ -1,7 +1,6 @@
 import { NonNativePlayer } from './non-native-player';
 import { remove } from '../DOM';
 import type Hls from '../../../../custom_modules/hls.js';
-import type { default as videojs } from 'video.js';
 import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig } from '../../../../custom_modules/hls.js';
 
 export class HlsPlayer extends NonNativePlayer {
@@ -10,7 +9,7 @@ export class HlsPlayer extends NonNativePlayer {
     private fragStart = 0;
 
     constructor(
-        instance: videojs.Player,
+        container: HTMLDivElement,
         hlsConstructor: typeof Hls,
         hlsConfig: Partial<HlsConfig>,
         config?: {
@@ -18,7 +17,7 @@ export class HlsPlayer extends NonNativePlayer {
             debug?: boolean
         }
     ) {
-        super(instance, config);
+        super(container, config);
         this.hlsInstance = new hlsConstructor(hlsConfig);
         this.hlsConstructor = hlsConstructor;
     }
