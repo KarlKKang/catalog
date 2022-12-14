@@ -114,9 +114,12 @@
   display: none !important;
 }
 
-.player .player-disabled {
-  opacity: 0.5;
-  cursor: default;
+.player .player-button.player-disabled {
+  cursor: default !important;
+}
+
+.player .player-button.player-disabled svg {
+  fill: var(--alt-text-color) !important;
 }
 
 .player .player-big-play-button {

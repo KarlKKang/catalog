@@ -552,7 +552,6 @@ export class Player {
 
         if (screenfull.isEnabled || IOS_FULLSCREEN) {
             removePlayerClass(this.fullscreenButton, 'disabled');
-            this.fullscreenButton.disabled = false;
 
             addEventListener(this.fullscreenButton, 'click', function () {
                 toggleFullscreen();
@@ -572,7 +571,7 @@ export class Player {
             }
         } else {
             addPlayerClass(this.fullscreenButton, 'disabled');
-            this.fullscreenButton.disabled = true;
+            this.fullscreenButton.title = 'Fullscreen Unavailable';
         }
 
         //Picture in picture
