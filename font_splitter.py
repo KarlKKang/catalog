@@ -161,6 +161,9 @@ def font_splitter(
         sys.argv[len(sys.argv) - 2] = "--flavor=woff"
         sys.argv[len(sys.argv) - 1] = f"--output-file={output_file_woff}"
         pyftsubset()
+        local_font_declaration = (
+            f'src: local("{font_name}"), \n' if font_name is not None else "src: "
+        )
         font_weight_declaration = (
             (f"font-weight: {str(font_weight)};\n") if font_weight is not None else ""
         )
@@ -168,7 +171,7 @@ def font_splitter(
             f"/*{glyph}*/\n"
             + "@font-face {\n"
             + f'font-family: "{font_family}";\n'
-            + f'src: local("{font_name}"), \n'
+            + local_font_declaration
             + f'url("{output_sub_dir}/{dest_file_name}.woff2") format("woff2"),\n'
             + f'url("{output_sub_dir}/{dest_file_name}.woff") format("woff");\n'
             + font_weight_declaration
