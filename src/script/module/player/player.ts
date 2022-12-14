@@ -16,7 +16,8 @@ import {
     createElement,
     appendChild,
     hideElement,
-    showElement
+    showElement,
+    insertAfter
 } from '../DOM';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
@@ -25,11 +26,21 @@ import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClas
 declare global {
     interface HTMLVideoElement {
         readonly webkitEnterFullscreen?: () => void,
+        readonly webkitShowPlaybackTargetPicker: () => void,
+        readonly webkitCurrentPlaybackTargetIsWireless?: boolean,
         autoPictureInPicture?: boolean,
     }
 
     interface HTMLMediaElement {
         controlsList?: DOMTokenList
+    }
+
+    interface Window {
+        WebKitPlaybackTargetAvailabilityEvent?: typeof Event
+    }
+
+    interface Event {
+        availability?: string
     }
 }
 
@@ -57,6 +68,7 @@ export class Player {
     private readonly timeDivider: HTMLElement;
     private readonly PIPButton: HTMLButtonElement | undefined;
     private readonly fullscreenButton: HTMLButtonElement;
+    private readonly airplayButton: HTMLButtonElement;
 
     protected attached = false;
 
@@ -240,6 +252,15 @@ export class Player {
         appendChild(fullscreenButtonPlaceholder, icons.fullscreenEnter);
         appendChild(fullscreenButtonPlaceholder, icons.fullscreenExit);
         this.IS_VIDEO && appendChild(controlBar, fullscreenButton);
+
+        // Airplay
+        const airplayButton = createElement('button') as HTMLButtonElement;
+        this.airplayButton = airplayButton;
+        airplayButton.type = 'button';
+        airplayButton.title = 'Airplay';
+        addPlayerClasses(airplayButton, ['airplay-control', 'control', 'button']);
+        const airplayButtonPlaceholder = addPlayerPlaceholder(airplayButton);
+        appendChild(airplayButtonPlaceholder, icons.airplay);
 
         this.DEBUG = config.debug === true;
         removeRightClick(controls);
@@ -575,6 +596,28 @@ export class Player {
                 removePlayerClass(this.controls, 'picture-in-picture');
                 PIPButton.title = 'Picture-in-Picture';
             }.bind(this));
+        }
+
+        //Airplay
+        if (w.WebKitPlaybackTargetAvailabilityEvent) {
+            this.onScreenConsoleOutput('Airplay available');
+            addEventListener(this.media, 'webkitplaybacktargetavailabilitychanged', (event) => {
+                this.onScreenConsoleOutput('webkitplaybacktargetavailabilitychanged: ' + event.availability);
+                if (event.availability !== 'available') {
+                    return;
+                }
+                insertAfter(this.airplayButton, this.progressControl);
+                addEventListener(this.airplayButton, 'click', () => {
+                    (this.media as HTMLVideoElement).webkitShowPlaybackTargetPicker();
+                });
+                addEventListener(this.media, 'webkitcurrentplaybacktargetiswirelesschanged', () => {
+                    if ((this.media as HTMLVideoElement).webkitCurrentPlaybackTargetIsWireless) {
+                        addPlayerClass(this.controls, 'airplay');
+                    } else {
+                        removePlayerClass(this.controls, 'airplay');
+                    }
+                });
+            });
         }
 
         //Hotkeys
