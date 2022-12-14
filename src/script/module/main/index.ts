@@ -366,20 +366,19 @@ export function clearCookies() {
 
 ////////////////////////////////////////
 import type Sha512 from 'node-forge/lib/sha512';
-let sha512: typeof Sha512 | null = null;
 export async function hashPassword(password: string) {
-    if (sha512 === null) {
-        try {
-            ({ default: sha512 } = await import(
-                /* webpackExports: ["default"] */
-                'node-forge/lib/sha512'
-            ));
-        } catch (e) {
-            showMessage(moduleImportError(e));
-        }
+    let sha512: typeof Sha512;
+    try {
+        sha512 = await import(
+            /* webpackExports: ["default"] */
+            'node-forge/lib/sha512'
+        );
+    } catch (e) {
+        showMessage(moduleImportError(e));
+        throw e;
     }
 
-    const hash = (sha512 as typeof Sha512).sha256.create();
+    const hash = sha512.sha256.create();
     hash.update(password);
     return hash.digest().toHex();
 }
