@@ -18,8 +18,8 @@ export class VideojsPlayer extends NonNativePlayer {
         }
     ) {
         super(container, config);
-        this.videojsInstance = videojsConstructor(this._media, videojsConfig);
-        prependChild(container, this._media);
+        this.videojsInstance = videojsConstructor(this.media, videojsConfig);
+        prependChild(container, this.media);
         remove(this.videojsInstance.el());
     }
 
