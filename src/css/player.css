@@ -252,10 +252,6 @@
   font-size: 1.4em;
 }
 
-.player .player-progress-control:hover .player-progress-holder.disabled {
-  font-size: 1em;
-}
-
 .player .player-progress-holder .player-play-progress,
 .player .player-progress-holder .player-load-progress {
   position: absolute;
@@ -298,10 +294,6 @@
   display: block;
   font-size: 0.6em;
   visibility: visible;
-}
-
-.player .player-progress-control.disabled:hover .player-time-tooltip {
-  font-size: 1em;
 }
 
 .player .player-progress-control .player-mouse-display {
@@ -355,10 +347,6 @@ only screen and (pointer: coarse) {
   /* Non-prefixed version, currently supported by Chrome and Opera */
   user-select: none;
   background-color: rgba(0, 0, 0, 0.15);
-}
-
-.player .player-slider.disabled {
-  cursor: default;
 }
 
 .player .player-time-control {
@@ -421,6 +409,10 @@ only screen and (pointer: coarse) {
   display: block;
   -webkit-animation: player-spinner-show 0s linear 0.3s forwards;
   animation: player-spinner-show 0s linear 0.3s forwards;
+}
+
+.player.player-controls-disabled .player-loading-spinner {
+  display: none;
 }
 
 .player .player-loading-spinner:before,
