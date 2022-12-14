@@ -7,7 +7,7 @@ import { w, createElement } from '../DOM';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
     interface Window {
-        chrome: any
+        chrome: any;
     }
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

@@ -2,25 +2,25 @@ import { throwError, isObject, isString, isArray, isNumber } from './helper';
 
 interface CDNPolicy {
     Statement: [{
-        Resource: string,
+        Resource: string;
         Condition: {
             DateLessThan: {
-                'AWS:EpochTime': number
-            },
+                'AWS:EpochTime': number;
+            };
             DateGreaterThan?: {
-                'AWS:EpochTime': number
-            },
+                'AWS:EpochTime': number;
+            };
             IpAddress?: {
-                'AWS:SourceIp': string
-            }
-        }
-    }]
+                'AWS:SourceIp': string;
+            };
+        };
+    }];
 }
 
 export type CDNCredentials = {
-    Signature: string,
-    'Key-Pair-Id': string,
-    Policy: CDNPolicy
+    Signature: string;
+    'Key-Pair-Id': string;
+    Policy: CDNPolicy;
 };
 
 function checkCDNPolicy(policy: any) {

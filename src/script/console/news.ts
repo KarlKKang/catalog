@@ -37,11 +37,11 @@ function modifyNews(button: Element) {
     const nextChunk = contentChunks.shift();
 
     const parsedRecord: {
-        id: string,
-        title: string,
-        content?: string,
-        public: boolean,
-        end: boolean
+        id: string;
+        title: string;
+        content?: string;
+        public: boolean;
+        end: boolean;
     } = {
         ...record,
         end: nextChunk === undefined
@@ -115,11 +115,11 @@ function addNews(button: Element) {
     const nextChunk = contentChunks.shift();
 
     const parsedRecord: {
-        id: string,
-        title: string,
-        content?: string,
-        public: boolean,
-        end: boolean
+        id: string;
+        title: string;
+        content?: string;
+        public: boolean;
+        end: boolean;
     } = {
         ...record,
         end: nextChunk === undefined
@@ -130,7 +130,7 @@ function addNews(button: Element) {
         command: 'insert',
         type: 'news',
         ...parsedRecord
-    }
+    };
 
     let confirm;
     do {
@@ -311,7 +311,7 @@ function appendNews(id: string, contentChunk: string, remainingContentChunks: st
         id: id,
         content: contentChunk,
         end: nextChunk === undefined
-    }
+    };
 
     sendServerRequest('console.php', {
         callback: function (response: string) {
@@ -336,5 +336,5 @@ function splitContent(content: string): string[] {
         result.push(content.substring(0, chunkSize));
         content = content.substring(chunkSize);
     }
-    return result
+    return result;
 }

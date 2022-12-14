@@ -92,11 +92,11 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
 
 ////////////////////////////////////////
 interface SendServerRequestOption {
-    callback?: (response: string) => void,
-    content?: string,
-    withCredentials?: boolean,
-    method?: 'POST' | 'GET',
-    logoutParam?: string
+    callback?: (response: string) => void;
+    content?: string;
+    withCredentials?: boolean;
+    method?: 'POST' | 'GET';
+    logoutParam?: string;
 }
 export function sendServerRequest(uri: string, options: SendServerRequestOption) {
     const xmlhttp = new XMLHttpRequest();
@@ -114,7 +114,7 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function authenticate(callback: { successful?: () => void, failed?: () => void }) {
+export function authenticate(callback: { successful?: () => void; failed?: () => void }) {
     sendServerRequest('get_authentication_state.php', {
         callback: function (response: string) {
             if (response == 'APPROVED') {
@@ -164,7 +164,7 @@ export function passwordStyling(element: HTMLInputElement) {
             descriptor.set = function (...args) {
                 originalSet.apply(this, args);
                 inputChangeHandler();
-            }
+            };
             Object.defineProperty(element, 'value', descriptor);
         }
     }

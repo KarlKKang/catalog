@@ -2,66 +2,66 @@ import { throwError, isObject, isString, isArray, isNumber, isBoolean } from './
 import * as CDNCredentials from './CDNCredentials';
 
 export type AudioFile = {
-    title: string,
-    artist: string,
-    format: string,
-    samplerate: string,
-    bitdepth: string,
-    file_name: string,
-    flac_fallback: boolean
-}
+    title: string;
+    artist: string;
+    format: string;
+    samplerate: string;
+    bitdepth: string;
+    file_name: string;
+    flac_fallback: boolean;
+};
 
 type ImageFile = {
-    tag: string,
-    file_name: string
-}
+    tag: string;
+    file_name: string;
+};
 
 interface EPInfo {
-    age_restricted: string | false,
-    authentication_token: string,
-    dir: string,
-    series_override?: string,
+    age_restricted: string | false;
+    authentication_token: string;
+    dir: string;
+    series_override?: string;
 }
 
 type Chapters = Array<[string, number]>;
 export type VideoFormatInfo = {
-    value: string,
-    tag?: string
+    value: string;
+    tag?: string;
 };
 export interface VideoEPInfo extends EPInfo {
-    type: 'video',
-    title: string,
-    formats: [VideoFormatInfo, ...VideoFormatInfo[]],
-    chapters: Chapters,
-    file_name: string,
-    cdn_credentials: CDNCredentials.CDNCredentials
+    type: 'video';
+    title: string;
+    formats: [VideoFormatInfo, ...VideoFormatInfo[]];
+    chapters: Chapters;
+    file_name: string;
+    cdn_credentials: CDNCredentials.CDNCredentials;
 }
 
 export interface AudioEPInfo extends EPInfo {
-    type: 'audio',
+    type: 'audio';
     album_info: {
-        album_title: string,
-        album_artist: string
-    },
-    files: [AudioFile, ...AudioFile[]],
-    cdn_credentials: CDNCredentials.CDNCredentials
+        album_title: string;
+        album_artist: string;
+    };
+    files: [AudioFile, ...AudioFile[]];
+    cdn_credentials: CDNCredentials.CDNCredentials;
 }
 
 export interface ImageEPInfo extends EPInfo {
-    type: 'image',
-    files: [ImageFile, ...ImageFile[]]
+    type: 'image';
+    files: [ImageFile, ...ImageFile[]];
 }
 
-export type Seasons = { id: string, season_name: string }[];
+export type Seasons = { id: string; season_name: string }[];
 export type SeriesEP = [string, ...string[]];
 
 export type BangumiInfo = {
-    title: string,
-    title_override?: string,
-    seasons: Seasons,
-    series_ep: SeriesEP,
-    ep_info: VideoEPInfo | AudioEPInfo | ImageEPInfo
-}
+    title: string;
+    title_override?: string;
+    seasons: Seasons;
+    series_ep: SeriesEP;
+    ep_info: VideoEPInfo | AudioEPInfo | ImageEPInfo;
+};
 
 function checkVideoEPInfo(epInfo: any) {
 

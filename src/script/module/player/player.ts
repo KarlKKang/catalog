@@ -25,22 +25,22 @@ import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClas
 
 declare global {
     interface HTMLVideoElement {
-        readonly webkitEnterFullscreen?: () => void,
-        readonly webkitShowPlaybackTargetPicker: () => void,
-        readonly webkitCurrentPlaybackTargetIsWireless?: boolean,
-        autoPictureInPicture?: boolean,
+        readonly webkitEnterFullscreen?: () => void;
+        readonly webkitShowPlaybackTargetPicker: () => void;
+        readonly webkitCurrentPlaybackTargetIsWireless?: boolean;
+        autoPictureInPicture?: boolean;
     }
 
     interface HTMLMediaElement {
-        controlsList?: DOMTokenList
+        controlsList?: DOMTokenList;
     }
 
     interface Window {
-        WebKitPlaybackTargetAvailabilityEvent?: typeof Event
+        WebKitPlaybackTargetAvailabilityEvent?: typeof Event;
     }
 
     interface Event {
-        availability?: string
+        availability?: string;
     }
 }
 
@@ -88,8 +88,8 @@ export class Player {
     constructor(
         container: HTMLDivElement,
         config?: {
-            audio?: boolean,
-            debug?: boolean
+            audio?: boolean;
+            debug?: boolean;
         }
     ) {
         config = config ?? {};
@@ -293,10 +293,10 @@ export class Player {
         this: Player,
         url: string,
         config?: {
-            play?: boolean | undefined,
-            startTime?: number | undefined,
-            onload?: (...args: any[]) => void,
-            onerror?: (...args: any[]) => void
+            play?: boolean | undefined;
+            startTime?: number | undefined;
+            onload?: (...args: any[]) => void;
+            onerror?: (...args: any[]) => void;
         }
     ): void {
         config = config ?? {};
@@ -390,7 +390,7 @@ export class Player {
         addEventListener(w, 'resize', function (this: Player) {
             let func = showElement;
             if (w.innerWidth < 320) {
-                func = hideElement
+                func = hideElement;
             }
             func(this.currentTimeDisplay);
             func(this.timeDivider);
@@ -800,9 +800,9 @@ export class Player {
         removePlayerClass(this.controls, 'seeking');
     }
 
-    protected getBufferedRange(this: Player): { start: number, end: number }[] {
+    protected getBufferedRange(this: Player): { start: number; end: number }[] {
         const bufferedRange = [];
-        let currentBuffer: null | { start: number, end: number } = null;
+        let currentBuffer: null | { start: number; end: number } = null;
         for (let i = 0; i < this.media.buffered.length; i++) {
             const nextBufferStart = this.media.buffered.start(i);
             if (currentBuffer === null) {
@@ -869,7 +869,7 @@ function getIcons() {
     const pauseIcon = createSvg(viewBox, 'm453,1419h299V373h-299v1046ZM1050,373v1046h299V373h-299Z');
     addPlayerClass(pauseIcon, 'pause-icon');
 
-    const replayIcon = createSvg(viewBox, 'm901,503.09V242.03l-326.77,326.77,326.77,326.77v-261.06c71.25,0,137.25,17.81,197.99,53.44,59.57,34.46,106.59,81.47,141.04,141.04,35.63,60.74,53.44,126.59,53.44,197.55s-17.81,137.1-53.44,198.42c-34.46,58.99-81.47,106-141.04,141.04-60.74,35.63-126.73,53.44-197.99,53.44s-137.25-17.81-197.99-53.44c-59.57-35.04-106.59-82.06-141.04-141.04-35.63-61.32-53.44-127.32-53.44-197.99h-130.53c0,70.67,13.72,138.42,41.17,203.24,26.28,62.49,63.51,117.97,111.7,166.45,48.18,48.47,103.52,85.85,166.01,112.13,64.83,27.45,132.87,41.17,204.12,41.17s139.29-13.72,204.12-41.17c62.49-26.28,117.83-63.66,166.01-112.13,48.18-48.47,85.41-103.96,111.7-166.45,27.45-64.83,41.17-132.72,41.17-203.68s-13.72-138.85-41.17-203.68c-26.28-62.49-63.51-117.83-111.7-166.01-48.18-48.18-103.52-85.71-166.01-112.57-64.83-27.45-132.87-41.17-204.12-41.17Z')
+    const replayIcon = createSvg(viewBox, 'm901,503.09V242.03l-326.77,326.77,326.77,326.77v-261.06c71.25,0,137.25,17.81,197.99,53.44,59.57,34.46,106.59,81.47,141.04,141.04,35.63,60.74,53.44,126.59,53.44,197.55s-17.81,137.1-53.44,198.42c-34.46,58.99-81.47,106-141.04,141.04-60.74,35.63-126.73,53.44-197.99,53.44s-137.25-17.81-197.99-53.44c-59.57-35.04-106.59-82.06-141.04-141.04-35.63-61.32-53.44-127.32-53.44-197.99h-130.53c0,70.67,13.72,138.42,41.17,203.24,26.28,62.49,63.51,117.97,111.7,166.45,48.18,48.47,103.52,85.85,166.01,112.13,64.83,27.45,132.87,41.17,204.12,41.17s139.29-13.72,204.12-41.17c62.49-26.28,117.83-63.66,166.01-112.13,48.18-48.47,85.41-103.96,111.7-166.45,27.45-64.83,41.17-132.72,41.17-203.68s-13.72-138.85-41.17-203.68c-26.28-62.49-63.51-117.83-111.7-166.01-48.18-48.18-103.52-85.71-166.01-112.57-64.83-27.45-132.87-41.17-204.12-41.17Z');
     addPlayerClass(replayIcon, 'replay-icon');
 
     const circle = createSvg(viewBox, 'm1424,896c0,288.84-234.16,523-523,523s-523-234.16-523-523,234.16-523,523-523,523,234.16,523,523Z');

@@ -27,14 +27,14 @@ export type VideojsImportPromise = Promise<typeof import(
 )>;
 
 type AllPromises = {
-    updatePage: UpdatePageImportPromise,
-    image: ImageImportPromise,
-    audio: AudioImportPromise,
-    video: VideoImportPromise,
-    lazyload: LazyloadImportPromise,
-    hls: HlsImportPromise,
-    videojs: VideojsImportPromise
-}
+    updatePage: UpdatePageImportPromise;
+    image: ImageImportPromise;
+    audio: AudioImportPromise;
+    video: VideoImportPromise;
+    lazyload: LazyloadImportPromise;
+    hls: HlsImportPromise;
+    videojs: VideojsImportPromise;
+};
 
 export default function (): AllPromises {
     return {

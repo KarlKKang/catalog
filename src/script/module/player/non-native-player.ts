@@ -11,8 +11,8 @@ export abstract class NonNativePlayer extends Player {
     constructor(
         container: HTMLDivElement,
         config?: {
-            audio?: boolean,
-            debug?: boolean
+            audio?: boolean;
+            debug?: boolean;
         }
     ) {
         super(container, config);
@@ -24,10 +24,10 @@ export abstract class NonNativePlayer extends Player {
         this: Player,
         url: string,
         config?: {
-            play?: boolean,
-            startTime?: number,
-            onload?: (...args: any[]) => void,
-            onerror?: (...args: any[]) => void
+            play?: boolean;
+            startTime?: number;
+            onload?: (...args: any[]) => void;
+            onerror?: (...args: any[]) => void;
         }
     ): void;
     public abstract override destroy(this: NonNativePlayer): void;
@@ -81,7 +81,7 @@ export abstract class NonNativePlayer extends Player {
         if (event !== undefined && (event.type == 'playing' || (!this.media.paused && event.type == 'timeupdate'))) {
             this.media.pause();
         }
-    }
+    };
 
     private startBuffer(this: NonNativePlayer) {
         if (this.buffering) {

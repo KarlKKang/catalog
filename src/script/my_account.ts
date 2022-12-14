@@ -285,7 +285,7 @@ addEventListener(w, 'load', function () {
                     warningElem.innerHTML = usernameChanged;
                     showElement(warningElem);
                     changeColor(warningElem, 'green');
-                    currentUsername = newUsername
+                    currentUsername = newUsername;
                 } else if (response == 'DUPLICATED') {
                     warningElem.innerHTML = usernameTaken;
                     showElement(warningElem);

@@ -4,7 +4,7 @@ import {
 } from './env/constant';
 import {
     imageProtection,
-} from './main'
+} from './main';
 import {
     appendChild,
     createElement
@@ -14,7 +14,7 @@ import { moduleImportError } from './message/template/param';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
-type webpMachineQueueItem = { container: Element, image: HTMLImageElement, webpData: Uint8Array, onload: (() => void) | undefined, onerror: () => void };
+type webpMachineQueueItem = { container: Element; image: HTMLImageElement; webpData: Uint8Array; onload: (() => void) | undefined; onerror: () => void };
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 
@@ -85,7 +85,7 @@ export default function (container: Element, src: string, alt: string, onload?: 
         imageProtection(canvas);
         appendChild(container, canvas);
         onload && onload();
-    }
+    };
 
 
     const xhr = new XMLHttpRequest();

@@ -113,7 +113,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
         addClass(titleNode, 'ellipsis-clipping-2');
 
         addEventListener(seriesNode, 'click', function () { goToSeries(seriesEntry.id); });
-        addClass(seriesNode, 'series')
+        addClass(seriesNode, 'series');
 
         appendChild(containerElem, seriesNode);
     }

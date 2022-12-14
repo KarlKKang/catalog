@@ -13,8 +13,8 @@ export class HlsPlayer extends NonNativePlayer {
         hlsConstructor: typeof Hls,
         hlsConfig: Partial<HlsConfig>,
         config?: {
-            audio?: boolean,
-            debug?: boolean
+            audio?: boolean;
+            debug?: boolean;
         }
     ) {
         super(container, config);
@@ -44,10 +44,10 @@ export class HlsPlayer extends NonNativePlayer {
         this: HlsPlayer,
         url: string,
         config?: {
-            play?: boolean | undefined,
-            startTime?: number | undefined,
-            onload?: (...args: any[]) => void,
-            onerror?: (...args: any[]) => void
+            play?: boolean | undefined;
+            startTime?: number | undefined;
+            onload?: (...args: any[]) => void;
+            onerror?: (...args: any[]) => void;
         }
     ): void {
         config = config ?? {};

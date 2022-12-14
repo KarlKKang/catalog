@@ -13,8 +13,8 @@ export class VideojsPlayer extends NonNativePlayer {
         videojsConstructor: typeof videojs,
         videojsConfig: videojs.PlayerOptions,
         config?: {
-            audio?: boolean,
-            debug?: boolean
+            audio?: boolean;
+            debug?: boolean;
         }
     ) {
         super(container, config);
@@ -40,10 +40,10 @@ export class VideojsPlayer extends NonNativePlayer {
         this: VideojsPlayer,
         url: string,
         config?: {
-            play?: boolean | undefined,
-            startTime?: number | undefined,
-            onload?: (...args: any[]) => void,
-            onerror?: (...args: any[]) => void
+            play?: boolean | undefined;
+            startTime?: number | undefined;
+            onload?: (...args: any[]) => void;
+            onerror?: (...args: any[]) => void;
         }
     ): void {
         config = config ?? {};

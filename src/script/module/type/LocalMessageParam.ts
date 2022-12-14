@@ -1,11 +1,11 @@
 import { throwError, isObject, isString, isBoolean } from './helper';
 export interface LocalMessageParam {
-    message: string,
-    title: string,
-    color: string,
-    logout: boolean,
-    url: string | null,
-    htmlTitle: string
+    message: string;
+    title: string;
+    color: string;
+    logout: boolean;
+    url: string | null;
+    htmlTitle: string;
 }
 
 export function check(localMessageParam: any) {

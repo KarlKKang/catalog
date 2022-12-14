@@ -145,15 +145,15 @@ function formatSwitch() {
             epInfo.cdn_credentials = parsedResponse;
 
             let config: {
-                play?: boolean | undefined,
-                startTime?: number | undefined,
+                play?: boolean | undefined;
+                startTime?: number | undefined;
             } | undefined;
 
             if (currentMediaInstance !== undefined) {
                 config = {
                     play: !currentMediaInstance.paused,
                     startTime: currentMediaInstance.media.currentTime
-                }
+                };
 
                 currentMediaInstance.destroy();
                 currentMediaInstance = undefined;
@@ -171,8 +171,8 @@ function formatSwitch() {
 }
 
 function addVideoNode(config?: {
-    play?: boolean | undefined,
-    startTime?: number | undefined,
+    play?: boolean | undefined;
+    startTime?: number | undefined;
 }) {
     if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
@@ -215,7 +215,7 @@ function addVideoNode(config?: {
             xhrSetup: function (xhr: XMLHttpRequest) {
                 xhr.withCredentials = true;
             }
-        }
+        };
 
         hlsImportPromise.then(({ default: Hls }) => {
             const mediaInstance = new HlsPlayer(playerContainer, Hls, hlsConfig, {

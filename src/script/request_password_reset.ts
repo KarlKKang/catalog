@@ -90,7 +90,7 @@ addEventListener(w, 'load', function () {
             },
             content: 'email=' + email,
             withCredentials: false
-        })
+        });
     }
 
     function disableAllInputs(disabled: boolean) {

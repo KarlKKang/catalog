@@ -123,7 +123,7 @@ addEventListener(w, 'load', function () {
             return;
         }
 
-        newPassword = await hashPassword(newPassword)
+        newPassword = await hashPassword(newPassword);
 
         sendServerRequest('reset_password.php', {
             callback: function (response: string) {

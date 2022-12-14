@@ -1,10 +1,10 @@
 import { throwError, isObject, isString, isArray, isNumber } from './helper';
 
 type AllNewsInfoEntry = {
-    id: string,
-    title: string,
-    update_time: number
-}
+    id: string;
+    title: string;
+    update_time: number;
+};
 
 export type AllNewsInfoEntries = AllNewsInfoEntry[];
 

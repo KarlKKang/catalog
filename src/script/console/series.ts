@@ -96,7 +96,7 @@ function addSeries(button: Element) {
         command: 'insert',
         type: 'series',
         ...parsedRecord
-    }
+    };
 
     let confirm;
     do {

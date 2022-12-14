@@ -1,9 +1,9 @@
 import { throwError, isObject, isString, isArray, isNumber } from './helper';
 
 export interface SeriesEntry {
-    title: string,
-    thumbnail: string,
-    id: string
+    title: string;
+    thumbnail: string;
+    id: string;
 }
 
 export type SeriesEntries = SeriesEntry[];

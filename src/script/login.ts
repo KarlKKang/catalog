@@ -60,7 +60,7 @@ addEventListener(w, 'load', function () {
                     if ((event as KeyboardEvent).key === 'Enter') {
                         login();
                     }
-                })
+                });
 
                 addEventListener(submitButton, 'click', function () {
                     login();

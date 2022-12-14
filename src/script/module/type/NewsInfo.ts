@@ -1,11 +1,11 @@
 import { throwError, isObject, isString, isNumber } from './helper';
 
 export type NewsInfo = {
-    title: string,
-    content: string,
-    create_time: number,
-    update_time: number | null
-}
+    title: string;
+    content: string;
+    create_time: number;
+    update_time: number | null;
+};
 
 export function check(newsInfo: any) {
     if (!isObject(newsInfo)) {

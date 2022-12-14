@@ -15,7 +15,10 @@ module.exports = {
   ],
   overrides: [],
   rules: {
-    "quotes": ["error", "single"],
+    'quotes': ['error', 'single'],
+    'semi': 'off',
+    '@typescript-eslint/semi': 'warn',
+    '@typescript-eslint/member-delimiter-style': 'warn',
     '@typescript-eslint/no-explicit-any': 'off'
   }
 }

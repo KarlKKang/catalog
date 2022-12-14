@@ -1,11 +1,11 @@
 import { throwError, isObject, isString } from './helper';
 
 export interface LocalImageParam {
-    baseURL: string,
-    fileName: string,
-    title: string,
-    authenticationToken: string,
-    xhrParam: string
+    baseURL: string;
+    fileName: string;
+    title: string;
+    authenticationToken: string;
+    xhrParam: string;
 }
 
 export function check(param: any) {

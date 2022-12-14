@@ -54,7 +54,7 @@ addEventListener(w, 'load', function () {
         param = JSON.parse(paramCookie);
         LocalMessageParam.check(param);
     } catch (e) {
-        redirect(TOP_URL, true)
+        redirect(TOP_URL, true);
         return;
     }
 
@@ -73,7 +73,7 @@ addEventListener(w, 'load', function () {
             addEventListener(button, 'click', function () {
                 deleteCookie('local-message-param');
                 redirect(url, true);
-            })
+            });
         }
 
         showElement(getBody());

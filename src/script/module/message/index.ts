@@ -11,11 +11,11 @@ import { unknownError } from './template/body';
 
 
 interface MessageParam {
-    message?: string,
-    title?: string,
-    color?: string,
-    logout?: boolean,
-    url?: string | null
+    message?: string;
+    title?: string;
+    color?: string;
+    logout?: boolean;
+    url?: string | null;
 }
 
 export function show(param?: MessageParam) {
