@@ -183,7 +183,7 @@
   transition: opacity 0.1s;
 }
 
-.player.player-has-started.player-user-inactive.player-playing .player-control-bar {
+.player.player-user-inactive.player-playing .player-control-bar {
   opacity: 0;
   pointer-events: none;
   transition: opacity 1s;
@@ -279,23 +279,17 @@
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 0.3em;
   float: right;
-  font-size: 1em;
-  padding: 6px 8px 8px 8px;
+  font-size: 0.8em;
+  padding: 6px 8px 6px 8px;
   pointer-events: none;
   position: absolute;
-  top: -3.4em;
+  top: -2.8em;
   visibility: hidden;
   z-index: 1;
 }
 
-.player .player-progress-holder:focus .player-time-tooltip {
-  display: none;
-}
-
-.player .player-progress-control:hover .player-time-tooltip,
-.player .player-progress-control:hover .player-progress-holder:focus .player-time-tooltip {
+.player .player-progress-control:hover .player-time-tooltip {
   display: block;
-  font-size: 0.6em;
   visibility: visible;
 }
 
@@ -327,7 +321,7 @@ only screen and (pointer: coarse) {
   background-color: var(--text-color);
 }
 
-.player.player-user-inactive .player-progress-control .player-mouse-display {
+.player.player-user-inactive.player-playing .player-progress-control .player-mouse-display {
   visibility: hidden;
   opacity: 0;
   transition: visibility 1s, opacity 1s;
