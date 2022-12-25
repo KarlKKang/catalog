@@ -61,7 +61,7 @@ if (USE_MSE) {
     const mediaSource = getMediaSource();
     if (mediaSource !== undefined) {
         CAN_PLAY_ALAC = mediaSource.isTypeSupported('audio/mp4; codecs="alac"');
-        CAN_PLAY_FLAC = mediaSource.isTypeSupported('audio/mp4; codecs="flac"');
+        CAN_PLAY_FLAC = mediaSource.isTypeSupported('audio/mp4; codecs="flac"') || mediaSource.isTypeSupported('audio/mp4; codecs="fLaC"');
         CAN_PLAY_AVC_AAC = mediaSource.isTypeSupported('video/mp4; codecs="avc1.640032,mp4a.40.2"');
     }
     //CAN_PLAY_MP3 = mediaSource.isTypeSupported('audio/mpeg'); //Firefox fails this test, but can still play mp3 in MSE.
