@@ -16,6 +16,8 @@ import {
     appendChild,
     getTitle,
     setDataAttribute,
+    prependChild,
+    getById,
 } from '../module/DOM';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import type { LocalImageParam } from '../module/type/LocalImageParam';
@@ -27,6 +29,16 @@ export default function (
     mediaHolder: HTMLElement,
     lazyloadImportPromise: LazyloadImportPromise
 ) {
+    const contentContainer = getById('content');
+
+    if (epInfo.gallery_title != '') {
+        const title = createElement('p');
+        addClass(title, 'sub-title');
+        addClass(title, 'center-align');
+        title.innerHTML = epInfo.gallery_title;
+        prependChild(contentContainer, title);
+    }
+
     const files = epInfo.files;
 
     files.forEach(function (file, index) {

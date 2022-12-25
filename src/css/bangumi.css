@@ -205,7 +205,7 @@ select:hover {
     margin: 0px 0px 2em 0px;
 }
 
-#media-holder.video,
+#content.video #media-holder,
 #message {
     margin: 0px 0px 1em 0px;
 }
@@ -259,6 +259,11 @@ select:hover {
     font-size: large;
     font-weight: 500;
     width: 100%;
+    margin: 32px 0px 32px 0px;
+}
+
+#content.video .sub-title,
+#media-holder .sub-title {
     margin: 32px 0px 16px 0px;
 }
 

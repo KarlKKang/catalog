@@ -69,8 +69,8 @@ export default function (
     hlsImportPromise = _hlsImportPromise;
     debug = _debug;
 
-    addClass(mediaHolder, 'video');
     const contentContainer = getById('content');
+    addClass(contentContainer, 'video');
 
     // Title
     if (epInfo.title != '') {

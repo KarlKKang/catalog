@@ -49,6 +49,7 @@ export interface AudioEPInfo extends EPInfo {
 
 export interface ImageEPInfo extends EPInfo {
     type: 'image';
+    gallery_title: string;
     files: [ImageFile, ...ImageFile[]];
 }
 
@@ -194,6 +195,9 @@ function checkImageFile(imageFile: any) {
 }
 
 function checkImageEPInfo(epInfo: any) {
+    if (!isString(epInfo.gallery_title)) {
+        throwError();
+    }
 
     const files = epInfo.files;
     if (!isArray(files)) {
