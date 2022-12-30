@@ -27,6 +27,9 @@ type Chapters = Array<[string, number]>;
 export type VideoFormatInfo = {
     value: string;
     tag?: string;
+    video?: string;
+    audio?: string;
+    av1_fallback?: string;
 };
 export interface VideoEPInfo extends EPInfo {
     type: 'video';
@@ -89,6 +92,18 @@ function checkVideoEPInfo(epInfo: any) {
         }
 
         if (format.tag !== undefined && !isString(format.tag)) {
+            throwError();
+        }
+
+        if (format.video !== undefined && !isString(format.video)) {
+            throwError();
+        }
+
+        if (format.audio !== undefined && !isString(format.audio)) {
+            throwError();
+        }
+
+        if (format.av1_fallback !== undefined && !isString(format.av1_fallback)) {
             throwError();
         }
     }
