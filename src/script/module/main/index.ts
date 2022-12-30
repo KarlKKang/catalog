@@ -10,7 +10,6 @@ import { moduleImportError } from '../message/template/param';
 import { connectionError, status403, status429, status503, status400And500 } from '../message/template/param/server';
 
 import {
-    w,
     getHref,
     redirect,
     deleteCookie,
@@ -324,11 +323,12 @@ export function imageProtection(elem: HTMLElement) {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
+import { base64Encode } from './base64';
 export function concatenateSignedURL(url: string, credentials: CDNCredentials, resourceURLOverride?: string) {
     const policy = credentials['Policy'];
     policy['Statement'][0]['Resource'] = resourceURLOverride ?? url;
     let policyString = JSON.stringify(policy);
-    policyString = w.btoa(policyString);
+    policyString = base64Encode(policyString);
     policyString = policyString.replace(/\+/g, '-');
     policyString = policyString.replace(/=/g, '_');
     policyString = policyString.replace(/\//g, '~');
