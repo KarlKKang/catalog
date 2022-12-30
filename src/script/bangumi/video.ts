@@ -31,7 +31,8 @@ import type { VideoEPInfo, VideoFormatInfo } from '../module/type/BangumiInfo';
 import {
     USE_MSE,
     NATIVE_HLS,
-    CAN_PLAY_AVC_AAC,
+    CAN_PLAY_AVC,
+    CAN_PLAY_AAC,
 } from '../module/browser';
 import { Player, HlsPlayer } from '../module/player';
 
@@ -178,7 +179,7 @@ function addVideoNode(config?: {
         showHLSCompatibilityError();
         return;
     }
-    if (!CAN_PLAY_AVC_AAC) {
+    if (!CAN_PLAY_AVC || !CAN_PLAY_AAC) {
         showCodecCompatibilityError();
         return;
     }

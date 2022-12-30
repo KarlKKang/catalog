@@ -51,28 +51,13 @@ const videoElem = createElement('video') as HTMLVideoElement;
 const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_IOS;
 const USE_MSE = isSupported() && !NATIVE_HLS;
 
-
-let CAN_PLAY_ALAC = false;
-let CAN_PLAY_FLAC = false;
+const CAN_PLAY_ALAC = audioCanPlay('alac');
+const CAN_PLAY_FLAC = audioCanPlay('flac') || audioCanPlay('fLaC');
 const CAN_PLAY_MP3 = audioElem.canPlayType('audio/mpeg') != '';
-let CAN_PLAY_AVC_AAC = false;
+const CAN_PLAY_AVC = videoCanPlay('avc1.640032');
+const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2');
 
-if (USE_MSE) {
-    const mediaSource = getMediaSource();
-    if (mediaSource !== undefined) {
-        CAN_PLAY_ALAC = mediaSource.isTypeSupported('audio/mp4; codecs="alac"');
-        CAN_PLAY_FLAC = mediaSource.isTypeSupported('audio/mp4; codecs="flac"') || mediaSource.isTypeSupported('audio/mp4; codecs="fLaC"');
-        CAN_PLAY_AVC_AAC = mediaSource.isTypeSupported('video/mp4; codecs="avc1.640032,mp4a.40.2"');
-    }
-    //CAN_PLAY_MP3 = mediaSource.isTypeSupported('audio/mpeg'); //Firefox fails this test, but can still play mp3 in MSE.
-} else if (NATIVE_HLS) {
-    CAN_PLAY_ALAC = audioElem.canPlayType('audio/mp4; codecs="alac"') != '';
-    CAN_PLAY_FLAC = audioElem.canPlayType('audio/mp4; codecs="flac"') != '';
-    CAN_PLAY_AVC_AAC = audioElem.canPlayType('video/mp4; codecs="avc1.640032,mp4a.40.2"') != '';
-    //CAN_PLAY_MP3 = audioElem.canPlayType('audio/mpeg') != "";
-}
-
-UNRECOMMENDED_BROWSER = UNRECOMMENDED_BROWSER || !CAN_PLAY_AVC_AAC || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
+UNRECOMMENDED_BROWSER = UNRECOMMENDED_BROWSER || !(CAN_PLAY_AVC && CAN_PLAY_AAC) || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
 
 export { IS_CHROMIUM };
 export { IS_IOS };
@@ -86,4 +71,31 @@ export { USE_MSE };
 export { CAN_PLAY_ALAC };
 export { CAN_PLAY_FLAC };
 export { CAN_PLAY_MP3 };
-export { CAN_PLAY_AVC_AAC };
+export { CAN_PLAY_AVC };
+export { CAN_PLAY_AAC };
+
+export function videoCanPlay(codecs: string): boolean {
+    return canPlay('video', codecs);
+}
+
+export function audioCanPlay(codecs: string): boolean {
+    return canPlay('audio', codecs);
+}
+
+function canPlay(type: 'video' | 'audio', codecs: string): boolean {
+    if (USE_MSE) {
+        const mediaSource = getMediaSource();
+        if (mediaSource === undefined) {
+            return false;
+        }
+        return mediaSource.isTypeSupported(`${type}/mp4; codecs="${codecs}"`);
+    } else {
+        let mediaElement: HTMLMediaElement;
+        if (type === 'video') {
+            mediaElement = videoElem;
+        } else {
+            mediaElement = audioElem;
+        }
+        return mediaElement.canPlayType(`${type}/mp4; codecs="${codecs}"`) != '';
+    }
+}
