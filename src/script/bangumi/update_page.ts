@@ -33,7 +33,7 @@ import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
-import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImportPromise, LazyloadImportPromise, VideojsImportPromise } from './get_import_promises';
+import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImportPromise, LazyloadImportPromise, VideojsImportPromise, DashjsImportPromise } from './get_import_promises';
 
 const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
 const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
@@ -51,6 +51,7 @@ export default function (
     imageImportPromise: ImageImportPromise,
     hlsImportPromise: HlsImportPromise,
     videojsImportPromise: VideojsImportPromise,
+    dashjsImportPromise: DashjsImportPromise,
     lazyloadImportPromise: LazyloadImportPromise
 ) {
     seriesID = _seriesID;
@@ -143,7 +144,7 @@ export default function (
 
     if (type === 'video') {
         videoImportPromise.then(({ default: module }) => {
-            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, debug);
+            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, dashjsImportPromise, debug);
         }).catch((e) => {
             showMessage(moduleImportError(e));
         });

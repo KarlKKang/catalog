@@ -33,12 +33,14 @@ import {
     NATIVE_HLS,
     CAN_PLAY_AVC,
     CAN_PLAY_AAC,
+    videoCanPlay,
+    audioCanPlay,
 } from '../module/browser';
-import { Player, HlsPlayer } from '../module/player';
+import { Player, HlsPlayer, DashPlayer } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
 import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent } from './media_helper';
-import type { HlsImportPromise } from './get_import_promises';
+import type { DashjsImportPromise, HlsImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from '../../../custom_modules/hls.js';
 
 let seriesID: string;
@@ -47,6 +49,7 @@ let epInfo: VideoEPInfo;
 let baseURL: string;
 let mediaHolder: HTMLElement;
 let hlsImportPromise: HlsImportPromise;
+let dashjsImportPromise: DashjsImportPromise;
 let debug: boolean;
 
 let currentFormat: VideoFormatInfo;
@@ -59,6 +62,7 @@ export default function (
     _baseURL: string,
     _mediaHolder: HTMLElement,
     _hlsImportPromise: HlsImportPromise,
+    _dashjsImportPromise: DashjsImportPromise,
     _debug: boolean
 ) {
 
@@ -68,6 +72,7 @@ export default function (
     baseURL = _baseURL;
     mediaHolder = _mediaHolder;
     hlsImportPromise = _hlsImportPromise;
+    dashjsImportPromise = _dashjsImportPromise;
     debug = _debug;
 
     const contentContainer = getById('content');
@@ -179,9 +184,38 @@ function addVideoNode(config?: {
         showHLSCompatibilityError();
         return;
     }
-    if (!CAN_PLAY_AVC || !CAN_PLAY_AAC) {
-        showCodecCompatibilityError();
-        return;
+
+    let AV1_FALLBACK = USE_MSE && currentFormat.av1_fallback !== undefined && videoCanPlay(currentFormat.av1_fallback);
+
+    if (currentFormat.video === 'dv5') {
+        if (!videoCanPlay('dvh1.05.06')) {
+            showCodecCompatibilityError();
+            return;
+        }
+    } else if (currentFormat.video === 'hdr10') {
+        if (videoCanPlay('hvc1.2.4.H153.90')) {
+            AV1_FALLBACK = false;
+        } else if (!AV1_FALLBACK) {
+            showCodecCompatibilityError();
+            return;
+        }
+    } else {
+        if (!CAN_PLAY_AVC) {
+            showCodecCompatibilityError();
+            return;
+        }
+    }
+
+    if (currentFormat.audio === 'ac3') {
+        if (!audioCanPlay('ac-3') && !CAN_PLAY_AAC) {
+            showCodecCompatibilityError();
+            return;
+        }
+    } else {
+        if (!CAN_PLAY_AAC) {
+            showCodecCompatibilityError();
+            return;
+        }
     }
 
     const _config = config ?? {};
@@ -197,39 +231,37 @@ function addVideoNode(config?: {
     const playerContainer = createElement('div') as HTMLDivElement;
     appendChild(mediaHolder, playerContainer);
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
-    const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '].m3u8'), epInfo.cdn_credentials);
 
-    if (USE_MSE) {
-        const hlsConfig = {
-            enableWebVTT: false,
-            enableIMSC1: false,
-            enableCEA708Captions: false,
-            lowLatencyMode: false,
-            enableWorker: false,
-            maxFragLookUpTolerance: 0.0,
-            testBandwidth: false,
-            backBufferLength: 0,
-            maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
-            maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
-            maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Although the value 0.5 is the default in the documentation, this option somehow must be explictly set to take effect.
-            debug: debug,
-            xhrSetup: function (xhr: XMLHttpRequest) {
-                xhr.withCredentials = true;
-            }
-        };
+    const resourceURLOverride = currentFormat.av1_fallback === undefined ? undefined : baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']*');
+    if (AV1_FALLBACK) {
+        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '][AV1].mpd'), epInfo.cdn_credentials, resourceURLOverride);
 
-        hlsImportPromise.then(({ default: Hls }) => {
-            const mediaInstance = new HlsPlayer(playerContainer, Hls, hlsConfig, {
+        dashjsImportPromise.then((dashjs) => {
+            const dashjsConfig = {
+                debug: {
+                    logLevel: debug ? 5 : 3
+                },
+                streaming: {
+                    buffer: {
+                        bufferPruningInterval: 1,
+                        flushBufferAtTrackSwitch: true,
+                        bufferToKeep: 0,
+                        bufferTimeAtTopQuality: 15,
+                        bufferTimeAtTopQualityLongForm: 15,
+                        avoidCurrentTimeRangePruning: true,
+                    }
+                }
+            };
+
+            const mediaInstance = new DashPlayer(playerContainer, dashjs, dashjsConfig, {
                 debug: debug
             });
             currentMediaInstance = mediaInstance;
             mediaInstance.load(url, {
-                onerror: function (_: Events.ERROR, data: ErrorData) {
-                    if (data.fatal) {
-                        showPlaybackError(data.details);
-                        currentMediaInstance = undefined;
-                        mediaInstance.destroy();
-                    }
+                onerror: function (e: dashjs.ErrorEvent) {
+                    showPlaybackError(e.error.toString());
+                    currentMediaInstance = undefined;
+                    mediaInstance.destroy();
                 },
                 play: _config.play,
                 startTime: _config.startTime
@@ -240,20 +272,63 @@ function addVideoNode(config?: {
             return;
         });
     } else {
-        const mediaInstance = new Player(playerContainer, {
-            debug: debug
-        });
-        currentMediaInstance = mediaInstance;
-        mediaInstance.load(url, {
-            onerror: function () {
-                showPlaybackError();
-                currentMediaInstance = undefined;
-                mediaInstance.destroy();
-            },
-            play: _config.play,
-            startTime: _config.startTime
-        });
-        _onInit(mediaInstance);
+        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '].m3u8'), epInfo.cdn_credentials, resourceURLOverride);
+        if (USE_MSE) {
+            const hlsConfig = {
+                enableWebVTT: false,
+                enableIMSC1: false,
+                enableCEA708Captions: false,
+                lowLatencyMode: false,
+                enableWorker: false,
+                maxFragLookUpTolerance: 0.0,
+                testBandwidth: false,
+                backBufferLength: 0,
+                maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
+                maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
+                maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Although the value 0.5 is the default in the documentation, this option somehow must be explictly set to take effect.
+                debug: debug,
+                xhrSetup: function (xhr: XMLHttpRequest) {
+                    xhr.withCredentials = true;
+                }
+            };
+
+            hlsImportPromise.then(({ default: Hls }) => {
+                const mediaInstance = new HlsPlayer(playerContainer, Hls, hlsConfig, {
+                    debug: debug
+                });
+                currentMediaInstance = mediaInstance;
+                mediaInstance.load(url, {
+                    onerror: function (_: Events.ERROR, data: ErrorData) {
+                        if (data.fatal) {
+                            showPlaybackError(data.details);
+                            currentMediaInstance = undefined;
+                            mediaInstance.destroy();
+                        }
+                    },
+                    play: _config.play,
+                    startTime: _config.startTime
+                });
+                _onInit(mediaInstance);
+            }).catch((e) => {
+                showMessage(moduleImportError(e));
+                return;
+            });
+        } else {
+            const mediaInstance = new Player(playerContainer, {
+                debug: debug
+            });
+            currentMediaInstance = mediaInstance;
+            mediaInstance.load(url, {
+                onerror: function () {
+                    showPlaybackError();
+                    currentMediaInstance = undefined;
+                    mediaInstance.destroy();
+                },
+                play: _config.play,
+                startTime: _config.startTime
+            });
+            _onInit(mediaInstance);
+        }
     }
 }
 

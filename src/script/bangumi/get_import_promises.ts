@@ -25,6 +25,10 @@ export type VideojsImportPromise = Promise<typeof import(
     /* webpackExports: ["default"] */
     'video.js'
 )>;
+export type DashjsImportPromise = Promise<typeof import(
+    /* webpackExports: ["default"] */
+    'dashjs'
+)>;
 
 type AllPromises = {
     updatePage: UpdatePageImportPromise;
@@ -34,6 +38,7 @@ type AllPromises = {
     lazyload: LazyloadImportPromise;
     hls: HlsImportPromise;
     videojs: VideojsImportPromise;
+    dashjs: DashjsImportPromise;
 };
 
 export default function (): AllPromises {
@@ -62,6 +67,10 @@ export default function (): AllPromises {
         videojs: import(
             /* webpackExports: ["default"] */
             'video.js'
+        ),
+        dashjs: import(
+            /* webpackExports: ["default"] */
+            'dashjs'
         )
     };
 }
