@@ -22,8 +22,7 @@ import {
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClass } from './helper';
-import { show as showMessage } from '../message';
-import { moduleImportError } from '../message/template/param';
+import * as icons from './icons';
 
 declare global {
     interface HTMLVideoElement {
@@ -255,22 +254,18 @@ export class Player {
         addPlayerClasses(airPlayButton, ['airplay-control', 'control', 'button']);
         const airPlayButtonPlaceholder = addPlayerPlaceholder(airPlayButton);
 
-        import('./icons').then((icons) => {
-            appendChild(bigPlayButtonPlaceholder, icons.getPlayIcon());
-            appendChild(playButtonIconPlaceholder, icons.getPlayIcon());
-            appendChild(playButtonIconPlaceholder, icons.getPauseIcon());
-            appendChild(playButtonIconPlaceholder, icons.getReplayIcon());
-            appendChild(playProgress, icons.getCircle());
-            if (PIPButtonPlaceholder !== undefined) {
-                appendChild(PIPButtonPlaceholder, icons.getPIPEnterIcon());
-                appendChild(PIPButtonPlaceholder, icons.getPIPExitIcon());
-            }
-            appendChild(fullscreenButtonPlaceholder, icons.getFullscreenEnterIcon());
-            appendChild(fullscreenButtonPlaceholder, icons.getFullscreenExitIcon());
-            appendChild(airPlayButtonPlaceholder, icons.getAirPlayIcon());
-        }).catch((e) => {
-            showMessage(moduleImportError(e));
-        });
+        appendChild(bigPlayButtonPlaceholder, icons.getPlayIcon());
+        appendChild(playButtonIconPlaceholder, icons.getPlayIcon());
+        appendChild(playButtonIconPlaceholder, icons.getPauseIcon());
+        appendChild(playButtonIconPlaceholder, icons.getReplayIcon());
+        appendChild(playProgress, icons.getCircle());
+        if (PIPButtonPlaceholder !== undefined) {
+            appendChild(PIPButtonPlaceholder, icons.getPIPEnterIcon());
+            appendChild(PIPButtonPlaceholder, icons.getPIPExitIcon());
+        }
+        appendChild(fullscreenButtonPlaceholder, icons.getFullscreenEnterIcon());
+        appendChild(fullscreenButtonPlaceholder, icons.getFullscreenExitIcon());
+        appendChild(airPlayButtonPlaceholder, icons.getAirPlayIcon());
     }
 
     protected preattach(this: Player) {
