@@ -259,7 +259,7 @@ function addVideoNode(config?: {
             currentMediaInstance = mediaInstance;
             mediaInstance.load(url, {
                 onerror: function (e: dashjs.ErrorEvent) {
-                    showPlaybackError(e.error.toString());
+                    showPlaybackError(JSON.stringify(e.error));
                     currentMediaInstance = undefined;
                     mediaInstance.destroy();
                 },
