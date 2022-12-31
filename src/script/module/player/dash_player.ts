@@ -18,6 +18,7 @@ export class DashPlayer extends NonNativePlayer {
         this.dashjsInstance = dashjsConstructor.MediaPlayer().create();
         this.dashjsInstance.initialize();
         this.dashjsInstance.updateSettings(dashjsConfig);
+        this.dashjsInstance.setAutoPlay(false);
         this.dashjsInstance.setXHRWithCredentialsForType('InitializationSegment', true);
         this.dashjsInstance.setXHRWithCredentialsForType('MediaSegment', true);
     }
