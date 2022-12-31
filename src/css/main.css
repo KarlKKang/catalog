@@ -143,10 +143,6 @@ button:disabled {
     background-color: transparent;
 }
 
-select {
-    color: var(--text-color);
-}
-
 #header {
     width: 100%;
     height: 46px;
