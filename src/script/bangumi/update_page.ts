@@ -63,6 +63,15 @@ export default function (
     const contentContainer = getById('content');
     const debug = DEVELOPMENT || getURLParam('debug') === '1';
     const av1Override = getURLParam('av1') === '1';
+    const startTimeText = getURLParam('timestamp');
+    let startTime: number | null = null;
+    if (startTimeText !== null) {
+        startTime = parseFloat(startTimeText);
+        if (isNaN(startTime)) {
+            startTime = null;
+        }
+    }
+    const play = getURLParam('play') === '1';
 
     const epInfo = response.ep_info;
 
@@ -145,7 +154,7 @@ export default function (
 
     if (type === 'video') {
         videoImportPromise.then(({ default: module }) => {
-            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, dashjsImportPromise, debug, av1Override);
+            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, dashjsImportPromise, debug, av1Override, startTime, play);
         }).catch((e) => {
             showMessage(moduleImportError(e));
         });

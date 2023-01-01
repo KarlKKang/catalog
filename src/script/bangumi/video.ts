@@ -65,7 +65,9 @@ export default function (
     _hlsImportPromise: HlsImportPromise,
     _dashjsImportPromise: DashjsImportPromise,
     _debug: boolean,
-    _av1Override: boolean
+    _av1Override: boolean,
+    startTime: number | null,
+    play: boolean
 ) {
 
     seriesID = _seriesID;
@@ -127,7 +129,10 @@ export default function (
 
     // Video Node
     addEventListener(selectMenu, 'change', formatSwitch);
-    addVideoNode();
+    addVideoNode({
+        startTime: startTime === null ? undefined : startTime,
+        play: play
+    });
 }
 
 function formatSwitch() {
