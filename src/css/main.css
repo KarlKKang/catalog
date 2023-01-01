@@ -6,6 +6,7 @@
     --background-color: rgba(252, 252, 252, 1);
     --background-color-transparent: rgba(251, 251, 251, 0);
     --nav-menu-background-color: rgba(255, 255, 255, 0.55);
+    --grey-background-color: rgba(235, 235, 235, 1);
 
     --text-color: rgba(0, 0, 0, 1);
     --text-color-transparent: rgba(0, 0, 0, 0);
@@ -38,6 +39,7 @@
         --background-color: rgba(40, 41, 49, 1);
         --background-color-transparent: rgba(40, 41, 49, 0);
         --nav-menu-background-color: rgba(0, 0, 0, 0.55);
+        --grey-background-color: rgba(65, 68, 80, 1);
 
         --text-color: rgba(210, 213, 220, 1);
         --text-color-transparent: rgba(210, 213, 220, 0);

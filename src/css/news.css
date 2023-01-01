@@ -111,3 +111,9 @@ hr {
 .bold {
     font-weight: 400;
 }
+
+.code-inline {
+    background-color: var(--grey-background-color);
+    padding: 0px 0.3em;
+    border-radius: 0.3em;
+}
