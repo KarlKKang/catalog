@@ -39,7 +39,7 @@ import {
 import { Player, HlsPlayer, DashPlayer } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage } from './media_helper';
+import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle } from './media_helper';
 import type { DashjsImportPromise, HlsImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from '../../../custom_modules/hls.js';
 
@@ -196,12 +196,15 @@ function addVideoNode(config?: {
             return;
         }
     } else if (currentFormat.video === 'hdr10') {
+        showMediaMessage('HDR10について', '詳しくは<a class="link" href="https://featherine.com/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。', 'orange');
         if (videoCanPlay('hvc1.2.4.H153.90')) {
             if (!av1Override) {
                 AV1_FALLBACK = false;
             }
-        } else if (!AV1_FALLBACK) {
-            showCodecCompatibilityError();
+        } else if (AV1_FALLBACK) {
+            showMediaMessage('HEVCに対応していません', 'AV1でエンコードされた動画が代わりに再生されています。詳しくは<a class="link" href="https://featherine.com/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。', 'red');
+        } else {
+            showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは<a class="link" href="https://featherine.com/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。');
             return;
         }
     } else {
