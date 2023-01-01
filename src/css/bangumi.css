@@ -241,9 +241,6 @@ select:hover {
 #media-holder>.lazyload {
     position: relative;
     padding-bottom: 56.25%;
-}
-
-#media-holder>.lazyload:hover {
     cursor: pointer;
 }
 
