@@ -39,7 +39,7 @@ import {
 import { Player, HlsPlayer, DashPlayer } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent } from './media_helper';
+import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage } from './media_helper';
 import type { DashjsImportPromise, HlsImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from '../../../custom_modules/hls.js';
 
@@ -211,7 +211,7 @@ function addVideoNode(config?: {
         }
     }
 
-    if (currentFormat.audio === 'atmos_ac3') {
+    if (currentFormat.audio === 'atmos_ac3' && !AV1_FALLBACK) {
         if (!audioCanPlay('ac-3') && !CAN_PLAY_AAC) {
             showCodecCompatibilityError();
             return;
@@ -221,6 +221,10 @@ function addVideoNode(config?: {
             showCodecCompatibilityError();
             return;
         }
+    }
+
+    if (currentFormat.audio === 'atmos_ac3') {
+        showMediaMessage('Dolby Atmos®について', 'AC-3ダウンミックスを再生しています。詳しくは<a class="link" href="https://featherine.com/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。', 'orange');
     }
 
     const _config = config ?? {};
