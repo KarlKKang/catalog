@@ -97,7 +97,7 @@ function addAudioNode(index: number) {
         backBufferLength: 0,
         maxBufferLength: 15,
         maxBufferSize: 0,
-        debug: false,
+        debug: debug,
         xhrSetup: function (xhr: XMLHttpRequest) {
             xhr.withCredentials = true;
         }
