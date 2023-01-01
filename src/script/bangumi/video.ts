@@ -211,7 +211,7 @@ function addVideoNode(config?: {
         }
     }
 
-    if (currentFormat.audio === 'ac3') {
+    if (currentFormat.audio === 'atmos_ac3') {
         if (!audioCanPlay('ac-3') && !CAN_PLAY_AAC) {
             showCodecCompatibilityError();
             return;
