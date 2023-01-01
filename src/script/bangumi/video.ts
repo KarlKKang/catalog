@@ -51,6 +51,7 @@ let mediaHolder: HTMLElement;
 let hlsImportPromise: HlsImportPromise;
 let dashjsImportPromise: DashjsImportPromise;
 let debug: boolean;
+let av1Override: boolean;
 
 let currentFormat: VideoFormatInfo;
 let currentMediaInstance: Player | undefined;
@@ -63,7 +64,8 @@ export default function (
     _mediaHolder: HTMLElement,
     _hlsImportPromise: HlsImportPromise,
     _dashjsImportPromise: DashjsImportPromise,
-    _debug: boolean
+    _debug: boolean,
+    _av1Override: boolean
 ) {
 
     seriesID = _seriesID;
@@ -74,6 +76,7 @@ export default function (
     hlsImportPromise = _hlsImportPromise;
     dashjsImportPromise = _dashjsImportPromise;
     debug = _debug;
+    av1Override = _av1Override;
 
     const contentContainer = getById('content');
     addClass(contentContainer, 'video');
@@ -194,7 +197,9 @@ function addVideoNode(config?: {
         }
     } else if (currentFormat.video === 'hdr10') {
         if (videoCanPlay('hvc1.2.4.H153.90')) {
-            AV1_FALLBACK = false;
+            if (!av1Override) {
+                AV1_FALLBACK = false;
+            }
         } else if (!AV1_FALLBACK) {
             showCodecCompatibilityError();
             return;

@@ -62,6 +62,7 @@ export default function (
 
     const contentContainer = getById('content');
     const debug = DEVELOPMENT || getURLParam('debug') === '1';
+    const av1Override = getURLParam('av1') === '1';
 
     const epInfo = response.ep_info;
 
@@ -144,7 +145,7 @@ export default function (
 
     if (type === 'video') {
         videoImportPromise.then(({ default: module }) => {
-            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, dashjsImportPromise, debug);
+            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, dashjsImportPromise, debug, av1Override);
         }).catch((e) => {
             showMessage(moduleImportError(e));
         });
