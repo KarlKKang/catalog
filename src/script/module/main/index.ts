@@ -385,7 +385,7 @@ export async function hashPassword(password: string) {
 ////////////////////////////////////////
 
 ////////////////////////////////////////
-export function removeRightClick(elem: HTMLElement) {
+export function removeRightClick(elem: Element) {
     addEventListener(elem, 'contextmenu', event => event.preventDefault());
 }
 ////////////////////////////////////////

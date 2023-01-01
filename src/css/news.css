@@ -117,3 +117,13 @@ hr {
     padding: 0px 0.3em;
     border-radius: 0.3em;
 }
+
+.image-internal {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    width: fit-content;
+}
+
+.image-internal.image-enlarge {
+    cursor: pointer;
+}

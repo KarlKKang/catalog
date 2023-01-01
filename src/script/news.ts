@@ -1,6 +1,7 @@
 // JavaScript Document
 import 'core-js';
 import {
+    CDN_URL,
     DEVELOPMENT,
     TOP_URL,
 } from './module/env/constant';
@@ -10,6 +11,8 @@ import {
     getURLParam,
     scrollToHash,
     navListeners,
+    encodeCFURIComponent,
+    removeRightClick,
 } from './module/main';
 import {
     w,
@@ -30,17 +33,23 @@ import {
     getHash,
     getDataAttribute,
     showElement,
+    setDataAttribute,
+    containsClass,
+    setCookie,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
+import { default as importLazyload } from './module/lazyload';
 import isbot from 'isbot';
+import { LocalImageParam } from './module/type/LocalImageParam';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo = 0;
 let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
+let lazyloadImportPromise: ReturnType<typeof importLazyload>;
 
 addEventListener(w, 'load', function () {
     if (!getHref().startsWith(NEWS_TOP_URL) && !DEVELOPMENT) {
@@ -62,6 +71,7 @@ addEventListener(w, 'load', function () {
         infiniteScrolling = initializeInfiniteScrolling(getAllNews);
         getAllNews();
     } else {
+        lazyloadImportPromise = importLazyload();
         getNews(newsID);
     }
 });
@@ -89,7 +99,7 @@ function getNews(newsID: string): void {
                 showMessage(invalidResponse);
                 return;
             }
-            showNews(parsedResponse);
+            showNews(parsedResponse, newsID);
             navListeners();
             showElement(getBody());
             scrollToHash(true);
@@ -99,7 +109,7 @@ function getNews(newsID: string): void {
     });
 }
 
-function showNews(newsInfo: NewsInfo.NewsInfo): void {
+function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
     const outerContainer = createElement('div');
     const container = createElement('div');
     container.id = 'content-container';
@@ -138,6 +148,45 @@ function showNews(newsInfo: NewsInfo.NewsInfo): void {
     appendChild(getById('main'), outerContainer);
 
     bindEventListners(contentContainer);
+    attachImage(contentContainer, newsID);
+}
+
+function attachImage(contentContainer: HTMLElement, newsID: string): void {
+    const baseURL = CDN_URL + '/news/' + newsID + '/';
+    const elems = getDescendantsByClass(contentContainer, 'image-internal');
+    for (const elem of elems) {
+        addClass(elem, 'lazyload');
+        const src = getDataAttribute(elem, 'src');
+        if (src === null) {
+            continue;
+        }
+        const xhrParam = encodeURIComponent(JSON.stringify({ news: newsID, file: src }));
+        setDataAttribute(elem, 'src', baseURL + encodeCFURIComponent(src));
+        setDataAttribute(elem, 'alt', src);
+        setDataAttribute(elem, 'xhr-param', xhrParam);
+        setDataAttribute(elem, 'authentication-token', 'news');
+        if (containsClass(elem, 'image-enlarge')) {
+            addEventListener(elem, 'click', function () {
+                const param: LocalImageParam = {
+                    baseURL: baseURL,
+                    fileName: src,
+                    xhrParam: xhrParam,
+                    title: getTitle(),
+                    authenticationToken: 'news'
+                };
+                setCookie('local-image-param', JSON.stringify(param), 10);
+                if (DEVELOPMENT) {
+                    redirect('image.html');
+                } else {
+                    openWindow(TOP_URL + '/image');
+                }
+            });
+        }
+        removeRightClick(elem);
+    }
+    lazyloadImportPromise.then((lazyloadInitialize) => {
+        lazyloadInitialize();
+    });
 }
 
 function bindEventListners(contentContainer: HTMLElement): void {
