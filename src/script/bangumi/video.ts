@@ -39,7 +39,7 @@ import {
 import { Player, HlsPlayer, DashPlayer } from '../module/player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage } from './media_helper';
+import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage } from './media_helper';
 import type { DashjsImportPromise, HlsImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from '../../../custom_modules/hls.js';
 
@@ -192,7 +192,7 @@ function addVideoNode(config?: {
 
     if (currentFormat.video === 'dv5') {
         if (!videoCanPlay('dvh1.05.06')) {
-            showCodecCompatibilityError();
+            showErrorMessage('Dolby Vision®に対応していません', 'Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは<a class="link" href="https://featherine.com/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。');
             return;
         }
     } else if (currentFormat.video === 'hdr10') {
