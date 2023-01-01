@@ -224,7 +224,7 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
         const updateTime = new Date(entry.update_time * 1000);
         dateContainer.innerHTML = updateTime.getFullYear() + '年';
         appendChild(dateContainer, createElement('br'));
-        dateContainer.innerHTML += (updateTime.getMonth() + 1) + '月' + updateTime.getDate() + '日';
+        dateContainer.innerHTML += (updateTime.getMonth() + 1).toString().padStart(2, '0') + '月' + updateTime.getDate().toString().padStart(2, '0') + '日';
 
         const titleContainer = createElement('div');
         titleContainer.innerHTML = entry.title;
