@@ -201,13 +201,13 @@ function addVideoNode(config?: {
             return;
         }
     } else if (currentFormat.video === 'hdr10') {
-        showMediaMessage('HDR10について', '詳しくは<a class="link" href="https://featherine.com/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。', 'orange');
+        showMediaMessage('HDR10について', '詳しくは<a class="link" href="https://featherine.com/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。', null);
         if (videoCanPlay('hvc1.2.4.H153.90')) {
             if (!av1Override) {
                 AV1_FALLBACK = false;
             }
         } else if (AV1_FALLBACK) {
-            showMediaMessage('HEVCに対応していません', 'AV1でエンコードされた動画が代わりに再生されています。詳しくは<a class="link" href="https://featherine.com/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。', 'red');
+            showMediaMessage('HEVCに対応していません', 'AV1でエンコードされた動画が代わりに再生されています。詳しくは<a class="link" href="https://featherine.com/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。', 'orange');
         } else {
             showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは<a class="link" href="https://featherine.com/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。');
             return;
@@ -232,7 +232,7 @@ function addVideoNode(config?: {
     }
 
     if (currentFormat.audio === 'atmos_ac3') {
-        showMediaMessage('Dolby Atmos®について', 'AC-3ダウンミックスを再生しています。詳しくは<a class="link" href="https://featherine.com/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。', 'orange');
+        showMediaMessage('Dolby Atmos®について', 'AC-3ダウンミックスを再生しています。詳しくは<a class="link" href="https://featherine.com/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。', null);
     }
 
     const _config = config ?? {};

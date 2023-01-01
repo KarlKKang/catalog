@@ -85,7 +85,7 @@ export function getFormatIndex(): number {
     return formatIndex;
 }
 
-export function createMessageElem(title: string, body: string, titleColor: string) {
+export function createMessageElem(title: string, body: string, titleColor: string | null) {
     const container = createElement('div');
     const titleElem = createElement('p');
     const bodyElem = createElement('div');
@@ -94,7 +94,7 @@ export function createMessageElem(title: string, body: string, titleColor: strin
     addClass(bodyElem, 'message-body');
     titleElem.innerHTML = title;
     bodyElem.innerHTML = body;
-    changeColor(titleElem, titleColor);
+    titleColor !== null && changeColor(titleElem, titleColor);
     appendChild(container, titleElem);
     appendChild(container, bodyElem);
     return container;

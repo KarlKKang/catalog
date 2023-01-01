@@ -55,7 +55,7 @@ export function showErrorMessage(title: string, body: string) {
     hideElement(mediaHolder);
 }
 
-export function showMediaMessage(title: string, body: string, titleColor: string) {
+export function showMediaMessage(title: string, body: string, titleColor: string | null) {
     const messageElem = createMessageElem(title, body, titleColor);
     prependChild(getById('media-holder'), messageElem);
 }
