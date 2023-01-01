@@ -56,7 +56,6 @@ export default function (
         appendChild(imageNode, overlay);
 
         addClass(imageNode, 'lazyload');
-        setDataAttribute(imageNode, 'crossorigin', 'use-credentials');
         setDataAttribute(imageNode, 'src', baseURL + encodeCFURIComponent(file.file_name));
         setDataAttribute(imageNode, 'alt', file.file_name);
         setDataAttribute(imageNode, 'xhr-param', index.toString());
