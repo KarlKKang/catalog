@@ -449,7 +449,10 @@ export class Player {
         }.bind(this));
 
         //Activity on media
-        addEventListener(this.media, 'play', this.onplay.bind(this));
+        addEventListener(this.media, 'play', function (this: Player) {
+            this.onScreenConsoleOutput('Playback started at ' + this.media.currentTime + '.');
+            this.onplay();
+        }.bind(this));
 
         addEventListener(this.media, 'pause', function (this: Player) {
             if (this.media.currentTime >= this.media.duration - 0.1) {
@@ -762,7 +765,6 @@ export class Player {
     }
 
     protected onplay(this: Player): void {
-        this.onScreenConsoleOutput('Playback started at ' + this.media.currentTime + '.');
         addPlayerClass(this.controls, 'has-started');
         removePlayerClass(this.playButton, 'paused');
         addPlayerClass(this.playButton, 'playing');
