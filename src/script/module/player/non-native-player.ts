@@ -7,7 +7,6 @@ import { addPlayerClass, containsPlayerClass, removePlayerClass } from './helper
 
 export abstract class NonNativePlayer extends Player {
     private buffering = false;
-    private stallTimeout = 61; // 15000 / 250 + 1
 
     constructor(
         container: HTMLDivElement,
@@ -95,7 +94,6 @@ export abstract class NonNativePlayer extends Player {
             /*if (!media.paused && media.readyState>2) {
                 media.pause();
             }*/
-            this.stallTimeout = 61;
             this.buffering = true;
             addPlayerClass(this.controls, 'seeking');
             addEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
@@ -182,18 +180,6 @@ export abstract class NonNativePlayer extends Player {
         super.onwaiting();
         if (this.IS_VIDEO) {
             this.startBuffer();
-        }
-    }
-
-    protected override intervalCallback(this: NonNativePlayer): void {
-        super.intervalCallback();
-        if (this.buffering) {
-            this.stallTimeout--;
-            if (this.stallTimeout === 0) {
-                this.seek(this.media.currentTime + 0.1);
-                this.onScreenConsoleOutput('Playback stalled.');
-                this.stallTimeout = 61;
-            }
         }
     }
 }
