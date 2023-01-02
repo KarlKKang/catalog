@@ -650,7 +650,7 @@ export class Player {
         }.bind(this));
     }
 
-    protected intervalCallback(this: Player): void {
+    private intervalCallback(this: Player): void {
         const duration = this.media.duration;
         if (!duration) {
             return;
