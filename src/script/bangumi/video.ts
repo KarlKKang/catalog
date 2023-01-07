@@ -261,7 +261,9 @@ function addVideoNode(config?: {
                 streaming: {
                     fragmentRequestTimeout: 60000,
                     gaps: {
-                        enableStallFix: false
+                        enableStallFix: true,
+                        jumpLargeGaps: false,
+                        smallGapLimit: 0.5
                     },
                     buffer: {
                         bufferPruningInterval: 1,
