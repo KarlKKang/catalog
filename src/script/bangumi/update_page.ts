@@ -34,6 +34,9 @@ import { invalidResponse } from '../module/message/template/param/server';
 import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
 import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImportPromise, LazyloadImportPromise, VideojsImportPromise, DashjsImportPromise } from './get_import_promises';
+import type { default as videoType } from './video';
+import type { default as audioType } from './audio';
+import type { default as imageType } from './image';
 
 const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
 const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
@@ -42,7 +45,7 @@ let EPSelectorHeight: number;
 let seriesID: string;
 let epIndex: number;
 
-export default function (
+export default async function (
     response: BangumiInfo.BangumiInfo,
     _seriesID: string,
     _epIndex: number,
@@ -153,24 +156,33 @@ export default function (
     const mediaHolder = getById('media-holder');
 
     if (type === 'video') {
-        videoImportPromise.then(({ default: module }) => {
-            module(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, dashjsImportPromise, debug, av1Override, startTime, play);
-        }).catch((e) => {
+        let video: typeof videoType;
+        try {
+            video = (await videoImportPromise).default;
+        } catch (e) {
             showMessage(moduleImportError(e));
-        });
+            throw e;
+        }
+        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, dashjsImportPromise, debug, av1Override, startTime, play);
     } else {
         if (type === 'audio') {
-            audioImportPromise.then(({ default: module }) => {
-                module(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, hlsImportPromise, videojsImportPromise, debug);
-            }).catch((e) => {
+            let audio: typeof audioType;
+            try {
+                audio = (await audioImportPromise).default;
+            } catch (e) {
                 showMessage(moduleImportError(e));
-            });
+                throw e;
+            }
+            audio(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, hlsImportPromise, videojsImportPromise, debug);
         } else {
-            imageImportPromise.then(({ default: module }) => {
-                module(epInfo as BangumiInfo.ImageEPInfo, baseURL, mediaHolder, lazyloadImportPromise);
-            }).catch((e) => {
+            let image: typeof imageType;
+            try {
+                image = (await imageImportPromise).default;
+            } catch (e) {
                 showMessage(moduleImportError(e));
-            });
+                throw e;
+            }
+            image(epInfo as BangumiInfo.ImageEPInfo, baseURL, mediaHolder, lazyloadImportPromise);
         }
         updateURLParam(seriesID, epIndex, 0);
     }

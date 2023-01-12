@@ -21,6 +21,7 @@ import { invalidResponse } from '../module/message/template/param/server';
 import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam, getFormatIndex } from './helper';
 import { default as getImportPromises } from './get_import_promises';
+import type { default as updatePageType } from './update_page';
 
 addEventListener(w, 'load', function () {
     if (!getHref().startsWith(TOP_URL + '/bangumi/') && !DEVELOPMENT) {
@@ -57,7 +58,7 @@ addEventListener(w, 'load', function () {
 
     //send requests
     sendServerRequest('get_ep.php', {
-        callback: function (response: string) {
+        callback: async function (response: string) {
             let parsedResponse: BangumiInfo.BangumiInfo;
             try {
                 parsedResponse = JSON.parse(response);
@@ -66,22 +67,26 @@ addEventListener(w, 'load', function () {
                 showMessage(invalidResponse);
                 return;
             }
-            importPromises.updatePage.then(({ default: updatePage }) => {
-                updatePage(
-                    parsedResponse,
-                    seriesID,
-                    epIndex,
-                    importPromises.video,
-                    importPromises.audio,
-                    importPromises.image,
-                    importPromises.hls,
-                    importPromises.videojs,
-                    importPromises.dashjs,
-                    importPromises.lazyload
-                );
-            }).catch((e) => {
+
+            let updatePage: typeof updatePageType;
+            try {
+                updatePage = (await importPromises.updatePage).default;
+            } catch (e) {
                 showMessage(moduleImportError(e));
-            });
+                throw e;
+            }
+            updatePage(
+                parsedResponse,
+                seriesID,
+                epIndex,
+                importPromises.video,
+                importPromises.audio,
+                importPromises.image,
+                importPromises.hls,
+                importPromises.videojs,
+                importPromises.dashjs,
+                importPromises.lazyload
+            );
         },
         content: 'series=' + seriesID + '&ep=' + epIndex + '&format=' + getFormatIndex(),
         logoutParam: getLogoutParam(seriesID, epIndex)

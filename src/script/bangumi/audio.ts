@@ -30,6 +30,8 @@ import {
     showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion
 } from './media_helper';
 import type { HlsImportPromise, VideojsImportPromise } from './get_import_promises';
+import type Hls from '../custom_modules/hls.js/dist/hls.js';
+import type videojs from 'video.js';
 
 let seriesID: string;
 let epIndex: number;
@@ -74,13 +76,17 @@ export default function (
     }
 
     for (let i = 0; i < audioEPInfo.files.length; i++) {
-        if (!addAudioNode(i)) {
-            return;
-        }
+        addAudioNode(i);
     }
 }
 
-function addAudioNode(index: number) {
+let error = false;
+
+async function addAudioNode(index: number) {
+    if (error) {
+        return;
+    }
+
     const audioEPInfo = epInfo as AudioEPInfo;
     const file = audioEPInfo.files[index] as AudioFile;
 
@@ -114,7 +120,8 @@ function addAudioNode(index: number) {
 
     if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { //ALAC has already fallen back to FLAC if not supported.
         showCodecCompatibilityError();
-        return false;
+        error = true;
+        return;
     }
 
     const playerContainer = createElement('div') as HTMLDivElement;
@@ -135,19 +142,55 @@ function addAudioNode(index: number) {
             },
         } as const;
 
-        videojsImportPromise.then(({ default: videojs }) => {
-            const audioInstance = new VideojsPlayer(playerContainer, videojs, configVideoJSMedia, {
+        let videojsConstructor: typeof videojs;
+        try {
+            videojsConstructor = (await videojsImportPromise).default;
+        } catch (e) {
+            showMessage(moduleImportError(e));
+            throw e;
+        }
+
+        const audioInstance = new VideojsPlayer(playerContainer, videojsConstructor, configVideoJSMedia, {
+            audio: true,
+            debug: debug
+        });
+        audioInstance.load(url, {
+            onerror: function () {
+                if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
+                    showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
+                } else {
+                    showPlaybackError('Index ' + index);
+                }
+                destroyAll();
+            },
+            onload: function () {
+                audioReadyCounter++;
+                if (audioReadyCounter == audioEPInfo.files.length) {
+                    audioReady();
+                }
+            }
+        });
+        mediaInstances[index] = audioInstance;
+        setMediaTitle(audioInstance);
+    } else {
+        if (USE_MSE) {
+            let hlsConstructor: typeof Hls;
+            try {
+                hlsConstructor = (await hlsImportPromise).default;
+            } catch (e) {
+                showMessage(moduleImportError(e));
+                throw e;
+            }
+            const audioInstance = new HlsPlayer(playerContainer, hlsConstructor, configHls, {
                 audio: true,
                 debug: debug
             });
             audioInstance.load(url, {
-                onerror: function () {
-                    if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
-                        showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
-                    } else {
-                        showPlaybackError('Index ' + index);
+                onerror: function (_, data) {
+                    if (data.fatal) {
+                        showPlaybackError('Index ' + index + ': ' + data.details);
+                        destroyAll();
                     }
-                    destroyAll();
                 },
                 onload: function () {
                     audioReadyCounter++;
@@ -158,37 +201,6 @@ function addAudioNode(index: number) {
             });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
-        }).catch((e) => {
-            showMessage(moduleImportError(e));
-            return;
-        });
-    } else {
-        if (USE_MSE) {
-            hlsImportPromise.then(({ default: Hls }) => {
-                const audioInstance = new HlsPlayer(playerContainer, Hls, configHls, {
-                    audio: true,
-                    debug: debug
-                });
-                audioInstance.load(url, {
-                    onerror: function (_, data) {
-                        if (data.fatal) {
-                            showPlaybackError('Index ' + index + ': ' + data.details);
-                            destroyAll();
-                        }
-                    },
-                    onload: function () {
-                        audioReadyCounter++;
-                        if (audioReadyCounter == audioEPInfo.files.length) {
-                            audioReady();
-                        }
-                    }
-                });
-                mediaInstances[index] = audioInstance;
-                setMediaTitle(audioInstance);
-            }).catch((e) => {
-                showMessage(moduleImportError(e));
-                return;
-            });
         } else {
             const audioInstance = new Player(playerContainer, {
                 audio: true,
@@ -214,8 +226,6 @@ function addAudioNode(index: number) {
     function setMediaTitle(audioInstance: Player) {
         audioInstance.media.title = ((file.title == '') ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();
     }
-
-    return true;
 }
 
 function addAlbumInfo() {

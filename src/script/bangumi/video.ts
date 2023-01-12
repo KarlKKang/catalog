@@ -42,6 +42,8 @@ import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
 import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle } from './media_helper';
 import type { DashjsImportPromise, HlsImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from '../../../custom_modules/hls.js';
+import type dashjs from 'dashjs';
+import type Hls from '../../../custom_modules/hls.js';
 
 let seriesID: string;
 let epIndex: number;
@@ -184,7 +186,7 @@ function formatSwitch() {
     });
 }
 
-function addVideoNode(config?: {
+async function addVideoNode(config?: {
     play?: boolean | undefined;
     startTime?: number | undefined;
 }) {
@@ -253,47 +255,49 @@ function addVideoNode(config?: {
     if (AV1_FALLBACK) {
         const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '][AV1].mpd'), epInfo.cdn_credentials, resourceURLOverride);
 
-        dashjsImportPromise.then((dashjs) => {
-            const dashjsConfig = {
-                debug: {
-                    logLevel: debug ? 5 : 3
-                },
-                streaming: {
-                    fragmentRequestTimeout: 60000,
-                    gaps: {
-                        enableStallFix: true,
-                        jumpLargeGaps: false,
-                        smallGapLimit: 0.5
-                    },
-                    buffer: {
-                        bufferPruningInterval: 1,
-                        flushBufferAtTrackSwitch: true,
-                        bufferToKeep: 0,
-                        bufferTimeAtTopQuality: 15,
-                        bufferTimeAtTopQualityLongForm: 15,
-                        avoidCurrentTimeRangePruning: true,
-                    }
-                }
-            };
-
-            const mediaInstance = new DashPlayer(playerContainer, dashjs, dashjsConfig, {
-                debug: debug
-            });
-            currentMediaInstance = mediaInstance;
-            mediaInstance.load(url, {
-                onerror: function (e: dashjs.ErrorEvent) {
-                    showPlaybackError(JSON.stringify(e.error));
-                    currentMediaInstance = undefined;
-                    mediaInstance.destroy();
-                },
-                play: _config.play,
-                startTime: _config.startTime
-            });
-            _onInit(mediaInstance);
-        }).catch((e) => {
+        let dashjsConstructor: typeof dashjs;
+        try {
+            dashjsConstructor = await dashjsImportPromise;
+        } catch (e) {
             showMessage(moduleImportError(e));
-            return;
+            throw e;
+        }
+        const dashjsConfig = {
+            debug: {
+                logLevel: debug ? 5 : 3
+            },
+            streaming: {
+                fragmentRequestTimeout: 60000,
+                gaps: {
+                    enableStallFix: true,
+                    jumpLargeGaps: false,
+                    smallGapLimit: 0.5
+                },
+                buffer: {
+                    bufferPruningInterval: 1,
+                    flushBufferAtTrackSwitch: true,
+                    bufferToKeep: 0,
+                    bufferTimeAtTopQuality: 15,
+                    bufferTimeAtTopQualityLongForm: 15,
+                    avoidCurrentTimeRangePruning: true,
+                }
+            }
+        };
+
+        const mediaInstance = new DashPlayer(playerContainer, dashjsConstructor, dashjsConfig, {
+            debug: debug
         });
+        currentMediaInstance = mediaInstance;
+        mediaInstance.load(url, {
+            onerror: function (e: dashjs.ErrorEvent) {
+                showPlaybackError(JSON.stringify(e.error));
+                currentMediaInstance = undefined;
+                mediaInstance.destroy();
+            },
+            play: _config.play,
+            startTime: _config.startTime
+        });
+        _onInit(mediaInstance);
     } else {
         const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '].m3u8'), epInfo.cdn_credentials, resourceURLOverride);
         if (USE_MSE) {
@@ -316,27 +320,30 @@ function addVideoNode(config?: {
                 }
             };
 
-            hlsImportPromise.then(({ default: Hls }) => {
-                const mediaInstance = new HlsPlayer(playerContainer, Hls, hlsConfig, {
-                    debug: debug
-                });
-                currentMediaInstance = mediaInstance;
-                mediaInstance.load(url, {
-                    onerror: function (_: Events.ERROR, data: ErrorData) {
-                        if (data.fatal) {
-                            showPlaybackError(data.details);
-                            currentMediaInstance = undefined;
-                            mediaInstance.destroy();
-                        }
-                    },
-                    play: _config.play,
-                    startTime: _config.startTime
-                });
-                _onInit(mediaInstance);
-            }).catch((e) => {
+            let hlsConstructor: typeof Hls;
+            try {
+                hlsConstructor = (await hlsImportPromise).default;
+            } catch (e) {
                 showMessage(moduleImportError(e));
-                return;
+                throw e;
+            }
+
+            const mediaInstance = new HlsPlayer(playerContainer, hlsConstructor, hlsConfig, {
+                debug: debug
             });
+            currentMediaInstance = mediaInstance;
+            mediaInstance.load(url, {
+                onerror: function (_: Events.ERROR, data: ErrorData) {
+                    if (data.fatal) {
+                        showPlaybackError(data.details);
+                        currentMediaInstance = undefined;
+                        mediaInstance.destroy();
+                    }
+                },
+                play: _config.play,
+                startTime: _config.startTime
+            });
+            _onInit(mediaInstance);
         } else {
             const mediaInstance = new Player(playerContainer, {
                 debug: debug
