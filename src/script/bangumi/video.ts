@@ -42,7 +42,7 @@ import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
 import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle } from './media_helper';
 import type { DashjsImportPromise, HlsImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from 'hls.js';
-import type dashjs from 'dashjs';
+import type { MediaPlayer } from 'dashjs';
 import type Hls from 'hls.js';
 
 let seriesID: string;
@@ -255,9 +255,9 @@ async function addVideoNode(config?: {
     if (AV1_FALLBACK) {
         const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '][AV1].mpd'), epInfo.cdn_credentials, resourceURLOverride);
 
-        let dashjsConstructor: typeof dashjs;
+        let dashjsMediaPlayerConstructor: typeof MediaPlayer;
         try {
-            dashjsConstructor = await dashjsImportPromise;
+            dashjsMediaPlayerConstructor = (await dashjsImportPromise).MediaPlayer;
         } catch (e) {
             showMessage(moduleImportError(e));
             throw e;
@@ -284,7 +284,7 @@ async function addVideoNode(config?: {
             }
         };
 
-        const mediaInstance = new DashPlayer(playerContainer, dashjsConstructor, dashjsConfig, {
+        const mediaInstance = new DashPlayer(playerContainer, dashjsMediaPlayerConstructor, dashjsConfig, {
             debug: debug
         });
         currentMediaInstance = mediaInstance;

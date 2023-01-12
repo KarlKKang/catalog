@@ -26,7 +26,7 @@ export type VideojsImportPromise = Promise<typeof import(
     'video.js'
 )>;
 export type DashjsImportPromise = Promise<typeof import(
-    /* webpackExports: ["default"] */
+    /* webpackExports: ["MediaPlayer"] */
     'dashjs'
 )>;
 
@@ -69,7 +69,7 @@ export default function (): AllPromises {
             'video.js'
         ),
         dashjs: import(
-            /* webpackExports: ["default"] */
+            /* webpackExports: ["MediaPlayer"] */
             'dashjs'
         )
     };
