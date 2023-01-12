@@ -53,7 +53,7 @@ const USE_MSE = isSupported() && !NATIVE_HLS;
 
 const CAN_PLAY_ALAC = audioCanPlay('alac');
 const CAN_PLAY_FLAC = audioCanPlay('flac') || audioCanPlay('fLaC');
-const CAN_PLAY_MP3 = audioElem.canPlayType('audio/mpeg') != '';
+const CAN_PLAY_MP3 = audioCanPlay('mp3') || canPlay('audio', 'mpeg', ''); // mp3: Firefox; mpeg: Safari and Chrome
 const CAN_PLAY_AVC = videoCanPlay('avc1.640032');
 const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2');
 
@@ -75,20 +75,23 @@ export { CAN_PLAY_AVC };
 export { CAN_PLAY_AAC };
 
 export function videoCanPlay(codecs: string): boolean {
-    return canPlay('video', codecs);
+    return canPlay('video', 'mp4', codecs);
 }
 
 export function audioCanPlay(codecs: string): boolean {
-    return canPlay('audio', codecs);
+    return canPlay('audio', 'mp4', codecs);
 }
 
-function canPlay(type: 'video' | 'audio', codecs: string): boolean {
+function canPlay(type: 'video' | 'audio', container: string, codecs: string): boolean {
+    if (codecs !== '') {
+        codecs = `; codecs="${codecs}"`;
+    }
     if (USE_MSE) {
         const mediaSource = getMediaSource();
         if (mediaSource === undefined) {
             return false;
         }
-        return mediaSource.isTypeSupported(`${type}/mp4; codecs="${codecs}"`);
+        return mediaSource.isTypeSupported(`${type}/${container}${codecs}`);
     } else {
         let mediaElement: HTMLMediaElement;
         if (type === 'video') {
@@ -96,6 +99,6 @@ function canPlay(type: 'video' | 'audio', codecs: string): boolean {
         } else {
             mediaElement = audioElem;
         }
-        return mediaElement.canPlayType(`${type}/mp4; codecs="${codecs}"`) != '';
+        return mediaElement.canPlayType(`${type}/${container}${codecs}`) != '';
     }
 }
