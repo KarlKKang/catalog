@@ -18,4 +18,3 @@ __pycache__
 /dist/*.html
 !/dist/google688e01234602d07d.html
 /webpack-bundle-analyzer-report.html
-/custom_modules/

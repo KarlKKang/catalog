@@ -19,7 +19,7 @@ export type VideoImportPromise = Promise<typeof import(
 export type LazyloadImportPromise = ReturnType<typeof importLazyload>;
 export type HlsImportPromise = Promise<typeof import(
     /* webpackExports: ["default"] */
-    '../../../custom_modules/hls.js'
+    'hls.js'
 )>;
 export type VideojsImportPromise = Promise<typeof import(
     /* webpackExports: ["default"] */
@@ -62,7 +62,7 @@ export default function (): AllPromises {
         lazyload: importLazyload(),
         hls: import(
             /* webpackExports: ["default"] */
-            '../../../custom_modules/hls.js' // This includes a temporary bug fix for encrypted mp3 buffer timestamp.
+            'hls.js'
         ),
         videojs: import(
             /* webpackExports: ["default"] */

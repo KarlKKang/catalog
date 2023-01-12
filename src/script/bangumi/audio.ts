@@ -30,7 +30,7 @@ import {
     showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion
 } from './media_helper';
 import type { HlsImportPromise, VideojsImportPromise } from './get_import_promises';
-import type Hls from '../custom_modules/hls.js/dist/hls.js';
+import type Hls from 'hls.js';
 import type videojs from 'video.js';
 
 let seriesID: string;

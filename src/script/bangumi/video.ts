@@ -41,9 +41,9 @@ import { Player, HlsPlayer, DashPlayer } from '../module/player';
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
 import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle } from './media_helper';
 import type { DashjsImportPromise, HlsImportPromise } from './get_import_promises';
-import type { ErrorData, Events } from '../../../custom_modules/hls.js';
+import type { ErrorData, Events } from 'hls.js';
 import type dashjs from 'dashjs';
-import type Hls from '../../../custom_modules/hls.js';
+import type Hls from 'hls.js';
 
 let seriesID: string;
 let epIndex: number;
