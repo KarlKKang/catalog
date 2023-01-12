@@ -89,25 +89,7 @@ async function addAudioNode(index: number) {
 
     const audioEPInfo = epInfo as AudioEPInfo;
     const file = audioEPInfo.files[index] as AudioFile;
-
     const credentials = audioEPInfo.cdn_credentials;
-
-    const configHls = {
-        enableWebVTT: false,
-        enableIMSC1: false,
-        enableCEA708Captions: false,
-        lowLatencyMode: false,
-        enableWorker: false,
-        maxFragLookUpTolerance: 0.0,
-        testBandwidth: false,
-        backBufferLength: 0,
-        maxBufferLength: 15,
-        maxBufferSize: 0,
-        debug: debug,
-        xhrSetup: function (xhr: XMLHttpRequest) {
-            xhr.withCredentials = true;
-        }
-    };
 
     const FLAC_FALLBACK = (file.flac_fallback && !CAN_PLAY_ALAC);
 
@@ -181,6 +163,23 @@ async function addAudioNode(index: number) {
                 showMessage(moduleImportError(e));
                 throw e;
             }
+
+            const configHls = {
+                enableWebVTT: false,
+                enableIMSC1: false,
+                enableCEA708Captions: false,
+                lowLatencyMode: false,
+                enableWorker: false,
+                maxFragLookUpTolerance: 0.0,
+                backBufferLength: 0,
+                maxBufferLength: 15,
+                maxBufferSize: 0,
+                maxBufferHole: 0.5,
+                debug: debug,
+                xhrSetup: function (xhr: XMLHttpRequest) {
+                    xhr.withCredentials = true;
+                }
+            };
             const audioInstance = new HlsPlayer(playerContainer, hlsConstructor, configHls, {
                 audio: true,
                 debug: debug
