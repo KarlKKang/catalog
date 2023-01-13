@@ -82,9 +82,10 @@ addEventListener(w, 'load', function () {
                 importPromises.video,
                 importPromises.audio,
                 importPromises.image,
-                importPromises.hls,
-                importPromises.videojs,
-                importPromises.dashjs,
+                importPromises.nativePlayer,
+                importPromises.hlsPlayer,
+                importPromises.videojsPlayer,
+                importPromises.dashjsPlayer,
                 importPromises.lazyload
             );
         },

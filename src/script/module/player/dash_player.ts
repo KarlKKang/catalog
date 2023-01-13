@@ -1,13 +1,12 @@
 import { NonNativePlayer } from './non-native-player';
 import { remove } from '../DOM';
-import type { MediaPlayer } from 'dashjs';
+import { MediaPlayer } from 'dashjs';
 
 export class DashPlayer extends NonNativePlayer {
     private readonly dashjsInstance: dashjs.MediaPlayerClass;
 
     constructor(
         container: HTMLDivElement,
-        dashjsMediaPlayerConstructor: typeof MediaPlayer,
         dashjsConfig: dashjs.MediaPlayerSettingClass,
         config?: {
             audio?: boolean;
@@ -15,7 +14,7 @@ export class DashPlayer extends NonNativePlayer {
         }
     ) {
         super(container, config);
-        this.dashjsInstance = dashjsMediaPlayerConstructor().create();
+        this.dashjsInstance = MediaPlayer().create();
         this.dashjsInstance.initialize();
         this.dashjsInstance.updateSettings(dashjsConfig);
         this.dashjsInstance.setAutoPlay(false);

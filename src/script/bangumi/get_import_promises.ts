@@ -17,17 +17,21 @@ export type VideoImportPromise = Promise<typeof import(
     './video'
 )>;
 export type LazyloadImportPromise = ReturnType<typeof importLazyload>;
-export type HlsImportPromise = Promise<typeof import(
-    /* webpackExports: ["default"] */
-    'hls.js'
+export type NativePlayerImportPromise = Promise<typeof import(
+    /* webpackExports: ["Player"] */
+    '../module/player/player'
 )>;
-export type VideojsImportPromise = Promise<typeof import(
-    /* webpackExports: ["default"] */
-    'video.js'
+export type HlsPlayerImportPromise = Promise<typeof import(
+    /* webpackExports: ["HlsPlayer"] */
+    '../module/player/hls_player'
 )>;
-export type DashjsImportPromise = Promise<typeof import(
-    /* webpackExports: ["MediaPlayer"] */
-    'dashjs'
+export type VideojsPlayerImportPromise = Promise<typeof import(
+    /* webpackExports: ["VideojsPlayer"] */
+    '../module/player/videojs_player'
+)>;
+export type DashjsPlayerImportPromise = Promise<typeof import(
+    /* webpackExports: ["DashPlayer"] */
+    '../module/player/dash_player'
 )>;
 
 type AllPromises = {
@@ -36,9 +40,10 @@ type AllPromises = {
     audio: AudioImportPromise;
     video: VideoImportPromise;
     lazyload: LazyloadImportPromise;
-    hls: HlsImportPromise;
-    videojs: VideojsImportPromise;
-    dashjs: DashjsImportPromise;
+    nativePlayer: NativePlayerImportPromise;
+    hlsPlayer: HlsPlayerImportPromise;
+    videojsPlayer: VideojsPlayerImportPromise;
+    dashjsPlayer: DashjsPlayerImportPromise;
 };
 
 export default function (): AllPromises {
@@ -60,17 +65,21 @@ export default function (): AllPromises {
             './video'
         ),
         lazyload: importLazyload(),
-        hls: import(
-            /* webpackExports: ["default"] */
-            'hls.js'
+        nativePlayer: import(
+            /* webpackExports: ["Player"] */
+            '../module/player/player'
         ),
-        videojs: import(
-            /* webpackExports: ["default"] */
-            'video.js'
+        hlsPlayer: import(
+            /* webpackExports: ["HlsPlayer"] */
+            '../module/player/hls_player'
         ),
-        dashjs: import(
-            /* webpackExports: ["MediaPlayer"] */
-            'dashjs'
+        videojsPlayer: import(
+            /* webpackExports: ["VideojsPlayer"] */
+            '../module/player/videojs_player'
+        ),
+        dashjsPlayer: import(
+            /* webpackExports: ["DashPlayer"] */
+            '../module/player/dash_player'
         )
     };
 }

@@ -33,7 +33,7 @@ import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
-import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, HlsImportPromise, LazyloadImportPromise, VideojsImportPromise, DashjsImportPromise } from './get_import_promises';
+import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, LazyloadImportPromise, NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise, DashjsPlayerImportPromise } from './get_import_promises';
 import type { default as videoType } from './video';
 import type { default as audioType } from './audio';
 import type { default as imageType } from './image';
@@ -52,9 +52,10 @@ export default async function (
     videoImportPromise: VideoImportPromise,
     audioImportPromise: AudioImportPromise,
     imageImportPromise: ImageImportPromise,
-    hlsImportPromise: HlsImportPromise,
-    videojsImportPromise: VideojsImportPromise,
-    dashjsImportPromise: DashjsImportPromise,
+    nativePlayerImportPromise: NativePlayerImportPromise,
+    hlsPlayerImportPromise: HlsPlayerImportPromise,
+    videojsPlayerImportPromise: VideojsPlayerImportPromise,
+    dashjsPlayerImportPromise: DashjsPlayerImportPromise,
     lazyloadImportPromise: LazyloadImportPromise
 ) {
     seriesID = _seriesID;
@@ -163,7 +164,7 @@ export default async function (
             showMessage(moduleImportError(e));
             throw e;
         }
-        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, hlsImportPromise, dashjsImportPromise, debug, av1Override, startTime, play);
+        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, nativePlayerImportPromise, hlsPlayerImportPromise, dashjsPlayerImportPromise, debug, av1Override, startTime, play);
     } else {
         if (type === 'audio') {
             let audio: typeof audioType;
@@ -173,7 +174,7 @@ export default async function (
                 showMessage(moduleImportError(e));
                 throw e;
             }
-            audio(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, hlsImportPromise, videojsImportPromise, debug);
+            audio(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise, debug);
         } else {
             let image: typeof imageType;
             try {

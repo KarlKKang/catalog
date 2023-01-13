@@ -23,15 +23,15 @@ import {
     CAN_PLAY_FLAC,
     CAN_PLAY_MP3,
 } from '../module/browser';
-import { Player, HlsPlayer, VideojsPlayer } from '../module/player';
+import type { Player as PlayerType } from '../module/player/player';
+import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
+import type { VideojsPlayer as VideojsPlayerType } from '../module/player/videojs_player';
 
 import { parseCharacters } from './helper';
 import {
     showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion
 } from './media_helper';
-import type { HlsImportPromise, VideojsImportPromise } from './get_import_promises';
-import type Hls from 'hls.js';
-import type videojs from 'video.js';
+import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
 
 let seriesID: string;
 let epIndex: number;
@@ -41,9 +41,10 @@ let mediaHolder: HTMLElement;
 let debug: boolean;
 
 let audioReadyCounter = 0;
-const mediaInstances: Array<Player> = [];
-let hlsImportPromise: HlsImportPromise;
-let videojsImportPromise: VideojsImportPromise;
+const mediaInstances: Array<PlayerType> = [];
+let nativePlayerImportPromise: NativePlayerImportPromise;
+let hlsPlayerImportPromise: HlsPlayerImportPromise;
+let videojsPlayerImportPromise: VideojsPlayerImportPromise;
 
 export default function (
     _seriesID: string,
@@ -51,8 +52,9 @@ export default function (
     _epInfo: AudioEPInfo,
     _baseURL: string,
     _mediaHolder: HTMLElement,
-    _hlsImportPromise: HlsImportPromise,
-    _videojsImportPromise: VideojsImportPromise,
+    _nativePlayerImportPromise: NativePlayerImportPromise,
+    _hlsPlayerImportPromise: HlsPlayerImportPromise,
+    _videojsPlayerImportPromise: VideojsPlayerImportPromise,
     _debug: boolean
 ) {
 
@@ -61,8 +63,9 @@ export default function (
     epInfo = _epInfo;
     baseURL = _baseURL;
     mediaHolder = _mediaHolder;
-    hlsImportPromise = _hlsImportPromise;
-    videojsImportPromise = _videojsImportPromise;
+    nativePlayerImportPromise = _nativePlayerImportPromise;
+    hlsPlayerImportPromise = _hlsPlayerImportPromise;
+    videojsPlayerImportPromise = _videojsPlayerImportPromise;
     debug = _debug;
 
     const audioEPInfo = epInfo as AudioEPInfo;
@@ -111,6 +114,14 @@ async function addAudioNode(index: number) {
     const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8'), credentials, baseURL + '_MASTER_*.m3u8');
 
     if (USE_VIDEOJS) {
+        let VideojsPlayer: typeof VideojsPlayerType;
+        try {
+            VideojsPlayer = (await videojsPlayerImportPromise).VideojsPlayer;
+        } catch (e) {
+            showMessage(moduleImportError(e));
+            throw e;
+        }
+
         const configVideoJSMedia = {
             controls: false,
             autoplay: false,
@@ -124,15 +135,7 @@ async function addAudioNode(index: number) {
             },
         } as const;
 
-        let videojsConstructor: typeof videojs;
-        try {
-            videojsConstructor = (await videojsImportPromise).default;
-        } catch (e) {
-            showMessage(moduleImportError(e));
-            throw e;
-        }
-
-        const audioInstance = new VideojsPlayer(playerContainer, videojsConstructor, configVideoJSMedia, {
+        const audioInstance = new VideojsPlayer(playerContainer, configVideoJSMedia, {
             audio: true,
             debug: debug
         });
@@ -156,9 +159,9 @@ async function addAudioNode(index: number) {
         setMediaTitle(audioInstance);
     } else {
         if (USE_MSE) {
-            let hlsConstructor: typeof Hls;
+            let HlsPlayer: typeof HlsPlayerType;
             try {
-                hlsConstructor = (await hlsImportPromise).default;
+                HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
             } catch (e) {
                 showMessage(moduleImportError(e));
                 throw e;
@@ -180,7 +183,7 @@ async function addAudioNode(index: number) {
                     xhr.withCredentials = true;
                 }
             };
-            const audioInstance = new HlsPlayer(playerContainer, hlsConstructor, configHls, {
+            const audioInstance = new HlsPlayer(playerContainer, configHls, {
                 audio: true,
                 debug: debug
             });
@@ -201,6 +204,14 @@ async function addAudioNode(index: number) {
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
         } else {
+            let Player: typeof PlayerType;
+            try {
+                Player = (await nativePlayerImportPromise).Player;
+            } catch (e) {
+                showMessage(moduleImportError(e));
+                throw e;
+            }
+
             const audioInstance = new Player(playerContainer, {
                 audio: true,
                 debug: debug
@@ -222,7 +233,7 @@ async function addAudioNode(index: number) {
         }
     }
 
-    function setMediaTitle(audioInstance: Player) {
+    function setMediaTitle(audioInstance: PlayerType) {
         audioInstance.media.title = ((file.title == '') ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();
     }
 }
@@ -337,7 +348,7 @@ function audioReady() {
     }
     function playNext(currentIndex: number) {
         if (currentIndex < mediaInstances.length - 1) {
-            (mediaInstances[currentIndex + 1] as Player).play();
+            (mediaInstances[currentIndex + 1] as PlayerType).play();
         }
     }
 

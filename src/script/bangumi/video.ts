@@ -36,27 +36,28 @@ import {
     videoCanPlay,
     audioCanPlay,
 } from '../module/browser';
-import { Player, HlsPlayer, DashPlayer } from '../module/player';
+import type { Player, Player as PlayerType } from '../module/player/player';
+import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
+import type { DashPlayer as DashPlayerType } from '../module/player/dash_player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
 import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle } from './media_helper';
-import type { DashjsImportPromise, HlsImportPromise } from './get_import_promises';
+import type { NativePlayerImportPromise, DashjsPlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from 'hls.js';
-import type { MediaPlayer } from 'dashjs';
-import type Hls from 'hls.js';
 
 let seriesID: string;
 let epIndex: number;
 let epInfo: VideoEPInfo;
 let baseURL: string;
 let mediaHolder: HTMLElement;
-let hlsImportPromise: HlsImportPromise;
-let dashjsImportPromise: DashjsImportPromise;
+let nativePlayerImportPromise: NativePlayerImportPromise;
+let hlsPlayerImportPromise: HlsPlayerImportPromise;
+let dashjsPlayerImportPromise: DashjsPlayerImportPromise;
 let debug: boolean;
 let av1Override: boolean;
 
 let currentFormat: VideoFormatInfo;
-let currentMediaInstance: Player | undefined;
+let currentMediaInstance: PlayerType | undefined;
 
 export default function (
     _seriesID: string,
@@ -64,8 +65,9 @@ export default function (
     _epInfo: VideoEPInfo,
     _baseURL: string,
     _mediaHolder: HTMLElement,
-    _hlsImportPromise: HlsImportPromise,
-    _dashjsImportPromise: DashjsImportPromise,
+    _nativePlayerImportPromise: NativePlayerImportPromise,
+    _hlsPlayerImportPromise: HlsPlayerImportPromise,
+    _dashjsPlayerImportPromise: DashjsPlayerImportPromise,
     _debug: boolean,
     _av1Override: boolean,
     startTime: number | null,
@@ -77,8 +79,9 @@ export default function (
     epInfo = _epInfo;
     baseURL = _baseURL;
     mediaHolder = _mediaHolder;
-    hlsImportPromise = _hlsImportPromise;
-    dashjsImportPromise = _dashjsImportPromise;
+    nativePlayerImportPromise = _nativePlayerImportPromise;
+    hlsPlayerImportPromise = _hlsPlayerImportPromise;
+    dashjsPlayerImportPromise = _dashjsPlayerImportPromise;
     debug = _debug;
     av1Override = _av1Override;
 
@@ -239,7 +242,7 @@ async function addVideoNode(config?: {
 
     const _config = config ?? {};
 
-    function _onInit(mediaInstance: Player) {
+    function _onInit(mediaInstance: PlayerType) {
         mediaInstance.media.title = getTitle();
         if (epInfo.chapters.length > 0) {
             displayChapters(mediaInstance);
@@ -255,13 +258,14 @@ async function addVideoNode(config?: {
     if (AV1_FALLBACK) {
         const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '][AV1].mpd'), epInfo.cdn_credentials, resourceURLOverride);
 
-        let dashjsMediaPlayerConstructor: typeof MediaPlayer;
+        let DashPlayer: typeof DashPlayerType;
         try {
-            dashjsMediaPlayerConstructor = (await dashjsImportPromise).MediaPlayer;
+            DashPlayer = (await dashjsPlayerImportPromise).DashPlayer;
         } catch (e) {
             showMessage(moduleImportError(e));
             throw e;
         }
+
         const dashjsConfig = {
             debug: {
                 logLevel: debug ? 5 : 3
@@ -284,7 +288,7 @@ async function addVideoNode(config?: {
             }
         };
 
-        const mediaInstance = new DashPlayer(playerContainer, dashjsMediaPlayerConstructor, dashjsConfig, {
+        const mediaInstance = new DashPlayer(playerContainer, dashjsConfig, {
             debug: debug
         });
         currentMediaInstance = mediaInstance;
@@ -301,6 +305,14 @@ async function addVideoNode(config?: {
     } else {
         const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '].m3u8'), epInfo.cdn_credentials, resourceURLOverride);
         if (USE_MSE) {
+            let HlsPlayer: typeof HlsPlayerType;
+            try {
+                HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
+            } catch (e) {
+                showMessage(moduleImportError(e));
+                throw e;
+            }
+
             const hlsConfig = {
                 enableWebVTT: false,
                 enableIMSC1: false,
@@ -319,15 +331,7 @@ async function addVideoNode(config?: {
                 }
             };
 
-            let hlsConstructor: typeof Hls;
-            try {
-                hlsConstructor = (await hlsImportPromise).default;
-            } catch (e) {
-                showMessage(moduleImportError(e));
-                throw e;
-            }
-
-            const mediaInstance = new HlsPlayer(playerContainer, hlsConstructor, hlsConfig, {
+            const mediaInstance = new HlsPlayer(playerContainer, hlsConfig, {
                 debug: debug
             });
             currentMediaInstance = mediaInstance;
@@ -344,6 +348,14 @@ async function addVideoNode(config?: {
             });
             _onInit(mediaInstance);
         } else {
+            let Player: typeof PlayerType;
+            try {
+                Player = (await nativePlayerImportPromise).Player;
+            } catch (e) {
+                showMessage(moduleImportError(e));
+                throw e;
+            }
+
             const mediaInstance = new Player(playerContainer, {
                 debug: debug
             });

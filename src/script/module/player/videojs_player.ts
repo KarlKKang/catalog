@@ -1,5 +1,5 @@
 import { NonNativePlayer } from './non-native-player';
-import type { default as videojs } from 'video.js';
+import { default as videojs } from 'video.js';
 import {
     prependChild,
     remove,
@@ -10,7 +10,6 @@ export class VideojsPlayer extends NonNativePlayer {
 
     constructor(
         container: HTMLDivElement,
-        videojsConstructor: typeof videojs,
         videojsConfig: videojs.PlayerOptions,
         config?: {
             audio?: boolean;
@@ -18,7 +17,7 @@ export class VideojsPlayer extends NonNativePlayer {
         }
     ) {
         super(container, config);
-        this.videojsInstance = videojsConstructor(this.media, videojsConfig);
+        this.videojsInstance = videojs(this.media, videojsConfig);
         prependChild(container, this.media);
         remove(this.videojsInstance.el());
     }
