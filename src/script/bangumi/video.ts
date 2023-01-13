@@ -44,6 +44,7 @@ import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
 import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle } from './media_helper';
 import type { NativePlayerImportPromise, DashjsPlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from 'hls.js';
+import { ErrorDetails as HlsErrorDetails } from 'hls.js';
 
 let seriesID: string;
 let epIndex: number;
@@ -202,7 +203,7 @@ async function addVideoNode(config?: {
 
     if (currentFormat.video === 'dv5') {
         if (!videoCanPlay('dvh1.05.06')) {
-            showErrorMessage('Dolby Vision®に対応していません', 'Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは<a class="link" href="https://featherine.com/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。');
+            showDolbyVisionError();
             return;
         }
     } else if (currentFormat.video === 'hdr10') {
@@ -338,7 +339,11 @@ async function addVideoNode(config?: {
             mediaInstance.load(url, {
                 onerror: function (_: Events.ERROR, data: ErrorData) {
                     if (data.fatal) {
-                        showPlaybackError(data.details);
+                        if (data.details === HlsErrorDetails.BUFFER_APPEND_ERROR && currentFormat.video === 'dv5') {
+                            showDolbyVisionError();
+                        } else {
+                            showPlaybackError(data.details);
+                        }
                         currentMediaInstance = undefined;
                         mediaInstance.destroy();
                     }
@@ -426,4 +431,8 @@ function displayChapters(mediaInstance: Player) {
         });
     }
     addEventsListener(video, ['play', 'pause', 'seeking', 'seeked', 'timeupdate'], updateChapterDisplay);
+}
+
+function showDolbyVisionError() {
+    showErrorMessage('Dolby Vision®に対応していません', 'Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは<a class="link" href="https://featherine.com/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。');
 }
