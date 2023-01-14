@@ -19,6 +19,7 @@ module.exports = {
     'semi': 'off',
     '@typescript-eslint/semi': 'warn',
     '@typescript-eslint/member-delimiter-style': 'warn',
-    '@typescript-eslint/no-explicit-any': 'off'
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
   }
 }
