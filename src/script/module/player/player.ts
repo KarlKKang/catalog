@@ -392,7 +392,7 @@ export class Player {
         }
     }
 
-    private togglePlayback(this: Player) {
+    protected togglePlayback(this: Player) {
         if (containsPlayerClass(this.controls, 'playing')) {
             this.pause();
         } else {
