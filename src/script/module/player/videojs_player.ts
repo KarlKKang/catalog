@@ -63,7 +63,6 @@ export class VideojsPlayer extends NonNativePlayer {
             }
         }.bind(this);
 
-        this.pause();
         this.videojsInstance.one('loadedmetadata', callback);
         this.videojsInstance.src({
             src: url,

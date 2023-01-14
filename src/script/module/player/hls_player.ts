@@ -65,7 +65,6 @@ export class HlsPlayer extends NonNativePlayer {
             }
         }.bind(this);
 
-        this.pause();
         this.hlsInstance.once(Hls.Events.MANIFEST_PARSED, callback);
         this.hlsInstance.loadSource(url);
         this.onScreenConsoleOutput('HLS source loaded.');

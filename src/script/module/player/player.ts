@@ -82,6 +82,8 @@ export class Player {
     private droppedFrames = 0;
     private corruptedFrames = 0;
 
+    private playPromise: Promise<void> | undefined;
+
     public get paused(): boolean {
         return !this.playing && this.media.paused;
     }
@@ -339,11 +341,24 @@ export class Player {
     }
 
     public play(this: Player) {
-        this.media.play();
+        this.playPromise = this.media.play();
+        this.playPromise.catch((e) => {
+            this.onScreenConsoleOutput('play promise rejected');
+            throw e;
+        });
     }
 
     public pause(this: Player) {
-        this.media.pause();
+        const playPromise = this.playPromise;
+        if (this.playPromise === undefined) {
+            this.media.pause();
+        } else {
+            this.playPromise.then(() => {
+                if (this.playPromise === playPromise) {
+                    this.media.pause();
+                }
+            });
+        }
     }
 
     public seek(this: Player, timestamp: number) {
@@ -428,7 +443,7 @@ export class Player {
             this.dragging = true;
             this.draggingPreviewTimeout = 4;
             if (!this.media.paused) {
-                this.media.pause();
+                this.pause();
                 this.playing = true;
             }
 
@@ -656,7 +671,7 @@ export class Player {
             return;
         }
         if (this.dragging) {
-            if (this.draggingPreviewTimeout > 0) {
+            if (this.draggingPreviewTimeout > 0 && this.IS_VIDEO) {
                 this.draggingPreviewTimeout--;
             }
             return;

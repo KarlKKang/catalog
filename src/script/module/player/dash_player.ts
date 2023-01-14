@@ -65,7 +65,6 @@ export class DashPlayer extends NonNativePlayer {
             }
         }.bind(this);
 
-        this.pause();
         this.dashjsInstance.on('manifestLoaded', callback);
         this.dashjsInstance.attachSource(url);
         this.onScreenConsoleOutput('dashjs source loaded.');

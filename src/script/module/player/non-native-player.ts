@@ -43,19 +43,18 @@ export abstract class NonNativePlayer extends Player {
             }
             this.onplay();
         } else {
-            this.media.play();
+            super.play();
         }
     }
 
-    public override pause(this: NonNativePlayer) {
-        if (this.IS_VIDEO) {
+    public override pause(this: NonNativePlayer, setStatus = true) {
+        if (this.IS_VIDEO && setStatus) {
             this.playing = false;
-            super.onpause();
         }
-        this.media.pause();
+        super.pause();
     }
 
-    private checkBuffer = function (this: NonNativePlayer, event?: Event) {
+    private checkBuffer(this: NonNativePlayer) {
         if (this.buffering === false) {
             return;
         }
@@ -70,7 +69,7 @@ export abstract class NonNativePlayer extends Player {
                     this.buffering = false;
                     this.onScreenConsoleOutput('Buffer complete!');
                     if (this.playing && !this.dragging) {
-                        this.media.play();
+                        super.play();
                     }
                     return;
                 }
@@ -79,10 +78,8 @@ export abstract class NonNativePlayer extends Player {
         }
 
         setTimeout(this.checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
-        if (event !== undefined && (event.type == 'playing' || (!this.media.paused && event.type == 'timeupdate'))) {
-            this.media.pause();
-        }
-    };
+        this.pause(false);
+    }
 
     private startBuffer(this: NonNativePlayer) {
         if (this.buffering) {
@@ -90,15 +87,12 @@ export abstract class NonNativePlayer extends Player {
             return;
         }
 
-        const addCheckBuffer = function (this: NonNativePlayer) {
-            /*if (!media.paused && media.readyState>2) {
-                media.pause();
-            }*/
+        const addCheckBuffer = () => {
             this.buffering = true;
             addPlayerClass(this.controls, 'seeking');
             addEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
             this.checkBuffer();
-        }.bind(this);
+        };
 
         const bufferedRange = this.getBufferedRange();
         if (bufferedRange.length == 0) {
@@ -113,7 +107,7 @@ export abstract class NonNativePlayer extends Player {
                     } else {
                         this.onScreenConsoleOutput('Buffer above threshold.');
                         if (this.playing && !this.dragging) {
-                            this.media.play();
+                            super.play();
                         }
                     }
                     return;
