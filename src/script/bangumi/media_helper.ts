@@ -39,6 +39,10 @@ export function showCodecCompatibilityError() {
     showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix);
 }
 
+export function showPlayPromiseError() {
+    showErrorMessage(incompatibleTitle, 'ブラウザによって再生が中断されました。再読み込みするか、他のブラウザを使用してみてください。');
+}
+
 export function showErrorMessage(title: string, body: string) {
     let messageElem = getByIdNative('error');
     const mediaHolder = getById('media-holder');

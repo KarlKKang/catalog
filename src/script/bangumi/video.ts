@@ -41,7 +41,7 @@ import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 import type { DashPlayer as DashPlayerType } from '../module/player/dash_player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle } from './media_helper';
+import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError } from './media_helper';
 import type { NativePlayerImportPromise, DashjsPlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from 'hls.js';
 import { ErrorDetails as HlsErrorDetails } from 'hls.js';
@@ -249,6 +249,13 @@ async function addVideoNode(config?: {
             displayChapters(mediaInstance);
         }
     }
+    function onPlayPromiseError() {
+        showPlayPromiseError();
+        if (currentMediaInstance !== undefined) {
+            currentMediaInstance.destroy();
+            currentMediaInstance = undefined;
+        }
+    }
 
 
     const playerContainer = createElement('div') as HTMLDivElement;
@@ -299,6 +306,7 @@ async function addVideoNode(config?: {
                 currentMediaInstance = undefined;
                 mediaInstance.destroy();
             },
+            onplaypromiseerror: onPlayPromiseError,
             play: _config.play,
             startTime: _config.startTime
         });
@@ -348,6 +356,7 @@ async function addVideoNode(config?: {
                         mediaInstance.destroy();
                     }
                 },
+                onplaypromiseerror: onPlayPromiseError,
                 play: _config.play,
                 startTime: _config.startTime
             });
@@ -371,6 +380,7 @@ async function addVideoNode(config?: {
                     currentMediaInstance = undefined;
                     mediaInstance.destroy();
                 },
+                onplaypromiseerror: onPlayPromiseError,
                 play: _config.play,
                 startTime: _config.startTime
             });

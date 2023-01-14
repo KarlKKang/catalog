@@ -83,6 +83,7 @@ export class Player {
     private corruptedFrames = 0;
 
     private playPromise: Promise<void> | undefined;
+    protected onPlayPromiseError: (() => void) | undefined;
 
     public get paused(): boolean {
         return !this.playing && this.media.paused;
@@ -301,12 +302,14 @@ export class Player {
             startTime?: number | undefined;
             onload?: (...args: any[]) => void;
             onerror?: (...args: any[]) => void;
+            onplaypromiseerror?: () => void;
         }
     ): void {
         config = config ?? {};
 
         if (!this.attached) {
             this.attach(config.onload, config.onerror);
+            this.onPlayPromiseError = config.onplaypromiseerror;
         }
 
         const play = config.play === true;
@@ -343,6 +346,7 @@ export class Player {
     public play(this: Player) {
         this.playPromise = this.media.play();
         this.playPromise.catch((e) => {
+            this.onPlayPromiseError && this.onPlayPromiseError();
             this.onScreenConsoleOutput('play promise rejected');
             throw e;
         });

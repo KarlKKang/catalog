@@ -29,7 +29,7 @@ import type { VideojsPlayer as VideojsPlayerType } from '../module/player/videoj
 
 import { parseCharacters } from './helper';
 import {
-    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion
+    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, showPlaybackError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showPlayPromiseError
 } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
 
@@ -113,6 +113,11 @@ async function addAudioNode(index: number) {
     appendChild(mediaHolder, playerContainer);
     const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8'), credentials, baseURL + '_MASTER_*.m3u8');
 
+    function onPlayPromiseError() {
+        showPlayPromiseError();
+        destroyAll();
+    }
+
     if (USE_VIDEOJS) {
         let VideojsPlayer: typeof VideojsPlayerType;
         try {
@@ -153,7 +158,8 @@ async function addAudioNode(index: number) {
                 if (audioReadyCounter == audioEPInfo.files.length) {
                     audioReady();
                 }
-            }
+            },
+            onplaypromiseerror: onPlayPromiseError
         });
         mediaInstances[index] = audioInstance;
         setMediaTitle(audioInstance);
@@ -199,7 +205,8 @@ async function addAudioNode(index: number) {
                     if (audioReadyCounter == audioEPInfo.files.length) {
                         audioReady();
                     }
-                }
+                },
+                onplaypromiseerror: onPlayPromiseError
             });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
@@ -226,7 +233,8 @@ async function addAudioNode(index: number) {
                     if (audioReadyCounter == audioEPInfo.files.length) {
                         audioReady();
                     }
-                }
+                },
+                onplaypromiseerror: onPlayPromiseError
             });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
@@ -364,7 +372,9 @@ function audioReady() {
 }
 
 function destroyAll() {
-    for (const mediaInstance of mediaInstances) {
+    let mediaInstance = mediaInstances.pop();
+    while (mediaInstance !== undefined) {
         mediaInstance.destroy();
+        mediaInstance = mediaInstances.pop();
     }
 }
