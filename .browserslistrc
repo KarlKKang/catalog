@@ -1,5 +1,4 @@
-# supports es5
-supports es6 and supports es6-module and supports const and supports let and supports arrow-functions and not safari < 11 and not ios_saf < 11
+supports es6 and supports es6-module and supports const and supports let and supports arrow-functions and not safari < 11 and not ios_saf < 11 and not edge < 17
 
 [legacy]
 since 2000

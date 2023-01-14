@@ -47,4 +47,10 @@
         windowLocation.replace(URL);
         return;
     }
+
+    const videoPromise = document.createElement('video').play();
+    if (!(videoPromise && typeof videoPromise.then === 'function')) {
+        windowLocation.replace(URL);
+        return;
+    }
 })();
