@@ -49,7 +49,9 @@
     }
 
     const videoPromise = document.createElement('video').play();
-    if (!(videoPromise && typeof videoPromise.then === 'function')) {
+    if (videoPromise && typeof videoPromise.then === 'function') {
+        videoPromise.catch(() => { });
+    } else {
         windowLocation.replace(URL);
         return;
     }
