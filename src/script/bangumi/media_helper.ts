@@ -28,7 +28,7 @@ export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
 export function showPlaybackError(detail?: string) {
-    showErrorMessage(defaultError, '再生中にエラーが発生しました。' + defaultErrorSuffix + (detail === undefined ? '' : ('<br>Error detail: ' + detail)));
+    showErrorMessage(defaultError, '再生中にエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。' + defaultErrorSuffix + (detail === undefined ? '' : ('<br>Error detail: ' + detail)));
 }
 
 export function showHLSCompatibilityError() {
