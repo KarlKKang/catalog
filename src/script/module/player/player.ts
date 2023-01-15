@@ -317,11 +317,14 @@ export class Player {
 
         const callback = function (this: Player) {
             if (play) {
-                this.media.play().catch(() => {
-                    if (startTime !== undefined) {
-                        this.seek(startTime); // If the play promise is rejected, currentTime will be reset to 0 on older versions of Safari.
-                    }
-                });
+                const playPromise = this.media.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        if (startTime !== undefined) {
+                            this.seek(startTime); // If the play promise is rejected, currentTime will be reset to 0 on older versions of Safari.
+                        }
+                    });
+                }
             }
             if (startTime !== undefined) {
                 this.seek(startTime); // Calling the play method will reset the currentTime to 0 on older versions of Safari. So it should be set after calling the play().
@@ -344,12 +347,15 @@ export class Player {
     }
 
     public play(this: Player) {
-        this.playPromise = this.media.play();
-        this.playPromise.catch((e) => {
-            this.onPlayPromiseError && this.onPlayPromiseError();
-            this.onScreenConsoleOutput('play promise rejected');
-            throw e;
-        });
+        const playPromise = this.media.play();
+        this.playPromise = playPromise;
+        if (playPromise !== undefined) {
+            playPromise.catch((e) => {
+                this.onPlayPromiseError && this.onPlayPromiseError();
+                this.onScreenConsoleOutput('play promise rejected');
+                throw e;
+            });
+        }
     }
 
     public pause(this: Player) {
