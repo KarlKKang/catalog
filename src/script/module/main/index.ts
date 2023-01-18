@@ -34,22 +34,17 @@ export const EMAIL_REGEX = /^(?=.{3,254}$)[^\s@]+@[^\s@]+$/;
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
-////////////////////////////////////////
 export function getURLParam(name: string): string | null {
     const urlObj = new URL(getHref());
     return urlObj.searchParams.get(name);
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 function addXHROnError(xmlhttp: XMLHttpRequest) {
     xmlhttp.onerror = function () {
         showMessage(connectionError);
     };
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean {
     const status = response.status;
     if (response.readyState == 4) {
@@ -87,9 +82,7 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
         return false;
     }
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 interface SendServerRequestOption {
     callback?: (response: string) => void;
     content?: string;
@@ -110,9 +103,7 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
     xmlhttp.withCredentials = options.withCredentials ?? true;
     xmlhttp.send(options.content ?? '');
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function authenticate(callback: { successful?: () => void; failed?: () => void }) {
     sendServerRequest('get_authentication_state.php', {
         callback: function (response: string) {
@@ -126,9 +117,7 @@ export function authenticate(callback: { successful?: () => void; failed?: () =>
         }
     });
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function logout(callback: () => void,) {
     sendServerRequest('logout.php', {
         callback: function (response: string) {
@@ -143,9 +132,7 @@ export function logout(callback: () => void,) {
         }
     });
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function passwordStyling(element: HTMLInputElement) {
     function inputChangeHandler() {
         if (element.value === '') {
@@ -171,9 +158,7 @@ export function passwordStyling(element: HTMLInputElement) {
     addEventListener(element, 'input', inputChangeHandler);
     addEventListener(element, 'change', inputChangeHandler);
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 function navUpdate() {
     const navBtn = getById('nav-btn');
     toggleClass(navBtn, 'active');
@@ -189,9 +174,7 @@ function navUpdate() {
         }, 300);
     }
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function navListeners() {
     function getNavMenuButton(innerHTML: string) {
         const navMenuButtonContainer = createElement('p');
@@ -241,9 +224,7 @@ export function navListeners() {
         logout(function () { redirect(LOGIN_URL); });
     });
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function secToTimestamp(sec: number, templateSec?: number) {
     if (isNaN(sec)) {
         return '0:00';
@@ -289,18 +270,14 @@ function parseSec(sec: number) {
         sec: Math.floor(sec)
     };
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function changeColor(elem: HTMLElement, color: string) {
     removeClass(elem, 'color-red');
     removeClass(elem, 'color-green');
     removeClass(elem, 'color-orange');
     addClass(elem, 'color-' + color);
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function imageProtection(elem: HTMLElement) {
     removeRightClick(elem);
     addEventListener(elem, 'dragstart', e => {
@@ -320,9 +297,7 @@ export function imageProtection(elem: HTMLElement) {
         }
     });
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 import { base64Encode } from './base64';
 export function concatenateSignedURL(url: string, credentials: CDNCredentials, resourceURLOverride?: string) {
     const policy = credentials['Policy'];
@@ -334,15 +309,11 @@ export function concatenateSignedURL(url: string, credentials: CDNCredentials, r
     policyString = policyString.replace(/\//g, '~');
     return url + '?Policy=' + policyString + '&Signature=' + credentials['Signature'] + '&Key-Pair-Id=' + credentials['Key-Pair-Id'];
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function encodeCFURIComponent(uri: string) {
     return encodeURIComponent(uri).replace(/%20/g, '+');
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function disableInput(inputElement: HTMLInputElement, disabled: boolean) {
     inputElement.disabled = disabled;
     if (disabled) {
@@ -351,9 +322,7 @@ export function disableInput(inputElement: HTMLInputElement, disabled: boolean) 
         removeClass(getParent(inputElement), 'disabled');
     }
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function clearCookies() {
     if (getHref() != TOP_URL + '/message' && !DEVELOPMENT) {
         deleteCookie('local-message-param');
@@ -362,9 +331,7 @@ export function clearCookies() {
         deleteCookie('local-image-param');
     }
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 import type Sha512 from 'node-forge/lib/sha512';
 export async function hashPassword(password: string) {
     let sha512: typeof Sha512;
@@ -382,15 +349,11 @@ export async function hashPassword(password: string) {
     hash.update(password);
     return hash.digest().toHex();
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function removeRightClick(elem: Element) {
     addEventListener(elem, 'contextmenu', event => event.preventDefault());
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function scrollToHash(paddingTop: boolean) {
     const scrollID = getHash();
     if (scrollID !== '') {
@@ -402,9 +365,7 @@ export function scrollToHash(paddingTop: boolean) {
         }
     }
 }
-////////////////////////////////////////
 
-////////////////////////////////////////
 export function checkBaseURL(baseURL: string) {
     const href = getHref();
     let protocol = '';
