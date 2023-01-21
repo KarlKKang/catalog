@@ -63,6 +63,10 @@ export abstract class NonNativePlayer extends Player {
             this.IS_VIDEO && this.onpause(true); // onpause will not fire if the user pauses the video before the video finishes buffering.
             this.pause();
         } else {
+            if (this.ended) {
+                this.seek(0);
+                this.ended = false;
+            }
             this.play();
         }
     }
@@ -72,14 +76,23 @@ export abstract class NonNativePlayer extends Player {
             return;
         }
 
+        const endBuffer = () => {
+            removeEventsListener(this.media, ['progress', 'play', 'timeupdate'], this.checkBuffer);
+            removePlayerClass(this.controls, 'seeking');
+            this.buffering = false;
+        };
+
         const bufferedRange = this.getBufferedRange();
+        if (bufferedRange.length == 0 && this.media.currentTime >= this.media.duration - 0.1) {
+            endBuffer();
+            this.pause();
+            this.ended = true;
+        }
         for (const buffer of bufferedRange) {
             if (this.media.currentTime < buffer.end) {
                 this.onScreenConsoleOutput('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this.media.currentTime);
                 if (buffer.start <= this.media.currentTime + 0.1 && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - 0.1)) {
-                    removeEventsListener(this.media, ['progress', 'play', 'timeupdate'], this.checkBuffer);
-                    removePlayerClass(this.controls, 'seeking');
-                    this.buffering = false;
+                    endBuffer();
                     this.onScreenConsoleOutput('Buffer complete!');
                     if (this.playing && !this.dragging) {
                         super.play();
@@ -109,8 +122,12 @@ export abstract class NonNativePlayer extends Player {
 
         const bufferedRange = this.getBufferedRange();
         if (bufferedRange.length == 0) {
-            addCheckBuffer();
-            this.onScreenConsoleOutput('Buffer empty, start buffering.');
+            if (this.media.currentTime >= this.media.duration - 0.1) {
+                this.ended = true;
+            } else {
+                addCheckBuffer();
+                this.onScreenConsoleOutput('Buffer empty, start buffering.');
+            }
         } else {
             for (const buffer of bufferedRange) {
                 if (this.media.currentTime < buffer.end) {

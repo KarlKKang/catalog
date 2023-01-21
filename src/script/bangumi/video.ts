@@ -426,7 +426,7 @@ function displayChapters(mediaInstance: Player) {
         timestamp.textContent = secToTimestamp(startTime);
         addEventListener(timestamp, 'click', function () {
             mediaInstance.seek(startTime);
-            mediaInstance.controls.focus();
+            mediaInstance.focus();
         });
         appendChild(chapterNode, timestamp);
         appendChild(chapterNode, cueText);

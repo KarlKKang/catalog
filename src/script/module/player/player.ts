@@ -89,6 +89,25 @@ export class Player {
         return !this.playing && this.media.paused;
     }
 
+    protected get ended(): boolean {
+        return containsPlayerClass(this.controls, 'ended');
+    }
+
+    protected set ended(isEnded: boolean) {
+        if (isEnded) {
+            removePlayerClass(this.controls, 'seeking');
+            removePlayerClass(this.playButton, 'playing');
+            addPlayerClass(this.playButton, 'paused');
+            removePlayerClass(this.controls, 'playing');
+            addPlayerClass(this.controls, 'paused');
+            addPlayerClass(this.controls, 'ended');
+            addPlayerClass(this.playButton, 'ended');
+        } else {
+            removePlayerClass(this.controls, 'ended');
+            removePlayerClass(this.playButton, 'ended');
+        }
+    }
+
     constructor(
         container: HTMLDivElement,
         config?: {
@@ -331,7 +350,6 @@ export class Player {
             }
         }.bind(this);
 
-        this.pause();
         addEventListenerOnce(this.media, 'loadedmetadata', callback);
         this.media.src = url;
         this.media.load();
@@ -372,6 +390,9 @@ export class Player {
     }
 
     public seek(this: Player, timestamp: number) {
+        if (this.media.currentTime !== timestamp) {
+            this.ended = false;
+        }
         this.media.currentTime = timestamp;
     }
 
@@ -402,6 +423,10 @@ export class Player {
         if (containsPlayerClass(this.controls, 'playing')) {
             this.pause();
         } else {
+            if (this.ended) {
+                this.seek(0);
+                this.ended = false;
+            }
             this.play();
         }
     }
@@ -434,15 +459,8 @@ export class Player {
 
         //Play button
         addEventListener(this.playButton, 'click', function (this: Player) {
-            if (containsPlayerClass(this.controls, 'ended')) {
-                removePlayerClass(this.controls, 'ended');
-                removePlayerClass(this.playButton, 'ended');
-                this.seek(0);
-                this.play();
-            } else {
-                this.togglePlayback();
-            }
-            this.playButton.blur();
+            this.togglePlayback();
+            this.focus();
         }.bind(this));
 
         //Progress bar & frame drop monitor
@@ -457,8 +475,7 @@ export class Player {
                 this.playing = true;
             }
 
-            removePlayerClass(this.controls, 'ended');
-            removePlayerClass(this.playButton, 'ended');
+            this.ended = false;
 
             this.progressUpdate(event as MouseEvent | TouchEvent);
         }.bind(this));
@@ -480,9 +497,7 @@ export class Player {
         }.bind(this));
 
         addEventListener(this.media, 'pause', function (this: Player) {
-            if (this.media.currentTime >= this.media.duration - 0.1) {
-                this.onended();
-            } else if (!this.dragging) {
+            if (!this.dragging) {
                 this.onpause();
             }
         }.bind(this));
@@ -513,7 +528,7 @@ export class Player {
             this.resetToActive();
         }.bind(this), true);
         addEventListener(this.controls, 'click', function (this: Player) {
-            if (!touchClick) {
+            if (!touchClick && !this.ended) {
                 this.togglePlayback();
             }
         }.bind(this));
@@ -522,7 +537,7 @@ export class Player {
         addEventListener(this.bigPlayButton, 'click', function (this: Player, event: Event) {
             event.stopPropagation();
             this.play();
-            this.bigPlayButton.blur();
+            this.focus();
         }.bind(this));
 
         //Load progress
@@ -546,6 +561,7 @@ export class Player {
             if (this.media.currentTime >= this.media.duration - 0.1) {
                 this.onScreenConsoleOutput('Playback entered waiting state before ended at ' + this.media.currentTime + '.');
                 this.pause();
+                this.ended = true;
             } else {
                 this.onwaiting();
             }
@@ -564,12 +580,12 @@ export class Player {
                 screenfull.request(this.controls);
             }
 
-            this.controls.focus();
+            this.focus();
         }.bind(this);
 
         const exitFullscreen = function (this: Player) {
             screenfull.exit();
-            this.controls.focus();
+            this.focus();
         }.bind(this);
 
         const toggleFullscreen = function (this: Player) {
@@ -613,7 +629,7 @@ export class Player {
                 } else {
                     (this.media as HTMLVideoElement).requestPictureInPicture();
                 }
-                PIPButton.blur();
+                this.focus();
             }.bind(this));
 
             addEventListener(this.media, 'enterpictureinpicture', function (this: Player) {
@@ -624,6 +640,7 @@ export class Player {
             addEventListener(this.media, 'leavepictureinpicture', function (this: Player) {
                 removePlayerClass(this.controls, 'picture-in-picture');
                 PIPButton.title = 'Picture-in-Picture';
+                this.focus();
             }.bind(this));
         }
 
@@ -638,6 +655,7 @@ export class Player {
                 insertAfter(this.airPlayButton, this.progressControl);
                 addEventListener(this.airPlayButton, 'click', () => {
                     (this.media as HTMLVideoElement).webkitShowPlaybackTargetPicker();
+                    this.focus();
                 });
                 addEventListener(this.media, 'webkitcurrentplaybacktargetiswirelesschanged', () => {
                     if ((this.media as HTMLVideoElement).webkitCurrentPlaybackTargetIsWireless) {
@@ -726,10 +744,7 @@ export class Player {
             this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
         }
         this.durationDisplayText.textContent = secToTimestamp(this.media.duration);
-        if (containsPlayerClass(this.controls, 'ended')) {
-            removePlayerClass(this.controls, 'ended');
-            removePlayerClass(this.playButton, 'ended');
-        }
+        this.ended = false;
     }
 
     protected ondragended(this: Player, event: MouseEvent | TouchEvent): void {
@@ -742,7 +757,7 @@ export class Player {
             this.play();
             this.playing = false;
         }
-        this.progressControl.blur();
+        this.focus();
     }
 
     private progressUpdate(this: Player, event: MouseEvent | TouchEvent): number {
@@ -795,10 +810,7 @@ export class Player {
         addPlayerClass(this.playButton, 'playing');
         removePlayerClass(this.controls, 'paused');
         addPlayerClass(this.controls, 'playing');
-        if (containsPlayerClass(this.controls, 'ended')) {
-            removePlayerClass(this.controls, 'ended');
-            removePlayerClass(this.playButton, 'ended');
-        }
+        this.ended = false;
     }
 
     protected onpause(this: Player): void {
@@ -811,12 +823,9 @@ export class Player {
 
     protected onended(this: Player): void {
         this.onScreenConsoleOutput('Playback ended.');
-        removePlayerClass(this.playButton, 'playing');
-        addPlayerClass(this.playButton, 'paused');
-        removePlayerClass(this.controls, 'playing');
-        addPlayerClass(this.controls, 'paused');
-        addPlayerClass(this.controls, 'ended');
-        addPlayerClass(this.playButton, 'ended');
+        if (!this.dragging) {
+            this.ended = true;
+        }
     }
 
     protected onwaiting(this: Player): void {
@@ -848,6 +857,10 @@ export class Player {
         }
         currentBuffer && bufferedRange.push(currentBuffer);
         return bufferedRange;
+    }
+
+    public focus(this: Player) {
+        this.controls.focus({ preventScroll: true });
     }
 
     protected onScreenConsoleOutput(this: Player, txt: string) {
