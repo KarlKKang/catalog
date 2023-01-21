@@ -133,7 +133,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
         addClass(updateTimeContainer, 'date');
 
         const updateTime = new Date(newsInfo.update_time * 1000);
-        updateTimeContainer.innerHTML = '最終更新日：' + updateTime.getFullYear() + '年' + (updateTime.getMonth() + 1) + '月' + updateTime.getDate() + '日（' + getDayOfWeek(createTime) + '）' + createTime.getHours() + '時' + createTime.getMinutes() + '分' + createTime.getSeconds() + '秒';
+        updateTimeContainer.innerHTML = '最終更新日：' + updateTime.getFullYear() + '年' + (updateTime.getMonth() + 1) + '月' + updateTime.getDate() + '日（' + getDayOfWeek(updateTime) + '）' + updateTime.getHours() + '時' + updateTime.getMinutes() + '分' + updateTime.getSeconds() + '秒';
         appendChild(container, updateTimeContainer);
     }
 
