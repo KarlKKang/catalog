@@ -354,19 +354,11 @@ function audioReady() {
             }
         });
     }
-    function playNext(currentIndex: number) {
-        if (currentIndex < mediaInstances.length - 1) {
-            (mediaInstances[currentIndex + 1] as PlayerType).play();
-        }
-    }
 
     mediaInstances.forEach(function (instance, index) {
         addEventListener(instance.media, 'play', function () { // The media play event doesn't need to be handled separately since it catches all play events.
             pauseAll(index);
         });
-        instance.onEnded = function () { // The media ended event should be handled separately since there are situations where ended events won't fire.
-            instance.paused || playNext(index);
-        };
     });
 }
 

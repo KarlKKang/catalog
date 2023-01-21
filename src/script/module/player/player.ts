@@ -84,7 +84,6 @@ export class Player {
 
     private playPromise: Promise<void> | undefined;
     protected onPlayPromiseError: (() => void) | undefined;
-    public onEnded: (() => void) | undefined;
 
     public get paused(): boolean {
         return !this.playing && this.media.paused;
@@ -103,8 +102,7 @@ export class Player {
             addPlayerClass(this.controls, 'paused');
             addPlayerClass(this.controls, 'ended');
             addPlayerClass(this.playButton, 'ended');
-            this.onEnded && this.onEnded();
-            this.pause(); // pause should be called after onEnded since onEnded may rely on the current states of this instance.
+            this.pause();
         } else {
             removePlayerClass(this.controls, 'ended');
             removePlayerClass(this.playButton, 'ended');
