@@ -30,6 +30,7 @@ export type VideoFormatInfo = {
     video?: string;
     audio?: string;
     av1_fallback?: string;
+    aac_fallback?: boolean;
 };
 export interface VideoEPInfo extends EPInfo {
     type: 'video';
@@ -104,6 +105,10 @@ function checkVideoEPInfo(epInfo: any) {
         }
 
         if (format.av1_fallback !== undefined && !isString(format.av1_fallback)) {
+            throwError();
+        }
+
+        if (format.aac_fallback !== undefined && !isBoolean(format.aac_fallback)) {
             throwError();
         }
     }

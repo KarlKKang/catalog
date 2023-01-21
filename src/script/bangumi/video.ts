@@ -34,14 +34,16 @@ import {
     CAN_PLAY_AVC,
     CAN_PLAY_AAC,
     videoCanPlay,
-    audioCanPlay,
+    CAN_PLAY_AC3,
+    IS_CHROMIUM,
+    IS_FIREFOX,
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 import type { DashPlayer as DashPlayerType } from '../module/player/dash_player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError } from './media_helper';
+import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError, incompatibleSuffix } from './media_helper';
 import type { NativePlayerImportPromise, DashjsPlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from 'hls.js';
 import { ErrorDetails as HlsErrorDetails } from 'hls.js';
@@ -225,20 +227,29 @@ async function addVideoNode(config?: {
         }
     }
 
-    if (currentFormat.audio === 'atmos_ac3' && !AV1_FALLBACK) {
-        if (!audioCanPlay('ac-3') && !CAN_PLAY_AAC) {
-            showCodecCompatibilityError();
-            return;
+    let USE_AAC = true;
+    let AAC_FALLBACK = false;
+
+    if (currentFormat.audio !== undefined) {
+        if (currentFormat.audio.startsWith('atmos')) {
+            showMediaMessage('Dolby Atmos®について', 'Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは<a class="link" href="https://featherine.com/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。', null);
         }
-    } else {
-        if (!CAN_PLAY_AAC) {
-            showCodecCompatibilityError();
-            return;
+
+        if (currentFormat.audio.startsWith('atmos_ac3') && !AV1_FALLBACK) {
+            if (CAN_PLAY_AC3) {
+                USE_AAC = false;
+            } else if (currentFormat.aac_fallback) {
+                AAC_FALLBACK = true;
+            } else {
+                showCodecCompatibilityError();
+                return;
+            }
         }
     }
 
-    if (currentFormat.audio === 'atmos_ac3') {
-        showMediaMessage('Dolby Atmos®について', 'AC-3ダウンミックスを再生しています。詳しくは<a class="link" href="https://featherine.com/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。', null);
+    if (USE_AAC && !CAN_PLAY_AAC) {
+        showCodecCompatibilityError();
+        return;
     }
 
     const _config = config ?? {};
@@ -262,7 +273,7 @@ async function addVideoNode(config?: {
     appendChild(mediaHolder, playerContainer);
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
-    const resourceURLOverride = currentFormat.av1_fallback === undefined ? undefined : baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']*');
+    const resourceURLOverride = (currentFormat.av1_fallback === undefined && currentFormat.aac_fallback === undefined) ? undefined : baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']*');
     if (AV1_FALLBACK) {
         const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '][AV1].mpd'), epInfo.cdn_credentials, resourceURLOverride);
 
@@ -302,7 +313,11 @@ async function addVideoNode(config?: {
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
             onerror: function (e: dashjs.ErrorEvent) {
-                showPlaybackError(JSON.stringify(e.error));
+                if (typeof e.error === 'object' && e.error.code < 10 && currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
+                    show8chAudioError();
+                } else {
+                    showPlaybackError(JSON.stringify(e.error));
+                }
                 currentMediaInstance = undefined;
                 mediaInstance.destroy();
             },
@@ -312,7 +327,7 @@ async function addVideoNode(config?: {
         });
         _onInit(mediaInstance);
     } else {
-        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '].m3u8'), epInfo.cdn_credentials, resourceURLOverride);
+        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8'), epInfo.cdn_credentials, resourceURLOverride);
         if (USE_MSE) {
             let HlsPlayer: typeof HlsPlayerType;
             try {
@@ -347,8 +362,14 @@ async function addVideoNode(config?: {
             mediaInstance.load(url, {
                 onerror: function (_: Events.ERROR, data: ErrorData) {
                     if (data.fatal) {
-                        if (data.details === HlsErrorDetails.BUFFER_APPEND_ERROR && currentFormat.video === 'dv5') {
-                            showDolbyVisionError();
+                        if (data.details === HlsErrorDetails.BUFFER_APPEND_ERROR) {
+                            if (currentFormat.video === 'dv5') {
+                                showDolbyVisionError();
+                            } else if (currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
+                                show8chAudioError();
+                            } else {
+                                showCodecCompatibilityError();
+                            }
                         } else {
                             showPlaybackError(data.details);
                         }
@@ -445,4 +466,8 @@ function displayChapters(mediaInstance: Player) {
 
 function showDolbyVisionError() {
     showErrorMessage('Dolby Vision®に対応していません', 'Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは<a class="link" href="https://featherine.com/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。');
+}
+
+function show8chAudioError() {
+    showErrorMessage(incompatibleTitle, 'ChromiumベースのブラウザとFirefoxでは、7.1chオーディオを再生することはできません。' + incompatibleSuffix);
 }

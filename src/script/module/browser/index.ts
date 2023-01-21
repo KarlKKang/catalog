@@ -56,6 +56,7 @@ const CAN_PLAY_FLAC = audioCanPlay('flac') || audioCanPlay('fLaC');
 const CAN_PLAY_MP3 = audioCanPlay('mp3') || canPlay('audio', 'mpeg', ''); // mp3: Firefox; mpeg: Safari and Chrome
 const CAN_PLAY_AVC = videoCanPlay('avc1.640032');
 const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2');
+const CAN_PLAY_AC3 = audioCanPlay('ac-3');
 
 UNRECOMMENDED_BROWSER = UNRECOMMENDED_BROWSER || !(CAN_PLAY_AVC && CAN_PLAY_AAC) || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
 
@@ -73,6 +74,7 @@ export { CAN_PLAY_FLAC };
 export { CAN_PLAY_MP3 };
 export { CAN_PLAY_AVC };
 export { CAN_PLAY_AAC };
+export { CAN_PLAY_AC3 };
 
 export function videoCanPlay(codecs: string): boolean {
     return canPlay('video', 'mp4', codecs);
