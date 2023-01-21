@@ -80,9 +80,7 @@ export class HlsPlayer extends NonNativePlayer {
 
     public override seek(this: HlsPlayer, timestamp: number) {
         if (this.IS_VIDEO) {
-            if (this.media.currentTime !== timestamp) {
-                this.ended = false;
-            }
+            this.seekCheck(timestamp);
             if (timestamp >= this.fragStart) {
                 this.media.currentTime = timestamp;
                 this.onScreenConsoleOutput('Skipped buffer flushing.');

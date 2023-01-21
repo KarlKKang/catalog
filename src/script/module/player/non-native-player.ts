@@ -51,13 +51,6 @@ export abstract class NonNativePlayer extends Player {
         }
     }
 
-    public override pause(this: NonNativePlayer, setStatus = true) {
-        if (this.IS_VIDEO && setStatus) {
-            this.playing = false;
-        }
-        super.pause();
-    }
-
     protected override togglePlayback(this: NonNativePlayer) {
         if (containsPlayerClass(this.controls, 'playing')) {
             this.IS_VIDEO && this.onpause(true); // onpause will not fire if the user pauses the video before the video finishes buffering.
@@ -85,7 +78,6 @@ export abstract class NonNativePlayer extends Player {
         const bufferedRange = this.getBufferedRange();
         if (bufferedRange.length == 0 && this.media.currentTime >= this.media.duration - 0.1) {
             endBuffer();
-            this.pause();
             this.ended = true;
         }
         for (const buffer of bufferedRange) {
@@ -122,7 +114,7 @@ export abstract class NonNativePlayer extends Player {
 
         const bufferedRange = this.getBufferedRange();
         if (bufferedRange.length == 0) {
-            if (this.media.currentTime >= this.media.duration - 0.1) {
+            if (this.media.currentTime >= this.media.duration - 0.1) { // Media should be ended when it's near the end there's no more buffer.
                 this.ended = true;
             } else {
                 addCheckBuffer();
@@ -180,13 +172,6 @@ export abstract class NonNativePlayer extends Player {
         } else {
             super.onpause();
         }
-    }
-
-    protected override onended(this: NonNativePlayer): void {
-        if (this.IS_VIDEO) {
-            this.playing = false;
-        }
-        super.onended();
     }
 
     protected override oncanplaythrough(this: NonNativePlayer): void {

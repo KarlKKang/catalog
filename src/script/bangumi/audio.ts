@@ -361,13 +361,12 @@ function audioReady() {
     }
 
     mediaInstances.forEach(function (instance, index) {
-        const media = instance.media;
-        addEventListener(media, 'play', function () {
+        addEventListener(instance.media, 'play', function () { // The media play event doesn't need to be handled separately since it catches all play events.
             pauseAll(index);
         });
-        addEventListener(media, 'ended', function () {
-            playNext(index);
-        });
+        instance.onEnded = function () { // The media ended event should be handled separately since there are situations where ended events won't fire.
+            instance.paused || playNext(index);
+        };
     });
 }
 

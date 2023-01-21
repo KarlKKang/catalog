@@ -84,6 +84,7 @@ export class Player {
 
     private playPromise: Promise<void> | undefined;
     protected onPlayPromiseError: (() => void) | undefined;
+    public onEnded: (() => void) | undefined;
 
     public get paused(): boolean {
         return !this.playing && this.media.paused;
@@ -102,6 +103,8 @@ export class Player {
             addPlayerClass(this.controls, 'paused');
             addPlayerClass(this.controls, 'ended');
             addPlayerClass(this.playButton, 'ended');
+            this.onEnded && this.onEnded();
+            this.pause(); // pause should be called after onEnded since onEnded may rely on the current states of this instance.
         } else {
             removePlayerClass(this.controls, 'ended');
             removePlayerClass(this.playButton, 'ended');
@@ -376,7 +379,10 @@ export class Player {
         }
     }
 
-    public pause(this: Player) {
+    public pause(this: Player, setStatus = true) {
+        if (setStatus) {
+            this.playing = false; // This is necessary for the ended setter to work otherwise the player may resume playback after ended.
+        }
         const playPromise = this.playPromise;
         if (this.playPromise === undefined) {
             this.media.pause();
@@ -389,10 +395,18 @@ export class Player {
         }
     }
 
-    public seek(this: Player, timestamp: number) {
-        if (this.media.currentTime !== timestamp) {
+    protected seekCheck(this: Player, timestamp: number): void {
+        if (timestamp >= this.media.duration) {
+            if (!this.dragging) {
+                this.ended = true;
+            }
+        } else if (this.media.currentTime !== timestamp) {
             this.ended = false;
         }
+    }
+
+    public seek(this: Player, timestamp: number) {
+        this.seekCheck(timestamp);
         this.media.currentTime = timestamp;
     }
 
@@ -472,7 +486,7 @@ export class Player {
             this.draggingPreviewTimeout = 4;
             if (!this.media.paused) {
                 this.pause();
-                this.playing = true;
+                this.playing = true; // This line should be after this.pause() since playing is set to false in pause function.
             }
 
             this.ended = false;
@@ -560,7 +574,6 @@ export class Player {
         addEventListener(this.media, 'waiting', function (this: Player) {
             if (this.media.currentTime >= this.media.duration - 0.1) {
                 this.onScreenConsoleOutput('Playback entered waiting state before ended at ' + this.media.currentTime + '.');
-                this.pause();
                 this.ended = true;
             } else {
                 this.onwaiting();
@@ -681,10 +694,10 @@ export class Player {
                 this.seek(this.media.currentTime - 5);
                 event.preventDefault();
             } else if (key === 'ArrowRight' || key === 'Right') {
-                this.media.currentTime = this.media.currentTime + 5;
+                this.seek(this.media.currentTime + 5);
                 event.preventDefault();
             } else if (key === 'ArrowUp' || key === 'Up') {
-                this.media.currentTime = this.media.currentTime + 15;
+                this.seek(this.media.currentTime + 15);
                 event.preventDefault();
             } else if (key === 'ArrowDown' || key === 'Down') {
                 this.seek(this.media.currentTime - 15);
@@ -821,7 +834,7 @@ export class Player {
         addPlayerClass(this.controls, 'paused');
     }
 
-    protected onended(this: Player): void {
+    private onended(this: Player): void {
         this.onScreenConsoleOutput('Playback ended.');
         if (!this.dragging) {
             this.ended = true;
