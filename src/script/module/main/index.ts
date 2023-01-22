@@ -40,25 +40,44 @@ export function getURLParam(name: string): string | null {
     return urlObj.searchParams.get(name);
 }
 
-function addXHROnError(xmlhttp: XMLHttpRequest) {
-    xmlhttp.onerror = function () {
-        showMessage(connectionError);
-    };
+interface SendServerRequestOption {
+    callback?: (response: string) => void;
+    content?: string;
+    withCredentials?: boolean;
+    method?: 'POST' | 'GET';
+    logoutParam?: string;
+    connectionErrorRetry?: number;
 }
 
-function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean {
+function xhrOnErrorCallback(uri: string, options: SendServerRequestOption) {
+    if (options.connectionErrorRetry === undefined) {
+        options.connectionErrorRetry = 2;
+        sendServerRequest(uri, options);
+    } else {
+        options.connectionErrorRetry -= 1;
+        if (options.connectionErrorRetry < 0) {
+            showMessage(connectionError);
+        } else {
+            sendServerRequest(uri, options);
+        }
+    }
+}
+
+function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServerRequestOption): boolean {
     const status = response.status;
+    const responseText = response.responseText;
     if (response.readyState == 4) {
         if (status == 200) {
             return true;
         } else if (status == 403) {
-            if (response.responseText == 'SESSION ENDED') {
+            if (responseText == 'SESSION ENDED') {
                 redirect(TOP_URL);
-            } else if (response.responseText == 'INSUFFICIENT PERMISSIONS') {
+            } else if (responseText == 'INSUFFICIENT PERMISSIONS') {
                 redirect(TOP_URL, true);
-            } else if (response.responseText == 'UNAUTHORIZED') {
+            } else if (responseText == 'UNAUTHORIZED') {
+                const logoutParam = options.logoutParam;
                 redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
-            } else if (response.responseText != 'CRAWLER') {
+            } else if (responseText != 'CRAWLER') {
                 showMessage(status403);
             }
         } else if (status == 429) {
@@ -66,17 +85,15 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
         } else if (status == 503) {
             showMessage(status503);
         } else if (status == 500 || status == 400) {
-            const responseText = response.responseText;
             if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
                 showMessage(status400And500(responseText));
-            }
-            else {
+            } else {
                 showMessage();
             }
         } else if (status == 404 && response.responseText == 'REJECTED') {
             redirect(TOP_URL);
         } else {
-            showMessage(connectionError);
+            xhrOnErrorCallback(uri, options);
         }
         return false;
     } else {
@@ -84,21 +101,16 @@ function checkXHRStatus(response: XMLHttpRequest, logoutParam?: string): boolean
     }
 }
 
-interface SendServerRequestOption {
-    callback?: (response: string) => void;
-    content?: string;
-    withCredentials?: boolean;
-    method?: 'POST' | 'GET';
-    logoutParam?: string;
-}
 export function sendServerRequest(uri: string, options: SendServerRequestOption) {
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
-        if (checkXHRStatus(this, options.logoutParam)) {
+        if (checkXHRStatus(this, uri, options)) {
             options.callback && options.callback(this.responseText);
         }
     };
-    addXHROnError(xmlhttp);
+    xmlhttp.onerror = function () {
+        xhrOnErrorCallback(uri, options);
+    };
     xmlhttp.open(options.method ?? 'POST', SERVER_URL + '/' + uri, true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.withCredentials = options.withCredentials ?? true;
