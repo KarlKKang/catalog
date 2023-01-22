@@ -1,3 +1,4 @@
+import { TOP_URL } from '../module/env/constant';
 import {
     sendServerRequest,
     secToTimestamp,
@@ -209,15 +210,15 @@ async function addVideoNode(config?: {
             return;
         }
     } else if (currentFormat.video === 'hdr10') {
-        showMediaMessage('HDR10について', '詳しくは<a class="link" href="https://featherine.com/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。', null);
+        showMediaMessage('HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null);
         if (videoCanPlay('hvc1.2.4.H153.90')) {
             if (!av1Override) {
                 AV1_FALLBACK = false;
             }
         } else if (AV1_FALLBACK) {
-            showMediaMessage('HEVCに対応していません', 'AV1でエンコードされた動画が代わりに再生されています。詳しくは<a class="link" href="https://featherine.com/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。', 'orange');
+            showMediaMessage('HEVCに対応していません', `AV1でエンコードされた動画が代わりに再生されています。詳しくは<a class="link" href="${TOP_URL}/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。`, 'orange');
         } else {
-            showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは<a class="link" href="https://featherine.com/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。');
+            showErrorMessage(incompatibleTitle, `お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは<a class="link" href="${TOP_URL}/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。`);
             return;
         }
     } else {
@@ -232,7 +233,7 @@ async function addVideoNode(config?: {
 
     if (currentFormat.audio !== undefined) {
         if (currentFormat.audio.startsWith('atmos')) {
-            showMediaMessage('Dolby Atmos®について', 'Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは<a class="link" href="https://featherine.com/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。', null);
+            showMediaMessage('Dolby Atmos®について', `Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは<a class="link" href="${TOP_URL}/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。`, null);
         }
 
         if (currentFormat.audio.startsWith('atmos_ac3') && !AV1_FALLBACK) {
@@ -465,7 +466,7 @@ function displayChapters(mediaInstance: Player) {
 }
 
 function showDolbyVisionError() {
-    showErrorMessage('Dolby Vision®に対応していません', 'Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは<a class="link" href="https://featherine.com/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。');
+    showErrorMessage('Dolby Vision®に対応していません', `Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`);
 }
 
 function show8chAudioError() {
