@@ -17,7 +17,7 @@ import {
     getById,
     getBody,
     showElement,
-} from './module/DOM';
+} from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitationOnly } from './module/message/template/inline';

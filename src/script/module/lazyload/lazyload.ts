@@ -9,7 +9,7 @@ import {
     containsClass,
     addClass,
     getDataAttribute,
-} from '../DOM';
+} from '../dom';
 import { show as showMessage } from '../message';
 import { invalidResponse } from '../message/template/param/server';
 import * as CDNCredentials from '../type/CDNCredentials';

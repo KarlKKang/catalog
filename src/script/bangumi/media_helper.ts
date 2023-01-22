@@ -16,7 +16,7 @@ import {
     getByIdNative,
     getDescendantsByClassAt,
     hideElement,
-} from '../module/DOM';
+} from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
 import { defaultError } from '../module/message/template/title';

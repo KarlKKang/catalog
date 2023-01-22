@@ -24,7 +24,7 @@ import {
     openWindow,
     showElement,
     getBaseURL,
-} from './module/DOM';
+} from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';

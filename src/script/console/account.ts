@@ -12,7 +12,7 @@ import {
     containsClass,
     addClass,
     getDataAttribute
-} from '../module/DOM';
+} from '../module/dom';
 import { completeCallback, getTable } from './helper';
 
 function accountCompleteCallback(response: string) {

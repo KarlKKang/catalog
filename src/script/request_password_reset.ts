@@ -21,7 +21,7 @@ import {
     getDescendantsByTagAt,
     getBody,
     showElement,
-} from './module/DOM';
+} from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat } from './module/message/template/inline';

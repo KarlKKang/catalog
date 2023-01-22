@@ -9,7 +9,7 @@ import {
     addClass,
     containsClass,
     getDataAttribute
-} from '../module/DOM';
+} from '../module/dom';
 
 import { completeCallback, getTable } from './helper';
 

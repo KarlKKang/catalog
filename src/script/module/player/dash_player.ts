@@ -1,5 +1,5 @@
 import { NonNativePlayer } from './non-native-player';
-import { remove } from '../DOM';
+import { remove } from '../dom';
 import { MediaPlayer } from 'dashjs';
 
 export class DashPlayer extends NonNativePlayer {

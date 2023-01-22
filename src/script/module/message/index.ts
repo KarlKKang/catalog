@@ -3,7 +3,7 @@ import {
     TOP_URL,
     LOGIN_URL
 } from '../env/constant';
-import { getBaseURL, redirect, setCookie, getTitle } from '../DOM/document';
+import { getBaseURL, redirect, setCookie, getTitle } from '../dom/document';
 import type { LocalMessageParam } from '../type/LocalMessageParam';
 
 import { defaultError } from './template/title';

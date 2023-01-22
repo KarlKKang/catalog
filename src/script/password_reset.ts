@@ -21,7 +21,7 @@ import {
     getBody,
     showElement,
     getBaseURL,
-} from './module/DOM';
+} from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
 import { expired, passwordChanged } from './module/message/template/param';

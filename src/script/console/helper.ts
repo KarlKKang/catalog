@@ -8,7 +8,7 @@ import {
     addClass,
     getByClass,
     containsClass
-} from '../module/DOM';
+} from '../module/dom';
 
 export function getTable(type: string, callback?: () => void) {
     const param = {

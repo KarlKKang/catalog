@@ -1,4 +1,4 @@
-import { addClass, containsClass, removeClass } from '../DOM';
+import { addClass, containsClass, removeClass } from '../dom';
 
 export function addPlayerClass(elem: Element, className: string) {
     addClass(elem, 'player-' + className);

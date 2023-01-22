@@ -8,7 +8,7 @@ import {
 import {
     appendChild,
     createElement
-} from './DOM';
+} from './dom';
 import { show as showMessage } from './message';
 import { moduleImportError } from './message/template/param';
 

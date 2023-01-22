@@ -26,7 +26,7 @@ import {
     addEventListener,
     createElement,
     appendChild,
-} from '../DOM';
+} from '../dom';
 
 import type { CDNCredentials } from '../type/CDNCredentials';
 

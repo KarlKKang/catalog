@@ -14,7 +14,7 @@ import {
     addEventListener,
     getBaseURL,
     redirect,
-} from '../module/DOM';
+} from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';

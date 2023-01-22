@@ -12,7 +12,7 @@ import {
     changeURL,
     createElement,
     getComputedStyle,
-} from '../module/DOM';
+} from '../module/dom';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
     let height = elem.scrollHeight;

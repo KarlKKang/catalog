@@ -15,7 +15,7 @@ import {
     addEventListener,
     redirect,
     getBaseURL,
-} from './module/DOM';
+} from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
 

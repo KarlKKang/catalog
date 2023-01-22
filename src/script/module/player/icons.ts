@@ -1,4 +1,4 @@
-import { appendChild, d } from '../DOM';
+import { appendChild, d } from '../dom';
 import { addPlayerClass } from './helper';
 
 

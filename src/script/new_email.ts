@@ -19,7 +19,7 @@ import {
     getBody,
     showElement,
     getBaseURL,
-} from './module/DOM';
+} from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
 import { expired, emailSent } from './module/message/template/param';

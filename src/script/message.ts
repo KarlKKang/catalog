@@ -21,7 +21,7 @@ import {
     getBaseURL,
     hideElement,
     showElement,
-} from './module/DOM';
+} from './module/dom';
 import * as LocalMessageParam from './module/type/LocalMessageParam';
 
 addEventListener(w, 'load', function () {

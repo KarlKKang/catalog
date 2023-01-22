@@ -10,7 +10,7 @@ import {
     getTitle,
     appendChild,
     prependChild,
-} from '../module/DOM';
+} from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import type { AudioEPInfo, AudioFile } from '../module/type/BangumiInfo';

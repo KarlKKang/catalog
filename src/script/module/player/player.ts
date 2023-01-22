@@ -18,7 +18,7 @@ import {
     hideElement,
     showElement,
     insertAfter
-} from '../DOM';
+} from '../dom';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClass } from './helper';

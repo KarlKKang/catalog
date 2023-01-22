@@ -3,7 +3,7 @@ import { default as videojs } from 'video.js';
 import {
     prependChild,
     remove,
-} from '../DOM';
+} from '../dom';
 
 export class VideojsPlayer extends NonNativePlayer {
     private readonly videojsInstance: videojs.Player;

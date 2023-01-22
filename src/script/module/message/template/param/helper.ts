@@ -2,7 +2,7 @@ import {
     TOP_URL,
     LOGIN_URL
 } from '../../../env/constant';
-import { getBaseURL } from '../../../DOM/document';
+import { getBaseURL } from '../../../dom/document';
 
 export function paramWithRedirect<T extends string>(message: T): { readonly message: T; readonly url?: typeof LOGIN_URL | typeof TOP_URL; readonly logout?: boolean } {
     const href = getBaseURL();

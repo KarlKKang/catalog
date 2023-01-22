@@ -22,7 +22,7 @@ import {
     getById,
     getBody,
     showElement,
-} from './module/DOM';
+} from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent as emailSentParam } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';

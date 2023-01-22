@@ -1,5 +1,5 @@
 import { NonNativePlayer } from './non-native-player';
-import { remove } from '../DOM';
+import { remove } from '../dom';
 import Hls from 'hls.js';
 import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig } from 'hls.js';
 

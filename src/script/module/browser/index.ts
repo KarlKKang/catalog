@@ -2,7 +2,7 @@ import { getMediaSource } from 'hls.js/src/utils/mediasource-helper';
 import { isSupported } from 'hls.js/src/is-supported';
 import { UAParser } from 'ua-parser-js';
 
-import { w, createElement } from '../DOM';
+import { w, createElement } from '../dom';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {

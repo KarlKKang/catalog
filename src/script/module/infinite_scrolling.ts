@@ -4,7 +4,7 @@ import {
     addEventListener,
     getById,
     d,
-} from './DOM';
+} from './dom';
 
 let positionDetector: HTMLElement;
 let callback: () => void;

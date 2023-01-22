@@ -25,7 +25,7 @@ import {
     getDescendantsByTagAt,
     showElement,
     getBaseURL
-} from './module/DOM';
+} from './module/dom';
 import { show as showMessage } from './module/message';
 import { loginFailed, accountDeactivated } from './module/message/template/inline';
 import { unrecommendedBrowser } from './module/message/template/param';

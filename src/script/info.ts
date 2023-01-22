@@ -19,7 +19,7 @@ import {
     d,
     showElement,
     getBaseURL,
-} from './module/DOM';
+} from './module/dom';
 
 addEventListener(w, 'load', function () {
     if (getBaseURL() !== TOP_URL + '/info' && !DEVELOPMENT) {

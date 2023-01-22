@@ -2,7 +2,7 @@ import { Player } from './player';
 import {
     addEventsListener,
     removeEventsListener,
-} from '../DOM';
+} from '../dom';
 import { addPlayerClass, containsPlayerClass, removePlayerClass } from './helper';
 
 export abstract class NonNativePlayer extends Player {

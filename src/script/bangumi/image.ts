@@ -18,7 +18,7 @@ import {
     setDataAttribute,
     prependChild,
     getById,
-} from '../module/DOM';
+} from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import type { LocalImageParam } from '../module/type/LocalImageParam';
 import type { LazyloadImportPromise } from './get_import_promises';

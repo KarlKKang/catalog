@@ -28,7 +28,7 @@ import {
     setDataAttribute,
     showElement,
     getBaseURL,
-} from './module/DOM';
+} from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
 import * as SeriesInfo from './module/type/SeriesInfo';
