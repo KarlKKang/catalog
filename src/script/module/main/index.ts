@@ -353,12 +353,11 @@ export function clearCookies() {
     }
 }
 
-import type Sha512 from 'node-forge/lib/sha512';
+import type forge from 'node-forge';
 export async function hashPassword(password: string) {
-    let sha512: typeof Sha512;
+    let sha512: typeof forge.sha512;
     try {
         sha512 = await import(
-            /* webpackExports: ["default"] */
             'node-forge/lib/sha512'
         );
     } catch (e) {
