@@ -145,7 +145,8 @@ export default async function (
                 }
             },
             content: 'token=' + epInfo.authentication_token,
-            logoutParam: getLogoutParam(seriesID, epIndex)
+            logoutParam: getLogoutParam(seriesID, epIndex),
+            connectionErrorRetry: 5
         });
     }, 30 * 1000);
 

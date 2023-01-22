@@ -47,19 +47,28 @@ interface SendServerRequestOption {
     method?: 'POST' | 'GET';
     logoutParam?: string;
     connectionErrorRetry?: number;
+    connectionErrorRetryTimeout?: number;
 }
 
 function xhrOnErrorCallback(uri: string, options: SendServerRequestOption) {
     if (options.connectionErrorRetry === undefined) {
         options.connectionErrorRetry = 2;
-        sendServerRequest(uri, options);
     } else {
         options.connectionErrorRetry -= 1;
-        if (options.connectionErrorRetry < 0) {
-            showMessage(connectionError);
-        } else {
+    }
+
+    if (options.connectionErrorRetryTimeout === undefined) {
+        options.connectionErrorRetryTimeout = 500;
+    } else {
+        options.connectionErrorRetryTimeout *= 2;
+    }
+
+    if (options.connectionErrorRetry < 0) {
+        showMessage(connectionError);
+    } else {
+        setTimeout(function () {
             sendServerRequest(uri, options);
-        }
+        }, options.connectionErrorRetryTimeout);
     }
 }
 
