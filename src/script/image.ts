@@ -14,7 +14,7 @@ import {
 import {
     w,
     addEventListener,
-    getHref,
+    getBaseURL,
     redirect,
     getCookie,
     deleteCookie,
@@ -28,7 +28,7 @@ import * as LocalImageParam from './module/type/LocalImageParam';
 import * as CDNCredentials from './module/type/CDNCredentials';
 
 addEventListener(w, 'load', function () {
-    if (getHref() !== TOP_URL + '/image' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/image' && !DEVELOPMENT) {
         redirect(TOP_URL + '/image', true);
         return;
     }

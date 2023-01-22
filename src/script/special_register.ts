@@ -12,7 +12,7 @@ import {
 import {
     w,
     addEventListener,
-    getHref,
+    getBaseURL,
     redirect,
     getById,
     getBody,
@@ -23,7 +23,7 @@ import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitationOnly } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
-    if (getHref() !== TOP_URL + '/special_register' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/special_register' && !DEVELOPMENT) {
         redirect(TOP_URL + '/special_register', true);
         return;
     }

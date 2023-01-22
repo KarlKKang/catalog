@@ -11,7 +11,6 @@ import {
     getURLParam,
     clearCookies,
     disableInput,
-    checkBaseURL,
 } from './module/main';
 import {
     w,
@@ -28,6 +27,7 @@ import {
     appendChild,
     setDataAttribute,
     showElement,
+    getBaseURL,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -49,7 +49,7 @@ let lazyloadImportPromise: ReturnType<typeof importLazyload>;
 let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 addEventListener(w, 'load', function () {
-    if (!checkBaseURL(TOP_URL) && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL && !DEVELOPMENT) {
         redirect(TOP_URL, true);
         return;
     }

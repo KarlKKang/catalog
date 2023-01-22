@@ -5,7 +5,6 @@ import {
 } from './module/env/constant';
 import {
     authenticate,
-    checkBaseURL,
     clearCookies,
     navListeners,
     scrollToHash,
@@ -19,10 +18,11 @@ import {
     getById,
     d,
     showElement,
+    getBaseURL,
 } from './module/DOM';
 
 addEventListener(w, 'load', function () {
-    if (!checkBaseURL(TOP_URL + '/info') && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/info' && !DEVELOPMENT) {
         redirect(TOP_URL + '/info', true);
         return;
     }

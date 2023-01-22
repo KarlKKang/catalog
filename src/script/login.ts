@@ -15,7 +15,6 @@ import {
     getURLParam,
     PASSWORD_REGEX,
     EMAIL_REGEX,
-    checkBaseURL,
 } from './module/main';
 import {
     w,
@@ -24,7 +23,8 @@ import {
     getById,
     getBody,
     getDescendantsByTagAt,
-    showElement
+    showElement,
+    getBaseURL
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { loginFailed, accountDeactivated } from './module/message/template/inline';
@@ -32,7 +32,7 @@ import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
 
 addEventListener(w, 'load', function () {
-    if (!checkBaseURL(LOGIN_URL) && !DEVELOPMENT) {
+    if (getBaseURL() !== LOGIN_URL && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }

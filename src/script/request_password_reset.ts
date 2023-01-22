@@ -15,7 +15,7 @@ import {
 import {
     w,
     addEventListener,
-    getHref,
+    getBaseURL,
     redirect,
     getById,
     getDescendantsByTagAt,
@@ -27,7 +27,7 @@ import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
-    if (getHref() !== LOGIN_URL + '/request_password_reset' && !DEVELOPMENT) {
+    if (getBaseURL() !== LOGIN_URL + '/request_password_reset' && !DEVELOPMENT) {
         redirect(LOGIN_URL + '/request_password_reset', true);
         return;
     }

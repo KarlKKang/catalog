@@ -17,7 +17,7 @@ import {
 import {
     w,
     addEventListener,
-    getHref,
+    getBaseURL,
     redirect,
     getById,
     createElement,
@@ -52,7 +52,7 @@ let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 let lazyloadImportPromise: ReturnType<typeof importLazyload>;
 
 addEventListener(w, 'load', function () {
-    if (!getHref().startsWith(NEWS_TOP_URL) && !DEVELOPMENT) {
+    if (!getBaseURL().startsWith(NEWS_TOP_URL) && !DEVELOPMENT) {
         redirect(NEWS_TOP_URL, true);
         return;
     }
@@ -65,7 +65,7 @@ addEventListener(w, 'load', function () {
 
     const newsID = getNewsID();
     if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {
-        if (getHref() !== NEWS_TOP_URL && !DEVELOPMENT) {
+        if (getBaseURL() !== NEWS_TOP_URL && !DEVELOPMENT) {
             changeURL(NEWS_TOP_URL, true);
         }
         infiniteScrolling = initializeInfiniteScrolling(getAllNews);
@@ -80,10 +80,8 @@ function getNewsID(): string | null {
     if (DEVELOPMENT) {
         return getURLParam('id');
     } else {
-        const url = getHref() + '?#';
         const start = NEWS_TOP_URL.length;
-        const end = Math.min(url.indexOf('?'), url.indexOf('#'));
-        return url.slice(start, end);
+        return getBaseURL().substring(start);
     }
 }
 

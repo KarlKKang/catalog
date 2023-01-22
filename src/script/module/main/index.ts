@@ -11,7 +11,7 @@ import { connectionError, status403, status429, status503, status400And500 } fro
 
 import {
     w,
-    getHref,
+    getBaseURL,
     redirect,
     deleteCookie,
     getHash,
@@ -36,7 +36,7 @@ export const EMAIL_REGEX = /^(?=.{3,254}$)[^\s@]+@[^\s@]+$/;
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
 export function getURLParam(name: string): string | null {
-    const urlObj = new URL(getHref());
+    const urlObj = new URL(w.location.href);
     return urlObj.searchParams.get(name);
 }
 
@@ -345,10 +345,10 @@ export function disableInput(inputElement: HTMLInputElement, disabled: boolean) 
 }
 
 export function clearCookies() {
-    if (getHref() != TOP_URL + '/message' && !DEVELOPMENT) {
+    if (getBaseURL() != TOP_URL + '/message' && !DEVELOPMENT) {
         deleteCookie('local-message-param');
     }
-    if (getHref() != TOP_URL + '/image' && !DEVELOPMENT) {
+    if (getBaseURL() != TOP_URL + '/image' && !DEVELOPMENT) {
         deleteCookie('local-image-param');
     }
 }
@@ -385,21 +385,4 @@ export function scrollToHash(paddingTop: boolean) {
             }, 500); //Give UI some time to load.
         }
     }
-}
-
-export function checkBaseURL(baseURL: string) {
-    const href = getHref();
-    let protocol = '';
-    if (baseURL.startsWith('https://')) {
-        protocol = 'https://';
-    } else if (baseURL.startsWith('http://')) {
-        protocol = 'http://';
-    }
-    const baseURLWithoutProtocol = baseURL.substring(protocol.length);
-    if (!baseURLWithoutProtocol.includes('/')) { // If is a root URL
-        if (href === baseURL + '/' || href.startsWith(baseURL + '/?') || href.startsWith(baseURL + '/#')) {
-            return true;
-        }
-    }
-    return href === baseURL || href.startsWith(baseURL + '?') || href.startsWith(baseURL + '#');
 }

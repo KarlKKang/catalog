@@ -18,14 +18,14 @@ import {
     redirect,
     setTitle,
     deleteCookie,
-    getHref,
+    getBaseURL,
     hideElement,
     showElement,
 } from './module/DOM';
 import * as LocalMessageParam from './module/type/LocalMessageParam';
 
 addEventListener(w, 'load', function () {
-    if (getHref() !== TOP_URL + '/message' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/message' && !DEVELOPMENT) {
         redirect(TOP_URL + '/message', true);
         return;
     }

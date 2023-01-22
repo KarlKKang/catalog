@@ -13,7 +13,6 @@ import {
     hashPassword,
     disableInput,
     PASSWORD_REGEX,
-    checkBaseURL
 } from './module/main';
 import {
     w,
@@ -24,13 +23,14 @@ import {
     getByClassAt,
     openWindow,
     showElement,
+    getBaseURL,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
-    if (!checkBaseURL(TOP_URL + '/register') && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/register' && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }

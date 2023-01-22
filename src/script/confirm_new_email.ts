@@ -9,18 +9,18 @@ import {
     sendServerRequest,
     getURLParam,
     clearCookies,
-    checkBaseURL,
 } from './module/main';
 import {
     w,
     addEventListener,
     redirect,
+    getBaseURL,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    if (!checkBaseURL(TOP_URL + '/confirm_new_email') && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/confirm_new_email' && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }

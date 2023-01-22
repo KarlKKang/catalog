@@ -12,7 +12,6 @@ import {
     hashPassword,
     disableInput,
     PASSWORD_REGEX,
-    checkBaseURL
 } from './module/main';
 import {
     w,
@@ -21,13 +20,14 @@ import {
     getById,
     getBody,
     showElement,
+    getBaseURL,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
 import { expired, passwordChanged } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    if (!checkBaseURL(LOGIN_URL + '/password_reset') && !DEVELOPMENT) {
+    if (getBaseURL() !== LOGIN_URL + '/password_reset' && !DEVELOPMENT) {
         redirect(LOGIN_URL, true);
         return;
     }

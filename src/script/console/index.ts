@@ -10,7 +10,7 @@ import {
 import {
     w,
     addEventListener,
-    getHref,
+    getBaseURL,
     redirect,
     getById,
     getBody,
@@ -21,7 +21,7 @@ import { moduleImportError } from '../module/message/template/param';
 import { getTable, setOutput } from './helper';
 
 addEventListener(w, 'load', function () {
-    if (getHref() !== TOP_URL + '/console' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/console' && !DEVELOPMENT) {
         redirect(TOP_URL + '/console', true);
         return;
     }

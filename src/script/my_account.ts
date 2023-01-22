@@ -17,7 +17,7 @@ import {
 import {
     w,
     addEventListener,
-    getHref,
+    getBaseURL,
     redirect,
     getById,
     getBody,
@@ -44,7 +44,7 @@ import * as UserInfo from './module/type/UserInfo';
 import isbot from 'isbot';
 
 addEventListener(w, 'load', function () {
-    if (getHref() !== TOP_URL + '/my_account' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/my_account' && !DEVELOPMENT) {
         redirect(TOP_URL + '/my_account', true);
         return;
     }
@@ -190,7 +190,7 @@ addEventListener(w, 'load', function () {
                 } else if (response == 'CLOSED') {
                     warningElem.innerHTML = invitationClosed;
                 } else if (response == 'DONE') {
-                    showMessage(emailSentParam(getHref()));
+                    showMessage(emailSentParam(getBaseURL()));
                     return;
                 } else {
                     showMessage();

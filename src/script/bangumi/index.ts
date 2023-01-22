@@ -12,7 +12,7 @@ import {
 import {
     w,
     addEventListener,
-    getHref,
+    getBaseURL,
     redirect,
 } from '../module/DOM';
 import { show as showMessage } from '../module/message';
@@ -24,7 +24,7 @@ import { default as getImportPromises } from './get_import_promises';
 import type { default as updatePageType } from './update_page';
 
 addEventListener(w, 'load', function () {
-    if (!getHref().startsWith(TOP_URL + '/bangumi/') && !DEVELOPMENT) {
+    if (!getBaseURL().startsWith(TOP_URL + '/bangumi/') && !DEVELOPMENT) {
         redirect(TOP_URL, true);
         return;
     }
@@ -98,9 +98,7 @@ function getSeriesID(): string | null {
     if (DEVELOPMENT) {
         return getURLParam('series');
     } else {
-        const url = getHref() + '?#';
         const start = (TOP_URL + '/bangumi/').length;
-        const end = Math.min(url.indexOf('?'), url.indexOf('#'));
-        return url.slice(start, end);
+        return getBaseURL().substring(start);
     }
 }

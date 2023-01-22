@@ -10,7 +10,6 @@ import {
     clearCookies,
     disableInput,
     EMAIL_REGEX,
-    checkBaseURL
 } from './module/main';
 import {
     w,
@@ -19,13 +18,14 @@ import {
     getById,
     getBody,
     showElement,
+    getBaseURL,
 } from './module/DOM';
 import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
 import { expired, emailSent } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    if (!checkBaseURL(TOP_URL + '/new_email') && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/new_email' && !DEVELOPMENT) {
         redirect(TOP_URL, true);
         return;
     }

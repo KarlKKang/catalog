@@ -3,7 +3,7 @@ import {
     TOP_URL,
     LOGIN_URL
 } from '../env/constant';
-import { getHref, redirect, setCookie, getTitle } from '../DOM/document';
+import { getBaseURL, redirect, setCookie, getTitle } from '../DOM/document';
 import type { LocalMessageParam } from '../type/LocalMessageParam';
 
 import { defaultError } from './template/title';
@@ -21,7 +21,7 @@ interface MessageParam {
 export function show(param?: MessageParam) {
     if (param === undefined) {
         param = {};
-        const href = getHref();
+        const href = getBaseURL();
         if (href == TOP_URL) {
             param.logout = true;
             param.url = LOGIN_URL;
