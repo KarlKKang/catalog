@@ -398,7 +398,7 @@ async function addVideoNode(config?: {
             currentMediaInstance = mediaInstance;
             mediaInstance.load(url, {
                 onerror: function () {
-                    showPlaybackError();
+                    showPlaybackError(mediaInstance.media.error?.message);
                     currentMediaInstance = undefined;
                     mediaInstance.destroy();
                 },
