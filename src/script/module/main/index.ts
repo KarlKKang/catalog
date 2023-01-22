@@ -77,7 +77,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
             } else if (responseText == 'UNAUTHORIZED') {
                 const logoutParam = options.logoutParam;
                 redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
-            } else if (responseText != 'CRAWLER') {
+            } else {
                 showMessage(status403);
             }
         } else if (status == 429) {
