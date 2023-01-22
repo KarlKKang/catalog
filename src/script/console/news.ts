@@ -211,7 +211,7 @@ function getNewsContent(button: Element, id: string) {
 }
 
 import { htmlMinifyOptions } from '../../../build_config.cjs';
-import type { minify } from 'html-minifier-terser';
+import type { minify } from 'html-minifier-terser/dist/htmlminifier.esm.bundle';
 let htmlMinifier: typeof minify | null = null;
 async function minifyNewsContent(button: Element) {
     const contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
