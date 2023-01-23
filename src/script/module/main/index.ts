@@ -7,7 +7,7 @@ import {
 
 import { show as showMessage } from '../message';
 import { moduleImportError } from '../message/template/param';
-import { connectionError, status403, status429, status503, status400And500 } from '../message/template/param/server';
+import { sessionEnded, connectionError, status403, status429, status503, status400And500 } from '../message/template/param/server';
 
 import {
     w,
@@ -80,7 +80,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
             return true;
         } else if (status == 403) {
             if (responseText == 'SESSION ENDED') {
-                redirect(TOP_URL);
+                showMessage(sessionEnded);
             } else if (responseText == 'INSUFFICIENT PERMISSIONS') {
                 redirect(TOP_URL, true);
             } else if (responseText == 'UNAUTHORIZED') {

@@ -1,8 +1,15 @@
 import { paramWithRedirect } from './helper';
 import * as body from '../body/server';
 import * as title from '../title/server';
+import { TOP_URL } from '../../../env/constant';
 
 export const invalidResponse = paramWithRedirect(body.invalidResponse);
+export const sessionEnded = {
+    title: title.sessionEnded,
+    message: body.sessionEnded,
+    color: 'orange',
+    url: TOP_URL
+};
 export const connectionError = {
     title: title.connectionError,
     message: body.connectionError
