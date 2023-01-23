@@ -44,7 +44,7 @@ import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 import type { DashPlayer as DashPlayerType } from '../module/player/dash_player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showPlaybackError, showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError, incompatibleSuffix } from './media_helper';
+import { showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError, incompatibleSuffix, showNativePlayerError, showHLSPlayerError, showDashPlayerError } from './media_helper';
 import type { NativePlayerImportPromise, DashjsPlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from 'hls.js';
 import { ErrorDetails as HlsErrorDetails } from 'hls.js';
@@ -317,7 +317,7 @@ async function addVideoNode(config?: {
                 if (typeof e.error === 'object' && e.error.code < 10 && currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
                     show8chAudioError();
                 } else {
-                    showPlaybackError(JSON.stringify(e.error));
+                    showDashPlayerError(e);
                 }
                 currentMediaInstance = undefined;
                 mediaInstance.destroy();
@@ -369,10 +369,10 @@ async function addVideoNode(config?: {
                             } else if (currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
                                 show8chAudioError();
                             } else {
-                                showCodecCompatibilityError();
+                                showHLSPlayerError(data);
                             }
                         } else {
-                            showPlaybackError(data.details);
+                            showHLSPlayerError(data);
                         }
                         currentMediaInstance = undefined;
                         mediaInstance.destroy();
@@ -398,7 +398,7 @@ async function addVideoNode(config?: {
             currentMediaInstance = mediaInstance;
             mediaInstance.load(url, {
                 onerror: function () {
-                    showPlaybackError(mediaInstance.media.error?.message);
+                    showNativePlayerError(mediaInstance.media.error);
                     currentMediaInstance = undefined;
                     mediaInstance.destroy();
                 },

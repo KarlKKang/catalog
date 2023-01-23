@@ -24,7 +24,6 @@ export class DashPlayer extends NonNativePlayer {
 
     protected attach(this: DashPlayer, onload?: (...args: any[]) => void, onerror?: (...args: any[]) => void): void {
         this.preattach();
-
         this.dashjsInstance.on('error', function (this: any, event: dashjs.ErrorEvent) {
             onerror && onerror.call(this, event);
         });

@@ -23,12 +23,23 @@ import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
 import { createMessageElem, getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
+import type { ErrorData } from 'hls.js';
+import { ErrorTypes as HlsErrorTypes, ErrorDetails as HlsErrorDetails } from 'hls.js';
+import type { ErrorEvent as DashErrorEvent } from 'dashjs';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
-export function showPlaybackError(detail?: string) {
-    showErrorMessage(defaultError, '再生中にエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。' + defaultErrorSuffix + (detail === undefined ? '' : ('<br>Error detail: ' + detail)));
+function showNetworkError() {
+    showErrorMessage(defaultError, 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。');
+}
+
+function showUnknownPlaybackError() {
+    showErrorMessage(defaultError, '再生中に不明なエラーが発生しました。' + defaultErrorSuffix);
+}
+
+function showDecodeError() {
+    showErrorMessage(defaultError, 'お使いのブラウザは、このデータ形式をデコードすることができません。コーデックに対応していない、またはデコードのためのメモリが不足している可能性があります。' + incompatibleSuffix);
 }
 
 export function showHLSCompatibilityError() {
@@ -40,7 +51,69 @@ export function showCodecCompatibilityError() {
 }
 
 export function showPlayPromiseError() {
-    showErrorMessage(incompatibleTitle, 'ブラウザによって再生が中断されました。再読み込みするか、他のブラウザを使用してみてください。');
+    showErrorMessage(incompatibleTitle, 'ブラウザによって再生が中断されました。ページを再読み込みしてみてください。このエラーが続く場合は、他のブラウザでお試しください。');
+}
+
+export function showNativePlayerError(error: MediaError | null) {
+    if (error === null) {
+        showUnknownPlaybackError();
+    } else {
+        if (error.code === MediaError.MEDIA_ERR_ABORTED) {
+            showPlayPromiseError();
+        } else if (error.code === MediaError.MEDIA_ERR_NETWORK) {
+            showNetworkError();
+        } else if (error.code === MediaError.MEDIA_ERR_DECODE) {
+            showDecodeError();
+        } else if (MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+            showCodecCompatibilityError();
+        } else {
+            showUnknownPlaybackError();
+        }
+    }
+    console.error(error);
+}
+
+export function showHLSPlayerError(data: ErrorData) {
+    const errorType = data.type;
+    if (errorType === HlsErrorTypes.NETWORK_ERROR) {
+        showNetworkError();
+    } else if (errorType === HlsErrorTypes.MUX_ERROR) {
+        showDecodeError();
+    } else if (errorType === HlsErrorTypes.MEDIA_ERROR) {
+        if ([
+            HlsErrorDetails.MANIFEST_INCOMPATIBLE_CODECS_ERROR,
+            HlsErrorDetails.BUFFER_ADD_CODEC_ERROR,
+            HlsErrorDetails.BUFFER_INCOMPATIBLE_CODECS_ERROR,
+        ].includes(data.details)) {
+            showCodecCompatibilityError();
+        } else {
+            showDecodeError();
+        }
+    } else {
+        showUnknownPlaybackError();
+    }
+    console.error(data);
+}
+
+export function showDashPlayerError(e: DashErrorEvent) {
+    const dashError = e.error;
+    if (dashError === 'download') {
+        showNetworkError();
+    } else if (typeof dashError === 'object') {
+        const errorCode = dashError.code;
+        if ([23, 24, 35].includes(errorCode)) {
+            showCodecCompatibilityError();
+        } else if (errorCode >= 25 && errorCode <= 29) {
+            showNetworkError();
+        } else if (errorCode === 20 || errorCode === 21) {
+            showDecodeError();
+        } else {
+            showUnknownPlaybackError();
+        }
+    } else {
+        showUnknownPlaybackError();
+    }
+    console.error(e);
 }
 
 export function showErrorMessage(title: string, body: string) {

@@ -25,9 +25,9 @@ export class VideojsPlayer extends NonNativePlayer {
     protected attach(this: VideojsPlayer, onload?: (...args: any[]) => void, onerror?: (...args: any[]) => void): void {
         this.preattach();
 
-        this.videojsInstance.on('error', function (this: any, ...args: any[]) {
-            onerror && onerror.apply(this, args);
-        });
+        this.videojsInstance.on('error', function (this: VideojsPlayer) {
+            onerror && onerror(this.videojsInstance.error());
+        }.bind(this));
         this.videojsInstance.on('loadedmetadata', function (this: any, ...args: any[]) {
             onload && onload.apply(this, args);
         });
