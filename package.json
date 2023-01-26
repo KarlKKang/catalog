@@ -1,7 +1,7 @@
 {
   "name": "catalog",
   "version": "1.0.0",
-  "description": "",
+  "description": "Front-end of featherine.com",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -24,7 +24,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/plugin-transform-runtime": "^7.19.6",
