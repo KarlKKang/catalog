@@ -23,7 +23,7 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "keywords": [],
-  "author": "",
+  "author": "Kai Kang",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.20.12",
