@@ -71,6 +71,13 @@ const config = {
                     variable: 'data',
                 }
             },
+            {
+                test: /\.html$/i,
+                loader: "html-loader",
+                options: {
+                    minimize: htmlMinifyOptions,
+                },
+            },
         ]
     }
 };

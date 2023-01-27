@@ -40,7 +40,7 @@ addEventListener(w, 'load', function () {
         if (DEVELOPMENT) {
             changeColor(titleElem, 'orange');
             titleElem.innerHTML = 'タイトルTitle';
-            messageElem.innerHTML = 'メッセージMessageメッセージMessageメッセージMessageメッセージMessageメッセージMessage';
+            messageElem.innerHTML = 'メッセージMessage'.repeat(10);
             showElement(getBody());
         } else {
             redirect(TOP_URL, true);

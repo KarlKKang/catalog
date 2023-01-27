@@ -2,7 +2,7 @@
 import 'core-js';
 import {
     DEVELOPMENT, TOP_URL
-} from './module/env/constant';
+} from '../module/env/constant';
 import {
     navListeners,
     passwordStyling,
@@ -13,7 +13,7 @@ import {
     disableInput,
     PASSWORD_REGEX,
     EMAIL_REGEX
-} from './module/main';
+} from '../module/main';
 import {
     w,
     addEventListener,
@@ -22,10 +22,10 @@ import {
     getById,
     getBody,
     showElement,
-} from './module/dom';
-import { show as showMessage } from './module/message';
-import { emailSent as emailSentParam } from './module/message/template/param';
-import { invalidResponse } from './module/message/template/param/server';
+} from '../module/dom';
+import { show as showMessage } from '../module/message';
+import { emailSent as emailSentParam } from '../module/message/template/param';
+import { invalidResponse } from '../module/message/template/param/server';
 import {
     invitationNotQualified,
     invalidEmailFormat,
@@ -39,9 +39,11 @@ import {
     usernameUnchanged,
     usernameChanged,
     usernameTaken
-} from './module/message/template/inline';
-import * as UserInfo from './module/type/UserInfo';
+} from '../module/message/template/inline';
+import * as UserInfo from '../module/type/UserInfo';
 import isbot from 'isbot';
+import body from './body.html';
+
 
 addEventListener(w, 'load', function () {
     if (getBaseURL() !== TOP_URL + '/my_account' && !DEVELOPMENT) {
@@ -82,52 +84,7 @@ addEventListener(w, 'load', function () {
     });
 
     function showUser(userInfo: UserInfo.UserInfo) {
-        getById('container').innerHTML = '<p id="title">マイページ</p>' +
-
-            '<p class="sub-title">メールアドレス</p>' +
-            '<p class="warning hidden" id="email-warning"></p>' +
-            '<p id="email"></p>' +
-            '<button class="button" id="email-change-button">変更する</button>' +
-
-            '<hr>' +
-
-            '<p class="sub-title">ユーザー名</p>' +
-            '<p class="warning hidden" id="username-warning"></p>' +
-            '<div class="input-field"><input id="new-username" class="multi-language" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off" maxlength="16"></div>' +
-            '<button class="button" id="username-change-button">変更する</button>' +
-            '<div class="note">' +
-            '<ul>' +
-            '<li>ユーザー名は16文字以内で入力して下さい。</li>' +
-            '</ul>' +
-            '</div>' +
-
-            '<hr>' +
-
-            '<p class="sub-title">パスワード</p>' +
-            '<p class="warning hidden" id="password-warning"></p>' +
-            '<div class="input-field"><input id="new-password" type="password" autocomplete="new-password" placeholder="新しいパスワード" autocapitalize="off"></div>' +
-            '<div class="input-field"><input id="new-password-confirm" type="password" autocomplete="new-password" placeholder="確認再入力" autocapitalize="off"></div>' +
-            '<button class="button" id="password-change-button">変更する</button>' +
-            '<div class="note">' +
-            '<ul>' +
-            '<li>使用できる文字は、半角数字・半角英字・記号 ` ~ ! @ # $ % ^ &amp; * ( ) - = _ + [ ] { } \\ | ; : &apos; &quot; , . &lt; &gt; / ? です。</li>' +
-            '<li>8～64文字で入力して下さい。</li>' +
-            '<li>大文字、小文字、数字を含める必要があります。</li>' +
-            '</ul>' +
-            '</div>' +
-
-            '<hr>' +
-
-            '<p class="sub-title">ご招待</p>' +
-            '<p id="invite-count-text">送信できる招待状の数：<span id="invite-count"></span></p>' +
-            '<p class="warning hidden" id="invite-warning"></p>' +
-            '<div class="input-field" id="invite-input"><input id="receiver-email" type="email" placeholder="メールアドレス" autocapitalize="off" autocomplete="off" maxlength="254"></div>' +
-            '<button class="button" id="invite-button">送信する</button>' +
-            '<div class="note">' +
-            '<ul>' +
-            '<li>進行中の招待がある場合は、別の招待状を送ることはできません。</li>' +
-            '</ul>' +
-            '</div>';
+        getById('container').innerHTML = body;
 
         newUsernameInput = getById('new-username') as HTMLInputElement;
         newPasswordInput = getById('new-password') as HTMLInputElement;
