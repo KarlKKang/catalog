@@ -1,5 +1,5 @@
 (function () {
-    const URL = '/unsupported_browser';
+    const URL = 'https://<%=data.domain%>/unsupported_browser';
     const windowLocation = window.location;
 
     if (!('onerror' in window)) {

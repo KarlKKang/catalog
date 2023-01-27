@@ -28,42 +28,46 @@ for (const entry of htmlEntries) {
 
 const jsEntries = ['browser', '404'];
 for (const entry of jsEntries) {
-    babel.transformFile(
-        './src/script/' + entry + '.ts',
-        { presets: ["@babel/preset-env", "@babel/preset-typescript"] },
-        function (err, result) {
-            if (err) {
-                console.error(err);
-                return;
+    const filename = './src/script/' + entry + '.ts';
+    fs.read(filename, function (code) {
+        code = lodashTemplate(code)({ data: { domain: DOMAIN } });
+        babel.transform(
+            code,
+            { filename: filename, presets: ["@babel/preset-env", "@babel/preset-typescript"] },
+            function (err, result) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                if (dev) {
+                    fs.write(destDirPrefix + 'script_legacy/' + entry + '.js', result.code);
+                    return;
+                }
+                terser(result.code, {
+                    ecma: 5,
+                    parse: {},
+                    compress: {
+                        passes: 5
+                    },
+                    mangle: true, // Note `mangle.properties` is `false` by default.
+                    module: true,
+                    // Deprecated
+                    output: null,
+                    format: null,
+                    //toplevel: false,
+                    nameCache: null,
+                    ie8: true,
+                    keep_classnames: undefined,
+                    keep_fnames: false,
+                    safari10: true,
+                }).then((minified) => {
+                    fs.write(destDirPrefix + 'script_legacy/' + entry + '.js', minified.code);
+                }).catch((e) => {
+                    console.error(e);
+                });
             }
-            if (dev) {
-                fs.write(destDirPrefix + 'script_legacy/' + entry + '.js', result.code);
-                return;
-            }
-            terser(result.code, {
-                ecma: 5,
-                parse: {},
-                compress: {
-                    passes: 5
-                },
-                mangle: true, // Note `mangle.properties` is `false` by default.
-                module: true,
-                // Deprecated
-                output: null,
-                format: null,
-                //toplevel: false,
-                nameCache: null,
-                ie8: true,
-                keep_classnames: undefined,
-                keep_fnames: false,
-                safari10: true,
-            }).then((minified) => {
-                fs.write(destDirPrefix + 'script_legacy/' + entry + '.js', minified.code);
-            }).catch((e) => {
-                console.error(e);
-            });
-        }
-    );
+        );
+    });
 }
 
 cssMinify('./src/css/', destDirPrefix + 'css/', 'unsupported_browser.css');

@@ -1,2 +1,2 @@
 // JavaScript Document
-window.location.replace('https://featherine.com');
+window.location.replace('https://<%=data.domain%>');
