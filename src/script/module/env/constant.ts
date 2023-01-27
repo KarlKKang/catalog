@@ -1,4 +1,5 @@
-export const DOMAIN = 'featherine.com';
+import { DOMAIN } from '../../../../env/index.cjs';
+export { DOMAIN };
 
 export const SERVER_URL = 'https://server.' + DOMAIN;
 export const CDN_URL = 'https://cdn.' + DOMAIN;

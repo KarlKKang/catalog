@@ -6,6 +6,7 @@ import { minify as terser } from 'terser';
 import cssMinify from './css-minifier.js';
 import * as fs from './file_system.js';
 import { htmlMinifyOptions } from './build_config.cjs';
+import { DOMAIN } from './env/index.cjs';
 
 process.env.BROWSERSLIST_ENV = 'legacy';
 const dev = process.argv[2] === 'dev';
@@ -17,7 +18,7 @@ if (dev) {
 
 const htmlEntries = ['unsupported_browser', '404'];
 for (const entry of htmlEntries) {
-    const html = ejsLoader('./src/html/' + entry + '.ejs').default();
+    const html = ejsLoader('./src/html/' + entry + '.ejs').default({ domain: DOMAIN });
     htmlMinify(html, htmlMinifyOptions).then((data) => {
         fs.write(destDirPrefix + entry + '.html', data);
     }).catch((e) => {
