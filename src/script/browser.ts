@@ -1,5 +1,5 @@
 (function () {
-    const URL = 'https://featherine.com/unsupported_browser';
+    const URL = '/unsupported_browser';
     const windowLocation = window.location;
 
     if (!('onerror' in window)) {
