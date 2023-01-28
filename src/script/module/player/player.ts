@@ -821,6 +821,9 @@ export class Player {
         addPlayerClass(this.playButton, 'playing');
         removePlayerClass(this.controls, 'paused');
         addPlayerClass(this.controls, 'playing');
+        if (this.ended) {
+            this.seek(0);
+        }
         this.ended = false;
     }
 
