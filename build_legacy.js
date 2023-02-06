@@ -15,6 +15,8 @@ let destDirPrefix = './dist/';
 if (dev) {
     destDirPrefix = './dev/';
 }
+fs.mkdir(destDirPrefix + 'script_legacy');
+fs.mkdir(destDirPrefix + 'css');
 
 const htmlEntries = ['unsupported_browser', '404'];
 for (const entry of htmlEntries) {

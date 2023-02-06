@@ -28,3 +28,9 @@ export function read(file, callback) {
 export function readSync(file) {
     return fs.readFileSync(file, 'utf8');
 }
+
+export function mkdir(dir) {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+}

@@ -31,6 +31,7 @@ export default function (srcDir, destDir, srcFilename, destFilename) {
             result.warnings().forEach(warn => {
                 console.warn(warn.toString())
             });
+            fs.mkdir(destDir);
             fs.write(destDir + destFilename, result.css);
         });
     });
