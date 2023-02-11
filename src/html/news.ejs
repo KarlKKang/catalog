@@ -2,7 +2,7 @@
 <html lang="ja">
 
 <head>
-    <%= require("./module/main_header.ejs").default({ title: 'お知らせ | ' + domain, index: true }) %>
+    <%= require("./module/main_header.ejs").default({ title: 'お知らせ | ' + titleSuffix, index: !dev }) %>
     <%= require("./module/header_theme.ejs").default() %>
 
     <link rel="stylesheet" type="text/css" href="/font/Roboto/Roboto-Light.css">

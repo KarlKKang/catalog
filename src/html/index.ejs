@@ -2,7 +2,7 @@
 <html lang="ja">
 
 <head>
-    <%= require("./module/main_header.ejs").default({ title: domain, index: true }) %>
+    <%= require("./module/main_header.ejs").default({ title: titleSuffix, index: !dev }) %>
     <%= require("./module/header_theme.ejs").default() %>
 
     <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Light.css">

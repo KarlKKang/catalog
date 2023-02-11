@@ -2,8 +2,11 @@ const { merge } = require('webpack-merge');
 const common = require('./webpack.common.cjs');
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require('path');
+const DOMAIN = require('./env').DOMAIN;;
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
 
-module.exports = merge(common, {
+const config = merge(common, {
     mode: 'production',
     output: {
         path: path.resolve(__dirname, 'dist/script'),
@@ -34,3 +37,21 @@ module.exports = merge(common, {
         ],
     },
 });
+
+for (const [page, _] of Object.entries(config.entry)) {
+    config.plugins.push(
+        new HtmlWebpackPlugin({
+            minify: htmlMinifyOptions,
+            chunks: [page],
+            filename: '../' + page + '.html',
+            template: 'src/html/' + page + '.ejs',
+            templateParameters: {
+                titleSuffix: DOMAIN,
+                domain: DOMAIN,
+                dev: false
+            }
+        })
+    );
+}
+
+module.exports = config;

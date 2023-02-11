@@ -1,8 +1,6 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const path = require('path');
 const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
-const DOMAIN = require('./env').DOMAIN;;
 
 const config = {
     target: 'browserslist',
@@ -104,17 +102,6 @@ for (const page of pages) {
     config.entry[page] = {
         import: './src/script/' + page
     };
-    config.plugins.push(
-        new HtmlWebpackPlugin({
-            minify: htmlMinifyOptions,
-            chunks: [page],
-            filename: '../' + page + '.html',
-            template: 'src/html/' + page + '.ejs',
-            templateParameters: {
-                domain: DOMAIN
-            }
-        })
-    );
 }
 
 config.plugins.push(
