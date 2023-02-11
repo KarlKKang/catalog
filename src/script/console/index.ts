@@ -1,7 +1,7 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT, TOP_URL,
+    TOP_URL,
 } from '../module/env/constant';
 import {
     sendServerRequest,
@@ -21,7 +21,7 @@ import { moduleImportError } from '../module/message/template/param';
 import { getTable, setOutput } from './helper';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/console' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/console') {
         redirect(TOP_URL + '/console', true);
         return;
     }

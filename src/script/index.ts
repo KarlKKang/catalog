@@ -1,7 +1,6 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT,
     TOP_URL,
     CDN_URL,
 } from './module/env/constant';
@@ -49,7 +48,7 @@ let lazyloadImportPromise: ReturnType<typeof importLazyload>;
 let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL) {
         redirect(TOP_URL, true);
         return;
     }
@@ -125,13 +124,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
 }
 
 function goToSeries(id: string) {
-    let url;
-    if (DEVELOPMENT) {
-        url = 'bangumi.html' + '?series=' + id;
-    } else {
-        url = TOP_URL + '/bangumi/' + id;
-    }
-    redirect(url);
+    redirect(TOP_URL + '/bangumi/' + id);
 }
 
 function search() {

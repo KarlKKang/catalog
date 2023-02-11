@@ -25,7 +25,7 @@ import {
 import * as LocalMessageParam from './module/type/LocalMessageParam';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/message' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/message') {
         redirect(TOP_URL + '/message', true);
         return;
     }

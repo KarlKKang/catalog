@@ -1,5 +1,4 @@
 import {
-    DEVELOPMENT,
     TOP_URL,
 } from '../module/env/constant';
 import {
@@ -8,7 +7,6 @@ import {
 } from '../module/main';
 import {
     addEventListener,
-    redirect,
     createElement,
     addClass,
     openWindow,
@@ -69,11 +67,7 @@ export default function (
                 authenticationToken: epInfo.authentication_token
             };
             setCookie('local-image-param', JSON.stringify(param), 10);
-            if (DEVELOPMENT) {
-                redirect('image.html');
-            } else {
-                openWindow(TOP_URL + '/image');
-            }
+            openWindow(TOP_URL + '/image');
         });
         removeRightClick(imageNode);
         appendChild(mediaHolder, imageNode);

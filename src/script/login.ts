@@ -1,7 +1,6 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT,
     TOP_URL,
     LOGIN_URL,
 } from './module/env/constant';
@@ -32,7 +31,7 @@ import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== LOGIN_URL && !DEVELOPMENT) {
+    if (getBaseURL() !== LOGIN_URL) {
         redirect(LOGIN_URL, true);
         return;
     }
@@ -66,7 +65,7 @@ addEventListener(w, 'load', function () {
                     login();
                 });
                 addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', function () {
-                    redirect(DEVELOPMENT ? 'request_password_reset.html' : (LOGIN_URL + '/request_password_reset'), true);
+                    redirect(LOGIN_URL + '/request_password_reset');
                 });
                 passwordStyling(passwordInput);
                 showElement(getBody());
@@ -140,15 +139,8 @@ addEventListener(w, 'load', function () {
         const series = getURLParam('series');
         if (series !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
             let url: string;
-            let separator: '?' | '&';
-
-            if (DEVELOPMENT) {
-                url = 'bangumi.html?series=' + series;
-                separator = '&';
-            } else {
-                url = TOP_URL + '/bangumi/' + series;
-                separator = '?';
-            }
+            let separator: '?' | '&' = '?';
+            url = TOP_URL + '/bangumi/' + series;
 
             const ep = getURLParam('ep');
             if (ep !== null && ep !== '1') {
@@ -167,11 +159,7 @@ addEventListener(w, 'load', function () {
         if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
             const hash = getURLParam('hash');
             const hashString = (hash === null) ? '' : ('#' + hash);
-            if (DEVELOPMENT) {
-                return 'news.html?id=' + news + hashString;
-            } else {
-                return TOP_URL + '/news/' + news + hashString;
-            }
+            return TOP_URL + '/news/' + news + hashString;
         }
 
         const keywords = getURLParam('keywords');

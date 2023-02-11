@@ -1,7 +1,7 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT, LOGIN_URL, TOP_URL,
+    LOGIN_URL, TOP_URL,
 } from './module/env/constant';
 import {
     sendServerRequest,
@@ -23,7 +23,7 @@ import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitationOnly } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/special_register' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/special_register') {
         redirect(TOP_URL + '/special_register', true);
         return;
     }

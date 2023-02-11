@@ -1,7 +1,7 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT, TOP_URL,
+    TOP_URL,
 } from './module/env/constant';
 import {
     authenticate,
@@ -22,7 +22,7 @@ import {
 } from './module/dom';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/info' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/info') {
         redirect(TOP_URL + '/info', true);
         return;
     }

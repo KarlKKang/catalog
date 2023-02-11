@@ -231,15 +231,15 @@ export function navListeners() {
     });
 
     addEventListener(navMenuButton2.button, 'click', function () {
-        redirect(DEVELOPMENT ? 'news.html' : (TOP_URL + '/news/'));
+        redirect(TOP_URL + '/news/');
     });
 
     addEventListener(navMenuButton3.button, 'click', function () {
-        redirect(DEVELOPMENT ? 'my_account.html' : (TOP_URL + '/my_account'));
+        redirect(TOP_URL + '/my_account');
     });
 
     addEventListener(navMenuButton4.button, 'click', function () {
-        redirect(DEVELOPMENT ? 'info.html' : (TOP_URL + '/info'));
+        redirect(TOP_URL + '/info');
     });
 
     addEventListener(navMenuButton5.button, 'click', function () {
@@ -345,10 +345,10 @@ export function disableInput(inputElement: HTMLInputElement, disabled: boolean) 
 }
 
 export function clearCookies() {
-    if (getBaseURL() != TOP_URL + '/message' && !DEVELOPMENT) {
+    if (getBaseURL() != TOP_URL + '/message') {
         deleteCookie('local-message-param');
     }
-    if (getBaseURL() != TOP_URL + '/image' && !DEVELOPMENT) {
+    if (getBaseURL() != TOP_URL + '/image') {
         deleteCookie('local-image-param');
     }
 }

@@ -25,7 +25,7 @@ import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/tem
 import { expired, emailSent } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/new_email' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/new_email') {
         redirect(TOP_URL, true);
         return;
     }

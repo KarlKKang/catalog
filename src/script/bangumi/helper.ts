@@ -1,5 +1,4 @@
 import {
-    DEVELOPMENT,
     TOP_URL,
 } from '../module/env/constant';
 import {
@@ -21,16 +20,11 @@ export function getContentBoxHeight(elem: HTMLElement): number {
 }
 
 export function updateURLParam(seriesID: string, epIndex: number, formatIndex: number): void {
-    let url: string;
-    if (DEVELOPMENT) {
-        url = 'bangumi.html' + '?series=' + seriesID;
-    } else {
-        url = TOP_URL + '/bangumi/' + seriesID;
-    }
+    let url = TOP_URL + '/bangumi/' + seriesID;
 
     const query = createQuery(epIndex, formatIndex);
     if (query !== '') {
-        url += (DEVELOPMENT ? '&' : '?') + query;
+        url += '?' + query;
     }
 
     changeURL(url, true);

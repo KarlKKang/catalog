@@ -1,7 +1,6 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT,
     TOP_URL,
     LOGIN_URL,
 } from './module/env/constant';
@@ -27,7 +26,7 @@ import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== LOGIN_URL + '/request_password_reset' && !DEVELOPMENT) {
+    if (getBaseURL() !== LOGIN_URL + '/request_password_reset') {
         redirect(LOGIN_URL + '/request_password_reset', true);
         return;
     }

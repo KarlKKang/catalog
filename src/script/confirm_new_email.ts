@@ -1,7 +1,6 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT,
     LOGIN_URL,
     TOP_URL,
 } from './module/env/constant';
@@ -20,7 +19,7 @@ import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/confirm_new_email' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/confirm_new_email') {
         redirect(LOGIN_URL, true);
         return;
     }

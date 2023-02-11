@@ -1,5 +1,4 @@
 import {
-    DEVELOPMENT,
     TOP_URL,
     LOGIN_URL
 } from '../env/constant';
@@ -46,5 +45,5 @@ export function show(param?: MessageParam) {
     };
 
     setCookie('local-message-param', JSON.stringify(cookie), 86400);
-    redirect(DEVELOPMENT ? 'message.html' : (TOP_URL + '/message'), true);
+    redirect(TOP_URL + '/message', true);
 }

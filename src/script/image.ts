@@ -1,7 +1,6 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT,
     TOP_URL,
 } from './module/env/constant';
 import {
@@ -28,7 +27,7 @@ import * as LocalImageParam from './module/type/LocalImageParam';
 import * as CDNCredentials from './module/type/CDNCredentials';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/image' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/image') {
         redirect(TOP_URL + '/image', true);
         return;
     }

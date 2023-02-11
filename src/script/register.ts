@@ -30,7 +30,7 @@ import { expired, registerComplete, emailAlreadyRegistered } from './module/mess
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/register' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/register') {
         redirect(LOGIN_URL, true);
         return;
     }
@@ -49,18 +49,7 @@ addEventListener(w, 'load', function () {
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
             showElement(getBody());
-            addEventListener(getByClassAt('link', 0), 'click', function () {
-                openWindow('info');
-            });
-            addEventListener(getByClassAt('link', 1), 'click', function () {
-                openWindow('info#en');
-            });
-            addEventListener(getByClassAt('link', 2), 'click', function () {
-                openWindow('info#zh-Hant');
-            });
-            addEventListener(getByClassAt('link', 3), 'click', function () {
-                openWindow('info#zh-Hans');
-            });
+            addInfoRedirects();
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -101,19 +90,7 @@ addEventListener(w, 'load', function () {
                 });
 
 
-                addEventListener(getByClassAt('link', 0), 'click', function () {
-                    openWindow('info');
-                });
-                addEventListener(getByClassAt('link', 1), 'click', function () {
-                    openWindow('info#en');
-                });
-                addEventListener(getByClassAt('link', 2), 'click', function () {
-                    openWindow('info#zh-Hant');
-                });
-                addEventListener(getByClassAt('link', 3), 'click', function () {
-                    openWindow('info#zh-Hans');
-                });
-
+                addInfoRedirects();
                 addEventListener(submitButton, 'click', function () {
                     register();
                 });
@@ -197,3 +174,18 @@ addEventListener(w, 'load', function () {
         disableInput(passwordConfirmInput, disabled);
     }
 });
+
+function addInfoRedirects() {
+    addEventListener(getByClassAt('link', 0), 'click', function () {
+        openWindow('info');
+    });
+    addEventListener(getByClassAt('link', 1), 'click', function () {
+        openWindow('info#en');
+    });
+    addEventListener(getByClassAt('link', 2), 'click', function () {
+        openWindow('info#zh-Hant');
+    });
+    addEventListener(getByClassAt('link', 3), 'click', function () {
+        openWindow('info#zh-Hans');
+    });
+}

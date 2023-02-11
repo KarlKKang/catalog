@@ -1,7 +1,7 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT, TOP_URL
+    TOP_URL
 } from '../module/env/constant';
 import {
     navListeners,
@@ -46,7 +46,7 @@ import body from './body.html';
 
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/my_account' && !DEVELOPMENT) {
+    if (getBaseURL() !== TOP_URL + '/my_account') {
         redirect(TOP_URL + '/my_account', true);
         return;
     }

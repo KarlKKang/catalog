@@ -2,13 +2,11 @@
 import 'core-js';
 import {
     CDN_URL,
-    DEVELOPMENT,
     TOP_URL,
 } from './module/env/constant';
 import {
     sendServerRequest,
     clearCookies,
-    getURLParam,
     scrollToHash,
     navListeners,
     encodeCFURIComponent,
@@ -52,7 +50,7 @@ let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 let lazyloadImportPromise: ReturnType<typeof importLazyload>;
 
 addEventListener(w, 'load', function () {
-    if (!getBaseURL().startsWith(NEWS_TOP_URL) && !DEVELOPMENT) {
+    if (!getBaseURL().startsWith(NEWS_TOP_URL)) {
         redirect(NEWS_TOP_URL, true);
         return;
     }
@@ -65,7 +63,7 @@ addEventListener(w, 'load', function () {
 
     const newsID = getNewsID();
     if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {
-        if (getBaseURL() !== NEWS_TOP_URL && !DEVELOPMENT) {
+        if (getBaseURL() !== NEWS_TOP_URL) {
             changeURL(NEWS_TOP_URL, true);
         }
         infiniteScrolling = initializeInfiniteScrolling(getAllNews);
@@ -77,12 +75,8 @@ addEventListener(w, 'load', function () {
 });
 
 function getNewsID(): string | null {
-    if (DEVELOPMENT) {
-        return getURLParam('id');
-    } else {
-        const start = NEWS_TOP_URL.length;
-        return getBaseURL().substring(start);
-    }
+    const start = NEWS_TOP_URL.length;
+    return getBaseURL().substring(start);
 }
 
 function getNews(newsID: string): void {
@@ -173,11 +167,7 @@ function attachImage(contentContainer: HTMLElement, newsID: string): void {
                     authenticationToken: 'news'
                 };
                 setCookie('local-image-param', JSON.stringify(param), 10);
-                if (DEVELOPMENT) {
-                    redirect('image.html');
-                } else {
-                    openWindow(TOP_URL + '/image');
-                }
+                openWindow(TOP_URL + '/image');
             });
         }
         removeRightClick(elem);
@@ -196,7 +186,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
             if (page === 'news') {
                 const newsID = getDataAttribute(elem, 'news-id');
                 if (newsID !== null) {
-                    openWindow(DEVELOPMENT ? ('news.html?id=' + newsID) : (NEWS_TOP_URL + newsID));
+                    openWindow(NEWS_TOP_URL + newsID);
                 }
                 return;
             }
@@ -209,13 +199,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
                     return;
                 }
 
-                let url: string;
-                if (DEVELOPMENT) {
-                    url = 'bangumi.html?series=' + seriesID;
-                    separator = '&';
-                } else {
-                    url = TOP_URL + '/bangumi/';
-                }
+                let url = TOP_URL + '/bangumi/';
 
                 const epIndex = getDataAttribute(elem, 'ep-index');
                 if (epIndex !== null) {
@@ -282,7 +266,7 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
         appendChild(overviewContainer, titleContainer);
 
         addEventListener(overviewContainer, 'click', function () {
-            redirect(DEVELOPMENT ? ('news.html?id=' + entry.id) : (NEWS_TOP_URL + entry.id));
+            redirect(NEWS_TOP_URL + entry.id);
         });
 
         appendChild(getById('main'), overviewContainer);

@@ -1,6 +1,5 @@
 // Low level DOM functions, required in ./message
 import {
-    DEVELOPMENT,
     DOMAIN
 } from '../env/constant';
 
@@ -82,11 +81,11 @@ export function getCookie(name: string) {
 }
 
 export function setCookie(name: string, value: string, maxAge: number) {
-    d.cookie = name + '=' + encodeURIComponent(value) + ';max-age=' + maxAge.toString() + ';path=/' + (DEVELOPMENT ? '' : ';domain=.' + DOMAIN + ';secure;samesite=strict');
+    d.cookie = name + '=' + encodeURIComponent(value) + ';max-age=' + maxAge.toString() + ';path=/;domain=.' + DOMAIN + ';secure;samesite=strict';
 }
 
 export function deleteCookie(name: string) {
-    d.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/' + (DEVELOPMENT ? '' : ';domain=.' + DOMAIN + ';secure;samesite=strict');
+    d.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.' + DOMAIN + ';secure;samesite=strict';
 }
 
 export function getTitle() {

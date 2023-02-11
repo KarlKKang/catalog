@@ -27,7 +27,7 @@ import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged 
 import { expired, passwordChanged } from './module/message/template/param';
 
 addEventListener(w, 'load', function () {
-    if (getBaseURL() !== LOGIN_URL + '/password_reset' && !DEVELOPMENT) {
+    if (getBaseURL() !== LOGIN_URL + '/password_reset') {
         redirect(LOGIN_URL, true);
         return;
     }

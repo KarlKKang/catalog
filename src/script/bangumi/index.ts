@@ -1,7 +1,6 @@
 // JavaScript Document
 import 'core-js';
 import {
-    DEVELOPMENT,
     TOP_URL,
 } from '../module/env/constant';
 import {
@@ -24,7 +23,7 @@ import { default as getImportPromises } from './get_import_promises';
 import type { default as updatePageType } from './update_page';
 
 addEventListener(w, 'load', function () {
-    if (!getBaseURL().startsWith(TOP_URL + '/bangumi/') && !DEVELOPMENT) {
+    if (!getBaseURL().startsWith(TOP_URL + '/bangumi/')) {
         redirect(TOP_URL, true);
         return;
     }
@@ -95,10 +94,6 @@ addEventListener(w, 'load', function () {
 });
 
 function getSeriesID(): string | null {
-    if (DEVELOPMENT) {
-        return getURLParam('series');
-    } else {
-        const start = (TOP_URL + '/bangumi/').length;
-        return getBaseURL().substring(start);
-    }
+    const start = (TOP_URL + '/bangumi/').length;
+    return getBaseURL().substring(start);
 }

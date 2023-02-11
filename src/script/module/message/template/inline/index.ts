@@ -1,4 +1,4 @@
-import { DOMAIN } from '../../../env/constant';
+import { TOP_DOMAIN } from '../../../env/constant';
 
 export { passwordChanged, incompletedInvitation, emailAlreadyRegistered } from '../comm';
 
@@ -19,4 +19,4 @@ export const usernameChanged = 'ユーザー名を変更しました。';
 export const usernameTaken = 'このユーザーネームはすでに使われています。別のユーザー名を入力してください。';
 
 export const loginFailed = 'アカウントIDかパスワードが正しくありません。';
-export const accountDeactivated = `お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（<a class="link" href="mailto:admin@${DOMAIN}">admin@${DOMAIN}</a>）にご連絡ください。`;
+export const accountDeactivated = `お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（<a class="link" href="mailto:admin@${TOP_DOMAIN}">admin@${TOP_DOMAIN}</a>）にご連絡ください。`;

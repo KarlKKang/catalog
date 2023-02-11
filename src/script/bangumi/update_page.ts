@@ -2,7 +2,6 @@ import {
     DEVELOPMENT,
     TOP_URL,
     CDN_URL,
-    DOMAIN,
 } from '../module/env/constant';
 import {
     navListeners,
@@ -27,6 +26,7 @@ import {
     showElement,
     hideElement,
     isHidden,
+    getTitle,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -84,10 +84,10 @@ export default async function (
     const titleOverride = response.title_override;
     if (titleOverride !== undefined) {
         titleElem.innerHTML = titleOverride;
-        setTitle(parseCharacters(titleOverride) + ' | ' + DOMAIN);
+        setTitle(parseCharacters(titleOverride) + ' | ' + getTitle());
     } else {
         titleElem.innerHTML = title;
-        setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | ' + DOMAIN);
+        setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | ' + getTitle());
     }
 
     if (debug) {
@@ -260,12 +260,7 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
 }
 
 function goToEP(dest_series: string, dest_ep: number) {
-    let url: string;
-    if (DEVELOPMENT) {
-        url = 'bangumi.html' + '?series=' + dest_series + (dest_ep == 1 ? '' : ('&ep=' + dest_ep));
-    } else {
-        url = TOP_URL + '/bangumi/' + dest_series + (dest_ep == 1 ? '' : ('?ep=' + dest_ep));
-    }
+    const url = TOP_URL + '/bangumi/' + dest_series + (dest_ep == 1 ? '' : ('?ep=' + dest_ep));
     redirect(url);
 }
 
