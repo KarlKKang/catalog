@@ -20,7 +20,9 @@
     "build": "npm run build:css && npm run lint && npm run type-check && npm run build:js",
     "start-server": "npx http-server dev -g -b -c-1 -S -C cert.pem",
     "lint": "npx eslint src/script/ --ext .ts",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "publish": "sh publish.sh featherine-website ./dist/",
+    "publish-dev": "sh publish.sh featherine-website-alpha ./dev/"
   },
   "keywords": [],
   "author": "Kai Kang",
