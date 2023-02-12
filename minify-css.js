@@ -7,6 +7,7 @@ if (dev) {
 }
 
 const entries = [
+    '404.css',
     'bangumi.css',
     'console.css',
     'image.css',

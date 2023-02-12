@@ -29,7 +29,6 @@
 }
 
 button {
-    height: 40px;
     box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
     background: var(--foreground-color);

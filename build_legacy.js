@@ -18,7 +18,7 @@ if (dev) {
 fs.mkdir(destDirPrefix + 'script_legacy');
 fs.mkdir(destDirPrefix + 'css');
 
-const htmlEntries = ['unsupported_browser', '404'];
+const htmlEntries = ['unsupported_browser'];
 for (const entry of htmlEntries) {
     const html = ejsLoader('./src/html/' + entry + '.ejs').default({ titleSuffix: DOMAIN + (dev ? ' (alpha)' : '') });
     htmlMinify(html, htmlMinifyOptions).then((data) => {
@@ -28,7 +28,7 @@ for (const entry of htmlEntries) {
     });
 }
 
-const jsEntries = ['browser', '404'];
+const jsEntries = ['browser'];
 for (const entry of jsEntries) {
     const filename = './src/script/' + entry + '.ts';
     fs.read(filename, function (code) {

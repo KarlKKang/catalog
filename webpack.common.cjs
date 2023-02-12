@@ -81,6 +81,7 @@ const config = {
 };
 
 const pages = [
+    '404',
     'bangumi',
     'confirm_new_email',
     'console',

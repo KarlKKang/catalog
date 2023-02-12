@@ -2,11 +2,22 @@
 <html lang="ja">
 
 <head>
-    <%= require("./module/main_header.ejs").default({ title: '404 | ' + data.titleSuffix, index: false, legacy: true }) %>
-    <script src="/script_legacy/404.js"></script>
+    <%= require("./module/main_header.ejs").default({ title: '404 | ' + titleSuffix, index: false }) %>
+    <%= require("./module/header_theme.ejs").default() %>
+
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Light.css">
+    <link rel="stylesheet" type="text/css" href="/font/NotoSansJP/NotoSansJP-Medium.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/message.css">
+    <link rel="stylesheet" type="text/css" href="/css/404.css">
 </head>
 
-<body>
+<body class="hidden">
+    <div id="container">
+        <p id="title" class="color-red">ページが見つかりません</p>
+        <p id="message">URLが間違っているか、ページが存在しません。ご確認の上、再度お試しください。</p>
+        <button id="button">トップページへ戻る</button>
+    </div>
 </body>
 
 </html>

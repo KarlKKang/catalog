@@ -28,7 +28,6 @@
 .input-field,
 #submit-button {
     margin: 1em 0px;
-    height: 40px;
     box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
     background: var(--foreground-color);
