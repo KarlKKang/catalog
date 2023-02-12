@@ -32,7 +32,7 @@ const jsEntries = ['browser'];
 for (const entry of jsEntries) {
     const filename = './src/script/' + entry + '.ts';
     fs.read(filename, function (code) {
-        code = lodashTemplate(code)({ data: { domain: DOMAIN } });
+        code = lodashTemplate(code)({ data: { domain: (dev ? 'alpha.' : '') + DOMAIN } });
         babel.transform(
             code,
             { filename: filename, presets: ["@babel/preset-env", "@babel/preset-typescript"] },
