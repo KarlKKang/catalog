@@ -17,3 +17,4 @@ export const moduleImportError = function (e: unknown) {
     }
     return `モジュールの読み込みに失敗しました。${defaultErrorSuffix}<br>` + message;
 };
+export const insufficientPermissions = 'このページを閲覧する権限がありません。';

@@ -6,7 +6,7 @@ import {
 } from '../env/constant';
 
 import { show as showMessage } from '../message';
-import { moduleImportError } from '../message/template/param';
+import { moduleImportError, insufficientPermissions } from '../message/template/param';
 import { sessionEnded, connectionError, status403, status429, status503, status400And500 } from '../message/template/param/server';
 
 import {
@@ -82,7 +82,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
             if (responseText == 'SESSION ENDED') {
                 showMessage(sessionEnded);
             } else if (responseText == 'INSUFFICIENT PERMISSIONS') {
-                redirect(TOP_URL, true);
+                showMessage(insufficientPermissions);
             } else if (responseText == 'UNAUTHORIZED') {
                 const logoutParam = options.logoutParam;
                 redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);

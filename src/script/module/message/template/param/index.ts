@@ -1,5 +1,5 @@
 import {
-    LOGIN_URL
+    LOGIN_URL, TOP_URL
 } from '../../../env/constant';
 
 import * as body from '../body';
@@ -53,4 +53,10 @@ export const unrecommendedBrowser = function (redirectURL: string) {
         color: 'orange',
         url: redirectURL
     } as const;
+};
+export const insufficientPermissions = {
+    title: title.insufficientPermissions,
+    message: body.insufficientPermissions,
+    color: 'red',
+    url: TOP_URL
 };
