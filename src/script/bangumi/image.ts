@@ -20,6 +20,8 @@ import {
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import type { LocalImageParam } from '../module/type/LocalImageParam';
 import type { LazyloadImportPromise } from './get_import_promises';
+import { show as showMessage } from '../module/message';
+import { moduleImportError } from '../module/message/template/param';
 
 export default function (
     epInfo: ImageEPInfo,
@@ -75,5 +77,7 @@ export default function (
 
     lazyloadImportPromise.then((lazyloadInitialize) => {
         lazyloadInitialize();
+    }).catch((e) => {
+        showMessage(moduleImportError(e));
     });
 }

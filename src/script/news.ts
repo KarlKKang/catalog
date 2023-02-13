@@ -37,6 +37,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
+import { moduleImportError } from './module/message/template/param';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
@@ -174,6 +175,8 @@ function attachImage(contentContainer: HTMLElement, newsID: string): void {
     }
     lazyloadImportPromise.then((lazyloadInitialize) => {
         lazyloadInitialize();
+    }).catch((e) => {
+        showMessage(moduleImportError(e));
     });
 }
 

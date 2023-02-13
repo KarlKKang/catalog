@@ -30,6 +30,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
+import { moduleImportError } from './module/message/template/param';
 import * as SeriesInfo from './module/type/SeriesInfo';
 import { default as importLazyload } from './module/lazyload';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
@@ -87,6 +88,8 @@ addEventListener(w, 'load', function () {
                 }
             });
             removeClass(getBody(), 'invisible');
+        }).catch((e) => {
+            showMessage(moduleImportError(e));
         });
     });
 });
