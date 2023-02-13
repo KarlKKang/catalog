@@ -119,7 +119,7 @@ async function startWebpMachine() {
             webpSupported = await detectWebpSupport();
         } catch (e: unknown) {
             showMessage(moduleImportError(e));
-            return;
+            throw e;
         }
     }
 
