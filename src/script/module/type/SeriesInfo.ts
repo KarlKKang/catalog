@@ -6,29 +6,25 @@ export interface SeriesEntry {
     id: string;
 }
 
-export type SeriesEntries = SeriesEntry[];
+export type Series = SeriesEntry[];
 
-export type PivotInfo = 'EOF' | number;
+export type Pivot = 'EOF' | number;
 
-export type SeriesInfo = [...SeriesEntries, PivotInfo];
+export type SeriesInfo = {
+    series: Series;
+    pivot: Pivot;
+};
 
 export function check(seriesInfo: any) {
-    if (!isArray(seriesInfo)) {
+    if (!isObject(seriesInfo)) {
         throwError();
     }
 
-    if (seriesInfo.length < 1) {
+    const series = seriesInfo.series;
+    if (!isArray(series)) {
         throwError();
     }
-
-    const pivotInfo = seriesInfo[seriesInfo.length - 1];
-
-    if (!isNumber(pivotInfo) && pivotInfo !== 'EOF') {
-        throwError();
-    }
-
-    const seriesEntries = seriesInfo.slice(0, -1);
-    for (const seriesEntry of seriesEntries) {
+    for (const seriesEntry of series) {
         if (!isObject(seriesEntry)) {
             throwError();
         }
@@ -36,4 +32,11 @@ export function check(seriesInfo: any) {
             throwError();
         }
     }
+
+    const pivot = seriesInfo.pivot;
+    if (!isNumber(pivot) && pivot !== 'EOF') {
+        throwError();
+    }
 }
+
+

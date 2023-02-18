@@ -42,7 +42,7 @@ let searchBar: HTMLElement;
 let searchBarInput: HTMLInputElement;
 let containerElem: HTMLElement;
 
-let pivot: SeriesInfo.PivotInfo = 0;
+let pivot: SeriesInfo.Pivot = 0;
 let keywords = '';
 
 let lazyloadImportPromise: ReturnType<typeof importLazyload>;
@@ -95,9 +95,8 @@ addEventListener(w, 'load', function () {
 });
 
 function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
-    pivot = seriesInfo[seriesInfo.length - 1] as SeriesInfo.PivotInfo;
-    const SeriesEntries = seriesInfo.slice(0, -1) as SeriesInfo.SeriesEntries;
-    for (const seriesEntry of SeriesEntries) {
+    pivot = seriesInfo.pivot;
+    for (const seriesEntry of seriesInfo.series) {
         const seriesNode = createElement('div');
         const thumbnailNode = createElement('div');
         const overlay = createElement('div');
