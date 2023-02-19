@@ -309,7 +309,7 @@ p.artist {
 }
 
 .message {
-    margin: 1em 0px;
+    margin: 0px 0px 1em 0px;
     padding: 2em;
     background-color: var(--foreground-color);
     box-shadow: var(--shadow);
