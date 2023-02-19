@@ -7,7 +7,7 @@ import {
 
 import { show as showMessage } from '../message';
 import { moduleImportError, insufficientPermissions } from '../message/template/param';
-import { sessionEnded, connectionError, status403, status429, status503, status400And500 } from '../message/template/param/server';
+import { sessionEnded, connectionError, status403, status429, status503, status400And500, invalidResponse } from '../message/template/param/server';
 
 import {
     w,
@@ -28,6 +28,7 @@ import {
     appendChild,
 } from '../dom';
 
+import * as MaintenanceInfo from '../type/MaintenanceInfo';
 import type { CDNCredentials } from '../type/CDNCredentials';
 
 export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d`~!@#$%^&*()\-=_+[\]{}\\|;:'",<.>/?]{8,64}$/;
@@ -92,7 +93,15 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
         } else if (status == 429) {
             showMessage(status429);
         } else if (status == 503) {
-            showMessage(status503);
+            let parsedResponse: MaintenanceInfo.MaintenanceInfo;
+            try {
+                parsedResponse = JSON.parse(responseText);
+                MaintenanceInfo.check(parsedResponse);
+            } catch (e) {
+                showMessage(invalidResponse);
+                return false;
+            }
+            showMessage(status503(parsedResponse));
         } else if (status == 500 || status == 400) {
             if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
                 showMessage(status400And500(responseText));
@@ -384,4 +393,50 @@ export function scrollToHash(paddingTop: boolean) {
             }, 500); //Give UI some time to load.
         }
     }
+}
+
+export function getLocalTime(unixTimestamp?: number) {
+    let date: Date;
+    if (unixTimestamp === undefined) {
+        date = new Date();
+    } else {
+        date = new Date(unixTimestamp * 1000);
+    }
+    return {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        date: date.getDate(),
+        dayOfWeek: getDayOfWeek(date),
+        hour: date.getHours(),
+        minute: date.getMinutes(),
+        second: date.getSeconds()
+    };
+}
+
+function getDayOfWeek(date: Date): string {
+    const index = date.getDay();
+    let result: string;
+    switch (index) {
+        case 1:
+            result = '月';
+            break;
+        case 2:
+            result = '火';
+            break;
+        case 3:
+            result = '水';
+            break;
+        case 4:
+            result = '木';
+            break;
+        case 5:
+            result = '金';
+            break;
+        case 6:
+            result = '土';
+            break;
+        default:
+            result = '日';
+    }
+    return result;
 }

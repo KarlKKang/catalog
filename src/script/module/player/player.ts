@@ -2,6 +2,7 @@
 import {
     secToTimestamp,
     removeRightClick,
+    getLocalTime,
 } from '../main';
 import {
     getById,
@@ -884,8 +885,8 @@ export class Player {
 
         const onScreenConsole = getById('on-screen-console');
         if (onScreenConsole instanceof HTMLTextAreaElement) {
-            const date = new Date();
-            const newline = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()) + '   ' + txt + '\r\n';
+            const date = getLocalTime();
+            const newline = (date.hour < 10 ? '0' + date.hour : date.hour) + ':' + (date.minute < 10 ? '0' + date.minute : date.minute) + ':' + (date.second < 10 ? '0' + date.second : date.second) + '   ' + txt + '\r\n';
             console.log(newline);
             onScreenConsole.value += newline;
         }

@@ -11,6 +11,7 @@ import {
     navListeners,
     encodeCFURIComponent,
     removeRightClick,
+    getLocalTime,
 } from './module/main';
 import {
     w,
@@ -117,16 +118,16 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
     const createTimeContainer = createElement('p');
     addClass(createTimeContainer, 'date');
 
-    const createTime = new Date(newsInfo.create_time * 1000);
-    createTimeContainer.innerHTML = '初回掲載日：' + createTime.getFullYear() + '年' + (createTime.getMonth() + 1) + '月' + createTime.getDate() + '日（' + getDayOfWeek(createTime) + '）' + createTime.getHours() + '時' + createTime.getMinutes() + '分' + createTime.getSeconds() + '秒';
+    const createTime = getLocalTime(newsInfo.create_time);
+    createTimeContainer.innerHTML = '初回掲載日：' + createTime.year + '年' + createTime.month + '月' + createTime.date + '日（' + createTime.dayOfWeek + '）' + createTime.hour + '時' + createTime.minute + '分' + createTime.second + '秒';
     appendChild(container, createTimeContainer);
 
     if (newsInfo.update_time !== null) {
         const updateTimeContainer = createElement('p');
         addClass(updateTimeContainer, 'date');
 
-        const updateTime = new Date(newsInfo.update_time * 1000);
-        updateTimeContainer.innerHTML = '最終更新日：' + updateTime.getFullYear() + '年' + (updateTime.getMonth() + 1) + '月' + updateTime.getDate() + '日（' + getDayOfWeek(updateTime) + '）' + updateTime.getHours() + '時' + updateTime.getMinutes() + '分' + updateTime.getSeconds() + '秒';
+        const updateTime = getLocalTime(newsInfo.update_time);
+        updateTimeContainer.innerHTML = '最終更新日：' + updateTime.year + '年' + updateTime.month + '月' + updateTime.date + '日（' + updateTime.dayOfWeek + '）' + updateTime.hour + '時' + updateTime.minute + '分' + updateTime.second + '秒';
         appendChild(container, updateTimeContainer);
     }
 
@@ -255,10 +256,10 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
 
         const dateContainer = createElement('div');
         addClass(dateContainer, 'date');
-        const updateTime = new Date(entry.update_time * 1000);
-        dateContainer.innerHTML = updateTime.getFullYear() + '年';
+        const updateTime = getLocalTime(entry.update_time);
+        dateContainer.innerHTML = updateTime.year + '年';
         appendChild(dateContainer, createElement('br'));
-        dateContainer.innerHTML += (updateTime.getMonth() + 1).toString().padStart(2, '0') + '月' + updateTime.getDate().toString().padStart(2, '0') + '日';
+        dateContainer.innerHTML += updateTime.month.toString().padStart(2, '0') + '月' + updateTime.date.toString().padStart(2, '0') + '日';
 
         const titleContainer = createElement('div');
         titleContainer.innerHTML = entry.title;
@@ -276,32 +277,4 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
     }
     infiniteScrolling.setEnabled(true);
     infiniteScrolling.updatePosition();
-}
-
-function getDayOfWeek(date: Date): string {
-    const index = date.getDay();
-    let result: string;
-    switch (index) {
-        case 1:
-            result = '月';
-            break;
-        case 2:
-            result = '火';
-            break;
-        case 3:
-            result = '水';
-            break;
-        case 4:
-            result = '木';
-            break;
-        case 5:
-            result = '金';
-            break;
-        case 6:
-            result = '土';
-            break;
-        default:
-            result = '日';
-    }
-    return result;
 }

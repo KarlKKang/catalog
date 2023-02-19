@@ -1,4 +1,5 @@
 import { throwError, isObject, isString, isArray, isNumber } from './helper';
+import * as MaintenanceInfo from './MaintenanceInfo';
 
 export interface SeriesEntry {
     title: string;
@@ -13,6 +14,7 @@ export type Pivot = 'EOF' | number;
 export type SeriesInfo = {
     series: Series;
     pivot: Pivot;
+    maintenance?: MaintenanceInfo.MaintenanceInfo;
 };
 
 export function check(seriesInfo: any) {
@@ -36,6 +38,10 @@ export function check(seriesInfo: any) {
     const pivot = seriesInfo.pivot;
     if (!isNumber(pivot) && pivot !== 'EOF') {
         throwError();
+    }
+
+    if (seriesInfo.maintenance !== undefined) {
+        MaintenanceInfo.check(seriesInfo.maintenance);
     }
 }
 

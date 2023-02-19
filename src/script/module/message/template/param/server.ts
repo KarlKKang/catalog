@@ -2,6 +2,7 @@ import { paramWithRedirect } from './helper';
 import * as body from '../body/server';
 import * as title from '../title/server';
 import { TOP_URL } from '../../../env/constant';
+import { MaintenanceInfo } from '../../../type/MaintenanceInfo';
 
 export const invalidResponse = paramWithRedirect(body.invalidResponse);
 export const sessionEnded = {
@@ -18,10 +19,12 @@ export const status429 = {
     title: title.status429,
     message: body.status429
 };
-export const status503 = {
-    title: title.status503,
-    message: body.status503,
-    color: 'orange'
+export const status503 = function (maintenanceInfo: MaintenanceInfo) {
+    return {
+        title: title.status503,
+        message: body.status503(maintenanceInfo),
+        color: 'orange'
+    };
 };
 export const status400And500 = function (responseText: string) {
     return {
