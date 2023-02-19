@@ -245,33 +245,37 @@ async function addVideoNode(config?: {
         }
     }
 
-    let USE_AAC = true;
+
     let AAC_FALLBACK = false;
 
-    if (currentFormat.audio !== undefined) {
-        if (currentFormat.audio.startsWith('atmos')) {
-            showMediaMessage('Dolby Atmos®について', `Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは<a class="link" href="${TOP_URL}/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。`, null);
+    if (currentFormat.audio !== 'none') {
+        let USE_AAC = true;
+
+        if (currentFormat.audio !== undefined) {
+            if (currentFormat.audio.startsWith('atmos')) {
+                showMediaMessage('Dolby Atmos®について', `Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは<a class="link" href="${TOP_URL}/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。`, null);
+            }
+
+            if (currentFormat.audio.startsWith('atmos_ac3')) {
+                if (CAN_PLAY_AC3) {
+                    formatString += ' + AC-3';
+                    USE_AAC = false;
+                } else if (currentFormat.aac_fallback) {
+                    AAC_FALLBACK = true;
+                } else {
+                    showCodecCompatibilityError();
+                    return;
+                }
+            }
         }
 
-        if (currentFormat.audio.startsWith('atmos_ac3')) {
-            if (CAN_PLAY_AC3) {
-                formatString += ' + AC-3';
-                USE_AAC = false;
-            } else if (currentFormat.aac_fallback) {
-                AAC_FALLBACK = true;
+        if (USE_AAC) {
+            if (CAN_PLAY_AAC) {
+                formatString += ' + AAC LC';
             } else {
                 showCodecCompatibilityError();
                 return;
             }
-        }
-    }
-
-    if (USE_AAC) {
-        if (CAN_PLAY_AAC) {
-            formatString += ' + AAC LC';
-        } else {
-            showCodecCompatibilityError();
-            return;
         }
     }
 
