@@ -65,7 +65,7 @@ addEventListener(w, 'load', function () {
                     login();
                 });
                 addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', function () {
-                    redirect(LOGIN_URL + '/request_password_reset');
+                    redirect(LOGIN_URL + '/request_password_reset', true);
                 });
                 passwordStyling(passwordInput);
                 showElement(getBody());
