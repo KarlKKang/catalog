@@ -22,6 +22,7 @@ import {
     getByIdNative,
     remove,
     showElement,
+    hideElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -131,6 +132,7 @@ export default function (
 
     const formatDisplay = createElement('div');
     formatDisplay.id = 'format-display';
+    hideElement(formatDisplay);
     appendChild(formatContainer, formatDisplay);
 
     insertBefore(formatContainer, mediaHolder);
@@ -184,6 +186,7 @@ function formatSwitch() {
                 currentMediaInstance = undefined;
             }
 
+            hideElement(getById('format-display'));
             mediaHolder.textContent = '';
             const errorMsgElem = getByIdNative('error');
             errorMsgElem && remove(errorMsgElem);
@@ -279,7 +282,9 @@ async function addVideoNode(config?: {
         }
     }
 
-    getById('format-display').textContent = formatString;
+    const formatDisplay = getById('format-display');
+    formatDisplay.textContent = formatString;
+    showElement(formatDisplay);
 
     const _config = config ?? {};
 
