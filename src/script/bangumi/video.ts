@@ -259,7 +259,7 @@ async function addVideoNode(config?: {
     appendChild(mediaHolder, playerContainer);
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
-    const resourceURLOverride = (currentFormat.av1_fallback === undefined && currentFormat.aac_fallback === undefined) ? undefined : baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']*');
+    const resourceURLOverride = (currentFormat.aac_fallback === undefined) ? undefined : (baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']*'));
     const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8'), epInfo.cdn_credentials, resourceURLOverride);
     if (USE_MSE) {
         let HlsPlayer: typeof HlsPlayerType;
