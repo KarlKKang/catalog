@@ -23,9 +23,16 @@
     "publish": "sh publish.sh featherine-website ./dist/",
     "publish-dev": "sh publish.sh featherine-website-alpha ./dev/"
   },
-  "keywords": [],
   "author": "Kai Kang",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KarlKKang/catalog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KarlKKang/catalog/issues"
+  },
+  "homepage": "https://github.com/KarlKKang/catalog",
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/plugin-transform-runtime": "^7.19.6",
