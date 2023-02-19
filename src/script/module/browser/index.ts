@@ -25,6 +25,7 @@ let IS_IOS = false;
 let IS_SAFARI = false;
 const IS_CHROMIUM = !!w.chrome;
 let IS_FIREFOX = false;
+let IS_EDGE = false;
 let IS_WINDOWS = false;
 let IS_MACOS = false;
 let UNRECOMMENDED_BROWSER = false;
@@ -38,6 +39,7 @@ if (ua !== null) {
     IS_IOS = browserName === 'mobile safari' || osName === 'ios' || (browserName === 'safari' && 'ontouchend' in document);
     IS_SAFARI = IS_IOS || browserName === 'safari';
     IS_FIREFOX = browserName.includes('firefox') && !IS_IOS;
+    IS_EDGE = browserName === 'edge';
     IS_WINDOWS = osName === 'windows';
     IS_MACOS = osName === 'mac os';
 
@@ -55,7 +57,7 @@ const CAN_PLAY_ALAC = audioCanPlay('alac');
 const CAN_PLAY_FLAC = audioCanPlay('flac') || audioCanPlay('fLaC');
 const CAN_PLAY_MP3 = audioCanPlay('mp3') || canPlay('audio', 'mpeg', ''); // mp3: Firefox; mpeg: Safari and Chrome
 const CAN_PLAY_AVC = videoCanPlay('avc1.640032');
-const CAN_PLAY_HEVC41 = videoCanPlay('hvc1.2.4.H123.90');
+const CAN_PLAY_HEVC41 = videoCanPlay('hvc1.2.4.H123.90') && !(IS_WINDOWS && IS_EDGE);
 const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2');
 const CAN_PLAY_AC3 = audioCanPlay('ac-3');
 
