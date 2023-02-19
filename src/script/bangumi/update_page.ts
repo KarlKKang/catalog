@@ -33,7 +33,7 @@ import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
-import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, LazyloadImportPromise, NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise, DashjsPlayerImportPromise } from './get_import_promises';
+import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, LazyloadImportPromise, NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
 import type { default as videoType } from './video';
 import type { default as audioType } from './audio';
 import type { default as imageType } from './image';
@@ -55,7 +55,6 @@ export default async function (
     nativePlayerImportPromise: NativePlayerImportPromise,
     hlsPlayerImportPromise: HlsPlayerImportPromise,
     videojsPlayerImportPromise: VideojsPlayerImportPromise,
-    dashjsPlayerImportPromise: DashjsPlayerImportPromise,
     lazyloadImportPromise: LazyloadImportPromise
 ) {
     seriesID = _seriesID;
@@ -66,7 +65,6 @@ export default async function (
 
     const contentContainer = getById('content');
     const debug = DEVELOPMENT || getURLParam('debug') === '1';
-    const av1Override = getURLParam('av1') === '1';
     const startTimeText = getURLParam('timestamp');
     let startTime: number | null = null;
     if (startTimeText !== null) {
@@ -165,7 +163,7 @@ export default async function (
             showMessage(moduleImportError(e));
             throw e;
         }
-        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, nativePlayerImportPromise, hlsPlayerImportPromise, dashjsPlayerImportPromise, debug, av1Override, startTime, play);
+        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, nativePlayerImportPromise, hlsPlayerImportPromise, debug, startTime, play);
     } else {
         if (type === 'audio') {
             let audio: typeof audioType;

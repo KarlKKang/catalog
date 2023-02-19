@@ -41,11 +41,10 @@ import {
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
-import type { DashPlayer as DashPlayerType } from '../module/player/dash_player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError, incompatibleSuffix, showNativePlayerError, showHLSPlayerError, showDashPlayerError } from './media_helper';
-import type { NativePlayerImportPromise, DashjsPlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
+import { showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError, incompatibleSuffix, showNativePlayerError, showHLSPlayerError } from './media_helper';
+import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import type { ErrorData, Events } from 'hls.js';
 import { ErrorDetails as HlsErrorDetails } from 'hls.js';
 
@@ -56,9 +55,7 @@ let baseURL: string;
 let mediaHolder: HTMLElement;
 let nativePlayerImportPromise: NativePlayerImportPromise;
 let hlsPlayerImportPromise: HlsPlayerImportPromise;
-let dashjsPlayerImportPromise: DashjsPlayerImportPromise;
 let debug: boolean;
-let av1Override: boolean;
 
 let currentFormat: VideoFormatInfo;
 let currentMediaInstance: PlayerType | undefined;
@@ -71,9 +68,7 @@ export default function (
     _mediaHolder: HTMLElement,
     _nativePlayerImportPromise: NativePlayerImportPromise,
     _hlsPlayerImportPromise: HlsPlayerImportPromise,
-    _dashjsPlayerImportPromise: DashjsPlayerImportPromise,
     _debug: boolean,
-    _av1Override: boolean,
     startTime: number | null,
     play: boolean
 ) {
@@ -85,9 +80,7 @@ export default function (
     mediaHolder = _mediaHolder;
     nativePlayerImportPromise = _nativePlayerImportPromise;
     hlsPlayerImportPromise = _hlsPlayerImportPromise;
-    dashjsPlayerImportPromise = _dashjsPlayerImportPromise;
     debug = _debug;
-    av1Override = _av1Override;
 
     const contentContainer = getById('content');
     addClass(contentContainer, 'video');
@@ -202,25 +195,17 @@ async function addVideoNode(config?: {
         return;
     }
 
-    let AV1_FALLBACK = USE_MSE && currentFormat.av1_fallback !== undefined && videoCanPlay(currentFormat.av1_fallback);
-
     if (currentFormat.video === 'dv5') {
         if (!videoCanPlay('dvh1.05.06')) {
             showDolbyVisionError();
             return;
         }
     } else if (currentFormat.video === 'hdr10') {
-        showMediaMessage('HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null);
-        if (videoCanPlay('hvc1.2.4.H153.90')) {
-            if (!av1Override) {
-                AV1_FALLBACK = false;
-            }
-        } else if (AV1_FALLBACK) {
-            showMediaMessage('HEVCに対応していません', `AV1でエンコードされた動画が代わりに再生されています。詳しくは<a class="link" href="${TOP_URL}/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。`, 'orange');
-        } else {
+        if (!videoCanPlay('hvc1.2.4.H153.90')) {
             showErrorMessage(incompatibleTitle, `お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは<a class="link" href="${TOP_URL}/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。`);
             return;
         }
+        showMediaMessage('HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null);
     } else {
         if (!CAN_PLAY_AVC) {
             showCodecCompatibilityError();
@@ -236,7 +221,7 @@ async function addVideoNode(config?: {
             showMediaMessage('Dolby Atmos®について', `Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは<a class="link" href="${TOP_URL}/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。`, null);
         }
 
-        if (currentFormat.audio.startsWith('atmos_ac3') && !AV1_FALLBACK) {
+        if (currentFormat.audio.startsWith('atmos_ac3')) {
             if (CAN_PLAY_AC3) {
                 USE_AAC = false;
             } else if (currentFormat.aac_fallback) {
@@ -275,50 +260,77 @@ async function addVideoNode(config?: {
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
     const resourceURLOverride = (currentFormat.av1_fallback === undefined && currentFormat.aac_fallback === undefined) ? undefined : baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']*');
-    if (AV1_FALLBACK) {
-        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + '][AV1].mpd'), epInfo.cdn_credentials, resourceURLOverride);
-
-        let DashPlayer: typeof DashPlayerType;
+    const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8'), epInfo.cdn_credentials, resourceURLOverride);
+    if (USE_MSE) {
+        let HlsPlayer: typeof HlsPlayerType;
         try {
-            DashPlayer = (await dashjsPlayerImportPromise).DashPlayer;
+            HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
         } catch (e) {
             showMessage(moduleImportError(e));
             throw e;
         }
 
-        const dashjsConfig = {
-            debug: {
-                logLevel: debug ? 5 : 3
-            },
-            streaming: {
-                fragmentRequestTimeout: 60000,
-                gaps: {
-                    enableStallFix: true,
-                    jumpLargeGaps: false,
-                    smallGapLimit: 0.5
-                },
-                buffer: {
-                    bufferPruningInterval: 1,
-                    flushBufferAtTrackSwitch: true,
-                    bufferToKeep: 0,
-                    bufferTimeAtTopQuality: 15,
-                    bufferTimeAtTopQualityLongForm: 15,
-                    avoidCurrentTimeRangePruning: true,
-                }
+        const hlsConfig = {
+            enableWebVTT: false,
+            enableIMSC1: false,
+            enableCEA708Captions: false,
+            lowLatencyMode: false,
+            enableWorker: false,
+            maxFragLookUpTolerance: 0.0,
+            backBufferLength: 0,
+            maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
+            maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
+            maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Default: 0.1.
+            fragLoadingTimeOut: 60000,
+            debug: debug,
+            xhrSetup: function (xhr: XMLHttpRequest) {
+                xhr.withCredentials = true;
             }
         };
 
-        const mediaInstance = new DashPlayer(playerContainer, dashjsConfig, {
+        const mediaInstance = new HlsPlayer(playerContainer, hlsConfig, {
             debug: debug
         });
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
-            onerror: function (e: dashjs.ErrorEvent) {
-                if (typeof e.error === 'object' && e.error.code < 10 && currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
-                    show8chAudioError();
-                } else {
-                    showDashPlayerError(e);
+            onerror: function (_: Events.ERROR, data: ErrorData) {
+                if (data.fatal) {
+                    if (data.details === HlsErrorDetails.BUFFER_APPEND_ERROR) {
+                        if (currentFormat.video === 'dv5') {
+                            showDolbyVisionError();
+                        } else if (currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
+                            show8chAudioError();
+                        } else {
+                            showHLSPlayerError(data);
+                        }
+                    } else {
+                        showHLSPlayerError(data);
+                    }
+                    currentMediaInstance = undefined;
+                    mediaInstance.destroy();
                 }
+            },
+            onplaypromiseerror: onPlayPromiseError,
+            play: _config.play,
+            startTime: _config.startTime
+        });
+        _onInit(mediaInstance);
+    } else {
+        let Player: typeof PlayerType;
+        try {
+            Player = (await nativePlayerImportPromise).Player;
+        } catch (e) {
+            showMessage(moduleImportError(e));
+            throw e;
+        }
+
+        const mediaInstance = new Player(playerContainer, {
+            debug: debug
+        });
+        currentMediaInstance = mediaInstance;
+        mediaInstance.load(url, {
+            onerror: function () {
+                showNativePlayerError(mediaInstance.media.error);
                 currentMediaInstance = undefined;
                 mediaInstance.destroy();
             },
@@ -327,87 +339,6 @@ async function addVideoNode(config?: {
             startTime: _config.startTime
         });
         _onInit(mediaInstance);
-    } else {
-        const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8'), epInfo.cdn_credentials, resourceURLOverride);
-        if (USE_MSE) {
-            let HlsPlayer: typeof HlsPlayerType;
-            try {
-                HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
-            } catch (e) {
-                showMessage(moduleImportError(e));
-                throw e;
-            }
-
-            const hlsConfig = {
-                enableWebVTT: false,
-                enableIMSC1: false,
-                enableCEA708Captions: false,
-                lowLatencyMode: false,
-                enableWorker: false,
-                maxFragLookUpTolerance: 0.0,
-                backBufferLength: 0,
-                maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
-                maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
-                maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Default: 0.1.
-                fragLoadingTimeOut: 60000,
-                debug: debug,
-                xhrSetup: function (xhr: XMLHttpRequest) {
-                    xhr.withCredentials = true;
-                }
-            };
-
-            const mediaInstance = new HlsPlayer(playerContainer, hlsConfig, {
-                debug: debug
-            });
-            currentMediaInstance = mediaInstance;
-            mediaInstance.load(url, {
-                onerror: function (_: Events.ERROR, data: ErrorData) {
-                    if (data.fatal) {
-                        if (data.details === HlsErrorDetails.BUFFER_APPEND_ERROR) {
-                            if (currentFormat.video === 'dv5') {
-                                showDolbyVisionError();
-                            } else if (currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
-                                show8chAudioError();
-                            } else {
-                                showHLSPlayerError(data);
-                            }
-                        } else {
-                            showHLSPlayerError(data);
-                        }
-                        currentMediaInstance = undefined;
-                        mediaInstance.destroy();
-                    }
-                },
-                onplaypromiseerror: onPlayPromiseError,
-                play: _config.play,
-                startTime: _config.startTime
-            });
-            _onInit(mediaInstance);
-        } else {
-            let Player: typeof PlayerType;
-            try {
-                Player = (await nativePlayerImportPromise).Player;
-            } catch (e) {
-                showMessage(moduleImportError(e));
-                throw e;
-            }
-
-            const mediaInstance = new Player(playerContainer, {
-                debug: debug
-            });
-            currentMediaInstance = mediaInstance;
-            mediaInstance.load(url, {
-                onerror: function () {
-                    showNativePlayerError(mediaInstance.media.error);
-                    currentMediaInstance = undefined;
-                    mediaInstance.destroy();
-                },
-                onplaypromiseerror: onPlayPromiseError,
-                play: _config.play,
-                startTime: _config.startTime
-            });
-            _onInit(mediaInstance);
-        }
     }
 }
 

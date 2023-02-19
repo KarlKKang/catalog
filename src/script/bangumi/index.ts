@@ -84,7 +84,6 @@ addEventListener(w, 'load', function () {
                 importPromises.nativePlayer,
                 importPromises.hlsPlayer,
                 importPromises.videojsPlayer,
-                importPromises.dashjsPlayer,
                 importPromises.lazyload
             );
         },
