@@ -160,11 +160,18 @@ hr {
     padding: 0px;
 }
 
+#format-container {
+    display: flex;
+    margin: 0px -16px 0px 0px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 #format-selector {
     max-width: 200px;
     width: 70%;
     position: relative;
-    margin: 0px 0px 1em 0px;
+    margin: 0px 16px 16px 0px;
 }
 
 .select:after {
@@ -199,6 +206,12 @@ select::-ms-expand {
 
 select:hover {
     box-shadow: var(--shadow-hover);
+}
+
+#format-display {
+    margin: 0px 16px 16px 0px;
+    color: var(--alt-text-color);
+    font-size: small;
 }
 
 #media-holder {

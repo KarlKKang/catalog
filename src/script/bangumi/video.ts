@@ -38,6 +38,7 @@ import {
     CAN_PLAY_AC3,
     IS_CHROMIUM,
     IS_FIREFOX,
+    CAN_PLAY_HEVC41,
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
@@ -98,6 +99,8 @@ export default function (
     let formatIndex = getFormatIndex();
     const formats = epInfo.formats;
 
+    const formatContainer = createElement('div');
+    formatContainer.id = 'format-container';
     const formatSelector = createElement('div');
     formatSelector.id = 'format-selector';
     addClass(formatSelector, 'select');
@@ -124,7 +127,13 @@ export default function (
     });
 
     appendChild(formatSelector, selectMenu);
-    insertBefore(formatSelector, mediaHolder);
+    appendChild(formatContainer, formatSelector);
+
+    const formatDisplay = createElement('div');
+    formatDisplay.id = 'format-display';
+    appendChild(formatContainer, formatDisplay);
+
+    insertBefore(formatContainer, mediaHolder);
 
     // Download Accordion
     appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
@@ -195,19 +204,42 @@ async function addVideoNode(config?: {
         return;
     }
 
+    let formatString = '';
+
+    let USE_AVC = true;
+    let AVC_FALLBACK = false;
+
     if (currentFormat.video === 'dv5') {
         if (!videoCanPlay('dvh1.05.06')) {
             showDolbyVisionError();
             return;
         }
+        formatString = 'HEVC/Main 10/L5.1/High/dvhe.05.06';
+        USE_AVC = false;
     } else if (currentFormat.video === 'hdr10') {
         if (!videoCanPlay('hvc1.2.4.H153.90')) {
             showErrorMessage(incompatibleTitle, `お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは<a class="link" href="${TOP_URL}/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。`);
             return;
         }
+        formatString = 'HEVC/Main 10/L5.1/High';
+        USE_AVC = false;
         showMediaMessage('HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null);
-    } else {
-        if (!CAN_PLAY_AVC) {
+    } else if (currentFormat.video === 'hevc41') {
+        if (CAN_PLAY_HEVC41) {
+            formatString = 'HEVC/Main 10/L4.1/High';
+            USE_AVC = false;
+        } else if (currentFormat.avc_fallback) {
+            AVC_FALLBACK = true;
+        } else {
+            showCodecCompatibilityError();
+            return;
+        }
+    }
+
+    if (USE_AVC) {
+        if (CAN_PLAY_AVC) {
+            formatString = 'AVC/High/L5';
+        } else {
             showCodecCompatibilityError();
             return;
         }
@@ -223,6 +255,7 @@ async function addVideoNode(config?: {
 
         if (currentFormat.audio.startsWith('atmos_ac3')) {
             if (CAN_PLAY_AC3) {
+                formatString += ' + AC-3';
                 USE_AAC = false;
             } else if (currentFormat.aac_fallback) {
                 AAC_FALLBACK = true;
@@ -233,10 +266,16 @@ async function addVideoNode(config?: {
         }
     }
 
-    if (USE_AAC && !CAN_PLAY_AAC) {
-        showCodecCompatibilityError();
-        return;
+    if (USE_AAC) {
+        if (CAN_PLAY_AAC) {
+            formatString += ' + AAC LC';
+        } else {
+            showCodecCompatibilityError();
+            return;
+        }
     }
+
+    getById('format-display').textContent = formatString;
 
     const _config = config ?? {};
 
@@ -259,8 +298,8 @@ async function addVideoNode(config?: {
     appendChild(mediaHolder, playerContainer);
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
-    const resourceURLOverride = (currentFormat.aac_fallback === undefined) ? undefined : (baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']*'));
-    const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8'), epInfo.cdn_credentials, resourceURLOverride);
+    const resourceURLOverride = (currentFormat.avc_fallback === undefined && currentFormat.aac_fallback === undefined) ? undefined : (baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']*.m3u8'));
+    const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8'), epInfo.cdn_credentials, resourceURLOverride);
     if (USE_MSE) {
         let HlsPlayer: typeof HlsPlayerType;
         try {
