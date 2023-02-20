@@ -25,7 +25,6 @@ import { createMessageElem, getContentBoxHeight, getFormatIndex, getLogoutParam 
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import type { ErrorData } from 'hls.js';
 import { ErrorTypes as HlsErrorTypes, ErrorDetails as HlsErrorDetails } from 'hls.js';
-import type { ErrorEvent as DashErrorEvent } from 'dashjs';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -93,27 +92,6 @@ export function showHLSPlayerError(data: ErrorData) {
         showUnknownPlaybackError();
     }
     console.error(data);
-}
-
-export function showDashPlayerError(e: DashErrorEvent) {
-    const dashError = e.error;
-    if (dashError === 'download') {
-        showNetworkError();
-    } else if (typeof dashError === 'object') {
-        const errorCode = dashError.code;
-        if ([23, 24, 35].includes(errorCode)) {
-            showCodecCompatibilityError();
-        } else if (errorCode >= 25 && errorCode <= 29) {
-            showNetworkError();
-        } else if (errorCode === 20 || errorCode === 21) {
-            showDecodeError();
-        } else {
-            showUnknownPlaybackError();
-        }
-    } else {
-        showUnknownPlaybackError();
-    }
-    console.error(e);
 }
 
 export function showErrorMessage(title: string, body: string) {

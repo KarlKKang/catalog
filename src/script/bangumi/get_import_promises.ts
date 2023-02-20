@@ -29,10 +29,6 @@ export type VideojsPlayerImportPromise = Promise<typeof import(
     /* webpackExports: ["VideojsPlayer"] */
     '../module/player/videojs_player'
 )>;
-export type DashjsPlayerImportPromise = Promise<typeof import(
-    /* webpackExports: ["DashPlayer"] */
-    '../module/player/dash_player'
-)>;
 
 type AllPromises = {
     updatePage: UpdatePageImportPromise;
@@ -43,7 +39,6 @@ type AllPromises = {
     nativePlayer: NativePlayerImportPromise;
     hlsPlayer: HlsPlayerImportPromise;
     videojsPlayer: VideojsPlayerImportPromise;
-    dashjsPlayer: DashjsPlayerImportPromise;
 };
 
 export default function (): AllPromises {
@@ -76,10 +71,6 @@ export default function (): AllPromises {
         videojsPlayer: import(
             /* webpackExports: ["VideojsPlayer"] */
             '../module/player/videojs_player'
-        ),
-        dashjsPlayer: import(
-            /* webpackExports: ["DashPlayer"] */
-            '../module/player/dash_player'
         )
     };
 }

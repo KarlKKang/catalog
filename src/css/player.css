@@ -164,6 +164,7 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  min-height: auto;
 }
 
 .player .player-control-bar {

@@ -29,7 +29,7 @@ export type VideoFormatInfo = {
     tag?: string;
     video?: string;
     audio?: string;
-    av1_fallback?: string;
+    avc_fallback?: boolean;
     aac_fallback?: boolean;
 };
 export interface VideoEPInfo extends EPInfo {
@@ -104,7 +104,7 @@ function checkVideoEPInfo(epInfo: any) {
             throwError();
         }
 
-        if (format.av1_fallback !== undefined && !isString(format.av1_fallback)) {
+        if (format.avc_fallback !== undefined && !isBoolean(format.avc_fallback)) {
             throwError();
         }
 
