@@ -169,11 +169,6 @@ button:disabled {
     width: 100%;
 }
 
-#main-note {
-    margin: 0px 0px 2em;
-    padding: 0px;
-}
-
 .lazyload.complete {
     padding-bottom: 0px !important;
 }
