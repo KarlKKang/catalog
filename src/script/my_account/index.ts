@@ -38,7 +38,8 @@ import {
     usernameEmpty,
     usernameUnchanged,
     usernameChanged,
-    usernameTaken
+    usernameTaken,
+    emailChangeWait
 } from '../module/message/template/inline';
 import * as UserInfo from '../module/type/UserInfo';
 import isbot from 'isbot';
@@ -205,7 +206,9 @@ addEventListener(w, 'load', function () {
 
         sendServerRequest('send_email_change.php', {
             callback: function (response: string) {
-                if (response == 'DONE') {
+                if (response == 'WAIT') {
+                    warningElem.innerHTML = emailChangeWait;
+                } else if (response == 'DONE') {
                     warningElem.innerHTML = emailSentInline;
                     changeColor(warningElem, 'green');
                 } else {

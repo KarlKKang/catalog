@@ -20,3 +20,5 @@ export const usernameTaken = 'このユーザーネームはすでに使われ�
 
 export const loginFailed = 'アカウントIDかパスワードが正しくありません。';
 export const accountDeactivated = `お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（<a class="link" href="mailto:admin@${TOP_DOMAIN}">admin@${TOP_DOMAIN}</a>）にご連絡ください。`;
+
+export const emailChangeWait = '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。';
