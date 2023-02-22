@@ -71,11 +71,23 @@ addEventListener(w, 'load', function () {
                 emailInput = getById('email') as HTMLInputElement;
                 passwordInput = getById('password') as HTMLInputElement;
                 submitButton = getById('submit-button') as HTMLButtonElement;
-                passwordStyling(passwordInput);
-                showElement(getBody());
+
+                addEventListener(emailInput, 'keydown', function (event) {
+                    if ((event as KeyboardEvent).key === 'Enter') {
+                        changeEmail(param, keyID, signature);
+                    }
+                });
+                addEventListener(passwordInput, 'keydown', function (event) {
+                    if ((event as KeyboardEvent).key === 'Enter') {
+                        changeEmail(param, keyID, signature);
+                    }
+                });
                 addEventListener(submitButton, 'click', function () {
                     changeEmail(param, keyID, signature);
                 });
+
+                passwordStyling(passwordInput);
+                showElement(getBody());
             } else {
                 showMessage();
             }
