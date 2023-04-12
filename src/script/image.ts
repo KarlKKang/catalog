@@ -58,24 +58,32 @@ addEventListener(w, 'load', function () {
         './module/image_loader'
     );
 
-    setInterval(function () {
-        sendServerRequest('device_authenticate.php', {
-            callback: function (response: string) {
-                if (response != 'APPROVED') {
-                    showMessage();
-                }
-            },
-            content: 'token=' + param.authenticationToken
-        });
-    }, 60 * 1000);
+    const mediaSessionCredential = param.mediaSessionCredential;
+    let uri = 'get_image.php';
+    let content = 'p=' + param.xhrParam;
+    if (mediaSessionCredential === null) {
+        uri = 'get_news_image.php';
+    } else {
+        content = mediaSessionCredential + '&' + content;
+        setInterval(function () {
+            sendServerRequest('authenticate_media_session.php', {
+                callback: function (response: string) {
+                    if (response != 'APPROVED') {
+                        showMessage();
+                    }
+                },
+                content: mediaSessionCredential,
+                connectionErrorRetry: 5
+            });
+        }, 30 * 1000);
+    }
 
     setTitle(param.title);
 
     const container = getById('image-container');
-
     removeRightClick(container);
 
-    sendServerRequest('get_image.php', {
+    sendServerRequest(uri, {
         callback: function (response: string) {
             let parsedResponse: CDNCredentials.CDNCredentials;
             try {
@@ -94,6 +102,6 @@ addEventListener(w, 'load', function () {
                 showMessage(moduleImportError(e));
             });
         },
-        content: 'token=' + param.authenticationToken + '&p=' + param.xhrParam
+        content: content
     });
 });

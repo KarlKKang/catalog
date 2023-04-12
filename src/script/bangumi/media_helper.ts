@@ -115,7 +115,7 @@ export function showMediaMessage(title: string, body: string, titleColor: string
     prependChild(getById('media-holder'), messageElem);
 }
 
-export function getDownloadAccordion(token: string, seriesID: string, epIndex: number): HTMLElement {
+export function getDownloadAccordion(mediaSessionCredential: string, seriesID: string, epIndex: number): HTMLElement {
 
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
@@ -127,7 +127,6 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
     accordionPanel.innerHTML = '<ul>' +
         '<li>下の「ダウンロード」ボタンをクリックすると、必要なツールやスクリプトが入ったZIPファイルのダウンロードが開始されます。</li>' +
         '<li>ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。</li>' +
-        '<li>ZIPファイル内のスクリプトの有効期限は、ダウンロード後5分です。有効期限内にスクリプトを実行してください。</li>' +
         '<li>スクリプトの実行には、Windows 10、Mac OS X 10.9、Linux 3.2.0以上を搭載したパソコンが必要です。</li>' +
         '<li>インターネット接続が良好であることをご確認してください。</li>' +
         '</ul>';
@@ -179,7 +178,7 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
                     showMessage(invalidResponse);
                 }
             },
-            content: 'token=' + token + '&format=' + getFormatIndex() + '&os=' + selectMenu.value,
+            content: mediaSessionCredential + '&format=' + getFormatIndex() + '&os=' + selectMenu.value,
             logoutParam: getLogoutParam(seriesID, epIndex)
         });
     });

@@ -1,5 +1,4 @@
 import {
-    concatenateSignedURL,
     encodeCFURIComponent,
 } from '../module/main';
 import {
@@ -71,7 +70,7 @@ export default function (
     const audioEPInfo = epInfo as AudioEPInfo;
 
     addAlbumInfo();
-    appendChild(getById('content'), getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
+    appendChild(getById('content'), getDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex));
 
     if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
@@ -92,7 +91,6 @@ async function addAudioNode(index: number) {
 
     const audioEPInfo = epInfo as AudioEPInfo;
     const file = audioEPInfo.files[index] as AudioFile;
-    const credentials = audioEPInfo.cdn_credentials;
 
     const FLAC_FALLBACK = (file.flac_fallback && !CAN_PLAY_ALAC);
 
@@ -111,7 +109,7 @@ async function addAudioNode(index: number) {
 
     const playerContainer = createElement('div') as HTMLDivElement;
     appendChild(mediaHolder, playerContainer);
-    const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8'), credentials, baseURL + '_MASTER_*.m3u8');
+    const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
     function onPlayPromiseError() {
         showPlayPromiseError();

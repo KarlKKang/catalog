@@ -1,5 +1,4 @@
 import { throwError, isObject, isString, isArray, isNumber, isBoolean } from './helper';
-import * as CDNCredentials from './CDNCredentials';
 
 export type AudioFile = {
     title: string;
@@ -18,9 +17,9 @@ type ImageFile = {
 
 interface EPInfo {
     age_restricted: string | false;
-    authentication_token: string;
     dir: string;
     series_override?: string;
+    media_session_credential: string;
 }
 
 type Chapters = Array<[string, number]>;
@@ -38,7 +37,6 @@ export interface VideoEPInfo extends EPInfo {
     formats: [VideoFormatInfo, ...VideoFormatInfo[]];
     chapters: Chapters;
     file_name: string;
-    cdn_credentials: CDNCredentials.CDNCredentials;
 }
 
 export interface AudioEPInfo extends EPInfo {
@@ -48,7 +46,6 @@ export interface AudioEPInfo extends EPInfo {
         album_artist: string;
     };
     files: [AudioFile, ...AudioFile[]];
-    cdn_credentials: CDNCredentials.CDNCredentials;
 }
 
 export interface ImageEPInfo extends EPInfo {
@@ -135,8 +132,6 @@ function checkVideoEPInfo(epInfo: any) {
     if (!isString(epInfo.file_name)) {
         throwError();
     }
-
-    CDNCredentials.check(epInfo.cdn_credentials);
 }
 
 function checkAudioFile(audioFile: any) {
@@ -196,8 +191,6 @@ function checkAudioEPInfo(epInfo: any) {
     for (const file of files) {
         checkAudioFile(file);
     }
-
-    CDNCredentials.check(epInfo.cdn_credentials);
 }
 
 function checkImageFile(imageFile: any) {
@@ -243,8 +236,7 @@ function checkEPInfo(epInfo: any) {
         throwError();
     }
 
-    const authenticationToken = epInfo.authentication_token;
-    if (!isString(authenticationToken)) {
+    if (!isString(epInfo.media_session_credential)) {
         throwError();
     }
 

@@ -59,14 +59,14 @@ export default function (
         setDataAttribute(imageNode, 'src', baseURL + encodeCFURIComponent(file.file_name));
         setDataAttribute(imageNode, 'alt', file.file_name);
         setDataAttribute(imageNode, 'xhr-param', index.toString());
-        setDataAttribute(imageNode, 'authentication-token', epInfo.authentication_token);
+        setDataAttribute(imageNode, 'media-session-credential', epInfo.media_session_credential);
         addEventListener(imageNode, 'click', function () {
             const param: LocalImageParam = {
                 baseURL: baseURL,
                 fileName: file.file_name,
                 xhrParam: index.toString(),
                 title: getTitle(),
-                authenticationToken: epInfo.authentication_token
+                mediaSessionCredential: epInfo.media_session_credential
             };
             setCookie('local-image-param', JSON.stringify(param), 10);
             openWindow(TOP_URL + '/image');

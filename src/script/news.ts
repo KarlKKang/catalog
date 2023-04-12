@@ -158,7 +158,6 @@ function attachImage(contentContainer: HTMLElement, newsID: string): void {
         setDataAttribute(elem, 'src', baseURL + encodeCFURIComponent(src));
         setDataAttribute(elem, 'alt', src);
         setDataAttribute(elem, 'xhr-param', xhrParam);
-        setDataAttribute(elem, 'authentication-token', 'news');
         if (containsClass(elem, 'image-enlarge')) {
             addEventListener(elem, 'click', function () {
                 const param: LocalImageParam = {
@@ -166,7 +165,7 @@ function attachImage(contentContainer: HTMLElement, newsID: string): void {
                     fileName: src,
                     xhrParam: xhrParam,
                     title: getTitle(),
-                    authenticationToken: 'news'
+                    mediaSessionCredential: null
                 };
                 setCookie('local-image-param', JSON.stringify(param), 10);
                 openWindow(TOP_URL + '/image');

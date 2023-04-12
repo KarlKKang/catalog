@@ -134,15 +134,15 @@ export default async function (
         insertBefore(warningElem, contentContainer);
     }
 
-    /////////////////////////////////////////////device_authenticate/////////////////////////////////////////////
+    /////////////////////////////////////////////authenticate media session/////////////////////////////////////////////
     setInterval(function () {
-        sendServerRequest('device_authenticate.php', {
-            callback: function (authResult: string) {
-                if (authResult != 'APPROVED') {
+        sendServerRequest('authenticate_media_session.php', {
+            callback: function (response: string) {
+                if (response != 'APPROVED') {
                     showMessage(invalidResponse);
                 }
             },
-            content: 'token=' + epInfo.authentication_token,
+            content: epInfo.media_session_credential,
             logoutParam: getLogoutParam(seriesID, epIndex),
             connectionErrorRetry: 5
         });

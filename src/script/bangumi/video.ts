@@ -2,7 +2,6 @@ import { TOP_URL } from '../module/env/constant';
 import {
     sendServerRequest,
     secToTimestamp,
-    concatenateSignedURL,
     encodeCFURIComponent,
 } from '../module/main';
 import {
@@ -27,7 +26,6 @@ import {
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
-import * as CDNCredentials from '../module/type/CDNCredentials';
 import type { VideoEPInfo, VideoFormatInfo } from '../module/type/BangumiInfo';
 
 import {
@@ -138,7 +136,7 @@ export default function (
     insertBefore(formatContainer, mediaHolder);
 
     // Download Accordion
-    appendChild(contentContainer, getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
+    appendChild(contentContainer, getDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex));
 
     // Video Node
     addEventListener(selectMenu, 'change', formatSwitch);
@@ -159,17 +157,11 @@ function formatSwitch() {
     currentFormat = format;
     updateURLParam(seriesID, epIndex, formatIndex);
 
-    sendServerRequest('format_switch.php', {
+    sendServerRequest('authenticate_media_session.php', {
         callback: function (response: string) {
-            let parsedResponse: CDNCredentials.CDNCredentials;
-            try {
-                parsedResponse = JSON.parse(response);
-                CDNCredentials.check(parsedResponse);
-            } catch (e) {
+            if (response != 'APPROVED') {
                 showMessage(invalidResponse);
-                return;
             }
-            epInfo.cdn_credentials = parsedResponse;
 
             let config: {
                 play?: boolean | undefined;
@@ -193,7 +185,7 @@ function formatSwitch() {
             showElement(mediaHolder);
             addVideoNode(config);
         },
-        content: 'token=' + epInfo.authentication_token + '&format=' + formatIndex,
+        content: epInfo.media_session_credential + '&format=' + formatIndex,
         logoutParam: getLogoutParam(seriesID, epIndex)
     });
 }
@@ -307,8 +299,7 @@ async function addVideoNode(config?: {
     appendChild(mediaHolder, playerContainer);
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
-    const resourceURLOverride = (currentFormat.avc_fallback === undefined && currentFormat.aac_fallback === undefined) ? undefined : (baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']*.m3u8'));
-    const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8'), epInfo.cdn_credentials, resourceURLOverride);
+    const url = baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
     if (USE_MSE) {
         let HlsPlayer: typeof HlsPlayerType;
         try {
