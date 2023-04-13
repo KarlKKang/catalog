@@ -1,5 +1,4 @@
-import { getMediaSource } from 'hls.js/src/utils/mediasource-helper';
-import { isSupported } from 'hls.js/src/is-supported';
+import { getMediaSource, isSupported } from './hls_helper';
 import { UAParser } from 'ua-parser-js';
 
 import { w, createElement } from '../dom';
@@ -95,7 +94,7 @@ function canPlay(type: 'video' | 'audio', container: string, codecs: string): bo
     if (USE_MSE) {
         const mediaSource = getMediaSource();
         if (mediaSource === undefined) {
-            return false;
+            return false; // Shouldn't be reached.
         }
         return mediaSource.isTypeSupported(`${type}/${container}${codecs}`);
     } else {

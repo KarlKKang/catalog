@@ -19,7 +19,7 @@ export abstract class NonNativePlayer extends Player {
         this.checkBuffer = this.checkBuffer.bind(this);
     }
 
-    protected abstract override attach(this: NonNativePlayer, onload?: (...args: any[]) => void, onerror?: (...args: any[]) => void): void;
+    protected abstract override attach(this: NonNativePlayer, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void;
     public abstract override load(
         this: Player,
         url: string,
@@ -27,7 +27,7 @@ export abstract class NonNativePlayer extends Player {
             play?: boolean;
             startTime?: number;
             onload?: (...args: any[]) => void;
-            onerror?: (...args: any[]) => void;
+            onerror?: (errorCode: number | null) => void;
             onplaypromiseerror?: () => void;
         }
     ): void;

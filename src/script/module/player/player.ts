@@ -24,6 +24,7 @@ import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClass } from './helper';
 import * as icons from './icons';
+import { MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
 
 declare global {
     interface HTMLVideoElement {
@@ -301,13 +302,27 @@ export class Player {
         this.setMediaAttributes();
     }
 
-    protected attach(this: Player, onload?: (...args: any[]) => void, onerror?: (...args: any[]) => void): void {
+    protected attach(this: Player, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
         this.preattach();
 
         this.media.crossOrigin = 'use-credentials';
-        addEventListener(this.media, 'error', function (this: any, event) {
-            onerror && onerror.call(this, event);
-        });
+        addEventListener(this.media, 'error', function (this: Player) {
+            let errorCode = null;
+            if (this.media.error !== null) {
+                const code = this.media.error.code;
+                if (code === MediaError.MEDIA_ERR_ABORTED) {
+                    errorCode = MEDIA_ERR_ABORTED;
+                } else if (code === MediaError.MEDIA_ERR_NETWORK) {
+                    errorCode = MEDIA_ERR_NETWORK;
+                } else if (code === MediaError.MEDIA_ERR_DECODE) {
+                    errorCode = MEDIA_ERR_DECODE;
+                } else if (code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+                    errorCode = MEDIA_ERR_SRC_NOT_SUPPORTED;
+                }
+            }
+            onerror && onerror(errorCode);
+            console.error(this.media.error);
+        }.bind(this));
         addEventListener(this.media, 'loadedmetadata', function (this: any, event) {
             onload && onload.call(this, event);
         });
@@ -322,7 +337,7 @@ export class Player {
             play?: boolean | undefined;
             startTime?: number | undefined;
             onload?: (...args: any[]) => void;
-            onerror?: (...args: any[]) => void;
+            onerror?: (errorCode: number | null) => void;
             onplaypromiseerror?: () => void;
         }
     ): void {

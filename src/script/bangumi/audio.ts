@@ -28,7 +28,7 @@ import type { VideojsPlayer as VideojsPlayerType } from '../module/player/videoj
 
 import { parseCharacters } from './helper';
 import {
-    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showPlayPromiseError, showNativePlayerError, showHLSPlayerError
+    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showPlayPromiseError, showPlayerError
 } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
 
@@ -143,11 +143,11 @@ async function addAudioNode(index: number) {
             debug: debug
         });
         audioInstance.load(url, {
-            onerror: function (error: MediaError | null) {
+            onerror: function (errorCode: number | null) {
                 if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
                     showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
                 } else {
-                    showNativePlayerError(error); // videojs mimics the standard HTML5 `MediaError` class.
+                    showPlayerError(errorCode);
                 }
                 destroyAll();
             },
@@ -192,10 +192,9 @@ async function addAudioNode(index: number) {
                 debug: debug
             });
             audioInstance.load(url, {
-                onerror: function (_, data) {
-                    if (data.fatal) {
-                        showHLSPlayerError(data);
-                    }
+                onerror: function (errorCode: number | null) {
+                    showPlayerError(errorCode);
+                    destroyAll();
                 },
                 onload: function () {
                     audioReadyCounter++;
@@ -221,8 +220,8 @@ async function addAudioNode(index: number) {
                 debug: debug
             });
             audioInstance.load(url, {
-                onerror: function () {
-                    showNativePlayerError(audioInstance.media.error);
+                onerror: function (errorCode: number | null) {
+                    showPlayerError(errorCode);
                     destroyAll();
                 },
                 onload: function () {

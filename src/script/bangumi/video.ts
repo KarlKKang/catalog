@@ -43,10 +43,9 @@ import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError, incompatibleSuffix, showNativePlayerError, showHLSPlayerError } from './media_helper';
+import { showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError, incompatibleSuffix, showPlayerError } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
-import type { ErrorData, Events } from 'hls.js';
-import { ErrorDetails as HlsErrorDetails } from 'hls.js';
+import { HLS_BUFFER_APPEND_ERROR } from '../module/player/media_error';
 
 let seriesID: string;
 let epIndex: number;
@@ -320,7 +319,6 @@ async function addVideoNode(config?: {
             maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
             maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
             maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Default: 0.1.
-            fragLoadingTimeOut: 60000,
             debug: debug,
             xhrSetup: function (xhr: XMLHttpRequest) {
                 xhr.withCredentials = true;
@@ -332,22 +330,20 @@ async function addVideoNode(config?: {
         });
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
-            onerror: function (_: Events.ERROR, data: ErrorData) {
-                if (data.fatal) {
-                    if (data.details === HlsErrorDetails.BUFFER_APPEND_ERROR) {
-                        if (currentFormat.video === 'dv5') {
-                            showDolbyVisionError();
-                        } else if (currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
-                            show8chAudioError();
-                        } else {
-                            showHLSPlayerError(data);
-                        }
+            onerror: function (errorCode: number | null) {
+                if (errorCode === HLS_BUFFER_APPEND_ERROR) {
+                    if (currentFormat.video === 'dv5') {
+                        showDolbyVisionError();
+                    } else if (currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
+                        show8chAudioError();
                     } else {
-                        showHLSPlayerError(data);
+                        showPlayerError(errorCode);
                     }
-                    currentMediaInstance = undefined;
-                    mediaInstance.destroy();
+                } else {
+                    showPlayerError(errorCode);
                 }
+                currentMediaInstance = undefined;
+                mediaInstance.destroy();
             },
             onplaypromiseerror: onPlayPromiseError,
             play: _config.play,
@@ -368,8 +364,8 @@ async function addVideoNode(config?: {
         });
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
-            onerror: function () {
-                showNativePlayerError(mediaInstance.media.error);
+            onerror: function (errorCode: number | null) {
+                showPlayerError(errorCode);
                 currentMediaInstance = undefined;
                 mediaInstance.destroy();
             },
