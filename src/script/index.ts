@@ -10,6 +10,8 @@ import {
     getURLParam,
     clearCookies,
     disableInput,
+    changeColor,
+    getLocalTime,
 } from './module/main';
 import {
     w,
@@ -27,6 +29,7 @@ import {
     setDataAttribute,
     showElement,
     getBaseURL,
+    insertBefore,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -75,6 +78,31 @@ addEventListener(w, 'load', function () {
             infiniteScrolling = initializeInfiniteScrolling(getSeries, - 256 - 24);
             addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
             showElement(getBody());
+            if (seriesInfo.maintenance !== undefined) {
+                const annoucementContainer = createElement('div');
+                addClass(annoucementContainer, 'announcement');
+                const announcementTitle = createElement('p');
+                addClass(announcementTitle, 'announcement-title');
+                changeColor(announcementTitle, 'orange');
+                const announcementBody = createElement('p');
+                addClass(announcementBody, 'announcement-body');
+                appendChild(annoucementContainer, announcementTitle);
+                appendChild(annoucementContainer, announcementBody);
+                insertBefore(annoucementContainer, containerElem);
+                announcementTitle.textContent = 'メンテナンスのお知らせ';
+
+                const maintenanceInfo = seriesInfo.maintenance;
+                let message = '';
+                const startTime = getLocalTime(maintenanceInfo.start);
+                if (maintenanceInfo.period > 0) {
+                    const endTime = getLocalTime(maintenanceInfo.start + maintenanceInfo.period);
+                    message = `${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}～${endTime.year}年${endTime.month}月${endTime.date}日（${endTime.dayOfWeek}）${endTime.hour.toString().padStart(2, '0')}:${endTime.minute.toString().padStart(2, '0')}の間、メンテナンスを実施する予定です。`;
+                } else {
+                    message = `メンテナンス開始は${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}を予定しております。`;
+                }
+                message += 'ご不便をおかけして申し訳ありません。';
+                announcementBody.textContent = message;
+            }
             showSeries(seriesInfo);
             navListeners();
             addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
