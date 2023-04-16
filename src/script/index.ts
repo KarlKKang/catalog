@@ -72,53 +72,55 @@ addEventListener(w, 'load', function () {
     containerElem = getById('container');
 
     getURLKeywords();
-    getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
-        lazyloadImportPromise.then((module) => {
-            lazyloadInitialize = module;
-            infiniteScrolling = initializeInfiniteScrolling(getSeries, - 256 - 24);
-            addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
-            showElement(getBody());
-            if (seriesInfo.maintenance !== undefined) {
-                const annoucementContainer = createElement('div');
-                addClass(annoucementContainer, 'announcement');
-                const announcementTitle = createElement('p');
-                addClass(announcementTitle, 'announcement-title');
-                changeColor(announcementTitle, 'orange');
-                const announcementBody = createElement('p');
-                addClass(announcementBody, 'announcement-body');
-                appendChild(annoucementContainer, announcementTitle);
-                appendChild(annoucementContainer, announcementBody);
-                insertBefore(annoucementContainer, containerElem);
-                announcementTitle.textContent = 'メンテナンスのお知らせ';
-
-                const maintenanceInfo = seriesInfo.maintenance;
-                let message = '';
-                const startTime = getLocalTime(maintenanceInfo.start);
-                if (maintenanceInfo.period > 0) {
-                    const endTime = getLocalTime(maintenanceInfo.start + maintenanceInfo.period);
-                    message = `${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}～${endTime.year}年${endTime.month}月${endTime.date}日（${endTime.dayOfWeek}）${endTime.hour.toString().padStart(2, '0')}:${endTime.minute.toString().padStart(2, '0')}の間、メンテナンスを実施する予定です。`;
-                } else {
-                    message = `メンテナンス開始は${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}を予定しております。`;
-                }
-                message += 'ご不便をおかけして申し訳ありません。';
-                announcementBody.textContent = message;
-            }
-            showSeries(seriesInfo);
-            navListeners();
-            addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
-                if (!searchBarInput.disabled) {
-                    search();
-                }
-            });
-            addEventListener(searchBarInput, 'keyup', function (event) {
-                if ((event as KeyboardEvent).key === 'Enter') {
-                    search();
-                }
-            });
-            removeClass(getBody(), 'invisible');
-        }).catch((e) => {
+    getSeries(async function (seriesInfo: SeriesInfo.SeriesInfo) {
+        try {
+            lazyloadInitialize = await lazyloadImportPromise;
+        } catch (e) {
             showMessage(moduleImportError(e));
+            throw e;
+        }
+
+        infiniteScrolling = initializeInfiniteScrolling(getSeries, - 256 - 24);
+        addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
+        showElement(getBody());
+        if (seriesInfo.maintenance !== undefined) {
+            const annoucementContainer = createElement('div');
+            addClass(annoucementContainer, 'announcement');
+            const announcementTitle = createElement('p');
+            addClass(announcementTitle, 'announcement-title');
+            changeColor(announcementTitle, 'orange');
+            const announcementBody = createElement('p');
+            addClass(announcementBody, 'announcement-body');
+            appendChild(annoucementContainer, announcementTitle);
+            appendChild(annoucementContainer, announcementBody);
+            insertBefore(annoucementContainer, containerElem);
+            announcementTitle.textContent = 'メンテナンスのお知らせ';
+
+            const maintenanceInfo = seriesInfo.maintenance;
+            let message = '';
+            const startTime = getLocalTime(maintenanceInfo.start);
+            if (maintenanceInfo.period > 0) {
+                const endTime = getLocalTime(maintenanceInfo.start + maintenanceInfo.period);
+                message = `${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}～${endTime.year}年${endTime.month}月${endTime.date}日（${endTime.dayOfWeek}）${endTime.hour.toString().padStart(2, '0')}:${endTime.minute.toString().padStart(2, '0')}の間、メンテナンスを実施する予定です。`;
+            } else {
+                message = `メンテナンス開始は${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}を予定しております。`;
+            }
+            message += 'ご不便をおかけして申し訳ありません。';
+            announcementBody.textContent = message;
+        }
+        showSeries(seriesInfo);
+        navListeners();
+        addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
+            if (!searchBarInput.disabled) {
+                search();
+            }
         });
+        addEventListener(searchBarInput, 'keyup', function (event) {
+            if ((event as KeyboardEvent).key === 'Enter') {
+                search();
+            }
+        });
+        removeClass(getBody(), 'invisible');
     });
 });
 
