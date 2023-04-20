@@ -38,7 +38,6 @@ const config = {
                     not: [
                         // Except for a few of them that needs to be transpiled because they use modern syntax
                         /node_modules[\\\/]screenfull/,
-                        /node_modules[\\\/]hls.js[\\\/]src/,
                     ]
                 },
                 use: {
@@ -50,7 +49,6 @@ const config = {
                                 {
                                     "useBuiltIns": "entry",
                                     "corejs": "3.30",
-                                    "modules": false
                                 }
                             ],
                             "@babel/preset-typescript"
