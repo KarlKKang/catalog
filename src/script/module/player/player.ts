@@ -18,7 +18,6 @@ import {
     appendChild,
     hideElement,
     showElement,
-    insertAfter
 } from '../dom';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
@@ -71,7 +70,6 @@ export class Player {
     private readonly timeDivider: HTMLElement;
     private readonly PIPButton: HTMLButtonElement | undefined;
     private readonly fullscreenButton: HTMLButtonElement;
-    private readonly airPlayButton: HTMLButtonElement;
 
     protected attached = false;
 
@@ -271,14 +269,6 @@ export class Player {
         const fullscreenButtonPlaceholder = addPlayerPlaceholder(fullscreenButton);
         this.IS_VIDEO && appendChild(controlBar, fullscreenButton);
 
-        // AirPlay
-        const airPlayButton = createElement('button') as HTMLButtonElement;
-        this.airPlayButton = airPlayButton;
-        airPlayButton.type = 'button';
-        airPlayButton.title = 'AirPlay';
-        addPlayerClasses(airPlayButton, ['airplay-control', 'control', 'button']);
-        const airPlayButtonPlaceholder = addPlayerPlaceholder(airPlayButton);
-
         appendChild(bigPlayButtonPlaceholder, icons.getPlayIcon());
         appendChild(playButtonIconPlaceholder, icons.getPlayIcon());
         appendChild(playButtonIconPlaceholder, icons.getPauseIcon());
@@ -290,7 +280,6 @@ export class Player {
         }
         appendChild(fullscreenButtonPlaceholder, icons.getFullscreenEnterIcon());
         appendChild(fullscreenButtonPlaceholder, icons.getFullscreenExitIcon());
-        appendChild(airPlayButtonPlaceholder, icons.getAirPlayIcon());
     }
 
     protected preattach(this: Player) {
@@ -669,29 +658,6 @@ export class Player {
                 PIPButton.title = 'Picture-in-Picture';
                 this.focus();
             }.bind(this));
-        }
-
-        //AirPlay
-        if (w.WebKitPlaybackTargetAvailabilityEvent) {
-            this.onScreenConsoleOutput('Airplay available');
-            addEventListener(this.media, 'webkitplaybacktargetavailabilitychanged', (event) => {
-                this.onScreenConsoleOutput('webkitplaybacktargetavailabilitychanged: ' + event.availability);
-                if (event.availability !== 'available') {
-                    return;
-                }
-                insertAfter(this.airPlayButton, this.progressControl);
-                addEventListener(this.airPlayButton, 'click', () => {
-                    (this.media as HTMLVideoElement).webkitShowPlaybackTargetPicker();
-                    this.focus();
-                });
-                addEventListener(this.media, 'webkitcurrentplaybacktargetiswirelesschanged', () => {
-                    if ((this.media as HTMLVideoElement).webkitCurrentPlaybackTargetIsWireless) {
-                        addPlayerClass(this.controls, 'airplay');
-                    } else {
-                        removePlayerClass(this.controls, 'airplay');
-                    }
-                });
-            });
         }
 
         //Hotkeys
