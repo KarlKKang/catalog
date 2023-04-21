@@ -585,6 +585,11 @@ export class Player {
 
         //Loading
         addEventListener(this.media, 'canplaythrough', this.oncanplaythrough.bind(this));
+        addEventListenerOnce(this.media, 'canplay', function (this: Player) {
+            const videoMedia = this.media as HTMLVideoElement;
+            this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
+            this.onScreenConsoleOutput('Video size: ' + videoMedia.videoWidth + 'x' + videoMedia.videoHeight);
+        }.bind(this));
 
         //Fullscreen
         const webkitEnterFullscreen = (this.media as HTMLVideoElement).webkitEnterFullscreen;
@@ -732,10 +737,6 @@ export class Player {
     }
 
     protected onloadedmetadata(this: Player): void {
-        if (this.IS_VIDEO) {
-            const videoMedia = this.media as HTMLVideoElement;
-            this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
-        }
         this.durationDisplayText.textContent = secToTimestamp(this.media.duration);
         this.ended = false;
     }
