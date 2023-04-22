@@ -151,16 +151,14 @@ async function addAudioNode(index: number) {
                 }
                 destroyAll();
             },
-            onload: function () {
-                audioReadyCounter++;
-                if (audioReadyCounter == audioEPInfo.files.length) {
-                    audioReady();
-                }
-            },
             onplaypromiseerror: onPlayPromiseError
         });
         mediaInstances[index] = audioInstance;
         setMediaTitle(audioInstance);
+        audioReadyCounter++;
+        if (audioReadyCounter == audioEPInfo.files.length) {
+            audioReady();
+        }
     } else {
         if (USE_MSE) {
             let HlsPlayer: typeof HlsPlayerType;
@@ -196,16 +194,14 @@ async function addAudioNode(index: number) {
                     showPlayerError(errorCode);
                     destroyAll();
                 },
-                onload: function () {
-                    audioReadyCounter++;
-                    if (audioReadyCounter == audioEPInfo.files.length) {
-                        audioReady();
-                    }
-                },
                 onplaypromiseerror: onPlayPromiseError
             });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
+            audioReadyCounter++;
+            if (audioReadyCounter == audioEPInfo.files.length) {
+                audioReady();
+            }
         } else {
             let Player: typeof PlayerType;
             try {
@@ -224,16 +220,14 @@ async function addAudioNode(index: number) {
                     showPlayerError(errorCode);
                     destroyAll();
                 },
-                onload: function () {
-                    audioReadyCounter++;
-                    if (audioReadyCounter == audioEPInfo.files.length) {
-                        audioReady();
-                    }
-                },
                 onplaypromiseerror: onPlayPromiseError
             });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
+            audioReadyCounter++;
+            if (audioReadyCounter == audioEPInfo.files.length) {
+                audioReady();
+            }
         }
     }
 
