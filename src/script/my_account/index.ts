@@ -22,6 +22,7 @@ import {
     getById,
     getBody,
     showElement,
+    hideElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { emailSent as emailSentParam } from '../module/message/template/param';
@@ -129,6 +130,7 @@ addEventListener(w, 'load', function () {
         const warningElem = getById('invite-warning');
 
         const receiver = inviteReceiverEmailInput.value;
+        hideElement(warningElem);
         changeColor(warningElem, 'red');
         if (!EMAIL_REGEX.test(receiver)) {
             warningElem.innerHTML = invalidEmailFormat;
@@ -168,6 +170,7 @@ addEventListener(w, 'load', function () {
         let newPassword = newPasswordInput.value;
         const newPasswordConfirm = newPasswordComfirmInput.value;
 
+        hideElement(warningElem);
         changeColor(warningElem, 'red');
 
         if (!PASSWORD_REGEX.test(newPassword)) {
@@ -202,6 +205,7 @@ addEventListener(w, 'load', function () {
     function changeEmail() {
         disableAllInputs(true);
         const warningElem = getById('email-warning');
+        hideElement(warningElem);
         changeColor(warningElem, 'red');
 
         sendServerRequest('send_email_change.php', {
@@ -225,6 +229,7 @@ addEventListener(w, 'load', function () {
         disableAllInputs(true);
         const warningElem = getById('username-warning');
         const newUsername = newUsernameInput.value;
+        hideElement(warningElem);
         changeColor(warningElem, 'red');
 
         if (newUsername == '') {

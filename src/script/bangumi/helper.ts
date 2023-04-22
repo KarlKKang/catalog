@@ -56,7 +56,6 @@ function createQuery(epIndex: number, formatIndex: number): string {
 }
 
 export function parseCharacters(txt: string) {
-    txt = txt.replace(/<.*?>/g, '');
     txt = txt.replace(/&gt;/g, '>');
     txt = txt.replace(/&lt;/g, '<');
     txt = txt.replace(/&amp;/g, '&');

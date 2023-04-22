@@ -18,12 +18,12 @@ import {
     appendChild,
     hideElement,
     showElement,
-    insertAfter
 } from '../dom';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClass } from './helper';
 import * as icons from './icons';
+import { MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
 
 declare global {
     interface HTMLVideoElement {
@@ -70,7 +70,6 @@ export class Player {
     private readonly timeDivider: HTMLElement;
     private readonly PIPButton: HTMLButtonElement | undefined;
     private readonly fullscreenButton: HTMLButtonElement;
-    private readonly airPlayButton: HTMLButtonElement;
 
     protected attached = false;
 
@@ -270,14 +269,6 @@ export class Player {
         const fullscreenButtonPlaceholder = addPlayerPlaceholder(fullscreenButton);
         this.IS_VIDEO && appendChild(controlBar, fullscreenButton);
 
-        // AirPlay
-        const airPlayButton = createElement('button') as HTMLButtonElement;
-        this.airPlayButton = airPlayButton;
-        airPlayButton.type = 'button';
-        airPlayButton.title = 'AirPlay';
-        addPlayerClasses(airPlayButton, ['airplay-control', 'control', 'button']);
-        const airPlayButtonPlaceholder = addPlayerPlaceholder(airPlayButton);
-
         appendChild(bigPlayButtonPlaceholder, icons.getPlayIcon());
         appendChild(playButtonIconPlaceholder, icons.getPlayIcon());
         appendChild(playButtonIconPlaceholder, icons.getPauseIcon());
@@ -289,7 +280,6 @@ export class Player {
         }
         appendChild(fullscreenButtonPlaceholder, icons.getFullscreenEnterIcon());
         appendChild(fullscreenButtonPlaceholder, icons.getFullscreenExitIcon());
-        appendChild(airPlayButtonPlaceholder, icons.getAirPlayIcon());
     }
 
     protected preattach(this: Player) {
@@ -301,13 +291,27 @@ export class Player {
         this.setMediaAttributes();
     }
 
-    protected attach(this: Player, onload?: (...args: any[]) => void, onerror?: (...args: any[]) => void): void {
+    protected attach(this: Player, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
         this.preattach();
 
         this.media.crossOrigin = 'use-credentials';
-        addEventListener(this.media, 'error', function (this: any, event) {
-            onerror && onerror.call(this, event);
-        });
+        addEventListener(this.media, 'error', function (this: Player) {
+            let errorCode = null;
+            if (this.media.error !== null) {
+                const code = this.media.error.code;
+                if (code === MediaError.MEDIA_ERR_ABORTED) {
+                    errorCode = MEDIA_ERR_ABORTED;
+                } else if (code === MediaError.MEDIA_ERR_NETWORK) {
+                    errorCode = MEDIA_ERR_NETWORK;
+                } else if (code === MediaError.MEDIA_ERR_DECODE) {
+                    errorCode = MEDIA_ERR_DECODE;
+                } else if (code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+                    errorCode = MEDIA_ERR_SRC_NOT_SUPPORTED;
+                }
+            }
+            onerror && onerror(errorCode);
+            console.error(this.media.error);
+        }.bind(this));
         addEventListener(this.media, 'loadedmetadata', function (this: any, event) {
             onload && onload.call(this, event);
         });
@@ -322,7 +326,7 @@ export class Player {
             play?: boolean | undefined;
             startTime?: number | undefined;
             onload?: (...args: any[]) => void;
-            onerror?: (...args: any[]) => void;
+            onerror?: (errorCode: number | null) => void;
             onplaypromiseerror?: () => void;
         }
     ): void {
@@ -581,6 +585,11 @@ export class Player {
 
         //Loading
         addEventListener(this.media, 'canplaythrough', this.oncanplaythrough.bind(this));
+        addEventListenerOnce(this.media, 'canplay', function (this: Player) {
+            const videoMedia = this.media as HTMLVideoElement;
+            this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
+            this.onScreenConsoleOutput('Video size: ' + videoMedia.videoWidth + 'x' + videoMedia.videoHeight);
+        }.bind(this));
 
         //Fullscreen
         const webkitEnterFullscreen = (this.media as HTMLVideoElement).webkitEnterFullscreen;
@@ -656,29 +665,6 @@ export class Player {
             }.bind(this));
         }
 
-        //AirPlay
-        if (w.WebKitPlaybackTargetAvailabilityEvent) {
-            this.onScreenConsoleOutput('Airplay available');
-            addEventListener(this.media, 'webkitplaybacktargetavailabilitychanged', (event) => {
-                this.onScreenConsoleOutput('webkitplaybacktargetavailabilitychanged: ' + event.availability);
-                if (event.availability !== 'available') {
-                    return;
-                }
-                insertAfter(this.airPlayButton, this.progressControl);
-                addEventListener(this.airPlayButton, 'click', () => {
-                    (this.media as HTMLVideoElement).webkitShowPlaybackTargetPicker();
-                    this.focus();
-                });
-                addEventListener(this.media, 'webkitcurrentplaybacktargetiswirelesschanged', () => {
-                    if ((this.media as HTMLVideoElement).webkitCurrentPlaybackTargetIsWireless) {
-                        addPlayerClass(this.controls, 'airplay');
-                    } else {
-                        removePlayerClass(this.controls, 'airplay');
-                    }
-                });
-            });
-        }
-
         //Hotkeys
         addEventListener(this.controls, 'keydown', function (this: Player, event: Event) {
             const key = (event as KeyboardEvent).key;
@@ -751,10 +737,6 @@ export class Player {
     }
 
     protected onloadedmetadata(this: Player): void {
-        if (this.IS_VIDEO) {
-            const videoMedia = this.media as HTMLVideoElement;
-            this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
-        }
         this.durationDisplayText.textContent = secToTimestamp(this.media.duration);
         this.ended = false;
     }

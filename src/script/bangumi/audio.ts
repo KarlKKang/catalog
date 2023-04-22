@@ -1,5 +1,4 @@
 import {
-    concatenateSignedURL,
     encodeCFURIComponent,
 } from '../module/main';
 import {
@@ -29,7 +28,7 @@ import type { VideojsPlayer as VideojsPlayerType } from '../module/player/videoj
 
 import { parseCharacters } from './helper';
 import {
-    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showPlayPromiseError, showNativePlayerError, showHLSPlayerError
+    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showPlayPromiseError, showPlayerError
 } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
 
@@ -71,7 +70,7 @@ export default function (
     const audioEPInfo = epInfo as AudioEPInfo;
 
     addAlbumInfo();
-    appendChild(getById('content'), getDownloadAccordion(epInfo.authentication_token, seriesID, epIndex));
+    appendChild(getById('content'), getDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex));
 
     if (!USE_MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
@@ -92,7 +91,6 @@ async function addAudioNode(index: number) {
 
     const audioEPInfo = epInfo as AudioEPInfo;
     const file = audioEPInfo.files[index] as AudioFile;
-    const credentials = audioEPInfo.cdn_credentials;
 
     const FLAC_FALLBACK = (file.flac_fallback && !CAN_PLAY_ALAC);
 
@@ -111,7 +109,7 @@ async function addAudioNode(index: number) {
 
     const playerContainer = createElement('div') as HTMLDivElement;
     appendChild(mediaHolder, playerContainer);
-    const url = concatenateSignedURL(baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8'), credentials, baseURL + '_MASTER_*.m3u8');
+    const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
     function onPlayPromiseError() {
         showPlayPromiseError();
@@ -145,11 +143,11 @@ async function addAudioNode(index: number) {
             debug: debug
         });
         audioInstance.load(url, {
-            onerror: function (error: MediaError | null) {
+            onerror: function (errorCode: number | null) {
                 if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
                     showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
                 } else {
-                    showNativePlayerError(error); // videojs mimics the standard HTML5 `MediaError` class.
+                    showPlayerError(errorCode);
                 }
                 destroyAll();
             },
@@ -194,10 +192,9 @@ async function addAudioNode(index: number) {
                 debug: debug
             });
             audioInstance.load(url, {
-                onerror: function (_, data) {
-                    if (data.fatal) {
-                        showHLSPlayerError(data);
-                    }
+                onerror: function (errorCode: number | null) {
+                    showPlayerError(errorCode);
+                    destroyAll();
                 },
                 onload: function () {
                     audioReadyCounter++;
@@ -223,8 +220,8 @@ async function addAudioNode(index: number) {
                 debug: debug
             });
             audioInstance.load(url, {
-                onerror: function () {
-                    showNativePlayerError(audioInstance.media.error);
+                onerror: function (errorCode: number | null) {
+                    showPlayerError(errorCode);
                     destroyAll();
                 },
                 onload: function () {

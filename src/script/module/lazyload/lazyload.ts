@@ -53,14 +53,17 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
         const altAttr = getDataAttribute(target, 'alt');
         const alt = altAttr === null ? src : altAttr;
 
-        const authenticationToken = getDataAttribute(target, 'authentication-token');
-
-        if (authenticationToken !== null) {
-            const xhrParam = getDataAttribute(target, 'xhr-param');
-            if (xhrParam === null) {
-                throw new Error('The "xhr-param" attribute is null on the lazyload element.');
+        const xhrParam = getDataAttribute(target, 'xhr-param');
+        if (xhrParam !== null) {
+            const mediaSessionCredential = getDataAttribute(target, 'media-session-credential');
+            let uri = 'get_image.php';
+            let content = 'p=' + xhrParam;
+            if (mediaSessionCredential === null) {
+                uri = 'get_news_image.php';
+            } else {
+                content = mediaSessionCredential + '&' + content;
             }
-            sendServerRequest('get_image.php', {
+            sendServerRequest(uri, {
                 callback: function (response: string) {
                     let credentials: CDNCredentials.CDNCredentials;
                     try {
@@ -76,7 +79,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                         addClass(target, 'complete');
                     });
                 },
-                content: 'token=' + authenticationToken + '&p=' + xhrParam
+                content: content
             });
         } else {
             loader(target, src, alt, function () {

@@ -23,8 +23,7 @@ import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
 import { createMessageElem, getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
-import type { ErrorData } from 'hls.js';
-import { ErrorTypes as HlsErrorTypes, ErrorDetails as HlsErrorDetails } from 'hls.js';
+import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from '../module/player/media_error';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -53,45 +52,18 @@ export function showPlayPromiseError() {
     showErrorMessage(incompatibleTitle, 'ブラウザによって再生が中断されました。ページを再読み込みしてみてください。このエラーが続く場合は、他のブラウザでお試しください。');
 }
 
-export function showNativePlayerError(error: MediaError | null) {
-    if (error === null) {
-        showUnknownPlaybackError();
-    } else {
-        if (error.code === MediaError.MEDIA_ERR_ABORTED) {
-            showPlayPromiseError();
-        } else if (error.code === MediaError.MEDIA_ERR_NETWORK) {
-            showNetworkError();
-        } else if (error.code === MediaError.MEDIA_ERR_DECODE) {
-            showDecodeError();
-        } else if (MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
-            showCodecCompatibilityError();
-        } else {
-            showUnknownPlaybackError();
-        }
-    }
-    console.error(error);
-}
-
-export function showHLSPlayerError(data: ErrorData) {
-    const errorType = data.type;
-    if (errorType === HlsErrorTypes.NETWORK_ERROR) {
+export function showPlayerError(errorCode: number | null) {
+    if (errorCode === MEDIA_ERR_ABORTED) {
+        showPlayPromiseError();
+    } else if (errorCode === MEDIA_ERR_NETWORK) {
         showNetworkError();
-    } else if (errorType === HlsErrorTypes.MUX_ERROR) {
+    } else if (errorCode === MEDIA_ERR_DECODE || errorCode === HLS_BUFFER_APPEND_ERROR) {
         showDecodeError();
-    } else if (errorType === HlsErrorTypes.MEDIA_ERROR) {
-        if ([
-            HlsErrorDetails.MANIFEST_INCOMPATIBLE_CODECS_ERROR,
-            HlsErrorDetails.BUFFER_ADD_CODEC_ERROR,
-            HlsErrorDetails.BUFFER_INCOMPATIBLE_CODECS_ERROR,
-        ].includes(data.details)) {
-            showCodecCompatibilityError();
-        } else {
-            showDecodeError();
-        }
+    } else if (errorCode === MEDIA_ERR_SRC_NOT_SUPPORTED) {
+        showCodecCompatibilityError();
     } else {
         showUnknownPlaybackError();
     }
-    console.error(data);
 }
 
 export function showErrorMessage(title: string, body: string) {
@@ -115,7 +87,7 @@ export function showMediaMessage(title: string, body: string, titleColor: string
     prependChild(getById('media-holder'), messageElem);
 }
 
-export function getDownloadAccordion(token: string, seriesID: string, epIndex: number): HTMLElement {
+export function getDownloadAccordion(mediaSessionCredential: string, seriesID: string, epIndex: number): HTMLElement {
 
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
@@ -127,7 +99,6 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
     accordionPanel.innerHTML = '<ul>' +
         '<li>下の「ダウンロード」ボタンをクリックすると、必要なツールやスクリプトが入ったZIPファイルのダウンロードが開始されます。</li>' +
         '<li>ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。</li>' +
-        '<li>ZIPファイル内のスクリプトの有効期限は、ダウンロード後5分です。有効期限内にスクリプトを実行してください。</li>' +
         '<li>スクリプトの実行には、Windows 10、Mac OS X 10.9、Linux 3.2.0以上を搭載したパソコンが必要です。</li>' +
         '<li>インターネット接続が良好であることをご確認してください。</li>' +
         '</ul>';
@@ -179,7 +150,7 @@ export function getDownloadAccordion(token: string, seriesID: string, epIndex: n
                     showMessage(invalidResponse);
                 }
             },
-            content: 'token=' + token + '&format=' + getFormatIndex() + '&os=' + selectMenu.value,
+            content: mediaSessionCredential + '&format=' + getFormatIndex() + '&os=' + selectMenu.value,
             logoutParam: getLogoutParam(seriesID, epIndex)
         });
     });
