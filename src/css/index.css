@@ -23,8 +23,7 @@
     align-self: flex-start;
 }
 
-/* Prefix of calc is not added to @supports conditions by autoprefixer */
-@supports ((max-width:-webkit-calc(50% - min(2%, 12px) * 2)) or (max-width:-moz-calc(50% - min(2%, 12px) * 2)) or (max-width:calc(50% - min(2%, 12px) * 2))) and (margin: min(2%, 12px)) {
+@supports (max-width:calc(50% - min(2%, 12px) * 2)) and (margin: calc(3vh - min(2%, 12px)) 5% 3vh 5%) and (margin: min(2%, 12px)) {
     #container {
         margin: calc(3vh - min(2%, 12px)) 5% 3vh 5%;
     }
