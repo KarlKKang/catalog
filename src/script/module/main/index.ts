@@ -110,7 +110,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
             }
         } else if (status == 404 && response.responseText == 'REJECTED') {
             redirect(TOP_URL);
-        } else {
+        } else if (status !== 0) { // Aborted before completion. Error is caught by attaching onerror listener.
             xhrOnErrorCallback(uri, options);
         }
         return false;
@@ -119,7 +119,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
     }
 }
 
-export function sendServerRequest(uri: string, options: SendServerRequestOption) {
+export function sendServerRequest(uri: string, options: SendServerRequestOption): XMLHttpRequest {
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
         if (checkXHRStatus(this, uri, options)) {
@@ -133,6 +133,7 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.withCredentials = options.withCredentials ?? true;
     xmlhttp.send(options.content ?? '');
+    return xmlhttp;
 }
 
 export function authenticate(callback: { successful?: () => void; failed?: () => void }) {

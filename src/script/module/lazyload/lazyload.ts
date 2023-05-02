@@ -21,7 +21,13 @@ const observer = new IntersectionObserver(observerCallback, {
     threshold: [0]
 });
 
-const STATUS_ATTR_NAME = 'lazyload-status';
+enum Status {
+    LISTENING,
+    WAITING,
+    LOADING,
+    COMPLETE,
+    ERROR,
+}
 
 let loader: typeof ImageLoader;
 export default function (imageLoader: typeof ImageLoader) {
@@ -29,26 +35,27 @@ export default function (imageLoader: typeof ImageLoader) {
 
     const elems = getByClass('lazyload');
     for (const elem of elems) {
-        if (getDataAttribute(elem, STATUS_ATTR_NAME) === null) {
+        if (getStatusAttr(elem) === null) {
             observer.observe(elem);
-            setDataAttribute(elem, STATUS_ATTR_NAME, 'listening');
+            setStatusAttr(elem, Status.LISTENING);
         }
     }
 }
 
+const requests: (XMLHttpRequest | undefined)[] = [];
 function observerCallback(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
     for (const entry of entries) {
         const target = entry.target;
 
         if (entry['isIntersecting']) {
-            if (getDataAttribute(target, STATUS_ATTR_NAME) === 'listening') {
-                setDataAttribute(target, STATUS_ATTR_NAME, 'loading');
+            if (getStatusAttr(target) === Status.LISTENING) {
+                setStatusAttr(target, Status.WAITING);
                 setTimeout(function () {
-                    if (getDataAttribute(target, STATUS_ATTR_NAME) !== 'loading') {
+                    if (getStatusAttr(target) !== Status.WAITING) {
                         return;
                     }
 
-                    observer.unobserve(target);
+                    setStatusAttr(target, Status.LOADING);
 
                     const src = getDataAttribute(target, 'src');
                     if (src === null) {
@@ -67,7 +74,10 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                         } else {
                             content = mediaSessionCredential + '&' + content;
                         }
-                        sendServerRequest(uri, {
+
+                        const requestIndex = requests.length;
+                        setRequestIndexAttr(target, requestIndex);
+                        requests[requestIndex] = sendServerRequest(uri, {
                             callback: function (response: string) {
                                 let credentials: CDNCredentials.CDNCredentials;
                                 try {
@@ -79,26 +89,84 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                                 }
 
                                 const url = concatenateSignedURL(src, credentials);
-                                loader(target, url, alt, function () {
-                                    addClass(target, 'complete');
-                                    setDataAttribute(target, STATUS_ATTR_NAME, 'complete');
-                                });
+                                requests[requestIndex] = loader(target, url, alt,
+                                    function () {
+                                        observer.unobserve(target);
+                                        addClass(target, 'complete');
+                                        setStatusAttr(target, Status.COMPLETE);
+                                    },
+                                    function () {
+                                        setStatusAttr(target, Status.ERROR);
+                                    }
+                                );
                             },
                             content: content
                         });
                     } else {
-                        loader(target, src, alt, function () {
-                            addClass(target, 'complete');
-                            setDataAttribute(target, STATUS_ATTR_NAME, 'complete');
-                        });
+                        const requestIndex = requests.length;
+                        setRequestIndexAttr(target, requestIndex);
+                        requests[requestIndex] = loader(target, src, alt,
+                            function () {
+                                observer.unobserve(target);
+                                addClass(target, 'complete');
+                                setStatusAttr(target, Status.COMPLETE);
+                            },
+                            function () {
+                                setStatusAttr(target, Status.ERROR);
+                            }
+                        );
                     }
                 }, 250);
             }
         } else {
-            if (getDataAttribute(target, STATUS_ATTR_NAME) === 'loading') {
-                setDataAttribute(target, STATUS_ATTR_NAME, 'listening');
+            const status = getStatusAttr(target);
+            if (status === Status.WAITING) {
+                setStatusAttr(target, Status.LISTENING);
+            } else if (status === Status.LOADING) {
+                const requestIndex = getRequestIndexAttr(target);
+                if (requestIndex !== null) {
+                    const request = requests[requestIndex];
+                    if (request !== undefined) {
+                        if (request.readyState === 4) { // onload for the imageLoader may be called after decoding webp.
+                            continue;
+                        } else {
+                            request.abort();
+                            requests[requestIndex] = undefined;
+                        }
+                    }
+                }
+                setStatusAttr(target, Status.LISTENING);
             }
         }
     }
 
+}
+
+const STATUS_ATTR_NAME = 'lazyload-status';
+function setStatusAttr(elem: Element, status: number) {
+    setDataAttribute(elem, STATUS_ATTR_NAME, status.toString());
+}
+function getStatusAttr(elem: Element) {
+    const statusStr = getDataAttribute(elem, STATUS_ATTR_NAME);
+    if (statusStr === null) {
+        return null;
+    }
+    const status = parseInt(statusStr, 10);
+    if (!(status in Status)) {
+        setStatusAttr(elem, Status.LISTENING);
+        return Status.LISTENING;
+    }
+    return status;
+}
+
+const REQUEST_INDEX_ATTR_NAME = 'lazyload-req-index';
+function setRequestIndexAttr(elem: Element, index: number) {
+    setDataAttribute(elem, REQUEST_INDEX_ATTR_NAME, index.toString());
+}
+function getRequestIndexAttr(elem: Element) {
+    const indexStr = getDataAttribute(elem, REQUEST_INDEX_ATTR_NAME);
+    if (indexStr === null) {
+        return null;
+    }
+    return parseInt(indexStr, 10);
 }

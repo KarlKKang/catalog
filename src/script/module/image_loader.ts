@@ -18,8 +18,7 @@ type webpMachineQueueItem = { container: Element; image: HTMLImageElement; webpD
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 
-export default function (container: Element, src: string, alt: string, onload?: () => void) {
-
+export default function (container: Element, src: string, alt: string, onload?: () => void, onerror?: () => void): XMLHttpRequest {
     let blob: Blob;
     let isWebp: boolean;
 
@@ -30,8 +29,11 @@ export default function (container: Element, src: string, alt: string, onload?: 
         if (DEVELOPMENT) {
             console.log('Unrecoverable error occured when loading the image.');
         }
-        image.src = '//:0';
-        appendChild(container, image);
+        const errorImage = new Image(); // Should not reuse the old Image instance since setting src to //:0 triggers onerror event.
+        errorImage.src = '//:0';
+        errorImage.alt = alt;
+        appendChild(container, errorImage);
+        onerror && onerror();
     }
 
     function errorHandler() {
@@ -94,18 +96,19 @@ export default function (container: Element, src: string, alt: string, onload?: 
 
     xhr.onerror = finalizeErrorImage;
     xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
                 isWebp = xhr.getResponseHeader('Content-Type') === 'image/webp';
                 blob = xhr.response as Blob;
                 image.src = URL.createObjectURL(blob);
-            } else {
+            } else if (xhr.status !== 0) {
                 finalizeErrorImage();
             }
         }
     };
 
     xhr.send();
+    return xhr;
 }
 
 async function startWebpMachine() {
