@@ -53,7 +53,15 @@ const config = {
                             ],
                             "@babel/preset-typescript"
                         ],
-                        plugins: ["@babel/plugin-transform-runtime"]
+                        plugins: [
+                            [
+                                "const-enum",
+                                {
+                                    "transform": "constObject"
+                                }
+                            ],
+                            "@babel/plugin-transform-runtime"
+                        ]
                     }
                 }
             },

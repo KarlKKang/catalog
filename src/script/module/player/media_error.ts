@@ -1,5 +1,7 @@
-export const MEDIA_ERR_ABORTED = 1;
-export const MEDIA_ERR_NETWORK = 2;
-export const MEDIA_ERR_DECODE = 3;
-export const MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
-export const HLS_BUFFER_APPEND_ERROR = 5;
+export const enum CustomMediaError {
+    MEDIA_ERR_ABORTED,
+    MEDIA_ERR_NETWORK,
+    MEDIA_ERR_DECODE,
+    MEDIA_ERR_SRC_NOT_SUPPORTED,
+    HLS_BUFFER_APPEND_ERROR,
+}

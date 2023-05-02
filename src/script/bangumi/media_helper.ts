@@ -23,7 +23,7 @@ import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
 import { createMessageElem, getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
-import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from '../module/player/media_error';
+import { CustomMediaError } from '../module/player/media_error';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -53,13 +53,13 @@ export function showPlayPromiseError() {
 }
 
 export function showPlayerError(errorCode: number | null) {
-    if (errorCode === MEDIA_ERR_ABORTED) {
+    if (errorCode === CustomMediaError.MEDIA_ERR_ABORTED) {
         showPlayPromiseError();
-    } else if (errorCode === MEDIA_ERR_NETWORK) {
+    } else if (errorCode === CustomMediaError.MEDIA_ERR_NETWORK) {
         showNetworkError();
-    } else if (errorCode === MEDIA_ERR_DECODE || errorCode === HLS_BUFFER_APPEND_ERROR) {
+    } else if (errorCode === CustomMediaError.MEDIA_ERR_DECODE || errorCode === CustomMediaError.HLS_BUFFER_APPEND_ERROR) {
         showDecodeError();
-    } else if (errorCode === MEDIA_ERR_SRC_NOT_SUPPORTED) {
+    } else if (errorCode === CustomMediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
         showCodecCompatibilityError();
     } else {
         showUnknownPlaybackError();
