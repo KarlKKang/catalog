@@ -76,23 +76,23 @@ function xhrOnErrorCallback(uri: string, options: SendServerRequestOption) {
 function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServerRequestOption): boolean {
     const status = response.status;
     const responseText = response.responseText;
-    if (response.readyState == 4) {
-        if (status == 200) {
+    if (response.readyState === 4) {
+        if (status === 200) {
             return true;
-        } else if (status == 403) {
-            if (responseText == 'SESSION ENDED') {
+        } else if (status === 403) {
+            if (responseText === 'SESSION ENDED') {
                 showMessage(sessionEnded);
-            } else if (responseText == 'INSUFFICIENT PERMISSIONS') {
+            } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
                 showMessage(insufficientPermissions);
-            } else if (responseText == 'UNAUTHORIZED') {
+            } else if (responseText === 'UNAUTHORIZED') {
                 const logoutParam = options.logoutParam;
                 redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
             } else {
                 showMessage(status403);
             }
-        } else if (status == 429) {
+        } else if (status === 429) {
             showMessage(status429);
-        } else if (status == 503) {
+        } else if (status === 503) {
             let parsedResponse: MaintenanceInfo.MaintenanceInfo;
             try {
                 parsedResponse = JSON.parse(responseText);
@@ -102,13 +102,13 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
                 return false;
             }
             showMessage(status503(parsedResponse));
-        } else if (status == 500 || status == 400) {
+        } else if (status === 500 || status === 400) {
             if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
                 showMessage(status400And500(responseText));
             } else {
                 showMessage();
             }
-        } else if (status == 404 && response.responseText == 'REJECTED') {
+        } else if (status === 404 && response.responseText === 'REJECTED') {
             redirect(TOP_URL);
         } else if (status !== 0) { // Aborted before completion. Error is caught by attaching onerror listener.
             xhrOnErrorCallback(uri, options);
@@ -139,9 +139,9 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
 export function authenticate(callback: { successful?: () => void; failed?: () => void }) {
     sendServerRequest('get_authentication_state.php', {
         callback: function (response: string) {
-            if (response == 'APPROVED') {
+            if (response === 'APPROVED') {
                 callback.successful && callback.successful();
-            } else if (response == 'FAILED') {
+            } else if (response === 'FAILED') {
                 callback.failed && callback.failed();
             } else {
                 showMessage();
@@ -153,7 +153,7 @@ export function authenticate(callback: { successful?: () => void; failed?: () =>
 export function logout(callback: () => void,) {
     sendServerRequest('logout.php', {
         callback: function (response: string) {
-            if (response == 'PARTIAL' || response == 'DONE') {
+            if (response === 'PARTIAL' || response === 'DONE') {
                 if (DEVELOPMENT) {
                     console.log(response);
                 }
