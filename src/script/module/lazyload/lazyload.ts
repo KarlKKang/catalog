@@ -96,6 +96,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                                         setStatusAttr(target, Status.COMPLETE);
                                     },
                                     function () {
+                                        observer.unobserve(target);
                                         setStatusAttr(target, Status.ERROR);
                                     }
                                 );
@@ -112,6 +113,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                                 setStatusAttr(target, Status.COMPLETE);
                             },
                             function () {
+                                observer.unobserve(target);
                                 setStatusAttr(target, Status.ERROR);
                             }
                         );
