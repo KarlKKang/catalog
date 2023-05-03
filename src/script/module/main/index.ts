@@ -26,6 +26,7 @@ import {
     addEventListener,
     createElement,
     appendChild,
+    removeEventListener,
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
@@ -76,62 +77,77 @@ function xhrOnErrorCallback(uri: string, options: SendServerRequestOption) {
 function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServerRequestOption): boolean {
     const status = response.status;
     const responseText = response.responseText;
-    if (response.readyState === 4) {
-        if (status === 200) {
-            return true;
-        } else if (status === 403) {
-            if (responseText === 'SESSION ENDED') {
-                showMessage(sessionEnded);
-            } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
-                showMessage(insufficientPermissions);
-            } else if (responseText === 'UNAUTHORIZED') {
-                const logoutParam = options.logoutParam;
-                redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
-            } else {
-                showMessage(status403);
-            }
-        } else if (status === 429) {
-            showMessage(status429);
-        } else if (status === 503) {
-            let parsedResponse: MaintenanceInfo.MaintenanceInfo;
-            try {
-                parsedResponse = JSON.parse(responseText);
-                MaintenanceInfo.check(parsedResponse);
-            } catch (e) {
-                showMessage(invalidResponse);
-                return false;
-            }
-            showMessage(status503(parsedResponse));
-        } else if (status === 500 || status === 400) {
-            if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
-                showMessage(status400And500(responseText));
-            } else {
-                showMessage();
-            }
-        } else if (status === 404 && response.responseText === 'REJECTED') {
-            redirect(TOP_URL);
-        } else if (status !== 0) { // Aborted before completion. Error is caught by attaching onerror listener.
-            xhrOnErrorCallback(uri, options);
+    if (status === 200) {
+        return true;
+    } else if (status === 403) {
+        if (responseText === 'SESSION ENDED') {
+            showMessage(sessionEnded);
+        } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
+            showMessage(insufficientPermissions);
+        } else if (responseText === 'UNAUTHORIZED') {
+            const logoutParam = options.logoutParam;
+            redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
+        } else {
+            showMessage(status403);
         }
-        return false;
+    } else if (status === 429) {
+        showMessage(status429);
+    } else if (status === 503) {
+        let parsedResponse: MaintenanceInfo.MaintenanceInfo;
+        try {
+            parsedResponse = JSON.parse(responseText);
+            MaintenanceInfo.check(parsedResponse);
+        } catch (e) {
+            showMessage(invalidResponse);
+            return false;
+        }
+        showMessage(status503(parsedResponse));
+    } else if (status === 500 || status === 400) {
+        if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
+            showMessage(status400And500(responseText));
+        } else {
+            showMessage();
+        }
+    } else if (status === 404 && response.responseText === 'REJECTED') {
+        redirect(TOP_URL);
     } else {
-        return false;
+        xhrOnErrorCallback(uri, options);
     }
+    return false;
 }
 
 export function sendServerRequest(uri: string, options: SendServerRequestOption): XMLHttpRequest {
     const xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function () {
-        if (checkXHRStatus(this, uri, options)) {
-            options.callback && options.callback(this.responseText);
-        }
-    };
-    xmlhttp.onerror = function () {
-        xhrOnErrorCallback(uri, options);
-    };
     xmlhttp.open(options.method ?? 'POST', SERVER_URL + '/' + uri, true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.withCredentials = options.withCredentials ?? true;
+
+    function onError() {
+        removeListeners();
+        xhrOnErrorCallback(uri, options);
+    }
+
+    function onAbort() {
+        removeListeners();
+    }
+
+    function onLoad() {
+        removeListeners();
+        if (checkXHRStatus(xmlhttp, uri, options)) {
+            options.callback && options.callback(xmlhttp.responseText);
+        }
+    }
+
+    function removeListeners() {
+        removeEventListener(xmlhttp, 'error', onError);
+        removeEventListener(xmlhttp, 'abort', onAbort);
+        removeEventListener(xmlhttp, 'load', onLoad);
+    }
+
+    addEventListener(xmlhttp, 'error', onError);
+    addEventListener(xmlhttp, 'abort', onAbort);
+    addEventListener(xmlhttp, 'load', onLoad);
+
     xmlhttp.send(options.content ?? '');
     return xmlhttp;
 }
@@ -308,26 +324,6 @@ export function changeColor(elem: HTMLElement, color: string) {
     removeClass(elem, 'color-green');
     removeClass(elem, 'color-orange');
     addClass(elem, 'color-' + color);
-}
-
-export function imageProtection(elem: HTMLElement) {
-    removeRightClick(elem);
-    addEventListener(elem, 'dragstart', e => {
-        e.preventDefault();
-    });
-    addEventListener(elem, 'touchforcechange', e => {
-        const event = e as TouchEvent;
-        if (event.changedTouches[0] !== undefined && event.changedTouches[0].force > 0.1) {
-            event.preventDefault();
-        }
-    });
-
-    addEventListener(elem, 'touchstart', e => {
-        const event = e as TouchEvent;
-        if (event.changedTouches[0] !== undefined && event.changedTouches[0].force > 0.1) {
-            event.preventDefault();
-        }
-    });
 }
 
 export function concatenateSignedURL(url: string, credentials: CDNCredentials, resourceURLOverride?: string) {

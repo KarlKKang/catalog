@@ -3,11 +3,14 @@ import {
     DEVELOPMENT
 } from './env/constant';
 import {
-    imageProtection,
+    removeRightClick,
 } from './main';
 import {
     appendChild,
-    createElement
+    createElement,
+    removeEventListener,
+    addEventListener,
+    addEventListenerOnce,
 } from './dom';
 import { show as showMessage } from './message';
 import { moduleImportError } from './message/template/param';
@@ -36,10 +39,12 @@ export default function (container: Element, src: string, alt: string, onload?: 
         onerror && onerror();
     }
 
-    function errorHandler() {
+    function onImageError() {
+        removeImageListeners();
+
         // Convert Blob to Uint8Array
         const reader = new FileReader();
-        reader.onload = function () {
+        addEventListenerOnce(reader, 'load', function () {
             const base64URL = reader.result;
             if (!(base64URL instanceof ArrayBuffer) || !isWebp) {
                 finalizeErrorImage();
@@ -60,12 +65,12 @@ export default function (container: Element, src: string, alt: string, onload?: 
                     console.log('Webp Machine NOT active. Pushed ' + image.alt + ' to queue. Webp Machine started.');
                 }
             }
-        };
+        });
         reader.readAsArrayBuffer(blob);
     }
 
-    image.onerror = errorHandler;
-    image.onload = function () {
+    function onImageLoad() {
+        removeImageListeners();
         const canvas = createElement('canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
         if (ctx === null) {
@@ -87,25 +92,49 @@ export default function (container: Element, src: string, alt: string, onload?: 
         imageProtection(canvas);
         appendChild(container, canvas);
         onload && onload();
-    };
+    }
+
+    function removeImageListeners() {
+        removeEventListener(image, 'error', onImageError);
+        removeEventListener(image, 'load', onImageLoad);
+    }
+    addEventListener(image, 'error', onImageError);
+    addEventListener(image, 'load', onImageLoad);
 
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
     xhr.responseType = 'blob';
 
-    xhr.onerror = finalizeErrorImage;
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                isWebp = xhr.getResponseHeader('Content-Type') === 'image/webp';
-                blob = xhr.response as Blob;
-                image.src = URL.createObjectURL(blob);
-            } else if (xhr.status !== 0) {
-                finalizeErrorImage();
-            }
+    function onXHRError() {
+        removeXHRListeners();
+        finalizeErrorImage();
+    }
+
+    function onXHRAbort() {
+        removeXHRListeners();
+    }
+
+    function onXHRLoad() {
+        removeXHRListeners();
+        if (xhr.status === 200) {
+            isWebp = xhr.getResponseHeader('Content-Type') === 'image/webp';
+            blob = xhr.response as Blob;
+            image.src = URL.createObjectURL(blob);
+        } else {
+            finalizeErrorImage();
         }
-    };
+    }
+
+    function removeXHRListeners() {
+        removeEventListener(xhr, 'error', onXHRError);
+        removeEventListener(xhr, 'abort', onXHRAbort);
+        removeEventListener(xhr, 'load', onXHRLoad);
+    }
+
+    addEventListener(xhr, 'error', onXHRError);
+    addEventListener(xhr, 'abort', onXHRAbort);
+    addEventListener(xhr, 'load', onXHRLoad);
 
     xhr.send();
     return xhr;
@@ -158,4 +187,11 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
     appendChild(queueItem.container, canvas);
     const onload = queueItem.onload;
     onload && onload();
+}
+
+function imageProtection(elem: HTMLElement) {
+    removeRightClick(elem);
+    addEventListener(elem, 'dragstart', e => {
+        e.preventDefault();
+    });
 }
