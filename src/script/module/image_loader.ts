@@ -57,14 +57,13 @@ export default function (container: Element, src: string, alt: string, onload?: 
             }
 
             const webpData = new Uint8Array(base64URL);
+            webpMachineQueue.push({ container: container, image: image, webpData: webpData, onload: onload, onerror: finalizeErrorImage });
             if (webpMachineActive) {
-                webpMachineQueue.push({ container: container, image: image, webpData: webpData, onload: onload, onerror: finalizeErrorImage });
                 if (DEVELOPMENT) {
                     console.log('Webp Machine active. Pushed ' + image.alt + ' to queue.');
                 }
             } else {
                 webpMachineActive = true;
-                webpMachineQueue.push({ container: container, image: image, webpData: webpData, onload: onload, onerror: finalizeErrorImage });
                 startWebpMachine();
                 if (DEVELOPMENT) {
                     console.log('Webp Machine NOT active. Pushed ' + image.alt + ' to queue. Webp Machine started.');
