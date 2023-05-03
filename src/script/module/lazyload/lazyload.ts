@@ -17,7 +17,7 @@ import type ImageLoader from '../image_loader';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,
-    rootMargin: '25% 0px 25% 0px',
+    rootMargin: '50% 0px 50% 0px',
     threshold: [0]
 });
 
@@ -50,6 +50,14 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
         if (entry['isIntersecting']) {
             if (getStatusAttr(target) === Status.LISTENING) {
                 setStatusAttr(target, Status.WAITING);
+                let delay = 0;
+                const delayStr = getDataAttribute(target, 'lazyload-delay');
+                if (delayStr !== null) {
+                    delay = parseInt(delayStr, 10);
+                    if (isNaN(delay)) {
+                        delay = 0;
+                    }
+                }
                 setTimeout(function () {
                     if (getStatusAttr(target) !== Status.WAITING) {
                         return;
@@ -107,7 +115,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                     } else {
                         requests[requestIndex] = loader(target, src, alt, onload, onerror);
                     }
-                }, 250);
+                }, delay);
             }
         } else {
             const status = getStatusAttr(target);

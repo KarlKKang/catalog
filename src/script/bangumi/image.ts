@@ -56,6 +56,7 @@ export default function (
         appendChild(imageNode, overlay);
 
         addClass(imageNode, 'lazyload');
+        setDataAttribute(imageNode, 'lazyload-delay', '250');
         setDataAttribute(imageNode, 'src', baseURL + encodeCFURIComponent(file.file_name));
         setDataAttribute(imageNode, 'alt', file.file_name);
         setDataAttribute(imageNode, 'xhr-param', index.toString());
