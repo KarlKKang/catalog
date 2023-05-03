@@ -57,11 +57,24 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 
                     setStatusAttr(target, Status.LOADING);
 
+                    const requestIndex = requests.length;
+                    setRequestIndexAttr(target, requestIndex);
+                    function onload() {
+                        observer.unobserve(target);
+                        requests[requestIndex] = undefined;
+                        addClass(target, 'complete');
+                        setStatusAttr(target, Status.COMPLETE);
+                    }
+                    function onerror() {
+                        observer.unobserve(target);
+                        requests[requestIndex] = undefined;
+                        setStatusAttr(target, Status.ERROR);
+                    }
+
                     const src = getDataAttribute(target, 'src');
                     if (src === null) {
                         throw new Error('The "src" attribute is missing on the lazyload element.');
                     }
-
                     const altAttr = getDataAttribute(target, 'alt');
                     const alt = altAttr === null ? src : altAttr;
                     const xhrParam = getDataAttribute(target, 'xhr-param');
@@ -75,8 +88,6 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                             content = mediaSessionCredential + '&' + content;
                         }
 
-                        const requestIndex = requests.length;
-                        setRequestIndexAttr(target, requestIndex);
                         requests[requestIndex] = sendServerRequest(uri, {
                             callback: function (response: string) {
                                 let credentials: CDNCredentials.CDNCredentials;
@@ -89,34 +100,12 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                                 }
 
                                 const url = concatenateSignedURL(src, credentials);
-                                requests[requestIndex] = loader(target, url, alt,
-                                    function () {
-                                        observer.unobserve(target);
-                                        addClass(target, 'complete');
-                                        setStatusAttr(target, Status.COMPLETE);
-                                    },
-                                    function () {
-                                        observer.unobserve(target);
-                                        setStatusAttr(target, Status.ERROR);
-                                    }
-                                );
+                                requests[requestIndex] = loader(target, url, alt, onload, onerror);
                             },
                             content: content
                         });
                     } else {
-                        const requestIndex = requests.length;
-                        setRequestIndexAttr(target, requestIndex);
-                        requests[requestIndex] = loader(target, src, alt,
-                            function () {
-                                observer.unobserve(target);
-                                addClass(target, 'complete');
-                                setStatusAttr(target, Status.COMPLETE);
-                            },
-                            function () {
-                                observer.unobserve(target);
-                                setStatusAttr(target, Status.ERROR);
-                            }
-                        );
+                        requests[requestIndex] = loader(target, src, alt, onload, onerror);
                     }
                 }, 250);
             }
