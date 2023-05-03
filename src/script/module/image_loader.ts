@@ -42,11 +42,16 @@ export default function (container: Element, src: string, alt: string, onload?: 
     function onImageError() {
         removeImageListeners();
 
+        if (!isWebp) {
+            finalizeErrorImage();
+            return;
+        }
+
         // Convert Blob to Uint8Array
         const reader = new FileReader();
         addEventListenerOnce(reader, 'load', function () {
             const base64URL = reader.result;
-            if (!(base64URL instanceof ArrayBuffer) || !isWebp) {
+            if (!(base64URL instanceof ArrayBuffer)) {
                 finalizeErrorImage();
                 return;
             }
@@ -154,7 +159,6 @@ async function startWebpMachine() {
             throw e;
         }
     }
-
 
     let queueNext = webpMachineQueue.shift();
     while (queueNext !== undefined) {
