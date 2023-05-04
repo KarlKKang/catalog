@@ -49,61 +49,58 @@ if (ua !== null) {
 const audioElem = createElement('audio') as HTMLAudioElement;
 const videoElem = createElement('video') as HTMLVideoElement;
 
-const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_IOS;
-const USE_MSE = isSupported() && !NATIVE_HLS;
+const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_SAFARI;
+const MSE = isSupported();
 
-const CAN_PLAY_ALAC = audioCanPlay('alac');
-const CAN_PLAY_FLAC = audioCanPlay('flac') || audioCanPlay('fLaC');
-const CAN_PLAY_MP3 = audioCanPlay('mp3') || canPlay('audio', 'mpeg', ''); // mp3: Firefox; mpeg: Safari and Chrome
-const CAN_PLAY_AVC = videoCanPlay('avc1.640032');
-const CAN_PLAY_HEVC41 = videoCanPlay('hvc1.2.4.H123.90') && !(IS_WINDOWS && IS_EDGE);
-const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2');
-const CAN_PLAY_AC3 = audioCanPlay('ac-3');
+const CAN_PLAY_ALAC = audioCanPlay('alac', NATIVE_HLS);
+const CAN_PLAY_FLAC = audioCanPlay('flac', NATIVE_HLS) || audioCanPlay('fLaC', NATIVE_HLS);
+const CAN_PLAY_AVC = videoCanPlay('avc1.640032', NATIVE_HLS);
+const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2', NATIVE_HLS);
 
 UNRECOMMENDED_BROWSER = UNRECOMMENDED_BROWSER || !(CAN_PLAY_AVC && CAN_PLAY_AAC) || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
 
 export { IS_CHROMIUM };
 export { IS_IOS };
 export { IS_FIREFOX };
+export { IS_EDGE };
 export { IS_WINDOWS };
 export { IS_MACOS };
 export { UNRECOMMENDED_BROWSER };
 
 export { NATIVE_HLS };
-export { USE_MSE };
+export { MSE };
 export { CAN_PLAY_ALAC };
 export { CAN_PLAY_FLAC };
-export { CAN_PLAY_MP3 };
 export { CAN_PLAY_AVC };
-export { CAN_PLAY_HEVC41 };
-export { CAN_PLAY_AAC };
-export { CAN_PLAY_AC3 };
 
-export function videoCanPlay(codecs: string): boolean {
-    return canPlay('video', 'mp4', codecs);
+export function videoCanPlay(codecs: string, native: boolean): boolean {
+    return canPlay('video', 'mp4', codecs, native);
 }
 
-export function audioCanPlay(codecs: string): boolean {
-    return canPlay('audio', 'mp4', codecs);
+export function audioCanPlay(codecs: string, native: boolean): boolean {
+    return canPlay('audio', 'mp4', codecs, native);
 }
 
-function canPlay(type: 'video' | 'audio', container: string, codecs: string): boolean {
+export function canPlay(type: 'video' | 'audio', container: string, codecs: string, native: boolean): boolean {
     if (codecs !== '') {
         codecs = `; codecs="${codecs}"`;
     }
-    if (USE_MSE) {
-        const mediaSource = getMediaSource();
-        if (mediaSource === undefined) {
-            return false; // Shouldn't be reached.
+    if (native) {
+        if (!NATIVE_HLS) {
+            return false;
         }
-        return mediaSource.isTypeSupported(`${type}/${container}${codecs}`);
-    } else {
         let mediaElement: HTMLMediaElement;
         if (type === 'video') {
             mediaElement = videoElem;
         } else {
             mediaElement = audioElem;
         }
-        return mediaElement.canPlayType(`${type}/${container}${codecs}`) != '';
+        return mediaElement.canPlayType(`${type}/${container}${codecs}`) !== '';
+    } else {
+        const mediaSource = getMediaSource();
+        if (!MSE || mediaSource === undefined) {
+            return false;
+        }
+        return mediaSource.isTypeSupported(`${type}/${container}${codecs}`);
     }
 }

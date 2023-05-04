@@ -16,11 +16,12 @@ import type { AudioEPInfo, AudioFile } from '../module/type/BangumiInfo';
 
 import {
     IS_FIREFOX,
-    USE_MSE,
+    MSE,
     NATIVE_HLS,
     CAN_PLAY_ALAC,
     CAN_PLAY_FLAC,
-    CAN_PLAY_MP3,
+    audioCanPlay,
+    canPlay,
 } from '../module/browser';
 import type { Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
@@ -72,7 +73,7 @@ export default function (
     addAlbumInfo();
     appendChild(getById('content'), getDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex));
 
-    if (!USE_MSE && !NATIVE_HLS) {
+    if (!MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
         return;
     }
@@ -97,11 +98,11 @@ async function addAudioNode(index: number) {
     appendChild(mediaHolder, getAudioSubtitleNode(file, FLAC_FALLBACK));
 
     const IS_FLAC = (file.format.toLowerCase() == 'flac' || FLAC_FALLBACK);
-    const USE_VIDEOJS = USE_MSE && IS_FLAC;
+    const USE_VIDEOJS = !NATIVE_HLS && IS_FLAC;
 
     const IS_MP3 = file.format.toLowerCase() == 'mp3';
-
-    if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { //ALAC has already fallen back to FLAC if not supported.
+    const CAN_PLAY_MP3 = audioCanPlay('mp3', NATIVE_HLS) || canPlay('audio', 'mpeg', '', NATIVE_HLS); // mp3: Firefox; mpeg: Safari and Chrome
+    if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { // ALAC has already fallen back to FLAC if not supported.
         showCodecCompatibilityError();
         error = true;
         return;
@@ -160,7 +161,33 @@ async function addAudioNode(index: number) {
             audioReady();
         }
     } else {
-        if (USE_MSE) {
+        if (NATIVE_HLS) {
+            let Player: typeof PlayerType;
+            try {
+                Player = (await nativePlayerImportPromise).Player;
+            } catch (e) {
+                showMessage(moduleImportError(e));
+                throw e;
+            }
+
+            const audioInstance = new Player(playerContainer, {
+                audio: true,
+                debug: debug
+            });
+            audioInstance.load(url, {
+                onerror: function (errorCode: number | null) {
+                    showPlayerError(errorCode);
+                    destroyAll();
+                },
+                onplaypromiseerror: onPlayPromiseError
+            });
+            mediaInstances[index] = audioInstance;
+            setMediaTitle(audioInstance);
+            audioReadyCounter++;
+            if (audioReadyCounter == audioEPInfo.files.length) {
+                audioReady();
+            }
+        } else {
             let HlsPlayer: typeof HlsPlayerType;
             try {
                 HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
@@ -186,32 +213,6 @@ async function addAudioNode(index: number) {
                 }
             };
             const audioInstance = new HlsPlayer(playerContainer, configHls, {
-                audio: true,
-                debug: debug
-            });
-            audioInstance.load(url, {
-                onerror: function (errorCode: number | null) {
-                    showPlayerError(errorCode);
-                    destroyAll();
-                },
-                onplaypromiseerror: onPlayPromiseError
-            });
-            mediaInstances[index] = audioInstance;
-            setMediaTitle(audioInstance);
-            audioReadyCounter++;
-            if (audioReadyCounter == audioEPInfo.files.length) {
-                audioReady();
-            }
-        } else {
-            let Player: typeof PlayerType;
-            try {
-                Player = (await nativePlayerImportPromise).Player;
-            } catch (e) {
-                showMessage(moduleImportError(e));
-                throw e;
-            }
-
-            const audioInstance = new Player(playerContainer, {
                 audio: true,
                 debug: debug
             });

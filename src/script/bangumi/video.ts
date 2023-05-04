@@ -29,15 +29,16 @@ import { invalidResponse } from '../module/message/template/param/server';
 import type { VideoEPInfo, VideoFormatInfo } from '../module/type/BangumiInfo';
 
 import {
-    USE_MSE,
+    MSE,
     NATIVE_HLS,
     CAN_PLAY_AVC,
-    CAN_PLAY_AAC,
     videoCanPlay,
-    CAN_PLAY_AC3,
+    audioCanPlay,
     IS_CHROMIUM,
     IS_FIREFOX,
-    CAN_PLAY_HEVC41,
+    IS_EDGE,
+    IS_IOS,
+    IS_WINDOWS,
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
@@ -193,25 +194,28 @@ async function addVideoNode(config?: {
     play?: boolean | undefined;
     startTime?: number | undefined;
 }) {
-    if (!USE_MSE && !NATIVE_HLS) {
+    if (!MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
         return;
     }
 
     let formatString = '';
 
+    let USE_NATIVE_HLS = NATIVE_HLS;
     let USE_AVC = true;
     let AVC_FALLBACK = false;
 
     if (currentFormat.video === 'dv5') {
-        if (!videoCanPlay('dvh1.05.06')) {
+        USE_NATIVE_HLS = USE_NATIVE_HLS && IS_IOS;
+        if (!videoCanPlay('dvh1.05.06', USE_NATIVE_HLS)) {
             showDolbyVisionError();
             return;
         }
         formatString = 'HEVC/Main 10/L5.1/High/dvhe.05.06';
         USE_AVC = false;
     } else if (currentFormat.video === 'hdr10') {
-        if (!videoCanPlay('hvc1.2.4.H153.90')) {
+        USE_NATIVE_HLS = USE_NATIVE_HLS && IS_IOS;
+        if (!videoCanPlay('hvc1.2.4.H153.90', USE_NATIVE_HLS)) {
             showErrorMessage(incompatibleTitle, `お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは<a class="link" href="${TOP_URL}/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。`);
             return;
         }
@@ -219,7 +223,7 @@ async function addVideoNode(config?: {
         USE_AVC = false;
         showMediaMessage('HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null);
     } else if (currentFormat.video === 'hevc41') {
-        if (CAN_PLAY_HEVC41) {
+        if (videoCanPlay('hvc1.2.4.H123.90', USE_NATIVE_HLS) && !(IS_WINDOWS && IS_EDGE)) {
             formatString = 'HEVC/Main 10/L4.1/High';
             USE_AVC = false;
         } else if (currentFormat.avc_fallback) {
@@ -231,7 +235,7 @@ async function addVideoNode(config?: {
     }
 
     if (USE_AVC) {
-        if (CAN_PLAY_AVC) {
+        if (CAN_PLAY_AVC) { // Can use `CAN_PLAY_AVC` constant since if `USE_NATIVE_HLS` is modified `USE_AVC` will be false.
             formatString = 'AVC/High/L5';
         } else {
             showCodecCompatibilityError();
@@ -251,7 +255,7 @@ async function addVideoNode(config?: {
             }
 
             if (currentFormat.audio.startsWith('atmos_ac3')) {
-                if (CAN_PLAY_AC3) {
+                if (audioCanPlay('ac-3', USE_NATIVE_HLS)) {
                     formatString += ' + AC-3';
                     USE_AAC = false;
                 } else if (currentFormat.aac_fallback) {
@@ -263,8 +267,8 @@ async function addVideoNode(config?: {
             }
         }
 
-        if (USE_AAC) {
-            if (CAN_PLAY_AAC) {
+        if (USE_AAC) { // Should not use `CAN_PLAY_AAC` since `USE_NATIVE_HLS` may be modified.
+            if (audioCanPlay('mp4a.40.2', USE_NATIVE_HLS)) {
                 formatString += ' + AAC LC';
             } else {
                 showCodecCompatibilityError();
@@ -299,7 +303,31 @@ async function addVideoNode(config?: {
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
     const url = baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
-    if (USE_MSE) {
+    if (USE_NATIVE_HLS) {
+        let Player: typeof PlayerType;
+        try {
+            Player = (await nativePlayerImportPromise).Player;
+        } catch (e) {
+            showMessage(moduleImportError(e));
+            throw e;
+        }
+
+        const mediaInstance = new Player(playerContainer, {
+            debug: debug
+        });
+        currentMediaInstance = mediaInstance;
+        mediaInstance.load(url, {
+            onerror: function (errorCode: number | null) {
+                showPlayerError(errorCode);
+                currentMediaInstance = undefined;
+                mediaInstance.destroy();
+            },
+            onplaypromiseerror: onPlayPromiseError,
+            play: _config.play,
+            startTime: _config.startTime
+        });
+        _onInit(mediaInstance);
+    } else {
         let HlsPlayer: typeof HlsPlayerType;
         try {
             HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
@@ -342,30 +370,6 @@ async function addVideoNode(config?: {
                 } else {
                     showPlayerError(errorCode);
                 }
-                currentMediaInstance = undefined;
-                mediaInstance.destroy();
-            },
-            onplaypromiseerror: onPlayPromiseError,
-            play: _config.play,
-            startTime: _config.startTime
-        });
-        _onInit(mediaInstance);
-    } else {
-        let Player: typeof PlayerType;
-        try {
-            Player = (await nativePlayerImportPromise).Player;
-        } catch (e) {
-            showMessage(moduleImportError(e));
-            throw e;
-        }
-
-        const mediaInstance = new Player(playerContainer, {
-            debug: debug
-        });
-        currentMediaInstance = mediaInstance;
-        mediaInstance.load(url, {
-            onerror: function (errorCode: number | null) {
-                showPlayerError(errorCode);
                 currentMediaInstance = undefined;
                 mediaInstance.destroy();
             },
