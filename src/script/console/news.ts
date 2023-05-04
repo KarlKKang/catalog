@@ -217,7 +217,6 @@ async function minifyNewsContent(button: Element) {
     const contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
     if (htmlMinifier === null) {
         ({ minify: htmlMinifier } = await import(
-            /* webpackExports: ["minify"] */
             'html-minifier-terser/dist/htmlminifier.esm.bundle'
         ));
     }

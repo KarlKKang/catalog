@@ -148,7 +148,6 @@ async function startWebpMachine() {
     if (webpMachine === null) {
         try {
             const { WebpMachine, detectWebpSupport } = await import(
-                /* webpackExports: ["WebpMachine", "detectWebpSupport"] */
                 'webp-hero/dist-cjs'
             );
             webpMachine = new WebpMachine();
