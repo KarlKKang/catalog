@@ -48,13 +48,14 @@ a:active {
         transform: translate(-50%, 0%);
         background-color: rgba(252, 252, 252, 1);
         box-shadow: 0 0 17px 0 rgba(32, 52, 76, .15);
-        transition: box-shadow .4s ease-out;
     }
 }
 
-#container>ul {
-    display: inline-block;
-    padding: 0px 0px 0px 0px;
+hr {
+    margin: 2em 0px;
+    height: 1px;
+    border-width: 0;
+    background-color: rgba(225, 227, 231, 1);
 }
 
 .title {
