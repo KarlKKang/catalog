@@ -23,6 +23,7 @@ const config = {
             chunks: 'all'
         },
     },
+    node: { global: false },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.json']
     },

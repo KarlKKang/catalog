@@ -48,25 +48,35 @@
     margin: 0px;
 }
 
-@media only screen and (hover: hover) and (pointer: fine) {
-    #container>div>div>.overlay {
-        background-color: rgb(255, 255, 255);
-        transition: opacity .4s ease-out;
-        opacity: 0;
-    }
+#container>div>div>.overlay {
+    background-color: rgb(255, 255, 255);
+    transition: opacity .4s ease-out;
+    opacity: 0;
+}
 
-    #container>div:hover>div>.overlay {
+#container>div:hover>div>.overlay {
+    opacity: 0.1;
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+    #container>div>div>.overlay {
+        background-color: rgb(0, 0, 0);
         opacity: 0.1;
     }
 
-    @media only screen and (prefers-color-scheme: dark) {
-        #container>div>div>.overlay {
-            background-color: rgb(0, 0, 0);
-            opacity: 0.1;
-        }
+    #container>div:hover>div>.overlay {
+        opacity: 0;
+    }
+}
 
+@media not screen and (hover: hover) and (pointer: fine) {
+    #container>div:hover>div>.overlay {
+        opacity: 0;
+    }
+
+    @media only screen and (prefers-color-scheme: dark) {
         #container>div:hover>div>.overlay {
-            opacity: 0;
+            opacity: 0.1;
         }
     }
 }

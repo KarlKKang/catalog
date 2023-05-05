@@ -774,7 +774,7 @@ export class Player {
         const currentTime = duration * percentage;
         const currentTimestamp = secToTimestamp(currentTime, duration);
 
-        if (w.matchMedia('only screen and (hover: hover) and (pointer: fine)').matches) {
+        if (!w.matchMedia('not screen and (hover: hover) and (pointer: fine)').matches) {
             this.progressMouseDisplay.style.left = leftPadding + 'px';
             this.timeTooltip.textContent = currentTimestamp;
             this.timeTooltip.style.right = -this.timeTooltip.offsetWidth / 2 + 'px';

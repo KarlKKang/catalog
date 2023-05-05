@@ -290,6 +290,10 @@
   margin: 0 10px;
 }
 
+.player .player-progress-control:hover .player-progress-holder {
+  font-size: 1.4em;
+}
+
 .player .player-progress-control:hover .player-time-tooltip {
   display: block;
   visibility: visible;
@@ -303,13 +307,17 @@
   z-index: 1;
 }
 
-@media only screen and (hover: hover) and (pointer: fine) {
+.player .player-progress-control:hover .player-mouse-display {
+  display: block;
+}
+
+@media not screen and (hover: hover) and (pointer: fine) {
   .player .player-progress-control:hover .player-progress-holder {
-    font-size: 1.4em;
+    font-size: inherit;
   }
 
   .player .player-progress-control:hover .player-mouse-display {
-    display: block;
+    display: none;
   }
 }
 

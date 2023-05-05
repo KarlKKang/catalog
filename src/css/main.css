@@ -25,12 +25,12 @@
     --shadow-size: 0 0 17px 0;
     --shadow-size-hover: 0 2px 30px 2px;
     --shadow: var(--shadow-size) var(--shadow-color);
-    --shadow-hover: var(--shadow-size) var(--shadow-color);
+    --shadow-hover: var(--shadow-size-hover) var(--shadow-color-hover);
 
     --checkbox-shadow-size: 0 0 10px 1.3px;
     --checkbox-shadow-size-hover: 0 2px 17px 4px;
     --checkbox-shadow: var(--checkbox-shadow-size) var(--shadow-color);
-    --checkbox-shadow-hover: var(--checkbox-shadow-size) var(--shadow-color);
+    --checkbox-shadow-hover: var(--checkbox-shadow-size-hover) var(--shadow-color-hover);
 }
 
 @media only screen and (prefers-color-scheme: dark) {
@@ -58,10 +58,10 @@
     }
 }
 
-@media only screen and (hover: hover) and (pointer: fine) {
+@media not screen and (hover: hover) and (pointer: fine) {
     :root {
-        --shadow-hover: var(--shadow-size-hover) var(--shadow-color-hover);
-        --checkbox-shadow-hover: var(--checkbox-shadow-size-hover) var(--shadow-color-hover);
+        --shadow-hover: var(--shadow);
+        --checkbox-shadow-hover: var(--checkbox-shadow);
     }
 }
 
