@@ -2,9 +2,12 @@
 /* CSS Document */
 
 * {
+    outline: none;
+}
+
+html {
     font-family: 'Noto Sans JP', '游ゴシック体', '游ゴシック', 'Yu Gothic', 'メイリオ', Meiryo, sans-serif;
     font-weight: 300;
-    outline: none;
 }
 
 :lang(en) {
