@@ -248,14 +248,6 @@
   height: 0.4em;
 }
 
-.player .player-progress-control .player-progress-holder {
-  margin: 0 10px;
-}
-
-.player .player-progress-control:hover .player-progress-holder {
-  font-size: 1.4em;
-}
-
 .player .player-progress-holder .player-play-progress,
 .player .player-progress-holder .player-load-progress {
   position: absolute;
@@ -294,6 +286,10 @@
   padding: 8px 10px;
 }
 
+.player .player-progress-control .player-progress-holder {
+  margin: 0 10px;
+}
+
 .player .player-progress-control:hover .player-time-tooltip {
   display: block;
   visibility: visible;
@@ -307,15 +303,13 @@
   z-index: 1;
 }
 
-.player .player-progress-control:hover .player-mouse-display {
-  display: block;
-}
+@media only screen and (hover: hover) and (pointer: fine) {
+  .player .player-progress-control:hover .player-progress-holder {
+    font-size: 1.4em;
+  }
 
-@media only screen and (hover: none),
-only screen and (pointer: none),
-only screen and (pointer: coarse) {
   .player .player-progress-control:hover .player-mouse-display {
-    display: none;
+    display: block;
   }
 }
 
