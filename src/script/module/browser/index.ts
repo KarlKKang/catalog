@@ -50,15 +50,13 @@ const audioElem = createElement('audio') as HTMLAudioElement;
 const videoElem = createElement('video') as HTMLVideoElement;
 
 const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_SAFARI;
-const NATIVE_HLS_VIDEO = NATIVE_HLS && IS_IOS;
 const MSE = isSupported();
 
 const CAN_PLAY_ALAC = audioCanPlay('alac', NATIVE_HLS);
 const CAN_PLAY_FLAC = audioCanPlay('flac', NATIVE_HLS) || audioCanPlay('fLaC', NATIVE_HLS);
 
-// The following two constants can only be used for video playback.
-const CAN_PLAY_AVC = videoCanPlay('avc1.640032', NATIVE_HLS_VIDEO);
-const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2', NATIVE_HLS_VIDEO);
+const CAN_PLAY_AVC = videoCanPlay('avc1.640032', NATIVE_HLS);
+const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2', NATIVE_HLS);
 
 UNRECOMMENDED_BROWSER = UNRECOMMENDED_BROWSER || !(CAN_PLAY_AVC && CAN_PLAY_AAC) || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
 
@@ -71,12 +69,10 @@ export { IS_MACOS };
 export { UNRECOMMENDED_BROWSER };
 
 export { NATIVE_HLS };
-export { NATIVE_HLS_VIDEO };
 export { MSE };
 export { CAN_PLAY_ALAC };
 export { CAN_PLAY_FLAC };
 export { CAN_PLAY_AVC };
-export { CAN_PLAY_AAC };
 
 export function videoCanPlay(codecs: string, native: boolean): boolean {
     return canPlay('video', 'mp4', codecs, native);

@@ -30,15 +30,15 @@ import type { VideoEPInfo, VideoFormatInfo } from '../module/type/BangumiInfo';
 
 import {
     MSE,
-    NATIVE_HLS_VIDEO,
+    NATIVE_HLS,
     CAN_PLAY_AVC,
-    CAN_PLAY_AAC,
     videoCanPlay,
     audioCanPlay,
     IS_CHROMIUM,
     IS_FIREFOX,
     IS_EDGE,
     IS_WINDOWS,
+    IS_IOS,
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
@@ -194,25 +194,28 @@ async function addVideoNode(config?: {
     play?: boolean | undefined;
     startTime?: number | undefined;
 }) {
-    if (!MSE && !NATIVE_HLS_VIDEO) {
+    if (!MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
         return;
     }
 
     let formatString = '';
 
+    let USE_NATIVE_HLS = NATIVE_HLS;
     let USE_AVC = true;
     let AVC_FALLBACK = false;
 
     if (currentFormat.video === 'dv5') {
-        if (!videoCanPlay('dvh1.05.06', NATIVE_HLS_VIDEO)) {
+        USE_NATIVE_HLS = USE_NATIVE_HLS && IS_IOS;
+        if (!videoCanPlay('dvh1.05.06', USE_NATIVE_HLS)) {
             showDolbyVisionError();
             return;
         }
         formatString = 'HEVC/Main 10/L5.1/High/dvhe.05.06';
         USE_AVC = false;
     } else if (currentFormat.video === 'hdr10') {
-        if (!videoCanPlay('hvc1.2.4.H153.90', NATIVE_HLS_VIDEO)) {
+        USE_NATIVE_HLS = USE_NATIVE_HLS && IS_IOS;
+        if (!videoCanPlay('hvc1.2.4.H153.90', USE_NATIVE_HLS)) {
             showErrorMessage(incompatibleTitle, `お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは<a class="link" href="${TOP_URL}/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。`);
             return;
         }
@@ -220,7 +223,8 @@ async function addVideoNode(config?: {
         USE_AVC = false;
         showMediaMessage('HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null);
     } else if (currentFormat.video === 'hevc41') {
-        if (videoCanPlay('hvc1.2.4.H123.90', NATIVE_HLS_VIDEO) && !(IS_WINDOWS && IS_EDGE)) {
+        const CAN_PLAY_HEVC = await canPlayHEVC(USE_NATIVE_HLS, currentFormat.avc_fallback);
+        if (CAN_PLAY_HEVC) {
             formatString = 'HEVC/Main 10/L4.1/High';
             USE_AVC = false;
         } else if (currentFormat.avc_fallback) {
@@ -232,7 +236,7 @@ async function addVideoNode(config?: {
     }
 
     if (USE_AVC) {
-        if (CAN_PLAY_AVC) {
+        if (CAN_PLAY_AVC) { // This constant can be used since USE_NATIVE_HLS === NATIVE_HLS in any case USE_AVC is true.
             formatString = 'AVC/High/L5';
         } else {
             showCodecCompatibilityError();
@@ -252,7 +256,7 @@ async function addVideoNode(config?: {
             }
 
             if (currentFormat.audio.startsWith('atmos_ac3')) {
-                if (audioCanPlay('ac-3', NATIVE_HLS_VIDEO)) {
+                if (audioCanPlay('ac-3', USE_NATIVE_HLS)) {
                     formatString += ' + AC-3';
                     USE_AAC = false;
                 } else if (currentFormat.aac_fallback) {
@@ -265,7 +269,7 @@ async function addVideoNode(config?: {
         }
 
         if (USE_AAC) {
-            if (CAN_PLAY_AAC) {
+            if (audioCanPlay('mp4a.40.2', USE_NATIVE_HLS)) {
                 formatString += ' + AAC LC';
             } else {
                 showCodecCompatibilityError();
@@ -300,7 +304,7 @@ async function addVideoNode(config?: {
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
     const url = baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
-    if (NATIVE_HLS_VIDEO) {
+    if (USE_NATIVE_HLS) {
         let Player: typeof PlayerType;
         try {
             Player = (await nativePlayerImportPromise).Player;
@@ -438,4 +442,35 @@ function showDolbyVisionError() {
 
 function show8chAudioError() {
     showErrorMessage(incompatibleTitle, 'ChromiumベースのブラウザとFirefoxでは、7.1chオーディオを再生することはできません。' + incompatibleSuffix);
+}
+
+async function canPlayHEVC(native: boolean, withFallback: boolean | undefined): Promise<boolean> {
+    const HEVC41_CODEC = 'hvc1.2.4.H123.90';
+    if ((IS_WINDOWS && IS_EDGE) || !videoCanPlay(HEVC41_CODEC, native)) {
+        return false;
+    }
+    if (!withFallback) {
+        return true;
+    }
+    if (!navigator.mediaCapabilities) {
+        return false;
+    }
+
+    let decodingInfo: MediaCapabilitiesDecodingInfo;
+    try {
+        decodingInfo = await navigator.mediaCapabilities.decodingInfo({
+            type: native ? 'file' : 'media-source',
+            video: {
+                contentType: `video/mp4;codecs=${HEVC41_CODEC}`,
+                width: 1920,
+                height: 1080,
+                bitrate: 24000 * 1000,
+                framerate: 60,
+            },
+        });
+    } catch {
+        return false;
+    }
+
+    return decodingInfo.supported && decodingInfo.powerEfficient;
 }
