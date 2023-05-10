@@ -5,6 +5,7 @@ import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig 
 import { CustomMediaError } from './media_error';
 
 export class HlsPlayer extends NonNativePlayer {
+    protected override readonly maxBufferHole = 0.5;
     private readonly hlsInstance: Hls;
     private fragStart = 0;
 

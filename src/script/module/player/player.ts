@@ -82,6 +82,8 @@ export class Player {
     private droppedFrames = 0;
     private corruptedFrames = 0;
 
+    protected readonly maxBufferHole: number = 0;
+
     private playPromise: Promise<void> | undefined;
     protected onPlayPromiseError: (() => void) | undefined;
 
@@ -843,7 +845,7 @@ export class Player {
             if (currentBuffer === null) {
                 currentBuffer = { start: nextBufferStart, end: this.media.buffered.end(i) };
             } else {
-                if (nextBufferStart - 0.5 <= currentBuffer.end) { // This value should match `maxBufferHole` in hls.js config.
+                if (nextBufferStart - this.maxBufferHole <= currentBuffer.end) {
                     this.onScreenConsoleOutput('Buffer hole detected: ' + currentBuffer.end + '-' + nextBufferStart + '. Duration: ' + (nextBufferStart - currentBuffer.end));
                     currentBuffer.end = this.media.buffered.end(i);
                 } else {

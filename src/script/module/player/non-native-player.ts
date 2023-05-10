@@ -83,7 +83,7 @@ export abstract class NonNativePlayer extends Player {
         for (const buffer of bufferedRange) {
             if (this.media.currentTime < buffer.end) {
                 this.onScreenConsoleOutput('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this.media.currentTime);
-                if (buffer.start <= this.media.currentTime + 0.1 && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - 0.1)) {
+                if (buffer.start <= this.media.currentTime + this.maxBufferHole && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - 0.1)) {
                     endBuffer();
                     this.onScreenConsoleOutput('Buffer complete!');
                     if (this.playing && !this.dragging) {
@@ -123,7 +123,7 @@ export abstract class NonNativePlayer extends Player {
         } else {
             for (const buffer of bufferedRange) {
                 if (this.media.currentTime < buffer.end) {
-                    if (buffer.start > this.media.currentTime + 0.1 || buffer.end < Math.min(this.media.currentTime + 14.9, this.media.duration - 0.1)) {
+                    if (buffer.start > this.media.currentTime + this.maxBufferHole || buffer.end < Math.min(this.media.currentTime + 14.9, this.media.duration - 0.1)) {
                         addCheckBuffer();
                         this.onScreenConsoleOutput('Buffer under threshold, start buffering.');
                     } else {
