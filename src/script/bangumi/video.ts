@@ -44,7 +44,7 @@ import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayPromiseError, incompatibleSuffix, showPlayerError } from './media_helper';
+import { showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import { CustomMediaError } from '../module/player/media_error';
 
@@ -290,14 +290,6 @@ async function addVideoNode(config?: {
             displayChapters(mediaInstance);
         }
     }
-    function onPlayPromiseError() {
-        showPlayPromiseError();
-        if (currentMediaInstance !== undefined) {
-            currentMediaInstance.destroy();
-            currentMediaInstance = undefined;
-        }
-    }
-
 
     const playerContainer = createElement('div') as HTMLDivElement;
     appendChild(mediaHolder, playerContainer);
@@ -323,7 +315,6 @@ async function addVideoNode(config?: {
                 currentMediaInstance = undefined;
                 mediaInstance.destroy();
             },
-            onplaypromiseerror: onPlayPromiseError,
             play: _config.play,
             startTime: _config.startTime
         });
@@ -374,7 +365,6 @@ async function addVideoNode(config?: {
                 currentMediaInstance = undefined;
                 mediaInstance.destroy();
             },
-            onplaypromiseerror: onPlayPromiseError,
             play: _config.play,
             startTime: _config.startTime
         });

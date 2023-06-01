@@ -48,7 +48,7 @@ export function showCodecCompatibilityError() {
     showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix);
 }
 
-export function showPlayPromiseError() {
+function showPlayPromiseError() {
     showErrorMessage(incompatibleTitle, 'ブラウザによって再生が中断されました。ページを再読み込みしてみてください。このエラーが続く場合は、他のブラウザでお試しください。');
 }
 

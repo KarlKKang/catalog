@@ -45,14 +45,12 @@ export class VideojsPlayer extends NonNativePlayer {
             startTime?: number | undefined;
             onload?: (...args: any[]) => void;
             onerror?: (errorCode: number | null) => void;
-            onplaypromiseerror?: () => void;
         }
     ): void {
         config = config ?? {};
 
         if (!this.attached) {
             this.attach(config.onload, config.onerror);
-            this.onPlayPromiseError = config.onplaypromiseerror;
         }
 
         const play = config.play === true;

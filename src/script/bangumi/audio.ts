@@ -29,7 +29,7 @@ import type { VideojsPlayer as VideojsPlayerType } from '../module/player/videoj
 
 import { parseCharacters } from './helper';
 import {
-    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showPlayPromiseError, showPlayerError
+    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showPlayerError
 } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
 
@@ -112,11 +112,6 @@ async function addAudioNode(index: number) {
     appendChild(mediaHolder, playerContainer);
     const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
-    function onPlayPromiseError() {
-        showPlayPromiseError();
-        destroyAll();
-    }
-
     if (USE_VIDEOJS) {
         let VideojsPlayer: typeof VideojsPlayerType;
         try {
@@ -152,7 +147,6 @@ async function addAudioNode(index: number) {
                 }
                 destroyAll();
             },
-            onplaypromiseerror: onPlayPromiseError
         });
         mediaInstances[index] = audioInstance;
         setMediaTitle(audioInstance);
@@ -179,7 +173,6 @@ async function addAudioNode(index: number) {
                     showPlayerError(errorCode);
                     destroyAll();
                 },
-                onplaypromiseerror: onPlayPromiseError
             });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
@@ -221,7 +214,6 @@ async function addAudioNode(index: number) {
                     showPlayerError(errorCode);
                     destroyAll();
                 },
-                onplaypromiseerror: onPlayPromiseError
             });
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);

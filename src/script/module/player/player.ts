@@ -85,7 +85,6 @@ export class Player {
     protected readonly maxBufferHole: number = 0;
 
     private playPromise: Promise<void> | undefined;
-    protected onPlayPromiseError: (() => void) | undefined;
 
     public get paused(): boolean {
         return !this.playing && this.media.paused;
@@ -329,14 +328,12 @@ export class Player {
             startTime?: number | undefined;
             onload?: (...args: any[]) => void;
             onerror?: (errorCode: number | null) => void;
-            onplaypromiseerror?: () => void;
         }
     ): void {
         config = config ?? {};
 
         if (!this.attached) {
             this.attach(config.onload, config.onerror);
-            this.onPlayPromiseError = config.onplaypromiseerror;
         }
 
         const play = config.play === true;
@@ -376,10 +373,10 @@ export class Player {
         const playPromise = this.media.play();
         this.playPromise = playPromise;
         if (playPromise !== undefined) {
-            playPromise.catch((e) => {
-                this.onPlayPromiseError && this.onPlayPromiseError();
+            playPromise.catch(() => {
+                this.playing = false;
+                this.onpause();
                 this.onScreenConsoleOutput('play promise rejected');
-                throw e;
             });
         }
     }

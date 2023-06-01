@@ -28,7 +28,6 @@ export abstract class NonNativePlayer extends Player {
             startTime?: number;
             onload?: (...args: any[]) => void;
             onerror?: (errorCode: number | null) => void;
-            onplaypromiseerror?: () => void;
         }
     ): void;
     public abstract override destroy(this: NonNativePlayer): void;
