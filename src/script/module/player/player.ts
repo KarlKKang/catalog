@@ -669,7 +669,6 @@ export class Player {
             const key = (event as KeyboardEvent).key;
             if (key === ' ' || key === 'Spacebar') {
                 this.togglePlayback();
-                this.resetToActive(); // 'keydown' is not a trigger for 'resetToActive'
                 event.preventDefault();
             } else if (key === 'f' || key === 'F') {
                 toggleFullscreen();
@@ -815,6 +814,7 @@ export class Player {
         addPlayerClass(this.playButton, 'paused');
         removePlayerClass(this.controls, 'playing');
         addPlayerClass(this.controls, 'paused');
+        this.resetToActive();
     }
 
     private onended(this: Player): void {

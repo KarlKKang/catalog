@@ -101,7 +101,7 @@
   margin: 0 !important;
 }
 
-.player.player-playing.player-user-inactive {
+.player.player-user-inactive {
   cursor: none;
 }
 
@@ -184,7 +184,7 @@
   transition: opacity 0.1s;
 }
 
-.player.player-user-inactive.player-playing .player-control-bar {
+.player.player-user-inactive .player-control-bar {
   opacity: 0;
   pointer-events: none;
   transition: opacity 1s;
@@ -329,7 +329,7 @@
   background-color: var(--text-color);
 }
 
-.player.player-user-inactive.player-playing .player-progress-control .player-mouse-display {
+.player.player-user-inactive .player-progress-control .player-mouse-display {
   visibility: hidden;
   opacity: 0;
   transition: visibility 1s, opacity 1s;
