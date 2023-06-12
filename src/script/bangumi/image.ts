@@ -26,10 +26,10 @@ import { moduleImportError } from '../module/message/template/param';
 export default function (
     epInfo: ImageEPInfo,
     baseURL: string,
-    mediaHolder: HTMLElement,
     lazyloadImportPromise: LazyloadImportPromise
 ) {
     const contentContainer = getById('content');
+    const mediaHolder = getById('media-holder');
 
     if (epInfo.gallery_title != '') {
         const title = createElement('p');

@@ -65,7 +65,6 @@ export default function (
     _epIndex: number,
     _epInfo: VideoEPInfo,
     _baseURL: string,
-    _mediaHolder: HTMLElement,
     _nativePlayerImportPromise: NativePlayerImportPromise,
     _hlsPlayerImportPromise: HlsPlayerImportPromise,
     _debug: boolean,
@@ -77,11 +76,11 @@ export default function (
     epIndex = _epIndex;
     epInfo = _epInfo;
     baseURL = _baseURL;
-    mediaHolder = _mediaHolder;
     nativePlayerImportPromise = _nativePlayerImportPromise;
     hlsPlayerImportPromise = _hlsPlayerImportPromise;
     debug = _debug;
 
+    mediaHolder = getById('media-holder');
     const contentContainer = getById('content');
     addClass(contentContainer, 'video');
 

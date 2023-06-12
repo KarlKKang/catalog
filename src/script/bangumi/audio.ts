@@ -37,7 +37,6 @@ let seriesID: string;
 let epIndex: number;
 let epInfo: AudioEPInfo;
 let baseURL: string;
-let mediaHolder: HTMLElement;
 let debug: boolean;
 
 let audioReadyCounter = 0;
@@ -51,7 +50,6 @@ export default function (
     _epIndex: number,
     _epInfo: AudioEPInfo,
     _baseURL: string,
-    _mediaHolder: HTMLElement,
     _nativePlayerImportPromise: NativePlayerImportPromise,
     _hlsPlayerImportPromise: HlsPlayerImportPromise,
     _videojsPlayerImportPromise: VideojsPlayerImportPromise,
@@ -62,7 +60,6 @@ export default function (
     epIndex = _epIndex;
     epInfo = _epInfo;
     baseURL = _baseURL;
-    mediaHolder = _mediaHolder;
     nativePlayerImportPromise = _nativePlayerImportPromise;
     hlsPlayerImportPromise = _hlsPlayerImportPromise;
     videojsPlayerImportPromise = _videojsPlayerImportPromise;
@@ -78,14 +75,15 @@ export default function (
         return;
     }
 
+    const mediaHolder = getById('media-holder');
     for (let i = 0; i < audioEPInfo.files.length; i++) {
-        addAudioNode(i);
+        addAudioNode(i, mediaHolder);
     }
 }
 
 let error = false;
 
-async function addAudioNode(index: number) {
+async function addAudioNode(index: number, mediaHolder: HTMLElement) {
     if (error) {
         return;
     }

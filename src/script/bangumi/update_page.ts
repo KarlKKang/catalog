@@ -153,8 +153,6 @@ export default async function (
     const seriesOverride = epInfo.series_override;
     const baseURL = CDN_URL + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
 
-    const mediaHolder = getById('media-holder');
-
     if (type === 'video') {
         let video: typeof videoType;
         try {
@@ -163,7 +161,7 @@ export default async function (
             showMessage(moduleImportError(e));
             throw e;
         }
-        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, mediaHolder, nativePlayerImportPromise, hlsPlayerImportPromise, debug, startTime, play);
+        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, debug, startTime, play);
     } else {
         if (type === 'audio') {
             let audio: typeof audioType;
@@ -173,7 +171,7 @@ export default async function (
                 showMessage(moduleImportError(e));
                 throw e;
             }
-            audio(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, mediaHolder, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise, debug);
+            audio(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise, debug);
         } else {
             let image: typeof imageType;
             try {
@@ -182,7 +180,7 @@ export default async function (
                 showMessage(moduleImportError(e));
                 throw e;
             }
-            image(epInfo as BangumiInfo.ImageEPInfo, baseURL, mediaHolder, lazyloadImportPromise);
+            image(epInfo as BangumiInfo.ImageEPInfo, baseURL, lazyloadImportPromise);
         }
         updateURLParam(seriesID, epIndex, 0);
     }
