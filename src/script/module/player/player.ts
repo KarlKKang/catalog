@@ -110,6 +110,22 @@ export class Player {
         }
     }
 
+    private get active(): boolean {
+        return containsPlayerClass(this.controls, 'user-active');
+    }
+
+    private set active(isActive: boolean) {
+        if (isActive) {
+            this.inactiveTimeout = 12;
+            removePlayerClass(this.controls, 'user-inactive');
+            addPlayerClass(this.controls, 'user-active');
+        } else {
+            this.inactiveTimeout = 0;
+            addPlayerClass(this.controls, 'user-inactive');
+            removePlayerClass(this.controls, 'user-active');
+        }
+    }
+
     constructor(
         container: HTMLDivElement,
         config?: {
@@ -447,12 +463,6 @@ export class Player {
         }
     }
 
-    private resetToActive(this: Player) {
-        this.inactiveTimeout = 12;
-        removePlayerClass(this.controls, 'user-inactive');
-        addPlayerClass(this.controls, 'user-active');
-    }
-
     private attachEventListeners(this: Player) {
         //Fluid resize and duration
         addEventListener(w, 'resize', function (this: Player) {
@@ -531,21 +541,33 @@ export class Player {
 
     private attachVideoEventListeners(this: Player) {
         //Catch events on control bar, otherwise bubbling events on the parent (constrols) will be fired.
-        addEventListener(this.controlBar, 'click', function (event: Event) {
+        addEventListener(this.controlBar, 'click', (event: Event) => {
+            this.onScreenConsoleOutput('Click on controlBar.');
+            this.active = true; // There's no reset to active in listeners attached to specific buttons.
             event.stopPropagation();
         });
 
         //UI activity
-        addEventsListener(this.controls, ['mousemove', 'touchmove', 'click'], this.resetToActive.bind(this), true);
-        let touchClick = false;
+        let touchClick = 0;
         addEventListener(this.controls, 'touchend', function (this: Player) {
-            touchClick = true;
-            setTimeout(function () { touchClick = false; }, 300);
-            this.resetToActive();
-        }.bind(this), true);
+            this.onScreenConsoleOutput('Touchend on controls.');
+            touchClick++;
+            setTimeout(function () { touchClick--; }, 300); // https://web.dev/mobile-touchandmouse/
+        }.bind(this));
         addEventListener(this.controls, 'click', function (this: Player) {
-            if (!touchClick && !this.ended) {
-                this.togglePlayback();
+            if (touchClick > 0) {
+                this.onScreenConsoleOutput('Touch click on controls.');
+                this.active = !this.active;
+            } else {
+                this.onScreenConsoleOutput('Mouse click on controls.');
+                if (!this.ended) {
+                    this.togglePlayback();
+                }
+            }
+        }.bind(this));
+        addEventListener(this.controls, 'mousemove', function (this: Player) {
+            if (touchClick <= 0) {
+                this.active = true;
             }
         }.bind(this));
 
@@ -714,8 +736,7 @@ export class Player {
         if (this.inactiveTimeout > 0) {
             this.inactiveTimeout--;
             if (this.inactiveTimeout == 0) {
-                removePlayerClass(this.controls, 'user-active');
-                addPlayerClass(this.controls, 'user-inactive');
+                this.active = false;
             }
         }
 
@@ -741,6 +762,7 @@ export class Player {
 
     protected ondragended(this: Player, event: MouseEvent | TouchEvent): void {
         this.dragging = false;
+        this.active = true; // The timeout won't decrease when this.dragging == true.
 
         const currentTime = this.progressUpdate(event);
         this.seek(currentTime);
@@ -814,7 +836,7 @@ export class Player {
         addPlayerClass(this.playButton, 'paused');
         removePlayerClass(this.controls, 'playing');
         addPlayerClass(this.controls, 'paused');
-        this.resetToActive();
+        this.active = true;
     }
 
     private onended(this: Player): void {
