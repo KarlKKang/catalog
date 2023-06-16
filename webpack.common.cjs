@@ -49,7 +49,7 @@ const config = {
                                 "@babel/preset-env",
                                 {
                                     "useBuiltIns": "entry",
-                                    "corejs": "3.30",
+                                    "corejs": "3.31",
                                 }
                             ],
                             "@babel/preset-typescript"
