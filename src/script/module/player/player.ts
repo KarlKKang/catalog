@@ -73,7 +73,6 @@ export class Player {
 
     protected attached = false;
 
-    protected playing = false;
     protected dragging = false;
 
     protected timer: NodeJS.Timer | undefined;
@@ -86,8 +85,23 @@ export class Player {
 
     private playPromise: Promise<void> | undefined;
 
-    public get paused(): boolean {
-        return !this.playing && this.media.paused;
+    public get playing(): boolean {
+        return containsPlayerClass(this.controls, 'playing');
+    }
+
+    protected set playing(isPlaying: boolean) {
+        if (isPlaying) {
+            addPlayerClass(this.controls, 'has-started');
+            addPlayerClass(this.playButton, 'playing');
+            removePlayerClass(this.playButton, 'paused');
+            addPlayerClass(this.controls, 'playing');
+            removePlayerClass(this.controls, 'paused');
+        } else {
+            removePlayerClass(this.playButton, 'playing');
+            addPlayerClass(this.playButton, 'paused');
+            removePlayerClass(this.controls, 'playing');
+            addPlayerClass(this.controls, 'paused');
+        }
     }
 
     protected get ended(): boolean {
@@ -97,10 +111,6 @@ export class Player {
     protected set ended(isEnded: boolean) {
         if (isEnded) {
             removePlayerClass(this.controls, 'seeking');
-            removePlayerClass(this.playButton, 'playing');
-            addPlayerClass(this.playButton, 'paused');
-            removePlayerClass(this.controls, 'playing');
-            addPlayerClass(this.controls, 'paused');
             addPlayerClass(this.controls, 'ended');
             addPlayerClass(this.playButton, 'ended');
             this.pause();
@@ -391,7 +401,6 @@ export class Player {
         if (playPromise !== undefined) {
             playPromise.catch(() => {
                 this.playing = false;
-                this.onpause();
                 this.onScreenConsoleOutput('play promise rejected');
             });
         }
@@ -453,7 +462,7 @@ export class Player {
     }
 
     protected togglePlayback(this: Player) {
-        if (containsPlayerClass(this.controls, 'playing')) {
+        if (this.playing) {
             this.pause();
         } else {
             if (this.ended) {
@@ -497,9 +506,8 @@ export class Player {
         addEventsListener(this.progressControl, ['mousedown', 'touchstart'], function (this: Player, event: Event) {
             this.dragging = true;
             this.draggingPreviewTimeout = 4;
-            if (!this.media.paused) {
+            if (this.playing) {
                 this.pause(false);
-                this.playing = true;
             }
             this.ended = false;
             this.progressUpdate(event as MouseEvent | TouchEvent);
@@ -517,14 +525,20 @@ export class Player {
 
         //Activity on media
         addEventListener(this.media, 'play', function (this: Player) {
-            this.onScreenConsoleOutput('Playback started at ' + this.media.currentTime + '.');
+            if (this.dragging) {
+                this.onScreenConsoleOutput('Playback started while dragging at ' + this.media.currentTime + '.');
+                this.media.pause(); // onplay event while dragging is probably initiated by some system controls, thus it's enough to directly intercept it.
+                return;
+            }
             this.onplay();
         }.bind(this));
 
         addEventListener(this.media, 'pause', function (this: Player) {
-            if (!this.dragging) {
-                this.onpause();
+            if (this.dragging) {
+                this.onScreenConsoleOutput('Paused while dragging at ' + this.media.currentTime + '.');
+                return;
             }
+            this.onpause();
         }.bind(this));
 
         addEventListener(this.media, 'ended', this.onended.bind(this));
@@ -759,7 +773,7 @@ export class Player {
         this.ended = false;
     }
 
-    protected ondragended(this: Player, event: MouseEvent | TouchEvent, keepPlayingStatus = false): void {
+    protected ondragended(this: Player, event: MouseEvent | TouchEvent): void {
         this.dragging = false;
         this.active = true; // The timeout won't decrease when this.dragging == true.
 
@@ -768,9 +782,6 @@ export class Player {
 
         if (this.playing) {
             this.play();
-            if (!keepPlayingStatus) {
-                this.playing = false;
-            }
         }
         this.focus();
     }
@@ -820,11 +831,8 @@ export class Player {
     }
 
     protected onplay(this: Player): void {
-        addPlayerClass(this.controls, 'has-started');
-        removePlayerClass(this.playButton, 'paused');
-        addPlayerClass(this.playButton, 'playing');
-        removePlayerClass(this.controls, 'paused');
-        addPlayerClass(this.controls, 'playing');
+        this.onScreenConsoleOutput('Playback started at ' + this.media.currentTime + '.');
+        this.playing = true;
         if (this.ended) {
             this.seek(0);
         }
@@ -833,10 +841,7 @@ export class Player {
 
     protected onpause(this: Player): void {
         this.onScreenConsoleOutput('Playback paused at ' + this.media.currentTime + '.');
-        removePlayerClass(this.playButton, 'playing');
-        addPlayerClass(this.playButton, 'paused');
-        removePlayerClass(this.controls, 'playing');
-        addPlayerClass(this.controls, 'paused');
+        this.playing = false;
         this.active = true;
     }
 

@@ -169,7 +169,7 @@ function formatSwitch() {
 
             if (currentMediaInstance !== undefined) {
                 config = {
-                    play: !currentMediaInstance.paused,
+                    play: currentMediaInstance.playing,
                     startTime: currentMediaInstance.media.currentTime
                 };
 

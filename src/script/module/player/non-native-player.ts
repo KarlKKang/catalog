@@ -50,21 +50,8 @@ export abstract class NonNativePlayer extends Player {
         }
     }
 
-    protected override togglePlayback(this: NonNativePlayer) {
-        if (containsPlayerClass(this.controls, 'playing')) {
-            this.IS_VIDEO && this.onpause(true); // onpause will not fire if the user pauses the video before the video finishes buffering.
-            this.pause();
-        } else {
-            if (this.ended) {
-                this.seek(0);
-                this.ended = false;
-            }
-            this.play();
-        }
-    }
-
     private checkBuffer(this: NonNativePlayer) {
-        if (this.buffering === false) {
+        if (!this.buffering) {
             return;
         }
 
@@ -146,22 +133,16 @@ export abstract class NonNativePlayer extends Player {
         }
     }
 
-    protected override ondragended(this: NonNativePlayer, event: MouseEvent | TouchEvent): void {
-        super.ondragended(event, this.IS_VIDEO);
-    }
-
     protected override onplay(this: NonNativePlayer): void {
         super.onplay();
         if (this.IS_VIDEO) {
-            this.playing = true;
             this.startBuffer();
         }
     }
 
-    protected override onpause(this: NonNativePlayer, forceStatusChange = false): void {
+    protected override onpause(this: NonNativePlayer): void {
         if (this.IS_VIDEO) {
-            if (!this.buffering || forceStatusChange) {
-                this.playing = false;
+            if (!this.buffering) {
                 super.onpause();
             }
         } else {
