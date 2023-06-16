@@ -414,11 +414,12 @@ export class Player {
     }
 
     protected seekCheck(this: Player, timestamp: number): void {
-        if (timestamp >= this.media.duration) {
+        if (timestamp >= this.media.duration - this.maxBufferHole) {
             if (!this.dragging) {
+                this.onScreenConsoleOutput('Seeked to end: ' + timestamp + '.');
                 this.ended = true;
             }
-        } else if (this.media.currentTime !== timestamp) {
+        } else {
             this.ended = false;
         }
     }
@@ -497,12 +498,10 @@ export class Player {
             this.dragging = true;
             this.draggingPreviewTimeout = 4;
             if (!this.media.paused) {
-                this.pause();
-                this.playing = true; // This line should be after this.pause() since playing is set to false in pause function.
+                this.pause(false);
+                this.playing = true;
             }
-
             this.ended = false;
-
             this.progressUpdate(event as MouseEvent | TouchEvent);
         }.bind(this));
 
@@ -596,7 +595,7 @@ export class Player {
         });
 
         addEventListener(this.media, 'waiting', function (this: Player) {
-            if (this.media.currentTime >= this.media.duration - 0.1) {
+            if (this.media.currentTime >= this.media.duration - this.maxBufferHole) {
                 this.onScreenConsoleOutput('Playback entered waiting state before ended at ' + this.media.currentTime + '.');
                 this.ended = true;
             } else {
@@ -760,7 +759,7 @@ export class Player {
         this.ended = false;
     }
 
-    protected ondragended(this: Player, event: MouseEvent | TouchEvent): void {
+    protected ondragended(this: Player, event: MouseEvent | TouchEvent, keepPlayingStatus = false): void {
         this.dragging = false;
         this.active = true; // The timeout won't decrease when this.dragging == true.
 
@@ -769,7 +768,9 @@ export class Player {
 
         if (this.playing) {
             this.play();
-            this.playing = false;
+            if (!keepPlayingStatus) {
+                this.playing = false;
+            }
         }
         this.focus();
     }

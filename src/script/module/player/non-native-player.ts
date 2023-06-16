@@ -75,14 +75,14 @@ export abstract class NonNativePlayer extends Player {
         };
 
         const bufferedRange = this.getBufferedRange();
-        if (bufferedRange.length == 0 && this.media.currentTime >= this.media.duration - 0.1) {
+        if (bufferedRange.length == 0 && this.media.currentTime >= this.media.duration - this.maxBufferHole) {
             endBuffer();
             this.ended = true;
         }
         for (const buffer of bufferedRange) {
             if (this.media.currentTime < buffer.end) {
                 this.onScreenConsoleOutput('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this.media.currentTime);
-                if (buffer.start <= this.media.currentTime + this.maxBufferHole && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - 0.1)) {
+                if (buffer.start <= this.media.currentTime + this.maxBufferHole && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - this.maxBufferHole)) {
                     endBuffer();
                     this.onScreenConsoleOutput('Buffer complete!');
                     if (this.playing && !this.dragging) {
@@ -113,7 +113,7 @@ export abstract class NonNativePlayer extends Player {
 
         const bufferedRange = this.getBufferedRange();
         if (bufferedRange.length == 0) {
-            if (this.media.currentTime >= this.media.duration - 0.1) { // Media should be ended when it's near the end there's no more buffer.
+            if (this.media.currentTime >= this.media.duration - this.maxBufferHole) { // Media should be ended when it's near the end there's no more buffer.
                 this.ended = true;
             } else {
                 addCheckBuffer();
@@ -122,7 +122,7 @@ export abstract class NonNativePlayer extends Player {
         } else {
             for (const buffer of bufferedRange) {
                 if (this.media.currentTime < buffer.end) {
-                    if (buffer.start > this.media.currentTime + this.maxBufferHole || buffer.end < Math.min(this.media.currentTime + 14.9, this.media.duration - 0.1)) {
+                    if (buffer.start > this.media.currentTime + this.maxBufferHole || buffer.end < Math.min(this.media.currentTime + 14.9, this.media.duration - this.maxBufferHole)) {
                         addCheckBuffer();
                         this.onScreenConsoleOutput('Buffer under threshold, start buffering.');
                     } else {
@@ -147,11 +147,7 @@ export abstract class NonNativePlayer extends Player {
     }
 
     protected override ondragended(this: NonNativePlayer, event: MouseEvent | TouchEvent): void {
-        const playing = this.playing;
-        super.ondragended(event);
-        if (this.IS_VIDEO) {
-            this.playing = playing;
-        }
+        super.ondragended(event, this.IS_VIDEO);
     }
 
     protected override onplay(this: NonNativePlayer): void {
