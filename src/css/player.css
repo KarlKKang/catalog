@@ -101,7 +101,7 @@
   margin: 0 !important;
 }
 
-.player.player-user-inactive {
+.player.player-has-started.player-user-inactive {
   cursor: none;
 }
 
