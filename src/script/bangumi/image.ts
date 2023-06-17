@@ -113,6 +113,7 @@ export default async function (
     addClass(downloadPanel, 'panel');
     downloadPanel.innerHTML = '<ul>' +
         '<li>画像をクリックすると、ダウンロードできます。</li>' +
+        '<li>iOSをご利用の方は、iOS 14以降が必要となります。</li>' +
         '</ul>';
 
     addAccordionEvent(downloadAccordion, downloadPanel);
