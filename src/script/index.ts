@@ -26,7 +26,6 @@ import {
     addClass,
     changeURL,
     appendChild,
-    setDataAttribute,
     showElement,
     getBaseURL,
     insertBefore,
@@ -35,11 +34,9 @@ import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
 import { moduleImportError } from './module/message/template/param';
 import * as SeriesInfo from './module/type/SeriesInfo';
-import { default as importLazyload } from './module/lazyload';
+import type { default as LazyloadObserve } from './module/lazyload';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 import isbot from 'isbot';
-
-let lazyloadInitialize: () => void;
 
 let searchBar: HTMLElement;
 let searchBarInput: HTMLInputElement;
@@ -48,7 +45,7 @@ let containerElem: HTMLElement;
 let pivot: SeriesInfo.Pivot = 0;
 let keywords = '';
 
-let lazyloadImportPromise: ReturnType<typeof importLazyload>;
+let lazyloadObserve: typeof LazyloadObserve;
 let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 addEventListener(w, 'load', function () {
@@ -64,7 +61,10 @@ addEventListener(w, 'load', function () {
     }
 
     // Preload module
-    lazyloadImportPromise = importLazyload();
+    const lazyloadImportPromise = import(
+        /* webpackExports: ["default"] */
+        './module/lazyload'
+    );
 
     searchBar = getById('search-bar');
     searchBarInput = getDescendantsByTagAt(searchBar, 'input', 0) as HTMLInputElement;
@@ -74,7 +74,7 @@ addEventListener(w, 'load', function () {
     getURLKeywords();
     getSeries(async function (seriesInfo: SeriesInfo.SeriesInfo) {
         try {
-            lazyloadInitialize = await lazyloadImportPromise;
+            lazyloadObserve = (await lazyloadImportPromise).default;
         } catch (e) {
             showMessage(moduleImportError(e));
             throw e;
@@ -138,8 +138,6 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
         addClass(overlay, 'overlay');
         appendChild(thumbnailNode, overlay);
         addClass(thumbnailNode, 'lazyload');
-        setDataAttribute(thumbnailNode, 'src', CDN_URL + '/thumbnails/' + seriesEntry.thumbnail);
-        setDataAttribute(thumbnailNode, 'alt', 'サムネイル：' + seriesEntry.title);
         titleNode.innerHTML = seriesEntry.title;
         addClass(titleNode, 'ellipsis-clipping-2');
 
@@ -147,9 +145,8 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
         addClass(seriesNode, 'series');
 
         appendChild(containerElem, seriesNode);
+        lazyloadObserve(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title);
     }
-
-    lazyloadInitialize();
 
     infiniteScrolling.setEnabled(true);
     infiniteScrolling.updatePosition();

@@ -1,5 +1,3 @@
-import { default as importLazyload } from '../module/lazyload';
-
 type UpdatePageImportPromise = Promise<typeof import(
     /* webpackExports: ["default"] */
     './update_page'
@@ -16,7 +14,10 @@ export type VideoImportPromise = Promise<typeof import(
     /* webpackExports: ["default"] */
     './video'
 )>;
-export type LazyloadImportPromise = ReturnType<typeof importLazyload>;
+export type LazyloadImportPromise = Promise<typeof import(
+    /* webpackExports: ["default"] */
+    '../module/lazyload'
+)>;
 export type NativePlayerImportPromise = Promise<typeof import(
     /* webpackExports: ["Player"] */
     '../module/player/player'
@@ -59,7 +60,10 @@ export default function (): AllPromises {
             /* webpackExports: ["default"] */
             './video'
         ),
-        lazyload: importLazyload(),
+        lazyload: import(
+            /* webpackExports: ["default"] */
+            '../module/lazyload'
+        ),
         nativePlayer: import(
             /* webpackExports: ["Player"] */
             '../module/player/player'

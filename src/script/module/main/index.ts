@@ -43,7 +43,7 @@ export function getURLParam(name: string): string | null {
 }
 
 interface SendServerRequestOption {
-    callback?: (response: string) => void;
+    callback?: (response: string) => void | Promise<void>;
     content?: string;
     withCredentials?: boolean;
     method?: 'POST' | 'GET';

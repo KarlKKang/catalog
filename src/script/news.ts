@@ -32,7 +32,6 @@ import {
     getHash,
     getDataAttribute,
     showElement,
-    setDataAttribute,
     containsClass,
     setCookie,
 } from './module/dom';
@@ -42,14 +41,17 @@ import { moduleImportError } from './module/message/template/param';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
-import { default as importLazyload } from './module/lazyload';
 import isbot from 'isbot';
 import { LocalImageParam } from './module/type/LocalImageParam';
+import type { default as LazyloadObserve } from './module/lazyload';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo = 0;
 let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
-let lazyloadImportPromise: ReturnType<typeof importLazyload>;
+let lazyloadImportPromise: Promise<typeof import(
+    /* webpackExports: ["default"] */
+    './module/lazyload'
+)>;
 
 addEventListener(w, 'load', function () {
     if (!getBaseURL().startsWith(NEWS_TOP_URL)) {
@@ -71,7 +73,10 @@ addEventListener(w, 'load', function () {
         infiniteScrolling = initializeInfiniteScrolling(getAllNews);
         getAllNews();
     } else {
-        lazyloadImportPromise = importLazyload();
+        lazyloadImportPromise = import(
+            /* webpackExports: ["default"] */
+            './module/lazyload'
+        );
         getNews(newsID);
     }
 });
@@ -145,7 +150,15 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
     attachImage(contentContainer, newsID);
 }
 
-function attachImage(contentContainer: HTMLElement, newsID: string): void {
+async function attachImage(contentContainer: HTMLElement, newsID: string): Promise<void> {
+    let lazyloadObserve: typeof LazyloadObserve;
+    try {
+        lazyloadObserve = (await lazyloadImportPromise).default;
+    } catch (e) {
+        showMessage(moduleImportError(e));
+        throw e;
+    }
+
     const baseURL = CDN_URL + '/news/' + newsID + '/';
     const elems = getDescendantsByClass(contentContainer, 'image-internal');
     for (const elem of elems) {
@@ -155,9 +168,7 @@ function attachImage(contentContainer: HTMLElement, newsID: string): void {
             continue;
         }
         const xhrParam = encodeURIComponent(JSON.stringify({ news: newsID, file: src }));
-        setDataAttribute(elem, 'src', baseURL + encodeCFURIComponent(src));
-        setDataAttribute(elem, 'alt', src);
-        setDataAttribute(elem, 'xhr-param', xhrParam);
+        lazyloadObserve(elem, baseURL + encodeCFURIComponent(src), src, { xhrParam: xhrParam });
         if (containsClass(elem, 'image-enlarge')) {
             addEventListener(elem, 'click', function () {
                 const param: LocalImageParam = {
@@ -173,11 +184,6 @@ function attachImage(contentContainer: HTMLElement, newsID: string): void {
         }
         removeRightClick(elem);
     }
-    lazyloadImportPromise.then((lazyloadInitialize) => {
-        lazyloadInitialize();
-    }).catch((e) => {
-        showMessage(moduleImportError(e));
-    });
 }
 
 function bindEventListners(contentContainer: HTMLElement): void {

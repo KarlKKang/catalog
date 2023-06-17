@@ -13,7 +13,6 @@ import {
     setCookie,
     appendChild,
     getTitle,
-    setDataAttribute,
     prependChild,
     getById,
 } from '../module/dom';
@@ -22,12 +21,21 @@ import type { LocalImageParam } from '../module/type/LocalImageParam';
 import type { LazyloadImportPromise } from './get_import_promises';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
+import type { default as LazyloadObserve } from '../module/lazyload';
 
-export default function (
+export default async function (
     epInfo: ImageEPInfo,
     baseURL: string,
     lazyloadImportPromise: LazyloadImportPromise
 ) {
+    let lazyloadObserve: typeof LazyloadObserve;
+    try {
+        lazyloadObserve = (await lazyloadImportPromise).default;
+    } catch (e) {
+        showMessage(moduleImportError(e));
+        throw e;
+    }
+
     const contentContainer = getById('content');
     const mediaHolder = getById('media-holder');
 
@@ -56,11 +64,6 @@ export default function (
         appendChild(imageNode, overlay);
 
         addClass(imageNode, 'lazyload');
-        setDataAttribute(imageNode, 'lazyload-delay', '250');
-        setDataAttribute(imageNode, 'src', baseURL + encodeCFURIComponent(file.file_name));
-        setDataAttribute(imageNode, 'alt', file.file_name);
-        setDataAttribute(imageNode, 'xhr-param', index.toString());
-        setDataAttribute(imageNode, 'media-session-credential', epInfo.media_session_credential);
         addEventListener(imageNode, 'click', function () {
             const param: LocalImageParam = {
                 baseURL: baseURL,
@@ -74,11 +77,10 @@ export default function (
         });
         removeRightClick(imageNode);
         appendChild(mediaHolder, imageNode);
-    });
-
-    lazyloadImportPromise.then((lazyloadInitialize) => {
-        lazyloadInitialize();
-    }).catch((e) => {
-        showMessage(moduleImportError(e));
+        lazyloadObserve(imageNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
+            xhrParam: index.toString(),
+            mediaSessionCredential: epInfo.media_session_credential,
+            delay: 250
+        });
     });
 }
