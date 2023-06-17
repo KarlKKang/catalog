@@ -162,24 +162,19 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
     appendChild(downloadElem, accordion);
     appendChild(downloadElem, accordionPanel);
     appendChild(downloadElem, iframe);
-    addAccordionEvent(accordion);
+    addAccordionEvent(accordion, accordionPanel);
     return downloadElem;
 }
 
-export function addAccordionEvent(acc: HTMLElement): void {
+export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement): void {
     addEventListener(acc, 'click', function () {
         toggleClass(acc, 'active');
-        const panel = acc.nextElementSibling;
-        if (panel === null) {
-            return;
-        }
-        const panelCast = panel as HTMLElement;
-        if (panelCast.style.maxHeight !== '') {
-            panelCast.style.maxHeight = '';
-            panelCast.style.padding = '0px 1em';
+        if (panel.style.maxHeight !== '') {
+            panel.style.maxHeight = '';
+            panel.style.padding = '0px 1em';
         } else {
-            panelCast.style.maxHeight = getContentBoxHeight(panelCast) + 'px';
-            panelCast.style.padding = '1em';
+            panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
+            panel.style.padding = '1em';
         }
     });
 }

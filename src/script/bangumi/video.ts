@@ -399,7 +399,7 @@ function displayChapters(mediaInstance: Player) {
     addClass(chaptersNode, 'chapters');
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);
-    addAccordionEvent(accordion);
+    addAccordionEvent(accordion, accordionPanel);
     appendChild(mediaHolder, chaptersNode);
 
     const video = mediaInstance.media;
