@@ -207,19 +207,24 @@ export function passwordStyling(element: HTMLInputElement) {
     addEventListener(element, 'change', inputChangeHandler);
 }
 
+let currentNavTimeout: NodeJS.Timeout | null = null;
 function navUpdate() {
     const navBtn = getById('nav-btn');
     toggleClass(navBtn, 'active');
     const menu = getById('nav-menu');
 
     if (containsClass(navBtn, 'active')) {
+        currentNavTimeout = null;
         removeClass(menu, 'invisible');
         removeClass(menu, 'transparent');
     } else {
         addClass(menu, 'transparent');
-        setTimeout(function () {
-            addClass(menu, 'invisible');
+        const timeout = setTimeout(function () {
+            if (currentNavTimeout === timeout) {
+                addClass(menu, 'invisible');
+            }
         }, 300);
+        currentNavTimeout = timeout;
     }
 }
 
