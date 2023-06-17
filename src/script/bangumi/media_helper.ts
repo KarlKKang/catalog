@@ -16,6 +16,7 @@ import {
     getByIdNative,
     getDescendantsByClassAt,
     hideElement,
+    getBaseURL,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -143,7 +144,7 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
         downloadButton.disabled = true;
         sendServerRequest('start_download.php', {
             callback: function (response: string) {
-                if (response.startsWith(CDN_URL)) {
+                if (getBaseURL(response).startsWith(CDN_URL + '/download/')) {
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {

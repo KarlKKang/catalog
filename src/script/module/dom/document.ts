@@ -11,14 +11,20 @@ export function getBody() {
     return d.body;
 }
 
-export function getBaseURL(): string {
-    let url = windowLocation.href;
+export function getBaseURL(url?: string): string {
+    if (url === undefined) {
+        url = windowLocation.href;
+    }
+
     const protocolIndex = url.indexOf('://');
     let protocol = '';
     if (protocolIndex >= 0) {
         protocol = url.substring(0, protocolIndex + 3);
         url = url.substring(protocolIndex + 3);
     }
+
+    const atIndex = url.lastIndexOf('@');
+    url = url.substring(atIndex + 1);
 
     const hashIndex = url.indexOf('#');
     if (hashIndex >= 0) {
