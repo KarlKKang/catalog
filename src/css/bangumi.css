@@ -415,10 +415,8 @@ p.artist {
 
 /* Style the accordion panel. Note: hidden by default */
 .panel {
-    padding: 0 1em;
     margin: 0px;
     background-color: var(--foreground-color);
-    max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out, padding 0.2s ease-out, box-shadow .4s ease-out;
     box-shadow: var(--shadow);

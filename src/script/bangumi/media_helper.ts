@@ -17,6 +17,7 @@ import {
     getDescendantsByClassAt,
     hideElement,
     getBaseURL,
+    containsClass,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -167,14 +168,18 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
 }
 
 export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement): void {
+    const hidePanel = function () {
+        panel.style.maxHeight = '0px';
+        panel.style.padding = '0px 1em';
+    };
+    hidePanel();
     addEventListener(acc, 'click', function () {
         toggleClass(acc, 'active');
-        if (panel.style.maxHeight !== '') {
-            panel.style.maxHeight = '';
-            panel.style.padding = '0px 1em';
-        } else {
+        if (containsClass(acc, 'active')) {
             panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
             panel.style.padding = '1em';
+        } else {
+            hidePanel();
         }
     });
 }
