@@ -93,7 +93,7 @@ export default async function (
                             URL.revokeObjectURL(downloadAnchor.href);
                             downloadAnchor.href = '';
                             downloadButton.disabled = false;
-                        }, 0); // Should be triggered in the next event cycle otherwise the download will fail (at least in Chrome).
+                        }, 100); // Should be triggered in the next event cycle otherwise the download will fail (at least in Chrome). iOS 14 and earlier need some delays.
                     });
                     downloadAnchor.click();
                 });
@@ -113,7 +113,6 @@ export default async function (
     addClass(downloadPanel, 'panel');
     downloadPanel.innerHTML = '<ul>' +
         '<li>画像をクリックすると、ダウンロードできます。</li>' +
-        '<li>iOSをご利用の方は、iOS 14以降が必要となります。</li>' +
         '</ul>';
 
     addAccordionEvent(downloadAccordion, downloadPanel);
