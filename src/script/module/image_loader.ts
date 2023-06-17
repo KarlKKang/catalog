@@ -17,12 +17,12 @@ import { moduleImportError } from './message/template/param';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
-type webpMachineQueueItem = { container: Element; image: HTMLImageElement; webpData: Uint8Array; onload: (() => void) | undefined; onerror: () => void };
+type webpMachineQueueItem = { container: Element; image: HTMLImageElement; webpData: Uint8Array; onLoad: (() => void) | undefined; onError: () => void };
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 
-export default function (container: Element, src: string, alt: string, onload?: () => void, onerror?: () => void): XMLHttpRequest {
-    let blob: Blob;
+export default function (container: Element, src: string, alt: string, onImageDraw?: () => void, onDataLoad?: (data: Blob) => void, onError?: () => void): XMLHttpRequest {
+    let imageData: Blob;
     let isWebp: boolean;
 
     const image = new Image();
@@ -32,11 +32,11 @@ export default function (container: Element, src: string, alt: string, onload?: 
         if (DEVELOPMENT) {
             console.log('Unrecoverable error occured when loading the image.');
         }
-        const errorImage = new Image(); // Should not reuse the old Image instance since setting src to //:0 triggers onerror event.
+        const errorImage = new Image(); // Should not reuse the old Image instance since setting src to //:0 triggers onError event.
         errorImage.src = '//:0';
         errorImage.alt = alt;
         appendChild(container, errorImage);
-        onerror && onerror();
+        onError && onError();
     }
 
     function onImageError() {
@@ -57,7 +57,7 @@ export default function (container: Element, src: string, alt: string, onload?: 
             }
 
             const webpData = new Uint8Array(base64URL);
-            webpMachineQueue.push({ container: container, image: image, webpData: webpData, onload: onload, onerror: finalizeErrorImage });
+            webpMachineQueue.push({ container: container, image: image, webpData: webpData, onLoad: onImageDraw, onError: finalizeErrorImage });
             if (webpMachineActive) {
                 if (DEVELOPMENT) {
                     console.log('Webp Machine active. Pushed ' + image.alt + ' to queue.');
@@ -70,7 +70,7 @@ export default function (container: Element, src: string, alt: string, onload?: 
                 }
             }
         });
-        reader.readAsArrayBuffer(blob);
+        reader.readAsArrayBuffer(imageData);
     }
 
     function onImageLoad() {
@@ -95,7 +95,7 @@ export default function (container: Element, src: string, alt: string, onload?: 
 
         imageProtection(canvas);
         appendChild(container, canvas);
-        onload && onload();
+        onImageDraw && onImageDraw();
     }
 
     function removeImageListeners() {
@@ -123,8 +123,9 @@ export default function (container: Element, src: string, alt: string, onload?: 
         removeXHRListeners();
         if (xhr.status === 200) {
             isWebp = xhr.getResponseHeader('Content-Type') === 'image/webp';
-            blob = xhr.response as Blob;
-            image.src = URL.createObjectURL(blob);
+            imageData = xhr.response as Blob;
+            image.src = URL.createObjectURL(imageData);
+            onDataLoad && onDataLoad(imageData);
         } else {
             finalizeErrorImage();
         }
@@ -161,7 +162,7 @@ async function startWebpMachine() {
     let queueNext = webpMachineQueue.shift();
     while (queueNext !== undefined) {
         if (webpSupported) {
-            queueNext.onerror();
+            queueNext.onError();
         } else {
             await drawWebp(webpMachine, queueNext);
         }
@@ -187,8 +188,8 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
     canvas.style.removeProperty('height');
     imageProtection(canvas);
     appendChild(queueItem.container, canvas);
-    const onload = queueItem.onload;
-    onload && onload();
+    const onLoad = queueItem.onLoad;
+    onLoad && onLoad();
 }
 
 function imageProtection(elem: HTMLElement) {

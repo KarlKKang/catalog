@@ -1,50 +1,65 @@
-(function () {
+let dynamicImportPromise: Promise<any> | null = null; // eslint-disable-line @typescript-eslint/no-unused-vars, prefer-const
+
+function unsupportRedirect() {
     const URL = 'https://<%=data.domain%>/unsupported_browser';
     const windowLocation = window.location;
+    windowLocation.replace(URL);
+}
 
+(function () {
     if (!('onerror' in window)) {
-        windowLocation.replace(URL);
+        unsupportRedirect();
         return;
     }
 
     if (!window.addEventListener) {
-        windowLocation.replace(URL);
+        unsupportRedirect();
         return;
     }
 
     if (!window.SyntaxError) {
-        windowLocation.replace(URL);
+        unsupportRedirect();
         return;
     }
 
     window.addEventListener('error', function (e) {
         if (e.error instanceof SyntaxError) {
-            windowLocation.replace(URL);
+            unsupportRedirect();
         }
     }, true);
 
     if (!window.Function || !Function.prototype.bind) {
-        windowLocation.replace(URL);
+        unsupportRedirect();
         return;
     }
 
     if (!window.XMLHttpRequest || !('withCredentials' in new XMLHttpRequest())) {
-        windowLocation.replace(URL);
+        unsupportRedirect();
         return;
     }
 
     if (!window.HTMLScriptElement) {
-        windowLocation.replace(URL);
+        unsupportRedirect();
         return;
     }
 
     if (!('noModule' in HTMLScriptElement.prototype)) {
-        windowLocation.replace(URL);
+        unsupportRedirect();
         return;
     }
 
     if (!window.CSS || !window.CSS.supports || !window.CSS.supports('(--a: 0)')) { // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
-        windowLocation.replace(URL);
+        unsupportRedirect();
         return;
     }
+
+    window.addEventListener('load', function () {
+        const dynamicImportScript = document.createElement('script');
+        dynamicImportScript.textContent = 'dynamicImportPromise=import("data:text/javascript;base64,Cg==")';
+        document.body.appendChild(dynamicImportScript);
+
+        const checkScript = document.createElement('script');
+        checkScript.textContent = 'dynamicImportPromise instanceof Promise?dynamicImportPromise.catch(function(){unsupportRedirect()}):unsupportRedirect()';
+        document.body.appendChild(checkScript);
+    });
 })();

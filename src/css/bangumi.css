@@ -237,7 +237,7 @@ select:hover {
 
 #media-holder>.lazyload {
     width: 100%;
-    margin: 0px 0px 1em 0px;
+    margin: 1em 0px 0px 0px;
 }
 
 #media-holder>.lazyload,
@@ -465,15 +465,15 @@ p.artist {
     text-align: center;
 }
 
-#download-button {
-    margin-bottom: 1em;
+.download-button {
+    margin: 1em 0px 1em 0px;
 }
 
 #os-selector {
     max-width: 150px;
     width: 100%;
     position: relative;
-    margin: 0px 0px 1em 0px;
+    margin: 0px;
     left: 50%;
     transform: translate(-50%, 0%);
 }
@@ -481,8 +481,4 @@ p.artist {
 .download>.panel>ul {
     padding: 0px 0px 0px 2em;
     text-align: left;
-}
-
-#download-iframe {
-    display: none;
 }

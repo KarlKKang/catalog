@@ -52,7 +52,7 @@ for (const entry of jsEntries) {
                         passes: 5
                     },
                     mangle: true, // Note `mangle.properties` is `false` by default.
-                    module: true,
+                    module: false,
                     // Deprecated
                     output: null,
                     format: null,

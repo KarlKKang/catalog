@@ -169,6 +169,10 @@ button:disabled {
     width: 100%;
 }
 
+.lazyload {
+    background: var(--foreground-color);
+}
+
 .lazyload.complete {
     padding-bottom: 0px !important;
 }

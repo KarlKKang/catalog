@@ -29,6 +29,7 @@ type TargetData = {
     xhrParam: string | null;
     mediaSessionCredential: string | null;
     delay: number;
+    onDataLoad: ((data: Blob) => void) | undefined;
     status: Status;
     xhr: XMLHttpRequest | null;
 };
@@ -48,6 +49,7 @@ export default function (
         xhrParam?: string;
         mediaSessionCredential?: string;
         delay?: number;
+        onDataLoad?: (data: Blob) => void;
     }
 ) {
     if (options === undefined) {
@@ -61,6 +63,7 @@ export default function (
         xhrParam: options.xhrParam || null,
         mediaSessionCredential: options.mediaSessionCredential || null,
         delay: options.delay || 0,
+        onDataLoad: options.onDataLoad,
         status: Status.LISTENING,
         xhr: null
     });
@@ -84,12 +87,12 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 
                     targetData.status = Status.LOADING;
 
-                    const onload = function () {
+                    const onImageDraw = function () {
                         observer.unobserve(target);
                         targets.delete(target);
                         addClass(target, 'complete');
                     };
-                    const onerror = function () {
+                    const onError = function () {
                         observer.unobserve(target);
                         targets.delete(target);
                     };
@@ -115,12 +118,12 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                                 }
 
                                 const url = concatenateSignedURL(targetData.src, credentials);
-                                targetData.xhr = (await imageLoaderImportPromise).default(target, url, targetData.alt, onload, onerror);
+                                targetData.xhr = (await imageLoaderImportPromise).default(target, url, targetData.alt, onImageDraw, targetData.onDataLoad, onError);
                             },
                             content: content
                         });
                     } else {
-                        targetData.xhr = (await imageLoaderImportPromise).default(target, targetData.src, targetData.alt, onload, onerror);
+                        targetData.xhr = (await imageLoaderImportPromise).default(target, targetData.src, targetData.alt, onImageDraw, targetData.onDataLoad, onError);
                     }
                 }, targetData.delay);
             }
@@ -129,7 +132,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                 targetData.status = Status.LISTENING;
             } else if (targetData.status === Status.LOADING) {
                 if (targetData.xhr !== null) {
-                    if (targetData.xhr.readyState === 4) { // onload for the imageLoader may be called after decoding webp.
+                    if (targetData.xhr.readyState === 4) { // onImageDraw for the imageLoader may be called after decoding webp.
                         continue;
                     } else {
                         targetData.xhr.abort();

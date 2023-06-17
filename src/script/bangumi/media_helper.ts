@@ -132,12 +132,12 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
     appendChild(accordionPanel, osSelector);
 
     const downloadButton = createElement('button') as HTMLButtonElement;
-    downloadButton.id = 'download-button';
+    addClass(downloadButton, 'download-button');
     addClass(downloadButton, 'button');
     downloadButton.innerHTML = 'ダウンロード';
 
     const iframe = createElement('iframe') as HTMLIFrameElement;
-    iframe.id = 'download-iframe';
+    hideElement(iframe);
     iframe.height = '0';
     iframe.width = '0';
 
