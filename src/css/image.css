@@ -11,21 +11,25 @@ html {
     }
 }
 
-body {
+body,
+#flex-container,
+#image-container {
     padding: 0px;
     margin: 0px;
 }
 
+#flex-container {
+    display: flex;
+}
+
 #image-container {
     position: relative;
-    padding: 0px;
-    width: 100%;
+    display: block;
 }
 
 #image-container>img,
 #image-container>canvas {
     display: block;
-    max-width: 100%;
     pointer-events: none;
     -webkit-touch-callout: none;
 }
