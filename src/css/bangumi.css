@@ -469,6 +469,10 @@ p.artist {
     margin: 1em 0px 1em 0px;
 }
 
+.image-download-button {
+    margin: 0px;
+}
+
 #os-selector {
     max-width: 150px;
     width: 100%;

@@ -65,7 +65,7 @@ export default async function (
         addClass(downloadPanel, 'download');
         addClass(downloadPanel, 'panel');
         addClass(downloadButton, 'button');
-        addClass(downloadButton, 'download-button');
+        addClass(downloadButton, 'image-download-button');
         downloadButton.disabled = true;
         downloadButton.innerHTML = 'ダウンロード';
         appendChild(downloadPanel, downloadButton);
