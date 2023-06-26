@@ -6,12 +6,12 @@
 }
 
 html {
-    font-family: 'Noto Sans JP', '游ゴシック体', '游ゴシック', 'Yu Gothic', 'メイリオ', Meiryo, sans-serif;
+    font-family: 'Noto Sans JP', 'メイリオ', Meiryo, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
 }
 
 :lang(en) {
-    font-family: roboto, 'Noto Sans Myanmar UI', arial, sans-serif;
+    font-family: roboto, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
 }
 

@@ -74,13 +74,13 @@ select,
 option,
 button,
 input {
-    font-family: 'Noto Sans JP', '游ゴシック体', '游ゴシック', 'Yu Gothic', 'メイリオ', Meiryo, sans-serif;
+    font-family: 'Noto Sans JP', 'メイリオ', Meiryo, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
     color: var(--text-color);
 }
 
 .multi-language {
-    font-family: 'Noto Sans JP', 'Noto Sans TC', 'Noto Sans SC', '游ゴシック体', '游ゴシック', 'Yu Gothic', 'メイリオ', Meiryo, 'PingFang TC', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-family: 'Noto Sans JP', 'Noto Sans TC', 'Noto Sans SC', 'メイリオ', Meiryo, 'PingFang TC', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 
 html {
