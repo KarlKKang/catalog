@@ -21,7 +21,9 @@
     "lint": "npx eslint src/script/ --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "publish": "sh publish.sh featherine-website ./dist/",
-    "publish-dev": "sh publish.sh featherine-website-alpha ./dev/"
+    "publish-dev": "sh publish.sh featherine-website-alpha ./dev/",
+    "init-sync": "sh init_sync.sh featherine-website ./dist/",
+    "init-sync-dev": "sh init_sync.sh featherine-website-alpha ./dev/"
   },
   "author": "Kai Kang",
   "license": "MIT",

@@ -6,6 +6,7 @@ _notes/
 /node_modules/
 .DS_Store
 /publish.log
+/init_sync.log
 /dev/
 __pycache__
 *.pem
