@@ -98,12 +98,14 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
     const accordionPanel = createElement('div');
     addClass(accordionPanel, 'panel');
 
-    accordionPanel.innerHTML = '<ul>' +
-        '<li>下の「ダウンロード」ボタンをクリックすると、必要なツールやスクリプトが入ったZIPファイルのダウンロードが開始されます。</li>' +
-        '<li>ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。</li>' +
-        '<li>スクリプトの実行には、Windows 10、Mac OS X 10.9、Linux 3.2.0以上を搭載したパソコンが必要です。</li>' +
-        '<li>インターネット接続が良好であることをご確認してください。</li>' +
-        '</ul>';
+    const accordionPannelContent = createElement('ul') as HTMLUListElement;
+    appendListItems(accordionPannelContent, [
+        '下の「ダウンロード」ボタンをクリックすると、必要なツールやスクリプトが入ったZIPファイルのダウンロードが開始されます。',
+        'ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。',
+        'スクリプトの実行には、Windows 10、Mac OS X 10.9、Linux 3.2.0以上を搭載したパソコンが必要です。',
+        'インターネット接続が良好であることをご確認してください。',
+    ]);
+    appendChild(accordionPanel, accordionPannelContent);
 
     const osSelector = createElement('div');
     osSelector.id = 'os-selector';
@@ -165,6 +167,14 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
     appendChild(downloadElem, iframe);
     addAccordionEvent(accordion, accordionPanel);
     return downloadElem;
+}
+
+function appendListItems(list: HTMLUListElement, contents: string[]): void {
+    for (const content of contents) {
+        const item = createElement('li');
+        item.textContent = content;
+        appendChild(list, item);
+    }
 }
 
 export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement): void {
