@@ -96,6 +96,10 @@ export class Player {
             removePlayerClass(this.playButton, 'paused');
             addPlayerClass(this.controls, 'playing');
             removePlayerClass(this.controls, 'paused');
+            if (this.ended) {
+                this.seek(0);
+            }
+            this.ended = false;
         } else {
             removePlayerClass(this.playButton, 'playing');
             addPlayerClass(this.playButton, 'paused');
@@ -396,6 +400,7 @@ export class Player {
     }
 
     public play(this: Player) {
+        this.playing = true;
         const playPromise = this.media.play();
         this.playPromise = playPromise;
         if (playPromise !== undefined) {
@@ -833,10 +838,6 @@ export class Player {
     protected onplay(this: Player): void {
         this.onScreenConsoleOutput('Playback started at ' + this.media.currentTime + '.');
         this.playing = true;
-        if (this.ended) {
-            this.seek(0);
-        }
-        this.ended = false;
     }
 
     protected onpause(this: Player): void {
