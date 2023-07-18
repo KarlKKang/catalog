@@ -29,7 +29,7 @@ import type { VideojsPlayer as VideojsPlayerType } from '../module/player/videoj
 
 import { parseCharacters } from './helper';
 import {
-    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, getDownloadAccordion, showPlayerError
+    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError
 } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
 
@@ -68,7 +68,7 @@ export default function (
     const audioEPInfo = epInfo as AudioEPInfo;
 
     addAlbumInfo();
-    appendChild(getById('content'), getDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex));
+    appendChild(getById('content'), buildDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex, null)[0]);
 
     if (!MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();

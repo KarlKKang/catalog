@@ -9,7 +9,6 @@ import {
     getById,
     createElement,
     addClass,
-    getDescendantsByTagAt,
     getTitle,
     setClass,
     getDescendantsByTag,
@@ -44,7 +43,7 @@ import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
-import { showHLSCompatibilityError, showCodecCompatibilityError, getDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError } from './media_helper';
+import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import { CustomMediaError } from '../module/player/media_error';
 
@@ -135,19 +134,19 @@ export default function (
     insertBefore(formatContainer, mediaHolder);
 
     // Download Accordion
-    appendChild(contentContainer, getDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex));
+    const [downloadAccordion, containerSelector] = buildDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
+    appendChild(contentContainer, downloadAccordion);
 
     // Video Node
-    addEventListener(selectMenu, 'change', formatSwitch);
+    addEventListener(selectMenu, 'change', function () { formatSwitch(selectMenu, containerSelector); });
     addVideoNode({
         startTime: startTime === null ? undefined : startTime,
         play: play
     });
 }
 
-function formatSwitch() {
-    const formatSelector = (getDescendantsByTagAt(getById('format-selector'), 'select', 0) as HTMLSelectElement);
-    const formatIndex = formatSelector.selectedIndex;
+function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HTMLElement) {
+    const formatIndex = formatSelectMenu.selectedIndex;
 
     const format = epInfo.formats[formatIndex];
     if (format === undefined) {
@@ -158,8 +157,14 @@ function formatSwitch() {
 
     sendServerRequest('authenticate_media_session.php', {
         callback: function (response: string) {
-            if (response != 'APPROVED') {
+            if (response !== 'APPROVED') {
                 showMessage(invalidResponse);
+            }
+
+            if (format.direct_download) {
+                hideElement(containerSelector);
+            } else {
+                showElement(containerSelector);
             }
 
             let config: {

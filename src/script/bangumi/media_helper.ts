@@ -23,9 +23,10 @@ import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
 import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
-import { createMessageElem, getContentBoxHeight, getFormatIndex, getLogoutParam } from './helper';
+import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper';
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import { CustomMediaError } from '../module/player/media_error';
+import { VideoFormatInfo } from '../module/type/BangumiInfo';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -89,11 +90,19 @@ export function showMediaMessage(title: string, body: string, titleColor: string
     prependChild(getById('media-holder'), messageElem);
 }
 
-export function getDownloadAccordion(mediaSessionCredential: string, seriesID: string, epIndex: number): HTMLElement {
-
+export function buildDownloadAccordion(
+    mediaSessionCredential: string,
+    seriesID: string,
+    epIndex: number,
+    videoFormats: null | {
+        selectMenu: HTMLSelectElement;
+        formats: VideoFormatInfo[];
+        initialFormat: VideoFormatInfo;
+    }
+): [HTMLElement, HTMLElement] {
     const accordion = createElement('button');
     addClass(accordion, 'accordion');
-    accordion.innerHTML = 'DOWNLOAD';
+    accordion.textContent = 'DOWNLOAD';
 
     const accordionPanel = createElement('div');
     addClass(accordionPanel, 'panel');
@@ -102,36 +111,62 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
     appendListItems(accordionPannelContent, [
         '下の「ダウンロード」ボタンをクリックすると、必要なツールやスクリプトが入ったZIPファイルのダウンロードが開始されます。',
         'ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。',
-        'スクリプトの実行には、Windows 10、Mac OS X 10.9、Linux 3.2.0以上を搭載したパソコンが必要です。',
+        'スクリプトを実行するには、Windows、macOS、またはLinuxを搭載したパソコンが必要です。',
         'インターネット接続が良好であることをご確認してください。',
     ]);
     appendChild(accordionPanel, accordionPannelContent);
 
+    const downloadOptionsContainer = createElement('div');
+    downloadOptionsContainer.id = 'download-options';
+
     const osSelector = createElement('div');
-    osSelector.id = 'os-selector';
     addClass(osSelector, 'select');
-    const selectMenu = createElement('select') as HTMLSelectElement;
-    const optionWindows = createElement('option') as HTMLOptionElement;
-    const optionMac = createElement('option') as HTMLOptionElement;
-    const optionLinux = createElement('option') as HTMLOptionElement;
-    optionWindows.value = '1';
-    optionMac.value = '2';
-    optionLinux.value = '0';
-    optionWindows.innerHTML = 'Windows 10 / 11';
-    optionMac.innerHTML = 'Mac OS X 10.9 +';
-    optionLinux.innerHTML = 'Linux 3.2.0 +';
+    const osSelectMenu = createElement('select') as HTMLSelectElement;
+    const osOptionWindows = createElement('option') as HTMLOptionElement;
+    const osOptionMac = createElement('option') as HTMLOptionElement;
+    const osOptionLinux = createElement('option') as HTMLOptionElement;
+    osOptionWindows.value = '1';
+    osOptionMac.value = '2';
+    osOptionLinux.value = '0';
+    osOptionWindows.textContent = 'Windows';
+    osOptionMac.textContent = 'macOS';
+    osOptionLinux.textContent = 'Linux';
     if (IS_WINDOWS) {
-        optionWindows.selected = true;
+        osOptionWindows.selected = true;
     } else if (IS_MACOS || IS_IOS) {
-        optionMac.selected = true;
+        osOptionMac.selected = true;
     } else {
-        optionLinux.selected = true;
+        osOptionLinux.selected = true;
     }
-    appendChild(selectMenu, optionWindows);
-    appendChild(selectMenu, optionMac);
-    appendChild(selectMenu, optionLinux);
-    appendChild(osSelector, selectMenu);
-    appendChild(accordionPanel, osSelector);
+    appendChild(osSelectMenu, osOptionWindows);
+    appendChild(osSelectMenu, osOptionMac);
+    appendChild(osSelectMenu, osOptionLinux);
+    appendChild(osSelector, osSelectMenu);
+    appendChild(downloadOptionsContainer, osSelector);
+
+    const containerSelector = createElement('div');
+    addClass(containerSelector, 'select');
+    const containerSelectMenu = createElement('select') as HTMLSelectElement;
+    const containerOptionTS = createElement('option') as HTMLOptionElement;
+    const containerOptionMKV = createElement('option') as HTMLOptionElement;
+    const containerOptionMP4 = createElement('option') as HTMLOptionElement;
+    containerOptionTS.value = '0';
+    containerOptionMKV.value = '1';
+    containerOptionMP4.value = '2';
+    containerOptionTS.textContent = 'MPEG Transport Stream (.ts)';
+    containerOptionMKV.textContent = 'Matroska (.mkv)';
+    containerOptionMP4.textContent = 'MPEG-4 Part 14 (.mp4)';
+    containerOptionTS.selected = true;
+    appendChild(containerSelectMenu, containerOptionTS);
+    appendChild(containerSelectMenu, containerOptionMKV);
+    appendChild(containerSelectMenu, containerOptionMP4);
+    appendChild(containerSelector, containerSelectMenu);
+    appendChild(downloadOptionsContainer, containerSelector);
+    if (videoFormats === null || videoFormats.initialFormat.direct_download) {
+        hideElement(containerSelector);
+    }
+
+    appendChild(accordionPanel, downloadOptionsContainer);
 
     const downloadButton = createElement('button') as HTMLButtonElement;
     addClass(downloadButton, 'download-button');
@@ -145,6 +180,18 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
 
     addEventListener(downloadButton, 'click', function () {
         downloadButton.disabled = true;
+        let requestContent = mediaSessionCredential + '&os=' + osSelectMenu.value;
+        if (videoFormats !== null) {
+            const formatIndex = videoFormats.selectMenu.selectedIndex;
+            requestContent += '&format=' + formatIndex;
+            const format = videoFormats.formats[formatIndex];
+            if (format === undefined) {
+                return;
+            }
+            if (format.direct_download !== true) {
+                requestContent += '&container=' + containerSelectMenu.value;
+            }
+        }
         sendServerRequest('start_download.php', {
             callback: function (response: string) {
                 if (getBaseURL(response).startsWith(CDN_URL + '/download/')) {
@@ -154,7 +201,7 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
                     showMessage(invalidResponse);
                 }
             },
-            content: mediaSessionCredential + '&format=' + getFormatIndex() + '&os=' + selectMenu.value,
+            content: requestContent,
             logoutParam: getLogoutParam(seriesID, epIndex)
         });
     });
@@ -166,7 +213,7 @@ export function getDownloadAccordion(mediaSessionCredential: string, seriesID: s
     appendChild(downloadElem, accordionPanel);
     appendChild(downloadElem, iframe);
     addAccordionEvent(accordion, accordionPanel);
-    return downloadElem;
+    return [downloadElem, containerSelector];
 }
 
 function appendListItems(list: HTMLUListElement, contents: string[]): void {

@@ -170,8 +170,11 @@ hr {
 #format-selector {
     max-width: 200px;
     width: 70%;
-    position: relative;
     margin: 0px 16px 16px 0px;
+}
+
+.select {
+    position: relative;
 }
 
 .select:after {
@@ -466,20 +469,25 @@ p.artist {
 }
 
 .download-button {
-    margin: 1em 0px 1em 0px;
+    margin: 0px 0px 1em 0px;
 }
 
 .image-download-button {
     margin: 0px;
 }
 
-#os-selector {
+#download-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0px;
+    margin: 0px -0.5em 0px -0.5em;
+}
+
+#download-options>div {
     max-width: 150px;
     width: 100%;
-    position: relative;
-    margin: 0px;
-    left: 50%;
-    transform: translate(-50%, 0%);
+    margin: 0px 0.5em 1em 0.5em;
 }
 
 .download>.panel>ul {
