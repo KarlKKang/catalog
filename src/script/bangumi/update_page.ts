@@ -27,6 +27,9 @@ import {
     hideElement,
     isHidden,
     getTitle,
+    createDivElement,
+    createButtonElement,
+    createParagraphElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -111,10 +114,10 @@ export default async function (
         const warningElem = createMessageElem(warningTitle, 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？', 'red');
         warningElem.id = 'warning';
 
-        const warningButtonGroup = createElement('div');
+        const warningButtonGroup = createDivElement();
         warningButtonGroup.id = 'warning-button-group';
-        const warningButtonYes = createElement('button');
-        const warningButtonNo = createElement('button');
+        const warningButtonYes = createButtonElement();
+        const warningButtonNo = createButtonElement();
         warningButtonYes.innerHTML = 'はい';
         warningButtonNo.innerHTML = 'いいえ';
         addClass(warningButtonYes, 'button');
@@ -187,12 +190,12 @@ export default async function (
 }
 
 function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
-    const epButtonWrapper = createElement('div');
+    const epButtonWrapper = createDivElement();
     epButtonWrapper.id = 'ep-button-wrapper';
 
     seriesEP.forEach(function (value, index) {
-        const epButton = createElement('div');
-        const epText = createElement('p');
+        const epButton = createDivElement();
+        const epText = createParagraphElement();
 
         epText.innerHTML = value;
 
@@ -211,7 +214,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     appendChild(epSelector, epButtonWrapper);
 
     EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10; //Add some extra pixels to compensate for slight variation and error.
-    const showMoreButton = createElement('p');
+    const showMoreButton = createParagraphElement();
     showMoreButton.id = 'show-more-button';
     hideElement(showMoreButton);
     appendChild(epSelector, showMoreButton);
@@ -228,14 +231,14 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
 }
 
 function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
-    const seasonButtonWrapper = createElement('div');
+    const seasonButtonWrapper = createDivElement();
     const seasonSelector = getById('season-selector');
     seasonButtonWrapper.id = 'season-button-wrapper';
 
     if (seasons.length != 0) {
         for (const season of seasons) {
-            const seasonButton = createElement('div');
-            const seasonText = createElement('p');
+            const seasonButton = createDivElement();
+            const seasonText = createParagraphElement();
 
             if (season.id != seriesID) {
                 seasonText.innerHTML = season.season_name;

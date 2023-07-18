@@ -7,7 +7,6 @@ import {
 import {
     addEventListener,
     getById,
-    createElement,
     addClass,
     getTitle,
     setClass,
@@ -21,6 +20,12 @@ import {
     remove,
     showElement,
     hideElement,
+    createParagraphElement,
+    createDivElement,
+    createSelectElement,
+    createOptionElement,
+    createButtonElement,
+    createSpanElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -85,7 +90,7 @@ export default function (
 
     // Title
     if (epInfo.title != '') {
-        const title = createElement('p');
+        const title = createParagraphElement();
         addClass(title, 'sub-title');
         addClass(title, 'center-align');
         title.innerHTML = epInfo.title;
@@ -96,13 +101,13 @@ export default function (
     let formatIndex = getFormatIndex();
     const formats = epInfo.formats;
 
-    const formatContainer = createElement('div');
+    const formatContainer = createDivElement();
     formatContainer.id = 'format-container';
-    const formatSelector = createElement('div');
+    const formatSelector = createDivElement();
     formatSelector.id = 'format-selector';
     addClass(formatSelector, 'select');
 
-    const selectMenu = createElement('select') as HTMLSelectElement;
+    const selectMenu = createSelectElement();
 
     if (formatIndex >= formats.length) {
         formatIndex = 0;
@@ -110,7 +115,7 @@ export default function (
     updateURLParam(seriesID, epIndex, formatIndex);
 
     formats.forEach(function (format, index) {
-        const option = createElement('option') as HTMLOptionElement;
+        const option = createOptionElement();
 
         option.value = format.value;
         option.innerHTML = (format.tag === undefined) ? format.value : format.tag;
@@ -126,7 +131,7 @@ export default function (
     appendChild(formatSelector, selectMenu);
     appendChild(formatContainer, formatSelector);
 
-    const formatDisplay = createElement('div');
+    const formatDisplay = createDivElement();
     formatDisplay.id = 'format-display';
     hideElement(formatDisplay);
     appendChild(formatContainer, formatDisplay);
@@ -295,7 +300,7 @@ async function addVideoNode(config?: {
         }
     }
 
-    const playerContainer = createElement('div') as HTMLDivElement;
+    const playerContainer = createDivElement();
     appendChild(mediaHolder, playerContainer);
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
@@ -377,16 +382,16 @@ async function addVideoNode(config?: {
 }
 
 function displayChapters(mediaInstance: Player) {
-    const accordion = createElement('button');
+    const accordion = createButtonElement();
     addClass(accordion, 'accordion');
     accordion.textContent = 'CHAPTERS';
 
-    const accordionPanel = createElement('div');
+    const accordionPanel = createDivElement();
     addClass(accordionPanel, 'panel');
 
     for (const chapter of epInfo.chapters) {
-        const chapterNode = createElement('p');
-        const timestamp = createElement('span');
+        const chapterNode = createParagraphElement();
+        const timestamp = createSpanElement();
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
         const startTime = chapter[1];
         timestamp.textContent = secToTimestamp(startTime);
@@ -400,7 +405,7 @@ function displayChapters(mediaInstance: Player) {
         appendChild(accordionPanel, chapterNode);
     }
 
-    const chaptersNode = createElement('div');
+    const chaptersNode = createDivElement();
     addClass(chaptersNode, 'chapters');
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);

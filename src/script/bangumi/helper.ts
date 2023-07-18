@@ -9,7 +9,8 @@ import {
     addClass,
     appendChild,
     changeURL,
-    createElement,
+    createDivElement,
+    createParagraphElement,
     getComputedStyle,
 } from '../module/dom';
 
@@ -79,9 +80,9 @@ export function getFormatIndex(): number {
 }
 
 export function createMessageElem(title: string, body: string, titleColor: string | null) {
-    const container = createElement('div');
-    const titleElem = createElement('p');
-    const bodyElem = createElement('div');
+    const container = createDivElement();
+    const titleElem = createParagraphElement();
+    const bodyElem = createDivElement();
     addClass(container, 'message');
     addClass(titleElem, 'message-title');
     addClass(bodyElem, 'message-body');

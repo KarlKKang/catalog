@@ -131,6 +131,42 @@ export function createElement(tag: string) {
     return d.createElement(tag);
 }
 
+export function createDivElement() {
+    return createElement('div') as HTMLDivElement;
+}
+
+export function createButtonElement() {
+    return createElement('button') as HTMLButtonElement;
+}
+
+export function createSpanElement() {
+    return createElement('span') as HTMLSpanElement;
+}
+
+export function createParagraphElement() {
+    return createElement('p') as HTMLParagraphElement;
+}
+
+export function createCanvasElement() {
+    return createElement('canvas') as HTMLCanvasElement;
+}
+
+export function createVideoElement() {
+    return createElement('video') as HTMLVideoElement;
+}
+
+export function createAudioElement() {
+    return createElement('audio') as HTMLAudioElement;
+}
+
+export function createSelectElement() {
+    return createElement('select') as HTMLSelectElement;
+}
+
+export function createOptionElement() {
+    return createElement('option') as HTMLOptionElement;
+}
+
 export function createTextNode(text: string) {
     return d.createTextNode(text);
 }

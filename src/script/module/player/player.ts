@@ -14,10 +14,14 @@ import {
     w,
     remove,
     addEventListenerOnce,
-    createElement,
     appendChild,
     hideElement,
     showElement,
+    createDivElement,
+    createButtonElement,
+    createSpanElement,
+    createVideoElement,
+    createAudioElement,
 } from '../dom';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
@@ -163,20 +167,20 @@ export class Player {
         removeRightClick(controls);
 
         // Media
-        const media = createElement(this.IS_VIDEO ? 'video' : 'audio') as HTMLVideoElement | HTMLAudioElement;
+        const media = this.IS_VIDEO ? createVideoElement() : createAudioElement();
         this._media = media;
         media.tabIndex = -1;
         addPlayerClass(media, 'tech');
         appendChild(controls, media);
 
         // Loading spinner
-        const loadingSpinner = createElement('div');
+        const loadingSpinner = createDivElement();
         addPlayerClass(loadingSpinner, 'loading-spinner');
         loadingSpinner.dir = 'ltr';
         this.IS_VIDEO && appendChild(controls, loadingSpinner);
 
         // Big play button
-        const bigPlayButton = createElement('button') as HTMLButtonElement;
+        const bigPlayButton = createButtonElement();
         this.bigPlayButton = bigPlayButton;
         bigPlayButton.type = 'button';
         bigPlayButton.title = 'Play Video';
@@ -185,14 +189,14 @@ export class Player {
         this.IS_VIDEO && appendChild(controls, bigPlayButton);
 
         // Control bar
-        const controlBar = createElement('div');
+        const controlBar = createDivElement();
         this.controlBar = controlBar;
         controlBar.dir = 'ltr';
         addPlayerClass(controlBar, 'control-bar');
         appendChild(controls, controlBar);
 
         // Play button
-        const playButton = createElement('button') as HTMLButtonElement;
+        const playButton = createButtonElement();
         this.playButton = playButton;
         playButton.type = 'button';
         playButton.title = 'Play';
@@ -201,34 +205,34 @@ export class Player {
         appendChild(controlBar, playButton);
 
         // Current time display
-        const currentTimeDisplay = createElement('div');
+        const currentTimeDisplay = createDivElement();
         this.currentTimeDisplay = currentTimeDisplay;
         addPlayerClasses(currentTimeDisplay, ['current-time', 'time-control', 'control']);
         appendChild(controlBar, currentTimeDisplay);
 
-        const currentTimeDisplayText = createElement('span');
+        const currentTimeDisplayText = createSpanElement();
         this.currentTimeDisplayText = currentTimeDisplayText;
         currentTimeDisplayText.textContent = '0:00';
         addPlayerClass(currentTimeDisplayText, 'current-time-display');
         appendChild(currentTimeDisplay, currentTimeDisplayText);
 
         // Time divider
-        const timeDivier = createElement('div');
+        const timeDivier = createDivElement();
         this.timeDivider = timeDivier;
         addPlayerClasses(timeDivier, ['time-control', 'time-divider']);
         appendChild(controlBar, timeDivier);
 
-        const timeDividerText = createElement('span');
+        const timeDividerText = createSpanElement();
         timeDividerText.textContent = '/';
         appendChild(timeDivier, timeDividerText);
 
         // Duration display
-        const durationDisplay = createElement('div');
+        const durationDisplay = createDivElement();
         this.durationDisplay = durationDisplay;
         addPlayerClasses(durationDisplay, ['duration', 'time-control', 'control']);
         appendChild(controlBar, durationDisplay);
 
-        const durationDisplayText = createElement('div');
+        const durationDisplayText = createDivElement();
         this.durationDisplayText = durationDisplayText;
         durationDisplayText.textContent = '0:00';
         addPlayerClass(durationDisplayText, 'duration-display');
@@ -241,39 +245,39 @@ export class Player {
         }
 
         // Progress control
-        const progressControl = createElement('div');
+        const progressControl = createDivElement();
         this.progressControl = progressControl;
         addPlayerClasses(progressControl, ['progress-control', 'control']);
         appendChild(controlBar, progressControl);
 
-        const progressHolder = createElement('div');
+        const progressHolder = createDivElement();
         this.progressHolder = progressHolder;
         progressHolder.tabIndex = 0;
         addPlayerClasses(progressHolder, ['progress-holder', 'slider', 'slider-horizontal']);
         appendChild(progressControl, progressHolder);
 
         // Load progress
-        const loadProgress = createElement('div');
+        const loadProgress = createDivElement();
         this.loadProgress = loadProgress;
         addPlayerClass(loadProgress, 'load-progress');
         loadProgress.style.width = '0%';
         this.IS_VIDEO && appendChild(progressHolder, loadProgress);
 
         // Mouse display
-        const mouseDisplay = createElement('div');
+        const mouseDisplay = createDivElement();
         this.progressMouseDisplay = mouseDisplay;
         addPlayerClass(mouseDisplay, 'mouse-display');
         appendChild(progressHolder, mouseDisplay);
 
         // Time tooltip
-        const timeTooltip = createElement('div');
+        const timeTooltip = createDivElement();
         this.timeTooltip = timeTooltip;
         timeTooltip.textContent = '0:00';
         addPlayerClass(timeTooltip, 'time-tooltip');
         appendChild(mouseDisplay, timeTooltip);
 
         // Play progress
-        const playProgress = createElement('div');
+        const playProgress = createDivElement();
         this.progressBar = playProgress;
         addPlayerClasses(playProgress, ['play-progress', 'slider-bar']);
         playProgress.style.width = '0%';
@@ -282,7 +286,7 @@ export class Player {
         // PIP
         let PIPButtonPlaceholder: undefined | HTMLElement = undefined;
         if (d.pictureInPictureEnabled) {
-            const PIPButton = createElement('button') as HTMLButtonElement;
+            const PIPButton = createButtonElement();
             this.PIPButton = PIPButton;
             PIPButton.type = 'button';
             PIPButton.title = 'Picture-in-Picture';
@@ -292,7 +296,7 @@ export class Player {
         }
 
         // Fullscreen
-        const fullscreenButton = createElement('button') as HTMLButtonElement;
+        const fullscreenButton = createButtonElement();
         this.fullscreenButton = fullscreenButton;
         fullscreenButton.type = 'button';
         fullscreenButton.title = 'Fullscreen';
@@ -904,7 +908,7 @@ export class Player {
 }
 
 function addPlayerPlaceholder(elem: HTMLElement) {
-    const placeholder = createElement('span');
+    const placeholder = createSpanElement();
     // placeholder.ariaHidden = 'true';
     addPlayerClass(placeholder, 'icon-placeholder');
     appendChild(elem, placeholder);

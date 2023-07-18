@@ -4,11 +4,13 @@ import {
 import {
     addEventListener,
     getById,
-    createElement,
     addClass,
     getTitle,
     appendChild,
     prependChild,
+    createDivElement,
+    createParagraphElement,
+    createSpanElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -106,7 +108,7 @@ async function addAudioNode(index: number, mediaHolder: HTMLElement) {
         return;
     }
 
-    const playerContainer = createElement('div') as HTMLDivElement;
+    const playerContainer = createDivElement();
     appendChild(mediaHolder, playerContainer);
     const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
@@ -231,12 +233,12 @@ function addAlbumInfo() {
     const contentContainer = getById('content');
     const albumInfo = (epInfo as AudioEPInfo).album_info;
     if (albumInfo.album_title != '') {
-        const albumTitleElem = createElement('p');
+        const albumTitleElem = createParagraphElement();
         addClass(albumTitleElem, 'sub-title');
         addClass(albumTitleElem, 'center-align');
         albumTitleElem.innerHTML = albumInfo.album_title;
         if (albumInfo.album_artist != '') {
-            const albumArtist = createElement('p');
+            const albumArtist = createParagraphElement();
             addClass(albumArtist, 'artist');
             addClass(albumArtist, 'center-align');
             albumArtist.innerHTML = albumInfo.album_artist;
@@ -245,7 +247,7 @@ function addAlbumInfo() {
         prependChild(contentContainer, albumTitleElem);
     } else if (albumInfo.album_artist != '') {
         const titleElem = getById('title');
-        const artistElem = createElement('span');
+        const artistElem = createSpanElement();
         addClass(artistElem, 'artist');
         artistElem.innerHTML = '<br/>' + albumInfo.album_artist;
         appendChild(titleElem, artistElem);
@@ -253,7 +255,7 @@ function addAlbumInfo() {
 }
 
 function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
-    const subtitle = createElement('p');
+    const subtitle = createParagraphElement();
     addClass(subtitle, 'sub-title');
 
     //subtitle
@@ -261,7 +263,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
         subtitle.innerHTML = file.title;
 
         if (file.artist != '') {
-            const artist = createElement('span');
+            const artist = createSpanElement();
             addClass(artist, 'artist');
             artist.innerHTML = '／' + file.artist;
             appendChild(subtitle, artist);
@@ -274,7 +276,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
             subtitle.innerHTML += '<br>';
         }
 
-        const format = createElement('span');
+        const format = createSpanElement();
         addClass(format, 'format');
         format.textContent = FLAC_FALLBACK ? 'FLAC' : file.format;
 

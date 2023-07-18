@@ -18,6 +18,10 @@ import {
     hideElement,
     getBaseURL,
     containsClass,
+    createButtonElement,
+    createDivElement,
+    createSelectElement,
+    createOptionElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -99,12 +103,12 @@ export function buildDownloadAccordion(
         formats: VideoFormatInfo[];
         initialFormat: VideoFormatInfo;
     }
-): [HTMLElement, HTMLElement] {
-    const accordion = createElement('button');
+): [HTMLDivElement, HTMLDivElement] {
+    const accordion = createButtonElement();
     addClass(accordion, 'accordion');
     accordion.textContent = 'DOWNLOAD';
 
-    const accordionPanel = createElement('div');
+    const accordionPanel = createDivElement();
     addClass(accordionPanel, 'panel');
 
     const accordionPannelContent = createElement('ul') as HTMLUListElement;
@@ -116,15 +120,15 @@ export function buildDownloadAccordion(
     ]);
     appendChild(accordionPanel, accordionPannelContent);
 
-    const downloadOptionsContainer = createElement('div');
+    const downloadOptionsContainer = createDivElement();
     downloadOptionsContainer.id = 'download-options';
 
-    const osSelector = createElement('div');
+    const osSelector = createDivElement();
     addClass(osSelector, 'select');
-    const osSelectMenu = createElement('select') as HTMLSelectElement;
-    const osOptionWindows = createElement('option') as HTMLOptionElement;
-    const osOptionMac = createElement('option') as HTMLOptionElement;
-    const osOptionLinux = createElement('option') as HTMLOptionElement;
+    const osSelectMenu = createSelectElement();
+    const osOptionWindows = createOptionElement();
+    const osOptionMac = createOptionElement();
+    const osOptionLinux = createOptionElement();
     osOptionWindows.value = '1';
     osOptionMac.value = '2';
     osOptionLinux.value = '0';
@@ -144,12 +148,12 @@ export function buildDownloadAccordion(
     appendChild(osSelector, osSelectMenu);
     appendChild(downloadOptionsContainer, osSelector);
 
-    const containerSelector = createElement('div');
+    const containerSelector = createDivElement();
     addClass(containerSelector, 'select');
-    const containerSelectMenu = createElement('select') as HTMLSelectElement;
-    const containerOptionTS = createElement('option') as HTMLOptionElement;
-    const containerOptionMKV = createElement('option') as HTMLOptionElement;
-    const containerOptionMP4 = createElement('option') as HTMLOptionElement;
+    const containerSelectMenu = createSelectElement();
+    const containerOptionTS = createOptionElement();
+    const containerOptionMKV = createOptionElement();
+    const containerOptionMP4 = createOptionElement();
     containerOptionTS.value = '0';
     containerOptionMKV.value = '1';
     containerOptionMP4.value = '2';
@@ -168,7 +172,7 @@ export function buildDownloadAccordion(
 
     appendChild(accordionPanel, downloadOptionsContainer);
 
-    const downloadButton = createElement('button') as HTMLButtonElement;
+    const downloadButton = createButtonElement();
     addClass(downloadButton, 'download-button');
     addClass(downloadButton, 'button');
     downloadButton.innerHTML = 'ダウンロード';
@@ -207,7 +211,7 @@ export function buildDownloadAccordion(
     });
     appendChild(accordionPanel, downloadButton);
 
-    const downloadElem = createElement('div');
+    const downloadElem = createDivElement();
     addClass(downloadElem, 'download');
     appendChild(downloadElem, accordion);
     appendChild(downloadElem, accordionPanel);

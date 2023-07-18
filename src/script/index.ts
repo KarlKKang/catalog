@@ -22,13 +22,14 @@ import {
     getDescendantsByClassAt,
     removeClass,
     getBody,
-    createElement,
     addClass,
     changeURL,
     appendChild,
     showElement,
     getBaseURL,
     insertBefore,
+    createDivElement,
+    createParagraphElement,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -84,12 +85,12 @@ addEventListener(w, 'load', function () {
         addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
         showElement(getBody());
         if (seriesInfo.maintenance !== undefined) {
-            const annoucementContainer = createElement('div');
+            const annoucementContainer = createDivElement();
             addClass(annoucementContainer, 'announcement');
-            const announcementTitle = createElement('p');
+            const announcementTitle = createParagraphElement();
             addClass(announcementTitle, 'announcement-title');
             changeColor(announcementTitle, 'orange');
-            const announcementBody = createElement('p');
+            const announcementBody = createParagraphElement();
             addClass(announcementBody, 'announcement-body');
             appendChild(annoucementContainer, announcementTitle);
             appendChild(annoucementContainer, announcementBody);
@@ -127,10 +128,10 @@ addEventListener(w, 'load', function () {
 function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
     pivot = seriesInfo.pivot;
     for (const seriesEntry of seriesInfo.series) {
-        const seriesNode = createElement('div');
-        const thumbnailNode = createElement('div');
-        const overlay = createElement('div');
-        const titleNode = createElement('p');
+        const seriesNode = createDivElement();
+        const thumbnailNode = createDivElement();
+        const overlay = createDivElement();
+        const titleNode = createParagraphElement();
 
         appendChild(seriesNode, thumbnailNode);
         appendChild(seriesNode, titleNode);

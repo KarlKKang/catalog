@@ -1,7 +1,7 @@
 import { getMediaSource, isSupported } from './hls_helper';
 import { UAParser } from 'ua-parser-js';
 
-import { w, createElement } from '../dom';
+import { createAudioElement, createVideoElement, w } from '../dom';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
@@ -46,8 +46,8 @@ if (ua !== null) {
     UNRECOMMENDED_BROWSER = (!SUPPORTED_BLINK && !IS_SAFARI) || browserName.includes('wechat') || browserName === 'ucbrowser';
 }
 
-const audioElem = createElement('audio') as HTMLAudioElement;
-const videoElem = createElement('video') as HTMLVideoElement;
+const audioElem = createAudioElement();
+const videoElem = createVideoElement();
 
 const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_SAFARI;
 const MSE = isSupported();

@@ -7,10 +7,10 @@ import {
 } from './main';
 import {
     appendChild,
-    createElement,
     removeEventListener,
     addEventListener,
     addEventListenerOnce,
+    createCanvasElement,
 } from './dom';
 import { show as showMessage } from './message';
 import { moduleImportError } from './message/template/param';
@@ -75,7 +75,7 @@ export default function (container: Element, src: string, alt: string, onImageDr
 
     function onImageLoad() {
         removeImageListeners();
-        const canvas = createElement('canvas') as HTMLCanvasElement;
+        const canvas = createCanvasElement();
         const ctx = canvas.getContext('2d');
         if (ctx === null) {
             finalizeErrorImage();
@@ -172,7 +172,7 @@ async function startWebpMachine() {
 }
 
 async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueItem) {
-    const canvas = createElement('canvas') as HTMLCanvasElement;
+    const canvas = createCanvasElement();
     try {
         await webpMachine.decodeToCanvas(canvas, queueItem.webpData);
     } catch (_) {

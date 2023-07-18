@@ -34,6 +34,8 @@ import {
     showElement,
     containsClass,
     setCookie,
+    createDivElement,
+    createParagraphElement,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -109,18 +111,18 @@ function getNews(newsID: string): void {
 }
 
 function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
-    const outerContainer = createElement('div');
-    const container = createElement('div');
+    const outerContainer = createDivElement();
+    const container = createDivElement();
     container.id = 'content-container';
 
-    const titleContainer = createElement('p');
+    const titleContainer = createParagraphElement();
     titleContainer.id = 'title';
 
     titleContainer.innerHTML = newsInfo.title;
     setTitle(newsInfo.title + ' | ' + getTitle());
     appendChild(container, titleContainer);
 
-    const createTimeContainer = createElement('p');
+    const createTimeContainer = createParagraphElement();
     addClass(createTimeContainer, 'date');
 
     const createTime = getLocalTime(newsInfo.create_time);
@@ -128,7 +130,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
     appendChild(container, createTimeContainer);
 
     if (newsInfo.update_time !== null) {
-        const updateTimeContainer = createElement('p');
+        const updateTimeContainer = createParagraphElement();
         addClass(updateTimeContainer, 'date');
 
         const updateTime = getLocalTime(newsInfo.update_time);
@@ -138,7 +140,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
 
     appendChild(container, createElement('hr'));
 
-    const contentContainer = createElement('div');
+    const contentContainer = createDivElement();
     contentContainer.id = 'content';
     contentContainer.innerHTML = newsInfo.content;
     appendChild(container, contentContainer);
@@ -256,17 +258,17 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
     pivot = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.PivotInfo;
     const allNewsInfoEntries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
     for (const entry of allNewsInfoEntries) {
-        const overviewContainer = createElement('div');
+        const overviewContainer = createDivElement();
         addClass(overviewContainer, 'overview-container');
 
-        const dateContainer = createElement('div');
+        const dateContainer = createDivElement();
         addClass(dateContainer, 'date');
         const updateTime = getLocalTime(entry.update_time);
         dateContainer.innerHTML = updateTime.year + '年';
         appendChild(dateContainer, createElement('br'));
         dateContainer.innerHTML += updateTime.month.toString().padStart(2, '0') + '月' + updateTime.date.toString().padStart(2, '0') + '日';
 
-        const titleContainer = createElement('div');
+        const titleContainer = createDivElement();
         titleContainer.innerHTML = entry.title;
         addClass(titleContainer, 'overview-title');
         addClass(titleContainer, 'ellipsis-clipping-2');

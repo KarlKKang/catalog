@@ -10,6 +10,9 @@ import {
     getById,
     addEventListener,
     hideElement,
+    createParagraphElement,
+    createDivElement,
+    createButtonElement,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import type { LazyloadImportPromise } from './get_import_promises';
@@ -35,7 +38,7 @@ export default async function (
     const mediaHolder = getById('media-holder');
 
     if (epInfo.gallery_title != '') {
-        const title = createElement('p');
+        const title = createParagraphElement();
         addClass(title, 'sub-title');
         addClass(title, 'center-align');
         title.innerHTML = epInfo.gallery_title;
@@ -46,16 +49,16 @@ export default async function (
 
     files.forEach(function (file, index) {
         if (file.tag != '') {
-            const subtitle = createElement('p');
+            const subtitle = createParagraphElement();
             addClass(subtitle, 'sub-title');
             subtitle.innerHTML = file.tag;
             appendChild(mediaHolder, subtitle);
         }
 
-        const imageNode = createElement('div');
-        const overlay = createElement('div');
-        const downloadPanel = createElement('div');
-        const downloadButton = createElement('button') as HTMLButtonElement;
+        const imageNode = createDivElement();
+        const overlay = createDivElement();
+        const downloadPanel = createDivElement();
+        const downloadButton = createButtonElement();
         const downloadAnchor = createElement('a') as HTMLAnchorElement;
 
         addClass(imageNode, 'lazyload');
@@ -102,14 +105,14 @@ export default async function (
         });
     });
 
-    const downloadElem = createElement('div');
+    const downloadElem = createDivElement();
     addClass(downloadElem, 'download');
 
-    const downloadAccordion = createElement('button');
+    const downloadAccordion = createButtonElement();
     addClass(downloadAccordion, 'accordion');
     downloadAccordion.innerHTML = 'DOWNLOAD';
 
-    const downloadPanel = createElement('div');
+    const downloadPanel = createDivElement();
     addClass(downloadPanel, 'panel');
     downloadPanel.innerHTML = '<ul>' +
         '<li>画像をクリックすると、ダウンロードできます。</li>' +

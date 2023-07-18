@@ -24,9 +24,10 @@ import {
     containsClass,
     getParent,
     addEventListener,
-    createElement,
     appendChild,
     removeEventListener,
+    createParagraphElement,
+    createSpanElement,
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
@@ -230,8 +231,8 @@ function navUpdate() {
 
 export function navListeners() {
     function getNavMenuButton(innerHTML: string) {
-        const navMenuButtonContainer = createElement('p');
-        const navMenuButton = createElement('span');
+        const navMenuButtonContainer = createParagraphElement();
+        const navMenuButton = createSpanElement();
         navMenuButton.innerHTML = innerHTML;
         appendChild(navMenuButtonContainer, navMenuButton);
         return {
