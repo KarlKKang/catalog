@@ -393,7 +393,7 @@ function displayChapters(mediaInstance: Player) {
         const chapterNode = createParagraphElement();
         const timestamp = createSpanElement();
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
-        const startTime = chapter[1];
+        const startTime = chapter[1] / 1000;
         timestamp.textContent = secToTimestamp(startTime);
         addEventListener(timestamp, 'click', function () {
             mediaInstance.seek(startTime);
