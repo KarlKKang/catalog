@@ -13,16 +13,16 @@ interface MessageParam {
     message?: string;
     title?: string;
     color?: string;
-    logout?: boolean;
     url?: string | null;
 }
 
 export function show(param?: MessageParam) {
+    let logout = false;
     if (param === undefined) {
         param = {};
         const href = getBaseURL();
         if (href == TOP_URL) {
-            param.logout = true;
+            logout = true;
             param.url = LOGIN_URL;
         } else if (href != LOGIN_URL) {
             param.url = TOP_URL;
@@ -32,14 +32,13 @@ export function show(param?: MessageParam) {
     param.title = param.title ?? defaultError;
     param.message = param.message ?? unknownError;
     param.color = param.color ?? 'red';
-    param.logout = param.logout ?? false;
     param.url = param.url ?? null;
 
     const cookie: LocalMessageParam = {
         message: param.message,
         title: param.title,
         color: param.color,
-        logout: param.logout,
+        logout: logout,
         url: param.url,
         htmlTitle: getTitle()
     };
