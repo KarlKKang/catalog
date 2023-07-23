@@ -255,9 +255,9 @@ async function addVideoNode(config?: {
 
 
     let AAC_FALLBACK = false;
-
+    let USE_AAC = false;
     if (currentFormat.audio !== 'none') {
-        let USE_AAC = true;
+        USE_AAC = true;
 
         if (currentFormat.audio !== undefined) {
             if (currentFormat.audio.startsWith('atmos')) {
@@ -296,7 +296,7 @@ async function addVideoNode(config?: {
     function _onInit(mediaInstance: PlayerType) {
         mediaInstance.media.title = getTitle();
         if (epInfo.chapters.length > 0) {
-            displayChapters(mediaInstance);
+            displayChapters(mediaInstance, USE_AAC ? 44 : 0);
         }
     }
 
@@ -381,7 +381,7 @@ async function addVideoNode(config?: {
     }
 }
 
-function displayChapters(mediaInstance: Player) {
+function displayChapters(mediaInstance: Player, offset: number) {
     const accordion = createButtonElement();
     addClass(accordion, 'accordion');
     accordion.textContent = 'CHAPTERS';
@@ -393,7 +393,7 @@ function displayChapters(mediaInstance: Player) {
         const chapterNode = createParagraphElement();
         const timestamp = createSpanElement();
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
-        const startTime = chapter[1] / 1000;
+        const startTime = (chapter[1] + offset) / 1000;
         timestamp.textContent = secToTimestamp(startTime);
         addEventListener(timestamp, 'click', function () {
             mediaInstance.seek(startTime);
@@ -418,11 +418,11 @@ function displayChapters(mediaInstance: Player) {
         const currentTime = video.currentTime;
         epInfo.chapters.forEach(function (chapter, index) {
             const chapterElement = chapterElements[index] as HTMLElement;
-            if (currentTime >= chapter[1]) {
+            if (currentTime >= (chapter[1] + offset) / 1000) {
                 const nextChapter = epInfo.chapters[index + 1];
                 if (nextChapter === undefined) {
                     setClass(chapterElement, 'current-chapter');
-                } else if (currentTime < nextChapter[1]) {
+                } else if (currentTime < (nextChapter[1] + offset) / 1000) {
                     setClass(chapterElement, 'current-chapter');
                 } else {
                     setClass(chapterElement, 'inactive-chapter');
