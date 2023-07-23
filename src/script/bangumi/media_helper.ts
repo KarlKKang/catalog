@@ -113,7 +113,7 @@ export function buildDownloadAccordion(
 
     const accordionPannelContent = createElement('ul') as HTMLUListElement;
     appendListItems(accordionPannelContent, [
-        '下の「ダウンロード」ボタンをクリックすると、必要なツールやスクリプトが入ったZIPファイルのダウンロードが開始されます。',
+        '下の「ダウンロード」ボタンをクリックすると、必要なスクリプトが入ったZIPファイルがダウンロードできます。',
         'ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。',
         'スクリプトを実行するには、Windows、macOS、またはLinuxを搭載したパソコンが必要です。',
         'インターネット接続が良好であることをご確認してください。',
@@ -160,7 +160,7 @@ export function buildDownloadAccordion(
     containerOptionTS.textContent = 'MPEG Transport Stream (.ts)';
     containerOptionMKV.textContent = 'Matroska (.mkv)';
     containerOptionMP4.textContent = 'MPEG-4 Part 14 (.mp4)';
-    containerOptionTS.selected = true;
+    containerOptionMKV.selected = true;
     appendChild(containerSelectMenu, containerOptionTS);
     appendChild(containerSelectMenu, containerOptionMKV);
     appendChild(containerSelectMenu, containerOptionMP4);
