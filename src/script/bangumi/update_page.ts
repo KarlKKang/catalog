@@ -20,12 +20,10 @@ import {
     createElement,
     addClass,
     remove,
-    containsClass,
     appendChild,
     insertBefore,
     showElement,
     hideElement,
-    isHidden,
     getTitle,
     createDivElement,
     createButtonElement,
@@ -40,10 +38,6 @@ import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, Lazylo
 import type { default as videoType } from './video';
 import type { default as audioType } from './audio';
 import type { default as imageType } from './image';
-
-const showMoreButtonClippedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
-const showMoreButtonExpandedText = '非表示にする <span class="symbol">&#xE971;</span>';
-let EPSelectorHeight: number;
 
 let seriesID: string;
 let epIndex: number;
@@ -192,6 +186,9 @@ export default async function (
 function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     const epButtonWrapper = createDivElement();
     epButtonWrapper.id = 'ep-button-wrapper';
+    const epSelector = getById('ep-selector');
+    appendChild(epSelector, epButtonWrapper);
+    let minHeight = Number.POSITIVE_INFINITY;
 
     seriesEP.forEach(function (value, index) {
         const epButton = createDivElement();
@@ -206,26 +203,120 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
         const targetEP = index + 1;
         appendChild(epButton, epText);
         addEventListener(epButton, 'click', function () { goToEP(seriesID, targetEP); });
-
         appendChild(epButtonWrapper, epButton);
+
+        const height = getContentBoxHeight(epButtonWrapper);
+        if (height < minHeight) {
+            minHeight = height;
+        }
     });
 
-    const epSelector = getById('ep-selector');
-    appendChild(epSelector, epButtonWrapper);
-
-    EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10; //Add some extra pixels to compensate for slight variation and error.
     const showMoreButton = createParagraphElement();
     showMoreButton.id = 'show-more-button';
-    hideElement(showMoreButton);
+    addClass(showMoreButton, 'invisible');
+    addClass(showMoreButton, 'transparent');
     appendChild(epSelector, showMoreButton);
-    addEventListener(showMoreButton, 'click', toggleEPSelector);
-    styleEPSelector();
 
+    const showMoreButtonFoldedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
+    let currentToggleTimeout: NodeJS.Timeout | null = null;
+    let currentToggleAnimationFrame: number | null = null;
+    let isExpanded = false;
+
+    const toggleEPSelector = function () {
+        if (isExpanded) {
+            currentToggleTimeout = null;
+            let animationFrame = w.requestAnimationFrame(function () {
+                if (currentToggleAnimationFrame === animationFrame) {
+                    epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
+                    animationFrame = w.requestAnimationFrame(function () {
+                        if (currentToggleAnimationFrame === animationFrame) {
+                            isExpanded = false;
+                            showMoreButton.innerHTML = showMoreButtonFoldedText;
+                            epButtonWrapper.style.maxHeight = '30vh';
+                            removeClass(epButtonWrapper, 'expanded');
+                        }
+                    });
+                    currentToggleAnimationFrame = animationFrame;
+                }
+            });
+            currentToggleAnimationFrame = animationFrame;
+        } else {
+            currentToggleAnimationFrame = null;
+            isExpanded = true;
+            showMoreButton.innerHTML = '非表示にする <span class="symbol">&#xE971;</span>';
+            epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
+            addClass(epButtonWrapper, 'expanded');
+            const timeout = setTimeout(function () {
+                if (currentToggleTimeout === timeout) {
+                    epButtonWrapper.style.removeProperty('max-height');
+                }
+            }, 400);
+            currentToggleTimeout = timeout;
+        }
+    };
+    addEventListener(showMoreButton, 'click', toggleEPSelector);
+
+    let currentStylingTimeout: NodeJS.Timeout | null = null;
+    let currentStylingAnimationFrame: number | null = null;
+    let isOversized = false;
+    const styleEPSelector = function () {
+        epButtonWrapper.style.removeProperty('min-height'); // Need to remove min-height first to calculate the height accurately.
+        const height = getContentBoxHeight(epButtonWrapper);
+        const reachedThreshold = height > minHeight * 1.8;
+        if (reachedThreshold) {
+            epButtonWrapper.style.minHeight = minHeight * 1.8 + 'px';
+        } else {
+            epButtonWrapper.style.removeProperty('min-height');
+        }
+
+        if (height / w.innerHeight > 0.40 && reachedThreshold) {
+            if (isOversized) {
+                return;
+            }
+            currentStylingTimeout = null;
+            currentToggleAnimationFrame = null;
+            currentToggleTimeout = null;
+            isOversized = true;
+            let animationFrame = w.requestAnimationFrame(function () {
+                if (currentStylingAnimationFrame === animationFrame) {
+                    epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
+                    animationFrame = w.requestAnimationFrame(function () {
+                        if (currentStylingAnimationFrame === animationFrame) {
+                            isExpanded = false;
+                            showMoreButton.innerHTML = showMoreButtonFoldedText;
+                            epButtonWrapper.style.maxHeight = '30vh';
+                            removeClass(epButtonWrapper, 'expanded');
+                            removeClass(showMoreButton, 'invisible');
+                            removeClass(showMoreButton, 'transparent');
+                        }
+                    });
+                    currentStylingAnimationFrame = animationFrame;
+                }
+            });
+            currentStylingAnimationFrame = animationFrame;
+        } else {
+            if (!isOversized) {
+                return;
+            }
+            currentStylingAnimationFrame = null;
+            currentToggleAnimationFrame = null;
+            currentToggleTimeout = null;
+            isOversized = false;
+            epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
+            addClass(showMoreButton, 'transparent');
+            removeClass(epButtonWrapper, 'expanded');
+            const timeout = setTimeout(function () {
+                if (currentStylingTimeout === timeout) {
+                    epButtonWrapper.style.removeProperty('max-height');
+                    addClass(showMoreButton, 'invisible');
+                }
+            }, 400);
+            currentStylingTimeout = timeout;
+        }
+    };
+
+    styleEPSelector();
     addEventListener(w, 'resize', function () {
-        const currentMaxHeight = epButtonWrapper.style.maxHeight;
-        epButtonWrapper.style.maxHeight = ''; //Resetting max-height can mitigate a bug in legacy browsers (Firefox) where the scrollHeight attribute is not accurate. This also remove the transition for height when resizing.
-        EPSelectorHeight = getContentBoxHeight(epButtonWrapper) + 10;
-        epButtonWrapper.style.maxHeight = currentMaxHeight;
         styleEPSelector();
     });
 }
@@ -261,53 +352,4 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
 function goToEP(dest_series: string, dest_ep: number) {
     const url = TOP_URL + '/bangumi/' + dest_series + (dest_ep == 1 ? '' : ('?ep=' + dest_ep));
     redirect(url);
-}
-
-function styleEPSelector() {
-    if (EPSelectorHeight / w.innerHeight > 0.50) {
-        foldEPSelector();
-    } else {
-        unfoldEPSelector();
-    }
-}
-
-function foldEPSelector() {
-    const showMoreButton = getById('show-more-button');
-    const epButtonWrapper = getById('ep-button-wrapper');
-
-    if (!isHidden(showMoreButton)) {
-        if (containsClass(epButtonWrapper, 'expanded')) {
-            epButtonWrapper.style.maxHeight = EPSelectorHeight + 'px';
-        }
-        return;
-    }
-    showMoreButton.innerHTML = showMoreButtonClippedText;
-    epButtonWrapper.style.maxHeight = '50vh';
-    removeClass(epButtonWrapper, 'expanded');
-    showElement(showMoreButton);
-}
-
-function unfoldEPSelector() {
-    const showMoreButton = getById('show-more-button');
-    const epButtonWrapper = getById('ep-button-wrapper');
-    if (isHidden(showMoreButton)) {
-        return;
-    }
-    epButtonWrapper.style.maxHeight = '';
-    removeClass(epButtonWrapper, 'expanded');
-    hideElement(showMoreButton);
-}
-
-function toggleEPSelector() {
-    const showMoreButton = getById('show-more-button');
-    const epButtonWrapper = getById('ep-button-wrapper');
-    const CLIPPED = !containsClass(epButtonWrapper, 'expanded');
-    showMoreButton.innerHTML = CLIPPED ? showMoreButtonExpandedText : showMoreButtonClippedText;
-    if (CLIPPED) {
-        epButtonWrapper.style.maxHeight = EPSelectorHeight + 'px';
-        addClass(epButtonWrapper, 'expanded');
-    } else {
-        epButtonWrapper.style.maxHeight = '50vh';
-        removeClass(epButtonWrapper, 'expanded');
-    }
 }

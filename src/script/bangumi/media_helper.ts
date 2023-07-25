@@ -5,6 +5,7 @@ import {
     sendServerRequest,
 } from '../module/main';
 import {
+    w,
     addEventListener,
     getById,
     createElement,
@@ -234,13 +235,35 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement): void {
         panel.style.padding = '0px 1em';
     };
     hidePanel();
+
+    let currentTimeout: NodeJS.Timeout | null = null;
+    let currentAnimationFrame: number | null = null;
     addEventListener(acc, 'click', function () {
         toggleClass(acc, 'active');
         if (containsClass(acc, 'active')) {
+            currentAnimationFrame = null;
             panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
             panel.style.padding = '1em';
+            const timeout = setTimeout(function () {
+                if (currentTimeout === timeout) {
+                    panel.style.removeProperty('max-height');
+                }
+            }, 200);
+            currentTimeout = timeout;
         } else {
-            hidePanel();
+            currentTimeout = null;
+            let animationFrame = w.requestAnimationFrame(function () {
+                if (currentAnimationFrame === animationFrame) {
+                    panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
+                    animationFrame = w.requestAnimationFrame(function () {
+                        if (currentAnimationFrame === animationFrame) {
+                            hidePanel();
+                        }
+                    });
+                    currentAnimationFrame = animationFrame;
+                }
+            });
+            currentAnimationFrame = animationFrame;
         }
     });
 }

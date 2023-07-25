@@ -6,17 +6,26 @@ import {
     getURLParam,
 } from '../module/main';
 import {
+    w,
     addClass,
     appendChild,
     changeURL,
     createDivElement,
     createParagraphElement,
-    getComputedStyle,
 } from '../module/dom';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
     let height = elem.scrollHeight;
-    height -= parseFloat(getComputedStyle(elem, 'padding-top')) + parseFloat(getComputedStyle(elem, 'padding-bottom'));
+    const computedStyle = w.getComputedStyle(elem);
+    let paddingTop = parseFloat(computedStyle.getPropertyValue('padding-top'));
+    if (isNaN(paddingTop)) {
+        paddingTop = 0;
+    }
+    let paddingBottom = parseFloat(computedStyle.getPropertyValue('padding-bottom'));
+    if (isNaN(paddingBottom)) {
+        paddingBottom = 0;
+    }
+    height -= paddingTop + paddingBottom;
     return height;
 }
 

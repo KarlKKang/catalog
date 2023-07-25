@@ -1,4 +1,4 @@
-import { w, d } from './document';
+import { d } from './document';
 
 export function getByIdNative(id: string) {
     return d.getElementById(id);
@@ -197,10 +197,6 @@ export function addEventListenerOnce(elem: Element | Document | Window | XMLHttp
         callback.call(this, arg);
     };
     addEventListener(elem, event, callbackOnce, useCapture);
-}
-
-export function getComputedStyle(elem: HTMLElement, property: string) {
-    return w.getComputedStyle(elem, null).getPropertyValue(property);
 }
 
 export function appendChild(parent: Node, child: Node) {
