@@ -89,8 +89,6 @@
     position: relative;
     height: auto;
     background-color: var(--foreground-color);
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
     padding: 0.6em 1em;
     margin: 12px;
     cursor: pointer;
@@ -100,11 +98,6 @@
     #ep-button-wrapper>div {
         margin: min(2%, 12px);
     }
-}
-
-#ep-button-wrapper>div:hover {
-    box-shadow: var(--shadow-hover);
-    z-index: 0;
 }
 
 #ep-button-wrapper>div.current-ep>p {
@@ -200,16 +193,10 @@ select {
     height: 34px;
     line-height: 22px;
     background-color: var(--foreground-color);
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
 }
 
 select::-ms-expand {
     display: none;
-}
-
-select:hover {
-    box-shadow: var(--shadow-hover);
 }
 
 #format-display {
@@ -227,41 +214,32 @@ select:hover {
     margin: 0px 0px 1em 0px;
 }
 
-#media-holder>.player {
+.player {
     width: 100%;
     margin: 0px 0px 16px 0px;
     background-color: #000;
 }
 
-#media-holder>.player>video,
-#media-holder>.player>audio {
+.player>video,
+.player>audio {
     /* Hide mouse-over tooltips */
     pointer-events: none;
 }
 
-#media-holder>.lazyload {
+.image {
     width: 100%;
     margin: 1em 0px 0px 0px;
 }
 
-#media-holder>.lazyload,
-#media-holder>.player {
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
-}
-
-#media-holder>.lazyload:hover,
-#media-holder>.player:hover {
-    box-shadow: var(--shadow-hover);
-}
-
-#media-holder>.lazyload {
+.image>.lazyload {
+    width: 100%;
+    margin: 0px;
     position: relative;
     padding-bottom: 56.25%;
     cursor: pointer;
 }
 
-#media-holder>.lazyload>.overlay {
+.image>.lazyload>.overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -316,8 +294,6 @@ p.artist {
     margin: 0px 0px 1em 0px;
     padding: 2em;
     background-color: var(--foreground-color);
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
     box-sizing: border-box;
 }
 
@@ -342,8 +318,6 @@ p.artist {
 }
 
 .button {
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
     background: var(--foreground-color);
     width: 150px;
     max-width: 100%;
@@ -352,11 +326,6 @@ p.artist {
 
 #warning-button-group>.button {
     margin: 1em 3% 0px 3%;
-}
-
-.message:hover,
-.button:enabled:hover {
-    box-shadow: var(--shadow-hover);
 }
 
 #warning-button-group {
@@ -372,33 +341,12 @@ p.artist {
     box-sizing: border-box;
 }
 
-/*#loader {
-	border: 5px solid #f3f3f3;
-	-webkit-animation: spin 1s linear infinite;
-	animation: spin 1s linear infinite;
-	border-top: 5px solid #555;
-	border-radius: 50%;
-	position: relative;
-	width: 50px;
-	height: 50px;
-	margin: 2em auto 10vh auto;
-}
-
-@-webkit-keyframes spin {
-	0% { -webkit-transform: rotate(0deg); }
-	100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-}*/
-
 /**Accodions/
 /* Style the buttons that are used to open and close the accordion panel */
 .accordion {
     background-color: var(--foreground-color);
     font-size: medium;
+    font-weight: 500;
     cursor: pointer;
     padding: 1em 2em 1em 1em;
     /*Right 2em padding to avoid overflow into the icon section*/
@@ -407,23 +355,7 @@ p.artist {
     text-align: left;
     border: none;
     outline: none;
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
     overflow-wrap: anywhere;
-}
-
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.accordion:hover {
-    box-shadow: var(--shadow-hover);
-}
-
-/* Style the accordion panel. Note: hidden by default */
-.panel {
-    margin: 0px;
-    background-color: var(--foreground-color);
-    overflow: hidden;
-    transition: max-height 0.2s ease-out, padding 0.2s ease-out, box-shadow .4s ease-out;
-    box-shadow: var(--shadow);
 }
 
 .accordion:after {
@@ -441,8 +373,18 @@ p.artist {
     /* Unicode character for "minus" sign (-) */
 }
 
-.panel:hover {
-    box-shadow: var(--shadow-hover);
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+    margin: 0px;
+    padding: 0px 1em;
+    background-color: var(--foreground-color);
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+.panel>hr {
+    width: 100%;
+    background-color: var(--horizontal-line-foreground-color);
 }
 
 /*Chapters*/
@@ -465,7 +407,8 @@ p.artist {
 }
 
 /*Download*/
-.download {
+.download,
+.image>.panel {
     text-align: center;
 }
 
@@ -474,7 +417,7 @@ p.artist {
 }
 
 .image-download-button {
-    margin: 0px;
+    margin: 1em 0px 1em 0px;
 }
 
 #download-options {
@@ -494,4 +437,28 @@ p.artist {
 .download>.panel>ul {
     padding: 0px 0px 0px 2em;
     text-align: left;
+}
+
+#ep-button-wrapper>div,
+.player,
+.image,
+.chapters,
+.download,
+.message,
+.button,
+select {
+    box-shadow: var(--shadow);
+    transition: box-shadow .4s ease-out;
+    /* Make sure these elements don't have other transitions. */
+}
+
+#ep-button-wrapper>div:hover,
+.player:hover,
+.image:hover,
+.chapters:hover,
+.download:hover,
+.message:hover,
+.button:enabled:hover,
+select:hover {
+    box-shadow: var(--shadow-hover);
 }

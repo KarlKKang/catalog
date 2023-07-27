@@ -11,6 +11,7 @@ import {
     createDivElement,
     createParagraphElement,
     createSpanElement,
+    createBRElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -272,8 +273,8 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
 
     //format
     if (file.format != '') {
-        if (subtitle.innerHTML != '') {
-            subtitle.innerHTML += '<br>';
+        if (file.title != '') {
+            appendChild(subtitle, createBRElement());
         }
 
         const format = createSpanElement();

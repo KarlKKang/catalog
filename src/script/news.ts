@@ -19,7 +19,6 @@ import {
     getBaseURL,
     redirect,
     getById,
-    createElement,
     addClass,
     appendChild,
     removeClass,
@@ -36,6 +35,9 @@ import {
     setCookie,
     createDivElement,
     createParagraphElement,
+    createHRElement,
+    createText,
+    createBRElement,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -138,7 +140,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
         appendChild(container, updateTimeContainer);
     }
 
-    appendChild(container, createElement('hr'));
+    appendChild(container, createHRElement());
 
     const contentContainer = createDivElement();
     contentContainer.id = 'content';
@@ -264,9 +266,9 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
         const dateContainer = createDivElement();
         addClass(dateContainer, 'date');
         const updateTime = getLocalTime(entry.update_time);
-        dateContainer.innerHTML = updateTime.year + '年';
-        appendChild(dateContainer, createElement('br'));
-        dateContainer.innerHTML += updateTime.month.toString().padStart(2, '0') + '月' + updateTime.date.toString().padStart(2, '0') + '日';
+        appendChild(dateContainer, createText(updateTime.year + '年'));
+        appendChild(dateContainer, createBRElement());
+        appendChild(dateContainer, createText(updateTime.month.toString().padStart(2, '0') + '月' + updateTime.date.toString().padStart(2, '0') + '日'));
 
         const titleContainer = createDivElement();
         titleContainer.innerHTML = entry.title;

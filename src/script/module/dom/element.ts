@@ -127,8 +127,13 @@ export function remove(elem: Element) {
     elem.remove();
 }
 
+export function createText(content: string) {
+    return d.createTextNode(content);
+}
+
 export function createElement(tag: string) {
-    return d.createElement(tag);
+    const elem = d.createElement(tag);
+    return elem;
 }
 
 export function createDivElement() {
@@ -167,7 +172,23 @@ export function createOptionElement() {
     return createElement('option') as HTMLOptionElement;
 }
 
-export function createSVGElement(viewBox: string, path: string): SVGSVGElement {
+export function createHRElement() {
+    return createElement('hr') as HTMLHRElement;
+}
+
+export function createBRElement() {
+    return createElement('br') as HTMLBRElement;
+}
+
+export function createUListElement() {
+    return createElement('ul') as HTMLUListElement;
+}
+
+export function createLIElement() {
+    return createElement('li') as HTMLLIElement;
+}
+
+export function createSVGElement(viewBox: string, path: string) {
     const svg = d.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', viewBox);
     addSVGPath(svg, path);

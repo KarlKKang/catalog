@@ -23,6 +23,9 @@ import {
     createDivElement,
     createSelectElement,
     createOptionElement,
+    createHRElement,
+    createUListElement,
+    createLIElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -107,19 +110,20 @@ export function buildDownloadAccordion(
 ): [HTMLDivElement, HTMLDivElement] {
     const accordion = createButtonElement();
     addClass(accordion, 'accordion');
-    accordion.textContent = 'DOWNLOAD';
+    accordion.textContent = 'ダウンロード';
 
     const accordionPanel = createDivElement();
     addClass(accordionPanel, 'panel');
+    appendChild(accordionPanel, createHRElement());
 
-    const accordionPannelContent = createElement('ul') as HTMLUListElement;
-    appendListItems(accordionPannelContent, [
+    const accordionPanelContent = createUListElement();
+    appendListItems(accordionPanelContent, [
         '下の「ダウンロード」ボタンをクリックすると、必要なスクリプトが入ったZIPファイルがダウンロードできます。',
         'ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。',
         'スクリプトを実行するには、Windows、macOS、またはLinuxを搭載したパソコンが必要です。',
         'インターネット接続が良好であることをご確認してください。',
     ]);
-    appendChild(accordionPanel, accordionPannelContent);
+    appendChild(accordionPanel, accordionPanelContent);
 
     const downloadOptionsContainer = createDivElement();
     downloadOptionsContainer.id = 'download-options';
@@ -217,24 +221,28 @@ export function buildDownloadAccordion(
     appendChild(downloadElem, accordion);
     appendChild(downloadElem, accordionPanel);
     appendChild(downloadElem, iframe);
-    addAccordionEvent(accordion, accordionPanel);
+    addAccordionEvent(accordion, accordionPanel, true);
     return [downloadElem, containerSelector];
 }
 
 function appendListItems(list: HTMLUListElement, contents: string[]): void {
     for (const content of contents) {
-        const item = createElement('li');
+        const item = createLIElement();
         item.textContent = content;
         appendChild(list, item);
     }
 }
 
-export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement): void {
+export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, active: boolean): void {
     const hidePanel = function () {
         panel.style.maxHeight = '0px';
-        panel.style.padding = '0px 1em';
     };
-    hidePanel();
+
+    if (active) {
+        addClass(acc, 'active');
+    } else {
+        hidePanel();
+    }
 
     let currentTimeout: NodeJS.Timeout | null = null;
     let currentAnimationFrame: number | null = null;
@@ -243,7 +251,6 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement): void {
         if (containsClass(acc, 'active')) {
             currentAnimationFrame = null;
             panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
-            panel.style.padding = '1em';
             const timeout = setTimeout(function () {
                 if (currentTimeout === timeout) {
                     panel.style.removeProperty('max-height');

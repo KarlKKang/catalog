@@ -13,6 +13,10 @@ import {
     createParagraphElement,
     createDivElement,
     createButtonElement,
+    createHRElement,
+    createUListElement,
+    createLIElement,
+    createText,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import type { LazyloadImportPromise } from './get_import_promises';
@@ -56,16 +60,17 @@ export default async function (
         }
 
         const imageNode = createDivElement();
+        const lazyloadNode = createDivElement();
         const overlay = createDivElement();
         const downloadPanel = createDivElement();
         const downloadButton = createButtonElement();
         const downloadAnchor = createElement('a') as HTMLAnchorElement;
 
-        addClass(imageNode, 'lazyload');
+        addClass(imageNode, 'image');
+        addClass(lazyloadNode, 'lazyload');
         addClass(overlay, 'overlay');
-        appendChild(imageNode, overlay);
+        appendChild(lazyloadNode, overlay);
 
-        addClass(downloadPanel, 'download');
         addClass(downloadPanel, 'panel');
         addClass(downloadButton, 'button');
         addClass(downloadButton, 'image-download-button');
@@ -77,13 +82,14 @@ export default async function (
         downloadAnchor.download = file.file_name;
         appendChild(downloadPanel, downloadAnchor); // The element need to be in the document for some old browsers like Firefox <= 69.
 
-        removeRightClick(imageNode);
-        addAccordionEvent(imageNode, downloadPanel);
+        removeRightClick(lazyloadNode);
+        addAccordionEvent(lazyloadNode, downloadPanel, false);
 
+        appendChild(imageNode, lazyloadNode);
+        appendChild(imageNode, downloadPanel);
         appendChild(mediaHolder, imageNode);
-        appendChild(mediaHolder, downloadPanel);
 
-        lazyloadObserve(imageNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
+        lazyloadObserve(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
             xhrParam: index.toString(),
             mediaSessionCredential: epInfo.media_session_credential,
             delay: 250,
@@ -110,15 +116,17 @@ export default async function (
 
     const downloadAccordion = createButtonElement();
     addClass(downloadAccordion, 'accordion');
-    downloadAccordion.innerHTML = 'DOWNLOAD';
+    downloadAccordion.innerHTML = 'ダウンロード';
 
     const downloadPanel = createDivElement();
     addClass(downloadPanel, 'panel');
-    downloadPanel.innerHTML = '<ul>' +
-        '<li>画像をクリックすると、ダウンロードできます。</li>' +
-        '</ul>';
-
-    addAccordionEvent(downloadAccordion, downloadPanel);
+    appendChild(downloadPanel, createHRElement());
+    const downloadPanelContent = createUListElement();
+    const downloadPanelContentItem = createLIElement();
+    appendChild(downloadPanelContentItem, createText('画像をクリックすると、ダウンロードできます。'));
+    appendChild(downloadPanelContent, downloadPanelContentItem);
+    appendChild(downloadPanel, downloadPanelContent);
+    addAccordionEvent(downloadAccordion, downloadPanel, true);
 
     appendChild(downloadElem, downloadAccordion);
     appendChild(downloadElem, downloadPanel);

@@ -10,7 +10,6 @@ import {
     addClass,
     getTitle,
     setClass,
-    getDescendantsByTag,
     createTextNode,
     addEventsListener,
     appendChild,
@@ -26,6 +25,7 @@ import {
     createOptionElement,
     createButtonElement,
     createSpanElement,
+    createHRElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -384,11 +384,13 @@ async function addVideoNode(config?: {
 function displayChapters(mediaInstance: Player, offset: number) {
     const accordion = createButtonElement();
     addClass(accordion, 'accordion');
-    accordion.textContent = 'CHAPTERS';
+    accordion.textContent = 'チャプター';
 
     const accordionPanel = createDivElement();
     addClass(accordionPanel, 'panel');
+    appendChild(accordionPanel, createHRElement());
 
+    const chapterElements: HTMLParagraphElement[] = [];
     for (const chapter of epInfo.chapters) {
         const chapterNode = createParagraphElement();
         const timestamp = createSpanElement();
@@ -403,17 +405,17 @@ function displayChapters(mediaInstance: Player, offset: number) {
         appendChild(chapterNode, cueText);
         setClass(chapterNode, 'inactive-chapter');
         appendChild(accordionPanel, chapterNode);
+        chapterElements.push(chapterNode);
     }
 
     const chaptersNode = createDivElement();
     addClass(chaptersNode, 'chapters');
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);
-    addAccordionEvent(accordion, accordionPanel);
+    addAccordionEvent(accordion, accordionPanel, true);
     appendChild(mediaHolder, chaptersNode);
 
     const video = mediaInstance.media;
-    const chapterElements = getDescendantsByTag(accordionPanel, 'p');
     function updateChapterDisplay() {
         const currentTime = video.currentTime;
         epInfo.chapters.forEach(function (chapter, index) {
