@@ -20,15 +20,14 @@ p:lang(en) {
     line-height: 1.5;
 }
 
-html:not(.no-header-padding) {
-    scroll-padding-top: 46px;
-}
-
-html.no-header-padding #main {
+#container {
+    margin: 0px;
     padding: 0px;
+    width: 100%;
 }
 
-#main>div {
+.overview-container,
+#content-outer-container {
     width: 1000px;
     max-width: 90%;
     margin: 2em 0px;
@@ -41,24 +40,25 @@ html.no-header-padding #main {
     transition: box-shadow .4s ease-out;
 }
 
-#main>div:hover {
+.overview-container:hover,
+#content-outer-container:hover {
     box-shadow: var(--shadow-hover);
 }
 
-#main>div.overview-container {
+.overview-container {
     display: flex;
     align-items: center;
     cursor: pointer;
 }
 
-#main>div.overview-container>.date {
+.overview-container>.date {
     padding: 0px 3% 0px 3%;
     border-right: 1px solid var(--horizontal-line-foreground-color);
     white-space: nowrap;
     text-align: center;
 }
 
-#main>div.overview-container>.overview-title {
+.overview-container>.overview-title {
     padding: 0px 3% 0px 3%;
     font-weight: 500;
 }

@@ -6,17 +6,14 @@ import {
 import {
     authenticate,
     clearCookies,
-    navListeners,
+    addNavBar,
     scrollToHash,
 } from './module/main';
 import {
     w,
     addEventListener,
     redirect,
-    removeClass,
     getBody,
-    getById,
-    d,
     showElement,
     getBaseURL,
 } from './module/dom';
@@ -32,17 +29,14 @@ addEventListener(w, 'load', function () {
     authenticate({
         successful:
             function () {
-                removeClass(d.documentElement, 'no-header-padding');
-                showElement(getById('header'));
-                showElement(getById('nav-btn'));
                 showElement(getBody());
-                navListeners();
-                scrollToHash(true);
+                addNavBar('info');
+                scrollToHash();
             },
         failed:
             function () {
                 showElement(getBody());
-                scrollToHash(false);
+                scrollToHash();
             },
     });
 

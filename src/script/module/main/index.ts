@@ -15,19 +15,18 @@ import {
     redirect,
     deleteCookie,
     getHash,
-
-    getById,
     getByIdNative,
     addClass,
     removeClass,
-    toggleClass,
-    containsClass,
     getParent,
     addEventListener,
     appendChild,
     removeEventListener,
     createParagraphElement,
-    createSpanElement,
+    createDivElement,
+    createText,
+    prependChild,
+    getBody,
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
@@ -208,75 +207,71 @@ export function passwordStyling(element: HTMLInputElement) {
     addEventListener(element, 'change', inputChangeHandler);
 }
 
-let currentNavTimeout: NodeJS.Timeout | null = null;
-function navUpdate() {
-    const navBtn = getById('nav-btn');
-    toggleClass(navBtn, 'active');
-    const menu = getById('nav-menu');
+export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info') {
+    const getNavButton = function (name: string): [HTMLDivElement, HTMLDivElement] {
+        const container = createDivElement();
+        const containerInner = createDivElement();
+        const iconContainer = createDivElement();
+        addClass(iconContainer, 'icon');
+        const nameContainer = createParagraphElement();
+        appendChild(nameContainer, createText(name));
+        appendChild(containerInner, iconContainer);
+        appendChild(containerInner, nameContainer);
+        appendChild(container, containerInner);
+        return [container, iconContainer];
+    };
 
-    if (containsClass(navBtn, 'active')) {
-        currentNavTimeout = null;
-        removeClass(menu, 'invisible');
-        removeClass(menu, 'transparent');
-    } else {
-        addClass(menu, 'transparent');
-        const timeout = setTimeout(function () {
-            if (currentNavTimeout === timeout) {
-                addClass(menu, 'invisible');
-            }
-        }, 300);
-        currentNavTimeout = timeout;
-    }
-}
+    const navButton1 = getNavButton('ホーム');
+    const navButton2 = getNavButton('お知らせ');
+    const navButton3 = getNavButton('マイページ');
+    const navButton4 = getNavButton('ご利用ガイド');
 
-export function navListeners() {
-    function getNavMenuButton(innerHTML: string) {
-        const navMenuButtonContainer = createParagraphElement();
-        const navMenuButton = createSpanElement();
-        navMenuButton.innerHTML = innerHTML;
-        appendChild(navMenuButtonContainer, navMenuButton);
-        return {
-            container: navMenuButtonContainer,
-            button: navMenuButton
-        };
-    }
+    const navBar = createDivElement();
+    navBar.id = 'nav-bar';
+    prependChild(getBody(), navBar);
+    appendChild(navBar, navButton1[0]);
+    appendChild(navBar, navButton2[0]);
+    appendChild(navBar, navButton3[0]);
+    appendChild(navBar, navButton4[0]);
 
-    const navMenuButton1 = getNavMenuButton('ライブラリ／LIBRARY');
-    const navMenuButton2 = getNavMenuButton('お知らせ／NEWS');
-    const navMenuButton3 = getNavMenuButton('マイページ／ACCOUNT SETTINGS');
-    const navMenuButton4 = getNavMenuButton('ご利用ガイド／POLICY＆GUIDE');
-    const navMenuButton5 = getNavMenuButton('ログアウト／LOG OUT');
-
-    const navMenuContentContainer = getById('nav-menu-content');
-    appendChild(navMenuContentContainer, navMenuButton1.container);
-    appendChild(navMenuContentContainer, navMenuButton2.container);
-    appendChild(navMenuContentContainer, navMenuButton3.container);
-    appendChild(navMenuContentContainer, navMenuButton4.container);
-    appendChild(navMenuContentContainer, navMenuButton5.container);
-
-    addEventListener(getById('nav-btn'), 'click', function () {
-        navUpdate();
-    });
-
-    addEventListener(navMenuButton1.button, 'click', function () {
+    addEventListener(navButton1[0], 'click', function () {
         redirect(TOP_URL);
     });
 
-    addEventListener(navMenuButton2.button, 'click', function () {
+    addEventListener(navButton2[0], 'click', function () {
         redirect(TOP_URL + '/news/');
     });
 
-    addEventListener(navMenuButton3.button, 'click', function () {
+    addEventListener(navButton3[0], 'click', function () {
         redirect(TOP_URL + '/my_account');
     });
 
-    addEventListener(navMenuButton4.button, 'click', function () {
+    addEventListener(navButton4[0], 'click', function () {
         redirect(TOP_URL + '/info');
     });
 
-    addEventListener(navMenuButton5.button, 'click', function () {
-        logout(function () { redirect(LOGIN_URL); });
-    });
+    const navBarPadding = createDivElement();
+    navBarPadding.id = 'nav-bar-padding';
+    appendChild(getBody(), navBarPadding);
+
+    const addNavBarIcon = async function () {
+        let icons: typeof import(
+            './icons'
+        );
+        try {
+            icons = await import(
+                './icons'
+            );
+        } catch (e) {
+            showMessage(moduleImportError(e));
+            throw e;
+        }
+        appendChild(navButton1[1], page === 'home' ? icons.getHomeFillIcon() : icons.getHomeIcon());
+        appendChild(navButton2[1], page === 'news' ? icons.getNewsFillIcon() : icons.getNewsIcon());
+        appendChild(navButton3[1], page === 'my_account' ? icons.getMyAccountFillIcon() : icons.getMyAccountIcon());
+        appendChild(navButton4[1], page === 'info' ? icons.getInfoFillIcon() : icons.getInfoIcon());
+    };
+    addNavBarIcon();
 }
 
 export function secToTimestamp(sec: number, templateSec?: number) {
@@ -386,13 +381,13 @@ export function removeRightClick(elem: Element) {
     addEventListener(elem, 'contextmenu', event => event.preventDefault());
 }
 
-export function scrollToHash(paddingTop: boolean) {
+export function scrollToHash() {
     const scrollID = getHash();
     if (scrollID !== '') {
         const elem = getByIdNative(scrollID);
         if (elem !== null) {
             setTimeout(function () {
-                window.scrollBy(0, elem.getBoundingClientRect().top - (paddingTop ? 46 : 0));
+                window.scrollBy(0, elem.getBoundingClientRect().top);
             }, 500); //Give UI some time to load.
         }
     }

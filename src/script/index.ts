@@ -5,7 +5,7 @@ import {
     CDN_URL,
 } from './module/env/constant';
 import {
-    navListeners,
+    addNavBar,
     sendServerRequest,
     getURLParam,
     clearCookies,
@@ -110,7 +110,7 @@ addEventListener(w, 'load', function () {
             announcementBody.textContent = message;
         }
         showSeries(seriesInfo);
-        navListeners();
+        addNavBar('home');
         addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
             if (!searchBarInput.disabled) {
                 search();

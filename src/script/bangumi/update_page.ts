@@ -4,7 +4,7 @@ import {
     CDN_URL,
 } from '../module/env/constant';
 import {
-    navListeners,
+    addNavBar,
     sendServerRequest,
     getURLParam,
     encodeCFURIComponent,
@@ -28,6 +28,7 @@ import {
     createDivElement,
     createButtonElement,
     createParagraphElement,
+    insertAfter,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -57,7 +58,7 @@ export default async function (
     seriesID = _seriesID;
     epIndex = _epIndex;
 
-    navListeners();
+    addNavBar();
     showElement(getBody());
 
     const contentContainer = getById('content');
@@ -90,7 +91,7 @@ export default async function (
         onScreenConsole.id = 'on-screen-console';
         onScreenConsole.readOnly = true;
         onScreenConsole.rows = 20;
-        appendChild(getById('main'), onScreenConsole);
+        insertAfter(onScreenConsole, contentContainer);
     }
 
     updateEPSelector(response.series_ep);

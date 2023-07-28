@@ -8,7 +8,7 @@ import {
     sendServerRequest,
     clearCookies,
     scrollToHash,
-    navListeners,
+    addNavBar,
     encodeCFURIComponent,
     removeRightClick,
     getLocalTime,
@@ -103,9 +103,9 @@ function getNews(newsID: string): void {
                 return;
             }
             showNews(parsedResponse, newsID);
-            navListeners();
+            addNavBar('news');
             showElement(getBody());
-            scrollToHash(true);
+            scrollToHash();
         },
         method: 'GET',
         logoutParam: 'news=' + newsID + ((hash === '') ? '' : ('&hash=' + hash))
@@ -114,6 +114,7 @@ function getNews(newsID: string): void {
 
 function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
     const outerContainer = createDivElement();
+    outerContainer.id = 'content-outer-container';
     const container = createDivElement();
     container.id = 'content-container';
 
@@ -148,7 +149,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
     appendChild(container, contentContainer);
 
     appendChild(outerContainer, container);
-    appendChild(getById('main'), outerContainer);
+    appendChild(getById('container'), outerContainer);
 
     bindEventListners(contentContainer);
     attachImage(contentContainer, newsID);
@@ -249,7 +250,7 @@ function getAllNews(): void {
             addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
             showElement(getBody());
             showAllNews(parsedResponse);
-            navListeners();
+            addNavBar('news');
             removeClass(getBody(), 'invisible');
         },
         content: 'pivot=' + pivot
@@ -282,7 +283,7 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
             redirect(NEWS_TOP_URL + entry.id);
         });
 
-        appendChild(getById('main'), overviewContainer);
+        appendChild(getById('container'), overviewContainer);
     }
     infiniteScrolling.setEnabled(true);
     infiniteScrolling.updatePosition();
