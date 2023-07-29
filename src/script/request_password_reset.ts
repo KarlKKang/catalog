@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     TOP_URL,
     LOGIN_URL,
@@ -12,9 +11,7 @@ import {
     EMAIL_REGEX
 } from './module/main';
 import {
-    w,
     addEventListener,
-    getBaseURL,
     redirect,
     getById,
     getDescendantsByTagAt,
@@ -25,12 +22,7 @@ import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat } from './module/message/template/inline';
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== LOGIN_URL + '/request_password_reset') {
-        redirect(LOGIN_URL + '/request_password_reset', true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     const emailInput = getById('email') as HTMLInputElement;
@@ -96,4 +88,4 @@ addEventListener(w, 'load', function () {
         submitButton.disabled = disabled;
         disableInput(emailInput, disabled);
     }
-});
+}

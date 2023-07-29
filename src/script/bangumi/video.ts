@@ -28,6 +28,7 @@ import {
     createHRElement,
     appendText,
     replaceChildren,
+    replaceText,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -290,7 +291,7 @@ async function addVideoNode(config?: {
     }
 
     const formatDisplay = getById('format-display');
-    appendText(formatDisplay, formatString);
+    replaceText(formatDisplay, formatString);
     showElement(formatDisplay);
 
     const _config = config ?? {};

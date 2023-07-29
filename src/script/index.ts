@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     TOP_URL,
     CDN_URL,
@@ -26,7 +25,6 @@ import {
     changeURL,
     appendChild,
     showElement,
-    getBaseURL,
     insertBefore,
     createDivElement,
     createParagraphElement,
@@ -50,12 +48,7 @@ let keywords = '';
 let lazyloadObserve: typeof LazyloadObserve;
 let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL) {
-        redirect(TOP_URL, true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
@@ -124,7 +117,7 @@ addEventListener(w, 'load', function () {
         });
         removeClass(getBody(), 'invisible');
     });
-});
+}
 
 function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
     pivot = seriesInfo.pivot;

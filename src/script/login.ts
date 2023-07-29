@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     TOP_URL,
     LOGIN_URL,
@@ -16,26 +15,19 @@ import {
     EMAIL_REGEX,
 } from './module/main';
 import {
-    w,
     addEventListener,
     redirect,
     getById,
     getBody,
     getDescendantsByTagAt,
     showElement,
-    getBaseURL
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { loginFailed, accountDeactivated } from './module/message/template/inline';
 import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== LOGIN_URL) {
-        redirect(LOGIN_URL, true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     const submitButton = getById('submit-button') as HTMLButtonElement;
@@ -169,4 +161,4 @@ addEventListener(w, 'load', function () {
 
         return TOP_URL;
     }
-});
+}

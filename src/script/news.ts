@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     CDN_URL,
     TOP_URL,
@@ -14,7 +13,6 @@ import {
     getLocalTime,
 } from './module/main';
 import {
-    w,
     addEventListener,
     getBaseURL,
     redirect,
@@ -57,12 +55,7 @@ let lazyloadImportPromise: Promise<typeof import(
     './module/lazyload'
 )>;
 
-addEventListener(w, 'load', function () {
-    if (!getBaseURL().startsWith(NEWS_TOP_URL)) {
-        redirect(NEWS_TOP_URL, true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
@@ -83,7 +76,7 @@ addEventListener(w, 'load', function () {
         );
         getNews(newsID);
     }
-});
+}
 
 function getNewsID(): string | null {
     const start = NEWS_TOP_URL.length;

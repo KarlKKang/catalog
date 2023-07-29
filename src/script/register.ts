@@ -1,9 +1,7 @@
 // JavaScript Document
-import 'core-js';
 import {
     DEVELOPMENT,
     LOGIN_URL,
-    TOP_URL,
 } from './module/env/constant';
 import {
     getURLParam,
@@ -15,7 +13,6 @@ import {
     PASSWORD_REGEX,
 } from './module/main';
 import {
-    w,
     addEventListener,
     redirect,
     getById,
@@ -23,18 +20,12 @@ import {
     getByClassAt,
     openWindow,
     showElement,
-    getBaseURL,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/register') {
-        redirect(LOGIN_URL, true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     const submitButton = getById('submit-button') as HTMLButtonElement;
@@ -173,7 +164,7 @@ addEventListener(w, 'load', function () {
         disableInput(passwordInput, disabled);
         disableInput(passwordConfirmInput, disabled);
     }
-});
+}
 
 function addInfoRedirects() {
     addEventListener(getByClassAt('link', 0), 'click', function () {

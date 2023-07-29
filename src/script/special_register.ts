@@ -1,7 +1,6 @@
 // JavaScript Document
-import 'core-js';
 import {
-    LOGIN_URL, TOP_URL,
+    LOGIN_URL,
 } from './module/env/constant';
 import {
     sendServerRequest,
@@ -10,10 +9,7 @@ import {
     EMAIL_REGEX
 } from './module/main';
 import {
-    w,
     addEventListener,
-    getBaseURL,
-    redirect,
     getById,
     getBody,
     showElement,
@@ -22,12 +18,7 @@ import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitationOnly } from './module/message/template/inline';
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/special_register') {
-        redirect(TOP_URL + '/special_register', true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     const emailInput = getById('email') as HTMLInputElement;
@@ -87,5 +78,4 @@ addEventListener(w, 'load', function () {
         submitButton.disabled = disabled;
         disableInput(emailInput, disabled);
     }
-
-});
+}

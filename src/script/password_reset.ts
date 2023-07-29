@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     DEVELOPMENT,
     LOGIN_URL,
@@ -14,24 +13,17 @@ import {
     PASSWORD_REGEX,
 } from './module/main';
 import {
-    w,
     addEventListener,
     redirect,
     getById,
     getBody,
     showElement,
-    getBaseURL,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
 import { expired, passwordChanged } from './module/message/template/param';
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== LOGIN_URL + '/password_reset') {
-        redirect(LOGIN_URL, true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     const newPasswordInput = getById('new-password') as HTMLInputElement;
@@ -149,4 +141,4 @@ addEventListener(w, 'load', function () {
         disableInput(newPasswordInput, disabled);
         disableInput(newPasswordConfirmInput, disabled);
     }
-});
+}

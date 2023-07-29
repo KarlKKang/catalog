@@ -438,3 +438,7 @@ function getDayOfWeek(date: Date): string {
     }
     return result;
 }
+
+export function objectKeyExists(key: PropertyKey, obj: object) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+}

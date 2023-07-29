@@ -1,8 +1,6 @@
 // JavaScript Document
-import 'core-js';
 import {
     LOGIN_URL,
-    TOP_URL
 } from '../module/env/constant';
 import {
     addNavBar,
@@ -17,7 +15,6 @@ import {
     logout
 } from '../module/main';
 import {
-    w,
     addEventListener,
     getBaseURL,
     redirect,
@@ -61,12 +58,7 @@ let passwordChangeButton: HTMLButtonElement;
 let inviteButton: HTMLButtonElement;
 let logoutButton: HTMLButtonElement;
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/my_account') {
-        redirect(TOP_URL + '/my_account', true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
@@ -86,7 +78,7 @@ addEventListener(w, 'load', function () {
             showUser(parsedResponse);
         }
     });
-});
+}
 
 function showUser(userInfo: UserInfo.UserInfo) {
     getById('container').innerHTML = body;

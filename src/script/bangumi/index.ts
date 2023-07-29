@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     TOP_URL,
 } from '../module/env/constant';
@@ -9,8 +8,6 @@ import {
     clearCookies,
 } from '../module/main';
 import {
-    w,
-    addEventListener,
     getBaseURL,
     redirect,
 } from '../module/dom';
@@ -22,12 +19,7 @@ import { getLogoutParam, getFormatIndex } from './helper';
 import { default as getImportPromises } from './get_import_promises';
 import type { default as updatePageType } from './update_page';
 
-addEventListener(w, 'load', function () {
-    if (!getBaseURL().startsWith(TOP_URL + '/bangumi/')) {
-        redirect(TOP_URL, true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     // Parse parameters
@@ -90,7 +82,7 @@ addEventListener(w, 'load', function () {
         content: 'series=' + seriesID + '&ep=' + epIndex + '&format=' + getFormatIndex(),
         logoutParam: getLogoutParam(seriesID, epIndex)
     });
-});
+}
 
 function getSeriesID(): string | null {
     const start = (TOP_URL + '/bangumi/').length;

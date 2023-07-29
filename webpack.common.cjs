@@ -4,7 +4,7 @@ const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
 
 const config = {
     target: 'browserslist',
-    entry: {},
+    entry: './src/script/entry',
     plugins: [],
     output: {
         filename: '[id].js',
@@ -13,7 +13,6 @@ const config = {
         chunkLoadingGlobal: 'loader'
     },
     optimization: {
-        runtimeChunk: 'single',
         concatenateModules: true,
         flagIncludedChunks: true,
         removeAvailableModules: true,
@@ -86,31 +85,6 @@ const config = {
         ]
     }
 };
-
-const pages = [
-    '404',
-    'bangumi',
-    'confirm_new_email',
-    'console',
-    'image',
-    'index',
-    'info',
-    'login',
-    'message',
-    'my_account',
-    'new_email',
-    'news',
-    'password_reset',
-    'register',
-    'request_password_reset',
-    'special_register',
-];
-
-for (const page of pages) {
-    config.entry[page] = {
-        import: './src/script/' + page
-    };
-}
 
 config.plugins.push(
     new BundleAnalyzerPlugin({

@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,
@@ -12,24 +11,17 @@ import {
     EMAIL_REGEX,
 } from './module/main';
 import {
-    w,
     addEventListener,
     redirect,
     getById,
     getBody,
     showElement,
-    getBaseURL,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
 import { expired, emailSent } from './module/message/template/param';
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/new_email') {
-        redirect(TOP_URL, true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     const newEmailInput = getById('new-email') as HTMLInputElement;
@@ -121,4 +113,4 @@ addEventListener(w, 'load', function () {
         submitButton.disabled = disabled;
         disableInput(newEmailInput, disabled);
     }
-});
+}

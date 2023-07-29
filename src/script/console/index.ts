@@ -1,17 +1,10 @@
 // JavaScript Document
-import 'core-js';
-import {
-    TOP_URL,
-} from '../module/env/constant';
 import {
     sendServerRequest,
     clearCookies,
 } from '../module/main';
 import {
-    w,
     addEventListener,
-    getBaseURL,
-    redirect,
     getById,
     getBody,
     showElement,
@@ -21,12 +14,7 @@ import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { getTable, setOutput } from './helper';
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/console') {
-        redirect(TOP_URL + '/console', true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     sendServerRequest('console.php', {
@@ -251,5 +239,4 @@ addEventListener(w, 'load', function () {
             content: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
-
-});
+}

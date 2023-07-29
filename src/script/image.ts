@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     TOP_URL,
 } from './module/env/constant';
@@ -11,9 +10,6 @@ import {
     encodeCFURIComponent,
 } from './module/main';
 import {
-    w,
-    addEventListener,
-    getBaseURL,
     redirect,
     getCookie,
     deleteCookie,
@@ -26,12 +22,7 @@ import { invalidResponse } from './module/message/template/param/server';
 import * as LocalImageParam from './module/type/LocalImageParam';
 import * as CDNCredentials from './module/type/CDNCredentials';
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/image') {
-        redirect(TOP_URL + '/image', true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     let paramCookie = getCookie('local-image-param');
@@ -104,4 +95,4 @@ addEventListener(w, 'load', function () {
         },
         content: content
     });
-});
+}

@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     DEVELOPMENT,
     TOP_URL,
@@ -10,7 +9,6 @@ import {
     changeColor,
 } from './module/main';
 import {
-    w,
     addEventListener,
     getCookie,
     getById,
@@ -18,18 +16,12 @@ import {
     redirect,
     setTitle,
     deleteCookie,
-    getBaseURL,
     hideElement,
     showElement,
 } from './module/dom';
 import * as LocalMessageParam from './module/type/LocalMessageParam';
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/message') {
-        redirect(TOP_URL + '/message', true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     let paramCookie = getCookie('local-message-param');
@@ -85,4 +77,4 @@ addEventListener(w, 'load', function () {
     }
 
     callback();
-});
+}

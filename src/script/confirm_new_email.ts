@@ -1,5 +1,4 @@
 // JavaScript Document
-import 'core-js';
 import {
     DEVELOPMENT,
     LOGIN_URL,
@@ -16,10 +15,8 @@ import {
     hashPassword,
 } from './module/main';
 import {
-    w,
     addEventListener,
     redirect,
-    getBaseURL,
     showElement,
     getBody,
     getById,
@@ -32,12 +29,7 @@ let emailInput: HTMLInputElement;
 let passwordInput: HTMLInputElement;
 let submitButton: HTMLButtonElement;
 
-addEventListener(w, 'load', function () {
-    if (getBaseURL() !== TOP_URL + '/confirm_new_email') {
-        redirect(LOGIN_URL, true);
-        return;
-    }
-
+export default function () {
     clearCookies();
 
     const param = getURLParam('p');
@@ -95,7 +87,7 @@ addEventListener(w, 'load', function () {
         content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature,
         withCredentials: false
     });
-});
+}
 
 async function changeEmail(param: string, keyID: string, signature: string) {
     disableAllInputs(true);
