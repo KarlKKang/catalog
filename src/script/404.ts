@@ -23,7 +23,7 @@ import {
 import { changeColor } from './module/main';
 
 addEventListener(w, 'load', function () {
-    setTitle('404 | ' + TOP_DOMAIN + DEVELOPMENT ? ' (alpha)' : '');
+    setTitle('404 | ' + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
 
     const container = createDivElement();
     const title = createParagraphElement();
