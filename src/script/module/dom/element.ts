@@ -137,7 +137,7 @@ export function remove(elem: Node) {
 
 export function replaceChildren(parent: Node, ...newChildren: Node[]) {
     let oldChild = parent.firstChild;
-    if (oldChild) {
+    while (oldChild !== null) {
         parent.removeChild(oldChild);
         oldChild = parent.firstChild;
     }
