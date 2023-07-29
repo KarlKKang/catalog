@@ -22,6 +22,7 @@ import {
     getBody,
     showElement,
     hideElement,
+    appendText,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { emailSent as emailSentParam } from '../module/message/template/param';
@@ -113,8 +114,8 @@ function showUser(userInfo: UserInfo.UserInfo) {
     passwordStyling(newPasswordInput);
     passwordStyling(newPasswordComfirmInput);
 
-    getById('email').innerHTML = userInfo.email;
-    getById('invite-count').innerHTML = userInfo.invite_quota.toString();
+    appendText(getById('email'), userInfo.email);
+    appendText(getById('invite-count'), userInfo.invite_quota.toString());
 
     newUsernameInput.value = userInfo.username;
     currentUsername = userInfo.username;

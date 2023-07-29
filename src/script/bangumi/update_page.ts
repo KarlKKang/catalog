@@ -29,6 +29,10 @@ import {
     createButtonElement,
     createParagraphElement,
     insertAfter,
+    appendText,
+    createTextNode,
+    createSpanElement,
+    replaceChildren,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -79,10 +83,10 @@ export default async function (
     const title = response.title;
     const titleOverride = response.title_override;
     if (titleOverride !== undefined) {
-        titleElem.innerHTML = titleOverride;
+        appendText(titleElem, titleOverride);
         setTitle(parseCharacters(titleOverride) + ' | ' + getTitle());
     } else {
-        titleElem.innerHTML = title;
+        appendText(titleElem, title);
         setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | ' + getTitle());
     }
 
@@ -113,8 +117,8 @@ export default async function (
         warningButtonGroup.id = 'warning-button-group';
         const warningButtonYes = createButtonElement();
         const warningButtonNo = createButtonElement();
-        warningButtonYes.innerHTML = 'はい';
-        warningButtonNo.innerHTML = 'いいえ';
+        appendText(warningButtonYes, 'はい');
+        appendText(warningButtonNo, 'いいえ');
         addClass(warningButtonYes, 'button');
         addClass(warningButtonNo, 'button');
         appendChild(warningButtonGroup, warningButtonYes);
@@ -194,8 +198,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     seriesEP.forEach(function (value, index) {
         const epButton = createDivElement();
         const epText = createParagraphElement();
-
-        epText.innerHTML = value;
+        appendText(epText, value);
 
         if (epIndex == index) {
             addClass(epButton, 'current-ep');
@@ -218,7 +221,16 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     addClass(showMoreButton, 'transparent');
     appendChild(epSelector, showMoreButton);
 
-    const showMoreButtonFoldedText = 'すべてを見る <span class="symbol">&#xE972;</span>';
+    const showMoreButtonFoldedText = createTextNode('すべてを見る ');
+    const showMoreButtonFoldedTextSymbol = createSpanElement();
+    appendText(showMoreButtonFoldedTextSymbol, '');
+    addClass(showMoreButtonFoldedTextSymbol, 'symbol');
+
+    const showMoreButtonExpandedText = createTextNode('非表示にする ');
+    const showMoreButtonExpandedTextSymbol = createSpanElement();
+    appendText(showMoreButtonExpandedTextSymbol, '');
+    addClass(showMoreButtonExpandedTextSymbol, 'symbol');
+
     let currentToggleTimeout: NodeJS.Timeout | null = null;
     let currentToggleAnimationFrame: number | null = null;
     let isExpanded = false;
@@ -232,7 +244,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
                     animationFrame = w.requestAnimationFrame(function () {
                         if (currentToggleAnimationFrame === animationFrame) {
                             isExpanded = false;
-                            showMoreButton.innerHTML = showMoreButtonFoldedText;
+                            replaceChildren(showMoreButton, showMoreButtonFoldedText, showMoreButtonFoldedTextSymbol);
                             epButtonWrapper.style.maxHeight = '30vh';
                             removeClass(epButtonWrapper, 'expanded');
                         }
@@ -244,7 +256,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
         } else {
             currentToggleAnimationFrame = null;
             isExpanded = true;
-            showMoreButton.innerHTML = '非表示にする <span class="symbol">&#xE971;</span>';
+            replaceChildren(showMoreButton, showMoreButtonExpandedText, showMoreButtonExpandedTextSymbol);
             epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
             addClass(epButtonWrapper, 'expanded');
             const timeout = setTimeout(function () {
@@ -284,7 +296,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
                     animationFrame = w.requestAnimationFrame(function () {
                         if (currentStylingAnimationFrame === animationFrame) {
                             isExpanded = false;
-                            showMoreButton.innerHTML = showMoreButtonFoldedText;
+                            replaceChildren(showMoreButton, showMoreButtonFoldedText, showMoreButtonFoldedTextSymbol);
                             epButtonWrapper.style.maxHeight = '30vh';
                             removeClass(epButtonWrapper, 'expanded');
                             removeClass(showMoreButton, 'invisible');
@@ -333,11 +345,11 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
             const seasonText = createParagraphElement();
 
             if (season.id != seriesID) {
-                seasonText.innerHTML = season.season_name;
+                appendText(seasonText, season.season_name);
                 const targetSeries = season.id;
                 addEventListener(seasonButton, 'click', function () { goToEP(targetSeries, 1); });
             } else {
-                seasonText.innerHTML = season.season_name;
+                appendText(seasonText, season.season_name);
                 addClass(seasonButton, 'current-season');
             }
             appendChild(seasonButton, seasonText);

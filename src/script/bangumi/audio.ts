@@ -238,12 +238,12 @@ function addAlbumInfo() {
         const albumTitleElem = createParagraphElement();
         addClass(albumTitleElem, 'sub-title');
         addClass(albumTitleElem, 'center-align');
-        albumTitleElem.innerHTML = albumInfo.album_title;
+        albumTitleElem.innerHTML = albumInfo.album_title; // Album title is in HTML syntax.
         if (albumInfo.album_artist != '') {
             const albumArtist = createParagraphElement();
             addClass(albumArtist, 'artist');
             addClass(albumArtist, 'center-align');
-            albumArtist.innerHTML = albumInfo.album_artist;
+            appendText(albumArtist, albumInfo.album_artist);
             prependChild(contentContainer, albumArtist);
         }
         prependChild(contentContainer, albumTitleElem);
@@ -251,7 +251,8 @@ function addAlbumInfo() {
         const titleElem = getById('title');
         const artistElem = createSpanElement();
         addClass(artistElem, 'artist');
-        artistElem.innerHTML = '<br/>' + albumInfo.album_artist;
+        appendChild(artistElem, createBRElement());
+        appendText(artistElem, albumInfo.album_artist);
         appendChild(titleElem, artistElem);
     }
 }
@@ -262,12 +263,11 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
 
     //subtitle
     if (file.title != '') {
-        subtitle.innerHTML = file.title;
-
+        appendText(subtitle, file.title);
         if (file.artist != '') {
             const artist = createSpanElement();
             addClass(artist, 'artist');
-            artist.innerHTML = '／' + file.artist;
+            appendText(artist, '／' + file.artist);
             appendChild(subtitle, artist);
         }
     }

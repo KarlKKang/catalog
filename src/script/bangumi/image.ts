@@ -45,7 +45,7 @@ export default async function (
         const title = createParagraphElement();
         addClass(title, 'sub-title');
         addClass(title, 'center-align');
-        title.innerHTML = epInfo.gallery_title;
+        title.innerHTML = epInfo.gallery_title; // Gallery title is in HTML syntax.
         prependChild(contentContainer, title);
     }
 
@@ -55,7 +55,7 @@ export default async function (
         if (file.tag != '') {
             const subtitle = createParagraphElement();
             addClass(subtitle, 'sub-title');
-            subtitle.innerHTML = file.tag;
+            appendText(subtitle, file.tag);
             appendChild(mediaHolder, subtitle);
         }
 
@@ -75,7 +75,7 @@ export default async function (
         addClass(downloadButton, 'button');
         addClass(downloadButton, 'image-download-button');
         downloadButton.disabled = true;
-        downloadButton.innerHTML = 'ダウンロード';
+        appendText(downloadButton, 'ダウンロード');
         appendChild(downloadPanel, downloadButton);
 
         hideElement(downloadAnchor);
@@ -116,7 +116,7 @@ export default async function (
 
     const downloadAccordion = createButtonElement();
     addClass(downloadAccordion, 'accordion');
-    downloadAccordion.innerHTML = 'ダウンロード';
+    appendText(downloadAccordion, 'ダウンロード');
 
     const downloadPanel = createDivElement();
     addClass(downloadPanel, 'panel');

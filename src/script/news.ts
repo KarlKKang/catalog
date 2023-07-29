@@ -114,7 +114,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
     const titleContainer = createParagraphElement();
     titleContainer.id = 'title';
 
-    titleContainer.innerHTML = newsInfo.title;
+    appendText(titleContainer, newsInfo.title);
     setTitle(newsInfo.title + ' | ' + getTitle());
     appendChild(container, titleContainer);
 
@@ -122,7 +122,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
     addClass(createTimeContainer, 'date');
 
     const createTime = getLocalTime(newsInfo.create_time);
-    createTimeContainer.innerHTML = '初回掲載日：' + createTime.year + '年' + createTime.month + '月' + createTime.date + '日（' + createTime.dayOfWeek + '）' + createTime.hour + '時' + createTime.minute + '分' + createTime.second + '秒';
+    appendText(createTimeContainer, '初回掲載日：' + createTime.year + '年' + createTime.month + '月' + createTime.date + '日（' + createTime.dayOfWeek + '）' + createTime.hour + '時' + createTime.minute + '分' + createTime.second + '秒');
     appendChild(container, createTimeContainer);
 
     if (newsInfo.update_time !== null) {
@@ -130,7 +130,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
         addClass(updateTimeContainer, 'date');
 
         const updateTime = getLocalTime(newsInfo.update_time);
-        updateTimeContainer.innerHTML = '最終更新日：' + updateTime.year + '年' + updateTime.month + '月' + updateTime.date + '日（' + updateTime.dayOfWeek + '）' + updateTime.hour + '時' + updateTime.minute + '分' + updateTime.second + '秒';
+        appendText(updateTimeContainer, '最終更新日：' + updateTime.year + '年' + updateTime.month + '月' + updateTime.date + '日（' + updateTime.dayOfWeek + '）' + updateTime.hour + '時' + updateTime.minute + '分' + updateTime.second + '秒');
         appendChild(container, updateTimeContainer);
     }
 
@@ -138,7 +138,7 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
 
     const contentContainer = createDivElement();
     contentContainer.id = 'content';
-    contentContainer.innerHTML = newsInfo.content;
+    contentContainer.innerHTML = newsInfo.content; // Content is in HTML syntax.
     appendChild(container, contentContainer);
 
     appendChild(outerContainer, container);
@@ -265,7 +265,7 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
         appendText(dateContainer, updateTime.month.toString().padStart(2, '0') + '月' + updateTime.date.toString().padStart(2, '0') + '日');
 
         const titleContainer = createDivElement();
-        titleContainer.innerHTML = entry.title;
+        appendText(titleContainer, entry.title);
         addClass(titleContainer, 'overview-title');
         addClass(titleContainer, 'ellipsis-clipping-2');
 

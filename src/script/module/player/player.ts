@@ -748,7 +748,7 @@ export class Player {
         }
 
         const currentTimestamp = secToTimestamp(this.media.currentTime, duration);
-        if (this.currentTimeDisplayText.textContent !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
+        if (this.currentTimeDisplayText.textContent !== currentTimestamp) {
             replaceText(this.currentTimeDisplayText, currentTimestamp);
         }
         this.progressBar.style.width = Math.min(this.media.currentTime / duration * 100, 100) + '%';

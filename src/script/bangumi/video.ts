@@ -96,7 +96,7 @@ export default function (
         const title = createParagraphElement();
         addClass(title, 'sub-title');
         addClass(title, 'center-align');
-        title.innerHTML = epInfo.title;
+        title.innerHTML = epInfo.title; // This title is in HTML syntax.
         prependChild(contentContainer, title);
     }
 
@@ -121,7 +121,7 @@ export default function (
         const option = createOptionElement();
 
         option.value = format.value;
-        option.innerHTML = (format.tag === undefined) ? format.value : format.tag;
+        appendText(option, (format.tag === undefined) ? format.value : format.tag);
 
         if (index == formatIndex) {
             option.selected = true;

@@ -18,6 +18,7 @@ import {
     deleteCookie,
     hideElement,
     showElement,
+    appendText,
 } from './module/dom';
 import * as LocalMessageParam from './module/type/LocalMessageParam';
 
@@ -31,8 +32,8 @@ export default function () {
     if (paramCookie === null) {
         if (DEVELOPMENT) {
             changeColor(titleElem, 'orange');
-            titleElem.innerHTML = 'タイトルTitle';
-            messageElem.innerHTML = 'メッセージMessage'.repeat(10);
+            appendText(titleElem, 'タイトルTitle');
+            appendText(messageElem, 'メッセージMessage'.repeat(10));
             showElement(getBody());
         } else {
             redirect(TOP_URL, true);
@@ -61,7 +62,7 @@ export default function () {
             hideElement(button);
         } else {
             const url = param.url;
-            button.innerHTML = '次に進む';
+            appendText(button, '次に進む');
             addEventListener(button, 'click', function () {
                 deleteCookie('local-message-param');
                 redirect(url, true);

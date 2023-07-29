@@ -29,6 +29,7 @@ import {
     createDivElement,
     createParagraphElement,
     appendText,
+    replaceChildren,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -133,7 +134,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
         addClass(overlay, 'overlay');
         appendChild(thumbnailNode, overlay);
         addClass(thumbnailNode, 'lazyload');
-        titleNode.innerHTML = seriesEntry.title;
+        appendText(titleNode, seriesEntry.title);
         addClass(titleNode, 'ellipsis-clipping-2');
 
         addEventListener(seriesNode, 'click', function () { goToSeries(seriesEntry.id); });
@@ -219,7 +220,7 @@ function requestSearchResults() {
     getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
         addClass(containerElem, 'transparent');
         setTimeout(function () {
-            containerElem.innerHTML = '';
+            replaceChildren(containerElem);
             showSeries(seriesInfo);
             removeClass(containerElem, 'transparent');
             disableSearchBarInput(false);
