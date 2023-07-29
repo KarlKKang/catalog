@@ -23,11 +23,16 @@ import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat } from './module/message/template/inline';
 
+let emailInput: HTMLInputElement;
+let submitButton: HTMLButtonElement;
+let warningElem: HTMLElement;
+
 export default function () {
     clearCookies();
 
-    const emailInput = getById('email') as HTMLInputElement;
-    const submitButton = getById('submit-button') as HTMLButtonElement;
+    emailInput = getById('email') as HTMLInputElement;
+    submitButton = getById('submit-button') as HTMLButtonElement;
+    warningElem = getById('warning');
 
     addEventListener(emailInput, 'keydown', function (event) {
         if ((event as KeyboardEvent).key === 'Enter') {
@@ -53,40 +58,37 @@ export default function () {
                 showElement(getBody());
             },
     });
+}
 
+function submitRequest() {
+    disableAllInputs(true);
 
-    function submitRequest() {
-        disableAllInputs(true);
-
-        const warningElem = getById('warning');
-
-        const email = emailInput.value;
-        if (!EMAIL_REGEX.test(email)) {
-            replaceText(warningElem, invalidEmailFormat);
-            showElement(warningElem);
-            disableAllInputs(false);
-            return;
-        }
-
-        sendServerRequest('send_password_reset.php', {
-            callback: function (response: string) {
-                if (response == 'INVALID FORMAT') {
-                    replaceText(warningElem, invalidEmailFormat);
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                } else if (response == 'DONE') {
-                    showMessage(emailSent(LOGIN_URL));
-                } else {
-                    showMessage();
-                }
-            },
-            content: 'email=' + email,
-            withCredentials: false
-        });
+    const email = emailInput.value;
+    if (!EMAIL_REGEX.test(email)) {
+        replaceText(warningElem, invalidEmailFormat);
+        showElement(warningElem);
+        disableAllInputs(false);
+        return;
     }
 
-    function disableAllInputs(disabled: boolean) {
-        submitButton.disabled = disabled;
-        disableInput(emailInput, disabled);
-    }
+    sendServerRequest('send_password_reset.php', {
+        callback: function (response: string) {
+            if (response == 'INVALID FORMAT') {
+                replaceText(warningElem, invalidEmailFormat);
+                showElement(warningElem);
+                disableAllInputs(false);
+            } else if (response == 'DONE') {
+                showMessage(emailSent(LOGIN_URL));
+            } else {
+                showMessage();
+            }
+        },
+        content: 'email=' + email,
+        withCredentials: false
+    });
+}
+
+function disableAllInputs(disabled: boolean) {
+    submitButton.disabled = disabled;
+    disableInput(emailInput, disabled);
 }

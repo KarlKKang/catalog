@@ -60,6 +60,11 @@ let passwordChangeButton: HTMLButtonElement;
 let inviteButton: HTMLButtonElement;
 let logoutButton: HTMLButtonElement;
 
+let emailWarning: HTMLElement;
+let usernameWarning: HTMLElement;
+let passwordWarning: HTMLElement;
+let inviteWarning: HTMLElement;
+
 export default function () {
     clearCookies();
 
@@ -96,6 +101,11 @@ function showUser(userInfo: UserInfo.UserInfo) {
     inviteButton = getById('invite-button') as HTMLButtonElement;
     logoutButton = getById('logout-button') as HTMLButtonElement;
 
+    emailWarning = getById('email-warning');
+    usernameWarning = getById('username-warning');
+    passwordWarning = getById('password-warning');
+    inviteWarning = getById('invite-warning');
+
     addEventListener(emailChangeButton, 'click', function () {
         changeEmail();
     });
@@ -128,9 +138,9 @@ function showUser(userInfo: UserInfo.UserInfo) {
 function invite() {
     disableAllInputs(true);
 
-    const warningElem = getById('invite-warning');
-
+    const warningElem = inviteWarning;
     const receiver = inviteReceiverEmailInput.value;
+
     hideElement(warningElem);
     changeColor(warningElem, 'red');
     if (!EMAIL_REGEX.test(receiver)) {
@@ -167,7 +177,7 @@ function invite() {
 async function changePassword() {
     disableAllInputs(true);
 
-    const warningElem = getById('password-warning');
+    const warningElem = passwordWarning;
     let newPassword = newPasswordInput.value;
     const newPasswordConfirm = newPasswordComfirmInput.value;
 
@@ -205,7 +215,9 @@ async function changePassword() {
 
 function changeEmail() {
     disableAllInputs(true);
-    const warningElem = getById('email-warning');
+
+    const warningElem = emailWarning;
+
     hideElement(warningElem);
     changeColor(warningElem, 'red');
 
@@ -228,8 +240,10 @@ function changeEmail() {
 
 function changeUsername() {
     disableAllInputs(true);
-    const warningElem = getById('username-warning');
+
+    const warningElem = usernameWarning;
     const newUsername = newUsernameInput.value;
+
     hideElement(warningElem);
     changeColor(warningElem, 'red');
 

@@ -26,13 +26,20 @@ import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 
+let submitButton: HTMLButtonElement;
+let usernameInput: HTMLInputElement;
+let passwordInput: HTMLInputElement;
+let passwordConfirmInput: HTMLInputElement;
+let warningElem: HTMLElement;
+
 export default function () {
     clearCookies();
 
-    const submitButton = getById('submit-button') as HTMLButtonElement;
-    const usernameInput = getById('username') as HTMLInputElement;
-    const passwordInput = getById('password') as HTMLInputElement;
-    const passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
+    submitButton = getById('submit-button') as HTMLButtonElement;
+    usernameInput = getById('username') as HTMLInputElement;
+    passwordInput = getById('password') as HTMLInputElement;
+    passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
+    warningElem = getById('warning');
 
     const param = getURLParam('p');
     const keyID = getURLParam('key-id');
@@ -67,24 +74,24 @@ export default function () {
             } else if (response == 'APPROVED') {
                 addEventListener(usernameInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        register();
+                        register(param, keyID, signature);
                     }
                 });
                 addEventListener(passwordInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        register();
+                        register(param, keyID, signature);
                     }
                 });
                 addEventListener(passwordConfirmInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        register();
+                        register(param, keyID, signature);
                     }
                 });
 
 
                 addInfoRedirects();
                 addEventListener(submitButton, 'click', function () {
-                    register();
+                    register(param, keyID, signature);
                 });
 
                 passwordStyling(passwordInput);
@@ -98,73 +105,71 @@ export default function () {
         content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature,
         withCredentials: false
     });
+}
 
-    async function register() {
-        disableAllInputs(true);
+async function register(param: string, keyID: string, signature: string) {
+    disableAllInputs(true);
 
-        const warningElem = getById('warning');
+    const username = usernameInput.value;
+    let password = passwordInput.value;
+    const passwordConfirm = passwordConfirmInput.value;
 
-        const username = usernameInput.value;
-        let password = passwordInput.value;
-        const passwordConfirm = passwordConfirmInput.value;
-
-        if (username == '') {
-            replaceText(warningElem, usernameEmpty);
-            showElement(warningElem);
-            disableAllInputs(false);
-            return;
-        }
-
-        if (!PASSWORD_REGEX.test(password)) {
-            replaceText(warningElem, invalidPasswordFormat);
-            showElement(warningElem);
-            disableAllInputs(false);
-            return;
-        } else if (password != passwordConfirm) {
-            replaceText(warningElem, passwordConfirmationMismatch);
-            showElement(warningElem);
-            disableAllInputs(false);
-            return;
-        }
-
-        password = await hashPassword(password);
-
-        const user = {
-            username: username,
-            password: password
-        };
-
-        sendServerRequest('register.php', {
-            callback: function (response: string) {
-                if (response == 'EXPIRED') {
-                    showMessage(expired);
-                } else if (response == 'USERNAME DUPLICATED') {
-                    replaceText(warningElem, usernameTaken);
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                } else if (response == 'USERNAME EMPTY') {
-                    replaceText(warningElem, usernameEmpty);
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                } else if (response == 'ALREADY REGISTERED') {
-                    showMessage(emailAlreadyRegistered);
-                } else if (response == 'DONE') {
-                    showMessage(registerComplete);
-                } else {
-                    showMessage();
-                }
-            },
-            content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&user=' + encodeURIComponent(JSON.stringify(user)),
-            withCredentials: false
-        });
+    if (username == '') {
+        replaceText(warningElem, usernameEmpty);
+        showElement(warningElem);
+        disableAllInputs(false);
+        return;
     }
 
-    function disableAllInputs(disabled: boolean) {
-        submitButton.disabled = disabled;
-        disableInput(usernameInput, disabled);
-        disableInput(passwordInput, disabled);
-        disableInput(passwordConfirmInput, disabled);
+    if (!PASSWORD_REGEX.test(password)) {
+        replaceText(warningElem, invalidPasswordFormat);
+        showElement(warningElem);
+        disableAllInputs(false);
+        return;
+    } else if (password != passwordConfirm) {
+        replaceText(warningElem, passwordConfirmationMismatch);
+        showElement(warningElem);
+        disableAllInputs(false);
+        return;
     }
+
+    password = await hashPassword(password);
+
+    const user = {
+        username: username,
+        password: password
+    };
+
+    sendServerRequest('register.php', {
+        callback: function (response: string) {
+            if (response == 'EXPIRED') {
+                showMessage(expired);
+            } else if (response == 'USERNAME DUPLICATED') {
+                replaceText(warningElem, usernameTaken);
+                showElement(warningElem);
+                disableAllInputs(false);
+            } else if (response == 'USERNAME EMPTY') {
+                replaceText(warningElem, usernameEmpty);
+                showElement(warningElem);
+                disableAllInputs(false);
+            } else if (response == 'ALREADY REGISTERED') {
+                showMessage(emailAlreadyRegistered);
+            } else if (response == 'DONE') {
+                showMessage(registerComplete);
+            } else {
+                showMessage();
+            }
+        },
+        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&user=' + encodeURIComponent(JSON.stringify(user)),
+        withCredentials: false
+    });
+}
+
+function disableAllInputs(disabled: boolean) {
+    submitButton.disabled = disabled;
+    disableInput(usernameInput, disabled);
+    disableInput(passwordInput, disabled);
+    disableInput(passwordConfirmInput, disabled);
 }
 
 function addInfoRedirects() {

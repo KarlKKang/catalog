@@ -30,9 +30,15 @@ import { loginFailed, accountDeactivated } from './module/message/template/inlin
 let emailInput: HTMLInputElement;
 let passwordInput: HTMLInputElement;
 let submitButton: HTMLButtonElement;
+let warningElem: HTMLElement;
 
 export default function () {
     clearCookies();
+
+    emailInput = getById('email') as HTMLInputElement;
+    passwordInput = getById('password') as HTMLInputElement;
+    submitButton = getById('submit-button') as HTMLButtonElement;
+    warningElem = getById('warning');
 
     const param = getURLParam('p');
     const keyID = getURLParam('key-id');
@@ -62,10 +68,6 @@ export default function () {
             } else if (response == 'DUPLICATED') {
                 showMessage(emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
-                emailInput = getById('email') as HTMLInputElement;
-                passwordInput = getById('password') as HTMLInputElement;
-                submitButton = getById('submit-button') as HTMLButtonElement;
-
                 addEventListener(emailInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
                         changeEmail(param, keyID, signature);
@@ -93,8 +95,6 @@ export default function () {
 
 async function changeEmail(param: string, keyID: string, signature: string) {
     disableAllInputs(true);
-
-    const warningElem = getById('warning');
 
     const email = emailInput.value;
     let password = passwordInput.value;

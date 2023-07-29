@@ -22,11 +22,16 @@ import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
 import { expired, emailSent } from './module/message/template/param';
 
+let newEmailInput: HTMLInputElement;
+let submitButton: HTMLButtonElement;
+let warningElem: HTMLElement;
+
 export default function () {
     clearCookies();
 
-    const newEmailInput = getById('new-email') as HTMLInputElement;
-    const submitButton = getById('submit-button') as HTMLButtonElement;
+    newEmailInput = getById('new-email') as HTMLInputElement;
+    submitButton = getById('submit-button') as HTMLButtonElement;
+    warningElem = getById('warning');
 
     const param = getURLParam('p');
     const keyID = getURLParam('key-id');
@@ -57,12 +62,12 @@ export default function () {
             } else if (response == 'APPROVED') {
                 addEventListener(newEmailInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        submitRequest();
+                        submitRequest(param, keyID, signature);
                     }
                 });
 
                 addEventListener(submitButton, 'click', function () {
-                    submitRequest();
+                    submitRequest(param, keyID, signature);
                 });
                 showElement(getBody());
             } else {
@@ -72,46 +77,44 @@ export default function () {
         content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature,
         withCredentials: false
     });
+}
 
+function submitRequest(param: string, keyID: string, signature: string) {
+    disableAllInputs(true);
 
-    function submitRequest() {
-        disableAllInputs(true);
+    const newEmail = newEmailInput.value;
 
-        const warningElem = getById('warning');
-        const newEmail = newEmailInput.value;
-
-        if (!EMAIL_REGEX.test(newEmail)) {
-            replaceText(warningElem, invalidEmailFormat);
-            showElement(warningElem);
-            disableAllInputs(false);
-            return;
-        }
-
-        sendServerRequest('verify_email_change.php', {
-            callback: function (response: string) {
-                if (response == 'EXPIRED') {
-                    showMessage(expired);
-                } else if (response == 'DUPLICATED') {
-                    replaceText(warningElem, emailAlreadyRegistered);
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                } else if (response == 'INVALID FORMAT') {
-                    replaceText(warningElem, invalidEmailFormat);
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                } else if (response == 'DONE') {
-                    showMessage(emailSent(TOP_URL));
-                } else {
-                    showMessage();
-                }
-            },
-            content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&new=' + newEmail,
-            withCredentials: false
-        });
+    if (!EMAIL_REGEX.test(newEmail)) {
+        replaceText(warningElem, invalidEmailFormat);
+        showElement(warningElem);
+        disableAllInputs(false);
+        return;
     }
 
-    function disableAllInputs(disabled: boolean) {
-        submitButton.disabled = disabled;
-        disableInput(newEmailInput, disabled);
-    }
+    sendServerRequest('verify_email_change.php', {
+        callback: function (response: string) {
+            if (response == 'EXPIRED') {
+                showMessage(expired);
+            } else if (response == 'DUPLICATED') {
+                replaceText(warningElem, emailAlreadyRegistered);
+                showElement(warningElem);
+                disableAllInputs(false);
+            } else if (response == 'INVALID FORMAT') {
+                replaceText(warningElem, invalidEmailFormat);
+                showElement(warningElem);
+                disableAllInputs(false);
+            } else if (response == 'DONE') {
+                showMessage(emailSent(TOP_URL));
+            } else {
+                showMessage();
+            }
+        },
+        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&new=' + newEmail,
+        withCredentials: false
+    });
+}
+
+function disableAllInputs(disabled: boolean) {
+    submitButton.disabled = disabled;
+    disableInput(newEmailInput, disabled);
 }
