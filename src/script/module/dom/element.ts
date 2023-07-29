@@ -103,10 +103,18 @@ export function getAttribute(elem: Element, name: string) {
     return elem.getAttribute(name);
 }
 
-export function getParent(elem: Element) {
+export function getParentElement(elem: Node) {
     const parent = elem.parentElement;
     if (parent === null) {
-        throw new Error('parentElement not found.');
+        throw new Error('Parent element not found.');
+    }
+    return parent;
+}
+
+function getParentNode(elem: Node) {
+    const parent = elem.parentNode;
+    if (parent === null) {
+        throw new Error('Parent node not found.');
     }
     return parent;
 }
@@ -115,20 +123,27 @@ export function prependChild(parent: Node, child: Node) {
     parent.insertBefore(child, parent.firstChild); // Works with empty elements as well.
 }
 
-export function insertBefore(newNode: Node, beforeNode: Element) {
-    getParent(beforeNode).insertBefore(newNode, beforeNode);
+export function insertBefore(newNode: Node, beforeNode: Node) {
+    getParentNode(beforeNode).insertBefore(newNode, beforeNode);
 }
 
-export function insertAfter(newNode: Node, beforeNode: Element) {
-    getParent(beforeNode).insertBefore(newNode, beforeNode.nextSibling);
+export function insertAfter(newNode: Node, beforeNode: Node) {
+    getParentNode(beforeNode).insertBefore(newNode, beforeNode.nextSibling);
 }
 
-export function remove(elem: Element) {
-    elem.remove();
+export function remove(elem: Node) {
+    getParentNode(elem).removeChild(elem);
 }
 
-export function createText(content: string) {
-    return d.createTextNode(content);
+export function replaceChildren(parent: Node, ...newChildren: Node[]) {
+    let oldChild = parent.firstChild;
+    if (oldChild) {
+        parent.removeChild(oldChild);
+        oldChild = parent.firstChild;
+    }
+    for (const newChild of newChildren) {
+        appendChild(parent, newChild);
+    }
 }
 
 export function createElement(tag: string) {
@@ -205,27 +220,35 @@ export function createTextNode(text: string) {
     return d.createTextNode(text);
 }
 
-export function addEventListener(elem: Element | Document | Window | XMLHttpRequest | FileReader, event: string, callback: EventListener, useCapture?: boolean) {
+export function appendText(parent: Node, content: string) {
+    appendChild(parent, createTextNode(content));
+}
+
+export function replaceText(parent: Node, content: string) {
+    replaceChildren(parent, createTextNode(content));
+}
+
+export function addEventListener(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
     elem.addEventListener(event, callback, useCapture);
 }
 
-export function addEventsListener(elem: Element | Document | Window | XMLHttpRequest | FileReader, events: Array<string>, callback: EventListener, useCapture?: boolean) {
+export function addEventsListener(elem: EventTarget, events: Array<string>, callback: EventListener, useCapture?: boolean) {
     for (const event of events) {
         addEventListener(elem, event, callback, useCapture);
     }
 }
 
-export function removeEventListener(elem: Element | Document | Window | XMLHttpRequest | FileReader, event: string, callback: EventListener, useCapture?: boolean) {
+export function removeEventListener(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
     elem.removeEventListener(event, callback, useCapture);
 }
 
-export function removeEventsListener(elem: Element | Document | Window | XMLHttpRequest | FileReader, events: Array<string>, callback: EventListener, useCapture?: boolean) {
+export function removeEventsListener(elem: EventTarget, events: Array<string>, callback: EventListener, useCapture?: boolean) {
     for (const event of events) {
         removeEventListener(elem, event, callback, useCapture);
     }
 }
 
-export function addEventListenerOnce(elem: Element | Document | Window | XMLHttpRequest | FileReader, event: string, callback: EventListener, useCapture?: boolean) {
+export function addEventListenerOnce(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
     const callbackOnce = function (this: any, arg: Event) {
         removeEventListener(elem, event, callbackOnce, useCapture);
         callback.call(this, arg);

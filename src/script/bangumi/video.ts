@@ -26,6 +26,8 @@ import {
     createButtonElement,
     createSpanElement,
     createHRElement,
+    appendText,
+    replaceChildren,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -188,7 +190,7 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HT
             }
 
             hideElement(getById('format-display'));
-            mediaHolder.textContent = '';
+            replaceChildren(mediaHolder);
             const errorMsgElem = getByIdNative('error');
             errorMsgElem && remove(errorMsgElem);
             showElement(mediaHolder);
@@ -288,7 +290,7 @@ async function addVideoNode(config?: {
     }
 
     const formatDisplay = getById('format-display');
-    formatDisplay.textContent = formatString;
+    appendText(formatDisplay, formatString);
     showElement(formatDisplay);
 
     const _config = config ?? {};
@@ -384,7 +386,7 @@ async function addVideoNode(config?: {
 function displayChapters(mediaInstance: Player, offset: number) {
     const accordion = createButtonElement();
     addClass(accordion, 'accordion');
-    accordion.textContent = 'チャプター';
+    appendText(accordion, 'チャプター');
 
     const accordionPanel = createDivElement();
     addClass(accordionPanel, 'panel');
@@ -396,7 +398,7 @@ function displayChapters(mediaInstance: Player, offset: number) {
         const timestamp = createSpanElement();
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
         const startTime = (chapter[1] + offset) / 1000;
-        timestamp.textContent = secToTimestamp(startTime);
+        appendText(timestamp, secToTimestamp(startTime));
         addEventListener(timestamp, 'click', function () {
             mediaInstance.seek(startTime);
             mediaInstance.focus();

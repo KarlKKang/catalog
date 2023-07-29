@@ -22,6 +22,8 @@ import {
     createSpanElement,
     createVideoElement,
     createAudioElement,
+    appendText,
+    replaceText,
 } from '../dom';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
@@ -212,7 +214,7 @@ export class Player {
 
         const currentTimeDisplayText = createSpanElement();
         this.currentTimeDisplayText = currentTimeDisplayText;
-        currentTimeDisplayText.textContent = '0:00';
+        appendText(currentTimeDisplayText, '0:00');
         addPlayerClass(currentTimeDisplayText, 'current-time-display');
         appendChild(currentTimeDisplay, currentTimeDisplayText);
 
@@ -223,7 +225,7 @@ export class Player {
         appendChild(controlBar, timeDivier);
 
         const timeDividerText = createSpanElement();
-        timeDividerText.textContent = '/';
+        appendText(timeDividerText, '/');
         appendChild(timeDivier, timeDividerText);
 
         // Duration display
@@ -234,7 +236,7 @@ export class Player {
 
         const durationDisplayText = createDivElement();
         this.durationDisplayText = durationDisplayText;
-        durationDisplayText.textContent = '0:00';
+        appendText(durationDisplayText, '0:00');
         addPlayerClass(durationDisplayText, 'duration-display');
         appendChild(durationDisplay, durationDisplayText);
 
@@ -272,7 +274,7 @@ export class Player {
         // Time tooltip
         const timeTooltip = createDivElement();
         this.timeTooltip = timeTooltip;
-        timeTooltip.textContent = '0:00';
+        appendText(timeTooltip, '0:00');
         addPlayerClass(timeTooltip, 'time-tooltip');
         appendChild(mouseDisplay, timeTooltip);
 
@@ -498,8 +500,8 @@ export class Player {
 
         addEventListener(this.media, 'durationchange', function (this: Player) {
             const duration = this.media.duration;
-            this.durationDisplayText.textContent = secToTimestamp(duration);
-            this.currentTimeDisplayText.textContent = secToTimestamp(this.media.currentTime, duration);
+            replaceText(this.durationDisplayText, secToTimestamp(duration));
+            replaceText(this.currentTimeDisplayText, secToTimestamp(this.media.currentTime, duration));
         }.bind(this));
 
         //Play button
@@ -747,7 +749,7 @@ export class Player {
 
         const currentTimestamp = secToTimestamp(this.media.currentTime, duration);
         if (this.currentTimeDisplayText.textContent !== currentTimestamp) { // Setting innerHTML will force refresh even if the value is not changed.
-            this.currentTimeDisplayText.textContent = currentTimestamp;
+            replaceText(this.currentTimeDisplayText, currentTimestamp);
         }
         this.progressBar.style.width = Math.min(this.media.currentTime / duration * 100, 100) + '%';
 
@@ -778,7 +780,7 @@ export class Player {
     }
 
     protected onloadedmetadata(this: Player): void {
-        this.durationDisplayText.textContent = secToTimestamp(this.media.duration);
+        replaceText(this.durationDisplayText, secToTimestamp(this.media.duration));
         this.ended = false;
     }
 
@@ -817,7 +819,7 @@ export class Player {
 
         if (!w.matchMedia('not screen and (hover: hover) and (pointer: fine)').matches) {
             this.progressMouseDisplay.style.left = leftPadding + 'px';
-            this.timeTooltip.textContent = currentTimestamp;
+            replaceText(this.timeTooltip, currentTimestamp);
             this.timeTooltip.style.right = -this.timeTooltip.offsetWidth / 2 + 'px';
             if (currentTime > this.media.currentTime) {
                 removeClass(this.progressMouseDisplay, 'backward');
@@ -832,7 +834,7 @@ export class Player {
                 this.seek(currentTime);
                 this.draggingPreviewTimeout = 4;
             }
-            this.currentTimeDisplayText.textContent = currentTimestamp;
+            replaceText(this.currentTimeDisplayText, currentTimestamp);
             this.progressBar.style.width = percentage * 100 + '%';
         }
         event.preventDefault(); // If touch events are not stopped then subsequent mouse event will be fired.

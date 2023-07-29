@@ -16,7 +16,7 @@ import {
     createHRElement,
     createUListElement,
     createLIElement,
-    createText,
+    appendText,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import type { LazyloadImportPromise } from './get_import_promises';
@@ -123,7 +123,7 @@ export default async function (
     appendChild(downloadPanel, createHRElement());
     const downloadPanelContent = createUListElement();
     const downloadPanelContentItem = createLIElement();
-    appendChild(downloadPanelContentItem, createText('画像をクリックすると、ダウンロードできます。'));
+    appendText(downloadPanelContentItem, '画像をクリックすると、ダウンロードできます。');
     appendChild(downloadPanelContent, downloadPanelContentItem);
     appendChild(downloadPanel, downloadPanelContent);
     addAccordionEvent(downloadAccordion, downloadPanel, true);

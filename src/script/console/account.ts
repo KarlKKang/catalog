@@ -5,7 +5,7 @@ import {
 } from '../module/main';
 import {
     addEventListener,
-    getParent,
+    getParentElement,
     getDescendantsByClassAt,
     getDescendantsByTag,
     getByClass,
@@ -24,7 +24,7 @@ export function getAccountTable() {
 }
 
 async function addAccount(button: Element) {
-    const record = getParent(getParent(button));
+    const record = getParentElement(getParentElement(button));
     const email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
     const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
     const password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
@@ -80,7 +80,7 @@ async function addAccount(button: Element) {
 }
 
 async function modifyAccount(button: Element, id: string) {
-    const record = getParent(getParent(button));
+    const record = getParentElement(getParentElement(button));
     const email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
     const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
     const password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;

@@ -36,8 +36,8 @@ import {
     createDivElement,
     createParagraphElement,
     createHRElement,
-    createText,
     createBRElement,
+    appendText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -267,9 +267,9 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
         const dateContainer = createDivElement();
         addClass(dateContainer, 'date');
         const updateTime = getLocalTime(entry.update_time);
-        appendChild(dateContainer, createText(updateTime.year + '年'));
+        appendText(dateContainer, updateTime.year + '年');
         appendChild(dateContainer, createBRElement());
-        appendChild(dateContainer, createText(updateTime.month.toString().padStart(2, '0') + '月' + updateTime.date.toString().padStart(2, '0') + '日'));
+        appendText(dateContainer, updateTime.month.toString().padStart(2, '0') + '月' + updateTime.date.toString().padStart(2, '0') + '日');
 
         const titleContainer = createDivElement();
         titleContainer.innerHTML = entry.title;

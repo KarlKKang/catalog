@@ -4,7 +4,7 @@ import {
 import {
     addEventListener,
     getById,
-    getParent,
+    getParentElement,
     addClass,
     getByClass,
     containsClass
@@ -68,5 +68,5 @@ export function setOutput(response: string, callback?: () => void, outputElement
 }
 
 function changed(elem: Element) {
-    addClass(getParent(elem), 'changed');
+    addClass(getParentElement(elem), 'changed');
 }

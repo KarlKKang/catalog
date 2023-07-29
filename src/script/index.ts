@@ -30,6 +30,7 @@ import {
     insertBefore,
     createDivElement,
     createParagraphElement,
+    appendText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -95,7 +96,7 @@ addEventListener(w, 'load', function () {
             appendChild(annoucementContainer, announcementTitle);
             appendChild(annoucementContainer, announcementBody);
             insertBefore(annoucementContainer, containerElem);
-            announcementTitle.textContent = 'メンテナンスのお知らせ';
+            appendText(announcementTitle, 'メンテナンスのお知らせ');
 
             const maintenanceInfo = seriesInfo.maintenance;
             let message = '';
@@ -107,7 +108,7 @@ addEventListener(w, 'load', function () {
                 message = `メンテナンス開始は${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}を予定しております。`;
             }
             message += 'ご不便をおかけして申し訳ありません。';
-            announcementBody.textContent = message;
+            appendText(announcementBody, message);
         }
         showSeries(seriesInfo);
         addNavBar('home');

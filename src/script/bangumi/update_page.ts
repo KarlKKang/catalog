@@ -334,14 +334,13 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
 
             if (season.id != seriesID) {
                 seasonText.innerHTML = season.season_name;
-                appendChild(seasonButton, seasonText);
                 const targetSeries = season.id;
                 addEventListener(seasonButton, 'click', function () { goToEP(targetSeries, 1); });
             } else {
                 seasonText.innerHTML = season.season_name;
-                appendChild(seasonButton, seasonText);
                 addClass(seasonButton, 'current-season');
             }
+            appendChild(seasonButton, seasonText);
             appendChild(seasonButtonWrapper, seasonButton);
         }
         appendChild(seasonSelector, seasonButtonWrapper);

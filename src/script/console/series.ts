@@ -3,7 +3,7 @@ import {
 } from '../module/main';
 import {
     addEventListener,
-    getParent,
+    getParentElement,
     getDescendantsByClassAt,
     getByClass,
     containsClass,
@@ -21,7 +21,7 @@ export function getSeriesTable() {
 }
 
 function modifySeries(button: Element) {
-    const record = getParent(getParent(button));
+    const record = getParentElement(getParentElement(button));
     const id = getDescendantsByClassAt(record, 'id', 0).innerHTML;
     const title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
     const thumbnail = (getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value;
@@ -79,7 +79,7 @@ function deleteSeries(id: string) {
 }
 
 function addSeries(button: Element) {
-    const record = getParent(getParent(button));
+    const record = getParentElement(getParentElement(button));
     const id = (getDescendantsByClassAt(record, 'id', 0) as HTMLTextAreaElement).value;
     const title = (getDescendantsByClassAt(record, 'title', 0) as HTMLTextAreaElement).value;
     const thumbnail = (getDescendantsByClassAt(record, 'thumbnail', 0) as HTMLTextAreaElement).value;

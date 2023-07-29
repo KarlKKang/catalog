@@ -26,6 +26,7 @@ import {
     createHRElement,
     createUListElement,
     createLIElement,
+    appendText,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -110,7 +111,7 @@ export function buildDownloadAccordion(
 ): [HTMLDivElement, HTMLDivElement] {
     const accordion = createButtonElement();
     addClass(accordion, 'accordion');
-    accordion.textContent = 'ダウンロード';
+    appendText(accordion, 'ダウンロード');
 
     const accordionPanel = createDivElement();
     addClass(accordionPanel, 'panel');
@@ -137,9 +138,9 @@ export function buildDownloadAccordion(
     osOptionWindows.value = '1';
     osOptionMac.value = '2';
     osOptionLinux.value = '0';
-    osOptionWindows.textContent = 'Windows';
-    osOptionMac.textContent = 'macOS';
-    osOptionLinux.textContent = 'Linux';
+    appendText(osOptionWindows, 'Windows');
+    appendText(osOptionMac, 'macOS');
+    appendText(osOptionLinux, 'Linux');
     if (IS_WINDOWS) {
         osOptionWindows.selected = true;
     } else if (IS_MACOS || IS_IOS) {
@@ -162,9 +163,9 @@ export function buildDownloadAccordion(
     containerOptionTS.value = '0';
     containerOptionMKV.value = '1';
     containerOptionMP4.value = '2';
-    containerOptionTS.textContent = 'MPEG Transport Stream (.ts)';
-    containerOptionMKV.textContent = 'Matroska (.mkv)';
-    containerOptionMP4.textContent = 'MPEG-4 Part 14 (.mp4)';
+    appendText(containerOptionTS, 'MPEG Transport Stream (.ts)');
+    appendText(containerOptionMKV, 'Matroska (.mkv)');
+    appendText(containerOptionMP4, 'MPEG-4 Part 14 (.mp4)');
     containerOptionMKV.selected = true;
     appendChild(containerSelectMenu, containerOptionTS);
     appendChild(containerSelectMenu, containerOptionMKV);
@@ -228,7 +229,7 @@ export function buildDownloadAccordion(
 function appendListItems(list: HTMLUListElement, contents: string[]): void {
     for (const content of contents) {
         const item = createLIElement();
-        item.textContent = content;
+        appendText(item, content);
         appendChild(list, item);
     }
 }

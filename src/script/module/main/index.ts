@@ -18,15 +18,15 @@ import {
     getByIdNative,
     addClass,
     removeClass,
-    getParent,
+    getParentElement,
     addEventListener,
     appendChild,
     removeEventListener,
     createParagraphElement,
     createDivElement,
-    createText,
     prependChild,
     getBody,
+    appendText,
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
@@ -214,7 +214,7 @@ export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info') {
         const iconContainer = createDivElement();
         addClass(iconContainer, 'icon');
         const nameContainer = createParagraphElement();
-        appendChild(nameContainer, createText(name));
+        appendText(nameContainer, name);
         appendChild(containerInner, iconContainer);
         appendChild(containerInner, nameContainer);
         appendChild(container, containerInner);
@@ -345,9 +345,9 @@ export function encodeCFURIComponent(uri: string) {
 export function disableInput(inputElement: HTMLInputElement, disabled: boolean) {
     inputElement.disabled = disabled;
     if (disabled) {
-        addClass(getParent(inputElement), 'disabled');
+        addClass(getParentElement(inputElement), 'disabled');
     } else {
-        removeClass(getParent(inputElement), 'disabled');
+        removeClass(getParentElement(inputElement), 'disabled');
     }
 }
 

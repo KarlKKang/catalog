@@ -3,7 +3,7 @@ import {
 } from '../module/main';
 import {
     addEventListener,
-    getParent,
+    getParentElement,
     getDescendantsByClassAt,
     getByClass,
     addClass,
@@ -22,7 +22,7 @@ export function getNewsTable() {
 }
 
 function modifyNews(button: Element) {
-    const recordElem = getParent(getParent(button));
+    const recordElem = getParentElement(getParentElement(button));
     const id = getDescendantsByClassAt(recordElem, 'id', 0).innerHTML;
     const title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
     const content = (getDescendantsByClassAt(recordElem, 'content', 0) as HTMLTextAreaElement).value;
@@ -101,7 +101,7 @@ function deleteNews(id: string) {
 }
 
 function addNews(button: Element) {
-    const recordElem = getParent(getParent(button));
+    const recordElem = getParentElement(getParentElement(button));
     const id = (getDescendantsByClassAt(recordElem, 'id', 0) as HTMLTextAreaElement).value;
     const title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
     const content = (getDescendantsByClassAt(recordElem, 'content', 0) as HTMLTextAreaElement).value;
@@ -194,7 +194,7 @@ function updateNewsTime(id: string) {
 }
 
 function getNewsContent(button: Element, id: string) {
-    const contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
+    const contentElem = (getDescendantsByClassAt(getParentElement(button), 'content', 0) as HTMLTextAreaElement);
 
     const param = {
         command: 'get',
@@ -214,7 +214,7 @@ import { htmlMinifyOptions } from '../../../build_config.cjs';
 import type { minify } from 'html-minifier-terser/dist/htmlminifier.esm.bundle';
 let htmlMinifier: typeof minify | null = null;
 async function minifyNewsContent(button: Element) {
-    const contentElem = (getDescendantsByClassAt(getParent(button), 'content', 0) as HTMLTextAreaElement);
+    const contentElem = (getDescendantsByClassAt(getParentElement(button), 'content', 0) as HTMLTextAreaElement);
     if (htmlMinifier === null) {
         ({ minify: htmlMinifier } = await import(
             'html-minifier-terser/dist/htmlminifier.esm.bundle'

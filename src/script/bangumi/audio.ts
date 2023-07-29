@@ -12,6 +12,7 @@ import {
     createParagraphElement,
     createSpanElement,
     createBRElement,
+    appendText,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -279,7 +280,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
 
         const format = createSpanElement();
         addClass(format, 'format');
-        format.textContent = FLAC_FALLBACK ? 'FLAC' : file.format;
+        appendText(format, FLAC_FALLBACK ? 'FLAC' : file.format);
 
         const samplerate = file.samplerate;
         if (samplerate != '') {
@@ -301,7 +302,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
                     samplerateText = '192.0kHz';
                     break;
             }
-            format.textContent += ' ' + samplerateText;
+            appendText(format, ' ' + samplerateText);
 
             const bitdepth = file.bitdepth;
             if (bitdepth != '') {
@@ -320,7 +321,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
                 if (bitdepthText == '32bit' && FLAC_FALLBACK) {
                     bitdepthText = '24bit';
                 }
-                format.textContent += '/' + bitdepthText;
+                appendText(format, '/' + bitdepthText);
             }
         }
 
