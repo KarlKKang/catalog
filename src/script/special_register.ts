@@ -13,6 +13,7 @@ import {
     getById,
     getBody,
     showElement,
+    replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
@@ -43,7 +44,7 @@ export default function () {
         const email = emailInput.value;
 
         if (!EMAIL_REGEX.test(email)) {
-            warningElem.innerHTML = invalidEmailFormat;
+            replaceText(warningElem, invalidEmailFormat);
             showElement(warningElem);
             disableAllInputs(false);
             return;
@@ -52,13 +53,13 @@ export default function () {
         sendServerRequest('send_invite.php', {
             callback: function (response: string) {
                 if (response == 'INVALID FORMAT') {
-                    warningElem.innerHTML = invalidEmailFormat;
+                    replaceText(warningElem, invalidEmailFormat);
                 } else if (response == 'ALREADY REGISTERED') {
-                    warningElem.innerHTML = emailAlreadyRegistered;
+                    replaceText(warningElem, emailAlreadyRegistered);
                 } else if (response == 'CLOSED') {
-                    warningElem.innerHTML = invitationClosed;
+                    replaceText(warningElem, invitationClosed);
                 } else if (response == 'NORMAL') {
-                    warningElem.innerHTML = invitationOnly;
+                    replaceText(warningElem, invitationOnly);
                 } else if (response == 'DONE') {
                     showMessage(emailSent(LOGIN_URL));
                     return;

@@ -21,6 +21,8 @@ import {
     getBody,
     getDescendantsByTagAt,
     showElement,
+    replaceChildren,
+    replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { loginFailed, accountDeactivated } from './module/message/template/inline';
@@ -73,14 +75,14 @@ export default function () {
         let password = passwordInput.value;
 
         if (!EMAIL_REGEX.test(email)) {
-            warningElem.innerHTML = loginFailed;
+            replaceText(warningElem, loginFailed);
             showElement(warningElem);
             disableAllInputs(false);
             return;
         }
 
         if (!PASSWORD_REGEX.test(password)) {
-            warningElem.innerHTML = loginFailed;
+            replaceText(warningElem, loginFailed);
             showElement(warningElem);
             disableAllInputs(false);
             return;
@@ -99,11 +101,11 @@ export default function () {
         sendServerRequest('login.php', {
             callback: function (response: string) {
                 if (response == 'FAILED') {
-                    warningElem.innerHTML = loginFailed;
+                    replaceText(warningElem, loginFailed);
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DEACTIVATED') {
-                    warningElem.innerHTML = accountDeactivated;
+                    replaceChildren(warningElem, ...accountDeactivated);
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'APPROVED') {

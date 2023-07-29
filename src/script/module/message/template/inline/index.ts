@@ -1,6 +1,7 @@
+import { addClass, appendText, createAnchorElement, createTextNode } from '../../../dom';
 import { TOP_DOMAIN } from '../../../env/constant';
 
-export { passwordChanged, incompletedInvitation, emailAlreadyRegistered } from '../comm';
+export { passwordChanged, emailAlreadyRegistered } from '../comm';
 
 export const invalidEmailFormat = '有効なメールアドレスを入力してください。';
 
@@ -19,6 +20,13 @@ export const usernameChanged = 'ユーザー名を変更しました。';
 export const usernameTaken = 'このユーザーネームはすでに使われています。別のユーザー名を入力してください。';
 
 export const loginFailed = 'アカウントIDかパスワードが正しくありません。';
-export const accountDeactivated = `お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（<a class="link" href="mailto:admin@${TOP_DOMAIN}">admin@${TOP_DOMAIN}</a>）にご連絡ください。`;
+export const accountDeactivated = [
+    createTextNode('お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（'),
+    createAnchorElement(),
+    createTextNode('）にご連絡ください。')
+] as const;
+addClass(accountDeactivated[1], 'link');
+accountDeactivated[1].href = 'mailto:admin@' + TOP_DOMAIN;
+appendText(accountDeactivated[1], 'admin@' + TOP_DOMAIN);
 
 export const emailChangeWait = '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。';

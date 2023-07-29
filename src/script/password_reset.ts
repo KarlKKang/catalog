@@ -18,6 +18,7 @@ import {
     getById,
     getBody,
     showElement,
+    replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
@@ -104,12 +105,12 @@ export default function () {
         const newPasswordConfirm = newPasswordConfirmInput.value;
 
         if (!PASSWORD_REGEX.test(newPassword)) {
-            warningElem.innerHTML = invalidPasswordFormat;
+            replaceText(warningElem, invalidPasswordFormat);
             showElement(warningElem);
             disableAllInputs(false);
             return;
         } else if (newPassword != newPasswordConfirm) {
-            warningElem.innerHTML = passwordConfirmationMismatch;
+            replaceText(warningElem, passwordConfirmationMismatch);
             showElement(warningElem);
             disableAllInputs(false);
             return;
@@ -122,7 +123,7 @@ export default function () {
                 if (response == 'EXPIRED') {
                     showMessage(expired);
                 } else if (response == 'SAME') {
-                    warningElem.innerHTML = passwordUnchanged;
+                    replaceText(warningElem, passwordUnchanged);
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DONE') {

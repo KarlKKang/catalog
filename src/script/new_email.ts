@@ -16,6 +16,7 @@ import {
     getById,
     getBody,
     showElement,
+    replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
@@ -80,7 +81,7 @@ export default function () {
         const newEmail = newEmailInput.value;
 
         if (!EMAIL_REGEX.test(newEmail)) {
-            warningElem.innerHTML = invalidEmailFormat;
+            replaceText(warningElem, invalidEmailFormat);
             showElement(warningElem);
             disableAllInputs(false);
             return;
@@ -91,11 +92,11 @@ export default function () {
                 if (response == 'EXPIRED') {
                     showMessage(expired);
                 } else if (response == 'DUPLICATED') {
-                    warningElem.innerHTML = emailAlreadyRegistered;
+                    replaceText(warningElem, emailAlreadyRegistered);
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'INVALID FORMAT') {
-                    warningElem.innerHTML = invalidEmailFormat;
+                    replaceText(warningElem, invalidEmailFormat);
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DONE') {

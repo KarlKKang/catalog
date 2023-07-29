@@ -23,6 +23,7 @@ import {
     showElement,
     hideElement,
     appendText,
+    replaceText,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { emailSent as emailSentParam } from '../module/message/template/param';
@@ -133,7 +134,7 @@ function invite() {
     hideElement(warningElem);
     changeColor(warningElem, 'red');
     if (!EMAIL_REGEX.test(receiver)) {
-        warningElem.innerHTML = invalidEmailFormat;
+        replaceText(warningElem, invalidEmailFormat);
         showElement(warningElem);
         disableAllInputs(false);
         return;
@@ -142,13 +143,13 @@ function invite() {
     sendServerRequest('send_invite.php', {
         callback: function (response: string) {
             if (response == 'NOT QUALIFIED') {
-                warningElem.innerHTML = invitationNotQualified;
+                replaceText(warningElem, invitationNotQualified);
             } else if (response == 'INVALID FORMAT') {
-                warningElem.innerHTML = invalidEmailFormat;
+                replaceText(warningElem, invalidEmailFormat);
             } else if (response == 'ALREADY REGISTERED') {
-                warningElem.innerHTML = emailAlreadyRegistered;
+                replaceText(warningElem, emailAlreadyRegistered);
             } else if (response == 'CLOSED') {
-                warningElem.innerHTML = invitationClosed;
+                replaceText(warningElem, invitationClosed);
             } else if (response == 'DONE') {
                 showMessage(emailSentParam(getBaseURL()));
                 return;
@@ -174,12 +175,12 @@ async function changePassword() {
     changeColor(warningElem, 'red');
 
     if (!PASSWORD_REGEX.test(newPassword)) {
-        warningElem.innerHTML = invalidPasswordFormat;
+        replaceText(warningElem, invalidPasswordFormat);
         showElement(warningElem);
         disableAllInputs(false);
         return;
     } else if (newPassword != newPasswordConfirm) {
-        warningElem.innerHTML = passwordConfirmationMismatch;
+        replaceText(warningElem, passwordConfirmationMismatch);
         showElement(warningElem);
         disableAllInputs(false);
         return;
@@ -190,7 +191,7 @@ async function changePassword() {
     sendServerRequest('change_password.php', {
         callback: function (response: string) {
             if (response == 'DONE') {
-                warningElem.innerHTML = passwordChanged;
+                replaceText(warningElem, passwordChanged);
                 showElement(warningElem);
                 changeColor(warningElem, 'green');
                 disableAllInputs(false);
@@ -211,9 +212,9 @@ function changeEmail() {
     sendServerRequest('send_email_change.php', {
         callback: function (response: string) {
             if (response == 'WAIT') {
-                warningElem.innerHTML = emailChangeWait;
+                replaceText(warningElem, emailChangeWait);
             } else if (response == 'DONE') {
-                warningElem.innerHTML = emailSentInline;
+                replaceText(warningElem, emailSentInline);
                 changeColor(warningElem, 'green');
             } else {
                 showMessage();
@@ -233,12 +234,12 @@ function changeUsername() {
     changeColor(warningElem, 'red');
 
     if (newUsername == '') {
-        warningElem.innerHTML = usernameEmpty;
+        replaceText(warningElem, usernameEmpty);
         showElement(warningElem);
         disableAllInputs(false);
         return;
     } else if (newUsername == currentUsername) {
-        warningElem.innerHTML = usernameUnchanged;
+        replaceText(warningElem, usernameUnchanged);
         showElement(warningElem);
         disableAllInputs(false);
         return;
@@ -247,15 +248,15 @@ function changeUsername() {
     sendServerRequest('change_username.php', {
         callback: function (response: string) {
             if (response == 'DONE') {
-                warningElem.innerHTML = usernameChanged;
+                replaceText(warningElem, usernameChanged);
                 showElement(warningElem);
                 changeColor(warningElem, 'green');
                 currentUsername = newUsername;
             } else if (response == 'DUPLICATED') {
-                warningElem.innerHTML = usernameTaken;
+                replaceText(warningElem, usernameTaken);
                 showElement(warningElem);
             } else if (response == 'EMPTY') {
-                warningElem.innerHTML = usernameEmpty;
+                replaceText(warningElem, usernameEmpty);
                 showElement(warningElem);
             } else {
                 showMessage();

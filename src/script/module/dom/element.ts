@@ -203,6 +203,10 @@ export function createLIElement() {
     return createElement('li') as HTMLLIElement;
 }
 
+export function createAnchorElement() {
+    return createElement('a') as HTMLAnchorElement;
+}
+
 export function createSVGElement(viewBox: string, path: string) {
     const svg = d.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', viewBox);

@@ -20,6 +20,8 @@ import {
     showElement,
     getBody,
     getById,
+    replaceChildren,
+    replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
@@ -98,14 +100,14 @@ async function changeEmail(param: string, keyID: string, signature: string) {
     let password = passwordInput.value;
 
     if (!EMAIL_REGEX.test(email)) {
-        warningElem.innerHTML = loginFailed;
+        replaceText(warningElem, loginFailed);
         showElement(warningElem);
         disableAllInputs(false);
         return;
     }
 
     if (!PASSWORD_REGEX.test(password)) {
-        warningElem.innerHTML = loginFailed;
+        replaceText(warningElem, loginFailed);
         showElement(warningElem);
         disableAllInputs(false);
         return;
@@ -127,11 +129,11 @@ async function changeEmail(param: string, keyID: string, signature: string) {
             } else if (response == 'DUPLICATED') {
                 showMessage(emailAlreadyRegistered);
             } else if (response == 'FAILED') {
-                warningElem.innerHTML = loginFailed;
+                replaceText(warningElem, loginFailed);
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'DEACTIVATED') {
-                warningElem.innerHTML = accountDeactivated;
+                replaceChildren(warningElem, ...accountDeactivated);
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'DONE') {

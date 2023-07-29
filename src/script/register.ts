@@ -20,6 +20,7 @@ import {
     getByClassAt,
     openWindow,
     showElement,
+    replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
@@ -108,19 +109,19 @@ export default function () {
         const passwordConfirm = passwordConfirmInput.value;
 
         if (username == '') {
-            warningElem.innerHTML = usernameEmpty;
+            replaceText(warningElem, usernameEmpty);
             showElement(warningElem);
             disableAllInputs(false);
             return;
         }
 
         if (!PASSWORD_REGEX.test(password)) {
-            warningElem.innerHTML = invalidPasswordFormat;
+            replaceText(warningElem, invalidPasswordFormat);
             showElement(warningElem);
             disableAllInputs(false);
             return;
         } else if (password != passwordConfirm) {
-            warningElem.innerHTML = passwordConfirmationMismatch;
+            replaceText(warningElem, passwordConfirmationMismatch);
             showElement(warningElem);
             disableAllInputs(false);
             return;
@@ -138,11 +139,11 @@ export default function () {
                 if (response == 'EXPIRED') {
                     showMessage(expired);
                 } else if (response == 'USERNAME DUPLICATED') {
-                    warningElem.innerHTML = usernameTaken;
+                    replaceText(warningElem, usernameTaken);
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'USERNAME EMPTY') {
-                    warningElem.innerHTML = usernameEmpty;
+                    replaceText(warningElem, usernameEmpty);
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'ALREADY REGISTERED') {

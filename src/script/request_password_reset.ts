@@ -17,6 +17,7 @@ import {
     getDescendantsByTagAt,
     getBody,
     showElement,
+    replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
@@ -61,7 +62,7 @@ export default function () {
 
         const email = emailInput.value;
         if (!EMAIL_REGEX.test(email)) {
-            warningElem.innerHTML = invalidEmailFormat;
+            replaceText(warningElem, invalidEmailFormat);
             showElement(warningElem);
             disableAllInputs(false);
             return;
@@ -70,7 +71,7 @@ export default function () {
         sendServerRequest('send_password_reset.php', {
             callback: function (response: string) {
                 if (response == 'INVALID FORMAT') {
-                    warningElem.innerHTML = invalidEmailFormat;
+                    replaceText(warningElem, invalidEmailFormat);
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
