@@ -3,7 +3,6 @@ import {
     TOP_URL,
 } from './module/env/constant';
 import {
-    w,
     addEventListener,
     getById,
     getBody,
@@ -12,10 +11,8 @@ import {
 } from './module/dom';
 
 export default function () {
-    addEventListener(w, 'load', function () {
-        addEventListener(getById('button'), 'click', function () {
-            redirect(TOP_URL);
-        });
-        showElement(getBody());
+    addEventListener(getById('button'), 'click', function () {
+        redirect(TOP_URL);
     });
+    showElement(getBody());
 }
