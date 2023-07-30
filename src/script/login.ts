@@ -111,7 +111,7 @@ async function login(warningElem: HTMLElement) {
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'DEACTIVATED') {
-                replaceChildren(warningElem, ...accountDeactivated);
+                replaceChildren(warningElem, ...accountDeactivated());
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'APPROVED') {

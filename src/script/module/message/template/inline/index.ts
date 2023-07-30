@@ -20,13 +20,16 @@ export const usernameChanged = 'ユーザー名を変更しました。';
 export const usernameTaken = 'このユーザーネームはすでに使われています。別のユーザー名を入力してください。';
 
 export const loginFailed = 'アカウントIDかパスワードが正しくありません。';
-export const accountDeactivated = [
-    createTextNode('お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（'),
-    createAnchorElement(),
-    createTextNode('）にご連絡ください。')
-] as const;
-addClass(accountDeactivated[1], 'link');
-accountDeactivated[1].href = 'mailto:admin@' + TOP_DOMAIN;
-appendText(accountDeactivated[1], 'admin@' + TOP_DOMAIN);
+export const accountDeactivated = function () {
+    const message = [
+        createTextNode('お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（'),
+        createAnchorElement(),
+        createTextNode('）にご連絡ください。')
+    ] as const;
+    addClass(message[1], 'link');
+    message[1].href = 'mailto:admin@' + TOP_DOMAIN;
+    appendText(message[1], 'admin@' + TOP_DOMAIN);
+    return message;
+};
 
 export const emailChangeWait = '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。';

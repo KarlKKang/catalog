@@ -133,7 +133,7 @@ async function changeEmail(param: string, keyID: string, signature: string) {
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'DEACTIVATED') {
-                replaceChildren(warningElem, ...accountDeactivated);
+                replaceChildren(warningElem, ...accountDeactivated());
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'DONE') {
