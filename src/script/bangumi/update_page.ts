@@ -221,15 +221,13 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     addClass(showMoreButton, 'transparent');
     appendChild(epSelector, showMoreButton);
 
-    const showMoreButtonFoldedText = createTextNode('すべてを見る ');
-    const showMoreButtonFoldedTextSymbol = createSpanElement();
-    appendText(showMoreButtonFoldedTextSymbol, '');
-    addClass(showMoreButtonFoldedTextSymbol, 'symbol');
+    const showMoreButtonFoldedText = [createTextNode('すべてを見る '), createSpanElement()] as const;
+    appendText(showMoreButtonFoldedText[1], '');
+    addClass(showMoreButtonFoldedText[1], 'symbol');
 
-    const showMoreButtonExpandedText = createTextNode('非表示にする ');
-    const showMoreButtonExpandedTextSymbol = createSpanElement();
-    appendText(showMoreButtonExpandedTextSymbol, '');
-    addClass(showMoreButtonExpandedTextSymbol, 'symbol');
+    const showMoreButtonExpandedText = [createTextNode('非表示にする '), createSpanElement()] as const;
+    appendText(showMoreButtonExpandedText[1], '');
+    addClass(showMoreButtonExpandedText[1], 'symbol');
 
     let currentToggleTimeout: NodeJS.Timeout | null = null;
     let currentToggleAnimationFrame: number | null = null;
@@ -244,7 +242,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
                     animationFrame = w.requestAnimationFrame(function () {
                         if (currentToggleAnimationFrame === animationFrame) {
                             isExpanded = false;
-                            replaceChildren(showMoreButton, showMoreButtonFoldedText, showMoreButtonFoldedTextSymbol);
+                            replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
                             epButtonWrapper.style.maxHeight = '30vh';
                             removeClass(epButtonWrapper, 'expanded');
                         }
@@ -256,7 +254,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
         } else {
             currentToggleAnimationFrame = null;
             isExpanded = true;
-            replaceChildren(showMoreButton, showMoreButtonExpandedText, showMoreButtonExpandedTextSymbol);
+            replaceChildren(showMoreButton, ...showMoreButtonExpandedText);
             epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
             addClass(epButtonWrapper, 'expanded');
             const timeout = setTimeout(function () {
@@ -296,7 +294,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
                     animationFrame = w.requestAnimationFrame(function () {
                         if (currentStylingAnimationFrame === animationFrame) {
                             isExpanded = false;
-                            replaceChildren(showMoreButton, showMoreButtonFoldedText, showMoreButtonFoldedTextSymbol);
+                            replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
                             epButtonWrapper.style.maxHeight = '30vh';
                             removeClass(epButtonWrapper, 'expanded');
                             removeClass(showMoreButton, 'invisible');
