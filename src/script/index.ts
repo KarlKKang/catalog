@@ -11,6 +11,7 @@ import {
     disableInput,
     changeColor,
     getLocalTime,
+    scrollToTop,
 } from './module/main';
 import {
     w,
@@ -105,7 +106,13 @@ export default function () {
             appendText(announcementBody, message);
         }
         showSeries(seriesInfo);
-        addNavBar('home');
+        addNavBar('home', function () {
+            scrollToTop();
+            if (keywords !== '') {
+                searchBarInput.value = '';
+                search();
+            }
+        });
         addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
             if (!searchBarInput.disabled) {
                 search();
@@ -115,6 +122,11 @@ export default function () {
             if ((event as KeyboardEvent).key === 'Enter') {
                 search();
             }
+        });
+        addEventListener(w, 'popstate', function () {
+            infiniteScrolling.setEnabled(false);
+            getURLKeywords();
+            requestSearchResults();
         });
         removeClass(getBody(), 'invisible');
     });
@@ -169,12 +181,6 @@ function search() {
     requestSearchResults();
 }
 
-addEventListener(w, 'popstate', function () {
-    infiniteScrolling.setEnabled(false);
-    getURLKeywords();
-    requestSearchResults();
-});
-
 function getURLKeywords() {
     const urlParam = getURLParam('keywords');
     if (urlParam == null) {
@@ -182,8 +188,13 @@ function getURLKeywords() {
         searchBarInput.value = '';
     } else {
         keywords = decodeURIComponent(urlParam).substring(0, 50);
-        searchBarInput.value = keywords;
-        keywords = 'keywords=' + encodeURIComponent(keywords) + '&';
+        if (keywords === '') {
+            keywords = '';
+            searchBarInput.value = '';
+        } else {
+            searchBarInput.value = keywords;
+            keywords = 'keywords=' + encodeURIComponent(keywords) + '&';
+        }
     }
 }
 

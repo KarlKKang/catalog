@@ -207,7 +207,7 @@ export function passwordStyling(element: HTMLInputElement) {
     addEventListener(element, 'change', inputChangeHandler);
 }
 
-export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info') {
+export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info', currentPageCallback?: () => void) {
     const getNavButton = function (name: string): [HTMLDivElement, HTMLDivElement] {
         const container = createDivElement();
         const containerInner = createDivElement();
@@ -234,19 +234,37 @@ export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info') {
     appendChild(navBar, navButton3[0]);
     appendChild(navBar, navButton4[0]);
 
+    const callback = currentPageCallback || scrollToTop;
+
     addEventListener(navButton1[0], 'click', function () {
+        if (page === 'home') {
+            callback();
+            return;
+        }
         redirect(TOP_URL);
     });
 
     addEventListener(navButton2[0], 'click', function () {
+        if (page === 'news') {
+            callback();
+            return;
+        }
         redirect(TOP_URL + '/news/');
     });
 
     addEventListener(navButton3[0], 'click', function () {
+        if (page === 'my_account') {
+            callback();
+            return;
+        }
         redirect(TOP_URL + '/my_account');
     });
 
     addEventListener(navButton4[0], 'click', function () {
+        if (page === 'info') {
+            callback();
+            return;
+        }
         redirect(TOP_URL + '/info');
     });
 
@@ -272,6 +290,10 @@ export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info') {
         appendChild(navButton4[1], page === 'info' ? icons.getInfoFillIcon() : icons.getInfoIcon());
     };
     addNavBarIcon();
+}
+
+export function scrollToTop() {
+    w.scrollBy(0, -1 * w.scrollY);
 }
 
 export function secToTimestamp(sec: number, templateSec?: number) {
@@ -382,12 +404,13 @@ export function removeRightClick(elem: Element) {
 }
 
 export function scrollToHash() {
+    // Use this function only when the hash element is loaded after the DOM loads.
     const scrollID = getHash();
     if (scrollID !== '') {
         const elem = getByIdNative(scrollID);
         if (elem !== null) {
             setTimeout(function () {
-                window.scrollBy(0, elem.getBoundingClientRect().top);
+                w.scrollBy(0, elem.getBoundingClientRect().top);
             }, 500); //Give UI some time to load.
         }
     }

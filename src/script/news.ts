@@ -96,7 +96,9 @@ function getNews(newsID: string): void {
                 return;
             }
             showNews(parsedResponse, newsID);
-            addNavBar('news');
+            addNavBar('news', function () {
+                redirect(NEWS_TOP_URL);
+            });
             showElement(getBody());
             scrollToHash();
         },
