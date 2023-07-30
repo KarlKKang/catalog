@@ -3,21 +3,25 @@ export function throwError(message?: string) {
 }
 
 export function isObject(obj: any) {
-    return (obj instanceof Object);
+    return objectToString(obj) === '[object Object]';
 }
 
 export function isString(str: any) {
-    return (typeof (str) === 'string');
+    return typeof str === 'string' || str instanceof String;
 }
 
 export function isNumber(num: any) {
-    return (typeof (num) === 'number');
+    return objectToString(num) === '[object Number]';
 }
 
 export function isArray(arr: any) {
-    return (arr instanceof Array);
+    return Array.isArray(arr);
 }
 
 export function isBoolean(bool: any) {
     return bool === true || bool === false;
+}
+
+function objectToString(obj: any) {
+    return Object.prototype.toString.call(obj);
 }
