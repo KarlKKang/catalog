@@ -652,7 +652,7 @@ function promptForEmailOtp(
         appendChild(buttonFlexbox, submitButton);
         appendChild(buttonFlexbox, cancelButton);
 
-        const disableAllInputs = function (disabled: boolean) {
+        const disableAllPopUpWindowInputs = function (disabled: boolean) {
             disableInput(otpInput, disabled);
             if (resendButton.textContent === resendButtonText) {
                 resendButton.disabled = disabled;
@@ -662,7 +662,7 @@ function promptForEmailOtp(
 
         };
         addEventListener(submitButton, 'click', function () {
-            disableAllInputs(true);
+            disableAllPopUpWindowInputs(true);
             hideElement(warningText);
 
             const otp = otpInput.value;
@@ -675,7 +675,7 @@ function promptForEmailOtp(
                 otp,
                 popUpWindow.hide,
                 function () {
-                    disableAllInputs(false);
+                    disableAllPopUpWindowInputs(false);
                     showElement(warningText);
                 }
             );
@@ -746,7 +746,7 @@ function promptForLogin(
         appendChild(buttonFlexbox, submitButton);
         appendChild(buttonFlexbox, cancelButton);
 
-        const disableAllInputs = function (disabled: boolean) {
+        const disableAllPopUpWindowInputs = function (disabled: boolean) {
             disableInput(emailInput, disabled);
             disableInput(passwordInput, disabled);
             submitButton.disabled = disabled;
@@ -754,7 +754,7 @@ function promptForLogin(
 
         };
         addEventListener(submitButton, 'click', function () {
-            disableAllInputs(true);
+            disableAllPopUpWindowInputs(true);
             hideElement(warningText);
 
             const email = emailInput.value;
@@ -775,7 +775,7 @@ function promptForLogin(
                 password,
                 popUpWindow.hide,
                 function (message: string | Node[]) {
-                    disableAllInputs(false);
+                    disableAllPopUpWindowInputs(false);
                     if (isString(message)) {
                         replaceText(warningText, message as string);
                     } else {
