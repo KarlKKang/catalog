@@ -8,7 +8,6 @@ import {
     getURLParam,
     passwordStyling,
     clearCookies,
-    hashPassword,
     disableInput,
     PASSWORD_REGEX,
 } from './module/main';
@@ -105,7 +104,7 @@ export default function () {
 async function submitRequest(user: string, keyID: string, signature: string, expires: string) {
     disableAllInputs(true);
 
-    let newPassword = newPasswordInput.value;
+    const newPassword = newPasswordInput.value;
     const newPasswordConfirm = newPasswordConfirmInput.value;
 
     if (!PASSWORD_REGEX.test(newPassword)) {
@@ -120,8 +119,6 @@ async function submitRequest(user: string, keyID: string, signature: string, exp
         return;
     }
 
-    newPassword = await hashPassword(newPassword);
-
     sendServerRequest('reset_password.php', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
@@ -130,13 +127,17 @@ async function submitRequest(user: string, keyID: string, signature: string, exp
                 replaceText(warningElem, passwordUnchanged);
                 showElement(warningElem);
                 disableAllInputs(false);
+            } else if (response === 'PASSWORD INVALID') {
+                replaceText(warningElem, invalidPasswordFormat);
+                showElement(warningElem);
+                disableAllInputs(false);
             } else if (response == 'DONE') {
                 showMessage(passwordChanged);
             } else {
                 showMessage();
             }
         },
-        content: 'user=' + user + '&key-id=' + keyID + '&signature=' + signature + '&expires=' + expires + '&new=' + newPassword,
+        content: 'user=' + user + '&key-id=' + keyID + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),
         withCredentials: false
     });
 }

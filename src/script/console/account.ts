@@ -1,6 +1,5 @@
 import {
     sendServerRequest,
-    hashPassword,
     PASSWORD_REGEX,
 } from '../module/main';
 import {
@@ -142,14 +141,12 @@ async function parseAccountRecord(email: string, username: string, password: str
         return false;
     }
 
-    let password_parsed: string | null;
-    if (password == '') {
+    let password_parsed: string | null = password;
+    if (password_parsed == '') {
         password_parsed = null;
-    } else if (!PASSWORD_REGEX.test(password)) {
+    } else if (!PASSWORD_REGEX.test(password_parsed)) {
         alert('ERROR: password requirements not met');
         return false;
-    } else {
-        password_parsed = await hashPassword(password);
     }
 
     let user_group_parsed: number;

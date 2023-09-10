@@ -6,10 +6,6 @@ export function isObject(obj: any) {
     return objectToString(obj) === '[object Object]';
 }
 
-export function isString(str: any) {
-    return typeof str === 'string' || str instanceof String;
-}
-
 export function isNumber(num: any) {
     return objectToString(num) === '[object Number]';
 }

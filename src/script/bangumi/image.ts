@@ -73,7 +73,8 @@ export default async function (
 
         addClass(downloadPanel, 'panel');
         addClass(downloadButton, 'button');
-        addClass(downloadButton, 'image-download-button');
+        addClass(downloadButton, 'hcenter');
+        addClass(downloadButton, 'download-button');
         downloadButton.disabled = true;
         appendText(downloadButton, 'ダウンロード');
         appendChild(downloadPanel, downloadButton);

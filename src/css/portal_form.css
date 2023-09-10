@@ -25,30 +25,16 @@
     color: var(--red-color);
 }
 
-.input-field,
-#submit-button {
-    margin: 1em 0px;
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
-    background: var(--foreground-color);
-}
-
-#submit-button {
+button {
+    margin: 2em 0px;
     width: 150px;
     max-width: 80%;
 }
 
 .input-field {
+    margin: 1em 0px;
     width: 300px;
     max-width: 100%;
-    position: relative;
-    left: 50%;
-    transform: translate(-50%, 0%);
-}
-
-.input-field:not(.disabled):hover,
-#submit-button:enabled:hover {
-    box-shadow: var(--shadow-hover);
 }
 
 #note {

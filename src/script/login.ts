@@ -9,7 +9,6 @@ import {
     authenticate,
     disableInput,
     clearCookies,
-    hashPassword,
     getURLParam,
     PASSWORD_REGEX,
     EMAIL_REGEX,
@@ -25,9 +24,10 @@ import {
     replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { loginFailed, accountDeactivated } from './module/message/template/inline';
+import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
 import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
+import { promptForTotp } from './module/pop_up_window';
 
 let submitButton: HTMLButtonElement;
 let passwordInput: HTMLInputElement;
@@ -53,17 +53,17 @@ export default function () {
             function () {
                 addEventListener(usernameInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        login(warningElem);
+                        login();
                     }
                 });
                 addEventListener(passwordInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        login(warningElem);
+                        login();
                     }
                 });
 
                 addEventListener(submitButton, 'click', function () {
-                    login(warningElem);
+                    login();
                 });
                 addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', function () {
                     redirect(LOGIN_URL + '/request_password_reset', true);
@@ -74,11 +74,11 @@ export default function () {
     });
 }
 
-async function login(warningElem: HTMLElement) {
+function login() {
     disableAllInputs(true);
 
     const email = usernameInput.value;
-    let password = passwordInput.value;
+    const password = passwordInput.value;
 
     if (!EMAIL_REGEX.test(email)) {
         replaceText(warningElem, loginFailed);
@@ -94,26 +94,56 @@ async function login(warningElem: HTMLElement) {
         return;
     }
 
-    password = await hashPassword(password);
-
     const param = {
         email: email,
         password: password,
         remember_me: rememberMeInput.checked
     };
 
-    const paramString = JSON.stringify(param);
+    sendLoginRequest(
+        JSON.stringify(param),
+        function () {
+            promptForTotp(
+                function (totp, closeWindow, showWarning) {
+                    const param = {
+                        email: email,
+                        password: password,
+                        remember_me: rememberMeInput.checked,
+                        totp: totp
+                    };
 
+                    sendLoginRequest(
+                        JSON.stringify(param),
+                        showWarning,
+                        closeWindow
+                    );
+                },
+                function () { disableAllInputs(false); }
+            );
+        }
+    );
+}
+
+function sendLoginRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
     sendServerRequest('login.php', {
         callback: function (response: string) {
             if (response == 'FAILED') {
+                closePopUpWindow?.();
                 replaceText(warningElem, loginFailed);
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'DEACTIVATED') {
+                closePopUpWindow?.();
                 replaceChildren(warningElem, ...accountDeactivated());
                 showElement(warningElem);
                 disableAllInputs(false);
+            } else if (response == 'TOO MANY REQUESTS') {
+                closePopUpWindow?.();
+                replaceText(warningElem, tooManyFailedLogin);
+                showElement(warningElem);
+                disableAllInputs(false);
+            } else if (response == 'FAILED TOTP') {
+                failedTotpCallback();
             } else if (response == 'APPROVED') {
                 if (UNRECOMMENDED_BROWSER) {
                     showMessage(unrecommendedBrowser(getForwardURL()));
@@ -124,7 +154,7 @@ async function login(warningElem: HTMLElement) {
                 showMessage();
             }
         },
-        content: 'p=' + encodeURIComponent(paramString)
+        content: 'p=' + encodeURIComponent(content)
     });
 }
 

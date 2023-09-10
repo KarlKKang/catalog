@@ -5,6 +5,8 @@
     --foreground-color: rgba(255, 255, 255, 1);
     --background-color: rgba(252, 252, 252, 1);
     --background-color-transparent: rgba(251, 251, 251, 0);
+    --pop-up-window-background-color: rgba(255, 255, 255, 0.9);
+    --pop-up-window-blurred-background-color: rgba(255, 255, 255, 0.55);
     --grey-background-color: rgba(235, 235, 235, 1);
 
     --text-color: rgba(0, 0, 0, 1);
@@ -77,6 +79,8 @@
         --foreground-color: rgba(43, 44, 52, 1);
         --background-color: rgba(40, 41, 49, 1);
         --background-color-transparent: rgba(40, 41, 49, 0);
+        --pop-up-window-background-color: rgba(0, 0, 0, 0.75);
+        --pop-up-window-blurred-background-color: rgba(0, 0, 0, 0.1);
         --grey-background-color: rgba(65, 68, 80, 1);
 
         --text-color: rgba(210, 213, 220, 1);
@@ -140,7 +144,25 @@ body {
     padding: 0px;
 }
 
-button,
+.hcenter {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+.button,
+.input-field {
+    box-shadow: var(--shadow);
+    transition: box-shadow .4s ease-out;
+    background: var(--foreground-color);
+}
+
+.input-field:not(.disabled):hover,
+.button:enabled:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.button,
 .input-field>input {
     font-size: medium;
     border: none;
@@ -148,11 +170,12 @@ button,
     min-height: 40px;
 }
 
-button {
+.button {
     /* Set color on 'input' elements will override placeholder color in some older browsers */
     color: var(--text-color);
     cursor: pointer;
     text-align: center;
+    display: block;
 }
 
 .input-field {
@@ -167,7 +190,7 @@ button {
     box-sizing: border-box;
 }
 
-button:disabled,
+.button:disabled,
 .input-field>input:disabled {
     color: var(--alt-text-color);
     /* required on iOS */
@@ -176,7 +199,7 @@ button:disabled,
     cursor: wait;
 }
 
-button:disabled {
+.button:disabled {
     background-color: var(--foreground-color);
 }
 

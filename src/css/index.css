@@ -131,15 +131,15 @@
     width: 24px;
 }
 
-#search-bar .input-field {
+#search-bar input {
     flex: 1;
     background-color: transparent;
     height: 100%;
     margin: 0px;
-}
-
-.input-field>input {
-    padding-left: 0px;
+    font-size: medium;
+    border: none;
+    padding: 0.5em 1em 0.5em 0px;
+    box-sizing: border-box;
 }
 
 #position-detector {

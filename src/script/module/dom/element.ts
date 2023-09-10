@@ -141,9 +141,7 @@ export function replaceChildren(parent: Node, ...newChildren: Node[]) {
         parent.removeChild(oldChild);
         oldChild = parent.firstChild;
     }
-    for (const newChild of newChildren) {
-        appendChild(parent, newChild);
-    }
+    appendChildren(parent, ...newChildren);
 }
 
 export function createElement(tag: string) {
@@ -207,6 +205,10 @@ export function createAnchorElement() {
     return createElement('a') as HTMLAnchorElement;
 }
 
+export function createInputElement() {
+    return createElement('input') as HTMLInputElement;
+}
+
 export function createSVGElement(viewBox: string, path: string) {
     const svg = d.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', viewBox);
@@ -262,6 +264,12 @@ export function addEventListenerOnce(elem: EventTarget, event: string, callback:
 
 export function appendChild(parent: Node, child: Node) {
     parent.appendChild(child);
+}
+
+export function appendChildren(parent: Node, ...children: Node[]) {
+    for (const child of children) {
+        appendChild(parent, child);
+    }
 }
 
 export function hideElement(elem: HTMLElement) {

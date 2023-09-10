@@ -20,6 +20,7 @@ const entries = [
     'portal_form.css',
     'register.css',
     'player.css',
+    'pop_up_window.css',
 ];
 
 for (const filename of entries) {

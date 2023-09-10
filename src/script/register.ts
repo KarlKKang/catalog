@@ -8,7 +8,6 @@ import {
     sendServerRequest,
     passwordStyling,
     clearCookies,
-    hashPassword,
     disableInput,
     PASSWORD_REGEX,
 } from './module/main';
@@ -111,7 +110,7 @@ async function register(param: string, keyID: string, signature: string) {
     disableAllInputs(true);
 
     const username = usernameInput.value;
-    let password = passwordInput.value;
+    const password = passwordInput.value;
     const passwordConfirm = passwordConfirmInput.value;
 
     if (username == '') {
@@ -133,8 +132,6 @@ async function register(param: string, keyID: string, signature: string) {
         return;
     }
 
-    password = await hashPassword(password);
-
     const user = {
         username: username,
         password: password
@@ -150,6 +147,10 @@ async function register(param: string, keyID: string, signature: string) {
                 disableAllInputs(false);
             } else if (response == 'USERNAME EMPTY') {
                 replaceText(warningElem, usernameEmpty);
+                showElement(warningElem);
+                disableAllInputs(false);
+            } else if (response === 'PASSWORD INVALID') {
+                replaceText(warningElem, invalidPasswordFormat);
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'ALREADY REGISTERED') {

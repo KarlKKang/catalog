@@ -12,7 +12,6 @@ import {
     disableInput,
     EMAIL_REGEX,
     PASSWORD_REGEX,
-    hashPassword,
 } from './module/main';
 import {
     addEventListener,
@@ -25,7 +24,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
-import { loginFailed, accountDeactivated } from './module/message/template/inline';
+import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
 
 let emailInput: HTMLInputElement;
 let passwordInput: HTMLInputElement;
@@ -93,11 +92,11 @@ export default function () {
     });
 }
 
-async function changeEmail(param: string, keyID: string, signature: string) {
+function changeEmail(param: string, keyID: string, signature: string) {
     disableAllInputs(true);
 
     const email = emailInput.value;
-    let password = passwordInput.value;
+    const password = passwordInput.value;
 
     if (!EMAIL_REGEX.test(email)) {
         replaceText(warningElem, loginFailed);
@@ -112,8 +111,6 @@ async function changeEmail(param: string, keyID: string, signature: string) {
         disableAllInputs(false);
         return;
     }
-
-    password = await hashPassword(password);
 
     const user = {
         email: email,
@@ -134,6 +131,10 @@ async function changeEmail(param: string, keyID: string, signature: string) {
                 disableAllInputs(false);
             } else if (response == 'DEACTIVATED') {
                 replaceChildren(warningElem, ...accountDeactivated());
+                showElement(warningElem);
+                disableAllInputs(false);
+            } else if (response == 'TOO MANY REQUESTS') {
+                replaceText(warningElem, tooManyFailedLogin);
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'DONE') {

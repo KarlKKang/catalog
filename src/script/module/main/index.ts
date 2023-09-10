@@ -342,11 +342,11 @@ function parseSec(sec: number) {
     };
 }
 
-export function changeColor(elem: HTMLElement, color: string) {
+export function changeColor(elem: HTMLElement, color: string | null) {
     removeClass(elem, 'color-red');
     removeClass(elem, 'color-green');
     removeClass(elem, 'color-orange');
-    addClass(elem, 'color-' + color);
+    color && addClass(elem, 'color-' + color);
 }
 
 export function concatenateSignedURL(url: string, credentials: CDNCredentials, resourceURLOverride?: string) {
@@ -380,23 +380,6 @@ export function clearCookies() {
     if (getBaseURL() != TOP_URL + '/image') {
         deleteCookie('local-image-param');
     }
-}
-
-import type forge from 'node-forge';
-export async function hashPassword(password: string) {
-    let sha512: typeof forge.sha512;
-    try {
-        sha512 = await import(
-            'node-forge/lib/sha512'
-        );
-    } catch (e) {
-        showMessage(moduleImportError(e));
-        throw e;
-    }
-
-    const hash = sha512.sha256.create();
-    hash.update(password);
-    return hash.digest().toHex();
 }
 
 export function removeRightClick(elem: Element) {
@@ -464,4 +447,8 @@ function getDayOfWeek(date: Date): string {
 
 export function objectKeyExists(key: PropertyKey, obj: object) {
     return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+export function isString(str: any) {
+    return typeof str === 'string' || str instanceof String;
 }

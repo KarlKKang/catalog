@@ -1,4 +1,5 @@
-import { throwError, isObject, isString, isBoolean } from './helper';
+import { isString } from '../main';
+import { throwError, isObject, isBoolean } from './helper';
 export interface LocalMessageParam {
     message: string;
     title: string;

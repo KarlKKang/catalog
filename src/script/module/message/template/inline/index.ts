@@ -19,7 +19,9 @@ export const usernameUnchanged = '新しいユーザー名は元のユーザー�
 export const usernameChanged = 'ユーザー名を変更しました。';
 export const usernameTaken = 'このユーザーネームはすでに使われています。別のユーザー名を入力してください。';
 
-export const loginFailed = 'アカウントIDかパスワードが正しくありません。';
+export const loginFailed = 'メールアドレスまたはパスワードが正しくありません。';
+export const tooManyFailedLogin = 'ログイン試行の回数が上限を超えました。ユーザー保護のため、現在ログインすることはできません。しばらくしてからもう一度お試しください。';
+export const failedTotp = '入力されたコードが正しくありません。';
 export const accountDeactivated = function () {
     const message = [
         createTextNode('お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（'),
@@ -33,3 +35,7 @@ export const accountDeactivated = function () {
 };
 
 export const emailChangeWait = '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。';
+export const generateRecoveryCodeWait = '直前にリカバリーコードを生成したため、1時間ほど待ってから再度生成を試みてください。';
+
+export const mfaNotSet = '二要素認証が設定されていません。';
+export const mfaAlreadySet = '二要素認証はすでに有効になっています。';

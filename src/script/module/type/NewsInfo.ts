@@ -1,4 +1,5 @@
-import { throwError, isObject, isString, isNumber } from './helper';
+import { isString } from '../main';
+import { throwError, isObject, isNumber } from './helper';
 
 export type NewsInfo = {
     title: string;

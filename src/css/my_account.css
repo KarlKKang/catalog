@@ -43,24 +43,14 @@ hr {
 .button {
     max-width: 100%;
     margin: 1em 0px;
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
-    background: var(--foreground-color);
 }
 
 .button {
     width: 150px;
-    position: relative;
-    display: block;
 }
 
 .input-field {
     width: 300px;
-}
-
-.input-field:not(.disabled):hover,
-.button:enabled:hover {
-    box-shadow: var(--shadow-hover);
 }
 
 .note>ul {
@@ -75,4 +65,21 @@ hr {
 #invite-count-text {
     padding: 1em 0px;
     margin: 0px;
+}
+
+.totp-qrcode {
+    display: block;
+    max-width: 100%;
+    margin: 0px;
+}
+
+.totp-uri {
+    overflow-wrap: break-word;
+}
+
+.recovery-codes {
+    background-color: var(--grey-background-color);
+    display: inline-block;
+    width: 100%;
+    overflow-wrap: anywhere;
 }

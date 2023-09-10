@@ -1,4 +1,5 @@
-import { throwError, isObject, isString, isArray, isNumber } from './helper';
+import { isString } from '../main';
+import { throwError, isObject, isArray, isNumber } from './helper';
 import * as MaintenanceInfo from './MaintenanceInfo';
 
 export interface SeriesEntry {

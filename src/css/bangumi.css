@@ -317,18 +317,16 @@ p.artist {
 }
 
 .button {
-    background: var(--foreground-color);
     width: 150px;
     max-width: 100%;
-    position: relative;
 }
 
 #warning-button-group>.button {
-    margin: 1em 3% 0px 3%;
+    margin: 1em 1em 0px 1em;
 }
 
 #warning-button-group {
-    margin: 0px;
+    margin: 0px -1em 0px -1em;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -412,10 +410,6 @@ p.artist {
 }
 
 .download-button {
-    margin: 0px 0px 1em 0px;
-}
-
-.image-download-button {
     margin: 1em 0px 1em 0px;
 }
 
@@ -424,7 +418,7 @@ p.artist {
     flex-wrap: wrap;
     justify-content: center;
     padding: 0px;
-    margin: 0px -0.5em 0px -0.5em;
+    margin: 0px -0.5em -1em -0.5em;
 }
 
 #download-options>div {
@@ -444,7 +438,6 @@ p.artist {
 .chapters,
 .download,
 .message,
-.button,
 select {
     box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
@@ -457,7 +450,6 @@ select {
 .chapters:hover,
 .download:hover,
 .message:hover,
-.button:enabled:hover,
 select:hover {
     box-shadow: var(--shadow-hover);
 }

@@ -29,16 +29,7 @@
 }
 
 button {
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
-    background: var(--foreground-color);
     width: 150px;
     max-width: 100%;
-    position: relative;
     margin: 1em 0px 0px 0px;
-}
-
-#container:hover,
-button:enabled:hover {
-    box-shadow: var(--shadow-hover);
 }
