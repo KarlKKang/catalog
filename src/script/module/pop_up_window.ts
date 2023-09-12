@@ -24,21 +24,21 @@ export function initializePopUpWindow() {
     let currentTimeout: NodeJS.Timeout | null = null;
 
     instance = new Promise<PopUpWindow>((resolve) => {
-        w.requestAnimationFrame(function () {
+        w.requestAnimationFrame(() => {
             addClass(container, 'invisible');
             addClass(container, 'transparent');
             appendChild(getBody(), container);
-            w.requestAnimationFrame(function () {
+            w.requestAnimationFrame(() => {
                 resolve({
-                    show: function (...contents: Node[]) {
+                    show: (...contents: Node[]) => {
                         currentTimeout = null;
                         replaceChildren(popUpWindowcontent, ...contents);
                         removeClass(container, 'invisible');
                         removeClass(container, 'transparent');
                     },
-                    hide: function () {
+                    hide: () => {
                         addClass(container, 'transparent');
-                        const timeout = setTimeout(function () {
+                        const timeout = setTimeout(() => {
                             if (currentTimeout === timeout) {
                                 addClass(container, 'invisible');
                                 replaceChildren(popUpWindowcontent);
@@ -62,7 +62,7 @@ export function promptForTotp(
     ) => void,
     closeWindowCallback: () => void
 ) {
-    initializePopUpWindow().then(function (popUpWindow) {
+    initializePopUpWindow().then((popUpWindow) => {
         const promptText = createParagraphElement();
         appendText(promptText, '二要素認証コードまたはリカバリーコードを入力してください。');
 
@@ -92,13 +92,13 @@ export function promptForTotp(
         appendChild(buttonFlexbox, submitButton);
         appendChild(buttonFlexbox, cancelButton);
 
-        const disableAllInputs = function (disabled: boolean) {
+        const disableAllInputs = (disabled: boolean) => {
             disableInput(totpInput, disabled);
             submitButton.disabled = disabled;
             cancelButton.disabled = disabled;
 
         };
-        addEventListener(submitButton, 'click', function () {
+        const submit = () => {
             disableAllInputs(true);
             hideElement(warningText);
 
@@ -111,13 +111,19 @@ export function promptForTotp(
             submitCallback(
                 totp,
                 popUpWindow.hide,
-                function () {
+                () => {
                     disableAllInputs(false);
                     showElement(warningText);
                 }
             );
+        };
+        addEventListener(submitButton, 'click', submit);
+        addEventListener(totpInput, 'keydown', (event) => {
+            if ((event as KeyboardEvent).key === 'Enter') {
+                submit();
+            }
         });
-        addEventListener(cancelButton, 'click', function () {
+        addEventListener(cancelButton, 'click', () => {
             closeWindowCallback();
             popUpWindow.hide();
         });

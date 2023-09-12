@@ -51,20 +51,16 @@ export default function () {
             },
         failed:
             function () {
-                addEventListener(usernameInput, 'keydown', function (event) {
+                const loginOnKeyDown = (event: Event) => {
                     if ((event as KeyboardEvent).key === 'Enter') {
                         login();
                     }
-                });
-                addEventListener(passwordInput, 'keydown', function (event) {
-                    if ((event as KeyboardEvent).key === 'Enter') {
-                        login();
-                    }
-                });
+                };
 
-                addEventListener(submitButton, 'click', function () {
-                    login();
-                });
+                addEventListener(usernameInput, 'keydown', loginOnKeyDown);
+                addEventListener(passwordInput, 'keydown', loginOnKeyDown);
+
+                addEventListener(submitButton, 'click', login);
                 addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', function () {
                     redirect(LOGIN_URL + '/request_password_reset', true);
                 });

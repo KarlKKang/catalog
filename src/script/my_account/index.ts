@@ -587,7 +587,7 @@ function promptForEmailOtp(
         closeWindow: () => void,
     ) => void
 ) {
-    initializePopUpWindow().then(function (popUpWindow) {
+    initializePopUpWindow().then((popUpWindow) => {
         const promptText = createParagraphElement();
         appendText(promptText, 'メールに送信された認証コードを入力してください。');
 
@@ -612,13 +612,13 @@ function promptForEmailOtp(
         const resendButton = createButtonElement();
         addClass(resendButton, 'button');
         const resendButtonText = '再送信する';
-        const resetResendTimer = function () {
+        const resetResendTimer = () => {
             resendButton.disabled = true;
             resendButton.style.cursor = 'not-allowed';
             resendButton.style.width = 'auto';
             resendButton.innerText = resendButtonText + '（60秒）';
             let count = 60;
-            const interval = setInterval(function () {
+            const interval = setInterval(() => {
                 count--;
                 if (count <= 0) {
                     resendButton.disabled = false;
@@ -634,7 +634,7 @@ function promptForEmailOtp(
         resetResendTimer();
         appendChild(inputFlexbox, resendButton);
 
-        addEventListener(resendButton, 'click', function () {
+        addEventListener(resendButton, 'click', () => {
             resetResendTimerCallback(
                 resetResendTimer,
                 popUpWindow.hide
@@ -652,7 +652,7 @@ function promptForEmailOtp(
         appendChild(buttonFlexbox, submitButton);
         appendChild(buttonFlexbox, cancelButton);
 
-        const disableAllPopUpWindowInputs = function (disabled: boolean) {
+        const disableAllPopUpWindowInputs = (disabled: boolean) => {
             disableInput(otpInput, disabled);
             if (resendButton.textContent === resendButtonText) {
                 resendButton.disabled = disabled;
@@ -661,26 +661,33 @@ function promptForEmailOtp(
             cancelButton.disabled = disabled;
 
         };
-        addEventListener(submitButton, 'click', function () {
+        const submit = () => {
             disableAllPopUpWindowInputs(true);
             hideElement(warningText);
 
             const otp = otpInput.value;
             if (!/^[2-9A-HJ-NP-Z]{6}$/.test(otp)) {
                 showElement(warningText);
+                disableAllPopUpWindowInputs(false);
                 return;
             }
 
             submitCallback(
                 otp,
                 popUpWindow.hide,
-                function () {
-                    disableAllPopUpWindowInputs(false);
+                () => {
                     showElement(warningText);
+                    disableAllPopUpWindowInputs(false);
                 }
             );
+        };
+        addEventListener(submitButton, 'click', submit);
+        addEventListener(otpInput, 'keydown', (event) => {
+            if ((event as KeyboardEvent).key === 'Enter') {
+                submit();
+            }
         });
-        addEventListener(cancelButton, 'click', function () {
+        addEventListener(cancelButton, 'click', () => {
             disableAllInputs(false);
             popUpWindow.hide();
         });
@@ -698,7 +705,7 @@ function promptForLogin(
     ) => void,
     message?: string | Node[]
 ) {
-    initializePopUpWindow().then(function (popUpWindow) {
+    initializePopUpWindow().then((popUpWindow) => {
         const promptText = createParagraphElement();
         appendText(promptText, 'メールアドレスとパスワードを入力してください。');
 
@@ -746,27 +753,31 @@ function promptForLogin(
         appendChild(buttonFlexbox, submitButton);
         appendChild(buttonFlexbox, cancelButton);
 
-        const disableAllPopUpWindowInputs = function (disabled: boolean) {
+        const disableAllPopUpWindowInputs = (disabled: boolean) => {
             disableInput(emailInput, disabled);
             disableInput(passwordInput, disabled);
             submitButton.disabled = disabled;
             cancelButton.disabled = disabled;
 
         };
-        addEventListener(submitButton, 'click', function () {
+        const submit = () => {
             disableAllPopUpWindowInputs(true);
             hideElement(warningText);
 
+            const showWarning = (message: string | Node[]) => {
+                if (isString(message)) {
+                    replaceText(warningText, message as string);
+                } else {
+                    replaceChildren(warningText, ...message as Node[]);
+                }
+                showElement(warningText);
+                disableAllPopUpWindowInputs(false);
+            };
+
             const email = emailInput.value;
             const password = passwordInput.value;
-
-            if (!EMAIL_REGEX.test(email)) {
-                showElement(warningText);
-                return;
-            }
-
-            if (!PASSWORD_REGEX.test(password)) {
-                showElement(warningText);
+            if (!EMAIL_REGEX.test(email) || !PASSWORD_REGEX.test(password)) {
+                showWarning(loginFailed);
                 return;
             }
 
@@ -774,18 +785,18 @@ function promptForLogin(
                 email,
                 password,
                 popUpWindow.hide,
-                function (message: string | Node[]) {
-                    disableAllPopUpWindowInputs(false);
-                    if (isString(message)) {
-                        replaceText(warningText, message as string);
-                    } else {
-                        replaceChildren(warningText, ...message as Node[]);
-                    }
-                    showElement(warningText);
-                }
+                showWarning
             );
-        });
-        addEventListener(cancelButton, 'click', function () {
+        };
+        const submitOnKeyDown = (event: Event) => {
+            if ((event as KeyboardEvent).key === 'Enter') {
+                submit();
+            }
+        };
+        addEventListener(submitButton, 'click', submit);
+        addEventListener(emailInput, 'keydown', submitOnKeyDown);
+        addEventListener(passwordInput, 'keydown', submitOnKeyDown);
+        addEventListener(cancelButton, 'click', () => {
             disableAllInputs(false);
             popUpWindow.hide();
         });
@@ -795,157 +806,160 @@ function promptForLogin(
 }
 
 function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
-    initializePopUpWindow().then(
-        (popUpWindow) => {
-            const promptText = createParagraphElement();
-            appendText(promptText, '二要素認証を有効にするには、Authenticatorアプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
+    initializePopUpWindow().then((popUpWindow) => {
+        const promptText = createParagraphElement();
+        appendText(promptText, '二要素認証を有効にするには、Authenticatorアプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
-            const qrcode = createCanvasElement();
-            addClass(qrcode, 'totp-qrcode');
-            addClass(qrcode, 'hcenter');
-            toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H' }, () => {
-                qrcode.style.removeProperty('height');
-            });
+        const qrcode = createCanvasElement();
+        addClass(qrcode, 'totp-qrcode');
+        addClass(qrcode, 'hcenter');
+        toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H' }, () => {
+            qrcode.style.removeProperty('height');
+        });
 
-            const uriElem = createParagraphElement();
-            addClass(uriElem, 'totp-uri');
-            const uriLink = createAnchorElement();
-            addClass(uriLink, 'link');
-            appendText(uriLink, totpInfo.uri);
-            uriLink.href = totpInfo.uri;
-            appendChild(uriElem, uriLink);
+        const uriElem = createParagraphElement();
+        addClass(uriElem, 'totp-uri');
+        const uriLink = createAnchorElement();
+        addClass(uriLink, 'link');
+        appendText(uriLink, totpInfo.uri);
+        uriLink.href = totpInfo.uri;
+        appendChild(uriElem, uriLink);
 
-            const warningText = createParagraphElement();
-            appendText(warningText, failedTotp);
-            changeColor(warningText, 'red');
+        const warningText = createParagraphElement();
+        appendText(warningText, failedTotp);
+        changeColor(warningText, 'red');
+        hideElement(warningText);
+
+        const totpInputContainer = createDivElement();
+        addClass(totpInputContainer, 'input-field');
+        addClass(totpInputContainer, 'hcenter');
+        const totpInput = createInputElement();
+        totpInput.type = 'text';
+        totpInput.autocomplete = 'one-time-code';
+        totpInput.placeholder = '認証コード';
+        totpInput.maxLength = 6;
+        appendChild(totpInputContainer, totpInput);
+
+        const submitButton = createButtonElement();
+        addClass(submitButton, 'button');
+        appendText(submitButton, '送信する');
+        const cancelButton = createButtonElement();
+        addClass(cancelButton, 'button');
+        appendText(cancelButton, 'キャンセル');
+        const buttonFlexbox = createDivElement();
+        addClass(buttonFlexbox, 'input-flexbox');
+        appendChild(buttonFlexbox, submitButton);
+        appendChild(buttonFlexbox, cancelButton);
+
+        const disableAllPopUpWindowInputs = (disabled: boolean) => {
+            disableInput(totpInput, disabled);
+            submitButton.disabled = disabled;
+            cancelButton.disabled = disabled;
+
+        };
+        const submit = () => {
+            disableAllPopUpWindowInputs(true);
             hideElement(warningText);
 
-            const totpInputContainer = createDivElement();
-            addClass(totpInputContainer, 'input-field');
-            addClass(totpInputContainer, 'hcenter');
-            const totpInput = createInputElement();
-            totpInput.type = 'text';
-            totpInput.autocomplete = 'one-time-code';
-            totpInput.placeholder = '認証コード';
-            totpInput.maxLength = 6;
-            appendChild(totpInputContainer, totpInput);
+            const totp = totpInput.value;
+            if (!/^\d{6}$/.test(totp)) {
+                showElement(warningText);
+                disableAllPopUpWindowInputs(false);
+                return;
+            }
 
-            const submitButton = createButtonElement();
-            addClass(submitButton, 'button');
-            appendText(submitButton, '送信する');
-            const cancelButton = createButtonElement();
-            addClass(cancelButton, 'button');
-            appendText(cancelButton, 'キャンセル');
-            const buttonFlexbox = createDivElement();
-            addClass(buttonFlexbox, 'input-flexbox');
-            appendChild(buttonFlexbox, submitButton);
-            appendChild(buttonFlexbox, cancelButton);
-
-            const disableAllPopUpWindowInputs = (disabled: boolean) => {
-                disableInput(totpInput, disabled);
-                submitButton.disabled = disabled;
-                cancelButton.disabled = disabled;
-
-            };
-            addEventListener(submitButton, 'click', () => {
-                disableAllPopUpWindowInputs(true);
-                hideElement(warningText);
-
-                const totp = totpInput.value;
-                if (!/^\d{6}$/.test(totp)) {
-                    showElement(warningText);
-                    return;
-                }
-
-                sendServerRequest('set_totp.php', {
-                    callback: (response: string) => {
-                        if (response === 'EXPIRED') {
-                            popUpWindow.hide();
-                            changeColor(mfaWarning, 'red');
-                            replaceText(mfaWarning, 'セッションが終了しました。もう一度お試しください。');
-                            showElement(mfaWarning);
-                            disableAllInputs(false);
-                        } else if (response === 'FAILED TOTP') {
-                            showElement(warningText);
-                            disableAllPopUpWindowInputs(false);
-                        } else if (response === 'ALREADY SET') {
-                            popUpWindow.hide();
-                            changeColor(mfaWarning, 'green');
-                            replaceText(mfaWarning, mfaAlreadySet);
-                            showElement(mfaWarning);
-                            currentMfaStatus = true;
-                            changeMfaStatus();
-                            disableAllInputs(false);
-                        } else {
-                            let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
-                            try {
-                                parsedResponse = JSON.parse(response);
-                                RecoveryCodeInfo.check(parsedResponse);
-                            } catch (e) {
-                                showMessage(invalidResponse);
-                                return;
-                            }
-                            showRecoveryCode(parsedResponse);
+            sendServerRequest('set_totp.php', {
+                callback: (response: string) => {
+                    if (response === 'EXPIRED') {
+                        popUpWindow.hide();
+                        changeColor(mfaWarning, 'red');
+                        replaceText(mfaWarning, 'セッションが終了しました。もう一度お試しください。');
+                        showElement(mfaWarning);
+                        disableAllInputs(false);
+                    } else if (response === 'FAILED TOTP') {
+                        showElement(warningText);
+                        disableAllPopUpWindowInputs(false);
+                    } else if (response === 'ALREADY SET') {
+                        popUpWindow.hide();
+                        changeColor(mfaWarning, 'green');
+                        replaceText(mfaWarning, mfaAlreadySet);
+                        showElement(mfaWarning);
+                        currentMfaStatus = true;
+                        changeMfaStatus();
+                        disableAllInputs(false);
+                    } else {
+                        let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
+                        try {
+                            parsedResponse = JSON.parse(response);
+                            RecoveryCodeInfo.check(parsedResponse);
+                        } catch (e) {
+                            showMessage(invalidResponse);
+                            return;
                         }
-                    },
-                    content: 'p=' + totpInfo.p + '&key-id=' + totpInfo.key_id + '&signature=' + totpInfo.signature + '&totp=' + totp
-                });
+                        showRecoveryCode(parsedResponse);
+                    }
+                },
+                content: 'p=' + totpInfo.p + '&key-id=' + totpInfo.key_id + '&signature=' + totpInfo.signature + '&totp=' + totp
             });
-            addEventListener(cancelButton, 'click', () => {
-                disableAllInputs(false);
-                popUpWindow.hide();
-            });
+        };
+        addEventListener(submitButton, 'click', submit);
+        addEventListener(totpInput, 'keydown', (event) => {
+            if ((event as KeyboardEvent).key === 'Enter') {
+                submit();
+            }
+        });
+        addEventListener(cancelButton, 'click', () => {
+            disableAllInputs(false);
+            popUpWindow.hide();
+        });
 
-            popUpWindow.show(promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox);
-        }
-    );
+        popUpWindow.show(promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox);
+    });
 }
 
 function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo) {
-    initializePopUpWindow().then(
-        (popUpWindow) => {
-            const promptText = createParagraphElement();
-            appendText(promptText, 'リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
+    initializePopUpWindow().then((popUpWindow) => {
+        const promptText = createParagraphElement();
+        appendText(promptText, 'リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
 
-            const recoveryCodeContainer = createDivElement();
-            addClass(recoveryCodeContainer, 'recovery-codes');
-            for (const recoveryCode of recoveryCodes) {
-                const recoveryCodeElem = createParagraphElement();
-                appendText(recoveryCodeElem, recoveryCode);
-                appendChild(recoveryCodeContainer, recoveryCodeElem);
-            }
-
-            const closeButton = createButtonElement();
-            addClass(closeButton, 'button');
-            addClass(closeButton, 'hcenter');
-
-            const closeButtonText = '閉じる';
-            closeButton.disabled = true;
-            closeButton.style.cursor = 'not-allowed';
-            appendText(closeButton, closeButtonText + '（15秒）');
-            let count = 15;
-            const interval = setInterval(function () {
-                count--;
-                if (count <= 0) {
-                    closeButton.disabled = false;
-                    closeButton.style.removeProperty('cursor');
-                    replaceText(closeButton, closeButtonText);
-                    clearInterval(interval);
-                } else {
-                    replaceText(closeButton, closeButtonText + '（' + count + '秒）');
-                }
-            }, 1000);
-
-            addEventListener(closeButton, 'click', () => {
-                popUpWindow.hide();
-                currentMfaStatus = true;
-                changeMfaStatus();
-                disableAllInputs(false);
-            });
-
-            popUpWindow.show(promptText, recoveryCodeContainer, closeButton);
+        const recoveryCodeContainer = createDivElement();
+        addClass(recoveryCodeContainer, 'recovery-codes');
+        for (const recoveryCode of recoveryCodes) {
+            const recoveryCodeElem = createParagraphElement();
+            appendText(recoveryCodeElem, recoveryCode);
+            appendChild(recoveryCodeContainer, recoveryCodeElem);
         }
-    );
+
+        const closeButton = createButtonElement();
+        addClass(closeButton, 'button');
+        addClass(closeButton, 'hcenter');
+
+        const closeButtonText = '閉じる';
+        closeButton.disabled = true;
+        closeButton.style.cursor = 'not-allowed';
+        appendText(closeButton, closeButtonText + '（15秒）');
+        let count = 15;
+        const interval = setInterval(() => {
+            count--;
+            if (count <= 0) {
+                closeButton.disabled = false;
+                closeButton.style.removeProperty('cursor');
+                replaceText(closeButton, closeButtonText);
+                clearInterval(interval);
+            } else {
+                replaceText(closeButton, closeButtonText + '（' + count + '秒）');
+            }
+        }, 1000);
+
+        addEventListener(closeButton, 'click', () => {
+            popUpWindow.hide();
+            currentMfaStatus = true;
+            changeMfaStatus();
+            disableAllInputs(false);
+        });
+
+        popUpWindow.show(promptText, recoveryCodeContainer, closeButton);
+    });
 }
 
 function changeMfaStatus() {
@@ -977,9 +991,6 @@ function disableAllInputs(disabled: boolean) {
     usernameChangeButton.disabled = disabled;
     passwordChangeButton.disabled = disabled;
     mfaButton.disabled = disabled;
-    if (currentMfaStatus) {
-        recoveryCodeButton.disabled = disabled;
-    }
     inviteButton.disabled = disabled;
     logoutButton.disabled = disabled;
 }

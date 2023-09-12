@@ -67,16 +67,13 @@ export default function () {
             } else if (response == 'DUPLICATED') {
                 showMessage(emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
-                addEventListener(emailInput, 'keydown', function (event) {
+                const changeEmailOnKeyDown = (event: Event) => {
                     if ((event as KeyboardEvent).key === 'Enter') {
                         changeEmail(param, keyID, signature);
                     }
-                });
-                addEventListener(passwordInput, 'keydown', function (event) {
-                    if ((event as KeyboardEvent).key === 'Enter') {
-                        changeEmail(param, keyID, signature);
-                    }
-                });
+                };
+                addEventListener(emailInput, 'keydown', changeEmailOnKeyDown);
+                addEventListener(passwordInput, 'keydown', changeEmailOnKeyDown);
                 addEventListener(submitButton, 'click', function () {
                     changeEmail(param, keyID, signature);
                 });
