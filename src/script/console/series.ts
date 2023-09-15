@@ -50,7 +50,7 @@ function modifySeries(button: Element) {
         }
     } while (confirm != 'modify');
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: seriesCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -72,7 +72,7 @@ function deleteSeries(id: string) {
         id: id
     };
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: seriesCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -106,7 +106,7 @@ function addSeries(button: Element) {
         }
     } while (confirm != 'insert');
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: seriesCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -196,7 +196,7 @@ function updateSeriesTime(id: string) {
         id: id
     };
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: seriesCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });

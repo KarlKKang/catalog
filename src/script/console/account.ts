@@ -72,7 +72,7 @@ async function addAccount(button: Element) {
         }
     } while (confirm != 'insert');
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: accountCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -124,7 +124,7 @@ async function modifyAccount(button: Element, id: string) {
         }
     } while (confirm != 'modify');
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: accountCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -209,7 +209,7 @@ function deleteAccount(id: string) {
         id: id
     };
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: accountCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });

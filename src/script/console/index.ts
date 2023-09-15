@@ -17,7 +17,7 @@ import { getTable, setOutput } from './helper';
 export default function () {
     clearCookies();
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: function (response: string) {
             if (response != 'APPROVED') {
                 showMessage(invalidResponse);
@@ -117,7 +117,7 @@ export default function () {
             type: type
         };
 
-        sendServerRequest('console.php', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 setOutput(response, undefined, 'id-output');
             },
@@ -131,7 +131,7 @@ export default function () {
             type: type
         };
 
-        sendServerRequest('console.php', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 setOutput(response);
             },
@@ -160,7 +160,7 @@ export default function () {
             dir: dir
         };
 
-        sendServerRequest('console.php', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 alert(response);
             },
@@ -182,7 +182,7 @@ export default function () {
             type: 'key_cache'
         };
 
-        sendServerRequest('console.php', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 alert(response);
             },
@@ -204,7 +204,7 @@ export default function () {
             type: type
         };
 
-        sendServerRequest('console.php', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 alert(response);
             },
@@ -232,7 +232,7 @@ export default function () {
             series: id
         };
 
-        sendServerRequest('console.php', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 alert(response);
             },

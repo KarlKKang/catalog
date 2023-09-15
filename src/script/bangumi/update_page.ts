@@ -138,7 +138,7 @@ export default async function (
 
     /////////////////////////////////////////////authenticate media session/////////////////////////////////////////////
     setInterval(function () {
-        sendServerRequest('authenticate_media_session.php', {
+        sendServerRequest('authenticate_media_session', {
             callback: function (response: string) {
                 if (response != 'APPROVED') {
                     showMessage(invalidResponse);

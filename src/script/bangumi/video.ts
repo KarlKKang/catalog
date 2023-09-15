@@ -163,7 +163,7 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HT
     currentFormat = format;
     updateURLParam(seriesID, epIndex, formatIndex);
 
-    sendServerRequest('authenticate_media_session.php', {
+    sendServerRequest('authenticate_media_session', {
         callback: function (response: string) {
             if (response !== 'APPROVED') {
                 showMessage(invalidResponse);

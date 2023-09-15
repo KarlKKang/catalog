@@ -108,7 +108,7 @@ function login() {
 }
 
 function sendLoginRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
-    sendServerRequest('login.php', {
+    sendServerRequest('login', {
         callback: function (response: string) {
             if (response == 'FAILED') {
                 closePopUpWindow?.();

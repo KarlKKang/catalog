@@ -17,7 +17,7 @@ export function getTable(type: string, callback?: () => void) {
     };
     const paramString = JSON.stringify(param);
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: function (response: string) {
             setOutput(response, callback);
         },

@@ -55,7 +55,7 @@ export default function () {
         return;
     }
 
-    sendServerRequest('verify_email_change.php', {
+    sendServerRequest('verify_email_change', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(expired);
@@ -91,7 +91,7 @@ function submitRequest(param: string, keyID: string, signature: string) {
         return;
     }
 
-    sendServerRequest('verify_email_change.php', {
+    sendServerRequest('verify_email_change', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(expired);

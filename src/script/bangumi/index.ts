@@ -48,7 +48,7 @@ export default function () {
     }
 
     //send requests
-    sendServerRequest('get_ep.php', {
+    sendServerRequest('get_ep', {
         callback: async function (response: string) {
             let parsedResponse: BangumiInfo.BangumiInfo;
             try {

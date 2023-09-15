@@ -62,7 +62,7 @@ export default function () {
         return;
     }
 
-    sendServerRequest('change_email.php', {
+    sendServerRequest('change_email', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(expired);
@@ -129,7 +129,7 @@ function changeEmail(param: string, keyID: string, signature: string) {
 }
 
 function sendChangeEmailRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
-    sendServerRequest('change_email.php', {
+    sendServerRequest('change_email', {
         callback: function (response: string) {
             const authenticationResult = handleAuthenticationResult(
                 response,

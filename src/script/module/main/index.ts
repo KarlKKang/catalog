@@ -153,7 +153,7 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
 }
 
 export function authenticate(callback: { successful?: () => void; failed?: () => void }) {
-    sendServerRequest('get_authentication_state.php', {
+    sendServerRequest('get_authentication_state', {
         callback: function (response: string) {
             if (response === 'APPROVED') {
                 callback.successful && callback.successful();
@@ -167,7 +167,7 @@ export function authenticate(callback: { successful?: () => void; failed?: () =>
 }
 
 export function logout(callback: () => void,) {
-    sendServerRequest('logout.php', {
+    sendServerRequest('logout', {
         callback: function (response: string) {
             if (response === 'PARTIAL' || response === 'DONE') {
                 if (DEVELOPMENT) {

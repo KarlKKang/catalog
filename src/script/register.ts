@@ -64,7 +64,7 @@ export default function () {
         return;
     }
 
-    sendServerRequest('register.php', {
+    sendServerRequest('register', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(expired);
@@ -132,7 +132,7 @@ async function register(param: string, keyID: string, signature: string) {
         return;
     }
 
-    sendServerRequest('register.php', {
+    sendServerRequest('register', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(expired);

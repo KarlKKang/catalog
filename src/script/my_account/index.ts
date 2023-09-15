@@ -102,7 +102,7 @@ export default function () {
         return;
     }
 
-    sendServerRequest('get_account.php', {
+    sendServerRequest('get_account', {
         callback: function (response: string) {
             let parsedResponse: UserInfo.UserInfo;
             try {
@@ -217,7 +217,7 @@ function invite() {
             faildCallback: (message: string | Node[]) => void,
             failedTotpCallback: () => void,
         ) => {
-            sendServerRequest('send_invite.php', {
+            sendServerRequest('send_invite', {
                 callback: (response: string) => {
                     const authenticationResult = handleAuthenticationResult(
                         response,
@@ -284,7 +284,7 @@ function changePassword() {
             faildCallback: (message: string | Node[]) => void,
             failedTotpCallback: () => void,
         ) => {
-            sendServerRequest('change_password.php', {
+            sendServerRequest('change_password', {
                 callback: (response: string) => {
                     const authenticationResult = handleAuthenticationResult(
                         response,
@@ -324,7 +324,7 @@ function changeEmail() {
     hideElement(warningElem);
     changeColor(warningElem, 'red');
 
-    sendServerRequest('send_email_change.php', {
+    sendServerRequest('send_email_change', {
         callback: function (response: string) {
             if (response == 'WAIT') {
                 replaceText(warningElem, emailChangeWait);
@@ -369,7 +369,7 @@ function changeUsername() {
             faildCallback: (message: string | Node[]) => void,
             failedTotpCallback: () => void,
         ) => {
-            sendServerRequest('change_username.php', {
+            sendServerRequest('change_username', {
                 callback: (response: string) => {
                     const authenticationResult = handleAuthenticationResult(
                         response,
@@ -416,7 +416,7 @@ function enableMfa() {
             otpSentCallback?: () => void,
             failedOtpCallback?: () => void,
         ) => {
-            sendServerRequest('generate_totp.php', {
+            sendServerRequest('generate_totp', {
                 callback: (response: string) => {
                     const authenticationResult = handleAuthenticationResult(
                         response,
@@ -471,7 +471,7 @@ function disableMfa() {
             otpSentCallback?: () => void,
             failedOtpCallback?: () => void,
         ) => {
-            sendServerRequest('disable_totp.php', {
+            sendServerRequest('disable_totp', {
                 callback: (response: string) => {
                     if (response == 'FAILED') {
                         faildCallback(loginFailed);
@@ -511,7 +511,7 @@ function generateRecoveryCode() {
             faildCallback: (message: string | Node[]) => void,
             failedTotpCallback: () => void,
         ) => {
-            sendServerRequest('generate_recovery_code.php', {
+            sendServerRequest('generate_recovery_code', {
                 callback: (response: string) => {
                     const authenticationResult = handleAuthenticationResult(
                         response,
@@ -937,7 +937,7 @@ function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                 return;
             }
 
-            sendServerRequest('set_totp.php', {
+            sendServerRequest('set_totp', {
                 callback: (response: string) => {
                     if (response === 'EXPIRED') {
                         popUpWindow.hide();

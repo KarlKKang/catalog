@@ -203,7 +203,7 @@ function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
         return;
     }
 
-    sendServerRequest('get_series.php', {
+    sendServerRequest('get_series', {
         callback: function (response: string) {
             let parsedResponse: SeriesInfo.SeriesInfo;
             try {

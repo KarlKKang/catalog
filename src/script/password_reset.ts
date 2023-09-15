@@ -65,7 +65,7 @@ export default function () {
         return;
     }
 
-    sendServerRequest('reset_password.php', {
+    sendServerRequest('reset_password', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(expired);
@@ -119,7 +119,7 @@ async function submitRequest(user: string, keyID: string, signature: string, exp
         return;
     }
 
-    sendServerRequest('reset_password.php', {
+    sendServerRequest('reset_password', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(expired);

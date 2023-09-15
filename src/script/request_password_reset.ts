@@ -71,7 +71,7 @@ function submitRequest() {
         return;
     }
 
-    sendServerRequest('send_password_reset.php', {
+    sendServerRequest('send_password_reset', {
         callback: function (response: string) {
             if (response == 'INVALID FORMAT') {
                 replaceText(warningElem, invalidEmailFormat);

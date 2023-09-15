@@ -62,7 +62,7 @@ function modifyNews(button: Element) {
         }
     } while (confirm != 'modify');
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: function (response: string) {
             if (nextChunk === undefined) {
                 newsCompleteCallback(response);
@@ -94,7 +94,7 @@ function deleteNews(id: string) {
         id: id
     };
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: newsCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -140,7 +140,7 @@ function addNews(button: Element) {
         }
     } while (confirm != 'insert');
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: function (response: string) {
             if (nextChunk === undefined) {
                 newsCompleteCallback(response);
@@ -187,7 +187,7 @@ function updateNewsTime(id: string) {
         id: id
     };
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: newsCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -202,7 +202,7 @@ function getNewsContent(button: Element, id: string) {
         id: id
     };
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: function (response: string) {
             contentElem.value = response;
         },
@@ -312,7 +312,7 @@ function appendNews(id: string, contentChunk: string, remainingContentChunks: st
         end: nextChunk === undefined
     };
 
-    sendServerRequest('console.php', {
+    sendServerRequest('console', {
         callback: function (response: string) {
             if (nextChunk === undefined) {
                 newsCompleteCallback(response);

@@ -203,7 +203,7 @@ export function buildDownloadAccordion(
                 requestContent += '&container=' + containerSelectMenu.value;
             }
         }
-        sendServerRequest('start_download.php', {
+        sendServerRequest('start_download', {
             callback: function (response: string) {
                 if (getBaseURL(response).startsWith(CDN_URL + '/download/')) {
                     iframe.src = response;

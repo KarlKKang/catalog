@@ -50,14 +50,14 @@ export default function () {
     );
 
     const mediaSessionCredential = param.mediaSessionCredential;
-    let uri = 'get_image.php';
+    let uri = 'get_image';
     let content = param.xhrParam;
     if (mediaSessionCredential === null) {
-        uri = 'get_news_image.php';
+        uri = 'get_news_image';
     } else {
         content = mediaSessionCredential + '&' + content;
         setInterval(function () {
-            sendServerRequest('authenticate_media_session.php', {
+            sendServerRequest('authenticate_media_session', {
                 callback: function (response: string) {
                     if (response != 'APPROVED') {
                         showMessage();

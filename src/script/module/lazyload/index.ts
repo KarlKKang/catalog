@@ -98,10 +98,10 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                     };
 
                     if (targetData.xhrParam !== null) {
-                        let uri = 'get_image.php';
+                        let uri = 'get_image';
                         let content = targetData.xhrParam;
                         if (targetData.mediaSessionCredential === null) {
-                            uri = 'get_news_image.php';
+                            uri = 'get_news_image';
                         } else {
                             content = targetData.mediaSessionCredential + '&' + content;
                         }

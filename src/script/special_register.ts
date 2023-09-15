@@ -55,7 +55,7 @@ async function register() {
         return;
     }
 
-    sendServerRequest('send_invite.php', {
+    sendServerRequest('send_invite', {
         callback: function (response: string) {
             if (response == 'INVALID FORMAT') {
                 replaceText(warningElem, invalidEmailFormat);

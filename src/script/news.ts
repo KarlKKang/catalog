@@ -85,7 +85,7 @@ function getNewsID(): string | null {
 
 function getNews(newsID: string): void {
     const hash = getHash();
-    sendServerRequest('get_news.php' + '?id=' + newsID, {
+    sendServerRequest('get_news' + '?id=' + newsID, {
         callback: function (response: string) {
             let parsedResponse: NewsInfo.NewsInfo;
             try {
@@ -232,7 +232,7 @@ function getAllNews(): void {
         return;
     }
 
-    sendServerRequest('get_all_news.php', {
+    sendServerRequest('get_all_news', {
         callback: function (response: string) {
             let parsedResponse: AllNewsInfo.AllNewsInfo;
             try {
