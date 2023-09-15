@@ -1,4 +1,4 @@
-import minifier from './css-minifier.js';
+import minifier from './css_minifier.js';
 
 const srcDir = './src/font/';
 

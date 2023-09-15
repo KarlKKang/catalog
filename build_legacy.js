@@ -3,7 +3,7 @@ import path from 'path';
 import { minify as htmlMinify } from 'html-minifier-terser';
 import babel from '@babel/core';
 import { minify as terser } from 'terser';
-import cssMinify from './css-minifier.js';
+import cssMinify from './css_minifier.js';
 import * as fs from './file_system.js';
 import { htmlMinifyOptions } from './build_config.cjs';
 import { DOMAIN } from './env/index.cjs';

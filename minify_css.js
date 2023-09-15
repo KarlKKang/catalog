@@ -1,4 +1,4 @@
-import minifier from './css-minifier.js';
+import minifier from './css_minifier.js';
 
 const dev = process.argv[2] === 'dev';
 let destDir = './dist/css/';
