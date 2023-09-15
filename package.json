@@ -9,7 +9,7 @@
     "type-check": "tsc --noEmit",
     "build:type": "tsc --emitDeclarationOnly --outDir dist/script",
     "build-dev:type": "tsc --emitDeclarationOnly --outDir dev/script",
-    "build:font": "python build_font.py && node minify_font_css.js",
+    "build:font": "python3 build_font.py && node minify_font_css.js",
     "build:js": "webpack --progress --config webpack.prod.cjs",
     "build-dev:js": "webpack --progress --config webpack.dev.cjs",
     "build:css": "node minify_css.js",
