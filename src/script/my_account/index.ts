@@ -12,7 +12,8 @@ import {
     PASSWORD_REGEX,
     EMAIL_REGEX,
     logout,
-    isString
+    isString,
+    handleAuthenticationResult
 } from '../module/main';
 import {
     addEventListener,
@@ -209,28 +210,49 @@ function invite() {
         return;
     }
 
-    sendServerRequest('send_invite.php', {
-        callback: function (response: string) {
-            if (response == 'NOT QUALIFIED') {
-                replaceText(warningElem, invitationNotQualified);
-            } else if (response == 'INVALID FORMAT') {
-                replaceText(warningElem, invalidEmailFormat);
-            } else if (response == 'ALREADY REGISTERED') {
-                replaceText(warningElem, emailAlreadyRegistered);
-            } else if (response == 'CLOSED') {
-                replaceText(warningElem, invitationClosed);
-            } else if (response == 'DONE') {
-                showMessage(emailSentParam(getBaseURL()));
-                return;
-            } else {
-                showMessage();
-                return;
-            }
-            showElement(warningElem);
-            disableAllInputs(false);
-        },
-        content: 'receiver=' + encodeURIComponent(receiver)
-    });
+    reauthenticationPrompt(
+        (
+            authenticationParam: string,
+            closeWindow: () => void,
+            faildCallback: (message: string | Node[]) => void,
+            failedTotpCallback: () => void,
+        ) => {
+            sendServerRequest('send_invite.php', {
+                callback: (response: string) => {
+                    const authenticationResult = handleAuthenticationResult(
+                        response,
+                        () => { faildCallback(loginFailed); },
+                        failedTotpCallback,
+                        () => { faildCallback([...accountDeactivated()]); },
+                        () => { faildCallback(tooManyFailedLogin); },
+                    );
+                    if (!authenticationResult) {
+                        return;
+                    }
+
+                    if (response == 'NOT QUALIFIED') {
+                        replaceText(warningElem, invitationNotQualified);
+                    } else if (response == 'INVALID FORMAT') {
+                        replaceText(warningElem, invalidEmailFormat);
+                    } else if (response == 'ALREADY REGISTERED') {
+                        replaceText(warningElem, emailAlreadyRegistered);
+                    } else if (response == 'CLOSED') {
+                        replaceText(warningElem, invitationClosed);
+                    } else if (response == 'DONE') {
+                        showMessage(emailSentParam(getBaseURL()));
+                        return;
+                    } else {
+                        showMessage(invalidResponse);
+                        return;
+                    }
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                    closeWindow();
+                },
+                content: authenticationParam + '&receiver=' + encodeURIComponent(receiver)
+            });
+        }
+    );
 }
 
 function changePassword() {
@@ -255,23 +277,43 @@ function changePassword() {
         return;
     }
 
-    sendServerRequest('change_password.php', {
-        callback: function (response: string) {
-            if (response == 'DONE') {
-                replaceText(warningElem, passwordChanged);
-                showElement(warningElem);
-                changeColor(warningElem, 'green');
-                disableAllInputs(false);
-            } else if (response === 'PASSWORD INVALID') {
-                replaceText(warningElem, invalidPasswordFormat);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else {
-                showMessage();
-            }
-        },
-        content: 'new=' + encodeURIComponent(newPassword)
-    });
+    reauthenticationPrompt(
+        (
+            authenticationParam: string,
+            closeWindow: () => void,
+            faildCallback: (message: string | Node[]) => void,
+            failedTotpCallback: () => void,
+        ) => {
+            sendServerRequest('change_password.php', {
+                callback: (response: string) => {
+                    const authenticationResult = handleAuthenticationResult(
+                        response,
+                        () => { faildCallback(loginFailed); },
+                        failedTotpCallback,
+                        () => { faildCallback([...accountDeactivated()]); },
+                        () => { faildCallback(tooManyFailedLogin); },
+                    );
+                    if (!authenticationResult) {
+                        return;
+                    }
+
+                    if (response == 'DONE') {
+                        replaceText(warningElem, passwordChanged);
+                        changeColor(warningElem, 'green');
+                    } else if (response === 'PASSWORD INVALID') {
+                        replaceText(warningElem, invalidPasswordFormat);
+                    } else {
+                        showMessage();
+                        return;
+                    }
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                    closeWindow();
+                },
+                content: authenticationParam + '&new=' + encodeURIComponent(newPassword)
+            });
+        }
+    );
 }
 
 function changeEmail() {
@@ -320,27 +362,46 @@ function changeUsername() {
         return;
     }
 
-    sendServerRequest('change_username.php', {
-        callback: function (response: string) {
-            if (response == 'DONE') {
-                replaceText(warningElem, usernameChanged);
-                showElement(warningElem);
-                changeColor(warningElem, 'green');
-                currentUsername = newUsername;
-            } else if (response == 'DUPLICATED') {
-                replaceText(warningElem, usernameTaken);
-                showElement(warningElem);
-            } else if (response == 'EMPTY') {
-                replaceText(warningElem, usernameEmpty);
-                showElement(warningElem);
-            } else {
-                showMessage();
-                return;
-            }
-            disableAllInputs(false);
-        },
-        content: 'new=' + newUsername
-    });
+    reauthenticationPrompt(
+        (
+            authenticationParam: string,
+            closeWindow: () => void,
+            faildCallback: (message: string | Node[]) => void,
+            failedTotpCallback: () => void,
+        ) => {
+            sendServerRequest('change_username.php', {
+                callback: (response: string) => {
+                    const authenticationResult = handleAuthenticationResult(
+                        response,
+                        () => { faildCallback(loginFailed); },
+                        failedTotpCallback,
+                        () => { faildCallback([...accountDeactivated()]); },
+                        () => { faildCallback(tooManyFailedLogin); },
+                    );
+                    if (!authenticationResult) {
+                        return;
+                    }
+
+                    if (response == 'DONE') {
+                        replaceText(warningElem, usernameChanged);
+                        changeColor(warningElem, 'green');
+                        currentUsername = newUsername;
+                    } else if (response == 'DUPLICATED') {
+                        replaceText(warningElem, usernameTaken);
+                    } else if (response == 'EMPTY') {
+                        replaceText(warningElem, usernameEmpty);
+                    } else {
+                        showMessage();
+                        return;
+                    }
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                    closeWindow();
+                },
+                content: authenticationParam + '&new=' + encodeURIComponent(newUsername)
+            });
+        }
+    );
 }
 
 function enableMfa() {
@@ -357,22 +418,27 @@ function enableMfa() {
         ) => {
             sendServerRequest('generate_totp.php', {
                 callback: (response: string) => {
-                    if (response == 'FAILED') {
-                        faildCallback(loginFailed);
-                    } else if (response == 'DEACTIVATED') {
-                        faildCallback([...accountDeactivated()]);
-                    } else if (response == 'TOO MANY REQUESTS') {
-                        faildCallback(tooManyFailedLogin);
-                    } else if (response == 'FAILED OTP') {
+                    const authenticationResult = handleAuthenticationResult(
+                        response,
+                        () => { faildCallback(loginFailed); },
+                        () => {
+                            closeWindow();
+                            changeColor(mfaWarning, 'green');
+                            replaceText(mfaWarning, mfaAlreadySet);
+                            showElement(mfaWarning);
+                            currentMfaStatus = true;
+                            changeMfaStatus();
+                            disableAllInputs(false);
+                        },
+                        () => { faildCallback([...accountDeactivated()]); },
+                        () => { faildCallback(tooManyFailedLogin); },
+                    );
+                    if (!authenticationResult) {
+                        return;
+                    }
+
+                    if (response == 'FAILED EMAIL OTP') {
                         failedOtpCallback?.();
-                    } else if (response == 'ALREADY SET') {
-                        closeWindow();
-                        changeColor(mfaWarning, 'green');
-                        replaceText(mfaWarning, mfaAlreadySet);
-                        showElement(mfaWarning);
-                        currentMfaStatus = true;
-                        changeMfaStatus();
-                        disableAllInputs(false);
                     } else if (response == 'SENT') {
                         otpSentCallback?.();
                     } else {
@@ -413,7 +479,7 @@ function disableMfa() {
                         faildCallback([...accountDeactivated()]);
                     } else if (response == 'TOO MANY REQUESTS') {
                         faildCallback(tooManyFailedLogin);
-                    } else if (response == 'FAILED OTP') {
+                    } else if (response == 'FAILED EMAIL OTP') {
                         failedOtpCallback?.();
                     } else if (response == 'SENT') {
                         otpSentCallback?.();
@@ -447,15 +513,18 @@ function generateRecoveryCode() {
         ) => {
             sendServerRequest('generate_recovery_code.php', {
                 callback: (response: string) => {
-                    if (response == 'FAILED') {
-                        faildCallback(loginFailed);
-                    } else if (response == 'DEACTIVATED') {
-                        faildCallback([...accountDeactivated()]);
-                    } else if (response == 'TOO MANY REQUESTS') {
-                        faildCallback(tooManyFailedLogin);
-                    } else if (response == 'FAILED TOTP') {
-                        failedTotpCallback();
-                    } else if (response == 'TOTP NOT SET') {
+                    const authenticationResult = handleAuthenticationResult(
+                        response,
+                        () => { faildCallback(loginFailed); },
+                        failedTotpCallback,
+                        () => { faildCallback([...accountDeactivated()]); },
+                        () => { faildCallback(tooManyFailedLogin); },
+                    );
+                    if (!authenticationResult) {
+                        return;
+                    }
+
+                    if (response == 'TOTP NOT SET') {
                         closeWindow();
                         changeColor(recoveryCodeWarning, 'red');
                         replaceText(recoveryCodeWarning, mfaNotSet);
@@ -519,7 +588,7 @@ function reauthenticationPrompt(
                 failedTotpCallback();
             } else {
                 sendRequestCallback(
-                    'email' + emailEncoded + '&password=' + passwordEncoded,
+                    'email=' + emailEncoded + '&password=' + passwordEncoded,
                     closeWindow,
                     showWarning,
                     failedTotpCallback

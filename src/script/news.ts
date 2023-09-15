@@ -167,7 +167,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string): Promi
         if (src === null) {
             continue;
         }
-        const xhrParam = encodeURIComponent(JSON.stringify({ news: newsID, file: src }));
+        const xhrParam = 'news=' + newsID + '&file=' + encodeURIComponent(src);
         lazyloadObserve(elem, baseURL + encodeCFURIComponent(src), src, { xhrParam: xhrParam });
         if (containsClass(elem, 'image-enlarge')) {
             addEventListener(elem, 'click', function () {

@@ -132,11 +132,6 @@ async function register(param: string, keyID: string, signature: string) {
         return;
     }
 
-    const user = {
-        username: username,
-        password: password
-    };
-
     sendServerRequest('register.php', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
@@ -161,7 +156,7 @@ async function register(param: string, keyID: string, signature: string) {
                 showMessage();
             }
         },
-        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&user=' + encodeURIComponent(JSON.stringify(user)),
+        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
         withCredentials: false
     });
 }

@@ -91,7 +91,7 @@ export default async function (
         appendChild(mediaHolder, imageNode);
 
         lazyloadObserve(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
-            xhrParam: index.toString(),
+            xhrParam: 'p=' + index,
             mediaSessionCredential: epInfo.media_session_credential,
             delay: 250,
             onDataLoad: function (data: Blob) {

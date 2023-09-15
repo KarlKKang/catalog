@@ -452,3 +452,26 @@ export function objectKeyExists(key: PropertyKey, obj: object) {
 export function isString(str: any) {
     return typeof str === 'string' || str instanceof String;
 }
+
+export function handleAuthenticationResult(
+    response: string,
+    failedCallback: () => void,
+    failedTotpCallback: () => void,
+    deactivatedCallback: () => void,
+    tooManyRequestsCallback: () => void,
+): boolean {
+    if (response == 'FAILED') {
+        failedCallback();
+        return false;
+    } else if (response == 'DEACTIVATED') {
+        deactivatedCallback();
+        return false;
+    } else if (response == 'TOO MANY REQUESTS') {
+        tooManyRequestsCallback();
+        return false;
+    } else if (response == 'FAILED TOTP') {
+        failedTotpCallback();
+        return false;
+    }
+    return true;
+}

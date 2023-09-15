@@ -12,6 +12,7 @@ import {
     disableInput,
     EMAIL_REGEX,
     PASSWORD_REGEX,
+    handleAuthenticationResult,
 } from './module/main';
 import {
     addEventListener,
@@ -25,6 +26,7 @@ import {
 import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
+import { promptForTotp } from './module/pop_up_window';
 
 let emailInput: HTMLInputElement;
 let passwordInput: HTMLInputElement;
@@ -109,39 +111,63 @@ function changeEmail(param: string, keyID: string, signature: string) {
         return;
     }
 
-    const user = {
-        email: email,
-        password: password,
-    };
+    sendChangeEmailRequest(
+        'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
+        function () {
+            promptForTotp(
+                function (totp, closeWindow, showWarning) {
+                    sendChangeEmailRequest(
+                        'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&totp=' + totp,
+                        showWarning,
+                        closeWindow
+                    );
+                },
+                function () { disableAllInputs(false); }
+            );
+        }
+    );
+}
 
-    const userString = JSON.stringify(user);
-
+function sendChangeEmailRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
     sendServerRequest('change_email.php', {
         callback: function (response: string) {
+            const authenticationResult = handleAuthenticationResult(
+                response,
+                () => {
+                    closePopUpWindow?.();
+                    replaceText(warningElem, loginFailed);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                },
+                failedTotpCallback,
+                () => {
+                    closePopUpWindow?.();
+                    replaceChildren(warningElem, ...accountDeactivated());
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                },
+                () => {
+                    closePopUpWindow?.();
+                    replaceText(warningElem, tooManyFailedLogin);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                },
+            );
+            if (!authenticationResult) {
+                return;
+            }
+
             if (response == 'EXPIRED') {
                 showMessage(expired);
             } else if (response == 'DUPLICATED') {
                 showMessage(emailAlreadyRegistered);
-            } else if (response == 'FAILED') {
-                replaceText(warningElem, loginFailed);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'DEACTIVATED') {
-                replaceChildren(warningElem, ...accountDeactivated());
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'TOO MANY REQUESTS') {
-                replaceText(warningElem, tooManyFailedLogin);
-                showElement(warningElem);
-                disableAllInputs(false);
             } else if (response == 'DONE') {
                 showMessage(emailChanged);
             } else {
                 showMessage();
             }
         },
-        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&user=' + userString,
-        withCredentials: false
+        content: content
     });
 }
 

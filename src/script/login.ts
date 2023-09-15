@@ -90,26 +90,13 @@ function login() {
         return;
     }
 
-    const param = {
-        email: email,
-        password: password,
-        remember_me: rememberMeInput.checked
-    };
-
     sendLoginRequest(
-        JSON.stringify(param),
+        'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0'),
         function () {
             promptForTotp(
                 function (totp, closeWindow, showWarning) {
-                    const param = {
-                        email: email,
-                        password: password,
-                        remember_me: rememberMeInput.checked,
-                        totp: totp
-                    };
-
                     sendLoginRequest(
-                        JSON.stringify(param),
+                        'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0') + '&totp=' + totp,
                         showWarning,
                         closeWindow
                     );
@@ -150,7 +137,7 @@ function sendLoginRequest(content: string, failedTotpCallback: () => void, close
                 showMessage();
             }
         },
-        content: 'p=' + encodeURIComponent(content)
+        content: content
     });
 }
 

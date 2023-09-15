@@ -51,7 +51,7 @@ export default function () {
 
     const mediaSessionCredential = param.mediaSessionCredential;
     let uri = 'get_image.php';
-    let content = 'p=' + param.xhrParam;
+    let content = param.xhrParam;
     if (mediaSessionCredential === null) {
         uri = 'get_news_image.php';
     } else {
