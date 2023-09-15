@@ -83,8 +83,7 @@ function submitRequest() {
                 showMessage();
             }
         },
-        content: 'email=' + email,
-        withCredentials: false
+        content: 'email=' + encodeURIComponent(email),
     });
 }
 
