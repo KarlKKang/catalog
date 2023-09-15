@@ -21,7 +21,7 @@ type webpMachineQueueItem = { container: Element; image: HTMLImageElement; webpD
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 
-export default function (container: Element, src: string, alt: string, onImageDraw?: () => void, onDataLoad?: (data: Blob) => void, onError?: () => void): XMLHttpRequest {
+export default function (container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: () => void, onDataLoad?: (data: Blob) => void, onError?: () => void): XMLHttpRequest {
     let imageData: Blob;
     let isWebp: boolean;
 
@@ -109,6 +109,7 @@ export default function (container: Element, src: string, alt: string, onImageDr
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
     xhr.responseType = 'blob';
+    xhr.withCredentials = withCredentials;
 
     function onXHRError() {
         removeXHRListeners();

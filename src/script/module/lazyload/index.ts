@@ -2,14 +2,12 @@
 import 'intersection-observer';
 import {
     sendServerRequest,
-    concatenateSignedURL,
 } from '../main';
 import {
     addClass,
 } from '../dom';
 import { show as showMessage } from '../message';
 import { invalidResponse } from '../message/template/param/server';
-import * as CDNCredentials from '../type/CDNCredentials';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,
@@ -108,22 +106,17 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
 
                         targetData.xhr = sendServerRequest(uri, {
                             callback: async function (response: string) {
-                                let credentials: CDNCredentials.CDNCredentials;
-                                try {
-                                    credentials = JSON.parse(response);
-                                    CDNCredentials.check(credentials);
-                                } catch (e) {
+                                if (response !== 'APPROVED') {
                                     showMessage(invalidResponse);
                                     return;
                                 }
 
-                                const url = concatenateSignedURL(targetData.src, credentials);
-                                targetData.xhr = (await imageLoaderImportPromise).default(target, url, targetData.alt, onImageDraw, targetData.onDataLoad, onError);
+                                targetData.xhr = (await imageLoaderImportPromise).default(target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);
                             },
                             content: content
                         });
                     } else {
-                        targetData.xhr = (await imageLoaderImportPromise).default(target, targetData.src, targetData.alt, onImageDraw, targetData.onDataLoad, onError);
+                        targetData.xhr = (await imageLoaderImportPromise).default(target, targetData.src, targetData.alt, false, onImageDraw, targetData.onDataLoad, onError);
                     }
                 }, targetData.delay);
             }

@@ -4,7 +4,6 @@ import {
 } from './module/env/constant';
 import {
     sendServerRequest,
-    concatenateSignedURL,
     clearCookies,
     removeRightClick,
     encodeCFURIComponent,
@@ -20,7 +19,6 @@ import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
 import * as LocalImageParam from './module/type/LocalImageParam';
-import * as CDNCredentials from './module/type/CDNCredentials';
 
 export default function () {
     clearCookies();
@@ -60,7 +58,7 @@ export default function () {
             sendServerRequest('authenticate_media_session', {
                 callback: function (response: string) {
                     if (response != 'APPROVED') {
-                        showMessage();
+                        showMessage(invalidResponse);
                     }
                 },
                 content: mediaSessionCredential,
@@ -76,19 +74,13 @@ export default function () {
 
     sendServerRequest(uri, {
         callback: function (response: string) {
-            let parsedResponse: CDNCredentials.CDNCredentials;
-            try {
-                parsedResponse = JSON.parse(response);
-                CDNCredentials.check(parsedResponse);
-            } catch (e) {
+            if (response !== 'APPROVED') {
                 showMessage(invalidResponse);
                 return;
             }
-            const credentials = parsedResponse;
-            const url = concatenateSignedURL(param.baseURL + encodeCFURIComponent(param.fileName), credentials);
 
             imageLoaderImportPromise.then(({ default: imageLoader }) => {
-                imageLoader(container, url, param.fileName);
+                imageLoader(container, param.baseURL + encodeCFURIComponent(param.fileName), param.fileName, true);
             }).catch((e) => {
                 showMessage(moduleImportError(e));
             });
