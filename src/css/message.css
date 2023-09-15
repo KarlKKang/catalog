@@ -16,6 +16,10 @@
     text-align: center;
 }
 
+#container:hover {
+    box-shadow: var(--shadow-hover);
+}
+
 #title {
     margin: 0px 0px 1em 0px;
     padding: 0px;
