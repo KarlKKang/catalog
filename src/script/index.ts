@@ -124,7 +124,6 @@ export default function () {
             }
         });
         addEventListener(w, 'popstate', function () {
-            infiniteScrolling.setEnabled(false);
             getURLKeywords();
             requestSearchResults();
         });
@@ -165,9 +164,6 @@ function goToSeries(id: string) {
 }
 
 function search() {
-    disableSearchBarInput(true);
-    infiniteScrolling.setEnabled(false);
-
     const searchBarInputValue = searchBarInput.value.substring(0, 50);
 
     if (searchBarInputValue == '') {
@@ -227,15 +223,23 @@ function getSeries(callback?: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
 
 function requestSearchResults() {
     pivot = 0;
+    disableSearchBarInput(true);
+    infiniteScrolling.setEnabled(false);
 
-    getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
-        addClass(containerElem, 'transparent');
+    const animationTimeout = new Promise<void>((resolve) => {
         setTimeout(function () {
+            resolve();
+        }, 400);
+    });
+
+    addClass(containerElem, 'transparent');
+    getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
+        animationTimeout.then(() => {
             replaceChildren(containerElem);
             showSeries(seriesInfo);
             removeClass(containerElem, 'transparent');
             disableSearchBarInput(false);
-        }, 400);
+        });
     });
 }
 
