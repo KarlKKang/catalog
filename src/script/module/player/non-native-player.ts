@@ -35,11 +35,11 @@ export abstract class NonNativePlayer extends Player {
     public override play(this: NonNativePlayer) {
         if (this.IS_VIDEO) {
             if (!containsPlayerClass(this.controls, 'has-started')) {
-                this.onScreenConsoleOutput('Initial play triggered.');
+                DEVELOPMENT && this.log?.('Initial play triggered.');
                 const currentTime = this.media.currentTime;
                 const playPromise = this.media.play();
                 if (playPromise !== undefined) {
-                    playPromise.catch(() => this.onScreenConsoleOutput('Initial play promise rejected. (This is harmless)')); // Some browsers will reject the initial play request if it is not from a user action.
+                    playPromise.catch(() => DEVELOPMENT && this.log?.('Initial play promise rejected. (This is harmless)')); // Some browsers will reject the initial play request if it is not from a user action.
                 }
                 this.media.pause();
                 this.seek(currentTime);
@@ -68,10 +68,10 @@ export abstract class NonNativePlayer extends Player {
         }
         for (const buffer of bufferedRange) {
             if (this.media.currentTime < buffer.end) {
-                this.onScreenConsoleOutput('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this.media.currentTime);
+                DEVELOPMENT && this.log?.('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this.media.currentTime);
                 if (buffer.start <= this.media.currentTime + this.maxBufferHole && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - this.maxBufferHole)) {
                     endBuffer();
-                    this.onScreenConsoleOutput('Buffer complete!');
+                    DEVELOPMENT && this.log?.('Buffer complete!');
                     if (this.playing && !this.dragging) {
                         super.play();
                     }
@@ -104,16 +104,16 @@ export abstract class NonNativePlayer extends Player {
                 this.ended = true;
             } else {
                 addCheckBuffer();
-                this.onScreenConsoleOutput('Buffer empty, start buffering.');
+                DEVELOPMENT && this.log?.('Buffer empty, start buffering.');
             }
         } else {
             for (const buffer of bufferedRange) {
                 if (this.media.currentTime < buffer.end) {
                     if (buffer.start > this.media.currentTime + this.maxBufferHole || buffer.end < Math.min(this.media.currentTime + 14.9, this.media.duration - this.maxBufferHole)) {
                         addCheckBuffer();
-                        this.onScreenConsoleOutput('Buffer under threshold, start buffering.');
+                        DEVELOPMENT && this.log?.('Buffer under threshold, start buffering.');
                     } else {
-                        this.onScreenConsoleOutput('Buffer above threshold.');
+                        DEVELOPMENT && this.log?.('Buffer above threshold.');
                         if (this.playing && !this.dragging) {
                             super.play();
                         }
@@ -122,7 +122,7 @@ export abstract class NonNativePlayer extends Player {
                 }
             }
             addCheckBuffer();
-            this.onScreenConsoleOutput('No buffer beyond current position, start buffering.');
+            DEVELOPMENT && this.log?.('No buffer beyond current position, start buffering.');
         }
     }
 
@@ -151,7 +151,7 @@ export abstract class NonNativePlayer extends Player {
     }
 
     protected override oncanplaythrough(this: NonNativePlayer): void {
-        this.onScreenConsoleOutput('Playback can play through at ' + this.media.currentTime + '.');
+        DEVELOPMENT && this.log?.('Playback can play through at ' + this.media.currentTime + '.');
 
         if (!this.buffering) {
             removePlayerClass(this.controls, 'seeking');

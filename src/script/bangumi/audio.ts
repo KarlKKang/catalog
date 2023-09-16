@@ -41,7 +41,6 @@ let seriesID: string;
 let epIndex: number;
 let epInfo: AudioEPInfo;
 let baseURL: string;
-let debug: boolean;
 
 let audioReadyCounter = 0;
 const mediaInstances: Array<PlayerType> = [];
@@ -57,7 +56,6 @@ export default function (
     _nativePlayerImportPromise: NativePlayerImportPromise,
     _hlsPlayerImportPromise: HlsPlayerImportPromise,
     _videojsPlayerImportPromise: VideojsPlayerImportPromise,
-    _debug: boolean
 ) {
 
     seriesID = _seriesID;
@@ -67,7 +65,6 @@ export default function (
     nativePlayerImportPromise = _nativePlayerImportPromise;
     hlsPlayerImportPromise = _hlsPlayerImportPromise;
     videojsPlayerImportPromise = _videojsPlayerImportPromise;
-    debug = _debug;
 
     const audioEPInfo = epInfo as AudioEPInfo;
 
@@ -138,7 +135,6 @@ async function addAudioNode(index: number, mediaHolder: HTMLElement) {
 
         const audioInstance = new VideojsPlayer(playerContainer, configVideoJSMedia, {
             audio: true,
-            debug: debug
         });
         audioInstance.load(url, {
             onerror: function (errorCode: number | null) {
@@ -168,7 +164,6 @@ async function addAudioNode(index: number, mediaHolder: HTMLElement) {
 
             const audioInstance = new Player(playerContainer, {
                 audio: true,
-                debug: debug
             });
             audioInstance.load(url, {
                 onerror: function (errorCode: number | null) {
@@ -202,14 +197,13 @@ async function addAudioNode(index: number, mediaHolder: HTMLElement) {
                 maxBufferLength: 15,
                 maxBufferSize: 0,
                 maxBufferHole: 0.5,
-                debug: debug,
+                debug: DEVELOPMENT,
                 xhrSetup: function (xhr: XMLHttpRequest) {
                     xhr.withCredentials = true;
                 }
             };
             const audioInstance = new HlsPlayer(playerContainer, configHls, {
                 audio: true,
-                debug: debug
             });
             audioInstance.load(url, {
                 onerror: function (errorCode: number | null) {

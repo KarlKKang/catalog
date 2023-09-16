@@ -62,7 +62,6 @@ let baseURL: string;
 let mediaHolder: HTMLElement;
 let nativePlayerImportPromise: NativePlayerImportPromise;
 let hlsPlayerImportPromise: HlsPlayerImportPromise;
-let debug: boolean;
 
 let currentFormat: VideoFormatInfo;
 let currentMediaInstance: PlayerType | undefined;
@@ -74,7 +73,6 @@ export default function (
     _baseURL: string,
     _nativePlayerImportPromise: NativePlayerImportPromise,
     _hlsPlayerImportPromise: HlsPlayerImportPromise,
-    _debug: boolean,
     startTime: number | null,
     play: boolean
 ) {
@@ -85,7 +83,6 @@ export default function (
     baseURL = _baseURL;
     nativePlayerImportPromise = _nativePlayerImportPromise;
     hlsPlayerImportPromise = _hlsPlayerImportPromise;
-    debug = _debug;
 
     mediaHolder = getById('media-holder');
     const contentContainer = getById('content');
@@ -317,9 +314,7 @@ async function addVideoNode(config?: {
             throw e;
         }
 
-        const mediaInstance = new Player(playerContainer, {
-            debug: debug
-        });
+        const mediaInstance = new Player(playerContainer);
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {
@@ -351,15 +346,13 @@ async function addVideoNode(config?: {
             maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
             maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
             maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Default: 0.1.
-            debug: debug,
+            debug: DEVELOPMENT,
             xhrSetup: function (xhr: XMLHttpRequest) {
                 xhr.withCredentials = true;
             }
         };
 
-        const mediaInstance = new HlsPlayer(playerContainer, hlsConfig, {
-            debug: debug
-        });
+        const mediaInstance = new HlsPlayer(playerContainer, hlsConfig);
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {

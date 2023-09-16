@@ -34,7 +34,7 @@ export class VideojsPlayer extends NonNativePlayer {
             onload && onload.apply(this, args);
         });
         this.videojsInstance.volume(1);
-        this.onScreenConsoleOutput('Videojs is attached.');
+        DEVELOPMENT && this.log?.('Videojs is attached.');
     }
 
     public load(
@@ -70,7 +70,7 @@ export class VideojsPlayer extends NonNativePlayer {
             src: url,
             type: 'application/vnd.apple.mpegurl'
         });
-        this.onScreenConsoleOutput('Videojs source loaded.');
+        DEVELOPMENT && this.log?.('Videojs source loaded.');
     }
 
     public destroy(this: VideojsPlayer) {

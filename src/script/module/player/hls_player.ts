@@ -54,11 +54,11 @@ export class HlsPlayer extends NonNativePlayer {
         });
         this.hlsInstance.on(Hls.Events.FRAG_CHANGED, function (this: HlsPlayer, _: Events.FRAG_CHANGED, data: FragChangedData) {
             this.fragStart = data.frag.startDTS;
-            this.onScreenConsoleOutput('Fragment changed: ' + this.fragStart + '-' + data.frag.endDTS);
+            DEVELOPMENT && this.log?.('Fragment changed: ' + this.fragStart + '-' + data.frag.endDTS);
         }.bind(this));
         this.hlsInstance.attachMedia(this.media);
         this.media.volume = 1;
-        this.onScreenConsoleOutput('HLS is attached.');
+        DEVELOPMENT && this.log?.('HLS is attached.');
     }
 
     public load(
@@ -91,7 +91,7 @@ export class HlsPlayer extends NonNativePlayer {
 
         this.hlsInstance.once(Hls.Events.MANIFEST_PARSED, callback);
         this.hlsInstance.loadSource(url);
-        this.onScreenConsoleOutput('HLS source loaded.');
+        DEVELOPMENT && this.log?.('HLS source loaded.');
     }
 
     public destroy(this: HlsPlayer) {
@@ -105,15 +105,15 @@ export class HlsPlayer extends NonNativePlayer {
             this.seekCheck(timestamp);
             if (timestamp >= this.fragStart) {
                 this.media.currentTime = timestamp;
-                this.onScreenConsoleOutput('Skipped buffer flushing.');
+                DEVELOPMENT && this.log?.('Skipped buffer flushing.');
             } else {
                 this.hlsInstance.once(Hls.Events.BUFFER_FLUSHED, function (this: HlsPlayer) {
                     this.media.currentTime = timestamp;
                     this.hlsInstance.startLoad(timestamp);
-                    this.onScreenConsoleOutput('Buffer reloaded.');
+                    DEVELOPMENT && this.log?.('Buffer reloaded.');
                 }.bind(this));
                 this.hlsInstance.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: Number.POSITIVE_INFINITY, type: null });
-                this.onScreenConsoleOutput('Buffer flushed.');
+                DEVELOPMENT && this.log?.('Buffer flushed.');
             }
         } else {
             super.seek(timestamp);

@@ -65,7 +65,6 @@ export default async function (
     showElement(getBody());
 
     const contentContainer = getById('content');
-    const debug = DEVELOPMENT || getURLParam('debug') === '1';
     const startTimeText = getURLParam('timestamp');
     let startTime: number | null = null;
     if (startTimeText !== null) {
@@ -89,7 +88,7 @@ export default async function (
         setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | ' + getTitle());
     }
 
-    if (debug) {
+    if (DEVELOPMENT) {
         const onScreenConsole = createElement('textarea') as HTMLTextAreaElement;
         onScreenConsole.id = 'on-screen-console';
         onScreenConsole.readOnly = true;
@@ -162,7 +161,7 @@ export default async function (
             showMessage(moduleImportError(e));
             throw e;
         }
-        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, debug, startTime, play);
+        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, startTime, play);
     } else {
         if (type === 'audio') {
             let audio: typeof audioType;
@@ -172,7 +171,7 @@ export default async function (
                 showMessage(moduleImportError(e));
                 throw e;
             }
-            audio(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise, debug);
+            audio(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise);
         } else {
             let image: typeof imageType;
             try {

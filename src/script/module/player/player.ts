@@ -53,7 +53,6 @@ declare global {
 }
 
 export class Player {
-    private readonly DEBUG: boolean;
     protected readonly IS_VIDEO: boolean;
 
     protected _media: HTMLVideoElement | HTMLAudioElement;
@@ -78,7 +77,6 @@ export class Player {
     private readonly fullscreenButton: HTMLButtonElement;
 
     protected attached = false;
-
     protected dragging = false;
 
     protected timer: NodeJS.Timer | undefined;
@@ -88,6 +86,7 @@ export class Player {
     private corruptedFrames = 0;
 
     protected readonly maxBufferHole: number = 0;
+    protected readonly log: undefined | ((message: string) => void) = undefined;
 
     private playPromise: Promise<void> | undefined;
 
@@ -150,12 +149,22 @@ export class Player {
         container: HTMLDivElement,
         config?: {
             audio?: boolean;
-            debug?: boolean;
         }
     ) {
         config = config ?? {};
         this.IS_VIDEO = !(config.audio === true);
-        this.DEBUG = config.debug === true;
+
+        if (DEVELOPMENT) {
+            this.log = (message: string) => {
+                const onScreenConsole = getById('on-screen-console');
+                if (onScreenConsole instanceof HTMLTextAreaElement) {
+                    const date = getLocalTime();
+                    const newline = (date.hour < 10 ? '0' + date.hour : date.hour) + ':' + (date.minute < 10 ? '0' + date.minute : date.minute) + ':' + (date.second < 10 ? '0' + date.second : date.second) + '   ' + message + '\r\n';
+                    console.log(newline);
+                    onScreenConsole.value += newline;
+                }
+            };
+        }
 
         // Container
         const controls = container;
@@ -353,7 +362,7 @@ export class Player {
             onload && onload.call(this, event);
         });
         this.media.volume = 1;
-        this.onScreenConsoleOutput('Native HLS is attached.');
+        DEVELOPMENT && this.log?.('Native HLS is attached.');
     }
 
     public load(
@@ -394,7 +403,7 @@ export class Player {
         addEventListenerOnce(this.media, 'loadedmetadata', callback);
         this.media.src = url;
         this.media.load();
-        this.onScreenConsoleOutput('Native HLS source loaded.');
+        DEVELOPMENT && this.log?.('Native HLS source loaded.');
     }
 
     public destroy(this: Player) {
@@ -412,7 +421,7 @@ export class Player {
         if (playPromise !== undefined) {
             playPromise.catch(() => {
                 this.playing = false;
-                this.onScreenConsoleOutput('play promise rejected');
+                DEVELOPMENT && this.log?.('play promise rejected');
             });
         }
     }
@@ -436,7 +445,7 @@ export class Player {
     protected seekCheck(this: Player, timestamp: number): void {
         if (timestamp >= this.media.duration - this.maxBufferHole) {
             if (!this.dragging) {
-                this.onScreenConsoleOutput('Seeked to end: ' + timestamp + '.');
+                DEVELOPMENT && this.log?.('Seeked to end: ' + timestamp + '.');
                 this.ended = true;
             }
         } else {
@@ -537,7 +546,7 @@ export class Player {
         //Activity on media
         addEventListener(this.media, 'play', function (this: Player) {
             if (this.dragging) {
-                this.onScreenConsoleOutput('Playback started while dragging at ' + this.media.currentTime + '.');
+                DEVELOPMENT && this.log?.('Playback started while dragging at ' + this.media.currentTime + '.');
                 this.media.pause(); // onplay event while dragging is probably initiated by some system controls, thus it's enough to directly intercept it.
                 return;
             }
@@ -546,7 +555,7 @@ export class Player {
 
         addEventListener(this.media, 'pause', function (this: Player) {
             if (this.dragging) {
-                this.onScreenConsoleOutput('Paused while dragging at ' + this.media.currentTime + '.');
+                DEVELOPMENT && this.log?.('Paused while dragging at ' + this.media.currentTime + '.');
                 return;
             }
             this.onpause();
@@ -556,17 +565,17 @@ export class Player {
 
         //Redundent
         addEventListener(this.media, 'seeking', function (this: Player) {
-            this.onScreenConsoleOutput('Seeking: ' + this.media.currentTime);
+            DEVELOPMENT && this.log?.('Seeking: ' + this.media.currentTime);
         }.bind(this));
         addEventListener(this.media, 'seeked', function (this: Player) {
-            this.onScreenConsoleOutput('Seeked: ' + this.media.currentTime);
+            DEVELOPMENT && this.log?.('Seeked: ' + this.media.currentTime);
         }.bind(this));
     }
 
     private attachVideoEventListeners(this: Player) {
         //Catch events on control bar, otherwise bubbling events on the parent (constrols) will be fired.
         addEventListener(this.controlBar, 'click', (event: Event) => {
-            this.onScreenConsoleOutput('Click on controlBar.');
+            DEVELOPMENT && this.log?.('Click on controlBar.');
             this.active = true; // There's no reset to active in listeners attached to specific buttons.
             event.stopPropagation();
         });
@@ -574,16 +583,16 @@ export class Player {
         //UI activity
         let touchClick = 0;
         addEventListener(this.controls, 'touchend', function (this: Player) {
-            this.onScreenConsoleOutput('Touchend on controls.');
+            DEVELOPMENT && this.log?.('Touchend on controls.');
             touchClick++;
             setTimeout(function () { touchClick--; }, 300); // https://web.dev/mobile-touchandmouse/
         }.bind(this));
         addEventListener(this.controls, 'click', function (this: Player) {
             if (touchClick > 0) {
-                this.onScreenConsoleOutput('Touch click on controls.');
+                DEVELOPMENT && this.log?.('Touch click on controls.');
                 this.active = !this.active;
             } else {
-                this.onScreenConsoleOutput('Mouse click on controls.');
+                DEVELOPMENT && this.log?.('Mouse click on controls.');
                 if (!this.ended) {
                     this.togglePlayback();
                 }
@@ -621,7 +630,7 @@ export class Player {
 
         addEventListener(this.media, 'waiting', function (this: Player) {
             if (this.media.currentTime >= this.media.duration - this.maxBufferHole) {
-                this.onScreenConsoleOutput('Playback entered waiting state before ended at ' + this.media.currentTime + '.');
+                DEVELOPMENT && this.log?.('Playback entered waiting state before ended at ' + this.media.currentTime + '.');
                 this.ended = true;
             } else {
                 this.onwaiting();
@@ -633,7 +642,7 @@ export class Player {
         addEventListenerOnce(this.media, 'canplay', function (this: Player) {
             const videoMedia = this.media as HTMLVideoElement;
             this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
-            this.onScreenConsoleOutput('Video size: ' + videoMedia.videoWidth + 'x' + videoMedia.videoHeight);
+            DEVELOPMENT && this.log?.('Video size: ' + videoMedia.videoWidth + 'x' + videoMedia.videoHeight);
         }.bind(this));
 
         //Fullscreen
@@ -764,15 +773,15 @@ export class Player {
             }
         }
 
-        if (this.DEBUG) {
+        if (DEVELOPMENT) {
             if (typeof (this.media as HTMLVideoElement).getVideoPlaybackQuality === 'function') {
                 const quality = (this.media as HTMLVideoElement).getVideoPlaybackQuality();
                 if (quality.droppedVideoFrames && quality.droppedVideoFrames != this.droppedFrames) {
-                    this.onScreenConsoleOutput('Frame drop detected. Total dropped: ' + quality.droppedVideoFrames);
+                    this.log?.('Frame drop detected. Total dropped: ' + quality.droppedVideoFrames);
                     this.droppedFrames = quality.droppedVideoFrames;
                 }
                 if (quality.corruptedVideoFrames && quality.corruptedVideoFrames != this.corruptedFrames) {
-                    this.onScreenConsoleOutput('Frame corruption detected. Total corrupted: ' + quality.corruptedVideoFrames);
+                    this.log?.('Frame corruption detected. Total corrupted: ' + quality.corruptedVideoFrames);
                     this.corruptedFrames = quality.corruptedVideoFrames;
                 }
             }
@@ -842,30 +851,30 @@ export class Player {
     }
 
     protected onplay(this: Player): void {
-        this.onScreenConsoleOutput('Playback started at ' + this.media.currentTime + '.');
+        DEVELOPMENT && this.log?.('Playback started at ' + this.media.currentTime + '.');
         this.playing = true;
     }
 
     protected onpause(this: Player): void {
-        this.onScreenConsoleOutput('Playback paused at ' + this.media.currentTime + '.');
+        DEVELOPMENT && this.log?.('Playback paused at ' + this.media.currentTime + '.');
         this.playing = false;
         this.active = true;
     }
 
     private onended(this: Player): void {
-        this.onScreenConsoleOutput('Playback ended.');
+        DEVELOPMENT && this.log?.('Playback ended.');
         if (!this.dragging) {
             this.ended = true;
         }
     }
 
     protected onwaiting(this: Player): void {
-        this.onScreenConsoleOutput('Playback entered waiting state at ' + this.media.currentTime + '.');
+        DEVELOPMENT && this.log?.('Playback entered waiting state at ' + this.media.currentTime + '.');
         addPlayerClass(this.controls, 'seeking');
     }
 
     protected oncanplaythrough(this: Player): void {
-        this.onScreenConsoleOutput('Playback can play through at ' + this.media.currentTime + '.');
+        DEVELOPMENT && this.log?.('Playback can play through at ' + this.media.currentTime + '.');
         removePlayerClass(this.controls, 'seeking');
     }
 
@@ -878,7 +887,7 @@ export class Player {
                 currentBuffer = { start: nextBufferStart, end: this.media.buffered.end(i) };
             } else {
                 if (nextBufferStart - this.maxBufferHole <= currentBuffer.end) {
-                    this.onScreenConsoleOutput('Buffer hole detected: ' + currentBuffer.end + '-' + nextBufferStart + '. Duration: ' + (nextBufferStart - currentBuffer.end));
+                    DEVELOPMENT && this.log?.('Buffer hole detected: ' + currentBuffer.end + '-' + nextBufferStart + '. Duration: ' + (nextBufferStart - currentBuffer.end));
                     currentBuffer.end = this.media.buffered.end(i);
                 } else {
                     bufferedRange.push(currentBuffer);
@@ -892,20 +901,6 @@ export class Player {
 
     public focus(this: Player) {
         this.controls.focus({ preventScroll: true });
-    }
-
-    protected onScreenConsoleOutput(this: Player, txt: string) {
-        if (!this.DEBUG) {
-            return;
-        }
-
-        const onScreenConsole = getById('on-screen-console');
-        if (onScreenConsole instanceof HTMLTextAreaElement) {
-            const date = getLocalTime();
-            const newline = (date.hour < 10 ? '0' + date.hour : date.hour) + ':' + (date.minute < 10 ? '0' + date.minute : date.minute) + ':' + (date.second < 10 ? '0' + date.second : date.second) + '   ' + txt + '\r\n';
-            console.log(newline);
-            onScreenConsole.value += newline;
-        }
     }
 }
 
