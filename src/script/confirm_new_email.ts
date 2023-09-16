@@ -2,7 +2,6 @@
 import {
     DEVELOPMENT,
     LOGIN_URL,
-    TOP_URL,
 } from './module/env/constant';
 import {
     sendServerRequest,
@@ -42,7 +41,6 @@ export default function () {
     warningElem = getById('warning');
 
     const param = getURLParam('p');
-    const keyID = getURLParam('key-id');
     const signature = getURLParam('signature');
 
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
@@ -51,10 +49,6 @@ export default function () {
         } else {
             redirect(LOGIN_URL, true);
         }
-        return;
-    }
-    if (keyID == null || !/^[a-zA-Z0-9~_-]+$/.test(keyID)) {
-        redirect(TOP_URL, true);
         return;
     }
     if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
@@ -71,13 +65,13 @@ export default function () {
             } else if (response == 'APPROVED') {
                 const changeEmailOnKeyDown = (event: Event) => {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        changeEmail(param, keyID, signature);
+                        changeEmail(param, signature);
                     }
                 };
                 addEventListener(emailInput, 'keydown', changeEmailOnKeyDown);
                 addEventListener(passwordInput, 'keydown', changeEmailOnKeyDown);
                 addEventListener(submitButton, 'click', function () {
-                    changeEmail(param, keyID, signature);
+                    changeEmail(param, signature);
                 });
 
                 passwordStyling(passwordInput);
@@ -86,12 +80,12 @@ export default function () {
                 showMessage();
             }
         },
-        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature,
+        content: 'p=' + param + '&signature=' + signature,
         withCredentials: false
     });
 }
 
-function changeEmail(param: string, keyID: string, signature: string) {
+function changeEmail(param: string, signature: string) {
     disableAllInputs(true);
 
     const email = emailInput.value;
@@ -112,12 +106,12 @@ function changeEmail(param: string, keyID: string, signature: string) {
     }
 
     sendChangeEmailRequest(
-        'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
+        'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
         function () {
             promptForTotp(
                 function (totp, closeWindow, showWarning) {
                     sendChangeEmailRequest(
-                        'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&totp=' + totp,
+                        'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&totp=' + totp,
                         showWarning,
                         closeWindow
                     );

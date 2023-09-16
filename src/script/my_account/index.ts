@@ -968,7 +968,7 @@ function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                         showRecoveryCode(parsedResponse);
                     }
                 },
-                content: 'p=' + totpInfo.p + '&key-id=' + totpInfo.key_id + '&signature=' + totpInfo.signature + '&totp=' + totp
+                content: 'p=' + totpInfo.p + '&signature=' + totpInfo.signature + '&totp=' + totp
             });
         };
         addEventListener(submitButton, 'click', submit);

@@ -4,7 +4,6 @@ import { isObject, throwError } from './helper';
 export type TOTPInfo = {
     uri: string;
     p: string;
-    key_id: string;
     signature: string;
 };
 
@@ -13,7 +12,7 @@ export function check(totpInfo: any) {
         throwError();
     }
 
-    if (!isString(totpInfo.uri) || !isString(totpInfo.p) || !isString(totpInfo.key_id) || !isString(totpInfo.signature)) {
+    if (!isString(totpInfo.uri) || !isString(totpInfo.p) || !isString(totpInfo.signature)) {
         throwError();
     }
 }

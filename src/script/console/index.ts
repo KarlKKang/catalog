@@ -88,6 +88,9 @@ export default function () {
                 addEventListener(getById('run-benchmark-hash'), 'click', function () {
                     misc('benchmark', 'hash');
                 });
+                addEventListener(getById('run-benchmark-hmac'), 'click', function () {
+                    misc('benchmark', 'hmac');
+                });
                 addEventListener(getById('run-benchmark-signature'), 'click', function () {
                     misc('benchmark', 'signature');
                 });

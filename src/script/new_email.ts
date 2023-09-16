@@ -34,7 +34,6 @@ export default function () {
     warningElem = getById('warning');
 
     const param = getURLParam('p');
-    const keyID = getURLParam('key-id');
     const signature = getURLParam('signature');
 
 
@@ -44,10 +43,6 @@ export default function () {
         } else {
             redirect(TOP_URL, true);
         }
-        return;
-    }
-    if (keyID == null || !/^[a-zA-Z0-9~_-]+$/.test(keyID)) {
-        redirect(TOP_URL, true);
         return;
     }
     if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
@@ -62,24 +57,24 @@ export default function () {
             } else if (response == 'APPROVED') {
                 addEventListener(newEmailInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        submitRequest(param, keyID, signature);
+                        submitRequest(param, signature);
                     }
                 });
 
                 addEventListener(submitButton, 'click', function () {
-                    submitRequest(param, keyID, signature);
+                    submitRequest(param, signature);
                 });
                 showElement(getBody());
             } else {
                 showMessage();
             }
         },
-        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature,
+        content: 'p=' + param + '&signature=' + signature,
         withCredentials: false
     });
 }
 
-function submitRequest(param: string, keyID: string, signature: string) {
+function submitRequest(param: string, signature: string) {
     disableAllInputs(true);
 
     const newEmail = newEmailInput.value;
@@ -109,7 +104,7 @@ function submitRequest(param: string, keyID: string, signature: string) {
                 showMessage();
             }
         },
-        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&new=' + newEmail,
+        content: 'p=' + param + '&signature=' + signature + '&new=' + newEmail,
         withCredentials: false
     });
 }

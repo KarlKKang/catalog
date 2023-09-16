@@ -41,7 +41,6 @@ export default function () {
     warningElem = getById('warning');
 
     const param = getURLParam('p');
-    const keyID = getURLParam('key-id');
     const signature = getURLParam('signature');
 
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
@@ -51,11 +50,6 @@ export default function () {
         } else {
             redirect(LOGIN_URL, true);
         }
-        return;
-    }
-
-    if (keyID === null || !/^[a-zA-Z0-9~_-]+$/.test(keyID)) {
-        redirect(LOGIN_URL, true);
         return;
     }
 
@@ -73,24 +67,24 @@ export default function () {
             } else if (response == 'APPROVED') {
                 addEventListener(usernameInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        register(param, keyID, signature);
+                        register(param, signature);
                     }
                 });
                 addEventListener(passwordInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        register(param, keyID, signature);
+                        register(param, signature);
                     }
                 });
                 addEventListener(passwordConfirmInput, 'keydown', function (event) {
                     if ((event as KeyboardEvent).key === 'Enter') {
-                        register(param, keyID, signature);
+                        register(param, signature);
                     }
                 });
 
 
                 addInfoRedirects();
                 addEventListener(submitButton, 'click', function () {
-                    register(param, keyID, signature);
+                    register(param, signature);
                 });
 
                 passwordStyling(passwordInput);
@@ -101,12 +95,12 @@ export default function () {
                 showMessage();
             }
         },
-        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature,
+        content: 'p=' + param + '&signature=' + signature,
         withCredentials: false
     });
 }
 
-async function register(param: string, keyID: string, signature: string) {
+async function register(param: string, signature: string) {
     disableAllInputs(true);
 
     const username = usernameInput.value;
@@ -156,7 +150,7 @@ async function register(param: string, keyID: string, signature: string) {
                 showMessage();
             }
         },
-        content: 'p=' + param + '&key-id=' + keyID + '&signature=' + signature + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
+        content: 'p=' + param + '&signature=' + signature + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
         withCredentials: false
     });
 }

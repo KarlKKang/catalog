@@ -37,7 +37,6 @@ export default function () {
     warningElem = getById('warning');
 
     const user = getURLParam('user');
-    const keyID = getURLParam('key-id');
     const signature = getURLParam('signature');
     const expires = getURLParam('expires');
 
@@ -47,11 +46,6 @@ export default function () {
         } else {
             redirect(LOGIN_URL, true);
         }
-        return;
-    }
-
-    if (keyID === null || !/^[a-zA-Z0-9~_-]+$/.test(keyID)) {
-        redirect(LOGIN_URL, true);
         return;
     }
 
@@ -77,18 +71,18 @@ export default function () {
 
             addEventListener(newPasswordInput, 'keydown', function (event) {
                 if ((event as KeyboardEvent).key === 'Enter') {
-                    submitRequest(user, keyID, signature, expires);
+                    submitRequest(user, signature, expires);
                 }
             });
 
             addEventListener(newPasswordConfirmInput, 'keydown', function (event) {
                 if ((event as KeyboardEvent).key === 'Enter') {
-                    submitRequest(user, keyID, signature, expires);
+                    submitRequest(user, signature, expires);
                 }
             });
 
             addEventListener(submitButton, 'click', function () {
-                submitRequest(user, keyID, signature, expires);
+                submitRequest(user, signature, expires);
             });
 
             passwordStyling(newPasswordInput);
@@ -96,12 +90,12 @@ export default function () {
 
             showElement(getBody());
         },
-        content: 'user=' + user + '&key-id=' + keyID + '&signature=' + signature + '&expires=' + expires,
+        content: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
         withCredentials: false
     });
 }
 
-async function submitRequest(user: string, keyID: string, signature: string, expires: string) {
+async function submitRequest(user: string, signature: string, expires: string) {
     disableAllInputs(true);
 
     const newPassword = newPasswordInput.value;
@@ -137,7 +131,7 @@ async function submitRequest(user: string, keyID: string, signature: string, exp
                 showMessage();
             }
         },
-        content: 'user=' + user + '&key-id=' + keyID + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),
+        content: 'user=' + user + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),
         withCredentials: false
     });
 }
