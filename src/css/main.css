@@ -122,7 +122,7 @@ input {
 }
 
 .multi-language {
-    font-family: 'Noto Sans JP', 'Noto Sans TC', 'Noto Sans SC', 'メイリオ', Meiryo, 'PingFang TC', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-family: 'Noto Sans JP', 'Noto Sans TC', 'Noto Sans SC', 'Noto Sans', 'メイリオ', Meiryo, 'PingFang TC', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 
 html {
@@ -234,7 +234,7 @@ body {
 }
 
 .password-font {
-    font-family: 'arial';
+    font-family: 'Helvetica', 'Arial';
 }
 
 .link,

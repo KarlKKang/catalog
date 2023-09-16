@@ -2,7 +2,7 @@
 /* CSS Document */
 
 :lang(en) {
-    font-family: roboto, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-family: 'Noto Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
 }
 
@@ -116,6 +116,7 @@ hr {
     background-color: var(--grey-background-color);
     padding: 0px 0.3em;
     border-radius: 0.3em;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .image-internal {

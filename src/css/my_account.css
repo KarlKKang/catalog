@@ -82,4 +82,5 @@ hr {
     display: inline-block;
     width: 100%;
     overflow-wrap: anywhere;
+    font-family: 'Courier New', Courier, monospace;
 }

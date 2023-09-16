@@ -6,91 +6,48 @@ from fontTools.subset import main as pyftsubset
 
 
 def font_splitter(
-    font_name: str,
     src_dir: str,
     file_name: str,
     file_extension: str,
     font_weight: int,
     font_family: str,
-    is_cjk: bool,
     split_blocks: Dict[str, int],
-    dir_surfix: str,
+    dest_dir: str,
     font_display: str = "swap",
     custom_unicode_blocks: Dict[str, str] = None,
 ) -> None:
-
     script_path = os.path.dirname(__file__)
     src_root_dir = os.path.join(script_path, "src", "font")
 
-    options = [
-        "--layout-features='*'",
-        "--glyph-names",
-        "--symbol-cmap",
-        "--legacy-cmap",
-        "--notdef-glyph",
-        "--notdef-outline",
-        "--recommended-glyphs",
-        "--name-IDs='*'",
-        "--name-legacy",
-        "--name-languages='*'",
-        "--harfbuzz-repacker",
-        "--recalc-bounds",
-        "--recalc-average-width",
-        "--recalc-max-context",
-        "--canonical-order",
-    ]
+    options = ["--harfbuzz-repacker"]
 
     unicode_blocks = {
         "Basic Latin": ["0000", "007F"],
-        "Latin-1 Supplement": ["0080", "00FF"],
-        "Latin Extended-A": ["0100", "017F"],
-        "Latin Extended-B": ["0180", "024F"],
-        "IPA Extensions": ["0250", "02AF"],
-        "Spacing Modifier Letters": ["02B0", "02FF"],
-        "Combining Diacritical Marks": ["0300", "036F"],
-        "Greek and Coptic": ["0370", "03FF"],
-        "Greek Extended": ["1F00", "1FFF"],
-        "General Punctuation": ["2000", "206F"],
-        "Letterlike Symbols": ["2100", "214F"],
-        "Number Forms": ["2150", "218F"],
-        "Arrows": ["2190", "21FF"],
-        "Mathematical Operators": ["2200", "22FF"],
-        "Enclosed Alphanumerics": ["2460", "24FF"],
-        "Geometric Shapes": ["25A0", "25FF"],
-        "Miscellaneous Symbols": ["2600", "26FF"],
-        "Dingbats": ["2700", "27BF"],
-    }
-
-    unicode_blocks_cjk = {
-        "CJK Radicals Supplement": ["2E80", "2EFF"],
-        "Kangxi Radicals": ["2F00", "2FDF"],
-        "Ideographic Description Characters": ["2FF0", "2FFF"],
-        "CJK Symbols and Punctuation": ["3000", "303F"],
-        "Hiragana and Katakana": ["3040", "30FF"],  # combined block
-        "Bopomofo": ["3100", "312F"],
-        "Kanbun": ["3190", "319F"],
-        "Bopomofo Extended": ["31A0", "31BF"],
-        "CJK Strokes": ["31C0", "31EF"],
-        "Katakana Phonetic Extensions": ["31F0", "31FF"],
-        "Enclosed CJK Letters and Months": ["3200", "32FF"],
-        "CJK Compatibility": ["3300", "33FF"],
+        "Latin Extension": ["0080", "036F"],  # combined block
+        "Language Extension 1": ["0370", "08FF"],  # combined block
+        "Language Extension 2": ["0900", "1C7F"],  # combined block
+        "Language Extension 3": ["1C80", "1FFF"],  # combined block
+        "Symbol Extension": ["2000", "2BFF"],  # combined block
+        "Language Extension 4": ["2C00", "2FFF"],  # combined block
+        "CJK Essential": ["3000", "30FF"],  # combined block
+        "CJK Extension 1": ["3100", "33FF"],  # combined block
         "CJK Unified Ideographs Extension A": ["3400", "4DBF"],
+        "Yijing Hexagram Symbols": ["4DC0", "4DFF"],
         "CJK Unified Ideographs": ["4E00", "9FFF"],
+        "Language Extension 5": ["A000", "F8FF"],  # combined block
         "CJK Compatibility Ideographs": ["F900", "FAFF"],
-        "Vertical Forms": ["FE10", "FE1F"],
-        "CJK Compatibility Forms": ["FE30", "FE4F"],
-        "Small Form Variants": ["FE50", "FE6F"],
+        "Language Extension 6": ["FB00", "FEFF"],  # combined block
         "Halfwidth and Fullwidth Forms": ["FF00", "FFEF"],
+        "Language Extension 7": ["FFF0", "1FBFF"],  # combined block
         "CJK Unified Ideographs Extension B": ["20000", "2A6DF"],
-        "CJK Unified Ideographs Extension C": ["2A700", "2B73F"],
-        "CJK Unified Ideographs Extension D": ["2B740", "2B81F"],
-        "CJK Unified Ideographs Extension E": ["2B820", "2CEAF"],
-        "CJK Unified Ideographs Extension F": ["2CEB0", "2EBEF"],
-        "CJK Compatibility Ideographs Supplement": ["2F800", "2FA1F"],
-        "CJK Unified Ideographs Extension G": ["30000", "3134F"],
+        "Language Extension 8": ["2A700", "10FFFF"],  # combined block
     }
 
     def split(glyph, count):
+        if count == 0:
+            del unicode_blocks[glyph]
+            return
+
         block = unicode_blocks[glyph]
         start = int(block[0], 16)
         end = int(block[1], 16)
@@ -110,9 +67,6 @@ def font_splitter(
             start = start + block_size
 
     if custom_unicode_blocks is None:
-        if is_cjk:
-            unicode_blocks.update(unicode_blocks_cjk)
-
         # split
         temp_keys = []
         for glyph in unicode_blocks:
@@ -130,7 +84,7 @@ def font_splitter(
         unicode_blocks = custom_unicode_blocks
 
     # prepare files
-    output_sub_dir = file_name + dir_surfix
+    output_sub_dir = dest_dir
     output_root_dir = os.path.join(src_root_dir, "dist", src_dir)
     output_dir = os.path.join(output_root_dir, output_sub_dir)
     Path(output_dir).mkdir(parents=True, exist_ok=True)
@@ -161,9 +115,6 @@ def font_splitter(
         sys.argv[len(sys.argv) - 2] = "--flavor=woff"
         sys.argv[len(sys.argv) - 1] = f"--output-file={output_file_woff}"
         pyftsubset()
-        local_font_declaration = (
-            f'src: local("{font_name}"), \n' if font_name is not None else "src: "
-        )
         font_weight_declaration = (
             (f"font-weight: {str(font_weight)};\n") if font_weight is not None else ""
         )
@@ -171,7 +122,7 @@ def font_splitter(
             f"/*{glyph}*/\n"
             + "@font-face {\n"
             + f'font-family: "{font_family}";\n'
-            + local_font_declaration
+            + "src: "
             + f'url("{output_sub_dir}/{dest_file_name}.woff2") format("woff2"),\n'
             + f'url("{output_sub_dir}/{dest_file_name}.woff") format("woff");\n'
             + font_weight_declaration

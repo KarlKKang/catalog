@@ -28,11 +28,17 @@ const entries = [
         ]
     },
     {
-        dir: 'Roboto',
+        dir: 'NotoSans',
         fonts: [
-            'Roboto-Light',
-            'Roboto-Regular',
-            'Roboto-Medium',
+            'NotoSans-Light',
+            'NotoSans-Regular',
+            'NotoSans-Medium',
+        ]
+    },
+    {
+        dir: 'CourierNew',
+        fonts: [
+            'CourierNew-Regular',
         ]
     },
     {
