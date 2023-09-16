@@ -156,7 +156,6 @@ hr {
 
 #format-container {
     display: flex;
-    margin: 0px -16px 0px 0px;
     flex-wrap: wrap;
     align-items: center;
 }
@@ -200,7 +199,7 @@ select::-ms-expand {
 }
 
 #format-display {
-    margin: 0px 16px 16px 0px;
+    margin: 0px 0px 16px 0px;
     color: var(--alt-text-color);
     font-size: small;
 }
