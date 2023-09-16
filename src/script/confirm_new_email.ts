@@ -1,6 +1,5 @@
 // JavaScript Document
 import {
-    DEVELOPMENT,
     LOGIN_URL,
 } from './module/env/constant';
 import {

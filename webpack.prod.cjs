@@ -2,6 +2,7 @@ const { merge } = require('webpack-merge');
 const common = require('./webpack.common.cjs');
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require('path');
+const { DefinePlugin } = require('webpack');
 
 const config = merge(common, {
     mode: 'production',
@@ -34,6 +35,13 @@ const config = merge(common, {
         ],
     },
 });
+
+config.plugins.push(
+    new DefinePlugin({
+        DEVELOPMENT: JSON.stringify(false),
+    })
+);
+
 require('./webpack_helper.cjs').addHTMLConfig(config, false);
 
 module.exports = config;

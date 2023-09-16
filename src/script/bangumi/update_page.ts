@@ -1,5 +1,4 @@
 import {
-    DEVELOPMENT,
     TOP_URL,
     CDN_URL,
 } from '../module/env/constant';

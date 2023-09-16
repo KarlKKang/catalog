@@ -1,6 +1,5 @@
 import {
     SERVER_URL,
-    DEVELOPMENT,
     TOP_URL,
     LOGIN_URL
 } from '../env/constant';

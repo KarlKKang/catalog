@@ -1,6 +1,5 @@
 // JavaScript Document
 import {
-    DEVELOPMENT,
     TOP_URL,
 } from './module/env/constant';
 import {

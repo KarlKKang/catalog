@@ -1,8 +1,5 @@
 import type { WebpMachine } from 'webp-hero/dist-cjs';
 import {
-    DEVELOPMENT
-} from './env/constant';
-import {
     removeRightClick,
 } from './main';
 import {

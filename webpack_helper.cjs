@@ -1,5 +1,5 @@
 const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
-const DOMAIN = require('./env').DOMAIN;;
+const { DOMAIN } = require('./env');;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports.addHTMLConfig = function (config, dev) {
