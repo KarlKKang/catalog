@@ -34,17 +34,17 @@ export default function () {
     submitButton = getById('submit-button') as HTMLButtonElement;
     warningElem = getById('warning');
 
-    addEventListener(emailInput, 'keydown', function (event) {
+    addEventListener(emailInput, 'keydown', (event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
             submitRequest();
         }
     });
 
-    addEventListener(submitButton, 'click', function () {
+    addEventListener(submitButton, 'click', () => {
         submitRequest();
     });
 
-    addEventListener(getDescendantsByTagAt(getById('go-back'), 'span', 0), 'click', function () {
+    addEventListener(getDescendantsByTagAt(getById('go-back'), 'span', 0), 'click', () => {
         redirect(LOGIN_URL, true);
     });
 

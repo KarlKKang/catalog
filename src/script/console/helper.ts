@@ -48,7 +48,7 @@ export function setOutput(response: string, callback?: () => void, outputElement
         for (const elem of elems) {
             if (!containsClass(elem, 'initialized')) {
                 addClass(elem, 'initialized');
-                addEventListener(elem, 'change', function () {
+                addEventListener(elem, 'change', () => {
                     changed(elem);
                 });
             }
@@ -58,7 +58,7 @@ export function setOutput(response: string, callback?: () => void, outputElement
         for (const elem of elems) {
             if (!containsClass(elem, 'initialized')) {
                 addClass(elem, 'initialized');
-                addEventListener(elem, 'input', function () {
+                addEventListener(elem, 'input', () => {
                     changed(elem);
                 });
             }

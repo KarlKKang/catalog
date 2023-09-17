@@ -6,7 +6,7 @@ export const invalidResponse = `サーバーが無効な応答を返しました
 export const sessionEnded = 'セッションがタイムアウトした、または別のソースからのアクティビティによって新しいセッションが開始された。';
 export const connectionError = 'インターネット接続環境をご確認の上、再度お試しください。';
 export const status429 = 'リクエストを送信する頻度が高すぎる。数分待ってから、もう一度お試しください。';
-export const status503 = function (maintenanceInfo: MaintenanceInfo) {
+export const status503 = (maintenanceInfo: MaintenanceInfo) => {
     let message = '';
     const suffix = 'ご不便をおかけして申し訳ありません。';
     if (maintenanceInfo.period > 0) {
@@ -17,7 +17,5 @@ export const status503 = function (maintenanceInfo: MaintenanceInfo) {
     }
     return message;
 };
-export const status400And500 = function (responseText: string) {
-    return 'サーバーからの応答：' + responseText + `<br>${defaultErrorSuffix}`;
-};
+export const status400And500 = (responseText: string) => 'サーバーからの応答：' + responseText + `<br>${defaultErrorSuffix}`;
 export const status403 = `サーバーがリクエストを拒否しました。${defaultErrorSuffix}`;

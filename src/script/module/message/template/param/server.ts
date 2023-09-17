@@ -19,18 +19,14 @@ export const status429 = {
     title: title.status429,
     message: body.status429
 };
-export const status503 = function (maintenanceInfo: MaintenanceInfo) {
-    return {
+export const status503 = (maintenanceInfo: MaintenanceInfo) => ({
         title: title.status503,
         message: body.status503(maintenanceInfo),
         color: 'orange'
-    };
-};
-export const status400And500 = function (responseText: string) {
-    return {
+    });
+export const status400And500 = (responseText: string) => ({
         message: body.status400And500(responseText)
-    };
-};
+    });
 export const status403 = {
     message: body.status403
 };

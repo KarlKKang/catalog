@@ -64,17 +64,17 @@ export default function () {
             } else if (response == 'ALREADY REGISTERED') {
                 showMessage(emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
-                addEventListener(usernameInput, 'keydown', function (event) {
+                addEventListener(usernameInput, 'keydown', (event) => {
                     if ((event as KeyboardEvent).key === 'Enter') {
                         register(param, signature);
                     }
                 });
-                addEventListener(passwordInput, 'keydown', function (event) {
+                addEventListener(passwordInput, 'keydown', (event) => {
                     if ((event as KeyboardEvent).key === 'Enter') {
                         register(param, signature);
                     }
                 });
-                addEventListener(passwordConfirmInput, 'keydown', function (event) {
+                addEventListener(passwordConfirmInput, 'keydown', (event) => {
                     if ((event as KeyboardEvent).key === 'Enter') {
                         register(param, signature);
                     }
@@ -82,7 +82,7 @@ export default function () {
 
 
                 addInfoRedirects();
-                addEventListener(submitButton, 'click', function () {
+                addEventListener(submitButton, 'click', () => {
                     register(param, signature);
                 });
 
@@ -162,16 +162,16 @@ function disableAllInputs(disabled: boolean) {
 }
 
 function addInfoRedirects() {
-    addEventListener(getByClassAt('link', 0), 'click', function () {
+    addEventListener(getByClassAt('link', 0), 'click', () => {
         openWindow('info');
     });
-    addEventListener(getByClassAt('link', 1), 'click', function () {
+    addEventListener(getByClassAt('link', 1), 'click', () => {
         openWindow('info#en');
     });
-    addEventListener(getByClassAt('link', 2), 'click', function () {
+    addEventListener(getByClassAt('link', 2), 'click', () => {
         openWindow('info#zh-Hant');
     });
-    addEventListener(getByClassAt('link', 3), 'click', function () {
+    addEventListener(getByClassAt('link', 3), 'click', () => {
         openWindow('info#zh-Hans');
     });
 }

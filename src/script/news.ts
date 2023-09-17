@@ -96,7 +96,7 @@ function getNews(newsID: string): void {
                 return;
             }
             showNews(parsedResponse, newsID);
-            addNavBar('news', function () {
+            addNavBar('news', () => {
                 redirect(NEWS_TOP_URL);
             });
             showElement(getBody());
@@ -170,7 +170,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string): Promi
         const xhrParam = 'news=' + newsID;
         lazyloadObserve(elem, baseURL + encodeCFURIComponent(src), src, { xhrParam: xhrParam });
         if (containsClass(elem, 'image-enlarge')) {
-            addEventListener(elem, 'click', function () {
+            addEventListener(elem, 'click', () => {
                 const param: LocalImageParam = {
                     baseURL: baseURL,
                     fileName: src,
@@ -189,7 +189,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string): Promi
 function bindEventListners(contentContainer: HTMLElement): void {
     const elems = getDescendantsByClass(contentContainer, 'open-window');
     for (const elem of (elems as HTMLCollectionOf<HTMLElement>)) {
-        addEventListener(elem, 'click', function () {
+        addEventListener(elem, 'click', () => {
             const page = getDataAttribute(elem, 'page');
 
             if (page === 'news') {
@@ -274,7 +274,7 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
         appendChild(overviewContainer, dateContainer);
         appendChild(overviewContainer, titleContainer);
 
-        addEventListener(overviewContainer, 'click', function () {
+        addEventListener(overviewContainer, 'click', () => {
             redirect(NEWS_TOP_URL + entry.id);
         });
 

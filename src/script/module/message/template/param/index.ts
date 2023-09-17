@@ -5,11 +5,9 @@ import {
 import * as body from '../body';
 import * as title from '../title';
 
-export const moduleImportError = function (e: unknown) {
-    return {
+export const moduleImportError = (e: unknown) => ({
         message: body.moduleImportError(e)
-    };
-};
+    });
 export const expired = {
     title: title.expired,
     message: body.expired,
@@ -32,28 +30,24 @@ export const registerComplete = {
     color: 'green',
     url: LOGIN_URL
 };
-export const emailSent = function (url: string) {
-    return {
+export const emailSent = (url: string) => ({
         title: title.emailSent,
         message: body.emailSent,
         color: 'green',
         url: url
-    };
-};
+    });
 export const passwordChanged = {
     title: title.completed,
     message: body.passwordChanged,
     color: 'green',
     url: LOGIN_URL
 };
-export const unrecommendedBrowser = function (redirectURL: string) {
-    return {
+export const unrecommendedBrowser = (redirectURL: string) => ({
         title: title.unrecommendedBrowser,
         message: body.unrecommendedBrowser,
         color: 'orange',
         url: redirectURL
-    } as const;
-};
+    } as const);
 export const insufficientPermissions = {
     title: title.insufficientPermissions,
     message: body.insufficientPermissions,

@@ -22,7 +22,7 @@ export const usernameTaken = 'このユーザーネームはすでに使われ�
 export const loginFailed = 'メールアドレスまたはパスワードが正しくありません。';
 export const tooManyFailedLogin = 'ログイン試行の回数が上限を超えました。ユーザー保護のため、現在ログインすることはできません。しばらくしてからもう一度お試しください。';
 export const failedTotp = '入力されたコードが正しくありません。';
-export const accountDeactivated = function () {
+export const accountDeactivated = () => {
     const message = [
         createTextNode('お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（'),
         createAnchorElement(),

@@ -8,7 +8,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module'
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'prefer-arrow-functions'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended'
@@ -17,9 +17,13 @@ module.exports = {
   rules: {
     'quotes': ['error', 'single'],
     'semi': 'off',
-    '@typescript-eslint/semi': 'warn',
-    '@typescript-eslint/member-delimiter-style': 'warn',
+    'prefer-arrow-callback': 'error',
+    'arrow-parens': ['error', 'always'],
+    'arrow-body-style': ['error', 'as-needed'],
+    'func-style': ['error', 'declaration', { 'allowArrowFunctions': true }],
+    'class-methods-use-this': 'error',
+    '@typescript-eslint/semi': 'error',
+    '@typescript-eslint/member-delimiter-style': 'error',
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-empty-function': 'off',
   }
-}
+};

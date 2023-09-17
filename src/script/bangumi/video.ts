@@ -114,7 +114,7 @@ export default function (
     }
     updateURLParam(seriesID, epIndex, formatIndex);
 
-    formats.forEach(function (format, index) {
+    formats.forEach((format, index) => {
         const option = createOptionElement();
 
         option.value = format.value;
@@ -143,7 +143,7 @@ export default function (
     appendChild(contentContainer, downloadAccordion);
 
     // Video Node
-    addEventListener(selectMenu, 'change', function () { formatSwitch(selectMenu, containerSelector); });
+    addEventListener(selectMenu, 'change', () => { formatSwitch(selectMenu, containerSelector); });
     addVideoNode({
         startTime: startTime === null ? undefined : startTime,
         play: play
@@ -393,7 +393,7 @@ function displayChapters(mediaInstance: Player, offset: number) {
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
         const startTime = (chapter[1] + offset) / 1000;
         appendText(timestamp, secToTimestamp(startTime));
-        addEventListener(timestamp, 'click', function () {
+        addEventListener(timestamp, 'click', () => {
             mediaInstance.seek(startTime);
             mediaInstance.focus();
         });
@@ -414,7 +414,7 @@ function displayChapters(mediaInstance: Player, offset: number) {
     const video = mediaInstance.media;
     function updateChapterDisplay() {
         const currentTime = video.currentTime;
-        epInfo.chapters.forEach(function (chapter, index) {
+        epInfo.chapters.forEach((chapter, index) => {
             const chapterElement = chapterElements[index] as HTMLElement;
             if (currentTime >= (chapter[1] + offset) / 1000) {
                 const nextChapter = epInfo.chapters[index + 1];

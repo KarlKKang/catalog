@@ -69,7 +69,7 @@ export default function () {
     containerElem = getById('container');
 
     getURLKeywords();
-    getSeries(async function (seriesInfo: SeriesInfo.SeriesInfo) {
+    getSeries(async (seriesInfo: SeriesInfo.SeriesInfo) => {
         try {
             lazyloadObserve = (await lazyloadImportPromise).default;
         } catch (e) {
@@ -106,24 +106,24 @@ export default function () {
             appendText(announcementBody, message);
         }
         showSeries(seriesInfo);
-        addNavBar('home', function () {
+        addNavBar('home', () => {
             scrollToTop();
             if (keywords !== '') {
                 searchBarInput.value = '';
                 search();
             }
         });
-        addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', function () {
+        addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', () => {
             if (!searchBarInput.disabled) {
                 search();
             }
         });
-        addEventListener(searchBarInput, 'keyup', function (event) {
+        addEventListener(searchBarInput, 'keyup', (event) => {
             if ((event as KeyboardEvent).key === 'Enter') {
                 search();
             }
         });
-        addEventListener(w, 'popstate', function () {
+        addEventListener(w, 'popstate', () => {
             getURLKeywords();
             requestSearchResults();
         });
@@ -148,7 +148,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
         appendText(titleNode, seriesEntry.title);
         addClass(titleNode, 'ellipsis-clipping-2');
 
-        addEventListener(seriesNode, 'click', function () { goToSeries(seriesEntry.id); });
+        addEventListener(seriesNode, 'click', () => { goToSeries(seriesEntry.id); });
         addClass(seriesNode, 'series');
 
         appendChild(containerElem, seriesNode);
@@ -227,13 +227,11 @@ function requestSearchResults() {
     infiniteScrolling.setEnabled(false);
 
     const animationTimeout = new Promise<void>((resolve) => {
-        setTimeout(function () {
-            resolve();
-        }, 400);
+        setTimeout(() => { resolve(); }, 400);
     });
 
     addClass(containerElem, 'transparent');
-    getSeries(function (seriesInfo: SeriesInfo.SeriesInfo) {
+    getSeries((seriesInfo: SeriesInfo.SeriesInfo) => {
         animationTimeout.then(() => {
             replaceChildren(containerElem);
             showSeries(seriesInfo);

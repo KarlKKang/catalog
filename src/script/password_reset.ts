@@ -68,19 +68,19 @@ export default function () {
                 return;
             }
 
-            addEventListener(newPasswordInput, 'keydown', function (event) {
+            addEventListener(newPasswordInput, 'keydown', (event) => {
                 if ((event as KeyboardEvent).key === 'Enter') {
                     submitRequest(user, signature, expires);
                 }
             });
 
-            addEventListener(newPasswordConfirmInput, 'keydown', function (event) {
+            addEventListener(newPasswordConfirmInput, 'keydown', (event) => {
                 if ((event as KeyboardEvent).key === 'Enter') {
                     submitRequest(user, signature, expires);
                 }
             });
 
-            addEventListener(submitButton, 'click', function () {
+            addEventListener(submitButton, 'click', () => {
                 submitRequest(user, signature, expires);
             });
 

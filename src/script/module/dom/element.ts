@@ -255,9 +255,9 @@ export function removeEventsListener(elem: EventTarget, events: Array<string>, c
 }
 
 export function addEventListenerOnce(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
-    const callbackOnce = function (this: any, arg: Event) {
+    const callbackOnce = (arg: Event) => {
         removeEventListener(elem, event, callbackOnce, useCapture);
-        callback.call(this, arg);
+        callback(arg);
     };
     addEventListener(elem, event, callbackOnce, useCapture);
 }

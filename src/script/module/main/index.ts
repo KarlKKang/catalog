@@ -67,7 +67,7 @@ function xhrOnErrorCallback(uri: string, options: SendServerRequestOption) {
     if (options.connectionErrorRetry < 0) {
         showMessage(connectionError);
     } else {
-        setTimeout(function () {
+        setTimeout(() => {
             sendServerRequest(uri, options);
         }, options.connectionErrorRetryTimeout);
     }
@@ -207,7 +207,7 @@ export function passwordStyling(element: HTMLInputElement) {
 }
 
 export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info', currentPageCallback?: () => void) {
-    const getNavButton = function (name: string): [HTMLDivElement, HTMLDivElement] {
+    const getNavButton = (name: string): [HTMLDivElement, HTMLDivElement] => {
         const container = createDivElement();
         const containerInner = createDivElement();
         const iconContainer = createDivElement();
@@ -235,7 +235,7 @@ export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info', curren
 
     const callback = currentPageCallback || scrollToTop;
 
-    addEventListener(navButton1[0], 'click', function () {
+    addEventListener(navButton1[0], 'click', () => {
         if (page === 'home') {
             callback();
             return;
@@ -243,7 +243,7 @@ export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info', curren
         redirect(TOP_URL);
     });
 
-    addEventListener(navButton2[0], 'click', function () {
+    addEventListener(navButton2[0], 'click', () => {
         if (page === 'news') {
             callback();
             return;
@@ -251,7 +251,7 @@ export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info', curren
         redirect(TOP_URL + '/news/');
     });
 
-    addEventListener(navButton3[0], 'click', function () {
+    addEventListener(navButton3[0], 'click', () => {
         if (page === 'my_account') {
             callback();
             return;
@@ -259,7 +259,7 @@ export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info', curren
         redirect(TOP_URL + '/my_account');
     });
 
-    addEventListener(navButton4[0], 'click', function () {
+    addEventListener(navButton4[0], 'click', () => {
         if (page === 'info') {
             callback();
             return;
@@ -271,7 +271,7 @@ export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info', curren
     navBarPadding.id = 'nav-bar-padding';
     appendChild(getBody(), navBarPadding);
 
-    const addNavBarIcon = async function () {
+    const addNavBarIcon = async () => {
         let icons: typeof import(
             './icons'
         );
@@ -382,7 +382,7 @@ export function clearCookies() {
 }
 
 export function removeRightClick(elem: Element) {
-    addEventListener(elem, 'contextmenu', event => event.preventDefault());
+    addEventListener(elem, 'contextmenu', (event) => event.preventDefault());
 }
 
 export function scrollToHash() {
@@ -391,7 +391,7 @@ export function scrollToHash() {
     if (scrollID !== '') {
         const elem = getByIdNative(scrollID);
         if (elem !== null) {
-            setTimeout(function () {
+            setTimeout(() => {
                 w.scrollBy(0, elem.getBoundingClientRect().top);
             }, 500); //Give UI some time to load.
         }

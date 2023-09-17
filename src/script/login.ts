@@ -61,7 +61,7 @@ export default function () {
                 addEventListener(passwordInput, 'keydown', loginOnKeyDown);
 
                 addEventListener(submitButton, 'click', login);
-                addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', function () {
+                addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', () => {
                     redirect(LOGIN_URL + '/request_password_reset', true);
                 });
                 passwordStyling(passwordInput);
@@ -92,16 +92,16 @@ function login() {
 
     sendLoginRequest(
         'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0'),
-        function () {
+        () => {
             promptForTotp(
-                function (totp, closeWindow, showWarning) {
+                (totp, closeWindow, showWarning) => {
                     sendLoginRequest(
                         'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0') + '&totp=' + totp,
                         showWarning,
                         closeWindow
                     );
                 },
-                function () { disableAllInputs(false); }
+                () => { disableAllInputs(false); }
             );
         }
     );

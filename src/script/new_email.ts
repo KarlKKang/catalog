@@ -54,13 +54,13 @@ export default function () {
             if (response == 'EXPIRED') {
                 showMessage(expired);
             } else if (response == 'APPROVED') {
-                addEventListener(newEmailInput, 'keydown', function (event) {
+                addEventListener(newEmailInput, 'keydown', (event) => {
                     if ((event as KeyboardEvent).key === 'Enter') {
                         submitRequest(param, signature);
                     }
                 });
 
-                addEventListener(submitButton, 'click', function () {
+                addEventListener(submitButton, 'click', () => {
                     submitRequest(param, signature);
                 });
                 showElement(getBody());

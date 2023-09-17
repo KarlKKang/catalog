@@ -121,11 +121,11 @@ export default async function (
         addClass(warningButtonNo, 'button');
         appendChild(warningButtonGroup, warningButtonYes);
         appendChild(warningButtonGroup, warningButtonNo);
-        addEventListener(warningButtonYes, 'click', function () {
+        addEventListener(warningButtonYes, 'click', () => {
             hideElement(warningElem);
             showElement(contentContainer);
         });
-        addEventListener(warningButtonNo, 'click', function () {
+        addEventListener(warningButtonNo, 'click', () => {
             redirect(TOP_URL);
         });
         appendChild(warningElem, warningButtonGroup);
@@ -135,7 +135,7 @@ export default async function (
     }
 
     /////////////////////////////////////////////authenticate media session/////////////////////////////////////////////
-    setInterval(function () {
+    setInterval(() => {
         sendServerRequest('authenticate_media_session', {
             callback: function (response: string) {
                 if (response != 'APPROVED') {
@@ -193,7 +193,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     appendChild(epSelector, epButtonWrapper);
     let minHeight = Number.POSITIVE_INFINITY;
 
-    seriesEP.forEach(function (value, index) {
+    seriesEP.forEach((value, index) => {
         const epButton = createDivElement();
         const epText = createParagraphElement();
         appendText(epText, value);
@@ -204,7 +204,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
 
         const targetEP = index + 1;
         appendChild(epButton, epText);
-        addEventListener(epButton, 'click', function () { goToEP(seriesID, targetEP); });
+        addEventListener(epButton, 'click', () => { goToEP(seriesID, targetEP); });
         appendChild(epButtonWrapper, epButton);
 
         const height = getContentBoxHeight(epButtonWrapper);
@@ -231,13 +231,13 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     let currentToggleAnimationFrame: number | null = null;
     let isExpanded = false;
 
-    const toggleEPSelector = function () {
+    const toggleEPSelector = () => {
         if (isExpanded) {
             currentToggleTimeout = null;
-            let animationFrame = w.requestAnimationFrame(function () {
+            let animationFrame = w.requestAnimationFrame(() => {
                 if (currentToggleAnimationFrame === animationFrame) {
                     epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
-                    animationFrame = w.requestAnimationFrame(function () {
+                    animationFrame = w.requestAnimationFrame(() => {
                         if (currentToggleAnimationFrame === animationFrame) {
                             isExpanded = false;
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
@@ -255,7 +255,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             replaceChildren(showMoreButton, ...showMoreButtonExpandedText);
             epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
             addClass(epButtonWrapper, 'expanded');
-            const timeout = setTimeout(function () {
+            const timeout = setTimeout(() => {
                 if (currentToggleTimeout === timeout) {
                     epButtonWrapper.style.removeProperty('max-height');
                 }
@@ -268,7 +268,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     let currentStylingTimeout: NodeJS.Timeout | null = null;
     let currentStylingAnimationFrame: number | null = null;
     let isOversized = false;
-    const styleEPSelector = function () {
+    const styleEPSelector = () => {
         epButtonWrapper.style.removeProperty('min-height'); // Need to remove min-height first to calculate the height accurately.
         const height = getContentBoxHeight(epButtonWrapper);
         const reachedThreshold = height > minHeight * 1.8;
@@ -286,10 +286,10 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             currentToggleAnimationFrame = null;
             currentToggleTimeout = null;
             isOversized = true;
-            let animationFrame = w.requestAnimationFrame(function () {
+            let animationFrame = w.requestAnimationFrame(() => {
                 if (currentStylingAnimationFrame === animationFrame) {
                     epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
-                    animationFrame = w.requestAnimationFrame(function () {
+                    animationFrame = w.requestAnimationFrame(() => {
                         if (currentStylingAnimationFrame === animationFrame) {
                             isExpanded = false;
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
@@ -314,7 +314,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
             addClass(showMoreButton, 'transparent');
             removeClass(epButtonWrapper, 'expanded');
-            const timeout = setTimeout(function () {
+            const timeout = setTimeout(() => {
                 if (currentStylingTimeout === timeout) {
                     epButtonWrapper.style.removeProperty('max-height');
                     addClass(showMoreButton, 'invisible');
@@ -325,9 +325,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     };
 
     styleEPSelector();
-    addEventListener(w, 'resize', function () {
-        styleEPSelector();
-    });
+    addEventListener(w, 'resize', styleEPSelector);
 }
 
 function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
@@ -343,7 +341,7 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
             if (season.id != seriesID) {
                 appendText(seasonText, season.season_name);
                 const targetSeries = season.id;
-                addEventListener(seasonButton, 'click', function () { goToEP(targetSeries, 1); });
+                addEventListener(seasonButton, 'click', () => { goToEP(targetSeries, 1); });
             } else {
                 appendText(seasonText, season.season_name);
                 addClass(seasonButton, 'current-season');

@@ -24,7 +24,7 @@ export class HlsPlayer extends NonNativePlayer {
     protected attach(this: HlsPlayer, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
         this.preattach();
 
-        this.hlsInstance.on(Hls.Events.ERROR, function (this: any, _: Events.ERROR, data: ErrorData) {
+        this.hlsInstance.on(Hls.Events.ERROR, (_: Events.ERROR, data: ErrorData) => {
             if (data.fatal) {
                 const errorType = data.type;
                 let errorCode = null;
@@ -49,13 +49,13 @@ export class HlsPlayer extends NonNativePlayer {
                 console.error(data);
             }
         });
-        this.hlsInstance.on(Hls.Events.MANIFEST_PARSED, function (this: any, event: Events.MANIFEST_PARSED, data: ManifestParsedData) {
-            onload && onload.call(this, event, data);
+        this.hlsInstance.on(Hls.Events.MANIFEST_PARSED, (event: Events.MANIFEST_PARSED, data: ManifestParsedData) => {
+            onload && onload(event, data);
         });
-        this.hlsInstance.on(Hls.Events.FRAG_CHANGED, function (this: HlsPlayer, _: Events.FRAG_CHANGED, data: FragChangedData) {
+        this.hlsInstance.on(Hls.Events.FRAG_CHANGED, (_: Events.FRAG_CHANGED, data: FragChangedData) => {
             this.fragStart = data.frag.startDTS;
             DEVELOPMENT && this.log?.('Fragment changed: ' + this.fragStart + '-' + data.frag.endDTS);
-        }.bind(this));
+        });
         this.hlsInstance.attachMedia(this.media);
         this.media.volume = 1;
         DEVELOPMENT && this.log?.('HLS is attached.');
@@ -80,14 +80,14 @@ export class HlsPlayer extends NonNativePlayer {
         const play = config.play === true;
         const startTime = config.startTime;
 
-        const callback = function (this: HlsPlayer) {
+        const callback = () => {
             if (startTime !== undefined) {
                 this.seek(startTime);
             }
             if (play) {
                 this.play();
             }
-        }.bind(this);
+        };
 
         this.hlsInstance.once(Hls.Events.MANIFEST_PARSED, callback);
         this.hlsInstance.loadSource(url);
@@ -107,11 +107,11 @@ export class HlsPlayer extends NonNativePlayer {
                 this.media.currentTime = timestamp;
                 DEVELOPMENT && this.log?.('Skipped buffer flushing.');
             } else {
-                this.hlsInstance.once(Hls.Events.BUFFER_FLUSHED, function (this: HlsPlayer) {
+                this.hlsInstance.once(Hls.Events.BUFFER_FLUSHED, () => {
                     this.media.currentTime = timestamp;
                     this.hlsInstance.startLoad(timestamp);
                     DEVELOPMENT && this.log?.('Buffer reloaded.');
-                }.bind(this));
+                });
                 this.hlsInstance.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: Number.POSITIVE_INFINITY, type: null });
                 DEVELOPMENT && this.log?.('Buffer flushed.');
             }

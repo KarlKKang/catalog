@@ -20,7 +20,7 @@ export default function (listener: () => void, offset?: number) {
     const callback = listener;
     let isEnabled = false;
 
-    const updatePosition = function () {
+    const updatePosition = () => {
         if (!isEnabled) {
             return;
         }

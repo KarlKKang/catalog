@@ -69,7 +69,7 @@ export default function () {
                 };
                 addEventListener(emailInput, 'keydown', changeEmailOnKeyDown);
                 addEventListener(passwordInput, 'keydown', changeEmailOnKeyDown);
-                addEventListener(submitButton, 'click', function () {
+                addEventListener(submitButton, 'click', () => {
                     changeEmail(param, signature);
                 });
 
@@ -106,16 +106,16 @@ function changeEmail(param: string, signature: string) {
 
     sendChangeEmailRequest(
         'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
-        function () {
+        () => {
             promptForTotp(
-                function (totp, closeWindow, showWarning) {
+                (totp, closeWindow, showWarning) => {
                     sendChangeEmailRequest(
                         'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&totp=' + totp,
                         showWarning,
                         closeWindow
                     );
                 },
-                function () { disableAllInputs(false); }
+                () => { disableAllInputs(false); }
             );
         }
     );

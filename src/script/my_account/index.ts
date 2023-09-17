@@ -143,15 +143,9 @@ function showUser(userInfo: UserInfo.UserInfo) {
     mfaInfo = getById('mfa-info');
     recoveryCodeInfo = getById('recovery-code-info');
 
-    addEventListener(emailChangeButton, 'click', function () {
-        changeEmail();
-    });
-    addEventListener(usernameChangeButton, 'click', function () {
-        changeUsername();
-    });
-    addEventListener(passwordChangeButton, 'click', function () {
-        changePassword();
-    });
+    addEventListener(emailChangeButton, 'click', changeEmail);
+    addEventListener(usernameChangeButton, 'click', changeUsername);
+    addEventListener(passwordChangeButton, 'click', changePassword);
     addEventListener(mfaButton, 'click', () => {
         if (currentMfaStatus) {
             disableMfa();
@@ -159,14 +153,10 @@ function showUser(userInfo: UserInfo.UserInfo) {
             enableMfa();
         }
     });
-    addEventListener(recoveryCodeButton, 'click', () => {
-        generateRecoveryCode();
-    });
-    addEventListener(inviteButton, 'click', function () {
-        invite();
-    });
-    addEventListener(logoutButton, 'click', function () {
-        logout(function () { redirect(LOGIN_URL); });
+    addEventListener(recoveryCodeButton, 'click', generateRecoveryCode);
+    addEventListener(inviteButton, 'click', invite);
+    addEventListener(logoutButton, 'click', () => {
+        logout(() => { redirect(LOGIN_URL); });
     });
 
     passwordStyling(newPasswordInput);

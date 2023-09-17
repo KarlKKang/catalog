@@ -189,7 +189,7 @@ export function buildDownloadAccordion(
     iframe.height = '0';
     iframe.width = '0';
 
-    addEventListener(downloadButton, 'click', function () {
+    addEventListener(downloadButton, 'click', () => {
         downloadButton.disabled = true;
         let requestContent = mediaSessionCredential + '&os=' + osSelectMenu.value;
         if (videoFormats !== null) {
@@ -236,7 +236,7 @@ function appendListItems(list: HTMLUListElement, contents: string[]): void {
 }
 
 export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, active: boolean): void {
-    const hidePanel = function () {
+    const hidePanel = () => {
         panel.style.maxHeight = '0px';
     };
 
@@ -248,12 +248,12 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, active: 
 
     let currentTimeout: NodeJS.Timeout | null = null;
     let currentAnimationFrame: number | null = null;
-    addEventListener(acc, 'click', function () {
+    addEventListener(acc, 'click', () => {
         toggleClass(acc, 'active');
         if (containsClass(acc, 'active')) {
             currentAnimationFrame = null;
             panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
-            const timeout = setTimeout(function () {
+            const timeout = setTimeout(() => {
                 if (currentTimeout === timeout) {
                     panel.style.removeProperty('max-height');
                 }
@@ -261,10 +261,10 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, active: 
             currentTimeout = timeout;
         } else {
             currentTimeout = null;
-            let animationFrame = w.requestAnimationFrame(function () {
+            let animationFrame = w.requestAnimationFrame(() => {
                 if (currentAnimationFrame === animationFrame) {
                     panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
-                    animationFrame = w.requestAnimationFrame(function () {
+                    animationFrame = w.requestAnimationFrame(() => {
                         if (currentAnimationFrame === animationFrame) {
                             hidePanel();
                         }

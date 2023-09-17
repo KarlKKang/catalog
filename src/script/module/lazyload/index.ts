@@ -78,19 +78,19 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
         if (entry['isIntersecting']) {
             if (targetData.status === Status.LISTENING) {
                 targetData.status = Status.WAITING;
-                setTimeout(async function () {
+                setTimeout(async () => {
                     if (targetData.status !== Status.WAITING) {
                         return;
                     }
 
                     targetData.status = Status.LOADING;
 
-                    const onImageDraw = function () {
+                    const onImageDraw = () => {
                         observer.unobserve(target);
                         targets.delete(target);
                         addClass(target, 'complete');
                     };
-                    const onError = function () {
+                    const onError = () => {
                         observer.unobserve(target);
                         targets.delete(target);
                     };

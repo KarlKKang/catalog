@@ -341,7 +341,7 @@ export class Player {
         this.preattach();
 
         this.media.crossOrigin = 'use-credentials';
-        addEventListener(this.media, 'error', function (this: Player) {
+        addEventListener(this.media, 'error', () => {
             let errorCode = null;
             if (this.media.error !== null) {
                 const code = this.media.error.code;
@@ -357,9 +357,9 @@ export class Player {
             }
             onerror && onerror(errorCode);
             console.error(this.media.error);
-        }.bind(this));
-        addEventListener(this.media, 'loadedmetadata', function (this: any, event) {
-            onload && onload.call(this, event);
+        });
+        addEventListener(this.media, 'loadedmetadata', (event) => {
+            onload && onload(event);
         });
         this.media.volume = 1;
         DEVELOPMENT && this.log?.('Native HLS is attached.');
@@ -384,7 +384,7 @@ export class Player {
         const play = config.play === true;
         const startTime = config.startTime;
 
-        const callback = function (this: Player) {
+        const callback = () => {
             if (play) {
                 const playPromise = this.media.play();
                 if (playPromise !== undefined) {
@@ -398,7 +398,7 @@ export class Player {
             if (startTime !== undefined) {
                 this.seek(startTime); // Calling the play method will reset the currentTime to 0 on older versions of Safari. So it should be set after calling the play().
             }
-        }.bind(this);
+        };
 
         addEventListenerOnce(this.media, 'loadedmetadata', callback);
         this.media.src = url;
@@ -495,7 +495,7 @@ export class Player {
 
     private attachEventListeners(this: Player) {
         //Fluid resize and duration
-        addEventListener(w, 'resize', function (this: Player) {
+        addEventListener(w, 'resize', () => {
             let func = showElement;
             if (w.innerWidth < 320) {
                 func = hideElement;
@@ -503,27 +503,27 @@ export class Player {
             func(this.currentTimeDisplay);
             func(this.timeDivider);
             func(this.durationDisplay);
-        }.bind(this));
+        });
 
-        addEventListener(this.media, 'loadedmetadata', this.onloadedmetadata.bind(this));
+        addEventListener(this.media, 'loadedmetadata', () => { this.onloadedmetadata(); });
 
-        addEventListener(this.media, 'durationchange', function (this: Player) {
+        addEventListener(this.media, 'durationchange', () => {
             const duration = this.media.duration;
             replaceText(this.durationDisplayText, secToTimestamp(duration));
             replaceText(this.currentTimeDisplayText, secToTimestamp(this.media.currentTime, duration));
-        }.bind(this));
+        });
 
         //Play button
-        addEventListener(this.playButton, 'click', function (this: Player) {
+        addEventListener(this.playButton, 'click', () => {
             this.togglePlayback();
             this.focus();
-        }.bind(this));
+        });
 
         //Progress bar & frame drop monitor
-        this.timer = setInterval(this.intervalCallback.bind(this), 250);
+        this.timer = setInterval(() => { this.intervalCallback; }, 250);
 
         //Progress bar
-        addEventsListener(this.progressControl, ['mousedown', 'touchstart'], function (this: Player, event: Event) {
+        addEventsListener(this.progressControl, ['mousedown', 'touchstart'], (event) => {
             this.dragging = true;
             this.draggingPreviewTimeout = 4;
             if (this.playing) {
@@ -531,45 +531,45 @@ export class Player {
             }
             this.ended = false;
             this.progressUpdate(event as MouseEvent | TouchEvent);
-        }.bind(this));
+        });
 
-        addEventsListener(d, ['mouseup', 'touchend', 'touchcancel'], function (this: Player, event: Event) {
+        addEventsListener(d, ['mouseup', 'touchend', 'touchcancel'], (event) => {
             if (this.dragging) {
                 this.ondragended(event as MouseEvent | TouchEvent);
             }
-        }.bind(this));
+        });
 
-        addEventsListener(this.progressControl, ['mousemove', 'touchmove'], function (this: Player, event: Event) {
+        addEventsListener(this.progressControl, ['mousemove', 'touchmove'], (event) => {
             this.progressUpdate(event as MouseEvent | TouchEvent);
-        }.bind(this));
+        });
 
         //Activity on media
-        addEventListener(this.media, 'play', function (this: Player) {
+        addEventListener(this.media, 'play', () => {
             if (this.dragging) {
                 DEVELOPMENT && this.log?.('Playback started while dragging at ' + this.media.currentTime + '.');
                 this.media.pause(); // onplay event while dragging is probably initiated by some system controls, thus it's enough to directly intercept it.
                 return;
             }
             this.onplay();
-        }.bind(this));
+        });
 
-        addEventListener(this.media, 'pause', function (this: Player) {
+        addEventListener(this.media, 'pause', () => {
             if (this.dragging) {
                 DEVELOPMENT && this.log?.('Paused while dragging at ' + this.media.currentTime + '.');
                 return;
             }
             this.onpause();
-        }.bind(this));
+        });
 
-        addEventListener(this.media, 'ended', this.onended.bind(this));
+        addEventListener(this.media, 'ended', () => { this.onended; });
 
         //Redundent
-        addEventListener(this.media, 'seeking', function (this: Player) {
+        addEventListener(this.media, 'seeking', () => {
             DEVELOPMENT && this.log?.('Seeking: ' + this.media.currentTime);
-        }.bind(this));
-        addEventListener(this.media, 'seeked', function (this: Player) {
+        });
+        addEventListener(this.media, 'seeked', () => {
             DEVELOPMENT && this.log?.('Seeked: ' + this.media.currentTime);
-        }.bind(this));
+        });
     }
 
     private attachVideoEventListeners(this: Player) {
@@ -582,12 +582,12 @@ export class Player {
 
         //UI activity
         let touchClick = 0;
-        addEventListener(this.controls, 'touchend', function (this: Player) {
+        addEventListener(this.controls, 'touchend', () => {
             DEVELOPMENT && this.log?.('Touchend on controls.');
             touchClick++;
-            setTimeout(function () { touchClick--; }, 300); // https://web.dev/mobile-touchandmouse/
-        }.bind(this));
-        addEventListener(this.controls, 'click', function (this: Player) {
+            setTimeout(() => { touchClick--; }, 300); // https://web.dev/mobile-touchandmouse/
+        });
+        addEventListener(this.controls, 'click', () => {
             if (touchClick > 0) {
                 DEVELOPMENT && this.log?.('Touch click on controls.');
                 this.active = !this.active;
@@ -597,19 +597,19 @@ export class Player {
                     this.togglePlayback();
                 }
             }
-        }.bind(this));
-        addEventListener(this.controls, 'mousemove', function (this: Player) {
+        });
+        addEventListener(this.controls, 'mousemove', () => {
             if (touchClick <= 0) {
                 this.active = true;
             }
-        }.bind(this));
+        });
 
         //Big play button
-        addEventListener(this.bigPlayButton, 'click', function (this: Player, event: Event) {
+        addEventListener(this.bigPlayButton, 'click', (event) => {
             event.stopPropagation();
             this.play();
             this.focus();
-        }.bind(this));
+        });
 
         //Load progress
         const updateLoadProgress = () => {
@@ -623,63 +623,53 @@ export class Player {
             }
             this.loadProgress.style.width = Math.min(Math.round(bufferEnd / this.media.duration * 100), 100) + '%';
         };
-        addEventListener(this.media, 'progress', function () {
+        addEventListener(this.media, 'progress', () => {
             updateLoadProgress();
             setTimeout(updateLoadProgress, 1000);
         });
 
-        addEventListener(this.media, 'waiting', function (this: Player) {
+        addEventListener(this.media, 'waiting', () => {
             if (this.media.currentTime >= this.media.duration - this.maxBufferHole) {
                 DEVELOPMENT && this.log?.('Playback entered waiting state before ended at ' + this.media.currentTime + '.');
                 this.ended = true;
             } else {
                 this.onwaiting();
             }
-        }.bind(this));
+        });
 
         //Loading
-        addEventListener(this.media, 'canplaythrough', this.oncanplaythrough.bind(this));
-        addEventListenerOnce(this.media, 'canplay', function (this: Player) {
+        addEventListener(this.media, 'canplaythrough', () => { this.oncanplaythrough(); });
+        addEventListenerOnce(this.media, 'canplay', () => {
             const videoMedia = this.media as HTMLVideoElement;
             this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
             DEVELOPMENT && this.log?.('Video size: ' + videoMedia.videoWidth + 'x' + videoMedia.videoHeight);
-        }.bind(this));
+        });
 
         //Fullscreen
         const webkitEnterFullscreen = (this.media as HTMLVideoElement).webkitEnterFullscreen;
         const IOS_FULLSCREEN = IS_IOS && webkitEnterFullscreen !== undefined;
-        const requestFullscreen = function (this: Player) {
-            if (IOS_FULLSCREEN) {
-                webkitEnterFullscreen.apply(this.media);
-            } else {
-                screenfull.request(this.controls);
-            }
 
-            this.focus();
-        }.bind(this);
-
-        const exitFullscreen = function (this: Player) {
-            screenfull.exit();
-            this.focus();
-        }.bind(this);
-
-        const toggleFullscreen = function (this: Player) {
+        const toggleFullscreen = () => {
             if (containsPlayerClass(this.controls, 'fullscreen')) {
-                exitFullscreen();
+                screenfull.exit();
+                this.focus();
             } else {
-                requestFullscreen();
+                if (IOS_FULLSCREEN) {
+                    webkitEnterFullscreen.call(this.media);
+                } else {
+                    screenfull.request(this.controls);
+                }
+                this.focus();
             }
-        }.bind(this);
+        };
 
         if (screenfull.isEnabled || IOS_FULLSCREEN) {
             removePlayerClass(this.fullscreenButton, 'disabled');
 
-            addEventListener(this.fullscreenButton, 'click', function () {
-                toggleFullscreen();
-            });
+            addEventListener(this.fullscreenButton, 'click', toggleFullscreen);
 
             if (!IOS_FULLSCREEN) {
-                screenfull.on('change', function (this: Player) {
+                screenfull.on('change', () => {
                     const elemInFS = screenfull.element;
                     if (elemInFS === undefined) {
                         removePlayerClass(this.controls, 'fullscreen');
@@ -688,7 +678,7 @@ export class Player {
                         addPlayerClass(this.controls, 'fullscreen');
                         this.fullscreenButton.title = 'Exit Fullscreen';
                     }
-                }.bind(this));
+                });
             }
         } else {
             addPlayerClass(this.fullscreenButton, 'disabled');
@@ -698,29 +688,29 @@ export class Player {
         //Picture in picture
         const PIPButton = this.PIPButton;
         if (PIPButton !== undefined) {
-            addEventListener(PIPButton, 'click', function (this: Player) {
+            addEventListener(PIPButton, 'click', () => {
                 if (containsPlayerClass(this.controls, 'picture-in-picture')) {
                     d.exitPictureInPicture();
                 } else {
                     (this.media as HTMLVideoElement).requestPictureInPicture();
                 }
                 this.focus();
-            }.bind(this));
+            });
 
-            addEventListener(this.media, 'enterpictureinpicture', function (this: Player) {
+            addEventListener(this.media, 'enterpictureinpicture', () => {
                 addPlayerClass(this.controls, 'picture-in-picture');
                 PIPButton.title = 'Exit Picture-in-Picture';
-            }.bind(this));
+            });
 
-            addEventListener(this.media, 'leavepictureinpicture', function (this: Player) {
+            addEventListener(this.media, 'leavepictureinpicture', () => {
                 removePlayerClass(this.controls, 'picture-in-picture');
                 PIPButton.title = 'Picture-in-Picture';
                 this.focus();
-            }.bind(this));
+            });
         }
 
         //Hotkeys
-        addEventListener(this.controls, 'keydown', function (this: Player, event: Event) {
+        addEventListener(this.controls, 'keydown', (event) => {
             const key = (event as KeyboardEvent).key;
             if (key === ' ' || key === 'Spacebar') {
                 this.togglePlayback();
@@ -741,7 +731,7 @@ export class Player {
                 this.seek(this.media.currentTime - 15);
                 event.preventDefault();
             }
-        }.bind(this));
+        });
     }
 
     private intervalCallback(this: Player): void {

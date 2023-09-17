@@ -30,13 +30,13 @@ export default function () {
     submitButton = getById('submit-button') as HTMLButtonElement;
     warningElem = getById('warning');
 
-    addEventListener(emailInput, 'keydown', function (event) {
+    addEventListener(emailInput, 'keydown', (event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
             register();
         }
     });
 
-    addEventListener(submitButton, 'click', function () {
+    addEventListener(submitButton, 'click', () => {
         register();
     });
 

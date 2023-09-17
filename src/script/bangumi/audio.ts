@@ -327,15 +327,15 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
 
 function audioReady() {
     function pauseAll(currentIndex: number) {
-        mediaInstances.forEach(function (mediaInstance, index) {
+        mediaInstances.forEach((mediaInstance, index) => {
             if (index !== currentIndex) {
                 mediaInstance.pause();
             }
         });
     }
 
-    mediaInstances.forEach(function (instance, index) {
-        addEventListener(instance.media, 'play', function () { // The media play event doesn't need to be handled separately since it catches all play events.
+    mediaInstances.forEach((instance, index) => {
+        addEventListener(instance.media, 'play', () => { // The media play event doesn't need to be handled separately since it catches all play events.
             pauseAll(index);
         });
     });

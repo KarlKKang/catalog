@@ -37,73 +37,73 @@ export default function () {
                     './news'
                 ),
             ]).then(([{ getSeriesTable }, { getAccountTable }, { getNewsTable }]) => {
-                addEventListener(getById('get-series-table'), 'click', function () {
+                addEventListener(getById('get-series-table'), 'click', () => {
                     getSeriesTable();
                 });
-                addEventListener(getById('get-account-table'), 'click', function () {
+                addEventListener(getById('get-account-table'), 'click', () => {
                     getAccountTable();
                 });
-                addEventListener(getById('get-invite-table'), 'click', function () {
+                addEventListener(getById('get-invite-table'), 'click', () => {
                     getTable('invite');
                 });
-                addEventListener(getById('get-news-table'), 'click', function () {
+                addEventListener(getById('get-news-table'), 'click', () => {
                     getNewsTable();
                 });
-                addEventListener(getById('get-log-table'), 'click', function () {
+                addEventListener(getById('get-log-table'), 'click', () => {
                     getTable('log');
                 });
-                addEventListener(getById('generate-id'), 'click', function () {
+                addEventListener(getById('generate-id'), 'click', () => {
                     generate('id');
                 });
-                addEventListener(getById('generate-series-id'), 'click', function () {
+                addEventListener(getById('generate-series-id'), 'click', () => {
                     generate('series_id');
                 });
-                addEventListener(getById('generate-news-id'), 'click', function () {
+                addEventListener(getById('generate-news-id'), 'click', () => {
                     generate('news_id');
                 });
-                addEventListener(getById('clear-cdn-cache'), 'click', function () {
+                addEventListener(getById('clear-cdn-cache'), 'click', () => {
                     clearCDNCache();
                 });
-                addEventListener(getById('clear-key-cache'), 'click', function () {
+                addEventListener(getById('clear-key-cache'), 'click', () => {
                     clearKeyCache();
                 });
-                addEventListener(getById('rebuild-series-search'), 'click', function () {
+                addEventListener(getById('rebuild-series-search'), 'click', () => {
                     rebuild('series_search');
                 });
-                addEventListener(getById('verify'), 'click', function () {
+                addEventListener(getById('verify'), 'click', () => {
                     verify();
                 });
-                addEventListener(getById('show-all-column'), 'click', function () {
+                addEventListener(getById('show-all-column'), 'click', () => {
                     getTable('all_column');
                 });
-                addEventListener(getById('show-all-index'), 'click', function () {
+                addEventListener(getById('show-all-index'), 'click', () => {
                     getTable('all_index');
                 });
-                addEventListener(getById('show-create-table'), 'click', function () {
+                addEventListener(getById('show-create-table'), 'click', () => {
                     getTable('create_table');
                 });
-                addEventListener(getById('run-debug'), 'click', function () {
+                addEventListener(getById('run-debug'), 'click', () => {
                     misc('run', 'debug');
                 });
-                addEventListener(getById('run-benchmark-hash'), 'click', function () {
+                addEventListener(getById('run-benchmark-hash'), 'click', () => {
                     misc('benchmark', 'hash');
                 });
-                addEventListener(getById('run-benchmark-hmac'), 'click', function () {
+                addEventListener(getById('run-benchmark-hmac'), 'click', () => {
                     misc('benchmark', 'hmac');
                 });
-                addEventListener(getById('run-benchmark-signature'), 'click', function () {
+                addEventListener(getById('run-benchmark-signature'), 'click', () => {
                     misc('benchmark', 'signature');
                 });
-                addEventListener(getById('run-benchmark-key-pair'), 'click', function () {
+                addEventListener(getById('run-benchmark-key-pair'), 'click', () => {
                     misc('benchmark', 'key_pair');
                 });
-                addEventListener(getById('run-benchmark-match-str'), 'click', function () {
+                addEventListener(getById('run-benchmark-match-str'), 'click', () => {
                     misc('benchmark', 'match_str');
                 });
-                addEventListener(getById('run-benchmark-random'), 'click', function () {
+                addEventListener(getById('run-benchmark-random'), 'click', () => {
                     misc('benchmark', 'random');
                 });
-                addEventListener(getById('run-benchmark-password-hash'), 'click', function () {
+                addEventListener(getById('run-benchmark-password-hash'), 'click', () => {
                     misc('benchmark', 'password_hash');
                 });
                 showElement(getBody());

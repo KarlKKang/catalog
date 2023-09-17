@@ -46,7 +46,7 @@ export default function (container: Element, src: string, alt: string, withCrede
 
         // Convert Blob to Uint8Array
         const reader = new FileReader();
-        addEventListenerOnce(reader, 'load', function () {
+        addEventListenerOnce(reader, 'load', () => {
             const base64URL = reader.result;
             if (!(base64URL instanceof ArrayBuffer)) {
                 finalizeErrorImage();
@@ -192,7 +192,7 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
 
 function imageProtection(elem: HTMLElement) {
     removeRightClick(elem);
-    addEventListener(elem, 'dragstart', e => {
+    addEventListener(elem, 'dragstart', (e) => {
         e.preventDefault();
     });
 }

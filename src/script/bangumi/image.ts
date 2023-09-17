@@ -51,7 +51,7 @@ export default async function (
 
     const files = epInfo.files;
 
-    files.forEach(function (file, index) {
+    files.forEach((file, index) => {
         if (file.tag != '') {
             const subtitle = createParagraphElement();
             addClass(subtitle, 'sub-title');
@@ -95,11 +95,11 @@ export default async function (
             mediaSessionCredential: epInfo.media_session_credential,
             delay: 250,
             onDataLoad: function (data: Blob) {
-                addEventListener(downloadButton, 'click', function () {
+                addEventListener(downloadButton, 'click', () => {
                     downloadButton.disabled = true;
                     downloadAnchor.href = URL.createObjectURL(data);
-                    addEventListener(downloadAnchor, 'click', function () {
-                        setTimeout(function () {
+                    addEventListener(downloadAnchor, 'click', () => {
+                        setTimeout(() => {
                             URL.revokeObjectURL(downloadAnchor.href);
                             downloadAnchor.href = '';
                             downloadButton.disabled = false;

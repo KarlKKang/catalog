@@ -54,7 +54,7 @@ export default function () {
         uri = 'get_news_image';
     } else {
         content = mediaSessionCredential + '&' + content;
-        setInterval(function () {
+        setInterval(() => {
             sendServerRequest('authenticate_media_session', {
                 callback: function (response: string) {
                     if (response != 'APPROVED') {

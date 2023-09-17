@@ -220,7 +220,7 @@ function updateEventHandlers() {
     for (const button of buttons) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
-            addEventListener(button, 'click', function () {
+            addEventListener(button, 'click', () => {
                 addAccount(button);
             });
         }
@@ -230,7 +230,7 @@ function updateEventHandlers() {
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
-            addEventListener(button, 'click', function () {
+            addEventListener(button, 'click', () => {
                 const id = getDataAttribute(button, 'user');
                 if (id === null) {
                     alert('ERROR: "email" attribute on the element is undefined.');
@@ -245,7 +245,7 @@ function updateEventHandlers() {
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, 'initialized')) {
             addClass(button, 'initialized');
-            addEventListener(button, 'click', function () {
+            addEventListener(button, 'click', () => {
                 const id = getDataAttribute(button, 'user');
                 if (id === null) {
                     alert('ERROR: "email" attribute on the element is undefined.');

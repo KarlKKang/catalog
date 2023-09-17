@@ -25,13 +25,13 @@ export class VideojsPlayer extends NonNativePlayer {
     protected attach(this: VideojsPlayer, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
         this.preattach();
 
-        this.videojsInstance.on('error', function (this: VideojsPlayer) {
+        this.videojsInstance.on('error', () => {
             const mediaError = this.videojsInstance.error();
             onerror && onerror(mediaError === null ? null : mediaError.code);  // videojs mimics the standard HTML5 `MediaError` class.
             console.error(mediaError);
-        }.bind(this));
-        this.videojsInstance.on('loadedmetadata', function (this: any, ...args: any[]) {
-            onload && onload.apply(this, args);
+        });
+        this.videojsInstance.on('loadedmetadata', (...args: any[]) => {
+            onload && onload(...args);
         });
         this.videojsInstance.volume(1);
         DEVELOPMENT && this.log?.('Videojs is attached.');
@@ -56,14 +56,14 @@ export class VideojsPlayer extends NonNativePlayer {
         const play = config.play === true;
         const startTime = config.startTime;
 
-        const callback = function (this: VideojsPlayer) {
+        const callback = () => {
             if (startTime !== undefined) {
                 this.seek(startTime);
             }
             if (play) {
                 this.play();
             }
-        }.bind(this);
+        };
 
         this.videojsInstance.one('loadedmetadata', callback);
         this.videojsInstance.src({

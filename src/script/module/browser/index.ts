@@ -3,13 +3,11 @@ import { UAParser } from 'ua-parser-js';
 
 import { createAudioElement, createVideoElement, w } from '../dom';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
     interface Window {
         chrome: any;
     }
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const ua: UAParser.IResult | null = function () {
     try {

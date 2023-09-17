@@ -50,7 +50,7 @@ export default function () {
         return;
     }
 
-    const callback = function () {
+    const callback = () => {
         setTitle(param.htmlTitle);
         titleElem.innerHTML = param.title;
         changeColor(titleElem, param.color);
@@ -62,7 +62,7 @@ export default function () {
         } else {
             const url = param.url;
             appendText(button, '次に進む');
-            addEventListener(button, 'click', function () {
+            addEventListener(button, 'click', () => {
                 deleteCookie('local-message-param');
                 redirect(url, true);
             });

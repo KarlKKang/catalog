@@ -22,7 +22,7 @@ function unsupportRedirect() {
         return;
     }
 
-    window.addEventListener('error', function (e) {
+    window.addEventListener('error', (e) => {
         if (e.error instanceof SyntaxError) {
             unsupportRedirect();
         }
@@ -53,7 +53,7 @@ function unsupportRedirect() {
         return;
     }
 
-    window.addEventListener('load', function () {
+    window.addEventListener('load', () => {
         const dynamicImportScript = document.createElement('script');
         dynamicImportScript.textContent = 'dynamicImportPromise=import("data:text/javascript;base64,Cg==")';
         document.body.appendChild(dynamicImportScript);

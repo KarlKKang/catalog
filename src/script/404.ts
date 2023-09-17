@@ -11,7 +11,7 @@ import {
 } from './module/dom';
 
 export default function () {
-    addEventListener(getById('button'), 'click', function () {
+    addEventListener(getById('button'), 'click', () => {
         redirect(TOP_URL);
     });
     showElement(getBody());
