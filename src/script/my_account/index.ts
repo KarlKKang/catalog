@@ -9,10 +9,7 @@ import {
     changeColor,
     clearCookies,
     disableInput,
-    PASSWORD_REGEX,
-    EMAIL_REGEX,
     logout,
-    handleAuthenticationResult
 } from '../module/main';
 import {
     addEventListener,
@@ -67,6 +64,7 @@ import body from './body.html';
 import { initializePopUpWindow, promptForTotp } from '../module/pop_up_window';
 import { toCanvas } from 'qrcode';
 import { isString } from '../module/type/helper';
+import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from '../module/main/pure';
 
 let currentUsername: string;
 let currentMfaStatus: boolean;

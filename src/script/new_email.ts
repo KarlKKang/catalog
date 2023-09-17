@@ -7,7 +7,6 @@ import {
     getURLParam,
     clearCookies,
     disableInput,
-    EMAIL_REGEX,
 } from './module/main';
 import {
     addEventListener,
@@ -20,6 +19,7 @@ import {
 import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
 import { expired, emailSent } from './module/message/template/param';
+import { EMAIL_REGEX } from './module/main/pure';
 
 let newEmailInput: HTMLInputElement;
 let submitButton: HTMLButtonElement;

@@ -1,4 +1,5 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 const path = require('path');
 const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
 
@@ -86,6 +87,14 @@ const config = {
     }
 };
 
+config.plugins.push(
+    new CircularDependencyPlugin({
+        exclude: /node_modules/,
+        failOnError: true,
+        allowAsyncCycles: false,
+        cwd: process.cwd(),
+    })
+);
 config.plugins.push(
     new BundleAnalyzerPlugin({
         analyzerMode: 'static',

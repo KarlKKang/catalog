@@ -8,9 +8,6 @@ import {
     clearCookies,
     passwordStyling,
     disableInput,
-    EMAIL_REGEX,
-    PASSWORD_REGEX,
-    handleAuthenticationResult,
 } from './module/main';
 import {
     addEventListener,
@@ -25,6 +22,7 @@ import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
 import { promptForTotp } from './module/pop_up_window';
+import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/main/pure';
 
 let emailInput: HTMLInputElement;
 let passwordInput: HTMLInputElement;

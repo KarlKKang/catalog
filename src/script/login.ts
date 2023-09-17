@@ -10,8 +10,6 @@ import {
     disableInput,
     clearCookies,
     getURLParam,
-    PASSWORD_REGEX,
-    EMAIL_REGEX,
 } from './module/main';
 import {
     addEventListener,
@@ -28,6 +26,7 @@ import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/me
 import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
 import { promptForTotp } from './module/pop_up_window';
+import { EMAIL_REGEX, PASSWORD_REGEX } from './module/main/pure';
 
 let submitButton: HTMLButtonElement;
 let passwordInput: HTMLInputElement;

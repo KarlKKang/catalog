@@ -10,7 +10,6 @@ import {
     clearCookies,
     disableInput,
     changeColor,
-    getLocalTime,
     scrollToTop,
 } from './module/main';
 import {
@@ -40,6 +39,7 @@ import * as SeriesInfo from './module/type/SeriesInfo';
 import type { default as LazyloadObserve } from './module/lazyload';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 import isbot from 'isbot';
+import { getLocalTime } from './module/main/pure';
 
 let searchBar: HTMLElement;
 let searchBarInput: HTMLInputElement;

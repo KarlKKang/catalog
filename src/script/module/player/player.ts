@@ -1,8 +1,6 @@
 // JavaScript Document
 import {
-    secToTimestamp,
     removeRightClick,
-    getLocalTime,
 } from '../main';
 import {
     getById,
@@ -33,6 +31,7 @@ import screenfull from 'screenfull';
 import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClass } from './helper';
 import * as icons from './icons';
 import { CustomMediaError } from './media_error';
+import { getLocalTime, secToTimestamp } from '../main/pure';
 
 declare global {
     interface HTMLVideoElement {

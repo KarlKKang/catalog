@@ -3,7 +3,7 @@ import { getBaseURL, getTitle, redirect, w, addEventListenerOnce } from './modul
 import { LOGIN_URL, TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
-import { objectKeyExists } from './module/main';
+import { objectKeyExists } from './module/main/pure';
 
 (function () {
     const pages = {

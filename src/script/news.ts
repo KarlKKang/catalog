@@ -8,9 +8,7 @@ import {
     clearCookies,
     scrollToHash,
     addNavBar,
-    encodeCFURIComponent,
     removeRightClick,
-    getLocalTime,
 } from './module/main';
 import {
     addEventListener,
@@ -47,6 +45,7 @@ import initializeInfiniteScrolling from './module/infinite_scrolling';
 import isbot from 'isbot';
 import { LocalImageParam } from './module/type/LocalImageParam';
 import type { default as LazyloadObserve } from './module/lazyload';
+import { encodeCFURIComponent, getLocalTime } from './module/main/pure';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo = 0;

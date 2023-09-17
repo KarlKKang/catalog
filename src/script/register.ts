@@ -8,7 +8,6 @@ import {
     passwordStyling,
     clearCookies,
     disableInput,
-    PASSWORD_REGEX,
 } from './module/main';
 import {
     addEventListener,
@@ -23,6 +22,7 @@ import {
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
+import { PASSWORD_REGEX } from './module/main/pure';
 
 let submitButton: HTMLButtonElement;
 let usernameInput: HTMLInputElement;

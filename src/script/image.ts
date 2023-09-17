@@ -6,7 +6,6 @@ import {
     sendServerRequest,
     clearCookies,
     removeRightClick,
-    encodeCFURIComponent,
 } from './module/main';
 import {
     redirect,
@@ -19,6 +18,7 @@ import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
 import * as LocalImageParam from './module/type/LocalImageParam';
+import { encodeCFURIComponent } from './module/main/pure';
 
 export default function () {
     clearCookies();

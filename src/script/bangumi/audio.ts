@@ -1,6 +1,6 @@
 import {
     encodeCFURIComponent,
-} from '../module/main';
+} from '../module/main/pure';
 import {
     addEventListener,
     getById,
