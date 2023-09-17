@@ -97,14 +97,11 @@ function getNews(newsID: string): void {
                 return;
             }
 
-            const showNewsPromise = new Promise<HTMLDivElement>((resolve) => {
-                const contentContainer = showNews(parsedResponse, newsID);
-                addNavBar('news', () => {
-                    redirect(NEWS_TOP_URL);
-                });
-                showElement(getBody());
-                resolve(contentContainer);
+            const contentContainer = showNews(parsedResponse, newsID);
+            addNavBar('news', () => {
+                redirect(NEWS_TOP_URL);
             });
+            showElement(getBody());
 
             const xhr = new XMLHttpRequest();
             xhr.open('GET', CDN_URL + '/news/' + newsID + '.html');
@@ -120,10 +117,8 @@ function getNews(newsID: string): void {
             addEventListener(xhr, 'load', () => {
                 removeAllEventListeners(xhr);
                 if (xhr.status === 200) {
-                    showNewsPromise.then((contentContainer) => {
-                        contentContainer.innerHTML = xhr.responseText;
-                        scrollToHash();
-                    });
+                    contentContainer.innerHTML = xhr.responseText;
+                    scrollToHash();
                 } else {
                     redirect(TOP_URL);
                 }
