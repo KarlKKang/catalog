@@ -9,35 +9,25 @@ import {
 } from './module/main';
 import {
     redirect,
-    getCookie,
-    deleteCookie,
     setTitle,
     getById,
+    getSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
-import * as LocalImageParam from './module/type/LocalImageParam';
 import { encodeCFURIComponent } from './module/main/pure';
 
 export default function () {
     clearCookies();
 
-    let paramCookie = getCookie('local-image-param');
+    const baseURL = getSessionStorage('base-url');
+    const fileName = getSessionStorage('file-name');
+    const xhrParam = getSessionStorage('xhr-param');
+    const title = getSessionStorage('title');
+    const mediaSessionCredential = getSessionStorage('media-session-credential');
 
-    if (paramCookie === null) {
-        redirect(TOP_URL, true);
-        return;
-    }
-
-    deleteCookie('local-image-param');
-
-    let param: LocalImageParam.LocalImageParam;
-    try {
-        paramCookie = decodeURIComponent(paramCookie);
-        param = JSON.parse(paramCookie);
-        LocalImageParam.check(param);
-    } catch (e) {
+    if (baseURL === null || fileName === null || xhrParam === null || title === null) {
         redirect(TOP_URL, true);
         return;
     }
@@ -47,9 +37,8 @@ export default function () {
         './module/image_loader'
     );
 
-    const mediaSessionCredential = param.mediaSessionCredential;
     let uri = 'get_image';
-    let content = param.xhrParam;
+    let content = xhrParam;
     if (mediaSessionCredential === null) {
         uri = 'get_news_image';
     } else {
@@ -67,7 +56,7 @@ export default function () {
         }, 30 * 1000);
     }
 
-    setTitle(param.title);
+    setTitle(title);
 
     const container = getById('image-container');
     removeRightClick(container);
@@ -80,7 +69,7 @@ export default function () {
             }
 
             imageLoaderImportPromise.then(({ default: imageLoader }) => {
-                imageLoader(container, param.baseURL + encodeCFURIComponent(param.fileName), param.fileName, true);
+                imageLoader(container, baseURL + encodeCFURIComponent(fileName), fileName, true);
             }).catch((e) => {
                 showMessage(moduleImportError(e));
             });

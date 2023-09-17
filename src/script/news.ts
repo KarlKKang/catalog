@@ -28,13 +28,13 @@ import {
     getDataAttribute,
     showElement,
     containsClass,
-    setCookie,
     createDivElement,
     createParagraphElement,
     createHRElement,
     createBRElement,
     appendText,
     removeAllEventListeners,
+    setSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/message/template/param/server';
@@ -43,7 +43,6 @@ import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 import isbot from 'isbot';
-import { LocalImageParam } from './module/type/LocalImageParam';
 import type { default as LazyloadObserve } from './module/lazyload';
 import { encodeCFURIComponent, getLocalTime } from './module/main/pure';
 
@@ -195,14 +194,10 @@ async function attachImage(contentContainer: HTMLElement, newsID: string): Promi
         lazyloadObserve(elem, baseURL + encodeCFURIComponent(src), src, { xhrParam: xhrParam });
         if (containsClass(elem, 'image-enlarge')) {
             addEventListener(elem, 'click', () => {
-                const param: LocalImageParam = {
-                    baseURL: baseURL,
-                    fileName: src,
-                    xhrParam: xhrParam,
-                    title: getTitle(),
-                    mediaSessionCredential: null
-                };
-                setCookie('local-image-param', JSON.stringify(param), 10);
+                setSessionStorage('base-url', baseURL);
+                setSessionStorage('file-name', src);
+                setSessionStorage('xhr-param', xhrParam);
+                setSessionStorage('title', getTitle());
                 openWindow(TOP_URL + '/image');
             });
         }
