@@ -1,5 +1,4 @@
 import { NonNativePlayer } from './non-native-player';
-import { remove } from '../dom';
 import Hls from 'hls.js';
 import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig } from 'hls.js';
 import { CustomMediaError } from './media_error';
@@ -8,6 +7,10 @@ export class HlsPlayer extends NonNativePlayer {
     protected override readonly maxBufferHole = 0.5;
     private readonly hlsInstance: Hls;
     private fragStart = 0;
+
+    private onHlsError: undefined | ((_: Events.ERROR, data: ErrorData) => void) = undefined;
+    private onHlsManifestParsed: undefined | ((event: Events.MANIFEST_PARSED, data: ManifestParsedData) => void) = undefined;
+    private onHlsFragChange: undefined | ((_: Events.FRAG_CHANGED, data: FragChangedData) => void) = undefined;
 
     constructor(
         container: HTMLDivElement,
@@ -24,7 +27,7 @@ export class HlsPlayer extends NonNativePlayer {
     protected attach(this: HlsPlayer, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
         this.preattach();
 
-        this.hlsInstance.on(Hls.Events.ERROR, (_: Events.ERROR, data: ErrorData) => {
+        this.onHlsError = (_: Events.ERROR, data: ErrorData) => {
             if (data.fatal) {
                 const errorType = data.type;
                 let errorCode = null;
@@ -48,14 +51,20 @@ export class HlsPlayer extends NonNativePlayer {
                 onerror && onerror(errorCode);
                 console.error(data);
             }
-        });
-        this.hlsInstance.on(Hls.Events.MANIFEST_PARSED, (event: Events.MANIFEST_PARSED, data: ManifestParsedData) => {
+        };
+        this.hlsInstance.on(Hls.Events.ERROR, this.onHlsError);
+
+        this.onHlsManifestParsed = (event: Events.MANIFEST_PARSED, data: ManifestParsedData) => {
             onload && onload(event, data);
-        });
-        this.hlsInstance.on(Hls.Events.FRAG_CHANGED, (_: Events.FRAG_CHANGED, data: FragChangedData) => {
+        };
+        this.hlsInstance.on(Hls.Events.MANIFEST_PARSED, this.onHlsManifestParsed);
+
+        this.onHlsFragChange = (_: Events.FRAG_CHANGED, data: FragChangedData) => {
             this.fragStart = data.frag.startDTS;
             DEVELOPMENT && this.log?.('Fragment changed: ' + this.fragStart + '-' + data.frag.endDTS);
-        });
+        };
+        this.hlsInstance.on(Hls.Events.FRAG_CHANGED, this.onHlsFragChange);
+
         this.hlsInstance.attachMedia(this.media);
         this.media.volume = 1;
         DEVELOPMENT && this.log?.('HLS is attached.');
@@ -94,10 +103,11 @@ export class HlsPlayer extends NonNativePlayer {
         DEVELOPMENT && this.log?.('HLS source loaded.');
     }
 
-    public destroy(this: HlsPlayer) {
-        this.timer && clearInterval(this.timer);
+    protected disattach(this: HlsPlayer) {
+        this.onHlsError && this.hlsInstance.off(Hls.Events.ERROR, this.onHlsError);
+        this.onHlsManifestParsed && this.hlsInstance.off(Hls.Events.MANIFEST_PARSED, this.onHlsManifestParsed);
+        this.onHlsFragChange && this.hlsInstance.off(Hls.Events.FRAG_CHANGED, this.onHlsFragChange);
         this.hlsInstance.destroy();
-        remove(this.controls);
     }
 
     public override seek(this: HlsPlayer, timestamp: number) {

@@ -32,7 +32,7 @@ type TargetData = {
     xhr: XMLHttpRequest | null;
 };
 
-const targets: WeakMap<Element, TargetData> = new WeakMap();
+const targets: Map<Element, TargetData> = new Map();
 
 const imageLoaderImportPromise = import(
     /* webpackExports: ["default"] */
@@ -136,4 +136,9 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
             }
         }
     }
+}
+
+export function unobserveAll() {
+    observer.disconnect();
+    targets.clear();
 }

@@ -234,34 +234,6 @@ export function replaceText(parent: Node, content: string) {
     replaceChildren(parent, createTextNode(content));
 }
 
-export function addEventListener(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
-    elem.addEventListener(event, callback, useCapture);
-}
-
-export function addEventsListener(elem: EventTarget, events: Array<string>, callback: EventListener, useCapture?: boolean) {
-    for (const event of events) {
-        addEventListener(elem, event, callback, useCapture);
-    }
-}
-
-export function removeEventListener(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
-    elem.removeEventListener(event, callback, useCapture);
-}
-
-export function removeEventsListener(elem: EventTarget, events: Array<string>, callback: EventListener, useCapture?: boolean) {
-    for (const event of events) {
-        removeEventListener(elem, event, callback, useCapture);
-    }
-}
-
-export function addEventListenerOnce(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
-    const callbackOnce = (arg: Event) => {
-        removeEventListener(elem, event, callbackOnce, useCapture);
-        callback(arg);
-    };
-    addEventListener(elem, event, callbackOnce, useCapture);
-}
-
 export function appendChild(parent: Node, child: Node) {
     parent.appendChild(child);
 }

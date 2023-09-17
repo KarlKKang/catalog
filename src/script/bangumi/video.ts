@@ -29,6 +29,7 @@ import {
     appendText,
     replaceChildren,
     replaceText,
+    removeAllEventListeners,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -65,6 +66,8 @@ let hlsPlayerImportPromise: HlsPlayerImportPromise;
 
 let currentFormat: VideoFormatInfo;
 let currentMediaInstance: PlayerType | undefined;
+
+const eventTargetsTracker = new Set<EventTarget>();
 
 export default function (
     _seriesID: string,
@@ -191,6 +194,10 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HT
             replaceChildren(mediaHolder);
             const errorMsgElem = getByIdNative('error');
             errorMsgElem && remove(errorMsgElem);
+            for (const eventTarget of eventTargetsTracker) {
+                removeAllEventListeners(eventTarget);
+            }
+            eventTargetsTracker.clear();
             showElement(mediaHolder);
             addVideoNode(config);
         },
@@ -397,6 +404,7 @@ function displayChapters(mediaInstance: Player, offset: number) {
             mediaInstance.seek(startTime);
             mediaInstance.focus();
         });
+        eventTargetsTracker.add(timestamp);
         appendChild(chapterNode, timestamp);
         appendChild(chapterNode, cueText);
         setClass(chapterNode, 'inactive-chapter');
@@ -409,6 +417,7 @@ function displayChapters(mediaInstance: Player, offset: number) {
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);
     addAccordionEvent(accordion, accordionPanel, true);
+    eventTargetsTracker.add(accordion);
     appendChild(mediaHolder, chaptersNode);
 
     const video = mediaInstance.media;

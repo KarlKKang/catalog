@@ -24,6 +24,9 @@ import {
     createAudioElement,
     appendText,
     replaceText,
+    removeAllEventListeners,
+    removeEventListener,
+    removeEventsListener,
 } from '../dom';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
@@ -86,6 +89,7 @@ export class Player {
     private corruptedFrames = 0;
 
     protected readonly maxBufferHole: number = 0;
+    private onFullscreenChange: undefined | (() => void) = undefined;
     protected readonly log: undefined | ((message: string) => void) = undefined;
 
     private playPromise: Promise<void> | undefined;
@@ -408,10 +412,27 @@ export class Player {
 
     public destroy(this: Player) {
         this.timer && clearInterval(this.timer);
+        this.disattach();
+        removeAllEventListeners(this.media);
+        removeAllEventListeners(this.controls);
+        removeAllEventListeners(this.controlBar);
+        removeAllEventListeners(this.playButton);
+        removeAllEventListeners(this.progressControl);
+        if (this.IS_VIDEO) {
+            removeAllEventListeners(this.bigPlayButton);
+            this.PIPButton && removeAllEventListeners(this.PIPButton);
+            removeAllEventListeners(this.fullscreenButton);
+            this.onFullscreenChange && screenfull.off('change', this.onFullscreenChange);
+        }
+        removeEventListener(w, 'resize', this.onWindowResize);
+        removeEventsListener(d, ['mouseup', 'touchend', 'touchcancel'], this.onMouseUp);
+        remove(this.controls);
+    }
+
+    protected disattach(this: Player) {
         this.pause();
         this.media.removeAttribute('src');
         this.media.load();
-        remove(this.controls);
     }
 
     public play(this: Player) {
@@ -495,15 +516,8 @@ export class Player {
 
     private attachEventListeners(this: Player) {
         //Fluid resize and duration
-        addEventListener(w, 'resize', () => {
-            let func = showElement;
-            if (w.innerWidth < 320) {
-                func = hideElement;
-            }
-            func(this.currentTimeDisplay);
-            func(this.timeDivider);
-            func(this.durationDisplay);
-        });
+        this.onWindowResize = this.onWindowResize.bind(this);
+        addEventListener(w, 'resize', this.onWindowResize);
 
         addEventListener(this.media, 'loadedmetadata', () => { this.onloadedmetadata(); });
 
@@ -533,11 +547,8 @@ export class Player {
             this.progressUpdate(event as MouseEvent | TouchEvent);
         });
 
-        addEventsListener(d, ['mouseup', 'touchend', 'touchcancel'], (event) => {
-            if (this.dragging) {
-                this.ondragended(event as MouseEvent | TouchEvent);
-            }
-        });
+        this.onMouseUp = this.onMouseUp.bind(this);
+        addEventsListener(d, ['mouseup', 'touchend', 'touchcancel'], this.onMouseUp);
 
         addEventsListener(this.progressControl, ['mousemove', 'touchmove'], (event) => {
             this.progressUpdate(event as MouseEvent | TouchEvent);
@@ -669,7 +680,7 @@ export class Player {
             addEventListener(this.fullscreenButton, 'click', toggleFullscreen);
 
             if (!IOS_FULLSCREEN) {
-                screenfull.on('change', () => {
+                this.onFullscreenChange = () => {
                     const elemInFS = screenfull.element;
                     if (elemInFS === undefined) {
                         removePlayerClass(this.controls, 'fullscreen');
@@ -678,7 +689,8 @@ export class Player {
                         addPlayerClass(this.controls, 'fullscreen');
                         this.fullscreenButton.title = 'Exit Fullscreen';
                     }
-                });
+                };
+                screenfull.on('change', this.onFullscreenChange);
             }
         } else {
             addPlayerClass(this.fullscreenButton, 'disabled');
@@ -891,6 +903,22 @@ export class Player {
 
     public focus(this: Player) {
         this.controls.focus({ preventScroll: true });
+    }
+
+    private onWindowResize(this: Player) {
+        let func = showElement;
+        if (w.innerWidth < 320) {
+            func = hideElement;
+        }
+        func(this.currentTimeDisplay);
+        func(this.timeDivider);
+        func(this.durationDisplay);
+    }
+
+    private onMouseUp(this: Player, event: Event) {
+        if (this.dragging) {
+            this.ondragended(event as MouseEvent | TouchEvent);
+        }
     }
 }
 

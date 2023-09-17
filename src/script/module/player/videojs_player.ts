@@ -73,9 +73,7 @@ export class VideojsPlayer extends NonNativePlayer {
         DEVELOPMENT && this.log?.('Videojs source loaded.');
     }
 
-    public destroy(this: VideojsPlayer) {
-        this.timer && clearInterval(this.timer);
+    protected disattach(this: VideojsPlayer) {
         this.videojsInstance.dispose();
-        remove(this.controls);
     }
 }

@@ -4,10 +4,10 @@ import {
 } from './main';
 import {
     appendChild,
-    removeEventListener,
     addEventListener,
     addEventListenerOnce,
     createCanvasElement,
+    removeAllEventListeners,
 } from './dom';
 import { show as showMessage } from './message';
 import { moduleImportError } from './message/template/param';
@@ -17,6 +17,8 @@ let webpMachineActive = false;
 type webpMachineQueueItem = { container: Element; image: HTMLImageElement; webpData: Uint8Array; onLoad: (() => void) | undefined; onError: () => void };
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
+
+const eventTargetsTracker = new Set<EventTarget>();
 
 export default function (container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: () => void, onDataLoad?: (data: Blob) => void, onError?: () => void): XMLHttpRequest {
     let imageData: Blob;
@@ -37,7 +39,7 @@ export default function (container: Element, src: string, alt: string, withCrede
     }
 
     function onImageError() {
-        removeImageListeners();
+        removeAllEventListeners(image);
 
         if (!isWebp) {
             finalizeErrorImage();
@@ -71,7 +73,7 @@ export default function (container: Element, src: string, alt: string, withCrede
     }
 
     function onImageLoad() {
-        removeImageListeners();
+        removeAllEventListeners(image);
         const canvas = createCanvasElement();
         const ctx = canvas.getContext('2d');
         if (ctx === null) {
@@ -95,10 +97,6 @@ export default function (container: Element, src: string, alt: string, withCrede
         onImageDraw && onImageDraw();
     }
 
-    function removeImageListeners() {
-        removeEventListener(image, 'error', onImageError);
-        removeEventListener(image, 'load', onImageLoad);
-    }
     addEventListener(image, 'error', onImageError);
     addEventListener(image, 'load', onImageLoad);
 
@@ -108,17 +106,15 @@ export default function (container: Element, src: string, alt: string, withCrede
     xhr.responseType = 'blob';
     xhr.withCredentials = withCredentials;
 
-    function onXHRError() {
-        removeXHRListeners();
+    addEventListener(xhr, 'error', () => {
+        removeAllEventListeners(xhr);
         finalizeErrorImage();
-    }
-
-    function onXHRAbort() {
-        removeXHRListeners();
-    }
-
-    function onXHRLoad() {
-        removeXHRListeners();
+    });
+    addEventListener(xhr, 'abort', () => {
+        removeAllEventListeners(xhr);
+    });
+    addEventListener(xhr, 'load', () => {
+        removeAllEventListeners(xhr);
         if (xhr.status === 200) {
             isWebp = xhr.getResponseHeader('Content-Type') === 'image/webp';
             imageData = xhr.response as Blob;
@@ -127,17 +123,7 @@ export default function (container: Element, src: string, alt: string, withCrede
         } else {
             finalizeErrorImage();
         }
-    }
-
-    function removeXHRListeners() {
-        removeEventListener(xhr, 'error', onXHRError);
-        removeEventListener(xhr, 'abort', onXHRAbort);
-        removeEventListener(xhr, 'load', onXHRLoad);
-    }
-
-    addEventListener(xhr, 'error', onXHRError);
-    addEventListener(xhr, 'abort', onXHRAbort);
-    addEventListener(xhr, 'load', onXHRLoad);
+    });
 
     xhr.send();
     return xhr;
@@ -191,8 +177,16 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
 }
 
 function imageProtection(elem: HTMLElement) {
+    eventTargetsTracker.add(elem);
     removeRightClick(elem);
     addEventListener(elem, 'dragstart', (e) => {
         e.preventDefault();
     });
+}
+
+export function clearAllImageEvents() {
+    for (const eventTarget of eventTargetsTracker) {
+        removeAllEventListeners(eventTarget);
+    }
+    eventTargetsTracker.clear();
 }

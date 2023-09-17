@@ -20,12 +20,12 @@ import {
     getParentElement,
     addEventListener,
     appendChild,
-    removeEventListener,
     createParagraphElement,
     createDivElement,
     prependChild,
     getBody,
     appendText,
+    removeAllEventListeners,
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
@@ -121,31 +121,19 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.withCredentials = options.withCredentials ?? true;
 
-    function onError() {
-        removeListeners();
+    addEventListener(xmlhttp, 'error', () => {
+        removeAllEventListeners(xmlhttp);
         xhrOnErrorCallback(uri, options);
-    }
-
-    function onAbort() {
-        removeListeners();
-    }
-
-    function onLoad() {
-        removeListeners();
+    });
+    addEventListener(xmlhttp, 'abort', () => {
+        removeAllEventListeners(xmlhttp);
+    });
+    addEventListener(xmlhttp, 'load', () => {
+        removeAllEventListeners(xmlhttp);
         if (checkXHRStatus(xmlhttp, uri, options)) {
             options.callback && options.callback(xmlhttp.responseText);
         }
-    }
-
-    function removeListeners() {
-        removeEventListener(xmlhttp, 'error', onError);
-        removeEventListener(xmlhttp, 'abort', onAbort);
-        removeEventListener(xmlhttp, 'load', onLoad);
-    }
-
-    addEventListener(xmlhttp, 'error', onError);
-    addEventListener(xmlhttp, 'abort', onAbort);
-    addEventListener(xmlhttp, 'load', onLoad);
+    });
 
     xmlhttp.send(options.content ?? '');
     return xmlhttp;

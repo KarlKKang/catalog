@@ -30,7 +30,7 @@ export abstract class NonNativePlayer extends Player {
             onerror?: (errorCode: number | null) => void;
         }
     ): void;
-    public abstract override destroy(this: NonNativePlayer): void;
+    protected abstract override disattach(this: NonNativePlayer): void;
 
     public override play(this: NonNativePlayer) {
         if (this.IS_VIDEO) {
@@ -56,7 +56,7 @@ export abstract class NonNativePlayer extends Player {
         }
 
         const endBuffer = () => {
-            removeEventsListener(this.media, ['progress', 'play', 'timeupdate'], this.checkBuffer);
+            removeEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
             removePlayerClass(this.controls, 'seeking');
             this.buffering = false;
         };

@@ -31,6 +31,7 @@ import {
     createParagraphElement,
     appendText,
     replaceChildren,
+    removeAllEventListeners,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -48,7 +49,11 @@ let pivot: SeriesInfo.Pivot = 0;
 let keywords = '';
 
 let lazyloadObserve: typeof LazyloadObserve;
+let lazyloadUnobserveAll: () => void;
+let clearAllImageEvents: () => void;
 let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
+
+const eventTargetsTracker = new Set<EventTarget>();
 
 export default function () {
     clearCookies();
@@ -59,8 +64,13 @@ export default function () {
 
     // Preload module
     const lazyloadImportPromise = import(
-        /* webpackExports: ["default"] */
+        /* webpackExports: ["default", "unobserveAll"] */
         './module/lazyload'
+    );
+
+    const imageLoaderImportPromise = import(
+        /* webpackExports: ["clearAllImageEvents"] */
+        './module/image_loader'
     );
 
     searchBar = getById('search-bar');
@@ -71,7 +81,12 @@ export default function () {
     getURLKeywords();
     getSeries(async (seriesInfo: SeriesInfo.SeriesInfo) => {
         try {
-            lazyloadObserve = (await lazyloadImportPromise).default;
+            const lazyloadModule = await lazyloadImportPromise;
+            lazyloadObserve = lazyloadModule.default;
+            lazyloadUnobserveAll = lazyloadModule.unobserveAll;
+
+            const imageLoaderModule = await imageLoaderImportPromise;
+            clearAllImageEvents = imageLoaderModule.clearAllImageEvents;
         } catch (e) {
             showMessage(moduleImportError(e));
             throw e;
@@ -149,6 +164,7 @@ function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
         addClass(titleNode, 'ellipsis-clipping-2');
 
         addEventListener(seriesNode, 'click', () => { goToSeries(seriesEntry.id); });
+        eventTargetsTracker.add(seriesNode);
         addClass(seriesNode, 'series');
 
         appendChild(containerElem, seriesNode);
@@ -226,11 +242,19 @@ function requestSearchResults() {
     disableSearchBarInput(true);
     infiniteScrolling.setEnabled(false);
 
+    addClass(containerElem, 'transparent');
     const animationTimeout = new Promise<void>((resolve) => {
-        setTimeout(() => { resolve(); }, 400);
+        setTimeout(() => {
+            for (const eventTarget of eventTargetsTracker) {
+                removeAllEventListeners(eventTarget);
+            }
+            eventTargetsTracker.clear();
+            lazyloadUnobserveAll();
+            clearAllImageEvents();
+            resolve();
+        }, 400);
     });
 
-    addClass(containerElem, 'transparent');
     getSeries((seriesInfo: SeriesInfo.SeriesInfo) => {
         animationTimeout.then(() => {
             replaceChildren(containerElem);
