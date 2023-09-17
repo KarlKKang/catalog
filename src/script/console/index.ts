@@ -1,13 +1,13 @@
 // JavaScript Document
 import {
     sendServerRequest,
-    clearCookies,
 } from '../module/main';
 import {
     addEventListener,
     getById,
     getBody,
     showElement,
+    clearSessionStorage,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -15,7 +15,7 @@ import { invalidResponse } from '../module/message/template/param/server';
 import { getTable, setOutput } from './helper';
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     sendServerRequest('console', {
         callback: function (response: string) {

@@ -1,6 +1,6 @@
 // Low level DOM functions, required in ./message
 import {
-    DOMAIN, TOP_URL
+    TOP_URL
 } from '../env/constant';
 
 export const d = document;
@@ -72,30 +72,6 @@ export function changeURL(url: string, withoutHistory?: boolean) {
 
 export function openWindow(url: string) {
     w.open(url);
-}
-
-export function getCookie(name: string) {
-    name = name + '=';
-    // var decodedCookie = decodeURIComponent(document.cookie);
-    const decodedCookies = d.cookie;
-    const cookies = decodedCookies.split(';');
-    for (let cookie of cookies) {
-        while (cookie.charAt(0) == ' ') {
-            cookie = cookie.substring(1);
-        }
-        if (cookie.indexOf(name) == 0) {
-            return cookie.substring(name.length, cookie.length);
-        }
-    }
-    return null;
-}
-
-export function setCookie(name: string, value: string, maxAge: number) {
-    d.cookie = name + '=' + encodeURIComponent(value) + ';max-age=' + maxAge.toString() + ';path=/;domain=.' + DOMAIN + ';secure;samesite=strict';
-}
-
-export function deleteCookie(name: string) {
-    d.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.' + DOMAIN + ';secure;samesite=strict';
 }
 
 export function setSessionStorage(key: string, value: string) {

@@ -1,17 +1,17 @@
 // JavaScript Document
 import {
     authenticate,
-    clearCookies,
     addNavBar,
     scrollToHash,
 } from './module/main';
 import {
+    clearSessionStorage,
     getBody,
     showElement,
 } from './module/dom';
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     authenticate({
         successful:

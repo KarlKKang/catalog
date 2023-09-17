@@ -7,7 +7,6 @@ import {
     passwordStyling,
     sendServerRequest,
     changeColor,
-    clearCookies,
     disableInput,
     logout,
 } from '../module/main';
@@ -30,6 +29,7 @@ import {
     createAnchorElement,
     appendChildren,
     replaceChildren,
+    clearSessionStorage,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { emailSent as emailSentParam } from '../module/message/template/param';
@@ -93,7 +93,7 @@ let mfaInfo: HTMLElement;
 let recoveryCodeInfo: HTMLElement;
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
         return;

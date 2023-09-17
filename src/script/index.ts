@@ -7,7 +7,6 @@ import {
     addNavBar,
     sendServerRequest,
     getURLParam,
-    clearCookies,
     disableInput,
     changeColor,
     scrollToTop,
@@ -31,6 +30,7 @@ import {
     appendText,
     replaceChildren,
     removeAllEventListeners,
+    clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -56,7 +56,7 @@ let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 const eventTargetsTracker = new Set<EventTarget>();
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
         return;

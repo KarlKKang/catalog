@@ -4,7 +4,6 @@ import {
 } from './module/env/constant';
 import {
     logout,
-    clearCookies,
     changeColor,
 } from './module/main';
 import {
@@ -13,7 +12,6 @@ import {
     getBody,
     redirect,
     setTitle,
-    deleteCookie,
     hideElement,
     showElement,
     appendText,
@@ -25,8 +23,6 @@ import {
 } from './module/dom';
 
 export default function () {
-    clearCookies();
-
     const titleElem = getById('title');
     const messageElem = getById('message');
 
@@ -78,7 +74,6 @@ export default function () {
             }
             appendText(button, buttonText);
             addEventListener(button, 'click', () => {
-                deleteCookie('local-message-param');
                 redirect(url, true);
             });
         }

@@ -10,9 +10,7 @@ import { sessionEnded, connectionError, notFound, status429, status503, status40
 
 import {
     w,
-    getBaseURL,
     redirect,
-    deleteCookie,
     getHash,
     getByIdNative,
     addClass,
@@ -292,15 +290,6 @@ export function disableInput(inputElement: HTMLInputElement, disabled: boolean) 
         addClass(getParentElement(inputElement), 'disabled');
     } else {
         removeClass(getParentElement(inputElement), 'disabled');
-    }
-}
-
-export function clearCookies() {
-    if (getBaseURL() != TOP_URL + '/message') {
-        deleteCookie('local-message-param');
-    }
-    if (getBaseURL() != TOP_URL + '/image') {
-        deleteCookie('local-image-param');
     }
 }
 

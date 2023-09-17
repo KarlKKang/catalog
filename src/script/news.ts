@@ -5,7 +5,6 @@ import {
 } from './module/env/constant';
 import {
     sendServerRequest,
-    clearCookies,
     scrollToHash,
     addNavBar,
     removeRightClick,
@@ -35,6 +34,7 @@ import {
     appendText,
     removeAllEventListeners,
     setSessionStorage,
+    clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/message/template/param/server';
@@ -55,7 +55,7 @@ let lazyloadImportPromise: Promise<typeof import(
 )>;
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
         return;

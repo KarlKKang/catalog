@@ -5,7 +5,6 @@ import {
 import {
     sendServerRequest,
     getURLParam,
-    clearCookies,
     passwordStyling,
     disableInput,
 } from './module/main';
@@ -17,6 +16,7 @@ import {
     getById,
     replaceChildren,
     replaceText,
+    clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
@@ -30,7 +30,7 @@ let submitButton: HTMLButtonElement;
 let warningElem: HTMLElement;
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     emailInput = getById('email') as HTMLInputElement;
     passwordInput = getById('password') as HTMLInputElement;

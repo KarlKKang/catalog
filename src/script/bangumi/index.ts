@@ -5,9 +5,9 @@ import {
 import {
     sendServerRequest,
     getURLParam,
-    clearCookies,
 } from '../module/main';
 import {
+    clearSessionStorage,
     getBaseURL,
     redirect,
 } from '../module/dom';
@@ -20,7 +20,7 @@ import { default as getImportPromises } from './get_import_promises';
 import type { default as updatePageType } from './update_page';
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     // Parse parameters
     const seriesIDParam = getSeriesID();

@@ -6,7 +6,6 @@ import {
     sendServerRequest,
     getURLParam,
     passwordStyling,
-    clearCookies,
     disableInput,
 } from './module/main';
 import {
@@ -16,6 +15,7 @@ import {
     getBody,
     showElement,
     replaceText,
+    clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
@@ -28,7 +28,7 @@ let submitButton: HTMLButtonElement;
 let warningElem: HTMLElement;
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     newPasswordInput = getById('new-password') as HTMLInputElement;
     newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;

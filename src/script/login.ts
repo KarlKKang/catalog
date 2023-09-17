@@ -8,7 +8,6 @@ import {
     passwordStyling,
     authenticate,
     disableInput,
-    clearCookies,
     getURLParam,
 } from './module/main';
 import {
@@ -20,6 +19,7 @@ import {
     showElement,
     replaceChildren,
     replaceText,
+    clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
@@ -35,7 +35,7 @@ let rememberMeInput: HTMLInputElement;
 let warningElem: HTMLElement;
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     submitButton = getById('submit-button') as HTMLButtonElement;
     passwordInput = getById('current-password') as HTMLInputElement;

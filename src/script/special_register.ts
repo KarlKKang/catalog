@@ -1,7 +1,6 @@
 // JavaScript Document
 import {
     sendServerRequest,
-    clearCookies,
     disableInput,
 } from './module/main';
 import {
@@ -10,6 +9,7 @@ import {
     getBody,
     showElement,
     replaceText,
+    clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
@@ -21,7 +21,7 @@ let submitButton: HTMLButtonElement;
 let warningElem: HTMLElement;
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     emailInput = getById('email') as HTMLInputElement;
     submitButton = getById('submit-button') as HTMLButtonElement;

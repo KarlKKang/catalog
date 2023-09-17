@@ -5,7 +5,6 @@ import {
 import {
     sendServerRequest,
     getURLParam,
-    clearCookies,
     disableInput,
 } from './module/main';
 import {
@@ -15,6 +14,7 @@ import {
     getBody,
     showElement,
     replaceText,
+    clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
@@ -26,7 +26,7 @@ let submitButton: HTMLButtonElement;
 let warningElem: HTMLElement;
 
 export default function () {
-    clearCookies();
+    clearSessionStorage();
 
     newEmailInput = getById('new-email') as HTMLInputElement;
     submitButton = getById('submit-button') as HTMLButtonElement;

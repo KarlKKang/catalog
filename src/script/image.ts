@@ -4,7 +4,6 @@ import {
 } from './module/env/constant';
 import {
     sendServerRequest,
-    clearCookies,
     removeRightClick,
 } from './module/main';
 import {
@@ -12,6 +11,7 @@ import {
     setTitle,
     getById,
     getSessionStorage,
+    clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
@@ -19,13 +19,13 @@ import { invalidResponse } from './module/message/template/param/server';
 import { encodeCFURIComponent } from './module/main/pure';
 
 export default function () {
-    clearCookies();
-
     const baseURL = getSessionStorage('base-url');
     const fileName = getSessionStorage('file-name');
     const xhrParam = getSessionStorage('xhr-param');
     const title = getSessionStorage('title');
     const mediaSessionCredential = getSessionStorage('media-session-credential');
+
+    clearSessionStorage();
 
     if (baseURL === null || fileName === null || xhrParam === null || title === null) {
         redirect(TOP_URL, true);
