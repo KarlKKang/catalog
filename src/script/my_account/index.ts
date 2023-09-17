@@ -153,7 +153,10 @@ function showUser(userInfo: UserInfo.UserInfo) {
     addEventListener(recoveryCodeButton, 'click', generateRecoveryCode);
     addEventListener(inviteButton, 'click', invite);
     addEventListener(logoutButton, 'click', () => {
-        logout(() => { redirect(LOGIN_URL); });
+        logout(() => {
+            disableAllInputs(true);
+            redirect(LOGIN_URL);
+        });
     });
 
     passwordStyling(newPasswordInput);
