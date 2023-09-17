@@ -18,6 +18,10 @@ export function isBoolean(bool: any) {
     return bool === true || bool === false;
 }
 
+export function isString(str: any) {
+    return typeof str === 'string' || str instanceof String;
+}
+
 function objectToString(obj: any) {
     return Object.prototype.toString.call(obj);
 }

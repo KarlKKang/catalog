@@ -1,8 +1,5 @@
 // JavaScript Document
 import {
-    LOGIN_URL,
-} from './module/env/constant';
-import {
     sendServerRequest,
     clearCookies,
     disableInput,
@@ -66,7 +63,7 @@ async function register() {
             } else if (response == 'NORMAL') {
                 replaceText(warningElem, invitationOnly);
             } else if (response == 'DONE') {
-                showMessage(emailSent(LOGIN_URL));
+                showMessage(emailSent(false));
                 return;
             } else {
                 showMessage();

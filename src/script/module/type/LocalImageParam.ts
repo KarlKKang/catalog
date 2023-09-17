@@ -1,5 +1,4 @@
-import { isString } from '../main';
-import { throwError, isObject } from './helper';
+import { throwError, isObject, isString } from './helper';
 
 export interface LocalImageParam {
     baseURL: string;

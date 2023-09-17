@@ -12,12 +12,10 @@ import {
     PASSWORD_REGEX,
     EMAIL_REGEX,
     logout,
-    isString,
     handleAuthenticationResult
 } from '../module/main';
 import {
     addEventListener,
-    getBaseURL,
     redirect,
     getById,
     getBody,
@@ -68,6 +66,7 @@ import isbot from 'isbot';
 import body from './body.html';
 import { initializePopUpWindow, promptForTotp } from '../module/pop_up_window';
 import { toCanvas } from 'qrcode';
+import { isString } from '../module/type/helper';
 
 let currentUsername: string;
 let currentMfaStatus: boolean;
@@ -229,7 +228,7 @@ function invite() {
                     } else if (response == 'CLOSED') {
                         replaceText(warningElem, invitationClosed);
                     } else if (response == 'DONE') {
-                        showMessage(emailSentParam(getBaseURL()));
+                        showMessage(emailSentParam(true));
                         return;
                     } else {
                         showMessage(invalidResponse);

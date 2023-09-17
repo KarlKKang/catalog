@@ -9,7 +9,6 @@ import {
 } from './module/main';
 import {
     addEventListener,
-    getCookie,
     getById,
     getBody,
     redirect,
@@ -18,17 +17,31 @@ import {
     hideElement,
     showElement,
     appendText,
+    getSessionStorage,
+    clearSessionStorage,
+    insertBefore,
+    remove,
+    createDivElement,
 } from './module/dom';
-import * as LocalMessageParam from './module/type/LocalMessageParam';
 
 export default function () {
     clearCookies();
 
-    let paramCookie = getCookie('local-message-param');
     const titleElem = getById('title');
     const messageElem = getById('message');
 
-    if (paramCookie === null) {
+    const message = getSessionStorage('message');
+    const title = getSessionStorage('title');
+    const color = getSessionStorage('color');
+    const documentTitle = getSessionStorage('document-title');
+    const buttonText = getSessionStorage('button-text');
+    const url = getSessionStorage('url');
+    const logoutParam = getSessionStorage('logout') === '1';
+    const replaceBody = getSessionStorage('replace-body') === '1';
+
+    clearSessionStorage();
+
+    if (message === null || title === null || color === null || documentTitle === null) {
         if (DEVELOPMENT) {
             changeColor(titleElem, 'orange');
             appendText(titleElem, 'タイトルTitle');
@@ -40,28 +53,30 @@ export default function () {
         return;
     }
 
-    let param: LocalMessageParam.LocalMessageParam;
-    try {
-        paramCookie = decodeURIComponent(paramCookie);
-        param = JSON.parse(paramCookie);
-        LocalMessageParam.check(param);
-    } catch (e) {
-        redirect(TOP_URL, true);
-        return;
-    }
-
     const callback = () => {
-        setTitle(param.htmlTitle);
-        titleElem.innerHTML = param.title;
-        changeColor(titleElem, param.color);
-        messageElem.innerHTML = param.message;
+        setTitle(documentTitle);
+        titleElem.innerHTML = title;
+        changeColor(titleElem, color);
+        if (replaceBody) {
+            const container = createDivElement();
+            messageElem.id = '';
+            container.id = 'message';
+            container.innerHTML = message;
+            insertBefore(container, messageElem);
+            remove(messageElem);
+        } else {
+            messageElem.innerHTML = message;
+        }
+
         const button = getById('button');
-        if (param.url === null) {
-            deleteCookie('local-message-param');
+        if (buttonText === null) {
             hideElement(button);
         } else {
-            const url = param.url;
-            appendText(button, '次に進む');
+            if (url === null) {
+                redirect(TOP_URL, true);
+                return;
+            }
+            appendText(button, buttonText);
             addEventListener(button, 'click', () => {
                 deleteCookie('local-message-param');
                 redirect(url, true);
@@ -71,7 +86,7 @@ export default function () {
         showElement(getBody());
     };
 
-    if (param.logout === true) {
+    if (logoutParam) {
         logout(callback);
         return;
     }

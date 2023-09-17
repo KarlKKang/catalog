@@ -255,3 +255,11 @@ export function showElement(elem: HTMLElement) {
 export function isHidden(elem: HTMLElement) {
     return containsClass(elem, 'hidden');
 }
+
+export function appendListItems(list: HTMLUListElement | HTMLOListElement, ...contents: string[]): void {
+    for (const content of contents) {
+        const item = createLIElement();
+        appendText(item, content);
+        appendChild(list, item);
+    }
+}

@@ -1,6 +1,6 @@
 // Low level DOM functions, required in ./message
 import {
-    DOMAIN
+    DOMAIN, TOP_URL
 } from '../env/constant';
 
 export const d = document;
@@ -9,6 +9,10 @@ const windowLocation = w.location;
 
 export function getBody() {
     return d.body;
+}
+
+export function getFullURL() {
+    return windowLocation.href;
 }
 
 export function getBaseURL(url?: string): string {
@@ -92,6 +96,23 @@ export function setCookie(name: string, value: string, maxAge: number) {
 
 export function deleteCookie(name: string) {
     d.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.' + DOMAIN + ';secure;samesite=strict';
+}
+
+export function setSessionStorage(key: string, value: string) {
+    try {
+        w.sessionStorage.setItem(key, value);
+    } catch (e) {
+        redirect(TOP_URL + '/unsupported_browser', true); // Since the support for SessionStorage is already checked, this is likely a QuotaExceededError. This will be treated as unsupported browser. The storage should never reach the quota of a properly configured browser in normal operation.
+        throw e;
+    }
+}
+
+export function getSessionStorage(key: string) {
+    return w.sessionStorage.getItem(key);
+}
+
+export function clearSessionStorage() {
+    w.sessionStorage.clear();
 }
 
 export function getTitle() {

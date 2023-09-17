@@ -6,7 +6,7 @@ import {
 
 import { show as showMessage } from '../message';
 import { moduleImportError, insufficientPermissions } from '../message/template/param';
-import { sessionEnded, connectionError, status403, status429, status503, status400And500, invalidResponse } from '../message/template/param/server';
+import { sessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse } from '../message/template/param/server';
 
 import {
     w,
@@ -87,7 +87,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
             const logoutParam = options.logoutParam;
             redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
         } else {
-            showMessage(status403);
+            xhrOnErrorCallback(uri, options);
         }
     } else if (status === 429) {
         showMessage(status429);
@@ -108,7 +108,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
             showMessage();
         }
     } else if (status === 404 && response.responseText === 'REJECTED') {
-        redirect(TOP_URL);
+        showMessage(notFound);
     } else {
         xhrOnErrorCallback(uri, options);
     }
@@ -434,10 +434,6 @@ function getDayOfWeek(date: Date): string {
 
 export function objectKeyExists(key: PropertyKey, obj: object) {
     return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
-export function isString(str: any) {
-    return typeof str === 'string' || str instanceof String;
 }
 
 export function handleAuthenticationResult(

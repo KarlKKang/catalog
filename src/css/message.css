@@ -32,6 +32,11 @@
     padding: 0px;
 }
 
+#message ul {
+    list-style-position: inside;
+    padding: 0px;
+}
+
 button {
     width: 150px;
     max-width: 100%;

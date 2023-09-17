@@ -1,5 +1,4 @@
-import { isString } from '../main';
-import { throwError, isObject, isArray, isNumber, isBoolean } from './helper';
+import { throwError, isObject, isArray, isNumber, isBoolean, isString } from './helper';
 
 export type AudioFile = {
     title: string;

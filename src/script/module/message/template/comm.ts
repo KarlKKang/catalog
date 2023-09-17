@@ -5,3 +5,15 @@ export const browserCompatibilitySuffix = '別のブラウザで、もう一度�
 
 export const passwordChanged = 'パスワードを変更しました。';
 export const emailAlreadyRegistered = 'このメールアドレスはすでに登録済みです。';
+
+export const nextButtonText = '次に進む';
+
+export interface MessageParam {
+    message?: string;
+    title?: string;
+    color?: string;
+    url?: string;
+    buttonText?: string | null;
+    logout?: boolean;
+    replaceBody?: boolean;
+}

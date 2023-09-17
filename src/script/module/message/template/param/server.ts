@@ -1,10 +1,30 @@
-import { paramWithRedirect } from './helper';
 import * as body from '../body/server';
 import * as title from '../title/server';
-import { TOP_URL } from '../../../env/constant';
+import { LOGIN_URL, TOP_URL } from '../../../env/constant';
 import { MaintenanceInfo } from '../../../type/MaintenanceInfo';
+import { getBaseURL } from '../../../dom';
+import { MessageParam } from '../comm';
 
-export const invalidResponse = paramWithRedirect(body.invalidResponse);
+export const invalidResponse = function () {
+    const href = getBaseURL();
+    const param: MessageParam = {
+        message: body.invalidResponse,
+    };
+    if (href === TOP_URL) {
+        param.url = LOGIN_URL;
+        param.logout = true;
+        return param;
+    } else if (href === LOGIN_URL) {
+        param.buttonText = null;
+        return param;
+    } else if (href.startsWith(LOGIN_URL)) {
+        param.url = LOGIN_URL;
+        return param;
+    } else {
+        param.url = TOP_URL;
+        return param;
+    }
+}();
 export const sessionEnded = {
     title: title.sessionEnded,
     message: body.sessionEnded,
@@ -13,20 +33,29 @@ export const sessionEnded = {
 };
 export const connectionError = {
     title: title.connectionError,
-    message: body.connectionError
+    message: body.connectionError,
+    replaceBody: true
 };
 export const status429 = {
     title: title.status429,
     message: body.status429
 };
 export const status503 = (maintenanceInfo: MaintenanceInfo) => ({
-        title: title.status503,
-        message: body.status503(maintenanceInfo),
-        color: 'orange'
-    });
+    title: title.status503,
+    message: body.status503(maintenanceInfo),
+    color: 'orange',
+    buttonText: null
+});
 export const status400And500 = (responseText: string) => ({
-        message: body.status400And500(responseText)
-    });
-export const status403 = {
-    message: body.status403
+    message: body.status400And500(responseText)
+});
+export const notFound = {
+    title: title.notFound,
+    message: body.notFound,
+    url: function () {
+        if (getBaseURL().startsWith(LOGIN_URL)) {
+            return LOGIN_URL;
+        }
+        return TOP_URL;
+    }()
 };

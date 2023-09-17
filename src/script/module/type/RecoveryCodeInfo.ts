@@ -1,5 +1,4 @@
-import { isString } from '../main';
-import { isArray, throwError } from './helper';
+import { isArray, throwError, isString } from './helper';
 
 export type RecoveryCodeInfo = string[];
 

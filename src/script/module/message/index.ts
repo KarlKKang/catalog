@@ -1,48 +1,38 @@
 import {
+    LOGIN_URL,
     TOP_URL,
-    LOGIN_URL
 } from '../env/constant';
-import { getBaseURL, redirect, setCookie, getTitle } from '../dom/document';
-import type { LocalMessageParam } from '../type/LocalMessageParam';
+import { redirect, getTitle, setSessionStorage, getFullURL, getBaseURL } from '../dom/document';
 
 import { defaultError } from './template/title';
 import { unknownError } from './template/body';
+import { MessageParam } from './template/comm';
 
+export function show({ message, title, color, url, buttonText, logout, replaceBody }: MessageParam = {}) {
+    setSessionStorage('message', message ?? unknownError);
+    setSessionStorage('title', title ?? defaultError);
+    setSessionStorage('color', color ?? 'red');
+    setSessionStorage('document-title', getTitle());
 
-interface MessageParam {
-    message?: string;
-    title?: string;
-    color?: string;
-    url?: string | null;
-}
-
-export function show(param?: MessageParam) {
-    let logout = false;
-    if (param === undefined) {
-        param = {};
-        const href = getBaseURL();
-        if (href == TOP_URL) {
-            logout = true;
-            param.url = LOGIN_URL;
-        } else if (href != LOGIN_URL) {
-            param.url = TOP_URL;
+    if (buttonText !== null) {
+        setSessionStorage('button-text', buttonText ?? '戻る');
+        if (url === undefined) {
+            setSessionStorage('url', getFullURL());
+        } else {
+            setSessionStorage('url', url);
         }
     }
 
-    param.title = param.title ?? defaultError;
-    param.message = param.message ?? unknownError;
-    param.color = param.color ?? 'red';
-    param.url = param.url ?? null;
+    if (logout) {
+        setSessionStorage('logout', '1');
+    }
+    if (replaceBody) {
+        setSessionStorage('replace-body', '1');
+    }
 
-    const cookie: LocalMessageParam = {
-        message: param.message,
-        title: param.title,
-        color: param.color,
-        logout: logout,
-        url: param.url,
-        htmlTitle: getTitle()
-    };
-
-    setCookie('local-message-param', JSON.stringify(cookie), 86400);
-    redirect(TOP_URL + '/message', true);
+    if (getBaseURL().startsWith(LOGIN_URL)) {
+        redirect(LOGIN_URL + '/message', true);
+    } else {
+        redirect(TOP_URL + '/message', true);
+    }
 }

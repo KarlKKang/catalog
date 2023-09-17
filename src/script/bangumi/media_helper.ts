@@ -25,8 +25,8 @@ import {
     createOptionElement,
     createHRElement,
     createUListElement,
-    createLIElement,
     appendText,
+    appendListItems,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -118,12 +118,13 @@ export function buildDownloadAccordion(
     appendChild(accordionPanel, createHRElement());
 
     const accordionPanelContent = createUListElement();
-    appendListItems(accordionPanelContent, [
+    appendListItems(
+        accordionPanelContent,
         '下の「ダウンロード」ボタンをクリックすると、必要なスクリプトが入ったZIPファイルがダウンロードできます。',
         'ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。',
         'スクリプトを実行するには、Windows、macOS、またはLinuxを搭載したパソコンが必要です。',
         'インターネット接続が良好であることをご確認してください。',
-    ]);
+    );
     appendChild(accordionPanel, accordionPanelContent);
 
     const downloadOptionsContainer = createDivElement();
@@ -225,14 +226,6 @@ export function buildDownloadAccordion(
     appendChild(downloadElem, iframe);
     addAccordionEvent(accordion, accordionPanel, true);
     return [downloadElem, containerSelector];
-}
-
-function appendListItems(list: HTMLUListElement, contents: string[]): void {
-    for (const content of contents) {
-        const item = createLIElement();
-        appendText(item, content);
-        appendChild(list, item);
-    }
 }
 
 export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, active: boolean): void {

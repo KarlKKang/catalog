@@ -78,7 +78,7 @@ function submitRequest() {
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'DONE') {
-                showMessage(emailSent(LOGIN_URL));
+                showMessage(emailSent(false));
             } else {
                 showMessage();
             }

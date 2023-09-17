@@ -1,3 +1,4 @@
+import { isString } from '../../../type/helper';
 import { defaultErrorSuffix, browserCompatibilitySuffix } from '../comm';
 export { passwordChanged, emailAlreadyRegistered } from '../comm';
 export { defaultErrorSuffix, browserCompatibilitySuffix };
@@ -9,12 +10,12 @@ export const registerComplete = 'アカウントが登録されました。';
 export const emailSent = '届くまでに時間がかかる場合があります。';
 export const unrecommendedBrowser = '一部のコンテンツが正常に再生されない場合は、Safari 11またはChrome 63以降のブラウザをお使いください。';
 export const moduleImportError = (e: unknown) => {
-    let message = 'Cannot get message from exception.';
-    if (typeof e === 'string') {
-        message = e;
+    let message: string = `モジュールの読み込みに失敗しました。${defaultErrorSuffix}`;
+    if (isString(e)) {
+        message += `<br>${e}`;
     } else if (e instanceof Error) {
-        message = e.message;
+        message += `<br>${e.message}`;
     }
-    return `モジュールの読み込みに失敗しました。${defaultErrorSuffix}<br>` + message;
+    return message;
 };
 export const insufficientPermissions = 'このページを閲覧する権限がありません。';

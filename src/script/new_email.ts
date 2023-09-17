@@ -98,7 +98,7 @@ function submitRequest(param: string, signature: string) {
                 showElement(warningElem);
                 disableAllInputs(false);
             } else if (response == 'DONE') {
-                showMessage(emailSent(TOP_URL));
+                showMessage(emailSent(false));
             } else {
                 showMessage();
             }

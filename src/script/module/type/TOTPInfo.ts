@@ -1,5 +1,4 @@
-import { isString } from '../main';
-import { isObject, throwError } from './helper';
+import { isObject, throwError, isString } from './helper';
 
 export type TOTPInfo = {
     uri: string;

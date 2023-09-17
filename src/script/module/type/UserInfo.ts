@@ -1,5 +1,4 @@
-import { isString } from '../main';
-import { throwError, isObject, isNumber, isBoolean } from './helper';
+import { throwError, isObject, isNumber, isBoolean, isString } from './helper';
 
 export interface UserInfo {
     username: string;

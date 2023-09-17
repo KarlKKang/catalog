@@ -1,4 +1,4 @@
-let dynamicImportPromise: Promise<any> | null = null; // eslint-disable-line @typescript-eslint/no-unused-vars, prefer-const
+let dynamicImportTest: Promise<any> | null = null; // eslint-disable-line @typescript-eslint/no-unused-vars, prefer-const
 
 function unsupportRedirect() {
     const URL = 'https://<%=data.domain%>/unsupported_browser';
@@ -53,13 +53,59 @@ function unsupportRedirect() {
         return;
     }
 
+    const getCookie = (name: string) => {
+        name = name + '=';
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            while (cookie.charAt(0) == ' ') {
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf(name) == 0) {
+                return cookie.substring(name.length, cookie.length);
+            }
+        }
+        return null;
+    };
+
+    try {
+        const x = '__cookie_test__';
+        document.cookie = x + '=' + x + ';max-age=10;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
+        if (getCookie(x) !== x) {
+            unsupportRedirect();
+            return;
+        }
+        document.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
+    } catch (e) {
+        unsupportRedirect();
+        return;
+    }
+
+    try {
+        const storage = window.sessionStorage;
+        if (!storage) {
+            unsupportRedirect();
+            return;
+        }
+        const x = '__storage_test__';
+        storage.setItem(x, x);
+        if (storage.getItem(x) !== x) {
+            unsupportRedirect();
+            return;
+        }
+        storage.removeItem(x);
+    } catch (e) {
+        // QuotaExceededError will be treated as unsupported browser. The storage should never reach the quota of a properly configured browser in normal operation.
+        unsupportRedirect();
+        return;
+    }
+
     window.addEventListener('load', () => {
         const dynamicImportScript = document.createElement('script');
-        dynamicImportScript.textContent = 'dynamicImportPromise=import("data:text/javascript;base64,Cg==")';
+        dynamicImportScript.textContent = 'dynamicImportTest=import("data:text/javascript;base64,Cg==")';
         document.body.appendChild(dynamicImportScript);
 
         const checkScript = document.createElement('script');
-        checkScript.textContent = 'dynamicImportPromise instanceof Promise?dynamicImportPromise.catch(function(){unsupportRedirect()}):unsupportRedirect()';
+        checkScript.textContent = 'dynamicImportTest instanceof Promise?dynamicImportTest.catch(function(){unsupportRedirect()}):unsupportRedirect()';
         document.body.appendChild(checkScript);
     });
 })();

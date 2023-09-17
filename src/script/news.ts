@@ -39,7 +39,7 @@ import {
     removeAllEventListeners,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { invalidResponse } from './module/message/template/param/server';
+import { invalidResponse, notFound } from './module/message/template/param/server';
 import { moduleImportError } from './module/message/template/param';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
@@ -109,7 +109,7 @@ function getNews(newsID: string): void {
 
             addEventListener(xhr, 'error', () => {
                 removeAllEventListeners(xhr);
-                redirect(TOP_URL);
+                showMessage(notFound);
             });
             addEventListener(xhr, 'abort', () => {
                 removeAllEventListeners(xhr);
@@ -120,7 +120,7 @@ function getNews(newsID: string): void {
                     contentContainer.innerHTML = xhr.responseText;
                     scrollToHash();
                 } else {
-                    redirect(TOP_URL);
+                    showMessage(notFound);
                 }
             });
 

@@ -24,13 +24,18 @@ import { objectKeyExists } from './module/main';
     };
     const loginPages = {
         '': () => import('./login'),
+        'message': () => import('./message'),
         'request_password_reset': () => import('./request_password_reset'),
         'password_reset': () => import('./password_reset'),
     };
 
-    const baseURL = getBaseURL();
+    let baseURL = getBaseURL();
 
-    if (baseURL.startsWith(TOP_URL)) {
+    if (baseURL === TOP_URL || baseURL === LOGIN_URL) {
+        baseURL += '/';
+    }
+
+    if (baseURL.startsWith(TOP_URL + '/')) {
         let page = baseURL.substring(TOP_URL.length + 1);
         if (objectKeyExists(page, pages)) {
             loadPage(pages[page as keyof typeof pages]());
@@ -43,7 +48,7 @@ import { objectKeyExists } from './module/main';
         }
     }
 
-    if (baseURL.startsWith(LOGIN_URL)) {
+    if (baseURL.startsWith(LOGIN_URL + '/')) {
         const page = baseURL.substring(LOGIN_URL.length + 1);
         if (objectKeyExists(page, loginPages)) {
             loadPage(loginPages[page as keyof typeof loginPages]());
