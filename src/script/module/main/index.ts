@@ -29,7 +29,6 @@ import {
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
-import type { CDNCredentials } from '../type/CDNCredentials';
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
@@ -285,17 +284,6 @@ export function changeColor(elem: HTMLElement, color: string | null) {
     removeClass(elem, 'color-green');
     removeClass(elem, 'color-orange');
     color && addClass(elem, 'color-' + color);
-}
-
-export function concatenateSignedURL(url: string, credentials: CDNCredentials, resourceURLOverride?: string) {
-    const policy = credentials['Policy'];
-    policy['Statement'][0]['Resource'] = resourceURLOverride ?? url;
-    let policyString = JSON.stringify(policy);
-    policyString = w.btoa(policyString);
-    policyString = policyString.replace(/\+/g, '-');
-    policyString = policyString.replace(/=/g, '_');
-    policyString = policyString.replace(/\//g, '~');
-    return url + '?Policy=' + policyString + '&Signature=' + credentials['Signature'] + '&Key-Pair-Id=' + credentials['Key-Pair-Id'];
 }
 
 export function disableInput(inputElement: HTMLInputElement, disabled: boolean) {
