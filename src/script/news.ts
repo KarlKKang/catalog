@@ -36,6 +36,7 @@ import {
     createHRElement,
     createBRElement,
     appendText,
+    removeAllEventListeners,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -85,7 +86,7 @@ function getNewsID(): string | null {
 
 function getNews(newsID: string): void {
     const hash = getHash();
-    sendServerRequest('get_news' + '?id=' + newsID, {
+    sendServerRequest('get_news', {
         callback: function (response: string) {
             let parsedResponse: NewsInfo.NewsInfo;
             try {
@@ -95,19 +96,47 @@ function getNews(newsID: string): void {
                 showMessage(invalidResponse);
                 return;
             }
-            showNews(parsedResponse, newsID);
-            addNavBar('news', () => {
-                redirect(NEWS_TOP_URL);
+
+            const showNewsPromise = new Promise<HTMLDivElement>((resolve) => {
+                const contentContainer = showNews(parsedResponse, newsID);
+                addNavBar('news', () => {
+                    redirect(NEWS_TOP_URL);
+                });
+                showElement(getBody());
+                resolve(contentContainer);
             });
-            showElement(getBody());
-            scrollToHash();
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', CDN_URL + '/news/' + newsID + '.html');
+            xhr.withCredentials = true;
+
+            addEventListener(xhr, 'error', () => {
+                removeAllEventListeners(xhr);
+                redirect(TOP_URL);
+            });
+            addEventListener(xhr, 'abort', () => {
+                removeAllEventListeners(xhr);
+            });
+            addEventListener(xhr, 'load', () => {
+                removeAllEventListeners(xhr);
+                if (xhr.status === 200) {
+                    showNewsPromise.then((contentContainer) => {
+                        contentContainer.innerHTML = xhr.responseText;
+                        scrollToHash();
+                    });
+                } else {
+                    redirect(TOP_URL);
+                }
+            });
+
+            xhr.send();
         },
-        method: 'GET',
+        content: 'id=' + newsID,
         logoutParam: 'news=' + newsID + ((hash === '') ? '' : ('&hash=' + hash))
     });
 }
 
-function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
+function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): HTMLDivElement {
     const outerContainer = createDivElement();
     outerContainer.id = 'content-outer-container';
     const container = createDivElement();
@@ -140,7 +169,6 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
 
     const contentContainer = createDivElement();
     contentContainer.id = 'content';
-    contentContainer.innerHTML = newsInfo.content; // Content is in HTML syntax.
     appendChild(container, contentContainer);
 
     appendChild(outerContainer, container);
@@ -148,6 +176,8 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): void {
 
     bindEventListners(contentContainer);
     attachImage(contentContainer, newsID);
+
+    return contentContainer;
 }
 
 async function attachImage(contentContainer: HTMLElement, newsID: string): Promise<void> {
