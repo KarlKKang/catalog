@@ -95,7 +95,7 @@ function getNews(newsID: string): void {
                 return;
             }
 
-            const contentContainer = showNews(parsedResponse, newsID);
+            const contentContainer = showNews(parsedResponse);
             addNavBar('news', () => {
                 redirect(NEWS_TOP_URL);
             });
@@ -116,6 +116,8 @@ function getNews(newsID: string): void {
                 removeAllEventListeners(xhr);
                 if (xhr.status === 200) {
                     contentContainer.innerHTML = xhr.responseText;
+                    bindEventListners(contentContainer);
+                    attachImage(contentContainer, newsID);
                     scrollToHash();
                 } else {
                     showMessage(notFound);
@@ -129,7 +131,7 @@ function getNews(newsID: string): void {
     });
 }
 
-function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): HTMLDivElement {
+function showNews(newsInfo: NewsInfo.NewsInfo): HTMLDivElement {
     const outerContainer = createDivElement();
     outerContainer.id = 'content-outer-container';
     const container = createDivElement();
@@ -167,9 +169,6 @@ function showNews(newsInfo: NewsInfo.NewsInfo, newsID: string): HTMLDivElement {
     appendChild(outerContainer, container);
     appendChild(getById('container'), outerContainer);
 
-    bindEventListners(contentContainer);
-    attachImage(contentContainer, newsID);
-
     return contentContainer;
 }
 
@@ -199,6 +198,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string): Promi
                 setSessionStorage('xhr-param', xhrParam);
                 setSessionStorage('title', getTitle());
                 openWindow(TOP_URL + '/image');
+                clearSessionStorage();
             });
         }
         removeRightClick(elem);
