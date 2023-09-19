@@ -14,7 +14,7 @@ __pycache__
 /src/font/**/*.css
 /dist/script/*
 /dist/script_legacy/*
-/dist/css/*
+/dist/style/*
 /dist/font/*
 /dist/*.html
 !/dist/google688e01234602d07d.html

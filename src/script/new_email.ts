@@ -6,12 +6,12 @@ import {
     sendServerRequest,
     getURLParam,
     disableInput,
+    showPage,
 } from './module/main';
 import {
     addEventListener,
     redirect,
     getById,
-    getBody,
     showElement,
     replaceText,
     clearSessionStorage,
@@ -20,25 +20,21 @@ import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
 import { expired, emailSent } from './module/message/template/param';
 import { EMAIL_REGEX } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 let newEmailInput: HTMLInputElement;
 let submitButton: HTMLButtonElement;
 let warningElem: HTMLElement;
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
-
-    newEmailInput = getById('new-email') as HTMLInputElement;
-    submitButton = getById('submit-button') as HTMLButtonElement;
-    warningElem = getById('warning');
 
     const param = getURLParam('p');
     const signature = getURLParam('signature');
 
-
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showElement(getBody());
+            showPage(styleImportPromises, htmlImportPromises);
         } else {
             redirect(TOP_URL, true);
         }
@@ -54,16 +50,21 @@ export default function () {
             if (response == 'EXPIRED') {
                 showMessage(expired);
             } else if (response == 'APPROVED') {
-                addEventListener(newEmailInput, 'keydown', (event) => {
-                    if ((event as KeyboardEvent).key === 'Enter') {
-                        submitRequest(param, signature);
-                    }
-                });
+                showPage(styleImportPromises, htmlImportPromises, () => {
+                    newEmailInput = getById('new-email') as HTMLInputElement;
+                    submitButton = getById('submit-button') as HTMLButtonElement;
+                    warningElem = getById('warning');
 
-                addEventListener(submitButton, 'click', () => {
-                    submitRequest(param, signature);
+                    addEventListener(newEmailInput, 'keydown', (event) => {
+                        if ((event as KeyboardEvent).key === 'Enter') {
+                            submitRequest(param, signature);
+                        }
+                    });
+
+                    addEventListener(submitButton, 'click', () => {
+                        submitRequest(param, signature);
+                    });
                 });
-                showElement(getBody());
             } else {
                 showMessage();
             }

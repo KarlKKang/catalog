@@ -5,6 +5,7 @@ import {
 import {
     sendServerRequest,
     getURLParam,
+    showPage,
 } from '../module/main';
 import {
     clearSessionStorage,
@@ -18,8 +19,9 @@ import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam, getFormatIndex } from './helper';
 import { default as getImportPromises } from './get_import_promises';
 import type { default as updatePageType } from './update_page';
+import type { HTMLImport } from '../module/type/HTMLImport';
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
 
     // Parse parameters
@@ -66,18 +68,21 @@ export default function () {
                 showMessage(moduleImportError(e));
                 throw e;
             }
-            updatePage(
-                parsedResponse,
-                seriesID,
-                epIndex,
-                importPromises.video,
-                importPromises.audio,
-                importPromises.image,
-                importPromises.nativePlayer,
-                importPromises.hlsPlayer,
-                importPromises.videojsPlayer,
-                importPromises.lazyload
-            );
+
+            showPage(styleImportPromises, htmlImportPromises, () => {
+                updatePage(
+                    parsedResponse,
+                    seriesID,
+                    epIndex,
+                    importPromises.video,
+                    importPromises.audio,
+                    importPromises.image,
+                    importPromises.nativePlayer,
+                    importPromises.hlsPlayer,
+                    importPromises.videojsPlayer,
+                    importPromises.lazyload
+                );
+            });
         },
         content: 'series=' + seriesID + '&ep=' + epIndex + '&format=' + getFormatIndex(),
         logoutParam: getLogoutParam(seriesID, epIndex)

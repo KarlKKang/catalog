@@ -7,12 +7,12 @@ import {
     sendServerRequest,
     passwordStyling,
     disableInput,
+    showPage,
 } from './module/main';
 import {
     addEventListener,
     redirect,
     getById,
-    getBody,
     getByClassAt,
     openWindow,
     showElement,
@@ -23,6 +23,7 @@ import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 import { PASSWORD_REGEX } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 let submitButton: HTMLButtonElement;
 let usernameInput: HTMLInputElement;
@@ -30,22 +31,15 @@ let passwordInput: HTMLInputElement;
 let passwordConfirmInput: HTMLInputElement;
 let warningElem: HTMLElement;
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
-
-    submitButton = getById('submit-button') as HTMLButtonElement;
-    usernameInput = getById('username') as HTMLInputElement;
-    passwordInput = getById('password') as HTMLInputElement;
-    passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
-    warningElem = getById('warning');
 
     const param = getURLParam('p');
     const signature = getURLParam('signature');
 
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showElement(getBody());
-            addInfoRedirects();
+            showPage(styleImportPromises, htmlImportPromises, addInfoRedirects);
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -64,32 +58,38 @@ export default function () {
             } else if (response == 'ALREADY REGISTERED') {
                 showMessage(emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
-                addEventListener(usernameInput, 'keydown', (event) => {
-                    if ((event as KeyboardEvent).key === 'Enter') {
+                showPage(styleImportPromises, htmlImportPromises, () => {
+                    submitButton = getById('submit-button') as HTMLButtonElement;
+                    usernameInput = getById('username') as HTMLInputElement;
+                    passwordInput = getById('password') as HTMLInputElement;
+                    passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
+                    warningElem = getById('warning');
+
+                    addEventListener(usernameInput, 'keydown', (event) => {
+                        if ((event as KeyboardEvent).key === 'Enter') {
+                            register(param, signature);
+                        }
+                    });
+                    addEventListener(passwordInput, 'keydown', (event) => {
+                        if ((event as KeyboardEvent).key === 'Enter') {
+                            register(param, signature);
+                        }
+                    });
+                    addEventListener(passwordConfirmInput, 'keydown', (event) => {
+                        if ((event as KeyboardEvent).key === 'Enter') {
+                            register(param, signature);
+                        }
+                    });
+
+
+                    addInfoRedirects();
+                    addEventListener(submitButton, 'click', () => {
                         register(param, signature);
-                    }
-                });
-                addEventListener(passwordInput, 'keydown', (event) => {
-                    if ((event as KeyboardEvent).key === 'Enter') {
-                        register(param, signature);
-                    }
-                });
-                addEventListener(passwordConfirmInput, 'keydown', (event) => {
-                    if ((event as KeyboardEvent).key === 'Enter') {
-                        register(param, signature);
-                    }
-                });
+                    });
 
-
-                addInfoRedirects();
-                addEventListener(submitButton, 'click', () => {
-                    register(param, signature);
+                    passwordStyling(passwordInput);
+                    passwordStyling(passwordConfirmInput);
                 });
-
-                passwordStyling(passwordInput);
-                passwordStyling(passwordConfirmInput);
-
-                showElement(getBody());
             } else {
                 showMessage();
             }

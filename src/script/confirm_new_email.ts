@@ -7,12 +7,12 @@ import {
     getURLParam,
     passwordStyling,
     disableInput,
+    showPage,
 } from './module/main';
 import {
     addEventListener,
     redirect,
     showElement,
-    getBody,
     getById,
     replaceChildren,
     replaceText,
@@ -23,26 +23,22 @@ import { expired, emailChanged, emailAlreadyRegistered } from './module/message/
 import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
 import { promptForTotp } from './module/pop_up_window';
 import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 let emailInput: HTMLInputElement;
 let passwordInput: HTMLInputElement;
 let submitButton: HTMLButtonElement;
 let warningElem: HTMLElement;
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
-
-    emailInput = getById('email') as HTMLInputElement;
-    passwordInput = getById('password') as HTMLInputElement;
-    submitButton = getById('submit-button') as HTMLButtonElement;
-    warningElem = getById('warning');
 
     const param = getURLParam('p');
     const signature = getURLParam('signature');
 
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showElement(getBody());
+            showPage(styleImportPromises, htmlImportPromises);
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -60,19 +56,25 @@ export default function () {
             } else if (response == 'DUPLICATED') {
                 showMessage(emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
-                const changeEmailOnKeyDown = (event: Event) => {
-                    if ((event as KeyboardEvent).key === 'Enter') {
-                        changeEmail(param, signature);
-                    }
-                };
-                addEventListener(emailInput, 'keydown', changeEmailOnKeyDown);
-                addEventListener(passwordInput, 'keydown', changeEmailOnKeyDown);
-                addEventListener(submitButton, 'click', () => {
-                    changeEmail(param, signature);
-                });
+                showPage(styleImportPromises, htmlImportPromises, () => {
+                    emailInput = getById('email') as HTMLInputElement;
+                    passwordInput = getById('password') as HTMLInputElement;
+                    submitButton = getById('submit-button') as HTMLButtonElement;
+                    warningElem = getById('warning');
 
-                passwordStyling(passwordInput);
-                showElement(getBody());
+                    const changeEmailOnKeyDown = (event: Event) => {
+                        if ((event as KeyboardEvent).key === 'Enter') {
+                            changeEmail(param, signature);
+                        }
+                    };
+                    addEventListener(emailInput, 'keydown', changeEmailOnKeyDown);
+                    addEventListener(passwordInput, 'keydown', changeEmailOnKeyDown);
+                    addEventListener(submitButton, 'click', () => {
+                        changeEmail(param, signature);
+                    });
+
+                    passwordStyling(passwordInput);
+                });
             } else {
                 showMessage();
             }

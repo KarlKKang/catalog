@@ -3,11 +3,12 @@ const common = require('./webpack.common.cjs');
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require('path');
 const { DefinePlugin } = require('webpack');
+const { addHTMLConfig, addFontLoader } = require('./webpack_helper.cjs');
 
 const config = merge(common, {
     mode: 'production',
     output: {
-        path: path.resolve(__dirname, 'dist/script'),
+        path: path.resolve(__dirname, 'dist'),
     },
     optimization: {
         minimize: true,
@@ -42,6 +43,7 @@ config.plugins.push(
     })
 );
 
-require('./webpack_helper.cjs').addHTMLConfig(config, false);
+addHTMLConfig(config, false);
+addFontLoader(config, false);
 
 module.exports = config;

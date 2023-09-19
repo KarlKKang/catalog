@@ -8,6 +8,7 @@ import {
     scrollToHash,
     addNavBar,
     removeRightClick,
+    showPage,
 } from './module/main';
 import {
     addEventListener,
@@ -16,8 +17,6 @@ import {
     getById,
     addClass,
     appendChild,
-    removeClass,
-    getBody,
     getDescendantsByClass,
     openWindow,
     changeURL,
@@ -25,7 +24,6 @@ import {
     getTitle,
     getHash,
     getDataAttribute,
-    showElement,
     containsClass,
     createDivElement,
     createParagraphElement,
@@ -45,6 +43,7 @@ import initializeInfiniteScrolling from './module/infinite_scrolling';
 import isbot from 'isbot';
 import type { default as LazyloadObserve } from './module/lazyload';
 import { encodeCFURIComponent, getLocalTime } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo = 0;
@@ -54,7 +53,7 @@ let lazyloadImportPromise: Promise<typeof import(
     './module/lazyload'
 )>;
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
@@ -66,14 +65,13 @@ export default function () {
         if (getBaseURL() !== NEWS_TOP_URL) {
             changeURL(NEWS_TOP_URL, true);
         }
-        infiniteScrolling = initializeInfiniteScrolling(getAllNews);
-        getAllNews();
+        getAllNews(styleImportPromises, htmlImportPromises);
     } else {
         lazyloadImportPromise = import(
             /* webpackExports: ["default"] */
             './module/lazyload'
         );
-        getNews(newsID);
+        getNews(newsID, styleImportPromises, htmlImportPromises);
     }
 }
 
@@ -82,7 +80,7 @@ function getNewsID(): string | null {
     return getBaseURL().substring(start);
 }
 
-function getNews(newsID: string): void {
+function getNews(newsID: string, styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport): void {
     const hash = getHash();
     sendServerRequest('get_news', {
         callback: function (response: string) {
@@ -95,11 +93,15 @@ function getNews(newsID: string): void {
                 return;
             }
 
-            const contentContainer = showNews(parsedResponse);
-            addNavBar('news', () => {
-                redirect(NEWS_TOP_URL);
+            const showPagePromise = new Promise<HTMLDivElement>((resolve) => {
+                showPage(styleImportPromises, htmlImportPromises, () => {
+                    const contentContainer = showNews(parsedResponse);
+                    addNavBar('news', () => {
+                        redirect(NEWS_TOP_URL);
+                    });
+                    resolve(contentContainer);
+                });
             });
-            showElement(getBody());
 
             const xhr = new XMLHttpRequest();
             xhr.open('GET', CDN_URL + '/news/' + newsID + '.html');
@@ -115,10 +117,12 @@ function getNews(newsID: string): void {
             addEventListener(xhr, 'load', () => {
                 removeAllEventListeners(xhr);
                 if (xhr.status === 200) {
-                    contentContainer.innerHTML = xhr.responseText;
-                    bindEventListners(contentContainer);
-                    attachImage(contentContainer, newsID);
-                    scrollToHash();
+                    showPagePromise.then((contentContainer) => {
+                        contentContainer.innerHTML = xhr.responseText;
+                        bindEventListners(contentContainer);
+                        attachImage(contentContainer, newsID);
+                        scrollToHash();
+                    });
                 } else {
                     showMessage(notFound);
                 }
@@ -246,7 +250,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
     }
 }
 
-function getAllNews(): void {
+function getAllNews(styleImportPromises?: Promise<any>[], htmlImportPromises?: HTMLImport): void {
     if (pivot === 'EOF') {
         return;
     }
@@ -261,11 +265,16 @@ function getAllNews(): void {
                 showMessage(invalidResponse);
                 return;
             }
-            addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
-            showElement(getBody());
-            showAllNews(parsedResponse);
-            addNavBar('news');
-            removeClass(getBody(), 'invisible');
+
+            if (styleImportPromises === undefined || htmlImportPromises === undefined) {
+                showAllNews(parsedResponse);
+            } else {
+                showPage(styleImportPromises, htmlImportPromises, () => {
+                    addNavBar('news');
+                    infiniteScrolling = initializeInfiniteScrolling(getAllNews);
+                    showAllNews(parsedResponse);
+                });
+            }
         },
         content: 'pivot=' + pivot
     });

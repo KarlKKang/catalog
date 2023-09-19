@@ -10,6 +10,7 @@ import {
     disableInput,
     changeColor,
     scrollToTop,
+    showPage,
 } from './module/main';
 import {
     w,
@@ -19,11 +20,9 @@ import {
     getDescendantsByTagAt,
     getDescendantsByClassAt,
     removeClass,
-    getBody,
     addClass,
     changeURL,
     appendChild,
-    showElement,
     insertBefore,
     createDivElement,
     createParagraphElement,
@@ -40,6 +39,7 @@ import type { default as LazyloadObserve } from './module/lazyload';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 import isbot from 'isbot';
 import { getLocalTime } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 let searchBar: HTMLElement;
 let searchBarInput: HTMLInputElement;
@@ -55,7 +55,7 @@ let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
@@ -73,12 +73,11 @@ export default function () {
         './module/image_loader'
     );
 
-    searchBar = getById('search-bar');
-    searchBarInput = getDescendantsByTagAt(searchBar, 'input', 0) as HTMLInputElement;
+    const urlKeywords = getURLKeywords();
+    if (urlKeywords !== '') {
+        keywords = 'keywords=' + encodeURIComponent(urlKeywords) + '&';
+    }
 
-    containerElem = getById('container');
-
-    getURLKeywords();
     getSeries(async (seriesInfo: SeriesInfo.SeriesInfo) => {
         try {
             const lazyloadModule = await lazyloadImportPromise;
@@ -92,57 +91,67 @@ export default function () {
             throw e;
         }
 
-        infiniteScrolling = initializeInfiniteScrolling(getSeries, - 256 - 24);
-        addClass(getBody(), 'invisible'); // Infinite scrolling does not work when element 'display' property is set to 'none'.
-        showElement(getBody());
-        if (seriesInfo.maintenance !== undefined) {
-            const annoucementContainer = createDivElement();
-            addClass(annoucementContainer, 'announcement');
-            const announcementTitle = createParagraphElement();
-            addClass(announcementTitle, 'announcement-title');
-            changeColor(announcementTitle, 'orange');
-            const announcementBody = createParagraphElement();
-            addClass(announcementBody, 'announcement-body');
-            appendChild(annoucementContainer, announcementTitle);
-            appendChild(annoucementContainer, announcementBody);
-            insertBefore(annoucementContainer, containerElem);
-            appendText(announcementTitle, 'メンテナンスのお知らせ');
+        showPage(styleImportPromises, htmlImportPromises, () => {
+            searchBar = getById('search-bar');
+            searchBarInput = getDescendantsByTagAt(searchBar, 'input', 0) as HTMLInputElement;
+            containerElem = getById('container');
+            searchBarInput.value = urlKeywords;
 
-            const maintenanceInfo = seriesInfo.maintenance;
-            let message = '';
-            const startTime = getLocalTime(maintenanceInfo.start);
-            if (maintenanceInfo.period > 0) {
-                const endTime = getLocalTime(maintenanceInfo.start + maintenanceInfo.period);
-                message = `${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}～${endTime.year}年${endTime.month}月${endTime.date}日（${endTime.dayOfWeek}）${endTime.hour.toString().padStart(2, '0')}:${endTime.minute.toString().padStart(2, '0')}の間、メンテナンスを実施する予定です。`;
-            } else {
-                message = `メンテナンス開始は${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}を予定しております。`;
+            infiniteScrolling = initializeInfiniteScrolling(getSeries, - 256 - 24);
+            if (seriesInfo.maintenance !== undefined) {
+                const annoucementContainer = createDivElement();
+                addClass(annoucementContainer, 'announcement');
+                const announcementTitle = createParagraphElement();
+                addClass(announcementTitle, 'announcement-title');
+                changeColor(announcementTitle, 'orange');
+                const announcementBody = createParagraphElement();
+                addClass(announcementBody, 'announcement-body');
+                appendChild(annoucementContainer, announcementTitle);
+                appendChild(annoucementContainer, announcementBody);
+                insertBefore(annoucementContainer, containerElem);
+                appendText(announcementTitle, 'メンテナンスのお知らせ');
+
+                const maintenanceInfo = seriesInfo.maintenance;
+                let message = '';
+                const startTime = getLocalTime(maintenanceInfo.start);
+                if (maintenanceInfo.period > 0) {
+                    const endTime = getLocalTime(maintenanceInfo.start + maintenanceInfo.period);
+                    message = `${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}～${endTime.year}年${endTime.month}月${endTime.date}日（${endTime.dayOfWeek}）${endTime.hour.toString().padStart(2, '0')}:${endTime.minute.toString().padStart(2, '0')}の間、メンテナンスを実施する予定です。`;
+                } else {
+                    message = `メンテナンス開始は${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}を予定しております。`;
+                }
+                message += 'ご不便をおかけして申し訳ありません。';
+                appendText(announcementBody, message);
             }
-            message += 'ご不便をおかけして申し訳ありません。';
-            appendText(announcementBody, message);
-        }
-        showSeries(seriesInfo);
-        addNavBar('home', () => {
-            scrollToTop();
-            if (keywords !== '') {
-                searchBarInput.value = '';
-                search();
-            }
+            showSeries(seriesInfo);
+            addNavBar('home', () => {
+                scrollToTop();
+                if (keywords !== '') {
+                    searchBarInput.value = '';
+                    search();
+                }
+            });
+            addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', () => {
+                if (!searchBarInput.disabled) {
+                    search();
+                }
+            });
+            addEventListener(searchBarInput, 'keyup', (event) => {
+                if ((event as KeyboardEvent).key === 'Enter') {
+                    search();
+                }
+            });
+            addEventListener(w, 'popstate', () => {
+                const urlKeywords = getURLKeywords();
+                searchBarInput.value = urlKeywords;
+                if (urlKeywords === '') {
+                    keywords = '';
+                } else {
+                    keywords = 'keywords=' + encodeURIComponent(urlKeywords) + '&';
+                }
+                requestSearchResults();
+            });
         });
-        addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', () => {
-            if (!searchBarInput.disabled) {
-                search();
-            }
-        });
-        addEventListener(searchBarInput, 'keyup', (event) => {
-            if ((event as KeyboardEvent).key === 'Enter') {
-                search();
-            }
-        });
-        addEventListener(w, 'popstate', () => {
-            getURLKeywords();
-            requestSearchResults();
-        });
-        removeClass(getBody(), 'invisible');
     });
 }
 
@@ -196,17 +205,9 @@ function search() {
 function getURLKeywords() {
     const urlParam = getURLParam('keywords');
     if (urlParam == null) {
-        keywords = '';
-        searchBarInput.value = '';
+        return '';
     } else {
-        keywords = decodeURIComponent(urlParam).substring(0, 50);
-        if (keywords === '') {
-            keywords = '';
-            searchBarInput.value = '';
-        } else {
-            searchBarInput.value = keywords;
-            keywords = 'keywords=' + encodeURIComponent(keywords) + '&';
-        }
+        return decodeURIComponent(urlParam).substring(0, 50);
     }
 }
 

@@ -5,6 +5,7 @@ import {
 import {
     sendServerRequest,
     removeRightClick,
+    showPage,
 } from './module/main';
 import {
     redirect,
@@ -17,8 +18,9 @@ import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
 import { encodeCFURIComponent } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     const baseURL = getSessionStorage('base-url');
     const fileName = getSessionStorage('file-name');
     const xhrParam = getSessionStorage('xhr-param');
@@ -58,20 +60,21 @@ export default function () {
 
     setTitle(title);
 
-    const container = getById('image-container');
-    removeRightClick(container);
-
     sendServerRequest(uri, {
         callback: function (response: string) {
             if (response !== 'APPROVED') {
                 showMessage(invalidResponse);
                 return;
             }
+            showPage(styleImportPromises, htmlImportPromises, () => {
+                const container = getById('image-container');
+                removeRightClick(container);
 
-            imageLoaderImportPromise.then(({ default: imageLoader }) => {
-                imageLoader(container, baseURL + encodeCFURIComponent(fileName), fileName, true);
-            }).catch((e) => {
-                showMessage(moduleImportError(e));
+                imageLoaderImportPromise.then(({ default: imageLoader }) => {
+                    imageLoader(container, baseURL + encodeCFURIComponent(fileName), fileName, true);
+                }).catch((e) => {
+                    showMessage(moduleImportError(e));
+                });
             });
         },
         content: content

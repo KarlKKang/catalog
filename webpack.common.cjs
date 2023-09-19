@@ -1,16 +1,42 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
 const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
 
 const config = {
     target: 'browserslist',
     entry: './src/script/entry',
-    plugins: [],
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: 'style/[id].css',
+        }),
+        new CircularDependencyPlugin({
+            exclude: /node_modules/,
+            failOnError: true,
+            allowAsyncCycles: false,
+            cwd: process.cwd(),
+        }),
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            reportFilename: '../../webpack-bundle-analyzer-report.html'
+        })
+    ],
     output: {
-        filename: '[id].js',
-        publicPath: '/script/',
-        clean: true,
+        filename: 'script/[id].js',
+        publicPath: '/',
+        clean: {
+            keep: (filename) => {
+                return filename === 'unsupported_browser.html' ||
+                    filename === 'style/unsupported_browser.css' ||
+                    filename === 'script_legacy' ||
+                    filename === 'icon' ||
+                    filename === 'google688e01234602d07d.html' ||
+                    filename === 'IndexNowb922f0d0-3cbe-42b9-b913-accbbf92100f.txt' ||
+                    filename === 'robots.txt' ||
+                    filename === 'sitemap.xml';
+            }
+        },
         chunkLoadingGlobal: 'loader'
     },
     optimization: {
@@ -83,23 +109,25 @@ const config = {
                     minimize: htmlMinifyOptions,
                 },
             },
+            {
+                test: /\.css$/i,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader'
+                ],
+                sideEffects: true,
+            },
+            {
+                test: /\.scss$/i,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'sass-loader',
+                ],
+                sideEffects: true,
+            },
         ]
     }
 };
-
-config.plugins.push(
-    new CircularDependencyPlugin({
-        exclude: /node_modules/,
-        failOnError: true,
-        allowAsyncCycles: false,
-        cwd: process.cwd(),
-    })
-);
-config.plugins.push(
-    new BundleAnalyzerPlugin({
-        analyzerMode: 'static',
-        reportFilename: '../../webpack-bundle-analyzer-report.html'
-    })
-);
 
 module.exports = config;

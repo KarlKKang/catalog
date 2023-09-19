@@ -7,13 +7,13 @@ import {
     sendServerRequest,
     authenticate,
     disableInput,
+    showPage,
 } from './module/main';
 import {
     addEventListener,
     redirect,
     getById,
     getDescendantsByTagAt,
-    getBody,
     showElement,
     replaceText,
     clearSessionStorage,
@@ -22,31 +22,14 @@ import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat } from './module/message/template/inline';
 import { EMAIL_REGEX } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 let emailInput: HTMLInputElement;
 let submitButton: HTMLButtonElement;
 let warningElem: HTMLElement;
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
-
-    emailInput = getById('email') as HTMLInputElement;
-    submitButton = getById('submit-button') as HTMLButtonElement;
-    warningElem = getById('warning');
-
-    addEventListener(emailInput, 'keydown', (event) => {
-        if ((event as KeyboardEvent).key === 'Enter') {
-            submitRequest();
-        }
-    });
-
-    addEventListener(submitButton, 'click', () => {
-        submitRequest();
-    });
-
-    addEventListener(getDescendantsByTagAt(getById('go-back'), 'span', 0), 'click', () => {
-        redirect(LOGIN_URL, true);
-    });
 
     authenticate({
         successful:
@@ -55,7 +38,25 @@ export default function () {
             },
         failed:
             function () {
-                showElement(getBody());
+                showPage(styleImportPromises, htmlImportPromises, () => {
+                    emailInput = getById('email') as HTMLInputElement;
+                    submitButton = getById('submit-button') as HTMLButtonElement;
+                    warningElem = getById('warning');
+
+                    addEventListener(emailInput, 'keydown', (event) => {
+                        if ((event as KeyboardEvent).key === 'Enter') {
+                            submitRequest();
+                        }
+                    });
+
+                    addEventListener(submitButton, 'click', () => {
+                        submitRequest();
+                    });
+
+                    addEventListener(getDescendantsByTagAt(getById('go-back'), 'span', 0), 'click', () => {
+                        redirect(LOGIN_URL, true);
+                    });
+                });
             },
     });
 }

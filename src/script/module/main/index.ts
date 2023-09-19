@@ -27,6 +27,7 @@ import {
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
+import { HTMLImport } from '../type/HTMLImport';
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
@@ -308,4 +309,15 @@ export function scrollToHash() {
             }, 500); //Give UI some time to load.
         }
     }
+}
+
+export function showPage(styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport, callback?: () => void) {
+    Promise.all(styleImportPromises).then(() => {
+        htmlImportPromises.then((html) => {
+            getBody().innerHTML = html.default;
+            callback?.();
+        });
+    }).catch((e) => {
+        showMessage(moduleImportError(e));
+    });
 }

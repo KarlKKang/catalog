@@ -5,21 +5,22 @@ import {
 import {
     addEventListener,
     getById,
-    getBody,
     redirect,
-    showElement,
     appendText,
     clearSessionStorage,
 } from './module/dom';
 import { notFound as notFoundTitle } from './module/message/template/title/server';
 import { notFound as notFoundBody } from './module/message/template/body/server';
+import type { HTMLImport } from './module/type/HTMLImport';
+import { showPage } from './module/main';
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
-    appendText(getById('title'), notFoundTitle);
-    appendText(getById('message'), notFoundBody);
-    addEventListener(getById('button'), 'click', () => {
-        redirect(TOP_URL);
+    showPage(styleImportPromises, htmlImportPromises, () => {
+        appendText(getById('title'), notFoundTitle);
+        appendText(getById('message'), notFoundBody);
+        addEventListener(getById('button'), 'click', () => {
+            redirect(TOP_URL);
+        });
     });
-    showElement(getBody());
 }

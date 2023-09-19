@@ -1,7 +1,7 @@
 // JavaScript Document
 import {
     LOGIN_URL,
-} from '../module/env/constant';
+} from './module/env/constant';
 import {
     addNavBar,
     passwordStyling,
@@ -9,12 +9,12 @@ import {
     changeColor,
     disableInput,
     logout,
-} from '../module/main';
+    showPage,
+} from './module/main';
 import {
     addEventListener,
     redirect,
     getById,
-    getBody,
     showElement,
     hideElement,
     appendText,
@@ -30,10 +30,10 @@ import {
     appendChildren,
     replaceChildren,
     clearSessionStorage,
-} from '../module/dom';
-import { show as showMessage } from '../module/message';
-import { emailSent as emailSentParam } from '../module/message/template/param';
-import { invalidResponse } from '../module/message/template/param/server';
+} from './module/dom';
+import { show as showMessage } from './module/message';
+import { emailSent as emailSentParam } from './module/message/template/param';
+import { invalidResponse } from './module/message/template/param/server';
 import {
     invitationNotQualified,
     invalidEmailFormat,
@@ -55,16 +55,16 @@ import {
     generateRecoveryCodeWait,
     mfaNotSet,
     mfaAlreadySet
-} from '../module/message/template/inline';
-import * as UserInfo from '../module/type/UserInfo';
-import * as TOTPInfo from '../module/type/TOTPInfo';
-import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
+} from './module/message/template/inline';
+import * as UserInfo from './module/type/UserInfo';
+import * as TOTPInfo from './module/type/TOTPInfo';
+import * as RecoveryCodeInfo from './module/type/RecoveryCodeInfo';
 import isbot from 'isbot';
-import body from './body.html';
-import { initializePopUpWindow, promptForTotp } from '../module/pop_up_window';
+import { initializePopUpWindow, promptForTotp } from './module/pop_up_window';
 import { toCanvas } from 'qrcode';
-import { isString } from '../module/type/helper';
-import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from '../module/main/pure';
+import { isString } from './module/type/helper';
+import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 let currentUsername: string;
 let currentMfaStatus: boolean;
@@ -92,7 +92,7 @@ let recoveryCodeWarning: HTMLElement;
 let mfaInfo: HTMLElement;
 let recoveryCodeInfo: HTMLElement;
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
@@ -109,14 +109,15 @@ export default function () {
                 showMessage(invalidResponse);
                 return;
             }
-            showUser(parsedResponse);
+
+            showPage(styleImportPromises, htmlImportPromises, () => {
+                showUser(parsedResponse);
+            });
         }
     });
 }
 
 function showUser(userInfo: UserInfo.UserInfo) {
-    getById('container').innerHTML = body;
-
     newUsernameInput = getById('new-username') as HTMLInputElement;
     newPasswordInput = getById('new-password') as HTMLInputElement;
     newPasswordComfirmInput = getById('new-password-confirm') as HTMLInputElement;
@@ -182,7 +183,6 @@ function showUser(userInfo: UserInfo.UserInfo) {
     currentUsername = userInfo.username;
 
     addNavBar('my_account');
-    showElement(getBody());
 }
 
 function invite() {

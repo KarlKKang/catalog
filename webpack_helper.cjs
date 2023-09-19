@@ -4,36 +4,32 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports.addHTMLConfig = function (config, dev) {
     const pages = [
-        '404',
-        'bangumi',
-        'confirm_new_email',
-        'console',
-        'image',
-        'index',
-        'info',
-        'login',
-        'message',
-        'my_account',
-        'new_email',
-        'news',
-        'password_reset',
-        'register',
-        'request_password_reset',
-        'special_register',
+        'entry',
+        'entry_no_index',
+        'entry_no_theme_no_index',
     ];
 
     for (const page of pages) {
         config.plugins.push(
             new HtmlWebpackPlugin({
                 minify: htmlMinifyOptions,
-                filename: '../' + page + '.html',
+                filename: page + '.html',
                 template: 'src/html/' + page + '.ejs',
                 templateParameters: {
-                    titleSuffix: DOMAIN + (dev ? ' (alpha)' : ''),
-                    domain: DOMAIN,
+                    title: DOMAIN + (dev ? ' (alpha)' : ''),
                     dev: dev
                 }
             })
         );
     }
 };
+
+module.exports.addFontLoader = function (config, dev) {
+    config.module.rules.push({
+        test: /\.woff2?$/i,
+        type: 'asset/resource',
+        generator: {
+            filename: 'font/' + (dev ? '[file]' : '[hash][ext]')
+        }
+    });
+}

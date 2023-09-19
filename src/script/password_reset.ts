@@ -7,12 +7,12 @@ import {
     getURLParam,
     passwordStyling,
     disableInput,
+    showPage,
 } from './module/main';
 import {
     addEventListener,
     redirect,
     getById,
-    getBody,
     showElement,
     replaceText,
     clearSessionStorage,
@@ -21,19 +21,15 @@ import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
 import { expired, passwordChanged } from './module/message/template/param';
 import { PASSWORD_REGEX } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 let newPasswordInput: HTMLInputElement;
 let newPasswordConfirmInput: HTMLInputElement;
 let submitButton: HTMLButtonElement;
 let warningElem: HTMLElement;
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
-
-    newPasswordInput = getById('new-password') as HTMLInputElement;
-    newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
-    submitButton = getById('submit-button') as HTMLButtonElement;
-    warningElem = getById('warning');
 
     const user = getURLParam('user');
     const signature = getURLParam('signature');
@@ -41,7 +37,7 @@ export default function () {
 
     if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
         if (DEVELOPMENT) {
-            showElement(getBody());
+            showPage(styleImportPromises, htmlImportPromises);
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -68,26 +64,31 @@ export default function () {
                 return;
             }
 
-            addEventListener(newPasswordInput, 'keydown', (event) => {
-                if ((event as KeyboardEvent).key === 'Enter') {
+            showPage(styleImportPromises, htmlImportPromises, () => {
+                newPasswordInput = getById('new-password') as HTMLInputElement;
+                newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
+                submitButton = getById('submit-button') as HTMLButtonElement;
+                warningElem = getById('warning');
+
+                addEventListener(newPasswordInput, 'keydown', (event) => {
+                    if ((event as KeyboardEvent).key === 'Enter') {
+                        submitRequest(user, signature, expires);
+                    }
+                });
+
+                addEventListener(newPasswordConfirmInput, 'keydown', (event) => {
+                    if ((event as KeyboardEvent).key === 'Enter') {
+                        submitRequest(user, signature, expires);
+                    }
+                });
+
+                addEventListener(submitButton, 'click', () => {
                     submitRequest(user, signature, expires);
-                }
+                });
+
+                passwordStyling(newPasswordInput);
+                passwordStyling(newPasswordConfirmInput);
             });
-
-            addEventListener(newPasswordConfirmInput, 'keydown', (event) => {
-                if ((event as KeyboardEvent).key === 'Enter') {
-                    submitRequest(user, signature, expires);
-                }
-            });
-
-            addEventListener(submitButton, 'click', () => {
-                submitRequest(user, signature, expires);
-            });
-
-            passwordStyling(newPasswordInput);
-            passwordStyling(newPasswordConfirmInput);
-
-            showElement(getBody());
         },
         content: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
         withCredentials: false

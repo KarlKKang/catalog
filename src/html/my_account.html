@@ -1,0 +1,70 @@
+<div id="container">
+    <p id="title">マイページ</p>
+
+    <p class="sub-title">メールアドレス</p>
+    <p class="warning hidden" id="email-warning"></p>
+    <button class="button" id="email-change-button">変更する</button>
+
+    <hr>
+
+    <p class="sub-title">ユーザー名</p>
+    <p class="warning hidden" id="username-warning"></p>
+    <div class="input-field"><input id="new-username" class="multi-language" type="text" placeholder="ユーザー名" autocapitalize="off" autocomplete="off" maxlength="16"></div>
+    <button class="button" id="username-change-button">変更する</button>
+    <div class="note">
+        <ul>
+            <li>ユーザー名は16文字以内で入力して下さい。</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <p class="sub-title">パスワード</p>
+    <p class="warning hidden" id="password-warning"></p>
+    <div class="input-field"><input id="new-password" type="password" autocomplete="new-password" placeholder="新しいパスワード" autocapitalize="off"></div>
+    <div class="input-field"><input id="new-password-confirm" type="password" autocomplete="new-password" placeholder="確認再入力" autocapitalize="off"></div>
+    <button class="button" id="password-change-button">変更する</button>
+    <div class="note">
+        <ul>
+            <li>使用できる文字は、半角数字・半角英字・記号 ` ~ ! @ # $ % ^ &amp; * ( ) - = _ + [ ] { } \ | ; : &apos; &quot; , . &lt; &gt; / ? です。</li>
+            <li>8～64文字で入力して下さい。</li>
+            <li>大文字、小文字、数字を含める必要があります。</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <p class="sub-title">二要素認証</p>
+    <p id="mfa-info"></p>
+    <p class="warning hidden" id="mfa-warning"></p>
+    <button class="button" id="mfa-button"></button>
+
+    <hr>
+
+    <p class="sub-title">リカバリーコード</p>
+    <p id="recovery-code-info"></p>
+    <p class="warning hidden" id="recovery-code-warning"></p>
+    <button class="button" id="recovery-code-button">生成する</button>
+    <div class="note">
+        <ul>
+            <li>新しいコードを生成すると、既存のコードは無効になります。</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <p class="sub-title">ご招待</p>
+    <p id="invite-count-text">送信できる招待状の数：<span id="invite-count"></span></p>
+    <p class="warning hidden" id="invite-warning"></p>
+    <div class="input-field" id="invite-input"><input id="receiver-email" type="email" placeholder="メールアドレス" autocapitalize="off" autocomplete="off" maxlength="254"></div>
+    <button class="button" id="invite-button">送信する</button>
+    <div class="note">
+        <ul>
+            <li>進行中の招待がある場合は、別の招待状を送ることはできません。</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <button class="button" id="logout-button">ログアウ</button>
+</div>

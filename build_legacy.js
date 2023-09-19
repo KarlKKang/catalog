@@ -20,7 +20,7 @@ fs.mkdir(destDirPrefix + 'css');
 
 const htmlEntries = ['unsupported_browser'];
 for (const entry of htmlEntries) {
-    const html = ejsLoader('./src/html/' + entry + '.ejs').default({ titleSuffix: DOMAIN + (dev ? ' (alpha)' : '') });
+    const html = ejsLoader('./src/html/' + entry + '.ejs').default({ title: DOMAIN + (dev ? ' (alpha)' : '') });
     htmlMinify(html, htmlMinifyOptions).then((data) => {
         fs.write(destDirPrefix + entry + '.html', data);
     }).catch((e) => {

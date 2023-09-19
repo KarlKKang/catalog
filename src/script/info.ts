@@ -3,27 +3,29 @@ import {
     authenticate,
     addNavBar,
     scrollToHash,
+    showPage,
 } from './module/main';
 import {
     clearSessionStorage,
-    getBody,
-    showElement,
 } from './module/dom';
+import type { HTMLImport } from './module/type/HTMLImport';
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
 
     authenticate({
         successful:
             function () {
-                showElement(getBody());
-                addNavBar('info');
-                scrollToHash();
+                showPage(styleImportPromises, htmlImportPromises, () => {
+                    addNavBar('info');
+                    scrollToHash();
+                });
             },
         failed:
             function () {
-                showElement(getBody());
-                scrollToHash();
+                showPage(styleImportPromises, htmlImportPromises, () => {
+                    scrollToHash();
+                });
             },
     });
 }

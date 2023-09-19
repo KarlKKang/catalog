@@ -2,11 +2,11 @@
 import {
     sendServerRequest,
     disableInput,
+    showPage,
 } from './module/main';
 import {
     addEventListener,
     getById,
-    getBody,
     showElement,
     replaceText,
     clearSessionStorage,
@@ -15,29 +15,30 @@ import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitationOnly } from './module/message/template/inline';
 import { EMAIL_REGEX } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 let emailInput: HTMLInputElement;
 let submitButton: HTMLButtonElement;
 let warningElem: HTMLElement;
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
 
-    emailInput = getById('email') as HTMLInputElement;
-    submitButton = getById('submit-button') as HTMLButtonElement;
-    warningElem = getById('warning');
+    showPage(styleImportPromises, htmlImportPromises, () => {
+        emailInput = getById('email') as HTMLInputElement;
+        submitButton = getById('submit-button') as HTMLButtonElement;
+        warningElem = getById('warning');
 
-    addEventListener(emailInput, 'keydown', (event) => {
-        if ((event as KeyboardEvent).key === 'Enter') {
+        addEventListener(emailInput, 'keydown', (event) => {
+            if ((event as KeyboardEvent).key === 'Enter') {
+                register();
+            }
+        });
+
+        addEventListener(submitButton, 'click', () => {
             register();
-        }
+        });
     });
-
-    addEventListener(submitButton, 'click', () => {
-        register();
-    });
-
-    showElement(getBody());
 }
 
 async function register() {

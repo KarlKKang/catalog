@@ -9,12 +9,12 @@ import {
     authenticate,
     disableInput,
     getURLParam,
+    showPage,
 } from './module/main';
 import {
     addEventListener,
     redirect,
     getById,
-    getBody,
     getDescendantsByTagAt,
     showElement,
     replaceChildren,
@@ -27,6 +27,7 @@ import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
 import { promptForTotp } from './module/pop_up_window';
 import { EMAIL_REGEX, PASSWORD_REGEX } from './module/main/pure';
+import type { HTMLImport } from './module/type/HTMLImport';
 
 let submitButton: HTMLButtonElement;
 let passwordInput: HTMLInputElement;
@@ -34,14 +35,8 @@ let usernameInput: HTMLInputElement;
 let rememberMeInput: HTMLInputElement;
 let warningElem: HTMLElement;
 
-export default function () {
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();
-
-    submitButton = getById('submit-button') as HTMLButtonElement;
-    passwordInput = getById('current-password') as HTMLInputElement;
-    usernameInput = getById('username') as HTMLInputElement;
-    rememberMeInput = getById('remember-me-checkbox') as HTMLInputElement;
-    warningElem = getById('warning');
 
     authenticate({
         successful:
@@ -50,21 +45,28 @@ export default function () {
             },
         failed:
             function () {
-                const loginOnKeyDown = (event: Event) => {
-                    if ((event as KeyboardEvent).key === 'Enter') {
-                        login();
-                    }
-                };
+                showPage(styleImportPromises, htmlImportPromises, () => {
+                    submitButton = getById('submit-button') as HTMLButtonElement;
+                    passwordInput = getById('current-password') as HTMLInputElement;
+                    usernameInput = getById('username') as HTMLInputElement;
+                    rememberMeInput = getById('remember-me-checkbox') as HTMLInputElement;
+                    warningElem = getById('warning');
 
-                addEventListener(usernameInput, 'keydown', loginOnKeyDown);
-                addEventListener(passwordInput, 'keydown', loginOnKeyDown);
+                    const loginOnKeyDown = (event: Event) => {
+                        if ((event as KeyboardEvent).key === 'Enter') {
+                            login();
+                        }
+                    };
 
-                addEventListener(submitButton, 'click', login);
-                addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', () => {
-                    redirect(LOGIN_URL + '/request_password_reset', true);
+                    addEventListener(usernameInput, 'keydown', loginOnKeyDown);
+                    addEventListener(passwordInput, 'keydown', loginOnKeyDown);
+
+                    addEventListener(submitButton, 'click', login);
+                    addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', () => {
+                        redirect(LOGIN_URL + '/request_password_reset', true);
+                    });
+                    passwordStyling(passwordInput);
                 });
-                passwordStyling(passwordInput);
-                showElement(getBody());
             }
     });
 }

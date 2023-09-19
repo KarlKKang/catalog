@@ -5,15 +5,14 @@ import {
 import {
     logout,
     changeColor,
+    showPage,
 } from './module/main';
 import {
     addEventListener,
     getById,
-    getBody,
     redirect,
     setTitle,
     hideElement,
-    showElement,
     appendText,
     getSessionStorage,
     clearSessionStorage,
@@ -21,11 +20,9 @@ import {
     remove,
     createDivElement,
 } from './module/dom';
+import type { HTMLImport } from './module/type/HTMLImport';
 
-export default function () {
-    const titleElem = getById('title');
-    const messageElem = getById('message');
-
+export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     const message = getSessionStorage('message');
     const title = getSessionStorage('title');
     const color = getSessionStorage('color');
@@ -39,10 +36,13 @@ export default function () {
 
     if (message === null || title === null || color === null || documentTitle === null) {
         if (DEVELOPMENT) {
-            changeColor(titleElem, 'orange');
-            appendText(titleElem, 'タイトルTitle');
-            appendText(messageElem, 'メッセージMessage'.repeat(10));
-            showElement(getBody());
+            showPage(styleImportPromises, htmlImportPromises, () => {
+                const titleElem = getById('title');
+                const messageElem = getById('message');
+                changeColor(titleElem, 'orange');
+                appendText(titleElem, 'タイトルTitle');
+                appendText(messageElem, 'メッセージMessage'.repeat(10));
+            });
         } else {
             redirect(TOP_URL, true);
         }
@@ -50,35 +50,38 @@ export default function () {
     }
 
     const callback = () => {
-        setTitle(documentTitle);
-        titleElem.innerHTML = title;
-        changeColor(titleElem, color);
-        if (replaceBody) {
-            const container = createDivElement();
-            messageElem.id = '';
-            container.id = 'message';
-            container.innerHTML = message;
-            insertBefore(container, messageElem);
-            remove(messageElem);
-        } else {
-            messageElem.innerHTML = message;
-        }
+        showPage(styleImportPromises, htmlImportPromises, () => {
+            const titleElem = getById('title');
+            const messageElem = getById('message');
 
-        const button = getById('button');
-        if (buttonText === null) {
-            hideElement(button);
-        } else {
-            if (url === null) {
-                redirect(TOP_URL, true);
-                return;
+            setTitle(documentTitle);
+            titleElem.innerHTML = title;
+            changeColor(titleElem, color);
+            if (replaceBody) {
+                const container = createDivElement();
+                messageElem.id = '';
+                container.id = 'message';
+                container.innerHTML = message;
+                insertBefore(container, messageElem);
+                remove(messageElem);
+            } else {
+                messageElem.innerHTML = message;
             }
-            appendText(button, buttonText);
-            addEventListener(button, 'click', () => {
-                redirect(url, true);
-            });
-        }
 
-        showElement(getBody());
+            const button = getById('button');
+            if (buttonText === null) {
+                hideElement(button);
+            } else {
+                if (url === null) {
+                    redirect(TOP_URL, true);
+                    return;
+                }
+                appendText(button, buttonText);
+                addEventListener(button, 'click', () => {
+                    redirect(url, true);
+                });
+            }
+        });
     };
 
     if (logoutParam) {
