@@ -78,15 +78,14 @@ const config = {
                                     "corejs": "3.31",
                                 }
                             ],
-                            "@babel/preset-typescript"
+                            [
+                                "@babel/preset-typescript",
+                                {
+                                    optimizeConstEnums: true,
+                                }
+                            ]
                         ],
                         plugins: [
-                            [
-                                "const-enum",
-                                {
-                                    "transform": "constObject"
-                                }
-                            ],
                             "@babel/plugin-transform-runtime"
                         ]
                     }
