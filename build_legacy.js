@@ -16,7 +16,7 @@ if (dev) {
     destDirPrefix = './dev/';
 }
 fs.mkdir(destDirPrefix + 'script_legacy');
-fs.mkdir(destDirPrefix + 'css');
+fs.mkdir(destDirPrefix + 'style');
 
 const htmlEntries = ['unsupported_browser'];
 for (const entry of htmlEntries) {
@@ -72,7 +72,7 @@ for (const entry of jsEntries) {
     });
 }
 
-cssMinify('./src/css/', destDirPrefix + 'css/', 'unsupported_browser.css');
+cssMinify('./src/css/', destDirPrefix + '/style/', 'unsupported_browser.css');
 
 function ejsLoader(file) {
     const content = fs.readSync(file);
