@@ -88,7 +88,7 @@ def font_splitter(
     output_root_dir = os.path.join(src_root_dir, "dist", src_dir)
     output_dir = os.path.join(output_root_dir, output_sub_dir)
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    css = open(os.path.join(src_root_dir, src_dir, file_name + ".css"), "w")
+    css = open(os.path.join(output_root_dir, file_name + ".css"), "w")
     css.write('@charset "UTF-8";\n/* CSS Document */\n\n')
 
     # compress
