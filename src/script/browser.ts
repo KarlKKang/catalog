@@ -56,7 +56,8 @@ function unsupportRedirect() {
     const getCookie = (name: string) => {
         name = name + '=';
         const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i] as string;
             while (cookie.charAt(0) == ' ') {
                 cookie = cookie.substring(1);
             }
