@@ -176,7 +176,7 @@ export class Player {
         controls.lang = 'en';
         controls.tabIndex = -1;
         controls.translate = false;
-        addPlayerClasses(controls, ['big-play-centered', 'fluid', 'controls-enabled', 'paused', 'user-active']);
+        addPlayerClasses(controls, ['paused', 'user-active']);
         this.IS_VIDEO || addPlayerClass(controls, 'audio');
         removeRightClick(controls);
 
@@ -267,7 +267,7 @@ export class Player {
         const progressHolder = createDivElement();
         this.progressHolder = progressHolder;
         progressHolder.tabIndex = 0;
-        addPlayerClasses(progressHolder, ['progress-holder', 'slider', 'slider-horizontal']);
+        addPlayerClass(progressHolder, 'progress-holder');
         appendChild(progressControl, progressHolder);
 
         // Load progress
@@ -293,8 +293,9 @@ export class Player {
         // Play progress
         const playProgress = createDivElement();
         this.progressBar = playProgress;
-        addPlayerClasses(playProgress, ['play-progress', 'slider-bar']);
+        addPlayerClass(playProgress, 'play-progress');
         playProgress.style.width = '0%';
+        const playProgressIconPlaceholder = addPlayerPlaceholder(playProgress);
         appendChild(progressHolder, playProgress);
 
         // PIP
@@ -322,7 +323,7 @@ export class Player {
         appendChild(playButtonIconPlaceholder, icons.getPlayIcon());
         appendChild(playButtonIconPlaceholder, icons.getPauseIcon());
         appendChild(playButtonIconPlaceholder, icons.getReplayIcon());
-        appendChild(playProgress, icons.getCircle());
+        appendChild(playProgressIconPlaceholder, icons.getCircle());
         if (PIPButtonPlaceholder !== undefined) {
             appendChild(PIPButtonPlaceholder, icons.getPIPEnterIcon());
             appendChild(PIPButtonPlaceholder, icons.getPIPExitIcon());

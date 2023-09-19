@@ -1,5 +1,4 @@
-@charset "utf-8";
-/* CSS Document */
+@use 'module/nav_bar';
 
 #container {
     width: 1000px;
@@ -55,11 +54,11 @@ hr {
 
 .note>ul {
     padding: 0px 0px 0px 1em;
-}
 
-.note>ul>li {
-    font-size: small;
-    color: var(--alt-text-color);
+    >li {
+        font-size: small;
+        color: var(--alt-text-color);
+    }
 }
 
 #invite-count-text {

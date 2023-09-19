@@ -1,5 +1,4 @@
-@charset "utf-8";
-/* CSS Document */
+@use 'module/nav_bar';
 
 .symbol {
     font-family: SegMDL2;
@@ -27,46 +26,43 @@
     margin: 0px 0px -0.5em 0px;
     /*Offset #season-button-wrapper > div > p margin for underline spacing.*/
     padding: 2em 5% 0px 5%;
-}
 
-#season-button-wrapper>div>p {
-    padding: 0px;
-    margin: 0.5em 0px;
-}
+    >div {
+        height: auto;
+        transition: .4s ease-out;
+        margin: 0px 1.5em;
+        cursor: pointer;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: var(--text-color-transparent);
 
-#season-button-wrapper>div {
-    height: auto;
-    transition: .4s ease-out;
-    margin: 0px 1.5em;
-    cursor: pointer;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    border-bottom-color: var(--text-color-transparent);
-}
+        >p {
+            padding: 0px;
+            margin: 0.5em 0px;
+            transition: .4s ease-out;
+            color: var(--alt-text-color);
+        }
 
-#season-button-wrapper>div>p {
-    transition: .4s ease-out;
-    color: var(--alt-text-color);
-}
+        &:hover {
+            border-bottom-color: var(--text-color);
 
-#season-button-wrapper>div:hover {
-    border-bottom-color: var(--text-color);
-}
+            >p {
+                color: var(--text-color);
+            }
+        }
 
-#season-button-wrapper>div:hover>p {
-    color: var(--text-color);
-}
+        &.current-season {
+            cursor: auto;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-bottom-color: var(--text-color);
 
-#season-button-wrapper>div.current-season {
-    cursor: auto;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    border-bottom-color: var(--text-color);
-}
-
-#season-button-wrapper>div.current-season>p {
-    color: var(--text-color);
-    font-weight: 500;
+            >p {
+                color: var(--text-color);
+                font-weight: 500;
+            }
+        }
+    }
 }
 
 #ep-button-wrapper {
@@ -78,36 +74,34 @@
     overflow-y: hidden;
     box-sizing: content-box;
     transition: max-height .4s ease-out, padding-bottom .4s ease-out;
-}
 
-#ep-button-wrapper.expanded {
-    padding-bottom: 4.5em;
-    /*Repel the show-more-button*/
-}
-
-#ep-button-wrapper>div {
-    position: relative;
-    height: auto;
-    background-color: var(--foreground-color);
-    padding: 0.6em 1em;
-    margin: 12px;
-    cursor: pointer;
-}
-
-@supports (margin: min(2%, 12px)) {
-    #ep-button-wrapper>div {
-        margin: min(2%, 12px);
+    &.expanded {
+        padding-bottom: 4.5em;
+        /*Repel the show-more-button*/
     }
-}
 
-#ep-button-wrapper>div.current-ep>p {
-    font-weight: 500;
-    text-decoration: underline;
-}
+    >div {
+        position: relative;
+        height: auto;
+        background-color: var(--foreground-color);
+        padding: 0.6em 1em;
+        margin: 12px;
+        cursor: pointer;
 
-#ep-button-wrapper>div>* {
-    margin: 0px;
-    padding: 0px;
+        @supports (margin: min(2%, 12px)) {
+            margin: min(2%, 12px);
+        }
+
+        >* {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        &.current-ep>p {
+            font-weight: 500;
+            text-decoration: underline;
+        }
+    }
 }
 
 #show-more-button {
@@ -123,15 +117,15 @@
     line-height: 1;
     /*Line height 1em*/
     transition: opacity .4s ease-out;
-}
 
-#show-more-button,
-#show-more-button * {
-    color: var(--link-text-color);
-}
+    &,
+    * {
+        color: var(--link-text-color);
+    }
 
-#show-more-button:hover {
-    cursor: pointer;
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 hr {
@@ -168,17 +162,17 @@ hr {
 
 .select {
     position: relative;
-}
 
-.select:after {
-    content: '\E70D';
-    font-family: SegMDL2;
-    font-size: 0.9em;
-    color: var(--alt-text-color);
-    top: 10px;
-    right: 11px;
-    position: absolute;
-    pointer-events: none;
+    &:after {
+        content: '\E70D';
+        font-family: SegMDL2;
+        font-size: 0.9em;
+        color: var(--alt-text-color);
+        top: 10px;
+        right: 11px;
+        position: absolute;
+        pointer-events: none;
+    }
 }
 
 select {
@@ -192,10 +186,10 @@ select {
     height: 34px;
     line-height: 22px;
     background-color: var(--foreground-color);
-}
 
-select::-ms-expand {
-    display: none;
+    &::-ms-expand {
+        display: none;
+    }
 }
 
 #format-display {
@@ -216,66 +210,65 @@ select::-ms-expand {
 .player {
     width: 100%;
     margin: 0px 0px 16px 0px;
-}
 
-.player>video,
-.player>audio {
-    /* Hide mouse-over tooltips */
-    pointer-events: none;
+    >video,
+    >audio {
+        /* Hide mouse-over tooltips */
+        pointer-events: none;
+    }
 }
 
 .image {
     width: 100%;
     margin: 1em 0px 0px 0px;
-}
 
-.image>.lazyload {
-    width: 100%;
-    margin: 0px;
-    position: relative;
-    padding-bottom: 56.25%;
-    cursor: pointer;
-}
+    >.lazyload {
+        width: 100%;
+        margin: 0px;
+        position: relative;
+        padding-bottom: 56.25%;
+        cursor: pointer;
 
-.image>.lazyload>.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+        >.overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    }
 }
 
 .sub-title {
-    font-size: large;
-    font-weight: 500;
     width: 100%;
     margin: 32px 0px 32px 0px;
-}
 
-#content.video .sub-title,
-#media-holder .sub-title {
-    margin: 32px 0px 16px 0px;
-}
+    &,
+    * {
+        font-size: large;
+        font-weight: 500;
+    }
 
-.sub-title * {
-    font-size: large;
-    font-weight: 500;
+    >.format {
+        color: var(--alt-text-color);
+        font-size: small;
+        font-weight: 300;
+    }
+
+    #content.video &,
+    #media-holder & {
+        margin: 32px 0px 16px 0px;
+    }
 }
 
 .artist {
     color: var(--alt-text-color);
     font-size: medium;
     font-weight: 300;
-}
 
-.sub-title>.format {
-    color: var(--alt-text-color);
-    font-size: small;
-    font-weight: 300;
-}
-
-#title>.artist {
-    font-size: large;
+    #title>& {
+        font-size: large;
+    }
 }
 
 .sub-title.center-align,
@@ -307,12 +300,12 @@ p.artist {
     margin: 1em 0px 0px 0px;
     padding: 0px;
     text-align: center;
-}
 
-#message-body>p {
-    /*margin and padding already done in #message-body wrapper*/
-    margin: 0px;
-    padding: 0px;
+    >p {
+        /*margin and padding already done in #message-body wrapper*/
+        margin: 0px;
+        padding: 0px;
+    }
 }
 
 .button {
@@ -320,15 +313,15 @@ p.artist {
     max-width: 100%;
 }
 
-#warning-button-group>.button {
-    margin: 1em 1em 0px 1em;
-}
-
 #warning-button-group {
     margin: 0px -1em 0px -1em;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+
+    >.button {
+        margin: 1em 1em 0px 1em;
+    }
 }
 
 #on-screen-console {
@@ -352,22 +345,23 @@ p.artist {
     border: none;
     outline: none;
     overflow-wrap: anywhere;
+
+    &:after {
+        content: '\002B';
+        /* Unicode character for "plus" sign (+) */
+        font-size: 1em;
+        color: var(--alt-text-color);
+        float: right;
+        margin: 0px -1em 0px 0px;
+        /*Offset into the padding region to avoid collision with accodion text*/
+    }
+
+    &.active:after {
+        content: "\2212";
+        /* Unicode character for "minus" sign (-) */
+    }
 }
 
-.accordion:after {
-    content: '\002B';
-    /* Unicode character for "plus" sign (+) */
-    font-size: 1em;
-    color: var(--alt-text-color);
-    float: right;
-    margin: 0px -1em 0px 0px;
-    /*Offset into the padding region to avoid collision with accodion text*/
-}
-
-.accordion.active:after {
-    content: "\2212";
-    /* Unicode character for "minus" sign (-) */
-}
 
 /* Style the accordion panel. Note: hidden by default */
 .panel {
@@ -376,30 +370,32 @@ p.artist {
     background-color: var(--foreground-color);
     overflow: hidden;
     transition: max-height 0.2s ease-out;
-}
 
-.panel>hr {
-    width: 100%;
-    background-color: var(--horizontal-line-foreground-color);
-}
+    >hr {
+        width: 100%;
+        background-color: var(--horizontal-line-foreground-color);
+    }
 
-/*Chapters*/
-.chapters>.panel>p {
-    transition: .4s ease-out;
-}
+    /*Chapters*/
+    .chapters>& {
+        >p {
+            transition: .4s ease-out;
 
-.chapters>.panel>p>span {
-    cursor: pointer;
-    color: var(--link-text-color);
-}
+            >span {
+                cursor: pointer;
+                color: var(--link-text-color);
+            }
+        }
 
-.chapters>.panel>.current-chapter {
-    color: var(--text-color);
-    font-weight: 500;
-}
+        >.current-chapter {
+            color: var(--text-color);
+            font-weight: 500;
+        }
 
-.chapters>.panel>.inactive-chapter {
-    color: var(--alt-text-color);
+        >.inactive-chapter {
+            color: var(--alt-text-color);
+        }
+    }
 }
 
 /*Download*/
@@ -418,12 +414,12 @@ p.artist {
     justify-content: center;
     padding: 0px;
     margin: 0px -0.5em -1em -0.5em;
-}
 
-#download-options>div {
-    max-width: 150px;
-    width: 100%;
-    margin: 0px 0.5em 1em 0.5em;
+    >div {
+        max-width: 150px;
+        width: 100%;
+        margin: 0px 0.5em 1em 0.5em;
+    }
 }
 
 .download>.panel>ul {
