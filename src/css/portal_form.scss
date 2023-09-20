@@ -1,3 +1,7 @@
+@use 'module/common';
+
+@include common.password-font;
+
 #form {
     max-width: 90%;
     margin: 0px;

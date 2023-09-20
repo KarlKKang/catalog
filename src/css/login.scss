@@ -1,3 +1,14 @@
+:root {
+    --checkbox-shadow-size: 0 0 10px 1.3px;
+    --checkbox-shadow-size-hover: 0 2px 17px 4px;
+    --checkbox-shadow: var(--checkbox-shadow-size) var(--shadow-color);
+    --checkbox-shadow-hover: var(--checkbox-shadow-size-hover) var(--shadow-color-hover);
+
+    @media not screen and (hover: hover) and (pointer: fine) {
+        --checkbox-shadow-hover: var(--checkbox-shadow);
+    }
+}
+
 #remember-me {
     position: relative;
     display: flex;

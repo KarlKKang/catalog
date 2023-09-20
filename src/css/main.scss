@@ -5,8 +5,6 @@
     --foreground-color: rgba(255, 255, 255, 1);
     --background-color: rgba(252, 252, 252, 1);
     --background-color-transparent: rgba(251, 251, 251, 0);
-    --pop-up-window-background-color: rgba(255, 255, 255, 0.9);
-    --pop-up-window-blurred-background-color: rgba(255, 255, 255, 0.55);
     --grey-background-color: rgba(235, 235, 235, 1);
 
     --text-color: rgba(0, 0, 0, 1);
@@ -28,45 +26,10 @@
     --shadow: var(--shadow-size) var(--shadow-color);
     --shadow-hover: var(--shadow-size-hover) var(--shadow-color-hover);
 
-    --checkbox-shadow-size: 0 0 10px 1.3px;
-    --checkbox-shadow-size-hover: 0 2px 17px 4px;
-    --checkbox-shadow: var(--checkbox-shadow-size) var(--shadow-color);
-    --checkbox-shadow-hover: var(--checkbox-shadow-size-hover) var(--shadow-color-hover);
-
-    --nav-bar-height: 3.2em;
-    --nav-bar-padding: 0px;
-    --nav-bar-button-padding: 0px;
-
-    @supports (--nav-bar-height: calc(3.2em + constant(safe-area-inset-bottom, 0px))) {
-        --nav-bar-height: calc(3.2em + constant(safe-area-inset-bottom, 0px));
-    }
-
-    @supports (--nav-bar-padding: 0px max(constant(safe-area-inset-right, 0px), constant(safe-area-inset-left, 0px))) {
-        --nav-bar-padding: 0px max(constant(safe-area-inset-right, 0px), constant(safe-area-inset-left, 0px));
-    }
-
-    @supports (--nav-bar-button-padding: 0px 0px constant(safe-area-inset-bottom, 0px) 0px) {
-        --nav-bar-button-padding: 0px 0px constant(safe-area-inset-bottom, 0px) 0px;
-    }
-
-    @supports (--nav-bar-height: calc(3.2em + env(safe-area-inset-bottom, 0px))) {
-        --nav-bar-height: calc(3.2em + env(safe-area-inset-bottom, 0px));
-    }
-
-    @supports (--nav-bar-padding: 0px max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px))) {
-        --nav-bar-padding: 0px max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
-    }
-
-    @supports (--nav-bar-button-padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px) {
-        --nav-bar-button-padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px;
-    }
-
     @media only screen and (prefers-color-scheme: dark) {
         --foreground-color: rgba(43, 44, 52, 1);
         --background-color: rgba(40, 41, 49, 1);
         --background-color-transparent: rgba(40, 41, 49, 0);
-        --pop-up-window-background-color: rgba(0, 0, 0, 0.75);
-        --pop-up-window-blurred-background-color: rgba(0, 0, 0, 0.1);
         --grey-background-color: rgba(65, 68, 80, 1);
 
         --text-color: rgba(210, 213, 220, 1);
@@ -87,7 +50,6 @@
 
     @media not screen and (hover: hover) and (pointer: fine) {
         --shadow-hover: var(--shadow);
-        --checkbox-shadow-hover: var(--checkbox-shadow);
     }
 }
 
@@ -188,36 +150,6 @@ body {
     background-color: transparent;
 }
 
-.lazyload {
-    background: var(--foreground-color);
-
-    &.complete {
-        padding-bottom: 0px !important;
-    }
-
-    >img,
-    >canvas {
-        display: block;
-        margin: 0px;
-        padding: 0px;
-        width: 100%;
-        pointer-events: none;
-        -webkit-touch-callout: none;
-    }
-
-    >.overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    }
-}
-
-.password-font {
-    font-family: 'Helvetica', 'Arial';
-}
-
 .link,
 .link:link,
 .link:visited,
@@ -226,20 +158,6 @@ body {
     cursor: pointer;
     color: var(--link-text-color);
     text-decoration: none;
-}
-
-.ellipsis-clipping-2 {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-
-    @supports (-webkit-line-clamp: 2) {
-        white-space: initial;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        word-break: normal;
-    }
 }
 
 .hidden {

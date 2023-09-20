@@ -1,0 +1,49 @@
+@mixin lazyload {
+    .lazyload {
+        background: var(--foreground-color);
+
+        &.complete {
+            padding-bottom: 0px !important;
+        }
+
+        >img,
+        >canvas {
+            display: block;
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+            pointer-events: none;
+            -webkit-touch-callout: none;
+        }
+
+        >.overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+@mixin password-font {
+    .password-font {
+        font-family: 'Helvetica', 'Arial';
+    }
+}
+
+@mixin ellipsis-clipping-2 {
+    .ellipsis-clipping-2 {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        @supports (-webkit-line-clamp: 2) {
+            white-space: initial;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            word-break: normal;
+        }
+    }
+}

@@ -1,3 +1,33 @@
+:root {
+    --nav-bar-height: 3.2em;
+    --nav-bar-padding: 0px;
+    --nav-bar-button-padding: 0px;
+
+    @supports (--nav-bar-height: calc(3.2em + constant(safe-area-inset-bottom, 0px))) {
+        --nav-bar-height: calc(3.2em + constant(safe-area-inset-bottom, 0px));
+    }
+
+    @supports (--nav-bar-padding: 0px max(constant(safe-area-inset-right, 0px), constant(safe-area-inset-left, 0px))) {
+        --nav-bar-padding: 0px max(constant(safe-area-inset-right, 0px), constant(safe-area-inset-left, 0px));
+    }
+
+    @supports (--nav-bar-button-padding: 0px 0px constant(safe-area-inset-bottom, 0px) 0px) {
+        --nav-bar-button-padding: 0px 0px constant(safe-area-inset-bottom, 0px) 0px;
+    }
+
+    @supports (--nav-bar-height: calc(3.2em + env(safe-area-inset-bottom, 0px))) {
+        --nav-bar-height: calc(3.2em + env(safe-area-inset-bottom, 0px));
+    }
+
+    @supports (--nav-bar-padding: 0px max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px))) {
+        --nav-bar-padding: 0px max(env(safe-area-inset-right, 0px), env(safe-area-inset-left, 0px));
+    }
+
+    @supports (--nav-bar-button-padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px) {
+        --nav-bar-button-padding: 0px 0px env(safe-area-inset-bottom, 0px) 0px;
+    }
+}
+
 #nav-bar {
     display: flex;
     justify-content: center;

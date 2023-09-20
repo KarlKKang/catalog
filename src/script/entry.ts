@@ -58,6 +58,7 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
     const segMDL2Css = () => import('../font/dist/Segoe/SegMDL2.css');
     const mainCss = () => import('../css/main.scss');
     const popUpWindowCss = () => import('../css/pop_up_window.scss');
+    const navBarCss = () => import('../css/nav_bar.scss');
     const portalFormCss = () => import('../css/portal_form.scss');
     const newsCss = () => import('../css/news.scss');
     const registerCss = () => import('../css/register.scss');
@@ -84,6 +85,7 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
                 notoSansSCLightCss(),
                 notoSansLightCss(),
                 mainCss(),
+                navBarCss(),
                 import('../css/index.scss'),
             ],
             html: () => import('../html/index.html'),
@@ -133,6 +135,7 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
                 notoSansSCRegularCss(),
                 notoSansSCMediumCss(),
                 mainCss(),
+                navBarCss(),
                 newsCss(),
             ],
             html: () => import('../html/info.html'),
@@ -149,6 +152,7 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
                 notoSansLightCss(),
                 courierNewRegularCss(),
                 popUpWindowCss(),
+                navBarCss(),
                 mainCss(),
                 import('../css/my_account.scss'),
             ],
@@ -201,6 +205,7 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
                 notoSansJPLightCss(),
                 notoSansJPMediumCss(),
                 segMDL2Css(),
+                navBarCss(),
                 mainCss(),
                 import('../css/bangumi.scss'),
                 import('../css/player.scss'),
@@ -223,6 +228,7 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
                 notoSansSCRegularCss(),
                 notoSansSCMediumCss(),
                 mainCss(),
+                navBarCss(),
                 newsCss(),
             ],
             html: () => import('../html/news.html'),

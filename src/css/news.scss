@@ -1,5 +1,8 @@
 @use 'module/all_languages';
-@use 'module/nav_bar';
+@use 'module/common';
+
+@include common.lazyload;
+@include common.ellipsis-clipping-2;
 
 #container {
     margin: 0px;

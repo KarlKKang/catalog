@@ -1,4 +1,6 @@
-@use 'module/nav_bar';
+@use 'module/common';
+
+@include common.password-font;
 
 #container {
     width: 1000px;

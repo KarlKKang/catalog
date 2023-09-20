@@ -1,4 +1,6 @@
-@use 'module/nav_bar';
+@use 'module/common';
+
+@include common.lazyload;
 
 .symbol {
     font-family: SegMDL2;
