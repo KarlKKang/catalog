@@ -1,5 +1,5 @@
 import 'core-js';
-import { getBaseURL, getTitle, redirect, w, addEventListenerOnce, setTitle } from './module/dom';
+import { getBaseURL, w, addEventListenerOnce, setTitle } from './module/dom';
 import { LOGIN_URL, TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/main/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
@@ -82,6 +82,7 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
                 notoSansJPMediumCss(),
                 notoSansTCLightCss(),
                 notoSansSCLightCss(),
+                notoSansLightCss(),
                 mainCss(),
                 import('../css/index.scss'),
             ],
@@ -145,6 +146,7 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
                 notoSansJPMediumCss(),
                 notoSansTCLightCss(),
                 notoSansSCLightCss(),
+                notoSansLightCss(),
                 courierNewRegularCss(),
                 popUpWindowCss(),
                 mainCss(),
@@ -296,20 +298,16 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
         }
     }
 
-    if (getTitle().startsWith('404 | ' + TOP_DOMAIN)) {
-        loadPage(
-            import('./404'),
-            [
-                notoSansJPLightCss(),
-                notoSansJPMediumCss(),
-                mainCss(),
-                messageCss(),
-                import('../css/404.scss'),
-            ],
-            import('../html/404.html'),
-            '404'
-        );
-    } else {
-        redirect(TOP_URL + '/404');
-    }
+    loadPage(
+        import('./404'),
+        [
+            notoSansJPLightCss(),
+            notoSansJPMediumCss(),
+            mainCss(),
+            messageCss(),
+            import('../css/404.scss'),
+        ],
+        import('../html/404.html'),
+        '404'
+    );
 })();
