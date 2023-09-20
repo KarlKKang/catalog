@@ -10,7 +10,7 @@ import {
     disableInput,
     getURLParam,
     showPage,
-} from './module/main';
+} from './module/common';
 import {
     addEventListener,
     redirect,
@@ -26,7 +26,7 @@ import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/me
 import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
 import { promptForTotp } from './module/pop_up_window';
-import { EMAIL_REGEX, PASSWORD_REGEX } from './module/main/pure';
+import { EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 
 let submitButton: HTMLButtonElement;

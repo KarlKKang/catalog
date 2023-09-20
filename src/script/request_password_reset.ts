@@ -8,7 +8,7 @@ import {
     authenticate,
     disableInput,
     showPage,
-} from './module/main';
+} from './module/common';
 import {
     addEventListener,
     redirect,
@@ -21,7 +21,7 @@ import {
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat } from './module/message/template/inline';
-import { EMAIL_REGEX } from './module/main/pure';
+import { EMAIL_REGEX } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 
 let emailInput: HTMLInputElement;

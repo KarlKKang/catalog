@@ -6,7 +6,7 @@ import {
     sendServerRequest,
     removeRightClick,
     showPage,
-} from './module/main';
+} from './module/common';
 import {
     redirect,
     setTitle,
@@ -17,7 +17,7 @@ import {
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
-import { encodeCFURIComponent } from './module/main/pure';
+import { encodeCFURIComponent } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 
 export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {

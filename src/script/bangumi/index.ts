@@ -6,7 +6,7 @@ import {
     sendServerRequest,
     getURLParam,
     showPage,
-} from '../module/main';
+} from '../module/common';
 import {
     clearSessionStorage,
     getBaseURL,

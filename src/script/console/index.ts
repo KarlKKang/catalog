@@ -1,7 +1,7 @@
 // JavaScript Document
 import {
     sendServerRequest, showPage,
-} from '../module/main';
+} from '../module/common';
 import {
     addEventListener,
     getById,

@@ -1,6 +1,6 @@
 import {
     removeRightClick,
-} from '../module/main';
+} from '../module/common';
 import {
     createElement,
     addClass,
@@ -23,7 +23,7 @@ import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import type { default as LazyloadObserve } from '../module/lazyload';
 import { addAccordionEvent } from './media_helper';
-import { encodeCFURIComponent } from '../module/main/pure';
+import { encodeCFURIComponent } from '../module/common/pure';
 
 export default async function (
     epInfo: ImageEPInfo,

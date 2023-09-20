@@ -1,7 +1,7 @@
 import type { WebpMachine } from 'webp-hero/dist-cjs';
 import {
     removeRightClick,
-} from './main';
+} from './common';
 import {
     appendChild,
     addEventListener,

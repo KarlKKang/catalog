@@ -12,7 +12,7 @@ import {
 import { notFound as notFoundTitle } from './module/message/template/title/server';
 import { notFound as notFoundBody } from './module/message/template/body/server';
 import type { HTMLImport } from './module/type/HTMLImport';
-import { showPage } from './module/main';
+import { showPage } from './module/common';
 
 export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
     clearSessionStorage();

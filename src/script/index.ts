@@ -11,7 +11,7 @@ import {
     changeColor,
     scrollToTop,
     showPage,
-} from './module/main';
+} from './module/common';
 import {
     w,
     addEventListener,
@@ -38,7 +38,7 @@ import * as SeriesInfo from './module/type/SeriesInfo';
 import type { default as LazyloadObserve } from './module/lazyload';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 import isbot from 'isbot';
-import { getLocalTime } from './module/main/pure';
+import { getLocalTime } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 
 let searchBar: HTMLElement;

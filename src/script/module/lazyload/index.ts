@@ -2,7 +2,7 @@
 import 'intersection-observer';
 import {
     sendServerRequest,
-} from '../main';
+} from '../common';
 import {
     addClass,
 } from '../dom';

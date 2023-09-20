@@ -10,7 +10,7 @@ import {
     disableInput,
     logout,
     showPage,
-} from './module/main';
+} from './module/common';
 import {
     addEventListener,
     redirect,
@@ -63,7 +63,7 @@ import isbot from 'isbot';
 import { initializePopUpWindow, promptForTotp } from './module/pop_up_window';
 import { toCanvas } from 'qrcode';
 import { isString } from './module/type/helper';
-import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/main/pure';
+import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 
 let currentUsername: string;

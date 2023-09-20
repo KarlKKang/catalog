@@ -1,6 +1,6 @@
 import {
     sendServerRequest,
-} from '../module/main';
+} from '../module/common';
 import {
     addEventListener,
     getParentElement,
@@ -12,7 +12,7 @@ import {
     getDataAttribute
 } from '../module/dom';
 import { completeCallback, getTable } from './helper';
-import { PASSWORD_REGEX } from '../module/main/pure';
+import { PASSWORD_REGEX } from '../module/common/pure';
 
 function accountCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);

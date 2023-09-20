@@ -4,7 +4,7 @@ import {
     addNavBar,
     scrollToHash,
     showPage,
-} from './module/main';
+} from './module/common';
 import {
     clearSessionStorage,
 } from './module/dom';

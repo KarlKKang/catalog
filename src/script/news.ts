@@ -9,7 +9,7 @@ import {
     addNavBar,
     removeRightClick,
     showPage,
-} from './module/main';
+} from './module/common';
 import {
     addEventListener,
     getBaseURL,
@@ -42,7 +42,7 @@ import * as NewsInfo from './module/type/NewsInfo';
 import initializeInfiniteScrolling from './module/infinite_scrolling';
 import isbot from 'isbot';
 import type { default as LazyloadObserve } from './module/lazyload';
-import { encodeCFURIComponent, getLocalTime } from './module/main/pure';
+import { encodeCFURIComponent, getLocalTime } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';

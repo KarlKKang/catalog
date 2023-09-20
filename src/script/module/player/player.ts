@@ -1,7 +1,7 @@
 // JavaScript Document
 import {
     removeRightClick,
-} from '../main';
+} from '../common';
 import {
     getById,
     addEventListener,
@@ -31,7 +31,7 @@ import screenfull from 'screenfull';
 import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClass } from './helper';
 import * as icons from './icons';
 import { CustomMediaError } from './media_error';
-import { getLocalTime, secToTimestamp } from '../main/pure';
+import { getLocalTime, secToTimestamp } from '../common/pure';
 
 declare global {
     interface HTMLVideoElement {

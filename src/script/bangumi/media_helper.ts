@@ -3,7 +3,7 @@ import {
 } from '../module/env/constant';
 import {
     sendServerRequest,
-} from '../module/main';
+} from '../module/common';
 import {
     w,
     addEventListener,

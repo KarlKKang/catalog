@@ -1,6 +1,6 @@
 import {
     sendServerRequest,
-} from '../module/main';
+} from '../module/common';
 import {
     addEventListener,
     getParentElement,

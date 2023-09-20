@@ -8,7 +8,7 @@ import {
     passwordStyling,
     disableInput,
     showPage,
-} from './module/main';
+} from './module/common';
 import {
     addEventListener,
     redirect,
@@ -20,7 +20,7 @@ import {
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
 import { expired, passwordChanged } from './module/message/template/param';
-import { PASSWORD_REGEX } from './module/main/pure';
+import { PASSWORD_REGEX } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 
 let newPasswordInput: HTMLInputElement;

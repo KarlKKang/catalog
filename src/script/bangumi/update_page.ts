@@ -6,7 +6,7 @@ import {
     addNavBar,
     sendServerRequest,
     getURLParam,
-} from '../module/main';
+} from '../module/common';
 import {
     w,
     addEventListener,
@@ -41,7 +41,7 @@ import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, Lazylo
 import type { default as videoType } from './video';
 import type { default as audioType } from './audio';
 import type { default as imageType } from './image';
-import { encodeCFURIComponent } from '../module/main/pure';
+import { encodeCFURIComponent } from '../module/common/pure';
 
 let seriesID: string;
 let epIndex: number;

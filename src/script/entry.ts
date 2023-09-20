@@ -1,7 +1,7 @@
 import 'core-js';
 import { getBaseURL, w, addEventListenerOnce, setTitle } from './module/dom';
 import { LOGIN_URL, TOP_DOMAIN, TOP_URL } from './module/env/constant';
-import { objectKeyExists } from './module/main/pure';
+import { objectKeyExists } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 
 type PageEntry = (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) => void;

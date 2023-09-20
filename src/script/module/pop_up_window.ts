@@ -1,5 +1,5 @@
 import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, getBody, removeClass, replaceChildren, w, createInputElement, hideElement, showElement } from './dom';
-import { changeColor, disableInput } from './main';
+import { changeColor, disableInput } from './common';
 import { failedTotp } from './message/template/inline';
 
 type PopUpWindow = {

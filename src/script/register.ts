@@ -8,7 +8,7 @@ import {
     passwordStyling,
     disableInput,
     showPage,
-} from './module/main';
+} from './module/common';
 import {
     addEventListener,
     redirect,
@@ -22,7 +22,7 @@ import {
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
-import { PASSWORD_REGEX } from './module/main/pure';
+import { PASSWORD_REGEX } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 
 let submitButton: HTMLButtonElement;

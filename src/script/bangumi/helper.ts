@@ -4,7 +4,7 @@ import {
 import {
     changeColor,
     getURLParam,
-} from '../module/main';
+} from '../module/common';
 import {
     w,
     addClass,
