@@ -21,11 +21,14 @@ type PageMap = {
 };
 
 let windowLoaded = false;
-function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promise<any>[], htmlImportPromise: HTMLImport, title?: string) {
+function loadPage(scriptImportPromiseInit: () => Promise<any>, styleImportPromisesInit: () => Promise<any>[], htmlImportPromiseInit: () => HTMLImport, title?: string) {
     const executeScript = () => {
         if (title !== undefined) {
             setTitle(title + ' | ' + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
         }
+        const scriptImportPromise = scriptImportPromiseInit();
+        const styleImportPromises = styleImportPromisesInit();
+        const htmlImportPromise = htmlImportPromiseInit();
         scriptImportPromise.then((script) => {
             script.default(styleImportPromises, htmlImportPromise);
         });
@@ -284,13 +287,13 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
         let page = baseURL.substring(TOP_URL.length + 1);
         if (objectKeyExists(page, pages)) {
             const pageAsset = pages[page];
-            loadPage(pageAsset!.script(), pageAsset!.style(), pageAsset!.html(), pageAsset!.title);
+            loadPage(pageAsset!.script, pageAsset!.style, pageAsset!.html, pageAsset!.title);
             return;
         }
         page = page.substring(0, page.indexOf('/'));
         if (objectKeyExists(page, directories)) {
             const pageAsset = directories[page];
-            loadPage(pageAsset!.script(), pageAsset!.style(), pageAsset!.html(), pageAsset!.title);
+            loadPage(pageAsset!.script, pageAsset!.style, pageAsset!.html, pageAsset!.title);
             return;
         }
     }
@@ -299,21 +302,21 @@ function loadPage(scriptImportPromise: Promise<any>, styleImportPromises: Promis
         const page = baseURL.substring(LOGIN_URL.length + 1);
         if (objectKeyExists(page, loginPages)) {
             const pageAsset = loginPages[page];
-            loadPage(pageAsset!.script(), pageAsset!.style(), pageAsset!.html(), pageAsset!.title);
+            loadPage(pageAsset!.script, pageAsset!.style, pageAsset!.html, pageAsset!.title);
             return;
         }
     }
 
     loadPage(
-        import('./404'),
-        [
+        () => import('./404'),
+        () => [
             notoSansJPLightCss(),
             notoSansJPMediumCss(),
             mainCss(),
             messageCss(),
             import('../css/404.scss'),
         ],
-        import('../html/404.html'),
+        () => import('../html/404.html'),
         '404'
     );
 })();
