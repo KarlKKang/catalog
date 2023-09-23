@@ -1,8 +1,8 @@
 type ListenerMap = Map<EventListener, [boolean, boolean]>;
 type EventMap = Map<string, ListenerMap>;
-type ElementMap = WeakMap<EventTarget, EventMap>;
+type ElementMap = Map<EventTarget, EventMap>;
 
-const elementMap: ElementMap = new WeakMap();
+const elementMap: ElementMap = new Map();
 let elementCount = 0;
 
 const LOG_ELEMENT_MAP = false;
@@ -113,6 +113,16 @@ export function removeAllEventListeners(elem: EventTarget) {
         }
         return;
     }
+    removeAllEventListenersHelper(elem, eventMap);
+}
+
+export function deregisterAllEventTargets() {
+    for (const [elem, eventMap] of elementMap) {
+        removeAllEventListenersHelper(elem, eventMap);
+    }
+}
+
+function removeAllEventListenersHelper(elem: EventTarget, eventMap: EventMap) {
     for (const [event, listenerMap] of eventMap) {
         for (const [listener, listenerConfig] of listenerMap) {
             if (listenerConfig[0]) {

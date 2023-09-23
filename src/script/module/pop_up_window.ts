@@ -1,6 +1,7 @@
 import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, getBody, removeClass, replaceChildren, w, createInputElement, hideElement, showElement } from './dom';
 import { changeColor, disableInput } from './common';
 import { failedTotp } from './message/template/inline';
+import { addTimeout } from './timer';
 
 type PopUpWindow = {
     show: (...contents: Node[]) => void;
@@ -23,12 +24,18 @@ export function initializePopUpWindow() {
 
     let currentTimeout: NodeJS.Timeout | null = null;
 
-    instance = new Promise<PopUpWindow>((resolve) => {
+    const newInstance = new Promise<PopUpWindow>((resolve, reject) => {
         w.requestAnimationFrame(() => {
+            if (newInstance !== instance) {
+                reject();
+            }
             addClass(container, 'invisible');
             addClass(container, 'transparent');
             appendChild(getBody(), container);
             w.requestAnimationFrame(() => {
+                if (newInstance !== instance) {
+                    reject();
+                }
                 resolve({
                     show: (...contents: Node[]) => {
                         currentTimeout = null;
@@ -38,7 +45,7 @@ export function initializePopUpWindow() {
                     },
                     hide: () => {
                         addClass(container, 'transparent');
-                        const timeout = setTimeout(() => {
+                        const timeout = addTimeout(() => {
                             if (currentTimeout === timeout) {
                                 addClass(container, 'invisible');
                                 replaceChildren(popUpWindowcontent);
@@ -50,6 +57,7 @@ export function initializePopUpWindow() {
             });
         });
     });
+    instance = newInstance;
 
     return instance;
 }
@@ -129,5 +137,9 @@ export function promptForTotp(
         });
 
         popUpWindow.show(promptText, warningText, totpInputContainer, buttonFlexbox);
-    });
+    }).catch();
+}
+
+export function destroy() {
+    instance = null;
 }

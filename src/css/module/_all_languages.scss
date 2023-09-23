@@ -1,18 +1,20 @@
-:lang(en) {
-    font-family: 'Noto Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-    font-weight: 300;
-}
+@mixin default {
+    :lang(en) {
+        font-family: 'Noto Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        font-weight: 300;
+    }
 
-:lang(zh-Hans) {
-    font-family: 'Noto Sans SC', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-    font-weight: 300;
-}
+    :lang(zh-Hans) {
+        font-family: 'Noto Sans SC', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        font-weight: 300;
+    }
 
-:lang(zh-Hant) {
-    font-family: 'Noto Sans TC', 'PingFang TC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-    font-weight: 300;
-}
+    :lang(zh-Hant) {
+        font-family: 'Noto Sans TC', 'PingFang TC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        font-weight: 300;
+    }
 
-p:lang(en) {
-    line-height: 1.5;
+    p:lang(en) {
+        line-height: 1.5;
+    }
 }

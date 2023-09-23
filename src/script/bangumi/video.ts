@@ -54,21 +54,24 @@ import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAc
 import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import { CustomMediaError } from '../module/player/media_error';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
+import { RedirectFunc } from '../module/type/RedirectFunc';
+
+let pageLoaded = true;
 
 let seriesID: string;
 let epIndex: number;
 let epInfo: VideoEPInfo;
 let baseURL: string;
-let mediaHolder: HTMLElement;
 let nativePlayerImportPromise: NativePlayerImportPromise;
 let hlsPlayerImportPromise: HlsPlayerImportPromise;
 
 let currentFormat: VideoFormatInfo;
-let currentMediaInstance: PlayerType | undefined;
+let currentMediaInstance: PlayerType | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
 export default function (
+    redirect: RedirectFunc,
     _seriesID: string,
     _epIndex: number,
     _epInfo: VideoEPInfo,
@@ -78,6 +81,9 @@ export default function (
     startTime: number | null,
     play: boolean
 ) {
+    if (!pageLoaded) {
+        return;
+    }
 
     seriesID = _seriesID;
     epIndex = _epIndex;
@@ -86,7 +92,7 @@ export default function (
     nativePlayerImportPromise = _nativePlayerImportPromise;
     hlsPlayerImportPromise = _hlsPlayerImportPromise;
 
-    mediaHolder = getById('media-holder');
+    const mediaHolder = getById('media-holder');
     const contentContainer = getById('content');
     addClass(contentContainer, 'video');
 
@@ -141,18 +147,22 @@ export default function (
     insertBefore(formatContainer, mediaHolder);
 
     // Download Accordion
-    const [downloadAccordion, containerSelector] = buildDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
+    const [downloadAccordion, containerSelector] = buildDownloadAccordion(redirect, epInfo.media_session_credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
     appendChild(contentContainer, downloadAccordion);
 
     // Video Node
-    addEventListener(selectMenu, 'change', () => { formatSwitch(selectMenu, containerSelector); });
-    addVideoNode({
-        startTime: startTime === null ? undefined : startTime,
-        play: play
-    });
+    addEventListener(selectMenu, 'change', () => { formatSwitch(redirect, mediaHolder, selectMenu, containerSelector); });
+    addVideoNode(
+        redirect,
+        mediaHolder,
+        {
+            startTime: startTime === null ? undefined : startTime,
+            play: play
+        }
+    );
 }
 
-function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HTMLElement) {
+function formatSwitch(redirect: RedirectFunc, mediaHolder: HTMLElement, formatSelectMenu: HTMLSelectElement, containerSelector: HTMLElement) {
     const formatIndex = formatSelectMenu.selectedIndex;
 
     const format = epInfo.formats[formatIndex];
@@ -162,10 +172,10 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HT
     currentFormat = format;
     updateURLParam(seriesID, epIndex, formatIndex);
 
-    sendServerRequest('authenticate_media_session', {
+    sendServerRequest(redirect, 'authenticate_media_session', {
         callback: function (response: string) {
             if (response !== 'APPROVED') {
-                showMessage(invalidResponse);
+                showMessage(redirect, invalidResponse);
             }
 
             if (format.direct_download) {
@@ -179,14 +189,14 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HT
                 startTime?: number | undefined;
             } | undefined;
 
-            if (currentMediaInstance !== undefined) {
+            if (currentMediaInstance !== null) {
                 config = {
                     play: currentMediaInstance.playing,
                     startTime: currentMediaInstance.media.currentTime
                 };
 
                 currentMediaInstance.destroy();
-                currentMediaInstance = undefined;
+                currentMediaInstance = null;
             }
 
             hideElement(getById('format-display'));
@@ -198,17 +208,21 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HT
             }
             eventTargetsTracker.clear();
             showElement(mediaHolder);
-            addVideoNode(config);
+            addVideoNode(redirect, mediaHolder, config);
         },
         content: epInfo.media_session_credential + '&format=' + formatIndex,
         logoutParam: getLogoutParam(seriesID, epIndex)
     });
 }
 
-async function addVideoNode(config?: {
+async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, config?: {
     play?: boolean | undefined;
     startTime?: number | undefined;
 }) {
+    if (!pageLoaded) {
+        return;
+    }
+
     if (!MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
         return;
@@ -239,6 +253,9 @@ async function addVideoNode(config?: {
         showMediaMessage('HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null);
     } else if (currentFormat.video === 'hevc41') {
         const CAN_PLAY_HEVC = await canPlayHEVC(USE_NATIVE_HLS, currentFormat.avc_fallback);
+        if (!pageLoaded) {
+            return;
+        }
         if (CAN_PLAY_HEVC) {
             formatString = 'HEVC/Main 10/L4.1/High';
             USE_AVC = false;
@@ -302,7 +319,7 @@ async function addVideoNode(config?: {
     function _onInit(mediaInstance: PlayerType) {
         mediaInstance.media.title = getTitle();
         if (epInfo.chapters.length > 0) {
-            displayChapters(mediaInstance, USE_AAC ? 44 : 0);
+            displayChapters(mediaHolder, mediaInstance, USE_AAC ? 44 : 0);
         }
     }
 
@@ -316,8 +333,12 @@ async function addVideoNode(config?: {
         try {
             Player = (await nativePlayerImportPromise).Player;
         } catch (e) {
-            showMessage(moduleImportError(e));
+            showMessage(redirect, moduleImportError(e));
             throw e;
+        }
+
+        if (!pageLoaded) {
+            return;
         }
 
         const mediaInstance = new Player(playerContainer);
@@ -325,7 +346,7 @@ async function addVideoNode(config?: {
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {
                 showPlayerError(errorCode);
-                currentMediaInstance = undefined;
+                currentMediaInstance = null;
                 mediaInstance.destroy();
             },
             play: _config.play,
@@ -337,8 +358,12 @@ async function addVideoNode(config?: {
         try {
             HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
         } catch (e) {
-            showMessage(moduleImportError(e));
+            showMessage(redirect, moduleImportError(e));
             throw e;
+        }
+
+        if (!pageLoaded) {
+            return;
         }
 
         const hlsConfig = {
@@ -373,7 +398,7 @@ async function addVideoNode(config?: {
                 } else {
                     showPlayerError(errorCode);
                 }
-                currentMediaInstance = undefined;
+                currentMediaInstance = null;
                 mediaInstance.destroy();
             },
             play: _config.play,
@@ -383,7 +408,7 @@ async function addVideoNode(config?: {
     }
 }
 
-function displayChapters(mediaInstance: Player, offset: number) {
+function displayChapters(mediaHolder: HTMLElement, mediaInstance: Player, offset: number) {
     const accordion = createButtonElement();
     addClass(accordion, 'accordion');
     appendText(accordion, 'チャプター');
@@ -478,4 +503,14 @@ async function canPlayHEVC(native: boolean, withFallback: boolean | undefined): 
     }
 
     return decodingInfo.supported && decodingInfo.powerEfficient;
+}
+
+export function reload() {
+    pageLoaded = true;
+}
+
+export function offload() {
+    pageLoaded = false;
+    currentMediaInstance?.destroy();
+    eventTargetsTracker.clear();
 }

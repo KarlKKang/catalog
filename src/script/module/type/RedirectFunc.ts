@@ -1,0 +1,1 @@
+export type RedirectFunc = (url: string, withoutHistory?: boolean) => void;

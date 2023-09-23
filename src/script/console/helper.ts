@@ -9,15 +9,16 @@ import {
     getByClass,
     containsClass
 } from '../module/dom';
+import type { RedirectFunc } from '../module/type/RedirectFunc';
 
-export function getTable(type: string, callback?: () => void) {
+export function getTable(redirect: RedirectFunc, type: string, callback?: () => void) {
     const param = {
         command: 'get',
         type: type
     };
     const paramString = JSON.stringify(param);
 
-    sendServerRequest('console', {
+    sendServerRequest(redirect, 'console', {
         callback: function (response: string) {
             setOutput(response, callback);
         },

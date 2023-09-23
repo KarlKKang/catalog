@@ -7,11 +7,9 @@ import {
     getURLParam,
     passwordStyling,
     disableInput,
-    showPage,
 } from './module/common';
 import {
     addEventListener,
-    redirect,
     getById,
     showElement,
     replaceText,
@@ -21,14 +19,10 @@ import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
 import { expired, passwordChanged } from './module/message/template/param';
 import { PASSWORD_REGEX } from './module/common/pure';
-import type { HTMLImport } from './module/type/HTMLImport';
+import { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
 
-let newPasswordInput: HTMLInputElement;
-let newPasswordConfirmInput: HTMLInputElement;
-let submitButton: HTMLButtonElement;
-let warningElem: HTMLElement;
-
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
 
     const user = getURLParam('user');
@@ -37,7 +31,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
 
     if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
         if (DEVELOPMENT) {
-            showPage(styleImportPromises, htmlImportPromises);
+            showPage();
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -54,90 +48,92 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
         return;
     }
 
-    sendServerRequest('reset_password', {
+    sendServerRequest(redirect, 'reset_password', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                showMessage(expired);
+                showMessage(redirect, expired);
                 return;
             } else if (response != 'APPROVED') {
-                showMessage();
+                showMessage(redirect);
                 return;
             }
 
-            showPage(styleImportPromises, htmlImportPromises, () => {
-                newPasswordInput = getById('new-password') as HTMLInputElement;
-                newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
-                submitButton = getById('submit-button') as HTMLButtonElement;
-                warningElem = getById('warning');
-
-                addEventListener(newPasswordInput, 'keydown', (event) => {
-                    if ((event as KeyboardEvent).key === 'Enter') {
-                        submitRequest(user, signature, expires);
-                    }
-                });
-
-                addEventListener(newPasswordConfirmInput, 'keydown', (event) => {
-                    if ((event as KeyboardEvent).key === 'Enter') {
-                        submitRequest(user, signature, expires);
-                    }
-                });
-
-                addEventListener(submitButton, 'click', () => {
-                    submitRequest(user, signature, expires);
-                });
-
-                passwordStyling(newPasswordInput);
-                passwordStyling(newPasswordConfirmInput);
-            });
+            showPage(() => { showPageCallback(redirect, user, signature, expires); });
         },
         content: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
         withCredentials: false
     });
 }
 
-async function submitRequest(user: string, signature: string, expires: string) {
-    disableAllInputs(true);
+function showPageCallback(redirect: RedirectFunc, user: string, signature: string, expires: string) {
+    const newPasswordInput = getById('new-password') as HTMLInputElement;
+    const newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
+    const warningElem = getById('warning');
 
-    const newPassword = newPasswordInput.value;
-    const newPasswordConfirm = newPasswordConfirmInput.value;
+    addEventListener(newPasswordInput, 'keydown', (event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            submitRequest();
+        }
+    });
 
-    if (!PASSWORD_REGEX.test(newPassword)) {
-        replaceText(warningElem, invalidPasswordFormat);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
-    } else if (newPassword != newPasswordConfirm) {
-        replaceText(warningElem, passwordConfirmationMismatch);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
+    addEventListener(newPasswordConfirmInput, 'keydown', (event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            submitRequest();
+        }
+    });
+
+    addEventListener(submitButton, 'click', () => {
+        submitRequest();
+    });
+
+    passwordStyling(newPasswordInput);
+    passwordStyling(newPasswordConfirmInput);
+
+    async function submitRequest() {
+        disableAllInputs(true);
+
+        const newPassword = newPasswordInput.value;
+        const newPasswordConfirm = newPasswordConfirmInput.value;
+
+        if (!PASSWORD_REGEX.test(newPassword)) {
+            replaceText(warningElem, invalidPasswordFormat);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        } else if (newPassword != newPasswordConfirm) {
+            replaceText(warningElem, passwordConfirmationMismatch);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        }
+
+        sendServerRequest(redirect, 'reset_password', {
+            callback: function (response: string) {
+                if (response == 'EXPIRED') {
+                    showMessage(redirect, expired);
+                } else if (response == 'SAME') {
+                    replaceText(warningElem, passwordUnchanged);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response === 'PASSWORD INVALID') {
+                    replaceText(warningElem, invalidPasswordFormat);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response == 'DONE') {
+                    showMessage(redirect, passwordChanged);
+                } else {
+                    showMessage(redirect);
+                }
+            },
+            content: 'user=' + user + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),
+            withCredentials: false
+        });
     }
 
-    sendServerRequest('reset_password', {
-        callback: function (response: string) {
-            if (response == 'EXPIRED') {
-                showMessage(expired);
-            } else if (response == 'SAME') {
-                replaceText(warningElem, passwordUnchanged);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response === 'PASSWORD INVALID') {
-                replaceText(warningElem, invalidPasswordFormat);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'DONE') {
-                showMessage(passwordChanged);
-            } else {
-                showMessage();
-            }
-        },
-        content: 'user=' + user + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),
-        withCredentials: false
-    });
-}
-
-function disableAllInputs(disabled: boolean) {
-    submitButton.disabled = disabled;
-    disableInput(newPasswordInput, disabled);
-    disableInput(newPasswordConfirmInput, disabled);
+    function disableAllInputs(disabled: boolean) {
+        submitButton.disabled = disabled;
+        disableInput(newPasswordInput, disabled);
+        disableInput(newPasswordConfirmInput, disabled);
+    }
 }

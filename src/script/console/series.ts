@@ -10,14 +10,18 @@ import {
     addClass,
     getDataAttribute
 } from '../module/dom';
+import type { RedirectFunc } from '../module/type/RedirectFunc';
 import { completeCallback, getTable } from './helper';
+
+let redirect: RedirectFunc;
 
 function seriesCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
 }
 
-export function getSeriesTable() {
-    getTable('series', updateEventHandlers);
+export function getSeriesTable(_redirect: RedirectFunc) {
+    redirect = _redirect;
+    getTable(redirect, 'series', updateEventHandlers);
 }
 
 function modifySeries(button: Element) {
@@ -50,7 +54,7 @@ function modifySeries(button: Element) {
         }
     } while (confirm != 'modify');
 
-    sendServerRequest('console', {
+    sendServerRequest(redirect, 'console', {
         callback: seriesCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -72,7 +76,7 @@ function deleteSeries(id: string) {
         id: id
     };
 
-    sendServerRequest('console', {
+    sendServerRequest(redirect, 'console', {
         callback: seriesCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -106,7 +110,7 @@ function addSeries(button: Element) {
         }
     } while (confirm != 'insert');
 
-    sendServerRequest('console', {
+    sendServerRequest(redirect, 'console', {
         callback: seriesCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -196,7 +200,7 @@ function updateSeriesTime(id: string) {
         id: id
     };
 
-    sendServerRequest('console', {
+    sendServerRequest(redirect, 'console', {
         callback: seriesCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });

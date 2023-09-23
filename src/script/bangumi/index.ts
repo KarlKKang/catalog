@@ -5,12 +5,10 @@ import {
 import {
     sendServerRequest,
     getURLParam,
-    showPage,
 } from '../module/common';
 import {
     clearSessionStorage,
     getBaseURL,
-    redirect,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -18,10 +16,13 @@ import { invalidResponse } from '../module/message/template/param/server';
 import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam, getFormatIndex } from './helper';
 import { default as getImportPromises } from './get_import_promises';
-import type { default as updatePageType } from './update_page';
-import type { HTMLImport } from '../module/type/HTMLImport';
+import type { UpdatePageImportPromise } from './get_import_promises';
+import type { ShowPageFunc } from '../module/type/ShowPageFunc';
+import type { RedirectFunc } from '../module/type/RedirectFunc';
 
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+let updatePageModule: Awaited<UpdatePageImportPromise> | null = null;
+
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
 
     // Parse parameters
@@ -50,27 +51,30 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
     }
 
     //send requests
-    sendServerRequest('get_ep', {
+    sendServerRequest(redirect, 'get_ep', {
         callback: async function (response: string) {
             let parsedResponse: BangumiInfo.BangumiInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 BangumiInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(invalidResponse);
+                showMessage(redirect, invalidResponse);
                 return;
             }
 
-            let updatePage: typeof updatePageType;
+            let updatePage: Awaited<UpdatePageImportPromise>;
             try {
-                updatePage = (await importPromises.updatePage).default;
+                updatePageModule = await importPromises.updatePage;
+                updatePage = updatePageModule;
             } catch (e) {
-                showMessage(moduleImportError(e));
+                showMessage(redirect, moduleImportError(e));
                 throw e;
             }
 
-            showPage(styleImportPromises, htmlImportPromises, () => {
-                updatePage(
+            showPage(() => {
+                updatePage.reload();
+                updatePage.default(
+                    redirect,
                     parsedResponse,
                     seriesID,
                     epIndex,
@@ -80,7 +84,8 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
                     importPromises.nativePlayer,
                     importPromises.hlsPlayer,
                     importPromises.videojsPlayer,
-                    importPromises.lazyload
+                    importPromises.lazyload,
+                    importPromises.imageLoader,
                 );
             });
         },
@@ -92,4 +97,8 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
 function getSeriesID(): string | null {
     const start = (TOP_URL + '/bangumi/').length;
     return getBaseURL().substring(start);
+}
+
+export function offload() {
+    updatePageModule?.offload();
 }

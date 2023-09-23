@@ -32,6 +32,7 @@ import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClas
 import * as icons from './icons';
 import { CustomMediaError } from './media_error';
 import { getLocalTime, secToTimestamp } from '../common/pure';
+import { addInterval, addTimeout, removeInterval } from '../timer';
 
 declare global {
     interface HTMLVideoElement {
@@ -411,7 +412,7 @@ export class Player {
     }
 
     public destroy(this: Player) {
-        this.timer && clearInterval(this.timer);
+        this.timer && removeInterval(this.timer);
         this.disattach();
         removeAllEventListeners(this.media);
         removeAllEventListeners(this.controls);
@@ -534,7 +535,7 @@ export class Player {
         });
 
         //Progress bar & frame drop monitor
-        this.timer = setInterval(() => { this.intervalCallback; }, 250);
+        this.timer = addInterval(() => { this.intervalCallback; }, 250);
 
         //Progress bar
         addEventsListener(this.progressControl, ['mousedown', 'touchstart'], (event) => {
@@ -596,7 +597,7 @@ export class Player {
         addEventListener(this.controls, 'touchend', () => {
             DEVELOPMENT && this.log?.('Touchend on controls.');
             touchClick++;
-            setTimeout(() => { touchClick--; }, 300); // https://web.dev/mobile-touchandmouse/
+            addTimeout(() => { touchClick--; }, 300); // https://web.dev/mobile-touchandmouse/
         });
         addEventListener(this.controls, 'click', () => {
             if (touchClick > 0) {
@@ -636,7 +637,7 @@ export class Player {
         };
         addEventListener(this.media, 'progress', () => {
             updateLoadProgress();
-            setTimeout(updateLoadProgress, 1000);
+            addTimeout(updateLoadProgress, 1000);
         });
 
         addEventListener(this.media, 'waiting', () => {

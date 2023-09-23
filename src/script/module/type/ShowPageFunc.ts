@@ -1,0 +1,1 @@
+export type ShowPageFunc = (callback?: () => void) => void;

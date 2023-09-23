@@ -9,15 +9,6 @@ declare global {
     }
 }
 
-const ua: UAParser.IResult | null = function () {
-    try {
-        return UAParser(typeof navigator !== 'undefined' ? navigator.userAgent.toLowerCase() : '');
-    }
-    catch (e) {
-        return null;
-    }
-}();
-
 let IS_IOS = false;
 let IS_SAFARI = false;
 const IS_CHROMIUM = !!w.chrome;
@@ -27,27 +18,42 @@ let IS_WINDOWS = false;
 let IS_MACOS = false;
 let UNRECOMMENDED_BROWSER = false;
 
-if (ua !== null) {
-    const browserName = ua.browser.name ? ua.browser.name.toLowerCase() : '';
-    const osName = ua.os.name ? ua.os.name.toLowerCase() : '';
-    const engineName = ua.engine.name ? ua.engine.name.toLowerCase() : '';
-    const engineVersion = ua.engine.version ? parseFloat(ua.engine.version) : NaN;
+(function () {
+    const ua: UAParser.IResult | null = function () {
+        try {
+            return UAParser(typeof navigator !== 'undefined' ? navigator.userAgent.toLowerCase() : '');
+        }
+        catch (e) {
+            return null;
+        }
+    }();
 
-    IS_IOS = browserName === 'mobile safari' || osName === 'ios' || (browserName === 'safari' && 'ontouchend' in document);
-    IS_SAFARI = IS_IOS || browserName === 'safari';
-    IS_FIREFOX = browserName.includes('firefox') && !IS_IOS;
-    IS_EDGE = browserName === 'edge';
-    IS_WINDOWS = osName === 'windows';
-    IS_MACOS = osName === 'mac os';
+    if (ua !== null) {
+        const browserName = ua.browser.name ? ua.browser.name.toLowerCase() : '';
+        const osName = ua.os.name ? ua.os.name.toLowerCase() : '';
+        const engineName = ua.engine.name ? ua.engine.name.toLowerCase() : '';
+        const engineVersion = ua.engine.version ? parseFloat(ua.engine.version) : NaN;
 
-    const SUPPORTED_BLINK = engineName === 'blink' && engineVersion >= 62;
-    UNRECOMMENDED_BROWSER = (!SUPPORTED_BLINK && !IS_SAFARI) || browserName.includes('wechat') || browserName === 'ucbrowser';
-}
+        IS_IOS = browserName === 'mobile safari' || osName === 'ios' || (browserName === 'safari' && 'ontouchend' in document);
+        IS_SAFARI = IS_IOS || browserName === 'safari';
+        IS_FIREFOX = browserName.includes('firefox') && !IS_IOS;
+        IS_EDGE = browserName === 'edge';
+        IS_WINDOWS = osName === 'windows';
+        IS_MACOS = osName === 'mac os';
 
-const audioElem = createAudioElement();
-const videoElem = createVideoElement();
+        const SUPPORTED_BLINK = engineName === 'blink' && engineVersion >= 62;
+        UNRECOMMENDED_BROWSER = (!SUPPORTED_BLINK && !IS_SAFARI) || browserName.includes('wechat') || browserName === 'ucbrowser';
+    }
+})();
 
-const NATIVE_HLS = (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_SAFARI;
+
+
+const NATIVE_HLS = (function () {
+    const audioElem = createAudioElement();
+    const videoElem = createVideoElement();
+    return (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_SAFARI;
+})();
+
 const MSE = isSupported();
 
 const CAN_PLAY_ALAC = audioCanPlay('alac', NATIVE_HLS);
@@ -90,9 +96,9 @@ export function canPlay(type: 'video' | 'audio', container: string, codecs: stri
         }
         let mediaElement: HTMLMediaElement;
         if (type === 'video') {
-            mediaElement = videoElem;
+            mediaElement = createVideoElement();
         } else {
-            mediaElement = audioElem;
+            mediaElement = createAudioElement();
         }
         return mediaElement.canPlayType(`${type}/${container}${codecs}`) !== '';
     } else {

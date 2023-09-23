@@ -2,7 +2,6 @@
 import {
     sendServerRequest,
     disableInput,
-    showPage,
 } from './module/common';
 import {
     addEventListener,
@@ -15,70 +14,68 @@ import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitationOnly } from './module/message/template/inline';
 import { EMAIL_REGEX } from './module/common/pure';
-import type { HTMLImport } from './module/type/HTMLImport';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
 
-let emailInput: HTMLInputElement;
-let submitButton: HTMLButtonElement;
-let warningElem: HTMLElement;
-
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
-
-    showPage(styleImportPromises, htmlImportPromises, () => {
-        emailInput = getById('email') as HTMLInputElement;
-        submitButton = getById('submit-button') as HTMLButtonElement;
-        warningElem = getById('warning');
-
-        addEventListener(emailInput, 'keydown', (event) => {
-            if ((event as KeyboardEvent).key === 'Enter') {
-                register();
-            }
-        });
-
-        addEventListener(submitButton, 'click', () => {
-            register();
-        });
-    });
+    showPage(() => { showPageCallback(redirect); });
 }
 
-async function register() {
-    disableAllInputs(true);
+function showPageCallback(redirect: RedirectFunc) {
+    const emailInput = getById('email') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
+    const warningElem = getById('warning');
 
-    const email = emailInput.value;
+    addEventListener(emailInput, 'keydown', (event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            register();
+        }
+    });
 
-    if (!EMAIL_REGEX.test(email)) {
-        replaceText(warningElem, invalidEmailFormat);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
-    }
+    addEventListener(submitButton, 'click', () => {
+        register();
+    });
 
-    sendServerRequest('send_invite', {
-        callback: function (response: string) {
-            if (response == 'INVALID FORMAT') {
-                replaceText(warningElem, invalidEmailFormat);
-            } else if (response == 'ALREADY REGISTERED') {
-                replaceText(warningElem, emailAlreadyRegistered);
-            } else if (response == 'CLOSED') {
-                replaceText(warningElem, invitationClosed);
-            } else if (response == 'NORMAL') {
-                replaceText(warningElem, invitationOnly);
-            } else if (response == 'DONE') {
-                showMessage(emailSent(false));
-                return;
-            } else {
-                showMessage();
-                return;
-            }
+    function register() {
+        disableAllInputs(true);
+
+        const email = emailInput.value;
+
+        if (!EMAIL_REGEX.test(email)) {
+            replaceText(warningElem, invalidEmailFormat);
             showElement(warningElem);
             disableAllInputs(false);
-        },
-        content: 'special=1&receiver=' + encodeURIComponent(email),
-        withCredentials: false
-    });
-}
+            return;
+        }
 
-function disableAllInputs(disabled: boolean) {
-    submitButton.disabled = disabled;
-    disableInput(emailInput, disabled);
+        sendServerRequest(redirect, 'send_invite', {
+            callback: function (response: string) {
+                if (response == 'INVALID FORMAT') {
+                    replaceText(warningElem, invalidEmailFormat);
+                } else if (response == 'ALREADY REGISTERED') {
+                    replaceText(warningElem, emailAlreadyRegistered);
+                } else if (response == 'CLOSED') {
+                    replaceText(warningElem, invitationClosed);
+                } else if (response == 'NORMAL') {
+                    replaceText(warningElem, invitationOnly);
+                } else if (response == 'DONE') {
+                    showMessage(redirect, emailSent(false));
+                    return;
+                } else {
+                    showMessage(redirect);
+                    return;
+                }
+                showElement(warningElem);
+                disableAllInputs(false);
+            },
+            content: 'special=1&receiver=' + encodeURIComponent(email),
+            withCredentials: false
+        });
+    }
+
+    function disableAllInputs(disabled: boolean) {
+        submitButton.disabled = disabled;
+        disableInput(emailInput, disabled);
+    }
 }

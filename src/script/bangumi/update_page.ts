@@ -10,9 +10,7 @@ import {
 import {
     w,
     addEventListener,
-    redirect,
     getById,
-    getBody,
     removeClass,
     setTitle,
     createElement,
@@ -37,16 +35,21 @@ import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
-import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, LazyloadImportPromise, NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
-import type { default as videoType } from './video';
-import type { default as audioType } from './audio';
-import type { default as imageType } from './image';
+import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, LazyloadImportPromise, NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise, ImageLoaderImportPromise } from './get_import_promises';
 import { encodeCFURIComponent } from '../module/common/pure';
+import { addInterval, addTimeout } from '../module/timer';
+import type { RedirectFunc } from '../module/type/RedirectFunc';
+
+let pageLoaded: boolean;
+let redirect: RedirectFunc;
 
 let seriesID: string;
 let epIndex: number;
 
+let currentPage: Awaited<VideoImportPromise> | Awaited<AudioImportPromise> | Awaited<ImageImportPromise> | null = null;
+
 export default async function (
+    _redirect: RedirectFunc,
     response: BangumiInfo.BangumiInfo,
     _seriesID: string,
     _epIndex: number,
@@ -56,13 +59,18 @@ export default async function (
     nativePlayerImportPromise: NativePlayerImportPromise,
     hlsPlayerImportPromise: HlsPlayerImportPromise,
     videojsPlayerImportPromise: VideojsPlayerImportPromise,
-    lazyloadImportPromise: LazyloadImportPromise
+    lazyloadImportPromise: LazyloadImportPromise,
+    imageLoaderImportPromise: ImageLoaderImportPromise,
 ) {
+    if (!pageLoaded) {
+        return;
+    }
+
+    redirect = _redirect;
     seriesID = _seriesID;
     epIndex = _epIndex;
 
-    addNavBar();
-    showElement(getBody());
+    addNavBar(redirect);
 
     const contentContainer = getById('content');
     const startTimeText = getURLParam('timestamp');
@@ -135,11 +143,11 @@ export default async function (
     }
 
     /////////////////////////////////////////////authenticate media session/////////////////////////////////////////////
-    setInterval(() => {
-        sendServerRequest('authenticate_media_session', {
+    addInterval(() => {
+        sendServerRequest(redirect, 'authenticate_media_session', {
             callback: function (response: string) {
                 if (response != 'APPROVED') {
-                    showMessage(invalidResponse);
+                    showMessage(redirect, invalidResponse);
                 }
             },
             content: epInfo.media_session_credential,
@@ -154,33 +162,42 @@ export default async function (
     const baseURL = CDN_URL + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
 
     if (type === 'video') {
-        let video: typeof videoType;
         try {
-            video = (await videoImportPromise).default;
+            currentPage = await videoImportPromise;
         } catch (e) {
-            showMessage(moduleImportError(e));
+            showMessage(redirect, moduleImportError(e));
             throw e;
         }
-        video(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, startTime, play);
+        if (!pageLoaded) {
+            return;
+        }
+        currentPage.reload();
+        currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, startTime, play);
     } else {
         if (type === 'audio') {
-            let audio: typeof audioType;
             try {
-                audio = (await audioImportPromise).default;
+                currentPage = await audioImportPromise;
             } catch (e) {
-                showMessage(moduleImportError(e));
+                showMessage(redirect, moduleImportError(e));
                 throw e;
             }
-            audio(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise);
+            if (!pageLoaded) {
+                return;
+            }
+            currentPage.reload();
+            currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise);
         } else {
-            let image: typeof imageType;
             try {
-                image = (await imageImportPromise).default;
+                currentPage = await imageImportPromise;
             } catch (e) {
-                showMessage(moduleImportError(e));
+                showMessage(redirect, moduleImportError(e));
                 throw e;
             }
-            image(epInfo as BangumiInfo.ImageEPInfo, baseURL, lazyloadImportPromise);
+            if (!pageLoaded) {
+                return;
+            }
+            currentPage.reload();
+            currentPage.default(redirect, epInfo as BangumiInfo.ImageEPInfo, baseURL, lazyloadImportPromise, imageLoaderImportPromise);
         }
         updateURLParam(seriesID, epIndex, 0);
     }
@@ -255,7 +272,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             replaceChildren(showMoreButton, ...showMoreButtonExpandedText);
             epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
             addClass(epButtonWrapper, 'expanded');
-            const timeout = setTimeout(() => {
+            const timeout = addTimeout(() => {
                 if (currentToggleTimeout === timeout) {
                     epButtonWrapper.style.removeProperty('max-height');
                 }
@@ -314,7 +331,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
             addClass(showMoreButton, 'transparent');
             removeClass(epButtonWrapper, 'expanded');
-            const timeout = setTimeout(() => {
+            const timeout = addTimeout(() => {
                 if (currentStylingTimeout === timeout) {
                     epButtonWrapper.style.removeProperty('max-height');
                     addClass(showMoreButton, 'invisible');
@@ -358,4 +375,13 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
 function goToEP(dest_series: string, dest_ep: number) {
     const url = TOP_URL + '/bangumi/' + dest_series + (dest_ep == 1 ? '' : ('?ep=' + dest_ep));
     redirect(url);
+}
+
+export function reload() {
+    pageLoaded = true;
+}
+
+export function offload() {
+    pageLoaded = false;
+    currentPage?.offload();
 }

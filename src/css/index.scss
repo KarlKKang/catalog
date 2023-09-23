@@ -1,172 +1,174 @@
 @use 'module/common';
 
-@include common.lazyload;
-@include common.ellipsis-clipping-2;
+#page-top {
+    @include common.lazyload;
+    @include common.ellipsis-clipping-2;
 
-#container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 0px;
-    margin: calc(3vh - 12px) 5% 3vh 5%;
-    transition: opacity .4s ease-out;
-
-    >div {
-        position: relative;
-        width: 256px;
-        max-width: calc(50% - 2 * 12px);
-        height: auto;
-        background-color: var(--foreground-color);
-        box-shadow: var(--shadow);
-        transition: box-shadow .4s ease-out;
-        margin: 12px;
-        cursor: pointer;
-        align-self: flex-start;
-
-        >* {
-            width: 100%;
-        }
-
-        >p {
-            width: 90%;
-            margin: 10% 5%;
-            padding: 0px;
-        }
+    #container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0px;
+        margin: calc(3vh - 12px) 5% 3vh 5%;
+        transition: opacity .4s ease-out;
 
         >div {
             position: relative;
-            padding-bottom: 141.4213562%;
-            margin: 0px;
+            width: 256px;
+            max-width: calc(50% - 2 * 12px);
+            height: auto;
+            background-color: var(--foreground-color);
+            box-shadow: var(--shadow);
+            transition: box-shadow .4s ease-out;
+            margin: 12px;
+            cursor: pointer;
+            align-self: flex-start;
 
-            >.overlay {
-                background-color: rgb(255, 255, 255);
-                transition: opacity .4s ease-out;
-                opacity: 0;
+            >* {
+                width: 100%;
             }
-        }
 
-        &:hover {
-            box-shadow: var(--shadow-hover);
+            >p {
+                width: 90%;
+                margin: 10% 5%;
+                padding: 0px;
+            }
 
-            >div>.overlay {
-                opacity: 0.1;
+            >div {
+                position: relative;
+                padding-bottom: 141.4213562%;
+                margin: 0px;
 
-                @media not screen and (hover: hover) and (pointer: fine) {
+                >.overlay {
+                    background-color: rgb(255, 255, 255);
+                    transition: opacity .4s ease-out;
                     opacity: 0;
                 }
             }
-        }
 
-        @media only screen and (prefers-color-scheme: dark) {
-            >div>.overlay {
-                background-color: rgb(0, 0, 0);
-                opacity: 0.1;
+            &:hover {
+                box-shadow: var(--shadow-hover);
+
+                >div>.overlay {
+                    opacity: 0.1;
+
+                    @media not screen and (hover: hover) and (pointer: fine) {
+                        opacity: 0;
+                    }
+                }
             }
 
-            &:hover>div>.overlay {
-                opacity: 0;
-
-                @media not screen and (hover: hover) and (pointer: fine) {
+            @media only screen and (prefers-color-scheme: dark) {
+                >div>.overlay {
+                    background-color: rgb(0, 0, 0);
                     opacity: 0.1;
+                }
+
+                &:hover>div>.overlay {
+                    opacity: 0;
+
+                    @media not screen and (hover: hover) and (pointer: fine) {
+                        opacity: 0.1;
+                    }
                 }
             }
         }
-    }
 
-    @supports (max-width:calc(50% - min(2%, 12px) * 2)) and (margin: calc(3vh - min(2%, 12px)) 5% 3vh 5%) and (margin: min(2%, 12px)) {
-        margin: calc(3vh - min(2%, 12px)) 5% 3vh 5%;
+        @supports (max-width:calc(50% - min(2%, 12px) * 2)) and (margin: calc(3vh - min(2%, 12px)) 5% 3vh 5%) and (margin: min(2%, 12px)) {
+            margin: calc(3vh - min(2%, 12px)) 5% 3vh 5%;
 
-        >div {
-            max-width: calc(50% - min(2%, 12px) * 2);
-            margin: min(2%, 12px);
+            >div {
+                max-width: calc(50% - min(2%, 12px) * 2);
+                margin: min(2%, 12px);
+            }
         }
     }
-}
 
-#search-bar {
-    background: var(--foreground-color);
-    display: flex;
-    height: 50px;
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
-    margin: 3vh auto 0px auto;
-    width: 75%;
-    max-width: 1000px;
-
-    .icon {
-        margin: 0px;
-        padding: 0 10px;
-        height: 50px;
-        width: 24px;
+    #search-bar {
+        background: var(--foreground-color);
         display: flex;
-        align-items: center;
-        cursor: pointer;
-
-        svg {
-            display: block;
-            fill: var(--alt-text-color);
-            height: 24px;
-            width: 24px;
-        }
-    }
-
-    input {
-        flex: 1;
-        background-color: transparent;
-        height: 100%;
-        width: 100%;
-        margin: 0px;
-        font-size: medium;
-        border: none;
-        padding: 0.5em 1em 0.5em 0px;
-        box-sizing: border-box;
-    }
-
-    &:not(.disabled):hover {
-        box-shadow: var(--shadow-hover);
-    }
-
-    &.disabled {
-        cursor: wait;
+        height: 50px;
+        box-shadow: var(--shadow);
+        transition: box-shadow .4s ease-out;
+        margin: 3vh auto 0px auto;
+        width: 75%;
+        max-width: 1000px;
 
         .icon {
+            margin: 0px;
+            padding: 0 10px;
+            height: 50px;
+            width: 24px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+
+            svg {
+                display: block;
+                fill: var(--alt-text-color);
+                height: 24px;
+                width: 24px;
+            }
+        }
+
+        input {
+            flex: 1;
+            background-color: transparent;
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            font-size: medium;
+            border: none;
+            padding: 0.5em 1em 0.5em 0px;
+            box-sizing: border-box;
+        }
+
+        &:not(.disabled):hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        &.disabled {
             cursor: wait;
+
+            .icon {
+                cursor: wait;
+            }
         }
     }
-}
 
-#position-detector {
-    width: 100%;
-    height: 0px;
-    margin: 0px;
-    padding: 0px;
-}
-
-.announcement {
-    margin: 3vh auto 0px auto;
-    width: 75%;
-    max-width: 1000px;
-    padding: 2em;
-    background-color: var(--foreground-color);
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
-    box-sizing: border-box;
-
-    &:hover {
-        box-shadow: var(--shadow-hover);
+    #position-detector {
+        width: 100%;
+        height: 0px;
+        margin: 0px;
+        padding: 0px;
     }
-}
 
-.announcement-title {
-    text-align: center;
-    margin: 0px 0px 1em 0px;
-    padding: 0px;
-    font-size: x-large;
-    font-weight: 500;
-}
+    .announcement {
+        margin: 3vh auto 0px auto;
+        width: 75%;
+        max-width: 1000px;
+        padding: 2em;
+        background-color: var(--foreground-color);
+        box-shadow: var(--shadow);
+        transition: box-shadow .4s ease-out;
+        box-sizing: border-box;
 
-.announcement-body {
-    margin: 1em 0px 0px 0px;
-    padding: 0px;
-    text-align: center;
+        &:hover {
+            box-shadow: var(--shadow-hover);
+        }
+    }
+
+    .announcement-title {
+        text-align: center;
+        margin: 0px 0px 1em 0px;
+        padding: 0px;
+        font-size: x-large;
+        font-weight: 500;
+    }
+
+    .announcement-body {
+        margin: 1em 0px 0px 0px;
+        padding: 0px;
+        text-align: center;
+    }
 }

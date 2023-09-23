@@ -1,87 +1,89 @@
 @use 'module/common';
 
-@include common.password-font;
+#page-my-account {
+    @include common.password-font;
 
-#container {
-    width: 1000px;
-    max-width: 90%;
-    margin: 0px;
-    padding: 1em 0px 1em 0px;
-    position: relative;
-    left: 50%;
-    transform: translate(-50%, 0%);
-}
-
-#title {
-    text-align: center;
-    font-size: x-large;
-}
-
-.sub-title {
-    font-size: large;
-}
-
-#title,
-.sub-title {
-    margin: 1em 0px;
-    padding: 0px;
-    font-weight: 500;
-}
-
-hr {
-    margin: 2em 0px 2em 0px;
-    height: 1px;
-    border-width: 0;
-    background-color: var(--horizontal-line-background-color);
-}
-
-.warning {
-    padding: 0px;
-    margin: 1em 0px;
-}
-
-.input-field,
-.button {
-    max-width: 100%;
-    margin: 1em 0px;
-}
-
-.button {
-    width: 150px;
-}
-
-.input-field {
-    width: 300px;
-}
-
-.note>ul {
-    padding: 0px 0px 0px 1em;
-
-    >li {
-        font-size: small;
-        color: var(--alt-text-color);
+    #container {
+        width: 1000px;
+        max-width: 90%;
+        margin: 0px;
+        padding: 1em 0px 1em 0px;
+        position: relative;
+        left: 50%;
+        transform: translate(-50%, 0%);
     }
-}
 
-#invite-count-text {
-    padding: 1em 0px;
-    margin: 0px;
-}
+    #title {
+        text-align: center;
+        font-size: x-large;
+    }
 
-.totp-qrcode {
-    display: block;
-    max-width: 100%;
-    margin: 0px;
-}
+    .sub-title {
+        font-size: large;
+    }
 
-.totp-uri {
-    overflow-wrap: break-word;
-}
+    #title,
+    .sub-title {
+        margin: 1em 0px;
+        padding: 0px;
+        font-weight: 500;
+    }
 
-.recovery-codes {
-    background-color: var(--grey-background-color);
-    display: inline-block;
-    width: 100%;
-    overflow-wrap: anywhere;
-    font-family: 'Courier New', Courier, monospace;
+    hr {
+        margin: 2em 0px 2em 0px;
+        height: 1px;
+        border-width: 0;
+        background-color: var(--horizontal-line-background-color);
+    }
+
+    .warning {
+        padding: 0px;
+        margin: 1em 0px;
+    }
+
+    .input-field,
+    .button {
+        max-width: 100%;
+        margin: 1em 0px;
+    }
+
+    .button {
+        width: 150px;
+    }
+
+    .input-field {
+        width: 300px;
+    }
+
+    .note>ul {
+        padding: 0px 0px 0px 1em;
+
+        >li {
+            font-size: small;
+            color: var(--alt-text-color);
+        }
+    }
+
+    #invite-count-text {
+        padding: 1em 0px;
+        margin: 0px;
+    }
+
+    .totp-qrcode {
+        display: block;
+        max-width: 100%;
+        margin: 0px;
+    }
+
+    .totp-uri {
+        overflow-wrap: break-word;
+    }
+
+    .recovery-codes {
+        background-color: var(--grey-background-color);
+        display: inline-block;
+        width: 100%;
+        overflow-wrap: anywhere;
+        font-family: 'Courier New', Courier, monospace;
+    }
 }

@@ -5,18 +5,17 @@ import {
 import {
     addEventListener,
     getById,
-    redirect,
     appendText,
     clearSessionStorage,
 } from './module/dom';
 import { notFound as notFoundTitle } from './module/message/template/title/server';
 import { notFound as notFoundBody } from './module/message/template/body/server';
-import type { HTMLImport } from './module/type/HTMLImport';
-import { showPage } from './module/common';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
 
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
-    showPage(styleImportPromises, htmlImportPromises, () => {
+    showPage(() => {
         appendText(getById('title'), notFoundTitle);
         appendText(getById('message'), notFoundBody);
         addEventListener(getById('button'), 'click', () => {

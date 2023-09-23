@@ -9,11 +9,9 @@ import {
     authenticate,
     disableInput,
     getURLParam,
-    showPage,
 } from './module/common';
 import {
     addEventListener,
-    redirect,
     getById,
     getDescendantsByTagAt,
     showElement,
@@ -25,161 +23,162 @@ import { show as showMessage } from './module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
 import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
-import { promptForTotp } from './module/pop_up_window';
+import { destroy as destroyPopUpWindow, promptForTotp } from './module/pop_up_window';
 import { EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
-import type { HTMLImport } from './module/type/HTMLImport';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
 
-let submitButton: HTMLButtonElement;
-let passwordInput: HTMLInputElement;
-let usernameInput: HTMLInputElement;
-let rememberMeInput: HTMLInputElement;
-let warningElem: HTMLElement;
-
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
 
-    authenticate({
+    authenticate(redirect, {
         successful:
             function () {
                 redirect(TOP_URL, true);
             },
         failed:
             function () {
-                showPage(styleImportPromises, htmlImportPromises, () => {
-                    submitButton = getById('submit-button') as HTMLButtonElement;
-                    passwordInput = getById('current-password') as HTMLInputElement;
-                    usernameInput = getById('username') as HTMLInputElement;
-                    rememberMeInput = getById('remember-me-checkbox') as HTMLInputElement;
-                    warningElem = getById('warning');
-
-                    const loginOnKeyDown = (event: Event) => {
-                        if ((event as KeyboardEvent).key === 'Enter') {
-                            login();
-                        }
-                    };
-
-                    addEventListener(usernameInput, 'keydown', loginOnKeyDown);
-                    addEventListener(passwordInput, 'keydown', loginOnKeyDown);
-
-                    addEventListener(submitButton, 'click', login);
-                    addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', () => {
-                        redirect(LOGIN_URL + '/request_password_reset', true);
-                    });
-                    passwordStyling(passwordInput);
-                });
+                showPage(() => { showPageCallback(redirect); });
             }
     });
 }
 
-function login() {
-    disableAllInputs(true);
+function showPageCallback(redirect: RedirectFunc) {
+    const submitButton = getById('submit-button') as HTMLButtonElement;
+    const passwordInput = getById('current-password') as HTMLInputElement;
+    const usernameInput = getById('username') as HTMLInputElement;
+    const rememberMeInput = getById('remember-me-checkbox') as HTMLInputElement;
+    const warningElem = getById('warning');
 
-    const email = usernameInput.value;
-    const password = passwordInput.value;
-
-    if (!EMAIL_REGEX.test(email)) {
-        replaceText(warningElem, loginFailed);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
-    }
-
-    if (!PASSWORD_REGEX.test(password)) {
-        replaceText(warningElem, loginFailed);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
-    }
-
-    sendLoginRequest(
-        'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0'),
-        () => {
-            promptForTotp(
-                (totp, closeWindow, showWarning) => {
-                    sendLoginRequest(
-                        'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0') + '&totp=' + totp,
-                        showWarning,
-                        closeWindow
-                    );
-                },
-                () => { disableAllInputs(false); }
-            );
+    const loginOnKeyDown = (event: Event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            login();
         }
-    );
-}
+    };
 
-function sendLoginRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
-    sendServerRequest('login', {
-        callback: function (response: string) {
-            if (response == 'FAILED') {
-                closePopUpWindow?.();
-                replaceText(warningElem, loginFailed);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'DEACTIVATED') {
-                closePopUpWindow?.();
-                replaceChildren(warningElem, ...accountDeactivated());
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'TOO MANY REQUESTS') {
-                closePopUpWindow?.();
-                replaceText(warningElem, tooManyFailedLogin);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'FAILED TOTP') {
-                failedTotpCallback();
-            } else if (response == 'APPROVED') {
-                if (UNRECOMMENDED_BROWSER) {
-                    showMessage(unrecommendedBrowser(getForwardURL()));
+    addEventListener(usernameInput, 'keydown', loginOnKeyDown);
+    addEventListener(passwordInput, 'keydown', loginOnKeyDown);
+
+    addEventListener(submitButton, 'click', login);
+    addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', () => {
+        redirect(LOGIN_URL + '/request_password_reset', true);
+    });
+    passwordStyling(passwordInput);
+
+    function login() {
+        disableAllInputs(true);
+
+        const email = usernameInput.value;
+        const password = passwordInput.value;
+
+        if (!EMAIL_REGEX.test(email)) {
+            replaceText(warningElem, loginFailed);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        }
+
+        if (!PASSWORD_REGEX.test(password)) {
+            replaceText(warningElem, loginFailed);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        }
+
+        sendLoginRequest(
+            'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0'),
+            () => {
+                promptForTotp(
+                    (totp, closeWindow, showWarning) => {
+                        sendLoginRequest(
+                            'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0') + '&totp=' + totp,
+                            showWarning,
+                            closeWindow
+                        );
+                    },
+                    () => { disableAllInputs(false); }
+                );
+            }
+        );
+    }
+
+    function sendLoginRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
+        sendServerRequest(redirect, 'login', {
+            callback: function (response: string) {
+                if (response == 'FAILED') {
+                    closePopUpWindow?.();
+                    replaceText(warningElem, loginFailed);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response == 'DEACTIVATED') {
+                    closePopUpWindow?.();
+                    replaceChildren(warningElem, ...accountDeactivated());
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response == 'TOO MANY REQUESTS') {
+                    closePopUpWindow?.();
+                    replaceText(warningElem, tooManyFailedLogin);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response == 'FAILED TOTP') {
+                    failedTotpCallback();
+                } else if (response == 'APPROVED') {
+                    if (UNRECOMMENDED_BROWSER) {
+                        showMessage(redirect, unrecommendedBrowser(getForwardURL()));
+                    } else {
+                        redirect(getForwardURL(), true);
+                    }
                 } else {
-                    redirect(getForwardURL(), true);
+                    showMessage(redirect);
                 }
-            } else {
-                showMessage();
+            },
+            content: content
+        });
+    }
+
+    function disableAllInputs(disabled: boolean) {
+        submitButton.disabled = disabled;
+        disableInput(passwordInput, disabled);
+        disableInput(usernameInput, disabled);
+        disableInput(rememberMeInput, disabled);
+    }
+
+    function getForwardURL() {
+        const series = getURLParam('series');
+        if (series !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
+            let url: string;
+            let separator: '?' | '&' = '?';
+            url = TOP_URL + '/bangumi/' + series;
+
+            const ep = getURLParam('ep');
+            if (ep !== null && ep !== '1') {
+                url += separator + 'ep=' + ep;
+                separator = '&';
             }
-        },
-        content: content
-    });
-}
 
-function disableAllInputs(disabled: boolean) {
-    submitButton.disabled = disabled;
-    disableInput(passwordInput, disabled);
-    disableInput(usernameInput, disabled);
-    disableInput(rememberMeInput, disabled);
-}
-
-function getForwardURL() {
-    const series = getURLParam('series');
-    if (series !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
-        let url: string;
-        let separator: '?' | '&' = '?';
-        url = TOP_URL + '/bangumi/' + series;
-
-        const ep = getURLParam('ep');
-        if (ep !== null && ep !== '1') {
-            url += separator + 'ep=' + ep;
-            separator = '&';
+            const format = getURLParam('format');
+            if (format !== null && format !== '1') {
+                url += separator + 'format=' + format;
+            }
+            return url;
         }
 
-        const format = getURLParam('format');
-        if (format !== null && format !== '1') {
-            url += separator + 'format=' + format;
+        const news = getURLParam('news');
+        if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
+            const hash = getURLParam('hash');
+            const hashString = (hash === null) ? '' : ('#' + hash);
+            return TOP_URL + '/news/' + news + hashString;
         }
-        return url;
-    }
 
-    const news = getURLParam('news');
-    if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
-        const hash = getURLParam('hash');
-        const hashString = (hash === null) ? '' : ('#' + hash);
-        return TOP_URL + '/news/' + news + hashString;
-    }
+        const keywords = getURLParam('keywords');
+        if (keywords !== null) {
+            return TOP_URL + '?keywords=' + keywords;
+        }
 
-    const keywords = getURLParam('keywords');
-    if (keywords !== null) {
-        return TOP_URL + '?keywords=' + keywords;
+        return TOP_URL;
     }
+}
 
-    return TOP_URL;
+export function offload() {
+    destroyPopUpWindow();
 }

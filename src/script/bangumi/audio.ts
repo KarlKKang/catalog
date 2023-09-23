@@ -36,19 +36,25 @@ import {
     showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError
 } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
+import type { RedirectFunc } from '../module/type/RedirectFunc';
+
+let pageLoaded = true;
 
 let seriesID: string;
 let epIndex: number;
 let epInfo: AudioEPInfo;
 let baseURL: string;
 
-let audioReadyCounter = 0;
-const mediaInstances: Array<PlayerType> = [];
 let nativePlayerImportPromise: NativePlayerImportPromise;
 let hlsPlayerImportPromise: HlsPlayerImportPromise;
 let videojsPlayerImportPromise: VideojsPlayerImportPromise;
 
+let audioReadyCounter: number;
+let error: boolean;
+const mediaInstances: Array<PlayerType> = [];
+
 export default function (
+    redirect: RedirectFunc,
     _seriesID: string,
     _epIndex: number,
     _epInfo: AudioEPInfo,
@@ -57,6 +63,9 @@ export default function (
     _hlsPlayerImportPromise: HlsPlayerImportPromise,
     _videojsPlayerImportPromise: VideojsPlayerImportPromise,
 ) {
+    if (!pageLoaded) {
+        return;
+    }
 
     seriesID = _seriesID;
     epIndex = _epIndex;
@@ -66,10 +75,13 @@ export default function (
     hlsPlayerImportPromise = _hlsPlayerImportPromise;
     videojsPlayerImportPromise = _videojsPlayerImportPromise;
 
+    audioReadyCounter = 0;
+    error = false;
+
     const audioEPInfo = epInfo as AudioEPInfo;
 
     addAlbumInfo();
-    appendChild(getById('content'), buildDownloadAccordion(epInfo.media_session_credential, seriesID, epIndex, null)[0]);
+    appendChild(getById('content'), buildDownloadAccordion(redirect, epInfo.media_session_credential, seriesID, epIndex, null)[0]);
 
     if (!MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
@@ -78,14 +90,12 @@ export default function (
 
     const mediaHolder = getById('media-holder');
     for (let i = 0; i < audioEPInfo.files.length; i++) {
-        addAudioNode(i, mediaHolder);
+        addAudioNode(redirect, i, mediaHolder);
     }
 }
 
-let error = false;
-
-async function addAudioNode(index: number, mediaHolder: HTMLElement) {
-    if (error) {
+async function addAudioNode(redirect: RedirectFunc, index: number, mediaHolder: HTMLElement) {
+    if (!pageLoaded || error) {
         return;
     }
 
@@ -116,8 +126,12 @@ async function addAudioNode(index: number, mediaHolder: HTMLElement) {
         try {
             VideojsPlayer = (await videojsPlayerImportPromise).VideojsPlayer;
         } catch (e) {
-            showMessage(moduleImportError(e));
+            showMessage(redirect, moduleImportError(e));
             throw e;
+        }
+
+        if (!pageLoaded) {
+            return;
         }
 
         const configVideoJSMedia = {
@@ -158,8 +172,12 @@ async function addAudioNode(index: number, mediaHolder: HTMLElement) {
             try {
                 Player = (await nativePlayerImportPromise).Player;
             } catch (e) {
-                showMessage(moduleImportError(e));
+                showMessage(redirect, moduleImportError(e));
                 throw e;
+            }
+
+            if (!pageLoaded) {
+                return;
             }
 
             const audioInstance = new Player(playerContainer, {
@@ -182,8 +200,12 @@ async function addAudioNode(index: number, mediaHolder: HTMLElement) {
             try {
                 HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
             } catch (e) {
-                showMessage(moduleImportError(e));
+                showMessage(redirect, moduleImportError(e));
                 throw e;
+            }
+
+            if (!pageLoaded) {
+                return;
             }
 
             const configHls = {
@@ -342,9 +364,19 @@ function audioReady() {
 }
 
 function destroyAll() {
+    pageLoaded = false;
     let mediaInstance = mediaInstances.pop();
     while (mediaInstance !== undefined) {
         mediaInstance.destroy();
         mediaInstance = mediaInstances.pop();
     }
+}
+
+export function reload() {
+    pageLoaded = true;
+}
+
+export function offload() {
+    pageLoaded = false;
+    destroyAll();
 }

@@ -9,81 +9,83 @@
     }
 }
 
-#remember-me {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 2em 0px;
-    padding: 0px;
-    /*font-size: small;*/
-}
-
-/* The container */
-.checkbox-container {
-    /* display: block; */
-    position: relative;
-    padding-left: 2.5em;
-    cursor: pointer;
-    user-select: none;
-
-    &.disabled {
-        cursor: wait;
-    }
-
-    >p {
-        margin: 0px;
+#page-login {
+    #remember-me {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 2em 0px;
         padding: 0px;
-        line-height: 1.2em;
+        /*font-size: small;*/
     }
 
-    /* Hide the browser's default checkbox */
-    input {
-        position: absolute;
-        opacity: 0;
-        height: 0;
-        width: 0;
-        margin: 0px;
-        padding: 0px;
-    }
+    /* The container */
+    .checkbox-container {
+        /* display: block; */
+        position: relative;
+        padding-left: 2.5em;
+        cursor: pointer;
+        user-select: none;
 
-    /* Create a custom checkbox */
-    .checkmark {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 1.2em;
-        width: 1.2em;
-        background-color: var(--foreground-color);
-        box-shadow: var(--checkbox-shadow);
-        transition: box-shadow .4s ease-out;
-
-        /* Create the checkmark/indicator (hidden when not checked) */
-        &:after {
-            content: "";
-            position: absolute;
-            display: none;
-            left: 0.35em;
-            top: 0.1em;
-            width: 0.3em;
-            height: 0.6em;
-            border: solid var(--text-color);
-            border-width: 0 3px 3px 0;
-            transform: rotate(45deg);
+        &.disabled {
+            cursor: wait;
         }
-    }
 
-    /* On mouse-over, add box shadow */
-    &:not(.disabled):hover input~.checkmark {
-        box-shadow: var(--checkbox-shadow-hover);
-    }
+        >p {
+            margin: 0px;
+            padding: 0px;
+            line-height: 1.2em;
+        }
 
-    /* Show the checkmark when checked */
-    input:checked~.checkmark:after {
-        display: block;
-    }
+        /* Hide the browser's default checkbox */
+        input {
+            position: absolute;
+            opacity: 0;
+            height: 0;
+            width: 0;
+            margin: 0px;
+            padding: 0px;
+        }
 
-    input:disabled~.checkmark:after {
-        border-color: var(--alt-text-color);
+        /* Create a custom checkbox */
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 1.2em;
+            width: 1.2em;
+            background-color: var(--foreground-color);
+            box-shadow: var(--checkbox-shadow);
+            transition: box-shadow .4s ease-out;
+
+            /* Create the checkmark/indicator (hidden when not checked) */
+            &:after {
+                content: "";
+                position: absolute;
+                display: none;
+                left: 0.35em;
+                top: 0.1em;
+                width: 0.3em;
+                height: 0.6em;
+                border: solid var(--text-color);
+                border-width: 0 3px 3px 0;
+                transform: rotate(45deg);
+            }
+        }
+
+        /* On mouse-over, add box shadow */
+        &:not(.disabled):hover input~.checkmark {
+            box-shadow: var(--checkbox-shadow-hover);
+        }
+
+        /* Show the checkmark when checked */
+        input:checked~.checkmark:after {
+            display: block;
+        }
+
+        input:disabled~.checkmark:after {
+            border-color: var(--alt-text-color);
+        }
     }
 }

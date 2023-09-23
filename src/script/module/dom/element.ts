@@ -1,5 +1,9 @@
 import { d } from './document';
 
+export function getBody() {
+    return getById('inner-body');
+}
+
 export function getByIdNative(id: string) {
     return d.getElementById(id);
 }

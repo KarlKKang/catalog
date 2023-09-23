@@ -1,4 +1,4 @@
-type UpdatePageImportPromise = Promise<typeof import(
+export type UpdatePageImportPromise = Promise<typeof import(
     /* webpackExports: ["default"] */
     './update_page'
 )>;
@@ -17,6 +17,10 @@ export type VideoImportPromise = Promise<typeof import(
 export type LazyloadImportPromise = Promise<typeof import(
     /* webpackExports: ["default"] */
     '../module/lazyload'
+)>;
+export type ImageLoaderImportPromise = Promise<typeof import(
+    /* webpackExports: ["clearAllImageEvents"] */
+    '../module/image_loader'
 )>;
 export type NativePlayerImportPromise = Promise<typeof import(
     /* webpackExports: ["Player"] */
@@ -37,6 +41,7 @@ type AllPromises = {
     audio: AudioImportPromise;
     video: VideoImportPromise;
     lazyload: LazyloadImportPromise;
+    imageLoader: ImageLoaderImportPromise;
     nativePlayer: NativePlayerImportPromise;
     hlsPlayer: HlsPlayerImportPromise;
     videojsPlayer: VideojsPlayerImportPromise;
@@ -45,24 +50,28 @@ type AllPromises = {
 export default function (): AllPromises {
     return {
         updatePage: import(
-            /* webpackExports: ["default"] */
+            /* webpackExports: ["default", "reload", "offload"] */
             './update_page'
         ),
         image: import(
-            /* webpackExports: ["default"] */
+            /* webpackExports: ["default", "reload", "offload"] */
             './image'
         ),
         audio: import(
-            /* webpackExports: ["default"] */
+            /* webpackExports: ["default", "reload", "offload"] */
             './audio'
         ),
         video: import(
-            /* webpackExports: ["default"] */
+            /* webpackExports: ["default", "reload", "offload"] */
             './video'
         ),
         lazyload: import(
-            /* webpackExports: ["default"] */
+            /* webpackExports: ["default", "unobserveAll"] */
             '../module/lazyload'
+        ),
+        imageLoader: import(
+            /* webpackExports: ["clearAllImageEvents"] */
+            '../module/image_loader'
         ),
         nativePlayer: import(
             /* webpackExports: ["Player"] */

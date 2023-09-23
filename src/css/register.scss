@@ -1,1 +1,5 @@
 @use 'module/all_languages';
+
+#page-register {
+    @include all_languages.default;
+}

@@ -18,24 +18,58 @@ import {
     appendText,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
-import type { LazyloadImportPromise } from './get_import_promises';
+import type { ImageLoaderImportPromise, LazyloadImportPromise } from './get_import_promises';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import type { default as LazyloadObserve } from '../module/lazyload';
 import { addAccordionEvent } from './media_helper';
 import { encodeCFURIComponent } from '../module/common/pure';
+import { addTimeout } from '../module/timer';
+import type { RedirectFunc } from '../module/type/RedirectFunc';
+
+let pageLoaded = true;
+
+type Lazyload = typeof import(
+    /* webpackExports: ["default", "unobserveAll"] */
+    '../module/lazyload'
+);
+let lazyload: Lazyload | null = null;
+
+type ImageLoader = typeof import(
+    /* webpackExports: ["clearAllImageEvents"] */
+    '../module/image_loader'
+);
+let imageLoader: ImageLoader | null = null;
 
 export default async function (
+    redirect: RedirectFunc,
     epInfo: ImageEPInfo,
     baseURL: string,
-    lazyloadImportPromise: LazyloadImportPromise
+    lazyloadImportPromise: LazyloadImportPromise,
+    imageLoaderImportPromise: ImageLoaderImportPromise,
 ) {
+    if (!pageLoaded) {
+        return;
+    }
+
     let lazyloadObserve: typeof LazyloadObserve;
     try {
-        lazyloadObserve = (await lazyloadImportPromise).default;
+        lazyload = await lazyloadImportPromise;
+        lazyloadObserve = lazyload.default;
     } catch (e) {
-        showMessage(moduleImportError(e));
+        showMessage(redirect, moduleImportError(e));
         throw e;
+    }
+
+    try {
+        imageLoader = await imageLoaderImportPromise;
+    } catch (e) {
+        showMessage(redirect, moduleImportError(e));
+        throw e;
+    }
+
+    if (!pageLoaded) {
+        return;
     }
 
     const contentContainer = getById('content');
@@ -90,7 +124,7 @@ export default async function (
         appendChild(imageNode, downloadPanel);
         appendChild(mediaHolder, imageNode);
 
-        lazyloadObserve(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
+        lazyloadObserve(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, redirect, {
             xhrParam: 'p=' + index,
             mediaSessionCredential: epInfo.media_session_credential,
             delay: 250,
@@ -99,7 +133,7 @@ export default async function (
                     downloadButton.disabled = true;
                     downloadAnchor.href = URL.createObjectURL(data);
                     addEventListener(downloadAnchor, 'click', () => {
-                        setTimeout(() => {
+                        addTimeout(() => {
                             URL.revokeObjectURL(downloadAnchor.href);
                             downloadAnchor.href = '';
                             downloadButton.disabled = false;
@@ -132,4 +166,16 @@ export default async function (
     appendChild(downloadElem, downloadAccordion);
     appendChild(downloadElem, downloadPanel);
     appendChild(contentContainer, downloadElem);
+}
+
+export function reload() {
+    pageLoaded = true;
+}
+
+export function offload() {
+    pageLoaded = false;
+    lazyload?.unobserveAll();
+    lazyload = null;
+    imageLoader?.clearAllImageEvents();
+    imageLoader = null;
 }

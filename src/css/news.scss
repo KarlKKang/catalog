@@ -1,114 +1,117 @@
 @use 'module/all_languages';
 @use 'module/common';
 
-@include common.lazyload;
-@include common.ellipsis-clipping-2;
+#page-news {
+    @include all_languages.default;
+    @include common.lazyload;
+    @include common.ellipsis-clipping-2;
 
-#container {
-    margin: 0px;
-    padding: 0px;
-    width: 100%;
-}
+    #container {
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+    }
 
-.overview-container,
-#content-outer-container {
-    width: 1000px;
-    max-width: 90%;
-    margin: 2em 0px;
-    padding: 1em 0px;
-    position: relative;
-    left: 50%;
-    transform: translate(-50%, 0%);
-    background-color: var(--foreground-color);
-    box-shadow: var(--shadow);
-    transition: box-shadow .4s ease-out;
-}
+    .overview-container,
+    #content-outer-container {
+        width: 1000px;
+        max-width: 90%;
+        margin: 2em 0px;
+        padding: 1em 0px;
+        position: relative;
+        left: 50%;
+        transform: translate(-50%, 0%);
+        background-color: var(--foreground-color);
+        box-shadow: var(--shadow);
+        transition: box-shadow .4s ease-out;
+    }
 
-.overview-container:hover,
-#content-outer-container:hover {
-    box-shadow: var(--shadow-hover);
-}
+    .overview-container:hover,
+    #content-outer-container:hover {
+        box-shadow: var(--shadow-hover);
+    }
 
-.overview-container {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
+    .overview-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
 
-.overview-container>.date {
-    padding: 0px 3% 0px 3%;
-    border-right: 1px solid var(--horizontal-line-foreground-color);
-    white-space: nowrap;
-    text-align: center;
-}
+    .overview-container>.date {
+        padding: 0px 3% 0px 3%;
+        border-right: 1px solid var(--horizontal-line-foreground-color);
+        white-space: nowrap;
+        text-align: center;
+    }
 
-.overview-container>.overview-title {
-    padding: 0px 3% 0px 3%;
-    font-weight: 500;
-}
+    .overview-container>.overview-title {
+        padding: 0px 3% 0px 3%;
+        font-weight: 500;
+    }
 
-#content-container {
-    margin: 0px 5%;
-    padding: 0px 0px 1.5em 0px;
-}
+    #content-container {
+        margin: 0px 5%;
+        padding: 0px 0px 1.5em 0px;
+    }
 
-#content {
-    margin: 0px;
-    padding: 0px;
-}
+    #content {
+        margin: 0px;
+        padding: 0px;
+    }
 
-#title {
-    text-align: center;
-    padding: 0px;
-    margin: 1em 0px;
-    font-size: x-large;
-    font-weight: 500;
-}
+    #title {
+        text-align: center;
+        padding: 0px;
+        margin: 1em 0px;
+        font-size: x-large;
+        font-weight: 500;
+    }
 
-#content-container>.date {
-    font-size: small;
-    color: var(--alt-text-color);
-    text-align: center;
-    margin: 0.5em 0px;
-}
+    #content-container>.date {
+        font-size: small;
+        color: var(--alt-text-color);
+        text-align: center;
+        margin: 0.5em 0px;
+    }
 
-.sub-title {
-    font-size: large;
-    font-weight: 400;
-}
+    .sub-title {
+        font-size: large;
+        font-weight: 400;
+    }
 
-hr {
-    margin: 2em 0px;
-    height: 1px;
-    border-width: 0;
-    background-color: var(--horizontal-line-foreground-color);
-}
+    hr {
+        margin: 2em 0px;
+        height: 1px;
+        border-width: 0;
+        background-color: var(--horizontal-line-foreground-color);
+    }
 
-.line-break {
-    margin: 2em 0px 0px 0px;
-}
+    .line-break {
+        margin: 2em 0px 0px 0px;
+    }
 
-.bolder {
-    font-weight: 500;
-}
+    .bolder {
+        font-weight: 500;
+    }
 
-.bold {
-    font-weight: 400;
-}
+    .bold {
+        font-weight: 400;
+    }
 
-.code-inline {
-    background-color: var(--grey-background-color);
-    padding: 0px 0.3em;
-    border-radius: 0.3em;
-    font-family: 'Courier New', Courier, monospace;
-}
+    .code-inline {
+        background-color: var(--grey-background-color);
+        padding: 0px 0.3em;
+        border-radius: 0.3em;
+        font-family: 'Courier New', Courier, monospace;
+    }
 
-.image-internal {
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    width: fit-content;
-}
+    .image-internal {
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        width: fit-content;
+    }
 
-.image-internal.image-enlarge {
-    cursor: pointer;
+    .image-internal.image-enlarge {
+        cursor: pointer;
+    }
 }

@@ -10,7 +10,6 @@ import { sessionEnded, connectionError, notFound, status429, status503, status40
 
 import {
     w,
-    redirect,
     getHash,
     getByIdNative,
     addClass,
@@ -27,7 +26,8 @@ import {
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
-import { HTMLImport } from '../type/HTMLImport';
+import { addTimeout } from '../timer';
+import { RedirectFunc } from '../type/RedirectFunc';
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
@@ -46,7 +46,7 @@ interface SendServerRequestOption {
     connectionErrorRetryTimeout?: number;
 }
 
-function xhrOnErrorCallback(uri: string, options: SendServerRequestOption) {
+function xhrOnErrorCallback(redirect: RedirectFunc, uri: string, options: SendServerRequestOption) {
     if (options.connectionErrorRetry === undefined) {
         options.connectionErrorRetry = 2;
     } else {
@@ -60,57 +60,57 @@ function xhrOnErrorCallback(uri: string, options: SendServerRequestOption) {
     }
 
     if (options.connectionErrorRetry < 0) {
-        showMessage(connectionError);
+        showMessage(redirect, connectionError);
     } else {
-        setTimeout(() => {
-            sendServerRequest(uri, options);
+        addTimeout(() => {
+            sendServerRequest(redirect, uri, options);
         }, options.connectionErrorRetryTimeout);
     }
 }
 
-function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServerRequestOption): boolean {
+function checkXHRStatus(redirect: RedirectFunc, response: XMLHttpRequest, uri: string, options: SendServerRequestOption): boolean {
     const status = response.status;
     const responseText = response.responseText;
     if (status === 200) {
         return true;
     } else if (status === 403) {
         if (responseText === 'SESSION ENDED') {
-            showMessage(sessionEnded);
+            showMessage(redirect, sessionEnded);
         } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
-            showMessage(insufficientPermissions);
+            showMessage(redirect, insufficientPermissions);
         } else if (responseText === 'UNAUTHORIZED') {
             const logoutParam = options.logoutParam;
             redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
         } else {
-            xhrOnErrorCallback(uri, options);
+            xhrOnErrorCallback(redirect, uri, options);
         }
     } else if (status === 429) {
-        showMessage(status429);
+        showMessage(redirect, status429);
     } else if (status === 503) {
         let parsedResponse: MaintenanceInfo.MaintenanceInfo;
         try {
             parsedResponse = JSON.parse(responseText);
             MaintenanceInfo.check(parsedResponse);
         } catch (e) {
-            showMessage(invalidResponse);
+            showMessage(redirect, invalidResponse);
             return false;
         }
-        showMessage(status503(parsedResponse));
+        showMessage(redirect, status503(parsedResponse));
     } else if (status === 500 || status === 400) {
         if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
-            showMessage(status400And500(responseText));
+            showMessage(redirect, status400And500(responseText));
         } else {
-            showMessage();
+            showMessage(redirect);
         }
     } else if (status === 404 && response.responseText === 'REJECTED') {
-        showMessage(notFound);
+        showMessage(redirect, notFound);
     } else {
-        xhrOnErrorCallback(uri, options);
+        xhrOnErrorCallback(redirect, uri, options);
     }
     return false;
 }
 
-export function sendServerRequest(uri: string, options: SendServerRequestOption): XMLHttpRequest {
+export function sendServerRequest(redirect: RedirectFunc, uri: string, options: SendServerRequestOption): XMLHttpRequest {
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.open(options.method ?? 'POST', SERVER_URL + '/' + uri, true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -118,14 +118,14 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
 
     addEventListener(xmlhttp, 'error', () => {
         removeAllEventListeners(xmlhttp);
-        xhrOnErrorCallback(uri, options);
+        xhrOnErrorCallback(redirect, uri, options);
     });
     addEventListener(xmlhttp, 'abort', () => {
         removeAllEventListeners(xmlhttp);
     });
     addEventListener(xmlhttp, 'load', () => {
         removeAllEventListeners(xmlhttp);
-        if (checkXHRStatus(xmlhttp, uri, options)) {
+        if (checkXHRStatus(redirect, xmlhttp, uri, options)) {
             options.callback && options.callback(xmlhttp.responseText);
         }
     });
@@ -134,22 +134,22 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
     return xmlhttp;
 }
 
-export function authenticate(callback: { successful?: () => void; failed?: () => void }) {
-    sendServerRequest('get_authentication_state', {
+export function authenticate(redirect: RedirectFunc, callback: { successful?: () => void; failed?: () => void }) {
+    sendServerRequest(redirect, 'get_authentication_state', {
         callback: function (response: string) {
             if (response === 'APPROVED') {
                 callback.successful && callback.successful();
             } else if (response === 'FAILED') {
                 callback.failed && callback.failed();
             } else {
-                showMessage();
+                showMessage(redirect);
             }
         }
     });
 }
 
-export function logout(callback: () => void,) {
-    sendServerRequest('logout', {
+export function logout(redirect: RedirectFunc, callback: () => void,) {
+    sendServerRequest(redirect, 'logout', {
         callback: function (response: string) {
             if (response === 'PARTIAL' || response === 'DONE') {
                 if (DEVELOPMENT) {
@@ -157,7 +157,7 @@ export function logout(callback: () => void,) {
                 }
                 callback();
             } else {
-                showMessage();
+                showMessage(redirect);
             }
         }
     });
@@ -189,7 +189,7 @@ export function passwordStyling(element: HTMLInputElement) {
     addEventListener(element, 'change', inputChangeHandler);
 }
 
-export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info', currentPageCallback?: () => void) {
+export function addNavBar(redirect: RedirectFunc, page?: 'home' | 'news' | 'my_account' | 'info', currentPageCallback?: () => void) {
     const getNavButton = (name: string): [HTMLDivElement, HTMLDivElement] => {
         const container = createDivElement();
         const containerInner = createDivElement();
@@ -263,7 +263,7 @@ export function addNavBar(page?: 'home' | 'news' | 'my_account' | 'info', curren
                 './icons'
             );
         } catch (e) {
-            showMessage(moduleImportError(e));
+            showMessage(redirect, moduleImportError(e));
             throw e;
         }
         appendChild(navButton1[1], page === 'home' ? icons.getHomeFillIcon() : icons.getHomeIcon());
@@ -304,20 +304,9 @@ export function scrollToHash() {
     if (scrollID !== '') {
         const elem = getByIdNative(scrollID);
         if (elem !== null) {
-            setTimeout(() => {
+            addTimeout(() => {
                 w.scrollBy(0, elem.getBoundingClientRect().top);
             }, 500); //Give UI some time to load.
         }
     }
-}
-
-export function showPage(styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport, callback?: () => void) {
-    Promise.all(styleImportPromises).then(() => {
-        htmlImportPromises.then((html) => {
-            getBody().innerHTML = html.default;
-            callback?.();
-        });
-    }).catch((e) => {
-        showMessage(moduleImportError(e));
-    });
 }

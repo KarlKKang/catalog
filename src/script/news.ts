@@ -8,12 +8,10 @@ import {
     scrollToHash,
     addNavBar,
     removeRightClick,
-    showPage,
 } from './module/common';
 import {
     addEventListener,
     getBaseURL,
-    redirect,
     getById,
     addClass,
     appendChild,
@@ -39,21 +37,37 @@ import { invalidResponse, notFound } from './module/message/template/param/serve
 import { moduleImportError } from './module/message/template/param';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
-import initializeInfiniteScrolling from './module/infinite_scrolling';
+import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
 import isbot from 'isbot';
 import type { default as LazyloadObserve } from './module/lazyload';
 import { encodeCFURIComponent, getLocalTime } from './module/common/pure';
-import type { HTMLImport } from './module/type/HTMLImport';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
+
+let pageLoaded: boolean;
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
-let pivot: AllNewsInfo.PivotInfo = 0;
-let infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>;
-let lazyloadImportPromise: Promise<typeof import(
-    /* webpackExports: ["default"] */
-    './module/lazyload'
-)>;
+let pivot: AllNewsInfo.PivotInfo;
 
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+type Lazyload = typeof import(
+    /* webpackExports: ["default", "unobserveAll"] */
+    './module/lazyload'
+);
+let lazyload: Lazyload | null = null;
+
+type ImageLoader = typeof import(
+    /* webpackExports: ["clearAllImageEvents"] */
+    './module/image_loader'
+);
+let imageLoader: ImageLoader | null = null;
+
+let redirect: RedirectFunc;
+
+export default function (showPage: ShowPageFunc, _redirect: RedirectFunc) {
+    pageLoaded = true;
+    pivot = 0;
+    redirect = _redirect;
+
     clearSessionStorage();
 
     if (navigator !== undefined && isbot(navigator.userAgent)) {
@@ -65,13 +79,19 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
         if (getBaseURL() !== NEWS_TOP_URL) {
             changeURL(NEWS_TOP_URL, true);
         }
-        getAllNews(styleImportPromises, htmlImportPromises);
+        getAllNews(showPage);
     } else {
-        lazyloadImportPromise = import(
-            /* webpackExports: ["default"] */
+        const lazyloadImportPromise = import(
+            /* webpackExports: ["default", "unobserveAll"] */
             './module/lazyload'
         );
-        getNews(newsID, styleImportPromises, htmlImportPromises);
+        import(
+            /* webpackExports: ["clearAllImageEvents"] */
+            './module/image_loader'
+        ).then((imageLoaderModule) => {
+            imageLoader = imageLoaderModule;
+        }); // Lazyload will handle if this import fails.
+        getNews(lazyloadImportPromise, newsID, showPage);
     }
 }
 
@@ -80,23 +100,23 @@ function getNewsID(): string | null {
     return getBaseURL().substring(start);
 }
 
-function getNews(newsID: string, styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport): void {
+function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showPage: ShowPageFunc): void {
     const hash = getHash();
-    sendServerRequest('get_news', {
+    sendServerRequest(redirect, 'get_news', {
         callback: function (response: string) {
             let parsedResponse: NewsInfo.NewsInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 NewsInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(invalidResponse);
+                showMessage(redirect, invalidResponse);
                 return;
             }
 
             const showPagePromise = new Promise<HTMLDivElement>((resolve) => {
-                showPage(styleImportPromises, htmlImportPromises, () => {
-                    const contentContainer = showNews(parsedResponse);
-                    addNavBar('news', () => {
+                showPage(() => {
+                    const contentContainer = showNews(getById('container'), parsedResponse);
+                    addNavBar(redirect, 'news', () => {
                         redirect(NEWS_TOP_URL);
                     });
                     resolve(contentContainer);
@@ -109,7 +129,7 @@ function getNews(newsID: string, styleImportPromises: Promise<any>[], htmlImport
 
             addEventListener(xhr, 'error', () => {
                 removeAllEventListeners(xhr);
-                showMessage(notFound);
+                showMessage(redirect, notFound);
             });
             addEventListener(xhr, 'abort', () => {
                 removeAllEventListeners(xhr);
@@ -118,13 +138,16 @@ function getNews(newsID: string, styleImportPromises: Promise<any>[], htmlImport
                 removeAllEventListeners(xhr);
                 if (xhr.status === 200) {
                     showPagePromise.then((contentContainer) => {
+                        if (!pageLoaded) {
+                            return;
+                        }
                         contentContainer.innerHTML = xhr.responseText;
                         bindEventListners(contentContainer);
-                        attachImage(contentContainer, newsID);
+                        attachImage(lazyloadImportPromise, contentContainer, newsID);
                         scrollToHash();
                     });
                 } else {
-                    showMessage(notFound);
+                    showMessage(redirect, notFound);
                 }
             });
 
@@ -135,25 +158,25 @@ function getNews(newsID: string, styleImportPromises: Promise<any>[], htmlImport
     });
 }
 
-function showNews(newsInfo: NewsInfo.NewsInfo): HTMLDivElement {
-    const outerContainer = createDivElement();
-    outerContainer.id = 'content-outer-container';
-    const container = createDivElement();
-    container.id = 'content-container';
+function showNews(container: HTMLElement, newsInfo: NewsInfo.NewsInfo): HTMLDivElement {
+    const contentOuterContainer = createDivElement();
+    contentOuterContainer.id = 'content-outer-container';
+    const contentContainer = createDivElement();
+    contentContainer.id = 'content-container';
 
     const titleContainer = createParagraphElement();
     titleContainer.id = 'title';
 
     appendText(titleContainer, newsInfo.title);
     setTitle(newsInfo.title + ' | ' + getTitle());
-    appendChild(container, titleContainer);
+    appendChild(contentContainer, titleContainer);
 
     const createTimeContainer = createParagraphElement();
     addClass(createTimeContainer, 'date');
 
     const createTime = getLocalTime(newsInfo.create_time);
     appendText(createTimeContainer, '初回掲載日：' + createTime.year + '年' + createTime.month + '月' + createTime.date + '日（' + createTime.dayOfWeek + '）' + createTime.hour + '時' + createTime.minute + '分' + createTime.second + '秒');
-    appendChild(container, createTimeContainer);
+    appendChild(contentContainer, createTimeContainer);
 
     if (newsInfo.update_time !== null) {
         const updateTimeContainer = createParagraphElement();
@@ -161,27 +184,31 @@ function showNews(newsInfo: NewsInfo.NewsInfo): HTMLDivElement {
 
         const updateTime = getLocalTime(newsInfo.update_time);
         appendText(updateTimeContainer, '最終更新日：' + updateTime.year + '年' + updateTime.month + '月' + updateTime.date + '日（' + updateTime.dayOfWeek + '）' + updateTime.hour + '時' + updateTime.minute + '分' + updateTime.second + '秒');
-        appendChild(container, updateTimeContainer);
+        appendChild(contentContainer, updateTimeContainer);
     }
 
-    appendChild(container, createHRElement());
+    appendChild(contentContainer, createHRElement());
 
-    const contentContainer = createDivElement();
-    contentContainer.id = 'content';
-    appendChild(container, contentContainer);
+    const content = createDivElement();
+    content.id = 'content';
+    appendChild(contentContainer, content);
 
-    appendChild(outerContainer, container);
-    appendChild(getById('container'), outerContainer);
+    appendChild(contentOuterContainer, contentContainer);
+    appendChild(container, contentOuterContainer);
 
-    return contentContainer;
+    return content;
 }
 
-async function attachImage(contentContainer: HTMLElement, newsID: string): Promise<void> {
+async function attachImage(lazyloadImportPromise: Promise<Lazyload>, contentContainer: HTMLElement, newsID: string): Promise<void> {
     let lazyloadObserve: typeof LazyloadObserve;
     try {
-        lazyloadObserve = (await lazyloadImportPromise).default;
+        lazyload = (await lazyloadImportPromise);
+        if (!pageLoaded) {
+            return;
+        }
+        lazyloadObserve = lazyload.default;
     } catch (e) {
-        showMessage(moduleImportError(e));
+        showMessage(redirect, moduleImportError(e));
         throw e;
     }
 
@@ -194,7 +221,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string): Promi
             continue;
         }
         const xhrParam = 'news=' + newsID;
-        lazyloadObserve(elem, baseURL + encodeCFURIComponent(src), src, { xhrParam: xhrParam });
+        lazyloadObserve(elem, baseURL + encodeCFURIComponent(src), src, redirect, { xhrParam: xhrParam });
         if (containsClass(elem, 'image-enlarge')) {
             addEventListener(elem, 'click', () => {
                 setSessionStorage('base-url', baseURL);
@@ -250,29 +277,32 @@ function bindEventListners(contentContainer: HTMLElement): void {
     }
 }
 
-function getAllNews(styleImportPromises?: Promise<any>[], htmlImportPromises?: HTMLImport): void {
+function getAllNews(showPage: ShowPageFunc): void;
+function getAllNews(container: HTMLElement): void;
+function getAllNews(containerOrShowPage: unknown): void {
     if (pivot === 'EOF') {
         return;
     }
 
-    sendServerRequest('get_all_news', {
+    sendServerRequest(redirect, 'get_all_news', {
         callback: function (response: string) {
             let parsedResponse: AllNewsInfo.AllNewsInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 AllNewsInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(invalidResponse);
+                showMessage(redirect, invalidResponse);
                 return;
             }
 
-            if (styleImportPromises === undefined || htmlImportPromises === undefined) {
-                showAllNews(parsedResponse);
+            if (containerOrShowPage instanceof HTMLElement) {
+                showAllNews(containerOrShowPage, parsedResponse);
             } else {
-                showPage(styleImportPromises, htmlImportPromises, () => {
-                    addNavBar('news');
-                    infiniteScrolling = initializeInfiniteScrolling(getAllNews);
-                    showAllNews(parsedResponse);
+                (containerOrShowPage as ShowPageFunc)(() => {
+                    addNavBar(redirect, 'news');
+                    const container = getById('container');
+                    initializeInfiniteScrolling(() => { getAllNews(container); });
+                    showAllNews(container, parsedResponse);
                 });
             }
         },
@@ -280,7 +310,7 @@ function getAllNews(styleImportPromises?: Promise<any>[], htmlImportPromises?: H
     });
 }
 
-function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
+function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInfo): void {
     pivot = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.PivotInfo;
     const allNewsInfoEntries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
     for (const entry of allNewsInfoEntries) {
@@ -306,8 +336,18 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo): void {
             redirect(NEWS_TOP_URL + entry.id);
         });
 
-        appendChild(getById('container'), overviewContainer);
+        appendChild(container, overviewContainer);
     }
+    const infiniteScrolling = getInfiniteScrolling();
     infiniteScrolling.setEnabled(true);
     infiniteScrolling.updatePosition();
+}
+
+export function offload() {
+    pageLoaded = false;
+    lazyload?.unobserveAll();
+    lazyload = null;
+    imageLoader?.clearAllImageEvents();
+    imageLoader = null;
+    destroyInfiniteScrolling();
 }

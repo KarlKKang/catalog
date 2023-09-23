@@ -7,17 +7,13 @@ export const d = document;
 export const w = window;
 const windowLocation = w.location;
 
-export function getBody() {
-    return d.body;
-}
-
 export function getFullURL() {
     return windowLocation.href;
 }
 
 export function getBaseURL(url?: string): string {
     if (url === undefined) {
-        url = windowLocation.href;
+        url = getFullURL();
     }
 
     const protocolIndex = url.indexOf('://');

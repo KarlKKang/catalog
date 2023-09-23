@@ -11,6 +11,7 @@ import {
 } from './dom';
 import { show as showMessage } from './message';
 import { moduleImportError } from './message/template/param';
+import { RedirectFunc } from './type/RedirectFunc';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
@@ -20,7 +21,7 @@ let webpSupported: boolean;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
-export default function (container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: () => void, onDataLoad?: (data: Blob) => void, onError?: () => void): XMLHttpRequest {
+export default function (redirect: RedirectFunc, container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: () => void, onDataLoad?: (data: Blob) => void, onError?: () => void): XMLHttpRequest {
     let imageData: Blob;
     let isWebp: boolean;
 
@@ -63,7 +64,7 @@ export default function (container: Element, src: string, alt: string, withCrede
                 }
             } else {
                 webpMachineActive = true;
-                startWebpMachine();
+                startWebpMachine(redirect);
                 if (DEVELOPMENT) {
                     console.log('Webp Machine NOT active. Pushed ' + image.alt + ' to queue. Webp Machine started.');
                 }
@@ -129,7 +130,7 @@ export default function (container: Element, src: string, alt: string, withCrede
     return xhr;
 }
 
-async function startWebpMachine() {
+async function startWebpMachine(redirect: RedirectFunc) {
     if (webpMachine === null) {
         try {
             const { WebpMachine, detectWebpSupport } = await import(
@@ -138,7 +139,7 @@ async function startWebpMachine() {
             webpMachine = new WebpMachine();
             webpSupported = await detectWebpSupport();
         } catch (e: unknown) {
-            showMessage(moduleImportError(e));
+            showMessage(redirect, moduleImportError(e));
             throw e;
         }
     }

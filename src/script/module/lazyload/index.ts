@@ -8,6 +8,8 @@ import {
 } from '../dom';
 import { show as showMessage } from '../message';
 import { invalidResponse } from '../message/template/param/server';
+import { addTimeout } from '../timer';
+import { RedirectFunc } from '../type/RedirectFunc';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,
@@ -24,6 +26,7 @@ const enum Status {
 type TargetData = {
     src: string;
     alt: string;
+    redirect: RedirectFunc; // This redirect function must be provided by each target.
     xhrParam: string | null;
     mediaSessionCredential: string | null;
     delay: number;
@@ -43,6 +46,7 @@ export default function (
     target: Element,
     src: string,
     alt: string,
+    redirect: RedirectFunc,
     options?: {
         xhrParam?: string;
         mediaSessionCredential?: string;
@@ -58,6 +62,7 @@ export default function (
     targets.set(target, {
         src: src,
         alt: alt,
+        redirect: redirect,
         xhrParam: options.xhrParam || null,
         mediaSessionCredential: options.mediaSessionCredential || null,
         delay: options.delay || 0,
@@ -78,7 +83,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
         if (entry['isIntersecting']) {
             if (targetData.status === Status.LISTENING) {
                 targetData.status = Status.WAITING;
-                setTimeout(async () => {
+                addTimeout(async () => {
                     if (targetData.status !== Status.WAITING) {
                         return;
                     }
@@ -104,19 +109,19 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                             content = targetData.mediaSessionCredential + '&' + content;
                         }
 
-                        targetData.xhr = sendServerRequest(uri, {
+                        targetData.xhr = sendServerRequest(targetData.redirect, uri, {
                             callback: async function (response: string) {
                                 if (response !== 'APPROVED') {
-                                    showMessage(invalidResponse);
+                                    showMessage(targetData.redirect, invalidResponse);
                                     return;
                                 }
 
-                                targetData.xhr = (await imageLoaderImportPromise).default(target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);
+                                targetData.xhr = (await imageLoaderImportPromise).default(targetData.redirect, target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);
                             },
                             content: content
                         });
                     } else {
-                        targetData.xhr = (await imageLoaderImportPromise).default(target, targetData.src, targetData.alt, false, onImageDraw, targetData.onDataLoad, onError);
+                        targetData.xhr = (await imageLoaderImportPromise).default(targetData.redirect, target, targetData.src, targetData.alt, false, onImageDraw, targetData.onDataLoad, onError);
                     }
                 }, targetData.delay);
             }

@@ -4,6 +4,7 @@ import {
     removeEventsListener,
 } from '../dom';
 import { addPlayerClass, containsPlayerClass, removePlayerClass } from './helper';
+import { addTimeout } from '../timer';
 
 export abstract class NonNativePlayer extends Player {
     private buffering = false;
@@ -81,7 +82,7 @@ export abstract class NonNativePlayer extends Player {
             }
         }
 
-        setTimeout(this.checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
+        addTimeout(this.checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
         this.pause(false);
     }
 

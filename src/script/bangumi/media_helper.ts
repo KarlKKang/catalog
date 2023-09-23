@@ -36,6 +36,8 @@ import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import { CustomMediaError } from '../module/player/media_error';
 import { VideoFormatInfo } from '../module/type/BangumiInfo';
+import { addTimeout } from '../module/timer';
+import type { RedirectFunc } from '../module/type/RedirectFunc';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -100,6 +102,7 @@ export function showMediaMessage(title: string, body: string, titleColor: string
 }
 
 export function buildDownloadAccordion(
+    redirect: RedirectFunc,
     mediaSessionCredential: string,
     seriesID: string,
     epIndex: number,
@@ -204,13 +207,13 @@ export function buildDownloadAccordion(
                 requestContent += '&container=' + containerSelectMenu.value;
             }
         }
-        sendServerRequest('start_download', {
+        sendServerRequest(redirect, 'start_download', {
             callback: function (response: string) {
                 if (getBaseURL(response).startsWith(CDN_URL + '/download/')) {
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {
-                    showMessage(invalidResponse);
+                    showMessage(redirect, invalidResponse);
                 }
             },
             content: requestContent,
@@ -246,7 +249,7 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, active: 
         if (containsClass(acc, 'active')) {
             currentAnimationFrame = null;
             panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
-            const timeout = setTimeout(() => {
+            const timeout = addTimeout(() => {
                 if (currentTimeout === timeout) {
                     panel.style.removeProperty('max-height');
                 }

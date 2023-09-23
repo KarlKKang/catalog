@@ -1,8 +1,8 @@
 @use 'module/common';
 
-@include common.password-font;
+#portal-form {
+    @include common.password-font;
 
-#form {
     max-width: 90%;
     margin: 0px;
     padding: 5vh 0px;
@@ -10,44 +10,44 @@
     left: 50%;
     transform: translate(-50%, 0%);
     text-align: center;
-}
 
-#title {
-    text-align: center;
-    margin: 0px;
-    padding: 1em 0px;
-    font-size: x-large;
-    font-weight: 500;
-}
+    #title {
+        text-align: center;
+        margin: 0px;
+        padding: 1em 0px;
+        font-size: x-large;
+        font-weight: 500;
+    }
 
-#warning {
-    padding: 0px;
-    margin: 1em 0px;
-    color: var(--red-color);
-}
+    #warning {
+        padding: 0px;
+        margin: 1em 0px;
+        color: var(--red-color);
+    }
 
-button {
-    margin: 2em 0px;
-    width: 150px;
-    max-width: 80%;
-}
+    button {
+        margin: 2em 0px;
+        width: 150px;
+        max-width: 80%;
+    }
 
-.input-field {
-    margin: 1em 0px;
-    width: 300px;
-    max-width: 100%;
-}
+    .input-field {
+        margin: 1em 0px;
+        width: 300px;
+        max-width: 100%;
+    }
 
-#note {
-    margin-bottom: 2em;
+    #note {
+        margin-bottom: 2em;
 
-    >ul {
-        font-size: small;
-        text-align: left;
-        padding: 0px 0px 0px 2em;
+        >ul {
+            font-size: small;
+            text-align: left;
+            padding: 0px 0px 0px 2em;
 
-        >li {
-            color: var(--alt-text-color);
+            >li {
+                color: var(--alt-text-color);
+            }
         }
     }
 }

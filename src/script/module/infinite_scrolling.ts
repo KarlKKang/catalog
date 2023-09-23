@@ -11,13 +11,12 @@ let instance: {
     setEnabled: (enabled: boolean) => void;
 } | null = null;
 
-export default function (listener: () => void, offset?: number) {
+export function initializeInfiniteScrolling(listener: () => void, offset?: number) {
     if (instance !== null) {
-        return instance;
+        throw new Error('Instance already initialized.');
     }
 
     const positionDetector = getById('position-detector');
-    const callback = listener;
     let isEnabled = false;
 
     const updatePosition = () => {
@@ -30,7 +29,7 @@ export default function (listener: () => void, offset?: number) {
 
         if (boundingRect.top + (offset ?? 0) <= viewportHeight * 1.5) {
             isEnabled = false;
-            callback();
+            listener();
         }
     };
 
@@ -43,6 +42,15 @@ export default function (listener: () => void, offset?: number) {
             isEnabled = enabled;
         }
     };
+}
 
+export function getInfiniteScrolling() {
+    if (instance === null) {
+        throw new Error('Instance not initialized');
+    }
     return instance;
+}
+
+export function destroy() {
+    instance = null;
 }

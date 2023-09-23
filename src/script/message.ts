@@ -5,12 +5,10 @@ import {
 import {
     logout,
     changeColor,
-    showPage,
 } from './module/common';
 import {
     addEventListener,
     getById,
-    redirect,
     setTitle,
     hideElement,
     appendText,
@@ -20,9 +18,10 @@ import {
     remove,
     createDivElement,
 } from './module/dom';
-import type { HTMLImport } from './module/type/HTMLImport';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
 
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     const message = getSessionStorage('message');
     const title = getSessionStorage('title');
     const color = getSessionStorage('color');
@@ -36,7 +35,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
 
     if (message === null || title === null || color === null || documentTitle === null) {
         if (DEVELOPMENT) {
-            showPage(styleImportPromises, htmlImportPromises, () => {
+            showPage(() => {
                 const titleElem = getById('title');
                 const messageElem = getById('message');
                 changeColor(titleElem, 'orange');
@@ -50,7 +49,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
     }
 
     const callback = () => {
-        showPage(styleImportPromises, htmlImportPromises, () => {
+        showPage(() => {
             const titleElem = getById('title');
             const messageElem = getById('message');
 
@@ -85,7 +84,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
     };
 
     if (logoutParam) {
-        logout(callback);
+        logout(redirect, callback);
         return;
     }
 

@@ -3,27 +3,27 @@ import {
     authenticate,
     addNavBar,
     scrollToHash,
-    showPage,
 } from './module/common';
 import {
     clearSessionStorage,
 } from './module/dom';
-import type { HTMLImport } from './module/type/HTMLImport';
+import type { RedirectFunc } from './module/type/RedirectFunc';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
 
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
 
-    authenticate({
+    authenticate(redirect, {
         successful:
             function () {
-                showPage(styleImportPromises, htmlImportPromises, () => {
-                    addNavBar('info');
+                showPage(() => {
+                    addNavBar(redirect, 'info');
                     scrollToHash();
                 });
             },
         failed:
             function () {
-                showPage(styleImportPromises, htmlImportPromises, () => {
+                showPage(() => {
                     scrollToHash();
                 });
             },

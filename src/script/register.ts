@@ -7,11 +7,9 @@ import {
     sendServerRequest,
     passwordStyling,
     disableInput,
-    showPage,
 } from './module/common';
 import {
     addEventListener,
-    redirect,
     getById,
     getByClassAt,
     openWindow,
@@ -23,15 +21,10 @@ import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 import { PASSWORD_REGEX } from './module/common/pure';
-import type { HTMLImport } from './module/type/HTMLImport';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
 
-let submitButton: HTMLButtonElement;
-let usernameInput: HTMLInputElement;
-let passwordInput: HTMLInputElement;
-let passwordConfirmInput: HTMLInputElement;
-let warningElem: HTMLElement;
-
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
 
     const param = getURLParam('p');
@@ -39,7 +32,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
 
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showPage(styleImportPromises, htmlImportPromises, addInfoRedirects);
+            showPage(addInfoRedirects);
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -51,47 +44,16 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
         return;
     }
 
-    sendServerRequest('register', {
+    sendServerRequest(redirect, 'register', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                showMessage(expired);
+                showMessage(redirect, expired);
             } else if (response == 'ALREADY REGISTERED') {
-                showMessage(emailAlreadyRegistered);
+                showMessage(redirect, emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
-                showPage(styleImportPromises, htmlImportPromises, () => {
-                    submitButton = getById('submit-button') as HTMLButtonElement;
-                    usernameInput = getById('username') as HTMLInputElement;
-                    passwordInput = getById('password') as HTMLInputElement;
-                    passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
-                    warningElem = getById('warning');
-
-                    addEventListener(usernameInput, 'keydown', (event) => {
-                        if ((event as KeyboardEvent).key === 'Enter') {
-                            register(param, signature);
-                        }
-                    });
-                    addEventListener(passwordInput, 'keydown', (event) => {
-                        if ((event as KeyboardEvent).key === 'Enter') {
-                            register(param, signature);
-                        }
-                    });
-                    addEventListener(passwordConfirmInput, 'keydown', (event) => {
-                        if ((event as KeyboardEvent).key === 'Enter') {
-                            register(param, signature);
-                        }
-                    });
-
-
-                    addInfoRedirects();
-                    addEventListener(submitButton, 'click', () => {
-                        register(param, signature);
-                    });
-
-                    passwordStyling(passwordInput);
-                    passwordStyling(passwordConfirmInput);
-                });
+                showPage(() => { showPageCallback(redirect, param, signature); });
             } else {
-                showMessage();
+                showMessage(redirect);
             }
         },
         content: 'p=' + param + '&signature=' + signature,
@@ -99,66 +61,99 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
     });
 }
 
-async function register(param: string, signature: string) {
-    disableAllInputs(true);
+function showPageCallback(redirect: RedirectFunc, param: string, signature: string) {
+    const submitButton = getById('submit-button') as HTMLButtonElement;
+    const usernameInput = getById('username') as HTMLInputElement;
+    const passwordInput = getById('password') as HTMLInputElement;
+    const passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
+    const warningElem = getById('warning');
 
-    const username = usernameInput.value;
-    const password = passwordInput.value;
-    const passwordConfirm = passwordConfirmInput.value;
-
-    if (username == '') {
-        replaceText(warningElem, usernameEmpty);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
-    }
-
-    if (!PASSWORD_REGEX.test(password)) {
-        replaceText(warningElem, invalidPasswordFormat);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
-    } else if (password != passwordConfirm) {
-        replaceText(warningElem, passwordConfirmationMismatch);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
-    }
-
-    sendServerRequest('register', {
-        callback: function (response: string) {
-            if (response == 'EXPIRED') {
-                showMessage(expired);
-            } else if (response == 'USERNAME DUPLICATED') {
-                replaceText(warningElem, usernameTaken);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'USERNAME EMPTY') {
-                replaceText(warningElem, usernameEmpty);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response === 'PASSWORD INVALID') {
-                replaceText(warningElem, invalidPasswordFormat);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'ALREADY REGISTERED') {
-                showMessage(emailAlreadyRegistered);
-            } else if (response == 'DONE') {
-                showMessage(registerComplete);
-            } else {
-                showMessage();
-            }
-        },
-        content: 'p=' + param + '&signature=' + signature + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
-        withCredentials: false
+    addEventListener(usernameInput, 'keydown', (event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            register();
+        }
     });
-}
+    addEventListener(passwordInput, 'keydown', (event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            register();
+        }
+    });
+    addEventListener(passwordConfirmInput, 'keydown', (event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            register();
+        }
+    });
 
-function disableAllInputs(disabled: boolean) {
-    submitButton.disabled = disabled;
-    disableInput(usernameInput, disabled);
-    disableInput(passwordInput, disabled);
-    disableInput(passwordConfirmInput, disabled);
+    addInfoRedirects();
+
+    addEventListener(submitButton, 'click', () => {
+        register();
+    });
+
+    passwordStyling(passwordInput);
+    passwordStyling(passwordConfirmInput);
+
+    function register() {
+        disableAllInputs(true);
+
+        const username = usernameInput.value;
+        const password = passwordInput.value;
+        const passwordConfirm = passwordConfirmInput.value;
+
+        if (username == '') {
+            replaceText(warningElem, usernameEmpty);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        }
+
+        if (!PASSWORD_REGEX.test(password)) {
+            replaceText(warningElem, invalidPasswordFormat);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        } else if (password != passwordConfirm) {
+            replaceText(warningElem, passwordConfirmationMismatch);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        }
+
+        sendServerRequest(redirect, 'register', {
+            callback: function (response: string) {
+                if (response == 'EXPIRED') {
+                    showMessage(redirect, expired);
+                } else if (response == 'USERNAME DUPLICATED') {
+                    replaceText(warningElem, usernameTaken);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response == 'USERNAME EMPTY') {
+                    replaceText(warningElem, usernameEmpty);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response === 'PASSWORD INVALID') {
+                    replaceText(warningElem, invalidPasswordFormat);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response == 'ALREADY REGISTERED') {
+                    showMessage(redirect, emailAlreadyRegistered);
+                } else if (response == 'DONE') {
+                    showMessage(redirect, registerComplete);
+                } else {
+                    showMessage(redirect);
+                }
+            },
+            content: 'p=' + param + '&signature=' + signature + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
+            withCredentials: false
+        });
+    }
+
+    function disableAllInputs(disabled: boolean) {
+        submitButton.disabled = disabled;
+        disableInput(usernameInput, disabled);
+        disableInput(passwordInput, disabled);
+        disableInput(passwordConfirmInput, disabled);
+    }
 }
 
 function addInfoRedirects() {

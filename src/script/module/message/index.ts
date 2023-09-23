@@ -2,13 +2,14 @@ import {
     LOGIN_URL,
     TOP_URL,
 } from '../env/constant';
-import { redirect, getTitle, setSessionStorage, getFullURL, getBaseURL } from '../dom/document';
+import { getTitle, setSessionStorage, getFullURL, getBaseURL } from '../dom/document';
 
 import { defaultError } from './template/title';
 import { unknownError } from './template/body';
 import { MessageParam } from './template/comm';
+import type { RedirectFunc } from '../type/RedirectFunc';
 
-export function show({ message, title, color, url, buttonText, logout, replaceBody }: MessageParam = {}) {
+export function show(redirect: RedirectFunc, { message, title, color, url, buttonText, logout, replaceBody }: MessageParam = {}) {
     setSessionStorage('message', message ?? unknownError);
     setSessionStorage('title', title ?? defaultError);
     setSessionStorage('color', color ?? 'red');

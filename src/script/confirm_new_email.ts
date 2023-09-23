@@ -7,11 +7,9 @@ import {
     getURLParam,
     passwordStyling,
     disableInput,
-    showPage,
 } from './module/common';
 import {
     addEventListener,
-    redirect,
     showElement,
     getById,
     replaceChildren,
@@ -21,16 +19,12 @@ import {
 import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
-import { promptForTotp } from './module/pop_up_window';
+import { destroy as destroyPopUpWindow, promptForTotp } from './module/pop_up_window';
 import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
-import type { HTMLImport } from './module/type/HTMLImport';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
 
-let emailInput: HTMLInputElement;
-let passwordInput: HTMLInputElement;
-let submitButton: HTMLButtonElement;
-let warningElem: HTMLElement;
-
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
 
     const param = getURLParam('p');
@@ -38,7 +32,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
 
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showPage(styleImportPromises, htmlImportPromises);
+            showPage();
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -49,34 +43,18 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
         return;
     }
 
-    sendServerRequest('change_email', {
+    sendServerRequest(redirect, 'change_email', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                showMessage(expired);
+                showMessage(redirect, expired);
             } else if (response == 'DUPLICATED') {
-                showMessage(emailAlreadyRegistered);
+                showMessage(redirect, emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
-                showPage(styleImportPromises, htmlImportPromises, () => {
-                    emailInput = getById('email') as HTMLInputElement;
-                    passwordInput = getById('password') as HTMLInputElement;
-                    submitButton = getById('submit-button') as HTMLButtonElement;
-                    warningElem = getById('warning');
-
-                    const changeEmailOnKeyDown = (event: Event) => {
-                        if ((event as KeyboardEvent).key === 'Enter') {
-                            changeEmail(param, signature);
-                        }
-                    };
-                    addEventListener(emailInput, 'keydown', changeEmailOnKeyDown);
-                    addEventListener(passwordInput, 'keydown', changeEmailOnKeyDown);
-                    addEventListener(submitButton, 'click', () => {
-                        changeEmail(param, signature);
-                    });
-
-                    passwordStyling(passwordInput);
+                showPage(() => {
+                    showPageCallback(redirect, param, signature);
                 });
             } else {
-                showMessage();
+                showMessage(redirect);
             }
         },
         content: 'p=' + param + '&signature=' + signature,
@@ -84,88 +62,112 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
     });
 }
 
-function changeEmail(param: string, signature: string) {
-    disableAllInputs(true);
+function showPageCallback(redirect: RedirectFunc, param: string, signature: string) {
+    const emailInput = getById('email') as HTMLInputElement;
+    const passwordInput = getById('password') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
+    const warningElem = getById('warning');
 
-    const email = emailInput.value;
-    const password = passwordInput.value;
-
-    if (!EMAIL_REGEX.test(email)) {
-        replaceText(warningElem, loginFailed);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
-    }
-
-    if (!PASSWORD_REGEX.test(password)) {
-        replaceText(warningElem, loginFailed);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
-    }
-
-    sendChangeEmailRequest(
-        'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
-        () => {
-            promptForTotp(
-                (totp, closeWindow, showWarning) => {
-                    sendChangeEmailRequest(
-                        'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&totp=' + totp,
-                        showWarning,
-                        closeWindow
-                    );
-                },
-                () => { disableAllInputs(false); }
-            );
+    const changeEmailOnKeyDown = (event: Event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            changeEmail();
         }
-    );
-}
-
-function sendChangeEmailRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
-    sendServerRequest('change_email', {
-        callback: function (response: string) {
-            const authenticationResult = handleAuthenticationResult(
-                response,
-                () => {
-                    closePopUpWindow?.();
-                    replaceText(warningElem, loginFailed);
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                },
-                failedTotpCallback,
-                () => {
-                    closePopUpWindow?.();
-                    replaceChildren(warningElem, ...accountDeactivated());
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                },
-                () => {
-                    closePopUpWindow?.();
-                    replaceText(warningElem, tooManyFailedLogin);
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                },
-            );
-            if (!authenticationResult) {
-                return;
-            }
-
-            if (response == 'EXPIRED') {
-                showMessage(expired);
-            } else if (response == 'DUPLICATED') {
-                showMessage(emailAlreadyRegistered);
-            } else if (response == 'DONE') {
-                showMessage(emailChanged);
-            } else {
-                showMessage();
-            }
-        },
-        content: content
+    };
+    addEventListener(emailInput, 'keydown', changeEmailOnKeyDown);
+    addEventListener(passwordInput, 'keydown', changeEmailOnKeyDown);
+    addEventListener(submitButton, 'click', () => {
+        changeEmail();
     });
+
+    passwordStyling(passwordInput);
+
+    function changeEmail() {
+        disableAllInputs(true);
+
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        if (!EMAIL_REGEX.test(email)) {
+            replaceText(warningElem, loginFailed);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        }
+
+        if (!PASSWORD_REGEX.test(password)) {
+            replaceText(warningElem, loginFailed);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        }
+
+        sendChangeEmailRequest(
+            'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
+            () => {
+                promptForTotp(
+                    (totp, closeWindow, showWarning) => {
+                        sendChangeEmailRequest(
+                            'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&totp=' + totp,
+                            showWarning,
+                            closeWindow
+                        );
+                    },
+                    () => { disableAllInputs(false); }
+                );
+            }
+        );
+    }
+
+    function sendChangeEmailRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
+        sendServerRequest(redirect, 'change_email', {
+            callback: function (response: string) {
+                const authenticationResult = handleAuthenticationResult(
+                    response,
+                    () => {
+                        closePopUpWindow?.();
+                        replaceText(warningElem, loginFailed);
+                        showElement(warningElem);
+                        disableAllInputs(false);
+                    },
+                    failedTotpCallback,
+                    () => {
+                        closePopUpWindow?.();
+                        replaceChildren(warningElem, ...accountDeactivated());
+                        showElement(warningElem);
+                        disableAllInputs(false);
+                    },
+                    () => {
+                        closePopUpWindow?.();
+                        replaceText(warningElem, tooManyFailedLogin);
+                        showElement(warningElem);
+                        disableAllInputs(false);
+                    },
+                );
+                if (!authenticationResult) {
+                    return;
+                }
+
+                if (response == 'EXPIRED') {
+                    showMessage(redirect, expired);
+                } else if (response == 'DUPLICATED') {
+                    showMessage(redirect, emailAlreadyRegistered);
+                } else if (response == 'DONE') {
+                    showMessage(redirect, emailChanged);
+                } else {
+                    showMessage(redirect);
+                }
+            },
+            content: content
+        });
+    }
+
+    function disableAllInputs(disabled: boolean) {
+        submitButton.disabled = disabled;
+        disableInput(emailInput, disabled);
+        disableInput(passwordInput, disabled);
+    }
 }
 
-function disableAllInputs(disabled: boolean) {
-    submitButton.disabled = disabled;
-    disableInput(emailInput, disabled);
-    disableInput(passwordInput, disabled);
+export function offload() {
+    destroyPopUpWindow();
 }

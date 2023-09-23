@@ -5,10 +5,8 @@ import {
 import {
     sendServerRequest,
     removeRightClick,
-    showPage,
 } from './module/common';
 import {
-    redirect,
     setTitle,
     getById,
     getSessionStorage,
@@ -18,9 +16,17 @@ import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
 import { encodeCFURIComponent } from './module/common/pure';
-import type { HTMLImport } from './module/type/HTMLImport';
+import { addInterval } from './module/timer';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
 
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+type ImageLoader = typeof import(
+    /* webpackExports: ["clearAllImageEvents"] */
+    './module/image_loader'
+);
+let imageLoader: ImageLoader | null = null;
+
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     const baseURL = getSessionStorage('base-url');
     const fileName = getSessionStorage('file-name');
     const xhrParam = getSessionStorage('xhr-param');
@@ -45,11 +51,11 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
         uri = 'get_news_image';
     } else {
         content = mediaSessionCredential + '&' + content;
-        setInterval(() => {
-            sendServerRequest('authenticate_media_session', {
+        addInterval(() => {
+            sendServerRequest(redirect, 'authenticate_media_session', {
                 callback: function (response: string) {
                     if (response != 'APPROVED') {
-                        showMessage(invalidResponse);
+                        showMessage(redirect, invalidResponse);
                     }
                 },
                 content: mediaSessionCredential,
@@ -60,23 +66,29 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
 
     setTitle(title);
 
-    sendServerRequest(uri, {
+    sendServerRequest(redirect, uri, {
         callback: function (response: string) {
             if (response !== 'APPROVED') {
-                showMessage(invalidResponse);
+                showMessage(redirect, invalidResponse);
                 return;
             }
-            showPage(styleImportPromises, htmlImportPromises, () => {
+            showPage(() => {
                 const container = getById('image-container');
                 removeRightClick(container);
 
-                imageLoaderImportPromise.then(({ default: imageLoader }) => {
-                    imageLoader(container, baseURL + encodeCFURIComponent(fileName), fileName, true);
+                imageLoaderImportPromise.then((imageLoaderModule) => {
+                    imageLoader = imageLoaderModule;
+                    imageLoader.default(redirect, container, baseURL + encodeCFURIComponent(fileName), fileName, true);
                 }).catch((e) => {
-                    showMessage(moduleImportError(e));
+                    showMessage(redirect, moduleImportError(e));
                 });
             });
         },
         content: content
     });
+}
+
+export function offload() {
+    imageLoader?.clearAllImageEvents();
+    imageLoader = null;
 }

@@ -1,6 +1,6 @@
 // JavaScript Document
 import {
-    sendServerRequest, showPage,
+    sendServerRequest,
 } from '../module/common';
 import {
     addEventListener,
@@ -11,15 +11,16 @@ import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { getTable, setOutput } from './helper';
-import type { HTMLImport } from '../module/type/HTMLImport';
+import type { ShowPageFunc } from '../module/type/ShowPageFunc';
+import type { RedirectFunc } from '../module/type/RedirectFunc';
 
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
 
-    sendServerRequest('console', {
+    sendServerRequest(redirect, 'console', {
         callback: function (response: string) {
             if (response != 'APPROVED') {
-                showMessage(invalidResponse);
+                showMessage(redirect, invalidResponse);
                 return;
             }
             Promise.all([
@@ -36,21 +37,21 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
                     './news'
                 ),
             ]).then(([{ getSeriesTable }, { getAccountTable }, { getNewsTable }]) => {
-                showPage(styleImportPromises, htmlImportPromises, () => {
+                showPage(() => {
                     addEventListener(getById('get-series-table'), 'click', () => {
-                        getSeriesTable();
+                        getSeriesTable(redirect);
                     });
                     addEventListener(getById('get-account-table'), 'click', () => {
-                        getAccountTable();
+                        getAccountTable(redirect);
                     });
                     addEventListener(getById('get-invite-table'), 'click', () => {
-                        getTable('invite');
+                        getTable(redirect, 'invite');
                     });
                     addEventListener(getById('get-news-table'), 'click', () => {
-                        getNewsTable();
+                        getNewsTable(redirect);
                     });
                     addEventListener(getById('get-log-table'), 'click', () => {
-                        getTable('log');
+                        getTable(redirect, 'log');
                     });
                     addEventListener(getById('generate-id'), 'click', () => {
                         generate('id');
@@ -74,13 +75,13 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
                         verify();
                     });
                     addEventListener(getById('show-all-column'), 'click', () => {
-                        getTable('all_column');
+                        getTable(redirect, 'all_column');
                     });
                     addEventListener(getById('show-all-index'), 'click', () => {
-                        getTable('all_index');
+                        getTable(redirect, 'all_index');
                     });
                     addEventListener(getById('show-create-table'), 'click', () => {
-                        getTable('create_table');
+                        getTable(redirect, 'create_table');
                     });
                     addEventListener(getById('run-debug'), 'click', () => {
                         misc('run', 'debug');
@@ -108,7 +109,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
                     });
                 });
             }).catch((e) => {
-                showMessage(moduleImportError(e));
+                showMessage(redirect, moduleImportError(e));
             });
         },
         content: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
@@ -120,7 +121,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
             type: type
         };
 
-        sendServerRequest('console', {
+        sendServerRequest(redirect, 'console', {
             callback: function (response: string) {
                 setOutput(response, undefined, 'id-output');
             },
@@ -134,7 +135,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
             type: type
         };
 
-        sendServerRequest('console', {
+        sendServerRequest(redirect, 'console', {
             callback: function (response: string) {
                 setOutput(response);
             },
@@ -163,7 +164,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
             dir: dir
         };
 
-        sendServerRequest('console', {
+        sendServerRequest(redirect, 'console', {
             callback: function (response: string) {
                 alert(response);
             },
@@ -185,7 +186,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
             type: 'key_cache'
         };
 
-        sendServerRequest('console', {
+        sendServerRequest(redirect, 'console', {
             callback: function (response: string) {
                 alert(response);
             },
@@ -207,7 +208,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
             type: type
         };
 
-        sendServerRequest('console', {
+        sendServerRequest(redirect, 'console', {
             callback: function (response: string) {
                 alert(response);
             },
@@ -235,7 +236,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
             series: id
         };
 
-        sendServerRequest('console', {
+        sendServerRequest(redirect, 'console', {
             callback: function (response: string) {
                 alert(response);
             },

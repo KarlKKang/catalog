@@ -1,0 +1,42 @@
+:root {
+    --background-color: rgba(252, 252, 252, 1);
+    --text-color: rgba(0, 0, 0, 1);
+
+    @media only screen and (prefers-color-scheme: dark) {
+        --background-color: rgba(40, 41, 49, 1);
+        --text-color: rgba(210, 213, 220, 1);
+    }
+}
+
+html {
+    display: none;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+
+    @media screen {
+        display: block;
+    }
+}
+
+body:not(.no-theme) {
+    background: var(--background-color);
+}
+
+html,
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+#loading-bar {
+    background-color: var(--text-color);
+    height: 1.5px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: width .4s ease-out, opacity .1s ease-out, visibility .1s ease-out;
+}

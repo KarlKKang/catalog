@@ -6,11 +6,9 @@ import {
     sendServerRequest,
     getURLParam,
     disableInput,
-    showPage,
 } from './module/common';
 import {
     addEventListener,
-    redirect,
     getById,
     showElement,
     replaceText,
@@ -20,13 +18,10 @@ import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
 import { expired, emailSent } from './module/message/template/param';
 import { EMAIL_REGEX } from './module/common/pure';
-import type { HTMLImport } from './module/type/HTMLImport';
+import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { RedirectFunc } from './module/type/RedirectFunc';
 
-let newEmailInput: HTMLInputElement;
-let submitButton: HTMLButtonElement;
-let warningElem: HTMLElement;
-
-export default function (styleImportPromises: Promise<any>[], htmlImportPromises: HTMLImport) {
+export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
 
     const param = getURLParam('p');
@@ -34,7 +29,7 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
 
     if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showPage(styleImportPromises, htmlImportPromises);
+            showPage();
         } else {
             redirect(TOP_URL, true);
         }
@@ -45,28 +40,14 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
         return;
     }
 
-    sendServerRequest('verify_email_change', {
+    sendServerRequest(redirect, 'verify_email_change', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                showMessage(expired);
+                showMessage(redirect, expired);
             } else if (response == 'APPROVED') {
-                showPage(styleImportPromises, htmlImportPromises, () => {
-                    newEmailInput = getById('new-email') as HTMLInputElement;
-                    submitButton = getById('submit-button') as HTMLButtonElement;
-                    warningElem = getById('warning');
-
-                    addEventListener(newEmailInput, 'keydown', (event) => {
-                        if ((event as KeyboardEvent).key === 'Enter') {
-                            submitRequest(param, signature);
-                        }
-                    });
-
-                    addEventListener(submitButton, 'click', () => {
-                        submitRequest(param, signature);
-                    });
-                });
+                showPage(() => { showPageCallback(redirect, param, signature); });
             } else {
-                showMessage();
+                showMessage(redirect);
             }
         },
         content: 'p=' + param + '&signature=' + signature,
@@ -74,42 +55,58 @@ export default function (styleImportPromises: Promise<any>[], htmlImportPromises
     });
 }
 
-function submitRequest(param: string, signature: string) {
-    disableAllInputs(true);
+function showPageCallback(redirect: RedirectFunc, param: string, signature: string) {
+    const newEmailInput = getById('new-email') as HTMLInputElement;
+    const submitButton = getById('submit-button') as HTMLButtonElement;
+    const warningElem = getById('warning');
 
-    const newEmail = newEmailInput.value;
+    addEventListener(newEmailInput, 'keydown', (event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            submitRequest();
+        }
+    });
 
-    if (!EMAIL_REGEX.test(newEmail)) {
-        replaceText(warningElem, invalidEmailFormat);
-        showElement(warningElem);
-        disableAllInputs(false);
-        return;
+    addEventListener(submitButton, 'click', () => {
+        submitRequest();
+    });
+
+    function submitRequest() {
+        disableAllInputs(true);
+
+        const newEmail = newEmailInput.value;
+
+        if (!EMAIL_REGEX.test(newEmail)) {
+            replaceText(warningElem, invalidEmailFormat);
+            showElement(warningElem);
+            disableAllInputs(false);
+            return;
+        }
+
+        sendServerRequest(redirect, 'verify_email_change', {
+            callback: function (response: string) {
+                if (response == 'EXPIRED') {
+                    showMessage(redirect, expired);
+                } else if (response == 'DUPLICATED') {
+                    replaceText(warningElem, emailAlreadyRegistered);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response == 'INVALID FORMAT') {
+                    replaceText(warningElem, invalidEmailFormat);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                } else if (response == 'DONE') {
+                    showMessage(redirect, emailSent(false));
+                } else {
+                    showMessage(redirect);
+                }
+            },
+            content: 'p=' + param + '&signature=' + signature + '&new=' + newEmail,
+            withCredentials: false
+        });
     }
 
-    sendServerRequest('verify_email_change', {
-        callback: function (response: string) {
-            if (response == 'EXPIRED') {
-                showMessage(expired);
-            } else if (response == 'DUPLICATED') {
-                replaceText(warningElem, emailAlreadyRegistered);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'INVALID FORMAT') {
-                replaceText(warningElem, invalidEmailFormat);
-                showElement(warningElem);
-                disableAllInputs(false);
-            } else if (response == 'DONE') {
-                showMessage(emailSent(false));
-            } else {
-                showMessage();
-            }
-        },
-        content: 'p=' + param + '&signature=' + signature + '&new=' + newEmail,
-        withCredentials: false
-    });
-}
-
-function disableAllInputs(disabled: boolean) {
-    submitButton.disabled = disabled;
-    disableInput(newEmailInput, disabled);
+    function disableAllInputs(disabled: boolean) {
+        submitButton.disabled = disabled;
+        disableInput(newEmailInput, disabled);
+    }
 }

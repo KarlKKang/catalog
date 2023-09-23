@@ -13,16 +13,20 @@ import {
 } from '../module/dom';
 import { completeCallback, getTable } from './helper';
 import { PASSWORD_REGEX } from '../module/common/pure';
+import type { RedirectFunc } from '../module/type/RedirectFunc';
+
+let redirect: RedirectFunc;
 
 function accountCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
 }
 
-export function getAccountTable() {
-    getTable('account', updateEventHandlers);
+export function getAccountTable(_redirect: RedirectFunc) {
+    redirect = _redirect;
+    getTable(redirect, 'account', updateEventHandlers);
 }
 
-async function addAccount(button: Element) {
+function addAccount(button: Element) {
     const record = getParentElement(getParentElement(button));
     const email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
     const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
@@ -48,7 +52,7 @@ async function addAccount(button: Element) {
 
     const available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
 
-    const parsedRecord = await parseAccountRecord(email, username, password, user_group, status, available_invite);
+    const parsedRecord = parseAccountRecord(email, username, password, user_group, status, available_invite);
     if (!parsedRecord) {
         return;
     }
@@ -72,13 +76,13 @@ async function addAccount(button: Element) {
         }
     } while (confirm != 'insert');
 
-    sendServerRequest('console', {
+    sendServerRequest(redirect, 'console', {
         callback: accountCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
-async function modifyAccount(button: Element, id: string) {
+function modifyAccount(button: Element, id: string) {
     const record = getParentElement(getParentElement(button));
     const email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
     const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
@@ -104,7 +108,7 @@ async function modifyAccount(button: Element, id: string) {
 
     const available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
 
-    const parsedRecord = await parseAccountRecord(email, username, password, user_group, status, available_invite);
+    const parsedRecord = parseAccountRecord(email, username, password, user_group, status, available_invite);
     if (!parsedRecord) {
         return;
     }
@@ -124,13 +128,13 @@ async function modifyAccount(button: Element, id: string) {
         }
     } while (confirm != 'modify');
 
-    sendServerRequest('console', {
+    sendServerRequest(redirect, 'console', {
         callback: accountCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
-async function parseAccountRecord(email: string, username: string, password: string, user_group: string, status: string, available_invite: string) {
+function parseAccountRecord(email: string, username: string, password: string, user_group: string, status: string, available_invite: string) {
     if (email == '') {
         alert('ERROR: "email" is required');
         return false;
@@ -209,7 +213,7 @@ function deleteAccount(id: string) {
         id: id
     };
 
-    sendServerRequest('console', {
+    sendServerRequest(redirect, 'console', {
         callback: accountCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
