@@ -535,7 +535,7 @@ export class Player {
         });
 
         //Progress bar & frame drop monitor
-        this.timer = addInterval(() => { this.intervalCallback; }, 250);
+        this.timer = addInterval(() => { this.intervalCallback(); }, 250);
 
         //Progress bar
         addEventsListener(this.progressControl, ['mousedown', 'touchstart'], (event) => {
