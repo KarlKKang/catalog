@@ -1,6 +1,7 @@
 import postcss from 'postcss';
 import cssnano from 'cssnano';
 import * as fs from './file_system.js';
+import { cssMinifyOptions } from './build_config.cjs';
 
 export default function (srcDir, destDir, srcFilename, destFilename) {
     if (destFilename === undefined) {
@@ -8,25 +9,7 @@ export default function (srcDir, destDir, srcFilename, destFilename) {
     }
     fs.read(srcDir + srcFilename, function (data) {
         postcss([
-            cssnano({
-                preset: [
-                    'cssnano-preset-advanced',
-                    {
-                        autoprefixer: {
-                            add: true,
-                            remove: true,
-                            supports: true,
-                            flexbox: true,
-                        },
-                        cssDeclarationSorter: {
-                            order: "smacss"
-                        },
-                        zindex: false,
-                        discardUnused: false,
-                        reduceIdents: false
-                    }
-                ]
-            })
+            cssnano(cssMinifyOptions)
         ]).process(data, { from: srcDir + srcFilename, to: destDir + destFilename }).then(result => {
             result.warnings().forEach(warn => {
                 console.warn(warn.toString())

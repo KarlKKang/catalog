@@ -1,9 +1,11 @@
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common.cjs');
-const TerserPlugin = require("terser-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
 const { DefinePlugin } = require('webpack');
 const { addHTMLConfig, addFontLoader } = require('./webpack_helper.cjs');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { cssMinifyOptions } = require('./build_config.cjs');
 
 const config = merge(common, {
     mode: 'production',
@@ -32,6 +34,9 @@ const config = merge(common, {
                     keep_fnames: false,
                     safari10: true,
                 },
+            }),
+            new CssMinimizerPlugin({
+                minimizerOptions: cssMinifyOptions,
             }),
         ],
     },

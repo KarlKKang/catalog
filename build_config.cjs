@@ -10,3 +10,23 @@ module.exports.htmlMinifyOptions = {
     sortAttributes: true,
     sortClassName: true
 };
+
+module.exports.cssMinifyOptions = {
+    preset: [
+        'cssnano-preset-advanced',
+        {
+            autoprefixer: {
+                add: true,
+                remove: true,
+                supports: true,
+                flexbox: true,
+            },
+            cssDeclarationSorter: {
+                order: "smacss"
+            },
+            zindex: false,
+            discardUnused: false,
+            reduceIdents: false
+        }
+    ]
+};
