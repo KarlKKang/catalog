@@ -18,7 +18,9 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     showPage(() => {
         appendText(getById('title'), notFoundTitle);
         appendText(getById('message'), notFoundBody);
-        addEventListener(getById('button'), 'click', () => {
+        const button = getById('button');
+        button.style.width = 'auto';
+        addEventListener(button, 'click', () => {
             redirect(TOP_URL);
         });
     });

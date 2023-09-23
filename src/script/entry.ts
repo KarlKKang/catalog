@@ -90,11 +90,11 @@ const page404: Page = {
         notoSansJPMediumCss(),
         commonCss(),
         messageCss(),
-        import('../css/404.scss'),
     ],
     html: () => import('../html/404.html'),
     html_entry: HTMLEntry.ENTRY_NO_INDEX,
     title: '404',
+    id: 'message',
 };
 
 const pages: PageMap = {
