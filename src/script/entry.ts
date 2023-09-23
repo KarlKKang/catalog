@@ -407,10 +407,21 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
             }
         });
 
+        let loadingBarWidth: number = 33;
+        let loadingBarShown: boolean = false;
+        let pageLoaded: boolean = false;
         const loadingBar = getById('loading-bar');
         loadingBar.style.visibility = 'visible';
         loadingBar.style.opacity = '1';
-        loadingBar.style.width = '33%';
+        addTimeout(() => {
+            if (pageLoaded) {
+                loadingBar.style.visibility = 'hidden';
+                loadingBar.style.opacity = '0';
+            } else {
+                loadingBar.style.width = loadingBarWidth + '%';
+                loadingBarShown = true;
+            }
+        }, 300);
 
         scriptImportPromise.then((script) => {
             if (currentScriptImportPromise === scriptImportPromise) {
@@ -425,14 +436,18 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
                             if (currentScriptImportPromise === scriptImportPromise) {
                                 getBody().innerHTML = html.default;
                                 callback?.();
-                                loadingBar.style.width = '100%';
-                                addTimeout(() => {
-                                    loadingBar.style.opacity = '0';
-                                    loadingBar.style.visibility = 'hidden';
+
+                                pageLoaded = true;
+                                if (loadingBarShown) {
+                                    loadingBar.style.width = '100%';
                                     addTimeout(() => {
-                                        loadingBar.style.width = '0';
-                                    }, 100);
-                                }, 400);
+                                        loadingBar.style.visibility = 'hidden';
+                                        loadingBar.style.opacity = '0';
+                                        addTimeout(() => {
+                                            loadingBar.style.width = '0';
+                                        }, 100);
+                                    }, 300);
+                                }
                             }
                         });
                     },
@@ -442,7 +457,11 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
                         }
                     }
                 );
-                loadingBar.style.width = '67%';
+                if (loadingBarShown) {
+                    loadingBar.style.width = '67%';
+                } else {
+                    loadingBarWidth = 67;
+                }
             }
         });
     };
