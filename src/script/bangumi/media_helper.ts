@@ -217,7 +217,8 @@ export function buildDownloadAccordion(
                 }
             },
             content: requestContent,
-            logoutParam: getLogoutParam(seriesID, epIndex)
+            logoutParam: getLogoutParam(seriesID, epIndex),
+            showSessionEndedMessage: true,
         });
     });
     appendChild(accordionPanel, downloadButton);

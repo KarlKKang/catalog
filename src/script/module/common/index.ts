@@ -6,7 +6,7 @@ import {
 
 import { show as showMessage } from '../message';
 import { moduleImportError, insufficientPermissions } from '../message/template/param';
-import { sessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse } from '../message/template/param/server';
+import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded } from '../message/template/param/server';
 
 import {
     w,
@@ -44,6 +44,7 @@ interface SendServerRequestOption {
     logoutParam?: string;
     connectionErrorRetry?: number;
     connectionErrorRetryTimeout?: number;
+    showSessionEndedMessage?: boolean;
 }
 
 function xhrOnErrorCallback(redirect: RedirectFunc, uri: string, options: SendServerRequestOption) {
@@ -75,12 +76,17 @@ function checkXHRStatus(redirect: RedirectFunc, response: XMLHttpRequest, uri: s
         return true;
     } else if (status === 403) {
         if (responseText === 'SESSION ENDED') {
-            showMessage(redirect, sessionEnded);
+            showMessage(redirect, mediaSessionEnded);
         } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
             showMessage(redirect, insufficientPermissions);
         } else if (responseText === 'UNAUTHORIZED') {
             const logoutParam = options.logoutParam;
-            redirect(LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam)), true);
+            const url = LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam));
+            if (options.showSessionEndedMessage) {
+                showMessage(redirect, sessionEnded(url));
+            } else {
+                redirect(url, true);
+            }
         } else {
             xhrOnErrorCallback(redirect, uri, options);
         }

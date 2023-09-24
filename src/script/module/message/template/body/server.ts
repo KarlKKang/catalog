@@ -5,7 +5,8 @@ import { MaintenanceInfo } from '../../../type/MaintenanceInfo';
 import { defaultErrorSuffix } from '../comm';
 
 export const invalidResponse = `サーバーが無効な応答を返しました。${defaultErrorSuffix}`;
-export const sessionEnded = 'セッションがタイムアウトした、または別のソースからのアクティビティによって新しいセッションが開始された。';
+export const sessionEnded = 'もう一度ログインしてください。';
+export const mediaSessionEnded = 'セッションがタイムアウトした、または別のソースからのアクティビティによって新しいセッションが開始された。';
 export const connectionError = function () {
     const container = createDivElement();
     const text = createParagraphElement();

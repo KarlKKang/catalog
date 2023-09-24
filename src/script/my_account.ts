@@ -214,7 +214,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                         disableAllInputs(false);
                         closeWindow();
                     },
-                    content: authenticationParam + '&receiver=' + encodeURIComponent(receiver)
+                    content: authenticationParam + '&receiver=' + encodeURIComponent(receiver),
+                    showSessionEndedMessage: true,
                 });
             },
             warningElem
@@ -276,7 +277,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                         disableAllInputs(false);
                         closeWindow();
                     },
-                    content: authenticationParam + '&new=' + encodeURIComponent(newPassword)
+                    content: authenticationParam + '&new=' + encodeURIComponent(newPassword),
+                    showSessionEndedMessage: true,
                 });
             },
             warningElem
@@ -304,7 +306,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                 }
                 showElement(warningElem);
                 disableAllInputs(false);
-            }
+            },
+            showSessionEndedMessage: true,
         });
     }
 
@@ -365,7 +368,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                         disableAllInputs(false);
                         closeWindow();
                     },
-                    content: authenticationParam + '&new=' + encodeURIComponent(newUsername)
+                    content: authenticationParam + '&new=' + encodeURIComponent(newUsername),
+                    showSessionEndedMessage: true,
                 });
             },
             warningElem
@@ -421,7 +425,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                             promptForTotpSetup(parsedResponse);
                         }
                     },
-                    content: content
+                    content: content,
+                    showSessionEndedMessage: true,
                 });
             }
         );
@@ -463,7 +468,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                             showMessage(redirect);
                         }
                     },
-                    content: content
+                    content: content,
+                    showSessionEndedMessage: true,
                 });
             }
         );
@@ -516,7 +522,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                             showRecoveryCode(parsedResponse);
                         }
                     },
-                    content: authenticationParam
+                    content: authenticationParam,
+                    showSessionEndedMessage: true,
                 });
             },
             recoveryCodeWarning,
@@ -942,7 +949,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                             showRecoveryCode(parsedResponse);
                         }
                     },
-                    content: 'p=' + totpInfo.p + '&signature=' + totpInfo.signature + '&totp=' + totp
+                    content: 'p=' + totpInfo.p + '&signature=' + totpInfo.signature + '&totp=' + totp,
+                    showSessionEndedMessage: true,
                 });
             };
             addEventListener(submitButton, 'click', submit);

@@ -102,7 +102,7 @@ export default function (showPage: ShowPageFunc, _redirect: RedirectFunc) {
         }
 
         showPage(() => { showPageCallback(seriesInfo, urlKeywords, lazyloadModule, imageLoaderModule); });
-    });
+    }, false);
 }
 
 function showPageCallback(
@@ -116,7 +116,7 @@ function showPageCallback(
     const containerElem = getById('container');
     searchBarInput.value = urlKeywords;
 
-    initializeInfiniteScrolling(() => { getSeries(showSeries); }, - 256 - 24);
+    initializeInfiniteScrolling(() => { getSeries(showSeries, true); }, - 256 - 24);
     if (seriesInfo.maintenance !== undefined) {
         const annoucementContainer = createDivElement();
         addClass(annoucementContainer, 'announcement');
@@ -243,7 +243,7 @@ function showPageCallback(
                 removeClass(containerElem, 'transparent');
                 disableSearchBarInput(false);
             });
-        });
+        }, true);
     }
 
     function disableSearchBarInput(disabled: boolean) {
@@ -269,7 +269,7 @@ function getURLKeywords() {
     }
 }
 
-function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
+function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void, showSessionEndedMessage: boolean) {
     if (pivot === 'EOF') {
         return;
     }
@@ -287,7 +287,8 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void) {
             callback(parsedResponse);
         },
         content: keywords + 'pivot=' + pivot,
-        logoutParam: keywords.slice(0, -1)
+        logoutParam: keywords.slice(0, -1),
+        showSessionEndedMessage: showSessionEndedMessage,
     });
 }
 

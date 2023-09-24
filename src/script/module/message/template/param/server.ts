@@ -25,9 +25,15 @@ export const invalidResponse = function () {
         return param;
     }
 }();
-export const sessionEnded = {
+export const sessionEnded = (url: string) => ({
     title: title.sessionEnded,
     message: body.sessionEnded,
+    color: 'orange',
+    url: url
+});
+export const mediaSessionEnded = {
+    title: title.sessionEnded,
+    message: body.mediaSessionEnded,
     color: 'orange',
     url: TOP_URL
 };

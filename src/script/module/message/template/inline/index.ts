@@ -39,3 +39,5 @@ export const generateRecoveryCodeWait = '直前にリカバリーコードを生
 
 export const mfaNotSet = '二要素認証が設定されていません。';
 export const mfaAlreadySet = '二要素認証はすでに有効になっています。';
+
+export const sessionEnded = 'セッションは終了した。もう一度お試しください。';

@@ -59,7 +59,8 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
                     }
                 },
                 content: mediaSessionCredential,
-                connectionErrorRetry: 5
+                connectionErrorRetry: 5,
+                showSessionEndedMessage: true,
             });
         }, 30 * 1000);
     }
@@ -84,7 +85,8 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
                 });
             });
         },
-        content: content
+        content: content,
+        showSessionEndedMessage: true,
     });
 }
 

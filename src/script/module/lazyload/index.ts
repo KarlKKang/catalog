@@ -115,10 +115,10 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                                     showMessage(targetData.redirect, invalidResponse);
                                     return;
                                 }
-
                                 targetData.xhr = (await imageLoaderImportPromise).default(targetData.redirect, target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);
                             },
-                            content: content
+                            content: content,
+                            showSessionEndedMessage: true,
                         });
                     } else {
                         targetData.xhr = (await imageLoaderImportPromise).default(targetData.redirect, target, targetData.src, targetData.alt, false, onImageDraw, targetData.onDataLoad, onError);

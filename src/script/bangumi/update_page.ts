@@ -152,7 +152,8 @@ export default async function (
             },
             content: epInfo.media_session_credential,
             logoutParam: getLogoutParam(seriesID, epIndex),
-            connectionErrorRetry: 5
+            connectionErrorRetry: 5,
+            showSessionEndedMessage: true,
         });
     }, 30 * 1000);
 
