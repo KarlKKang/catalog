@@ -20,7 +20,7 @@ import {
     clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
+import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/message/template/inline';
 import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
 import { destroy as destroyPopUpWindow, promptForTotp } from './module/pop_up_window';
@@ -96,7 +96,13 @@ function showPageCallback(redirect: RedirectFunc) {
                             closeWindow
                         );
                     },
-                    () => { disableAllInputs(false); }
+                    () => { disableAllInputs(false); },
+                    () => {
+                        usernameInput.value = '';
+                        passwordInput.value = '';
+                        replaceText(warningElem, sessionEnded);
+                        showElement(warningElem);
+                    }
                 );
             }
         );

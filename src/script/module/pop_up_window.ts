@@ -1,7 +1,7 @@
 import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, getBody, removeClass, replaceChildren, w, createInputElement, hideElement, showElement } from './dom';
 import { changeColor, disableInput } from './common';
 import { failedTotp } from './message/template/inline';
-import { addTimeout } from './timer';
+import { addInterval, addTimeout, removeInterval } from './timer';
 
 type PopUpWindow = {
     show: (...contents: Node[]) => void;
@@ -68,7 +68,8 @@ export function promptForTotp(
         closeWindow: () => void,
         showWarning: () => void,
     ) => void,
-    closeWindowCallback: () => void
+    closeWindowCallback: () => void,
+    timeoutCallback: () => void,
 ) {
     initializePopUpWindow().then((popUpWindow) => {
         const promptText = createParagraphElement();
@@ -100,6 +101,15 @@ export function promptForTotp(
         appendChild(buttonFlexbox, submitButton);
         appendChild(buttonFlexbox, cancelButton);
 
+        const startTime = Date.now();
+        const timer = addInterval(() => {
+            if (Date.now() - startTime > 90 * 1000) {
+                closeWindowCallback();
+                timeoutCallback();
+                popUpWindow.hide();
+            }
+        }, 1000);
+
         const disableAllInputs = (disabled: boolean) => {
             disableInput(totpInput, disabled);
             submitButton.disabled = disabled;
@@ -118,7 +128,10 @@ export function promptForTotp(
 
             submitCallback(
                 totp,
-                popUpWindow.hide,
+                () => {
+                    removeInterval(timer);
+                    popUpWindow.hide();
+                },
                 () => {
                     disableAllInputs(false);
                     showElement(warningText);
@@ -133,6 +146,7 @@ export function promptForTotp(
         });
         addEventListener(cancelButton, 'click', () => {
             closeWindowCallback();
+            removeInterval(timer);
             popUpWindow.hide();
         });
 

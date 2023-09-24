@@ -18,7 +18,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
-import { loginFailed, accountDeactivated, tooManyFailedLogin } from './module/message/template/inline';
+import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/message/template/inline';
 import { destroy as destroyPopUpWindow, promptForTotp } from './module/pop_up_window';
 import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -112,7 +112,13 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
                             closeWindow
                         );
                     },
-                    () => { disableAllInputs(false); }
+                    () => { disableAllInputs(false); },
+                    () => {
+                        emailInput.value = '';
+                        passwordInput.value = '';
+                        replaceText(warningElem, sessionEnded);
+                        showElement(warningElem);
+                    }
                 );
             }
         );

@@ -52,7 +52,8 @@ import {
     failedTotp,
     generateRecoveryCodeWait,
     mfaNotSet,
-    mfaAlreadySet
+    mfaAlreadySet,
+    sessionEnded
 } from './module/message/template/inline';
 import * as UserInfo from './module/type/UserInfo';
 import * as TOTPInfo from './module/type/TOTPInfo';
@@ -215,7 +216,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                     },
                     content: authenticationParam + '&receiver=' + encodeURIComponent(receiver)
                 });
-            }
+            },
+            warningElem
         );
     }
 
@@ -276,7 +278,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                     },
                     content: authenticationParam + '&new=' + encodeURIComponent(newPassword)
                 });
-            }
+            },
+            warningElem
         );
     }
 
@@ -364,7 +367,8 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                     },
                     content: authenticationParam + '&new=' + encodeURIComponent(newUsername)
                 });
-            }
+            },
+            warningElem
         );
     }
 
@@ -515,6 +519,7 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                     content: authenticationParam
                 });
             },
+            recoveryCodeWarning,
             true
         );
     }
@@ -526,6 +531,7 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
             faildCallback: (message: string | Node[]) => void,
             failedTotpCallback: () => void,
         ) => void,
+        warningElem: HTMLElement,
         directTotpPrompt = false,
         message?: string | Node[]
     ) {
@@ -540,11 +546,15 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                             sendRequestCallback(
                                 'email=' + emailEncoded + '&password=' + passwordEncoded + '&totp=' + totp,
                                 closeWindow,
-                                (message: string | Node[]) => { reauthenticationPrompt(sendRequestCallback, directTotpPrompt, message); },
+                                (message: string | Node[]) => { reauthenticationPrompt(sendRequestCallback, warningElem, directTotpPrompt, message); },
                                 showWarning
                             );
                         },
                         () => { disableAllInputs(false); },
+                        () => {
+                            replaceText(warningElem, sessionEnded);
+                            showElement(warningElem);
+                        },
                     );
                 };
 
@@ -906,7 +916,7 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                         if (response === 'EXPIRED') {
                             popUpWindow.hide();
                             changeColor(mfaWarning, 'red');
-                            replaceText(mfaWarning, 'セッションが終了しました。もう一度お試しください。');
+                            replaceText(mfaWarning, sessionEnded);
                             showElement(mfaWarning);
                             disableAllInputs(false);
                         } else if (response === 'FAILED TOTP') {
