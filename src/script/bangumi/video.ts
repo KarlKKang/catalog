@@ -52,7 +52,6 @@ import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
-import { CustomMediaError } from '../module/player/media_error';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { RedirectFunc } from '../module/type/RedirectFunc';
 

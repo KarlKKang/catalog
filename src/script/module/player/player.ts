@@ -30,7 +30,6 @@ import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClass } from './helper';
 import * as icons from './icons';
-import { CustomMediaError } from './media_error';
 import { getLocalTime, secToTimestamp } from '../common/pure';
 import { addInterval, addTimeout, removeInterval } from '../timer';
 

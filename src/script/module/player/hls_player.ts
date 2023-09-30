@@ -1,7 +1,6 @@
 import { NonNativePlayer } from './non-native-player';
 import Hls from 'hls.js';
 import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig } from 'hls.js';
-import { CustomMediaError } from './media_error';
 
 export class HlsPlayer extends NonNativePlayer {
     protected override readonly maxBufferHole = 0.5;

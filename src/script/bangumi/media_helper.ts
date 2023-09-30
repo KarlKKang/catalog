@@ -34,7 +34,6 @@ import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
 import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper';
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
-import { CustomMediaError } from '../module/player/media_error';
 import { VideoFormatInfo } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
 import type { RedirectFunc } from '../module/type/RedirectFunc';
