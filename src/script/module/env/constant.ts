@@ -1,12 +1,11 @@
-import { DOMAIN as TOP_DOMAIN } from '../../../../env/index.cjs';
-export { TOP_DOMAIN };
+const TOP_DOMAIN = ENV_DOMAIN;
 
 let DOMAIN: string = TOP_DOMAIN;
 if (DEVELOPMENT) {
     DOMAIN = 'alpha.' + DOMAIN;
 }
 
-export { DOMAIN };
+export { TOP_DOMAIN };
 
 export const SERVER_URL = 'https://server.' + DOMAIN;
 export const CDN_URL = 'https://cdn.' + DOMAIN;

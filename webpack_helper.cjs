@@ -1,6 +1,7 @@
 const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
-const { DOMAIN } = require('./env');;
+const { DOMAIN } = require('./env/index.cjs');;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { DefinePlugin } = require('webpack');
 
 module.exports.addHTMLConfig = function (config, dev) {
     const pages = [
@@ -32,4 +33,13 @@ module.exports.addFontLoader = function (config, dev) {
             filename: 'font/' + (dev ? '[file]' : '[hash][ext]')
         }
     });
+}
+
+module.exports.addDefinePlugin = function (config, dev) {
+    config.plugins.push(
+        new DefinePlugin({
+            DEVELOPMENT: JSON.stringify(dev),
+            ENV_DOMAIN: JSON.stringify(DOMAIN),
+        })
+    );
 }

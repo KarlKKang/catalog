@@ -1,8 +1,7 @@
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common.cjs');
 const path = require('path');
-const { DefinePlugin } = require('webpack');
-const { addHTMLConfig, addFontLoader } = require('./webpack_helper.cjs');
+const { addHTMLConfig, addFontLoader, addDefinePlugin } = require('./webpack_helper.cjs');
 
 const config = merge(common, {
     mode: 'development',
@@ -12,12 +11,7 @@ const config = merge(common, {
     }
 });
 
-config.plugins.push(
-    new DefinePlugin({
-        DEVELOPMENT: JSON.stringify(true),
-    })
-);
-
+addDefinePlugin(config, true);
 addHTMLConfig(config, true);
 addFontLoader(config, true);
 
