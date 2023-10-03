@@ -58,7 +58,6 @@ import {
 import * as UserInfo from './module/type/UserInfo';
 import * as TOTPInfo from './module/type/TOTPInfo';
 import * as RecoveryCodeInfo from './module/type/RecoveryCodeInfo';
-import isbot from 'isbot';
 import { destroy as destroyPopUpWindow, initializePopUpWindow, promptForTotp } from './module/pop_up_window';
 import { toCanvas } from 'qrcode';
 import { isString } from './module/type/helper';
@@ -69,10 +68,6 @@ import type { RedirectFunc } from './module/type/RedirectFunc';
 
 export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
-
-    if (navigator !== undefined && isbot(navigator.userAgent)) {
-        return;
-    }
 
     sendServerRequest(redirect, 'get_account', {
         callback: function (response: string) {

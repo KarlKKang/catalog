@@ -38,7 +38,6 @@ import { moduleImportError } from './module/message/template/param';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
-import isbot from 'isbot';
 import type { default as LazyloadObserve } from './module/lazyload';
 import { encodeCFURIComponent, getLocalTime } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -69,10 +68,6 @@ export default function (showPage: ShowPageFunc, _redirect: RedirectFunc) {
     redirect = _redirect;
 
     clearSessionStorage();
-
-    if (navigator !== undefined && isbot(navigator.userAgent)) {
-        return;
-    }
 
     const newsID = getNewsID();
     if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {

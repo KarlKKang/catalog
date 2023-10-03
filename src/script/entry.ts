@@ -190,7 +190,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/my_account.html'),
         title: 'マイページ',
-        html_entry: HTMLEntry.ENTRY,
+        html_entry: HTMLEntry.ENTRY_NO_INDEX,
     },
     'new_email': {
         script: () => import('./new_email'),
@@ -270,7 +270,7 @@ const directories: PageMap = {
         ],
         html: () => import('../html/news.html'),
         title: 'お知らせ',
-        html_entry: HTMLEntry.ENTRY,
+        html_entry: HTMLEntry.ENTRY_NO_INDEX,
     },
 };
 const loginPages: PageMap = {
