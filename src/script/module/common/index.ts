@@ -195,7 +195,7 @@ export function passwordStyling(element: HTMLInputElement) {
     addEventListener(element, 'change', inputChangeHandler);
 }
 
-export function addNavBar(redirect: RedirectFunc, page?: 'home' | 'news' | 'my_account' | 'info', currentPageCallback?: () => void) {
+export function addNavBar(redirect: RedirectFunc, page?: number, currentPageCallback?: () => void) {
     const getNavButton = (name: string): [HTMLDivElement, HTMLDivElement] => {
         const container = createDivElement();
         const containerInner = createDivElement();
@@ -225,7 +225,7 @@ export function addNavBar(redirect: RedirectFunc, page?: 'home' | 'news' | 'my_a
     const callback = currentPageCallback || scrollToTop;
 
     addEventListener(navButton1[0], 'click', () => {
-        if (page === 'home') {
+        if (page === NavBarPage.HOME) {
             callback();
             return;
         }
@@ -233,7 +233,7 @@ export function addNavBar(redirect: RedirectFunc, page?: 'home' | 'news' | 'my_a
     });
 
     addEventListener(navButton2[0], 'click', () => {
-        if (page === 'news') {
+        if (page === NavBarPage.NEWS) {
             callback();
             return;
         }
@@ -241,7 +241,7 @@ export function addNavBar(redirect: RedirectFunc, page?: 'home' | 'news' | 'my_a
     });
 
     addEventListener(navButton3[0], 'click', () => {
-        if (page === 'my_account') {
+        if (page === NavBarPage.MY_ACCOUNT) {
             callback();
             return;
         }
@@ -249,7 +249,7 @@ export function addNavBar(redirect: RedirectFunc, page?: 'home' | 'news' | 'my_a
     });
 
     addEventListener(navButton4[0], 'click', () => {
-        if (page === 'info') {
+        if (page === NavBarPage.INFO) {
             callback();
             return;
         }
@@ -272,10 +272,10 @@ export function addNavBar(redirect: RedirectFunc, page?: 'home' | 'news' | 'my_a
             showMessage(redirect, moduleImportError(e));
             throw e;
         }
-        appendChild(navButton1[1], page === 'home' ? icons.getHomeFillIcon() : icons.getHomeIcon());
-        appendChild(navButton2[1], page === 'news' ? icons.getNewsFillIcon() : icons.getNewsIcon());
-        appendChild(navButton3[1], page === 'my_account' ? icons.getMyAccountFillIcon() : icons.getMyAccountIcon());
-        appendChild(navButton4[1], page === 'info' ? icons.getInfoFillIcon() : icons.getInfoIcon());
+        appendChild(navButton1[1], page === NavBarPage.HOME ? icons.getHomeFillIcon() : icons.getHomeIcon());
+        appendChild(navButton2[1], page === NavBarPage.NEWS ? icons.getNewsFillIcon() : icons.getNewsIcon());
+        appendChild(navButton3[1], page === NavBarPage.MY_ACCOUNT ? icons.getMyAccountFillIcon() : icons.getMyAccountIcon());
+        appendChild(navButton4[1], page === NavBarPage.INFO ? icons.getInfoFillIcon() : icons.getInfoIcon());
     };
     addNavBarIcon();
 }

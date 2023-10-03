@@ -143,7 +143,7 @@ function showPageCallback(
         appendText(announcementBody, message);
     }
     showSeries(seriesInfo);
-    addNavBar(redirect, 'home', () => {
+    addNavBar(redirect, NavBarPage.HOME, () => {
         scrollToTop();
         if (keywords !== '') {
             searchBarInput.value = '';

@@ -116,7 +116,7 @@ function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showP
             const showPagePromise = new Promise<HTMLDivElement>((resolve) => {
                 showPage(() => {
                     const contentContainer = showNews(getById('container'), parsedResponse);
-                    addNavBar(redirect, 'news', () => {
+                    addNavBar(redirect, NavBarPage.NEWS, () => {
                         redirect(NEWS_TOP_URL);
                     });
                     resolve(contentContainer);
@@ -299,7 +299,7 @@ function getAllNews(containerOrShowPage: unknown): void {
                 showAllNews(containerOrShowPage, parsedResponse);
             } else {
                 (containerOrShowPage as ShowPageFunc)(() => {
-                    addNavBar(redirect, 'news');
+                    addNavBar(redirect, NavBarPage.NEWS);
                     const container = getById('container');
                     initializeInfiniteScrolling(() => { getAllNews(container); });
                     showAllNews(container, parsedResponse);

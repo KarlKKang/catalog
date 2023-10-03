@@ -17,7 +17,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
         successful:
             function () {
                 showPage(() => {
-                    addNavBar(redirect, 'info');
+                    addNavBar(redirect, NavBarPage.INFO);
                     scrollToHash();
                 });
             },

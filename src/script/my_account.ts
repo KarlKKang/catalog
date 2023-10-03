@@ -158,7 +158,7 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
     newUsernameInput.value = userInfo.username;
     currentUsername = userInfo.username;
 
-    addNavBar(redirect, 'my_account');
+    addNavBar(redirect, NavBarPage.MY_ACCOUNT);
 
     function invite() {
         disableAllInputs(true);
