@@ -47,6 +47,9 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
                     addEventListener(getById('get-invite-table'), 'click', () => {
                         getTable(redirect, 'invite');
                     });
+                    addEventListener(getById('get-email-change-table'), 'click', () => {
+                        getTable(redirect, 'email_change');
+                    });
                     addEventListener(getById('get-news-table'), 'click', () => {
                         getNewsTable(redirect);
                     });
