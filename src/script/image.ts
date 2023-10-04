@@ -55,7 +55,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
             sendServerRequest(redirect, 'authenticate_media_session', {
                 callback: function (response: string) {
                     if (response != 'APPROVED') {
-                        showMessage(redirect, invalidResponse);
+                        showMessage(redirect, invalidResponse());
                     }
                 },
                 content: mediaSessionCredential,
@@ -70,7 +70,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     sendServerRequest(redirect, uri, {
         callback: function (response: string) {
             if (response !== 'APPROVED') {
-                showMessage(redirect, invalidResponse);
+                showMessage(redirect, invalidResponse());
                 return;
             }
             showPage(() => {

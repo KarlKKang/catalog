@@ -55,7 +55,7 @@ import {
     mfaAlreadySet,
     sessionEnded
 } from './module/message/template/inline';
-import * as UserInfo from './module/type/UserInfo';
+import * as AccountInfo from './module/type/AccountInfo';
 import * as TOTPInfo from './module/type/TOTPInfo';
 import * as RecoveryCodeInfo from './module/type/RecoveryCodeInfo';
 import { destroy as destroyPopUpWindow, initializePopUpWindow, promptForTotp } from './module/pop_up_window';
@@ -71,12 +71,12 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
 
     sendServerRequest(redirect, 'get_account', {
         callback: function (response: string) {
-            let parsedResponse: UserInfo.UserInfo;
+            let parsedResponse: AccountInfo.AccountInfo;
             try {
                 parsedResponse = JSON.parse(response);
-                UserInfo.check(parsedResponse);
+                AccountInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse);
+                showMessage(redirect, invalidResponse());
                 return;
             }
 
@@ -85,7 +85,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     });
 }
 
-function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
+function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectFunc) {
     let currentUsername: string;
     let currentMfaStatus: boolean;
 
@@ -202,7 +202,7 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                             showMessage(redirect, emailSentParam(true));
                             return;
                         } else {
-                            showMessage(redirect, invalidResponse);
+                            showMessage(redirect, invalidResponse());
                             return;
                         }
                         showElement(warningElem);
@@ -414,7 +414,7 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                                 parsedResponse = JSON.parse(response);
                                 TOTPInfo.check(parsedResponse);
                             } catch (e) {
-                                showMessage(redirect, invalidResponse);
+                                showMessage(redirect, invalidResponse());
                                 return;
                             }
                             promptForTotpSetup(parsedResponse);
@@ -511,7 +511,7 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                                 parsedResponse = JSON.parse(response);
                                 RecoveryCodeInfo.check(parsedResponse);
                             } catch (e) {
-                                showMessage(redirect, invalidResponse);
+                                showMessage(redirect, invalidResponse());
                                 return;
                             }
                             showRecoveryCode(parsedResponse);
@@ -938,7 +938,7 @@ function showPageCallback(userInfo: UserInfo.UserInfo, redirect: RedirectFunc) {
                                 parsedResponse = JSON.parse(response);
                                 RecoveryCodeInfo.check(parsedResponse);
                             } catch (e) {
-                                showMessage(redirect, invalidResponse);
+                                showMessage(redirect, invalidResponse());
                                 return;
                             }
                             showRecoveryCode(parsedResponse);

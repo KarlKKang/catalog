@@ -281,7 +281,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void, showSe
                 parsedResponse = JSON.parse(response);
                 SeriesInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse);
+                showMessage(redirect, invalidResponse());
                 return;
             }
             callback(parsedResponse);

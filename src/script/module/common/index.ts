@@ -98,7 +98,7 @@ function checkXHRStatus(redirect: RedirectFunc, response: XMLHttpRequest, uri: s
             parsedResponse = JSON.parse(responseText);
             MaintenanceInfo.check(parsedResponse);
         } catch (e) {
-            showMessage(redirect, invalidResponse);
+            showMessage(redirect, invalidResponse());
             return false;
         }
         showMessage(redirect, status503(parsedResponse));

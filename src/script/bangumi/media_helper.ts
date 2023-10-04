@@ -212,7 +212,7 @@ export function buildDownloadAccordion(
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {
-                    showMessage(redirect, invalidResponse);
+                    showMessage(redirect, invalidResponse());
                 }
             },
             content: requestContent,

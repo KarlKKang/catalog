@@ -112,7 +112,7 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                         targetData.xhr = sendServerRequest(targetData.redirect, uri, {
                             callback: async function (response: string) {
                                 if (response !== 'APPROVED') {
-                                    showMessage(targetData.redirect, invalidResponse);
+                                    showMessage(targetData.redirect, invalidResponse());
                                     return;
                                 }
                                 targetData.xhr = (await imageLoaderImportPromise).default(targetData.redirect, target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);

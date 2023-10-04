@@ -58,7 +58,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
                 parsedResponse = JSON.parse(response);
                 BangumiInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse);
+                showMessage(redirect, invalidResponse());
                 return;
             }
 

@@ -174,7 +174,7 @@ function formatSwitch(redirect: RedirectFunc, mediaHolder: HTMLElement, formatSe
     sendServerRequest(redirect, 'authenticate_media_session', {
         callback: function (response: string) {
             if (response !== 'APPROVED') {
-                showMessage(redirect, invalidResponse);
+                showMessage(redirect, invalidResponse());
             }
 
             if (format.direct_download) {

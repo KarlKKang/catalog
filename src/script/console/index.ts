@@ -20,7 +20,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     sendServerRequest(redirect, 'console', {
         callback: function (response: string) {
             if (response != 'APPROVED') {
-                showMessage(redirect, invalidResponse);
+                showMessage(redirect, invalidResponse());
                 return;
             }
             Promise.all([

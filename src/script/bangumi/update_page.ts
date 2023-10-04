@@ -147,7 +147,7 @@ export default async function (
         sendServerRequest(redirect, 'authenticate_media_session', {
             callback: function (response: string) {
                 if (response != 'APPROVED') {
-                    showMessage(redirect, invalidResponse);
+                    showMessage(redirect, invalidResponse());
                 }
             },
             content: epInfo.media_session_credential,

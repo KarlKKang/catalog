@@ -5,7 +5,7 @@ import { MaintenanceInfo } from '../../../type/MaintenanceInfo';
 import { getBaseURL } from '../../../dom';
 import { MessageParam } from '../comm';
 
-export const invalidResponse = function () {
+export const invalidResponse = () => {
     const href = getBaseURL();
     const param: MessageParam = {
         message: body.invalidResponse,
@@ -24,7 +24,7 @@ export const invalidResponse = function () {
         param.url = TOP_URL;
         return param;
     }
-}();
+};
 export const sessionEnded = (url: string) => ({
     title: title.sessionEnded,
     message: body.sessionEnded,
@@ -59,7 +59,7 @@ export const notFound = {
     title: title.notFound,
     message: body.notFound,
     url: function () {
-        if (getBaseURL().startsWith(LOGIN_URL)) {
+        if (getBaseURL().startsWith(LOGIN_URL)) { // Change the origin requires a page refresh.
             return LOGIN_URL;
         }
         return TOP_URL;

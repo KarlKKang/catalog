@@ -104,7 +104,7 @@ function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showP
                 parsedResponse = JSON.parse(response);
                 NewsInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse);
+                showMessage(redirect, invalidResponse());
                 return;
             }
 
@@ -286,7 +286,7 @@ function getAllNews(containerOrShowPage: unknown): void {
                 parsedResponse = JSON.parse(response);
                 AllNewsInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse);
+                showMessage(redirect, invalidResponse());
                 return;
             }
 
