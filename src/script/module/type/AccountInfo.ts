@@ -6,11 +6,11 @@ export interface AccountInfo {
     mfa_status: boolean;
     recovery_code_status: number;
     sessions: {
+        id?: string;
         ua: string;
         ip: string;
         country: string;
         time: number;
-        current?: boolean;
     }[];
 }
 
@@ -36,7 +36,7 @@ export function check(accountInfo: any) {
             throwError();
         }
 
-        if (session.current !== undefined && !isBoolean(session.current)) {
+        if (session.id !== undefined && !isString(session.id)) {
             throwError();
         }
     }
