@@ -3,6 +3,7 @@ import {
     authenticate,
     addNavBar,
     scrollToHash,
+    NAV_BAR_INFO,
 } from './module/common';
 import {
     clearSessionStorage,
@@ -17,7 +18,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
         successful:
             function () {
                 showPage(() => {
-                    addNavBar(redirect, NavBarPage.INFO);
+                    addNavBar(redirect, NAV_BAR_INFO);
                     scrollToHash();
                 });
             },

@@ -10,6 +10,7 @@ import {
     disableInput,
     changeColor,
     scrollToTop,
+    NAV_BAR_HOME,
 } from './module/common';
 import {
     w,
@@ -143,7 +144,7 @@ function showPageCallback(
         appendText(announcementBody, message);
     }
     showSeries(seriesInfo);
-    addNavBar(redirect, NavBarPage.HOME, () => {
+    addNavBar(redirect, NAV_BAR_HOME, () => {
         scrollToTop();
         if (keywords !== '') {
             searchBarInput.value = '';

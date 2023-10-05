@@ -54,6 +54,7 @@ import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAc
 import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { RedirectFunc } from '../module/type/RedirectFunc';
+import { HLS_BUFFER_APPEND_ERROR } from '../module/player/media_error';
 
 let pageLoaded = true;
 
@@ -386,7 +387,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {
-                if (errorCode === CustomMediaError.HLS_BUFFER_APPEND_ERROR) {
+                if (errorCode === HLS_BUFFER_APPEND_ERROR) {
                     if (currentFormat.video === 'dv5') {
                         showDolbyVisionError();
                     } else if (currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {

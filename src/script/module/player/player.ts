@@ -32,6 +32,7 @@ import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClas
 import * as icons from './icons';
 import { getLocalTime, secToTimestamp } from '../common/pure';
 import { addInterval, addTimeout, removeInterval } from '../timer';
+import { MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
 
 declare global {
     interface HTMLVideoElement {
@@ -350,13 +351,13 @@ export class Player {
             if (this.media.error !== null) {
                 const code = this.media.error.code;
                 if (code === MediaError.MEDIA_ERR_ABORTED) {
-                    errorCode = CustomMediaError.MEDIA_ERR_ABORTED;
+                    errorCode = MEDIA_ERR_ABORTED;
                 } else if (code === MediaError.MEDIA_ERR_NETWORK) {
-                    errorCode = CustomMediaError.MEDIA_ERR_NETWORK;
+                    errorCode = MEDIA_ERR_NETWORK;
                 } else if (code === MediaError.MEDIA_ERR_DECODE) {
-                    errorCode = CustomMediaError.MEDIA_ERR_DECODE;
+                    errorCode = MEDIA_ERR_DECODE;
                 } else if (code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
-                    errorCode = CustomMediaError.MEDIA_ERR_SRC_NOT_SUPPORTED;
+                    errorCode = MEDIA_ERR_SRC_NOT_SUPPORTED;
                 }
             }
             onerror && onerror(errorCode);

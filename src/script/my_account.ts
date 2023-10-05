@@ -9,6 +9,7 @@ import {
     changeColor,
     disableInput,
     logout,
+    NAV_BAR_MY_ACCOUNT,
 } from './module/common';
 import {
     addEventListener,
@@ -153,7 +154,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     newUsernameInput.value = userInfo.username;
     currentUsername = userInfo.username;
 
-    addNavBar(redirect, NavBarPage.MY_ACCOUNT);
+    addNavBar(redirect, NAV_BAR_MY_ACCOUNT);
 
     function invite() {
         disableAllInputs(true);

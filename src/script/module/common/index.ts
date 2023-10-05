@@ -195,7 +195,19 @@ export function passwordStyling(element: HTMLInputElement) {
     addEventListener(element, 'change', inputChangeHandler);
 }
 
-export function addNavBar(redirect: RedirectFunc, page?: number, currentPageCallback?: () => void) {
+const enum NavBarPage {
+    HOME,
+    NEWS,
+    MY_ACCOUNT,
+    INFO,
+}
+
+export const NAV_BAR_HOME = NavBarPage.HOME;
+export const NAV_BAR_NEWS = NavBarPage.NEWS;
+export const NAV_BAR_MY_ACCOUNT = NavBarPage.MY_ACCOUNT;
+export const NAV_BAR_INFO = NavBarPage.INFO;
+
+export function addNavBar(redirect: RedirectFunc, page?: NavBarPage, currentPageCallback?: () => void) {
     const getNavButton = (name: string): [HTMLDivElement, HTMLDivElement] => {
         const container = createDivElement();
         const containerInner = createDivElement();

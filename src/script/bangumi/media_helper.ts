@@ -37,6 +37,7 @@ import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import { VideoFormatInfo } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
 import type { RedirectFunc } from '../module/type/RedirectFunc';
+import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from '../module/player/media_error';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -66,13 +67,13 @@ function showPlayPromiseError() {
 }
 
 export function showPlayerError(errorCode: number | null) {
-    if (errorCode === CustomMediaError.MEDIA_ERR_ABORTED) {
+    if (errorCode === MEDIA_ERR_ABORTED) {
         showPlayPromiseError();
-    } else if (errorCode === CustomMediaError.MEDIA_ERR_NETWORK) {
+    } else if (errorCode === MEDIA_ERR_NETWORK) {
         showNetworkError();
-    } else if (errorCode === CustomMediaError.MEDIA_ERR_DECODE || errorCode === CustomMediaError.HLS_BUFFER_APPEND_ERROR) {
+    } else if (errorCode === MEDIA_ERR_DECODE || errorCode === HLS_BUFFER_APPEND_ERROR) {
         showDecodeError();
-    } else if (errorCode === CustomMediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+    } else if (errorCode === MEDIA_ERR_SRC_NOT_SUPPORTED) {
         showCodecCompatibilityError();
     } else {
         showUnknownPlaybackError();

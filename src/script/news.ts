@@ -8,6 +8,7 @@ import {
     scrollToHash,
     addNavBar,
     removeRightClick,
+    NAV_BAR_NEWS,
 } from './module/common';
 import {
     addEventListener,
@@ -111,7 +112,7 @@ function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showP
             const showPagePromise = new Promise<HTMLDivElement>((resolve) => {
                 showPage(() => {
                     const contentContainer = showNews(getById('container'), parsedResponse);
-                    addNavBar(redirect, NavBarPage.NEWS, () => {
+                    addNavBar(redirect, NAV_BAR_NEWS, () => {
                         redirect(NEWS_TOP_URL);
                     });
                     resolve(contentContainer);
@@ -294,7 +295,7 @@ function getAllNews(containerOrShowPage: unknown): void {
                 showAllNews(containerOrShowPage, parsedResponse);
             } else {
                 (containerOrShowPage as ShowPageFunc)(() => {
-                    addNavBar(redirect, NavBarPage.NEWS);
+                    addNavBar(redirect, NAV_BAR_NEWS);
                     const container = getById('container');
                     initializeInfiniteScrolling(() => { getAllNews(container); });
                     showAllNews(container, parsedResponse);

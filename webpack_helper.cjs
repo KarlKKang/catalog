@@ -1,5 +1,5 @@
 const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
-const { DOMAIN, CustomMediaError, NavBarPage } = require('./env/index.cjs');;
+const { DOMAIN } = require('./env/index.cjs');;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 
@@ -40,8 +40,6 @@ module.exports.addDefinePlugin = function (config, dev) {
         new DefinePlugin({
             DEVELOPMENT: JSON.stringify(dev),
             ENV_DOMAIN: JSON.stringify(DOMAIN),
-            CustomMediaError: JSON.stringify(CustomMediaError),
-            NavBarPage: JSON.stringify(NavBarPage),
         })
     );
 }

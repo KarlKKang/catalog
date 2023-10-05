@@ -1,6 +1,7 @@
 import { NonNativePlayer } from './non-native-player';
 import Hls from 'hls.js';
 import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig } from 'hls.js';
+import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
 
 export class HlsPlayer extends NonNativePlayer {
     protected override readonly maxBufferHole = 0.5;
@@ -31,20 +32,20 @@ export class HlsPlayer extends NonNativePlayer {
                 const errorType = data.type;
                 let errorCode = null;
                 if (errorType === Hls.ErrorTypes.NETWORK_ERROR) {
-                    errorCode = CustomMediaError.MEDIA_ERR_NETWORK;
+                    errorCode = MEDIA_ERR_NETWORK;
                 } else if (errorType === Hls.ErrorTypes.MUX_ERROR) {
-                    errorCode = CustomMediaError.MEDIA_ERR_DECODE;
+                    errorCode = MEDIA_ERR_DECODE;
                 } else if (errorType === Hls.ErrorTypes.MEDIA_ERROR) {
                     if ([
                         Hls.ErrorDetails.MANIFEST_INCOMPATIBLE_CODECS_ERROR,
                         Hls.ErrorDetails.BUFFER_ADD_CODEC_ERROR,
                         Hls.ErrorDetails.BUFFER_INCOMPATIBLE_CODECS_ERROR,
                     ].includes(data.details)) {
-                        errorCode = CustomMediaError.MEDIA_ERR_SRC_NOT_SUPPORTED;
+                        errorCode = MEDIA_ERR_SRC_NOT_SUPPORTED;
                     } else if (data.details === Hls.ErrorDetails.BUFFER_APPEND_ERROR) {
-                        errorCode = CustomMediaError.HLS_BUFFER_APPEND_ERROR;
+                        errorCode = HLS_BUFFER_APPEND_ERROR;
                     } else {
-                        errorCode = CustomMediaError.MEDIA_ERR_DECODE;
+                        errorCode = MEDIA_ERR_DECODE;
                     }
                 }
                 onerror && onerror(errorCode);
