@@ -442,15 +442,9 @@
         box-shadow: var(--shadow);
         transition: box-shadow .4s ease-out;
         /* Make sure these elements don't have other transitions. */
-    }
 
-    #ep-button-wrapper>div:hover,
-    .player:hover,
-    .image:hover,
-    .chapters:hover,
-    .download:hover,
-    .message:hover,
-    select:hover {
-        box-shadow: var(--shadow-hover);
+        &:hover {
+            box-shadow: var(--shadow-hover);
+        }
     }
 }
