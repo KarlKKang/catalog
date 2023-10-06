@@ -3,6 +3,8 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
 const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { cssMinifyOptions } = require('./build_config.cjs');
 
 const config = {
     target: 'browserslist',
@@ -48,6 +50,12 @@ const config = {
             maxSize: 1000 * 1000,
             chunks: 'all'
         },
+        minimize: true,
+        minimizer: [
+            new CssMinimizerPlugin({
+                minimizerOptions: cssMinifyOptions,
+            }),
+        ]
     },
     node: { global: false },
     resolve: {
