@@ -37,7 +37,6 @@
     }
 
     .warning {
-        padding: 0px;
         margin: 1em 0px;
     }
 
@@ -85,5 +84,33 @@
         width: 100%;
         overflow-wrap: anywhere;
         font-family: 'Courier New', Courier, monospace;
+    }
+
+    #sessions {
+        >div {
+            margin: 2em 0px;
+            width: 100%;
+            background-color: var(--foreground-color);
+            box-sizing: border-box;
+            box-shadow: var(--shadow);
+            transition: box-shadow .4s ease-out;
+            padding: 2em;
+
+            >p {
+                margin: 0px 0px 1em 0px;
+            }
+
+            >.warning {
+                margin: 0px;
+            }
+
+            >.button {
+                margin: 0px;
+            }
+
+            &:hover {
+                box-shadow: var(--shadow-hover);
+            }
+        }
     }
 }

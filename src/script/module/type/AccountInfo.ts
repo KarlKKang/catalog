@@ -10,7 +10,8 @@ export interface AccountInfo {
         ua: string;
         ip: string;
         country: string;
-        time: number;
+        last_active_time: number;
+        login_time: number;
     }[];
 }
 
@@ -32,7 +33,7 @@ export function check(accountInfo: any) {
             throwError();
         }
 
-        if (!isString(session.ua) || !isString(session.ip) || !isString(session.country) || !isNumber(session.time)) {
+        if (!isString(session.ua) || !isString(session.ip) || !isString(session.country) || !isNumber(session.last_active_time) || !isNumber(session.login_time)) {
             throwError();
         }
 

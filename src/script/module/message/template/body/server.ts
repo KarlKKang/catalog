@@ -1,6 +1,6 @@
 import { addClass, appendChild, appendChildren, appendListItems, appendText, createAnchorElement, createDivElement, createLIElement, createParagraphElement, createUListElement } from '../../../dom';
 import { TOP_DOMAIN } from '../../../env/constant';
-import { getLocalTime } from '../../../common/pure';
+import { getLocalTimeString } from '../../../common/pure';
 import { MaintenanceInfo } from '../../../type/MaintenanceInfo';
 import { defaultErrorSuffix } from '../comm';
 
@@ -38,8 +38,8 @@ export const status503 = (maintenanceInfo: MaintenanceInfo) => {
     let message = '';
     const suffix = 'ご不便をおかけして申し訳ありません。';
     if (maintenanceInfo.period > 0) {
-        const endTime = getLocalTime(maintenanceInfo.start + maintenanceInfo.period);
-        message = `メンテナンス期間は${endTime.year}年${endTime.month}月${endTime.date}日（${endTime.dayOfWeek}）${endTime.hour.toString().padStart(2, '0')}:${endTime.minute.toString().padStart(2, '0')}までとさせていただきます。${suffix}`;
+        const endTime = getLocalTimeString(maintenanceInfo.start + maintenanceInfo.period, false, false);
+        message = `メンテナンス期間は${endTime}までとさせていただきます。${suffix}`;
     } else {
         message = suffix + '後ほどもう一度お試しください。';
     }

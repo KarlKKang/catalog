@@ -40,7 +40,7 @@ import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
 import type { default as LazyloadObserve } from './module/lazyload';
-import { encodeCFURIComponent, getLocalTime } from './module/common/pure';
+import { encodeCFURIComponent, getLocalTime, getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 
@@ -170,16 +170,16 @@ function showNews(container: HTMLElement, newsInfo: NewsInfo.NewsInfo): HTMLDivE
     const createTimeContainer = createParagraphElement();
     addClass(createTimeContainer, 'date');
 
-    const createTime = getLocalTime(newsInfo.create_time);
-    appendText(createTimeContainer, '初回掲載日：' + createTime.year + '年' + createTime.month + '月' + createTime.date + '日（' + createTime.dayOfWeek + '）' + createTime.hour + '時' + createTime.minute + '分' + createTime.second + '秒');
+    const createTime = getLocalTimeString(newsInfo.create_time, true, false);
+    appendText(createTimeContainer, '初回掲載日：' + createTime);
     appendChild(contentContainer, createTimeContainer);
 
     if (newsInfo.update_time !== null) {
         const updateTimeContainer = createParagraphElement();
         addClass(updateTimeContainer, 'date');
 
-        const updateTime = getLocalTime(newsInfo.update_time);
-        appendText(updateTimeContainer, '最終更新日：' + updateTime.year + '年' + updateTime.month + '月' + updateTime.date + '日（' + updateTime.dayOfWeek + '）' + updateTime.hour + '時' + updateTime.minute + '分' + updateTime.second + '秒');
+        const updateTime = getLocalTimeString(newsInfo.update_time, true, false);
+        appendText(updateTimeContainer, '最終更新日：' + updateTime);
         appendChild(contentContainer, updateTimeContainer);
     }
 

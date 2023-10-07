@@ -36,6 +36,7 @@ export const accountDeactivated = () => {
 
 export const emailChangeWait = '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。';
 export const generateRecoveryCodeWait = '直前にリカバリーコードを生成したため、1時間ほど待ってから再度生成を試みてください。';
+export const logoutDone = 'ログアウトしました。';
 
 export const mfaNotSet = '二要素認証が設定されていません。';
 export const mfaAlreadySet = '二要素認証はすでに有効になっています。';

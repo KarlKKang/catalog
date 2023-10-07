@@ -21,6 +21,18 @@ export function getLocalTime(unixTimestamp?: number) {
     };
 }
 
+export function getLocalTimeString(unixTimestamp?: number, showSeconds?: boolean, showTimezone?: boolean) {
+    const localTime = getLocalTime(unixTimestamp);
+    let result = localTime.year + '年' + localTime.month + '月' + localTime.date + '日（' + localTime.dayOfWeek + '）' + localTime.hour.toString().padStart(2, '0') + '時' + localTime.minute.toString().padStart(2, '0') + '分';
+    if (showSeconds) {
+        result += localTime.second.toString().padStart(2, '0') + '秒';
+    }
+    if (showTimezone) {
+        result += '（' + new Date().toLocaleTimeString('ja-JP', { timeZoneName: 'long' }).split(' ').at(-1) + '）';
+    }
+    return result;
+}
+
 function getDayOfWeek(date: Date): string {
     const index = date.getDay();
     let result: string;

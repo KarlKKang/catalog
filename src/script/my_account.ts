@@ -29,6 +29,8 @@ import {
     appendChildren,
     replaceChildren,
     clearSessionStorage,
+    remove,
+    prependChild,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent as emailSentParam } from './module/message/template/param';
@@ -54,7 +56,8 @@ import {
     generateRecoveryCodeWait,
     mfaNotSet,
     mfaAlreadySet,
-    sessionEnded
+    sessionEnded,
+    logoutDone,
 } from './module/message/template/inline';
 import * as AccountInfo from './module/type/AccountInfo';
 import * as TOTPInfo from './module/type/TOTPInfo';
@@ -62,10 +65,11 @@ import * as RecoveryCodeInfo from './module/type/RecoveryCodeInfo';
 import { destroy as destroyPopUpWindow, initializePopUpWindow, promptForTotp } from './module/pop_up_window';
 import { toCanvas } from 'qrcode';
 import { isString } from './module/type/helper';
-import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
+import { EMAIL_REGEX, PASSWORD_REGEX, getLocalTimeString, handleAuthenticationResult } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addInterval, removeInterval } from './module/timer';
 import type { RedirectFunc } from './module/type/RedirectFunc';
+import { UAParser } from 'ua-parser-js';
 
 export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
@@ -112,6 +116,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
 
     const mfaInfo = getById('mfa-info');
     const recoveryCodeInfo = getById('recovery-code-info');
+    const sessionsContainer = getById('sessions');
 
     addEventListener(emailChangeButton, 'click', changeEmail);
     addEventListener(usernameChangeButton, 'click', changeUsername);
@@ -150,11 +155,108 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     }
 
     appendText(getById('invite-count'), userInfo.invite_quota.toString());
-
     newUsernameInput.value = userInfo.username;
     currentUsername = userInfo.username;
+    showSessions();
 
     addNavBar(redirect, NAV_BAR_MY_ACCOUNT);
+
+    function showSessions() {
+        for (const session of userInfo.sessions) {
+            const sessionContainer = createDivElement();
+
+            appendParagraph('IPアドレス：' + session.ip + '（' + session.country + '）', sessionContainer);
+
+            const ua = UAParser(session.ua);
+            const UNKNOWN = '不明';
+            let browser = ua.browser.name;
+            if (browser === undefined) {
+                browser = UNKNOWN;
+            } else {
+                const browserVer = ua.browser.version;
+                if (browserVer !== undefined) {
+                    browser += ' ' + browserVer;
+                }
+            }
+            let os = ua.os.name;
+            if (os === undefined) {
+                os = UNKNOWN;
+            } else {
+                const osVer = ua.os.version;
+                if (osVer !== undefined) {
+                    os += ' ' + osVer;
+                }
+            }
+            appendParagraph('ブラウザ：' + browser, sessionContainer);
+            appendParagraph('OS：' + os, sessionContainer);
+
+            appendParagraph('最初のログイン：' + getLocalTimeString(session.login_time, true, true), sessionContainer);
+            appendParagraph('最近のアクティビティ：' + getLocalTimeString(session.last_active_time, true, true), sessionContainer);
+
+            const sessionID = session.id;
+
+            if (sessionID === undefined) {
+                const thisDevicePrompt = createParagraphElement();
+                addClass(thisDevicePrompt, 'warning');
+                appendText(thisDevicePrompt, '※このデバイスです。');
+                appendChild(sessionContainer, thisDevicePrompt);
+                prependChild(sessionsContainer, sessionContainer);
+            } else {
+                const sessionWarningElem = createParagraphElement();
+                addClass(sessionWarningElem, 'warning');
+                hideElement(sessionWarningElem);
+                appendChild(sessionContainer, sessionWarningElem);
+
+                const sessionLogoutButton = createButtonElement();
+                addClass(sessionLogoutButton, 'button');
+                appendText(sessionLogoutButton, 'ログアウト');
+                appendChild(sessionContainer, sessionLogoutButton);
+
+                addEventListener(sessionLogoutButton, 'click', () => {
+                    hideElement(sessionWarningElem);
+                    changeColor(sessionWarningElem, 'red');
+                    reauthenticationPrompt(
+                        (
+                            authenticationParam: string,
+                            closeWindow: () => void,
+                            faildCallback: (message: string | Node[]) => void,
+                            failedTotpCallback: () => void,
+                        ) => {
+                            sendServerRequest(redirect, 'logout_session', {
+                                callback: (response: string) => {
+                                    const authenticationResult = handleAuthenticationResult(
+                                        response,
+                                        () => { faildCallback(loginFailed); },
+                                        failedTotpCallback,
+                                        () => { faildCallback([...accountDeactivated()]); },
+                                        () => { faildCallback(tooManyFailedLogin); },
+                                    );
+                                    if (!authenticationResult) {
+                                        return;
+                                    }
+
+                                    if (response == 'DONE') {
+                                        remove(sessionLogoutButton);
+                                        changeColor(sessionWarningElem, 'green');
+                                        replaceText(sessionWarningElem, logoutDone);
+                                    } else {
+                                        showMessage(redirect, invalidResponse());
+                                        return;
+                                    }
+                                    showElement(sessionWarningElem);
+                                    closeWindow();
+                                },
+                                content: authenticationParam + '&id=' + sessionID,
+                                showSessionEndedMessage: true,
+                            });
+                        },
+                        sessionWarningElem
+                    );
+                });
+                appendChild(sessionsContainer, sessionContainer);
+            }
+        }
+    }
 
     function invite() {
         disableAllInputs(true);
@@ -1041,6 +1143,12 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         inviteButton.disabled = disabled;
         logoutButton.disabled = disabled;
     }
+}
+
+function appendParagraph(text: string, container: HTMLElement) {
+    const elem = createParagraphElement();
+    appendText(elem, text);
+    appendChild(container, elem);
 }
 
 export function offload() {

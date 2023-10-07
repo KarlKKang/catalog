@@ -36,7 +36,7 @@ import { moduleImportError } from './module/message/template/param';
 import * as SeriesInfo from './module/type/SeriesInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
 import isbot from 'isbot';
-import { getLocalTime } from './module/common/pure';
+import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 
@@ -133,12 +133,12 @@ function showPageCallback(
 
         const maintenanceInfo = seriesInfo.maintenance;
         let message = '';
-        const startTime = getLocalTime(maintenanceInfo.start);
+        const startTime = getLocalTimeString(maintenanceInfo.start, false, false);
         if (maintenanceInfo.period > 0) {
-            const endTime = getLocalTime(maintenanceInfo.start + maintenanceInfo.period);
-            message = `${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}～${endTime.year}年${endTime.month}月${endTime.date}日（${endTime.dayOfWeek}）${endTime.hour.toString().padStart(2, '0')}:${endTime.minute.toString().padStart(2, '0')}の間、メンテナンスを実施する予定です。`;
+            const endTime = getLocalTimeString(maintenanceInfo.start + maintenanceInfo.period, false, false);
+            message = `${startTime}～${endTime}の間、メンテナンスを実施する予定です。`;
         } else {
-            message = `メンテナンス開始は${startTime.year}年${startTime.month}月${startTime.date}日（${startTime.dayOfWeek}）${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}を予定しております。`;
+            message = `メンテナンス開始は${startTime}を予定しております。`;
         }
         message += 'ご不便をおかけして申し訳ありません。';
         appendText(announcementBody, message);

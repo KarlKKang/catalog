@@ -19,31 +19,26 @@ let IS_MACOS = false;
 let UNRECOMMENDED_BROWSER = false;
 
 (function () {
-    const ua: UAParser.IResult | null = function () {
-        try {
-            return UAParser(typeof navigator !== 'undefined' ? navigator.userAgent.toLowerCase() : '');
-        }
-        catch (e) {
-            return null;
-        }
-    }();
-
-    if (ua !== null) {
-        const browserName = ua.browser.name ? ua.browser.name.toLowerCase() : '';
-        const osName = ua.os.name ? ua.os.name.toLowerCase() : '';
-        const engineName = ua.engine.name ? ua.engine.name.toLowerCase() : '';
-        const engineVersion = ua.engine.version ? parseFloat(ua.engine.version) : NaN;
-
-        IS_IOS = browserName === 'mobile safari' || osName === 'ios' || (browserName === 'safari' && 'ontouchend' in document);
-        IS_SAFARI = IS_IOS || browserName === 'safari';
-        IS_FIREFOX = browserName.includes('firefox') && !IS_IOS;
-        IS_EDGE = browserName === 'edge';
-        IS_WINDOWS = osName === 'windows';
-        IS_MACOS = osName === 'mac os';
-
-        const SUPPORTED_BLINK = engineName === 'blink' && engineVersion >= 62;
-        UNRECOMMENDED_BROWSER = (!SUPPORTED_BLINK && !IS_SAFARI) || browserName.includes('wechat') || browserName === 'ucbrowser';
+    if (typeof navigator === 'undefined') {
+        return;
     }
+
+    const ua = UAParser();
+
+    const browserName = ua.browser.name ? ua.browser.name.toLowerCase() : '';
+    const osName = ua.os.name ? ua.os.name.toLowerCase() : '';
+    const engineName = ua.engine.name ? ua.engine.name.toLowerCase() : '';
+    const engineVersion = ua.engine.version ? parseFloat(ua.engine.version) : NaN;
+
+    IS_IOS = browserName === 'mobile safari' || osName === 'ios' || (browserName === 'safari' && 'ontouchend' in document);
+    IS_SAFARI = IS_IOS || browserName === 'safari';
+    IS_FIREFOX = browserName.includes('firefox') && !IS_IOS;
+    IS_EDGE = browserName === 'edge';
+    IS_WINDOWS = osName === 'windows';
+    IS_MACOS = osName === 'mac os';
+
+    const SUPPORTED_BLINK = engineName === 'blink' && engineVersion >= 62;
+    UNRECOMMENDED_BROWSER = (!SUPPORTED_BLINK && !IS_SAFARI) || browserName.includes('wechat') || browserName === 'ucbrowser';
 })();
 
 
