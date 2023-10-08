@@ -131,8 +131,8 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     addEventListener(recoveryCodeButton, 'click', generateRecoveryCode);
     addEventListener(inviteButton, 'click', invite);
     addEventListener(logoutButton, 'click', () => {
+        disableAllInputs(true);
         logout(redirect, () => {
-            disableAllInputs(true);
             redirect(LOGIN_URL);
         });
     });
