@@ -48,6 +48,10 @@
 
     .button {
         width: 150px;
+
+        &.not-allowed {
+            cursor: not-allowed;
+        }
     }
 
     .input-field {
@@ -61,11 +65,6 @@
             font-size: small;
             color: var(--alt-text-color);
         }
-    }
-
-    #invite-count-text {
-        padding: 1em 0px;
-        margin: 0px;
     }
 
     .totp-qrcode {

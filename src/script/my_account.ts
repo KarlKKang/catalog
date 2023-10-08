@@ -30,6 +30,7 @@ import {
     clearSessionStorage,
     remove,
     prependChild,
+    removeClass,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent as emailSentParam } from './module/message/template/param';
@@ -57,6 +58,10 @@ import {
     mfaAlreadySet,
     sessionEnded,
     logoutDone,
+    mfaDisabled,
+    mfaEnabled,
+    loginNotificationEnabled,
+    loginNotificationDisabled,
 } from './module/message/template/inline';
 import * as AccountInfo from './module/type/AccountInfo';
 import * as TOTPInfo from './module/type/TOTPInfo';
@@ -90,8 +95,9 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
 }
 
 function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectFunc) {
-    let currentUsername: string;
-    let currentMfaStatus: boolean;
+    let currentUsername = userInfo.username;
+    let currentMfaStatus = userInfo.mfa_status;
+    let currentLoginNotificationStatus = userInfo.login_notification;
 
     const newUsernameInput = getById('new-username') as HTMLInputElement;
     const newPasswordInput = getById('new-password') as HTMLInputElement;
@@ -105,6 +111,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     const logoutButton = getById('logout-button') as HTMLButtonElement;
     const mfaButton = getById('mfa-button') as HTMLButtonElement;
     const recoveryCodeButton = getById('recovery-code-button') as HTMLButtonElement;
+    const loginNotificationButton = getById('login-notification-button') as HTMLButtonElement;
 
     const emailWarning = getById('email-warning');
     const usernameWarning = getById('username-warning');
@@ -112,9 +119,11 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     const inviteWarning = getById('invite-warning');
     const mfaWarning = getById('mfa-warning');
     const recoveryCodeWarning = getById('recovery-code-warning');
+    const loginNotificationWarning = getById('login-notification-warning');
 
     const mfaInfo = getById('mfa-info');
     const recoveryCodeInfo = getById('recovery-code-info');
+    const loginNotificationInfo = getById('login-notification-info');
     const sessionsContainer = getById('sessions');
 
     addEventListener(emailChangeButton, 'click', changeEmail);
@@ -135,11 +144,11 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             redirect(LOGIN_URL);
         });
     });
+    addEventListener(loginNotificationButton, 'click', changeLoginNotification);
 
     passwordStyling(newPasswordInput);
     passwordStyling(newPasswordComfirmInput);
 
-    currentMfaStatus = userInfo.mfa_status;
     changeMfaStatus();
     if (currentMfaStatus) {
         if (userInfo.recovery_code_status === 0) {
@@ -154,8 +163,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     }
 
     appendText(getById('invite-count'), userInfo.invite_quota.toString());
-    newUsernameInput.value = userInfo.username;
-    currentUsername = userInfo.username;
+    newUsernameInput.value = currentUsername;
     showSessions();
 
     addNavBar(redirect, NAV_BAR_MY_ACCOUNT);
@@ -507,9 +515,10 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                             } else if (response == 'DONE') {
                                 closeWindow();
                                 changeColor(mfaWarning, 'green');
-                                replaceText(mfaWarning, '二要素認証が無効になりました。');
+                                replaceText(mfaWarning, mfaDisabled);
                                 showElement(mfaWarning);
                                 currentMfaStatus = false;
+                                currentLoginNotificationStatus = true;
                                 changeMfaStatus();
                                 disableAllInputs(false);
                             } else {
@@ -558,7 +567,9 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                     showMessage(redirect, invalidResponse());
                                     return;
                                 }
-                                showRecoveryCode(parsedResponse);
+                                showRecoveryCode(parsedResponse, () => {
+                                    disableAllInputs(false);
+                                });
                             }
                         });
                     },
@@ -568,6 +579,52 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             },
             recoveryCodeWarning,
             true
+        );
+    }
+
+    function changeLoginNotification() {
+        disableAllInputs(true);
+
+        const warningElem = loginNotificationWarning;
+
+        hideElement(warningElem);
+        changeColor(warningElem, 'red');
+
+        const loginNotificationTargetStatus = !currentLoginNotificationStatus;
+
+        reauthenticationPrompt(
+            (
+                authenticationParam: string,
+                closeWindow: () => void,
+                failedCallback: (message: string | Node[]) => void,
+                failedTotpCallback: () => void,
+            ) => {
+                sendServerRequest(redirect, 'change_login_notification', {
+                    callback: (response: string) => {
+                        serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
+                            if (response == 'DONE') {
+                                currentLoginNotificationStatus = loginNotificationTargetStatus;
+                                replaceText(warningElem, loginNotificationTargetStatus ? loginNotificationEnabled : loginNotificationDisabled);
+                                changeColor(warningElem, 'green');
+                            } else if (response == 'TOTP NOT SET') {
+                                currentLoginNotificationStatus = true;
+                                currentMfaStatus = false;
+                                replaceText(warningElem, mfaNotSet);
+                            } else {
+                                showMessage(redirect, invalidResponse());
+                                return;
+                            }
+                            showElement(warningElem);
+                            changeMfaStatus();
+                            disableAllInputs(false);
+                            closeWindow();
+                        });
+                    },
+                    content: authenticationParam + '&p=' + (loginNotificationTargetStatus ? '1' : '0'),
+                    showSessionEndedMessage: true,
+                });
+            },
+            warningElem
         );
     }
 
@@ -986,7 +1043,14 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                 showMessage(redirect, invalidResponse());
                                 return;
                             }
-                            showRecoveryCode(parsedResponse);
+                            showRecoveryCode(parsedResponse, () => {
+                                changeColor(mfaWarning, 'green');
+                                replaceText(mfaWarning, mfaEnabled);
+                                showElement(mfaWarning);
+                                currentMfaStatus = true;
+                                changeMfaStatus();
+                                disableAllInputs(false);
+                            });
                         }
                     },
                     content: 'p=' + totpInfo.p + '&signature=' + totpInfo.signature + '&totp=' + totp,
@@ -1008,7 +1072,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         }).catch();
     }
 
-    function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo) {
+    function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo, completedCallback: () => void) {
         initializePopUpWindow().then((popUpWindow) => {
             const promptText = createParagraphElement();
             appendText(promptText, 'リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
@@ -1027,14 +1091,14 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
 
             const closeButtonText = '閉じる';
             closeButton.disabled = true;
-            closeButton.style.cursor = 'not-allowed';
+            addClass(closeButton, 'not-allowed');
             appendText(closeButton, closeButtonText + '（15秒）');
             let count = 15;
             const interval = addInterval(() => {
                 count--;
                 if (count <= 0) {
                     closeButton.disabled = false;
-                    closeButton.style.removeProperty('cursor');
+                    removeClass(closeButton, 'not-allowed');
                     replaceText(closeButton, closeButtonText);
                     removeInterval(interval);
                 } else {
@@ -1044,9 +1108,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
 
             addEventListener(closeButton, 'click', () => {
                 popUpWindow.hide();
-                currentMfaStatus = true;
-                changeMfaStatus();
-                disableAllInputs(false);
+                completedCallback();
             });
 
             popUpWindow.show(promptText, recoveryCodeContainer, closeButton);
@@ -1054,21 +1116,36 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     }
 
     function changeMfaStatus() {
+        const disableButtonText = '無効にする';
+        const loginNotificationEnabledPrefix = 'ログイン通知が有効になっています。';
         if (currentMfaStatus) {
             replaceText(mfaInfo, '二要素認証が有効になっています。');
-            replaceText(mfaButton, '無効にする');
+            replaceText(mfaButton, disableButtonText);
+
             hideElement(recoveryCodeInfo);
             recoveryCodeButton.disabled = false;
-            recoveryCodeButton.style.removeProperty('cursor');
+            removeClass(recoveryCodeButton, 'not-allowed');
+
+            replaceText(loginNotificationInfo, currentLoginNotificationStatus ? loginNotificationEnabledPrefix : 'ログイン通知が無効になっています。');
+            replaceText(loginNotificationButton, currentLoginNotificationStatus ? disableButtonText : '有効にする');
+            loginNotificationButton.disabled = false;
+            removeClass(loginNotificationButton, 'not-allowed');
         } else {
             replaceText(mfaInfo, mfaNotSet);
             replaceText(mfaButton, '設定する');
+
             replaceText(recoveryCodeInfo, 'リカバリーコードは、二要素認証が有効な場合にのみ生成できます。');
             changeColor(recoveryCodeInfo, null);
             showElement(recoveryCodeInfo);
             hideElement(recoveryCodeWarning);
             recoveryCodeButton.disabled = true;
-            recoveryCodeButton.style.cursor = 'not-allowed';
+            addClass(recoveryCodeButton, 'not-allowed');
+
+            replaceText(loginNotificationInfo, loginNotificationEnabledPrefix + 'ログイン通知を無効にできるのは、二要素認証が有効になっている場合のみです。');
+            replaceText(loginNotificationButton, disableButtonText);
+            hideElement(loginNotificationWarning);
+            loginNotificationButton.disabled = true;
+            addClass(loginNotificationButton, 'not-allowed');
         }
     }
 
@@ -1084,6 +1161,9 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         mfaButton.disabled = disabled;
         inviteButton.disabled = disabled;
         logoutButton.disabled = disabled;
+
+        recoveryCodeButton.disabled = !disabled && currentMfaStatus;
+        loginNotificationButton.disabled = !disabled && currentMfaStatus;
     }
 }
 

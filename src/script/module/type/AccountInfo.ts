@@ -5,6 +5,7 @@ export interface AccountInfo {
     invite_quota: number;
     mfa_status: boolean;
     recovery_code_status: number;
+    login_notification: boolean;
     sessions: {
         id?: string;
         ua: string;
@@ -20,7 +21,7 @@ export function check(accountInfo: any) {
         throwError();
     }
 
-    if (!isString(accountInfo.username) || !isNumber(accountInfo.invite_quota) || !isBoolean(accountInfo.mfa_status) || !isNumber(accountInfo.recovery_code_status)) {
+    if (!isString(accountInfo.username) || !isNumber(accountInfo.invite_quota) || !isBoolean(accountInfo.mfa_status) || !isNumber(accountInfo.recovery_code_status) || !isBoolean(accountInfo.login_notification)) {
         throwError();
     }
 

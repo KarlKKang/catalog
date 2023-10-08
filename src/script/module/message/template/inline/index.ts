@@ -40,5 +40,10 @@ export const logoutDone = 'ログアウトしました。';
 
 export const mfaNotSet = '二要素認証が設定されていません。';
 export const mfaAlreadySet = '二要素認証はすでに有効になっています。';
+export const mfaDisabled = '二要素認証が無効になりました。';
+export const mfaEnabled = '二要素認証が有効になりました。';
+
+export const loginNotificationEnabled = 'ログイン通知が有効になりました。';
+export const loginNotificationDisabled = 'ログイン通知が無効になりました。';
 
 export const sessionEnded = 'セッションは終了した。もう一度お試しください。';
