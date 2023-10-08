@@ -24,7 +24,7 @@ import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } fro
 import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
 import { destroy as destroyPopUpWindow, promptForTotp } from './module/pop_up_window';
-import { EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
+import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 
@@ -111,24 +111,33 @@ function showPageCallback(redirect: RedirectFunc) {
     function sendLoginRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
         sendServerRequest(redirect, 'login', {
             callback: function (response: string) {
-                if (response == 'FAILED') {
-                    closePopUpWindow?.();
-                    replaceText(warningElem, loginFailed);
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                } else if (response == 'DEACTIVATED') {
-                    closePopUpWindow?.();
-                    replaceChildren(warningElem, ...accountDeactivated());
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                } else if (response == 'TOO MANY REQUESTS') {
-                    closePopUpWindow?.();
-                    replaceText(warningElem, tooManyFailedLogin);
-                    showElement(warningElem);
-                    disableAllInputs(false);
-                } else if (response == 'FAILED TOTP') {
-                    failedTotpCallback();
-                } else if (response == 'APPROVED') {
+                const authenticationResult = handleAuthenticationResult(
+                    response,
+                    () => {
+                        closePopUpWindow?.();
+                        replaceText(warningElem, loginFailed);
+                        showElement(warningElem);
+                        disableAllInputs(false);
+                    },
+                    failedTotpCallback,
+                    () => {
+                        closePopUpWindow?.();
+                        replaceChildren(warningElem, ...accountDeactivated());
+                        showElement(warningElem);
+                        disableAllInputs(false);
+                    },
+                    () => {
+                        closePopUpWindow?.();
+                        replaceText(warningElem, tooManyFailedLogin);
+                        showElement(warningElem);
+                        disableAllInputs(false);
+                    },
+                );
+                if (!authenticationResult) {
+                    return;
+                }
+
+                if (response == 'APPROVED') {
                     if (UNRECOMMENDED_BROWSER) {
                         showMessage(redirect, unrecommendedBrowser(getForwardURL()));
                     } else {
