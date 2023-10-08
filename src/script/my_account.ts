@@ -220,32 +220,23 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                         (
                             authenticationParam: string,
                             closeWindow: () => void,
-                            faildCallback: (message: string | Node[]) => void,
+                            failedCallback: (message: string | Node[]) => void,
                             failedTotpCallback: () => void,
                         ) => {
                             sendServerRequest(redirect, 'logout_session', {
                                 callback: (response: string) => {
-                                    const authenticationResult = handleAuthenticationResult(
-                                        response,
-                                        () => { faildCallback(loginFailed); },
-                                        failedTotpCallback,
-                                        () => { faildCallback([...accountDeactivated()]); },
-                                        () => { faildCallback(tooManyFailedLogin); },
-                                    );
-                                    if (!authenticationResult) {
-                                        return;
-                                    }
-
-                                    if (response == 'DONE') {
-                                        remove(sessionLogoutButton);
-                                        changeColor(sessionWarningElem, 'green');
-                                        replaceText(sessionWarningElem, logoutDone);
-                                    } else {
-                                        showMessage(redirect, invalidResponse());
-                                        return;
-                                    }
-                                    showElement(sessionWarningElem);
-                                    closeWindow();
+                                    serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
+                                        if (response == 'DONE') {
+                                            remove(sessionLogoutButton);
+                                            changeColor(sessionWarningElem, 'green');
+                                            replaceText(sessionWarningElem, logoutDone);
+                                        } else {
+                                            showMessage(redirect, invalidResponse());
+                                            return;
+                                        }
+                                        showElement(sessionWarningElem);
+                                        closeWindow();
+                                    });
                                 },
                                 content: authenticationParam + '&id=' + sessionID,
                                 showSessionEndedMessage: true,
@@ -278,40 +269,31 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             (
                 authenticationParam: string,
                 closeWindow: () => void,
-                faildCallback: (message: string | Node[]) => void,
+                failedCallback: (message: string | Node[]) => void,
                 failedTotpCallback: () => void,
             ) => {
                 sendServerRequest(redirect, 'send_invite', {
                     callback: (response: string) => {
-                        const authenticationResult = handleAuthenticationResult(
-                            response,
-                            () => { faildCallback(loginFailed); },
-                            failedTotpCallback,
-                            () => { faildCallback([...accountDeactivated()]); },
-                            () => { faildCallback(tooManyFailedLogin); },
-                        );
-                        if (!authenticationResult) {
-                            return;
-                        }
-
-                        if (response == 'NOT QUALIFIED') {
-                            replaceText(warningElem, invitationNotQualified);
-                        } else if (response == 'INVALID FORMAT') {
-                            replaceText(warningElem, invalidEmailFormat);
-                        } else if (response == 'ALREADY REGISTERED') {
-                            replaceText(warningElem, emailAlreadyRegistered);
-                        } else if (response == 'CLOSED') {
-                            replaceText(warningElem, invitationClosed);
-                        } else if (response == 'DONE') {
-                            showMessage(redirect, emailSentParam(true));
-                            return;
-                        } else {
-                            showMessage(redirect, invalidResponse());
-                            return;
-                        }
-                        showElement(warningElem);
-                        disableAllInputs(false);
-                        closeWindow();
+                        serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
+                            if (response == 'NOT QUALIFIED') {
+                                replaceText(warningElem, invitationNotQualified);
+                            } else if (response == 'INVALID FORMAT') {
+                                replaceText(warningElem, invalidEmailFormat);
+                            } else if (response == 'ALREADY REGISTERED') {
+                                replaceText(warningElem, emailAlreadyRegistered);
+                            } else if (response == 'CLOSED') {
+                                replaceText(warningElem, invitationClosed);
+                            } else if (response == 'DONE') {
+                                showMessage(redirect, emailSentParam(true));
+                                return;
+                            } else {
+                                showMessage(redirect, invalidResponse());
+                                return;
+                            }
+                            showElement(warningElem);
+                            disableAllInputs(false);
+                            closeWindow();
+                        });
                     },
                     content: authenticationParam + '&receiver=' + encodeURIComponent(receiver),
                     showSessionEndedMessage: true,
@@ -347,34 +329,25 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             (
                 authenticationParam: string,
                 closeWindow: () => void,
-                faildCallback: (message: string | Node[]) => void,
+                failedCallback: (message: string | Node[]) => void,
                 failedTotpCallback: () => void,
             ) => {
                 sendServerRequest(redirect, 'change_password', {
                     callback: (response: string) => {
-                        const authenticationResult = handleAuthenticationResult(
-                            response,
-                            () => { faildCallback(loginFailed); },
-                            failedTotpCallback,
-                            () => { faildCallback([...accountDeactivated()]); },
-                            () => { faildCallback(tooManyFailedLogin); },
-                        );
-                        if (!authenticationResult) {
-                            return;
-                        }
-
-                        if (response == 'DONE') {
-                            replaceText(warningElem, passwordChanged);
-                            changeColor(warningElem, 'green');
-                        } else if (response === 'PASSWORD INVALID') {
-                            replaceText(warningElem, invalidPasswordFormat);
-                        } else {
-                            showMessage(redirect);
-                            return;
-                        }
-                        showElement(warningElem);
-                        disableAllInputs(false);
-                        closeWindow();
+                        serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
+                            if (response == 'DONE') {
+                                replaceText(warningElem, passwordChanged);
+                                changeColor(warningElem, 'green');
+                            } else if (response === 'PASSWORD INVALID') {
+                                replaceText(warningElem, invalidPasswordFormat);
+                            } else {
+                                showMessage(redirect);
+                                return;
+                            }
+                            showElement(warningElem);
+                            disableAllInputs(false);
+                            closeWindow();
+                        });
                     },
                     content: authenticationParam + '&new=' + encodeURIComponent(newPassword),
                     showSessionEndedMessage: true,
@@ -435,37 +408,28 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             (
                 authenticationParam: string,
                 closeWindow: () => void,
-                faildCallback: (message: string | Node[]) => void,
+                failedCallback: (message: string | Node[]) => void,
                 failedTotpCallback: () => void,
             ) => {
                 sendServerRequest(redirect, 'change_username', {
                     callback: (response: string) => {
-                        const authenticationResult = handleAuthenticationResult(
-                            response,
-                            () => { faildCallback(loginFailed); },
-                            failedTotpCallback,
-                            () => { faildCallback([...accountDeactivated()]); },
-                            () => { faildCallback(tooManyFailedLogin); },
-                        );
-                        if (!authenticationResult) {
-                            return;
-                        }
-
-                        if (response == 'DONE') {
-                            replaceText(warningElem, usernameChanged);
-                            changeColor(warningElem, 'green');
-                            currentUsername = newUsername;
-                        } else if (response == 'DUPLICATED') {
-                            replaceText(warningElem, usernameTaken);
-                        } else if (response == 'EMPTY') {
-                            replaceText(warningElem, usernameEmpty);
-                        } else {
-                            showMessage(redirect);
-                            return;
-                        }
-                        showElement(warningElem);
-                        disableAllInputs(false);
-                        closeWindow();
+                        serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
+                            if (response == 'DONE') {
+                                replaceText(warningElem, usernameChanged);
+                                changeColor(warningElem, 'green');
+                                currentUsername = newUsername;
+                            } else if (response == 'DUPLICATED') {
+                                replaceText(warningElem, usernameTaken);
+                            } else if (response == 'EMPTY') {
+                                replaceText(warningElem, usernameEmpty);
+                            } else {
+                                showMessage(redirect);
+                                return;
+                            }
+                            showElement(warningElem);
+                            disableAllInputs(false);
+                            closeWindow();
+                        });
                     },
                     content: authenticationParam + '&new=' + encodeURIComponent(newUsername),
                     showSessionEndedMessage: true,
@@ -483,46 +447,37 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             (
                 content: string,
                 closeWindow: () => void,
-                faildCallback: (message: string | Node[]) => void,
+                failedCallback: (message: string | Node[]) => void,
                 otpSentCallback?: () => void,
                 failedOtpCallback?: () => void,
             ) => {
                 sendServerRequest(redirect, 'generate_totp', {
                     callback: (response: string) => {
-                        const authenticationResult = handleAuthenticationResult(
-                            response,
-                            () => { faildCallback(loginFailed); },
-                            () => {
-                                closeWindow();
-                                changeColor(mfaWarning, 'green');
-                                replaceText(mfaWarning, mfaAlreadySet);
-                                showElement(mfaWarning);
-                                currentMfaStatus = true;
-                                changeMfaStatus();
-                                disableAllInputs(false);
-                            },
-                            () => { faildCallback([...accountDeactivated()]); },
-                            () => { faildCallback(tooManyFailedLogin); },
-                        );
-                        if (!authenticationResult) {
-                            return;
-                        }
-
-                        if (response == 'FAILED EMAIL OTP') {
-                            failedOtpCallback?.();
-                        } else if (response == 'SENT') {
-                            otpSentCallback?.();
-                        } else {
-                            let parsedResponse: TOTPInfo.TOTPInfo;
-                            try {
-                                parsedResponse = JSON.parse(response);
-                                TOTPInfo.check(parsedResponse);
-                            } catch (e) {
-                                showMessage(redirect, invalidResponse());
-                                return;
+                        serverResponseCallback(response, failedCallback, () => {
+                            closeWindow();
+                            changeColor(mfaWarning, 'green');
+                            replaceText(mfaWarning, mfaAlreadySet);
+                            showElement(mfaWarning);
+                            currentMfaStatus = true;
+                            changeMfaStatus();
+                            disableAllInputs(false);
+                        }, () => {
+                            if (response == 'FAILED EMAIL OTP') {
+                                failedOtpCallback?.();
+                            } else if (response == 'SENT') {
+                                otpSentCallback?.();
+                            } else {
+                                let parsedResponse: TOTPInfo.TOTPInfo;
+                                try {
+                                    parsedResponse = JSON.parse(response);
+                                    TOTPInfo.check(parsedResponse);
+                                } catch (e) {
+                                    showMessage(redirect, invalidResponse());
+                                    return;
+                                }
+                                promptForTotpSetup(parsedResponse);
                             }
-                            promptForTotpSetup(parsedResponse);
-                        }
+                        });
                     },
                     content: content,
                     showSessionEndedMessage: true,
@@ -539,33 +494,29 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             (
                 content: string,
                 closeWindow: () => void,
-                faildCallback: (message: string | Node[]) => void,
+                failedCallback: (message: string | Node[]) => void,
                 otpSentCallback?: () => void,
                 failedOtpCallback?: () => void,
             ) => {
                 sendServerRequest(redirect, 'disable_totp', {
                     callback: (response: string) => {
-                        if (response == 'FAILED') {
-                            faildCallback(loginFailed);
-                        } else if (response == 'DEACTIVATED') {
-                            faildCallback([...accountDeactivated()]);
-                        } else if (response == 'TOO MANY REQUESTS') {
-                            faildCallback(tooManyFailedLogin);
-                        } else if (response == 'FAILED EMAIL OTP') {
-                            failedOtpCallback?.();
-                        } else if (response == 'SENT') {
-                            otpSentCallback?.();
-                        } else if (response == 'DONE') {
-                            closeWindow();
-                            changeColor(mfaWarning, 'green');
-                            replaceText(mfaWarning, '二要素認証が無効になりました。');
-                            showElement(mfaWarning);
-                            currentMfaStatus = false;
-                            changeMfaStatus();
-                            disableAllInputs(false);
-                        } else {
-                            showMessage(redirect);
-                        }
+                        serverResponseCallback(response, failedCallback, () => { /* This page will never respond with `FAILED TOTP` */ }, () => {
+                            if (response == 'FAILED EMAIL OTP') {
+                                failedOtpCallback?.();
+                            } else if (response == 'SENT') {
+                                otpSentCallback?.();
+                            } else if (response == 'DONE') {
+                                closeWindow();
+                                changeColor(mfaWarning, 'green');
+                                replaceText(mfaWarning, '二要素認証が無効になりました。');
+                                showElement(mfaWarning);
+                                currentMfaStatus = false;
+                                changeMfaStatus();
+                                disableAllInputs(false);
+                            } else {
+                                showMessage(redirect);
+                            }
+                        });
                     },
                     content: content,
                     showSessionEndedMessage: true,
@@ -581,45 +532,36 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             (
                 authenticationParam: string,
                 closeWindow: () => void,
-                faildCallback: (message: string | Node[]) => void,
+                failedCallback: (message: string | Node[]) => void,
                 failedTotpCallback: () => void,
             ) => {
                 sendServerRequest(redirect, 'generate_recovery_code', {
                     callback: (response: string) => {
-                        const authenticationResult = handleAuthenticationResult(
-                            response,
-                            () => { faildCallback(loginFailed); },
-                            failedTotpCallback,
-                            () => { faildCallback([...accountDeactivated()]); },
-                            () => { faildCallback(tooManyFailedLogin); },
-                        );
-                        if (!authenticationResult) {
-                            return;
-                        }
-
-                        if (response == 'TOTP NOT SET') {
-                            closeWindow();
-                            changeColor(recoveryCodeWarning, 'red');
-                            replaceText(recoveryCodeWarning, mfaNotSet);
-                            showElement(recoveryCodeWarning);
-                            disableAllInputs(false);
-                        } else if (response == 'WAIT') {
-                            closeWindow();
-                            changeColor(recoveryCodeWarning, 'red');
-                            replaceText(recoveryCodeWarning, generateRecoveryCodeWait);
-                            showElement(recoveryCodeWarning);
-                            disableAllInputs(false);
-                        } else {
-                            let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
-                            try {
-                                parsedResponse = JSON.parse(response);
-                                RecoveryCodeInfo.check(parsedResponse);
-                            } catch (e) {
-                                showMessage(redirect, invalidResponse());
-                                return;
+                        serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
+                            if (response == 'TOTP NOT SET') {
+                                closeWindow();
+                                changeColor(recoveryCodeWarning, 'red');
+                                replaceText(recoveryCodeWarning, mfaNotSet);
+                                showElement(recoveryCodeWarning);
+                                disableAllInputs(false);
+                            } else if (response == 'WAIT') {
+                                closeWindow();
+                                changeColor(recoveryCodeWarning, 'red');
+                                replaceText(recoveryCodeWarning, generateRecoveryCodeWait);
+                                showElement(recoveryCodeWarning);
+                                disableAllInputs(false);
+                            } else {
+                                let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
+                                try {
+                                    parsedResponse = JSON.parse(response);
+                                    RecoveryCodeInfo.check(parsedResponse);
+                                } catch (e) {
+                                    showMessage(redirect, invalidResponse());
+                                    return;
+                                }
+                                showRecoveryCode(parsedResponse);
                             }
-                            showRecoveryCode(parsedResponse);
-                        }
+                        });
                     },
                     content: authenticationParam,
                     showSessionEndedMessage: true,
@@ -634,7 +576,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         sendRequestCallback: (
             authenticationParam: string,
             closeWindow: () => void,
-            faildCallback: (message: string | Node[]) => void,
+            failedCallback: (message: string | Node[]) => void,
             failedTotpCallback: () => void,
         ) => void,
         warningElem: HTMLElement,
@@ -683,7 +625,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         sendRequestCallback: (
             content: string,
             closeWindow: () => void,
-            faildCallback: (message: string | Node[]) => void,
+            failedCallback: (message: string | Node[]) => void,
             otpSentCallback?: () => void,
             failedOtpCallback?: () => void,
         ) => void,
@@ -1144,6 +1086,20 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         inviteButton.disabled = disabled;
         logoutButton.disabled = disabled;
     }
+}
+
+function serverResponseCallback(response: string, failedCallback: (message: string | Node[]) => void, failedTotpCallback: () => void, successCallback: () => void) {
+    const authenticationResult = handleAuthenticationResult(
+        response,
+        () => { failedCallback(loginFailed); },
+        failedTotpCallback,
+        () => { failedCallback([...accountDeactivated()]); },
+        () => { failedCallback(tooManyFailedLogin); },
+    );
+    if (!authenticationResult) {
+        return;
+    }
+    successCallback();
 }
 
 function appendParagraph(text: string, container: HTMLElement) {
