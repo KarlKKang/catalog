@@ -424,44 +424,47 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
         }, 300);
 
         scriptImportPromise.then((script) => {
-            if (currentScriptImportPromise === scriptImportPromise) {
-                currentPage = {
-                    script: script,
-                    html_entry: page.html_entry,
-                    domain: domain,
-                };
-                script.default(
-                    (callback?: () => void) => {
-                        Promise.all([htmlImportPromise, ...styleImportPromises]).then(([html]) => {
-                            if (currentScriptImportPromise === scriptImportPromise) {
-                                getBody().innerHTML = html.default;
-                                callback?.();
-
-                                pageLoaded = true;
-                                if (loadingBarShown) {
-                                    loadingBar.style.width = '100%';
-                                    addTimeout(() => {
-                                        loadingBar.style.visibility = 'hidden';
-                                        loadingBar.style.opacity = '0';
-                                        addTimeout(() => {
-                                            loadingBar.style.width = '0';
-                                        }, 100);
-                                    }, 300);
-                                }
-                            }
-                        });
-                    },
-                    (url: string, withoutHistory: boolean = false) => {
-                        if (currentScriptImportPromise === scriptImportPromise) {
-                            load(url, withoutHistory);
+            if (currentScriptImportPromise !== scriptImportPromise) {
+                return;
+            }
+            currentPage = {
+                script: script,
+                html_entry: page.html_entry,
+                domain: domain,
+            };
+            script.default(
+                (callback?: () => void) => {
+                    Promise.all([htmlImportPromise, ...styleImportPromises]).then(([html]) => {
+                        if (currentScriptImportPromise !== scriptImportPromise) {
+                            return;
                         }
+
+                        getBody().innerHTML = html.default;
+                        callback?.();
+
+                        pageLoaded = true;
+                        if (loadingBarShown) {
+                            loadingBar.style.width = '100%';
+                            addTimeout(() => {
+                                loadingBar.style.visibility = 'hidden';
+                                loadingBar.style.opacity = '0';
+                                addTimeout(() => {
+                                    loadingBar.style.width = '0';
+                                }, 100);
+                            }, 300);
+                        }
+                    });
+                },
+                (url: string, withoutHistory: boolean = false) => {
+                    if (currentScriptImportPromise === scriptImportPromise) {
+                        load(url, withoutHistory);
                     }
-                );
-                if (loadingBarShown) {
-                    loadingBar.style.width = '67%';
-                } else {
-                    loadingBarWidth = 67;
                 }
+            );
+            if (loadingBarShown) {
+                loadingBar.style.width = '67%';
+            } else {
+                loadingBarWidth = 67;
             }
         });
     };
