@@ -165,7 +165,8 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         for (const session of userInfo.sessions) {
             const sessionContainer = createDivElement();
 
-            appendParagraph('IPアドレス：' + session.ip + '（' + session.country + '）', sessionContainer);
+            appendParagraph('場所：' + session.country, sessionContainer);
+            appendParagraph('IPアドレス：' + session.ip, sessionContainer);
 
             const ua = UAParser(session.ua);
             const UNKNOWN = '不明';
