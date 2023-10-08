@@ -45,7 +45,7 @@ const config = {
         concatenateModules: true,
         flagIncludedChunks: true,
         removeAvailableModules: true,
-        usedExports: true,
+        runtimeChunk: 'single',
         splitChunks: {
             maxSize: 1000 * 1000,
             chunks: 'all'
