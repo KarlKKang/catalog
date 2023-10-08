@@ -1,4 +1,3 @@
-// JavaScript Document
 import {
     TOP_URL,
     LOGIN_URL,

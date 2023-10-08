@@ -1,4 +1,3 @@
-// JavaScript Document
 import {
     removeRightClick,
 } from '../common';

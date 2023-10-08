@@ -1,4 +1,3 @@
-// JavaScript Document
 import {
     CDN_URL,
     TOP_URL,

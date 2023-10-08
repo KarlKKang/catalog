@@ -1,4 +1,3 @@
-// JavaScript Document
 import {
     sendServerRequest,
 } from '../module/common';

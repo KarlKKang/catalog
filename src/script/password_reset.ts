@@ -1,4 +1,3 @@
-// JavaScript Document
 import {
     LOGIN_URL,
 } from './module/env/constant';

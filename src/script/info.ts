@@ -1,4 +1,3 @@
-// JavaScript Document
 import {
     authenticate,
     addNavBar,
