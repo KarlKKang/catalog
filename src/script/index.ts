@@ -38,6 +38,7 @@ import isbot from 'isbot';
 import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
+import { addTimeout } from './module/timer';
 
 let pageLoaded: boolean;
 
@@ -222,7 +223,7 @@ function showPageCallback(
 
         addClass(containerElem, 'transparent');
         const animationTimeout = new Promise<void>((resolve) => {
-            setTimeout(() => { // Using `addTimeout` may result in a promise that will never be settled.
+            addTimeout(() => {
                 for (const eventTarget of eventTargetsTracker) {
                     removeAllEventListeners(eventTarget);
                 }

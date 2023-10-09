@@ -24,17 +24,17 @@ export function initializePopUpWindow() {
 
     let currentTimeout: NodeJS.Timeout | null = null;
 
-    const newInstance = new Promise<PopUpWindow>((resolve, reject) => {
+    const newInstance = new Promise<PopUpWindow>((resolve) => {
         w.requestAnimationFrame(() => {
             if (newInstance !== instance) {
-                reject();
+                return;
             }
             addClass(container, 'invisible');
             addClass(container, 'transparent');
             appendChild(getBody(), container);
             w.requestAnimationFrame(() => {
                 if (newInstance !== instance) {
-                    reject();
+                    return;
                 }
                 resolve({
                     show: (...contents: Node[]) => {
@@ -151,7 +151,7 @@ export function promptForTotp(
         });
 
         popUpWindow.show(promptText, warningText, totpInputContainer, buttonFlexbox);
-    }).catch();
+    });
 }
 
 export function destroy() {

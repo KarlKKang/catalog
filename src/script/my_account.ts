@@ -840,7 +840,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             });
 
             popUpWindow.show(promptText, warningText, inputFlexbox, buttonFlexbox);
-        }).catch();
+        });
     }
 
     function promptForLogin(
@@ -949,7 +949,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             });
 
             popUpWindow.show(promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox);
-        }).catch();
+        });
     }
 
     function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
@@ -1069,7 +1069,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             });
 
             popUpWindow.show(promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox);
-        }).catch();
+        });
     }
 
     function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo, completedCallback: () => void) {
@@ -1112,7 +1112,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             });
 
             popUpWindow.show(promptText, recoveryCodeContainer, closeButton);
-        }).catch();
+        });
     }
 
     function changeMfaStatus() {
