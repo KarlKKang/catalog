@@ -89,7 +89,7 @@ function showPageCallback(redirect: RedirectFunc, user: string, signature: strin
     passwordStyling(newPasswordInput);
     passwordStyling(newPasswordConfirmInput);
 
-    async function submitRequest() {
+    function submitRequest() {
         disableAllInputs(true);
 
         const newPassword = newPasswordInput.value;

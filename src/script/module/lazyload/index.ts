@@ -9,6 +9,7 @@ import { show as showMessage } from '../message';
 import { invalidResponse } from '../message/template/param/server';
 import { addTimeout } from '../timer';
 import { RedirectFunc } from '../type/RedirectFunc';
+import { moduleImportError } from '../message/template/param';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,
@@ -35,6 +36,8 @@ type TargetData = {
 };
 
 const targets: Map<Element, TargetData> = new Map();
+let mediaSessionCredentialPromise: Promise<void> | null = null;
+let newsSessionCredentialPromise: Promise<void> | null = null;
 
 const imageLoaderImportPromise = import(
     /* webpackExports: ["default"] */
@@ -100,27 +103,37 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
                     };
 
                     if (targetData.xhrParam !== null) {
-                        let uri = 'get_image';
-                        let content = targetData.xhrParam;
-                        if (targetData.mediaSessionCredential === null) {
-                            uri = 'get_news_image';
-                        } else {
-                            content = targetData.mediaSessionCredential + '&' + content;
-                        }
+                        const mediaSessionCredential = targetData.mediaSessionCredential;
+                        const isMediaSession = mediaSessionCredential !== null;
+                        const uri = isMediaSession ? 'get_image' : 'get_news_image';
+                        const content = (isMediaSession ? (mediaSessionCredential + '&') : '') + targetData.xhrParam;
 
-                        targetData.xhr = sendServerRequest(targetData.redirect, uri, {
-                            callback: async function (response: string) {
-                                if (response !== 'APPROVED') {
-                                    showMessage(targetData.redirect, invalidResponse());
-                                    return;
-                                }
-                                targetData.xhr = (await imageLoaderImportPromise).default(targetData.redirect, target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);
-                            },
-                            content: content,
-                            showSessionEndedMessage: true,
-                        });
+                        const credentialPromise = isMediaSession ? mediaSessionCredentialPromise : newsSessionCredentialPromise;
+                        if (credentialPromise === null) {
+                            setCredentialPromise(isMediaSession, new Promise((resolve) => {
+                                targetData.xhr = sendServerRequest(targetData.redirect, uri, {
+                                    callback: async function (response: string) {
+                                        if (response !== 'APPROVED') {
+                                            showMessage(targetData.redirect, invalidResponse());
+                                            return;
+                                        }
+                                        addTimeout(() => {
+                                            setCredentialPromise(isMediaSession, null);
+                                        }, 15 * 1000);
+                                        resolve();
+                                        targetData.xhr = await loadImage(targetData.redirect, target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);
+                                    },
+                                    content: content,
+                                    showSessionEndedMessage: true,
+                                });
+                            }));
+                        } else {
+                            credentialPromise.then(async () => {
+                                targetData.xhr = await loadImage(targetData.redirect, target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);
+                            });
+                        }
                     } else {
-                        targetData.xhr = (await imageLoaderImportPromise).default(targetData.redirect, target, targetData.src, targetData.alt, false, onImageDraw, targetData.onDataLoad, onError);
+                        targetData.xhr = await loadImage(targetData.redirect, target, targetData.src, targetData.alt, false, onImageDraw, targetData.onDataLoad, onError);
                     }
                 }, targetData.delay);
             }
@@ -142,7 +155,32 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
     }
 }
 
+async function loadImage(redirect: RedirectFunc, container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: (() => void) | undefined, onDataLoad?: ((data: Blob) => void) | undefined, onError?: (() => void) | undefined): Promise<XMLHttpRequest | null> {
+    let imageLoader: Awaited<typeof imageLoaderImportPromise>;
+    try {
+        imageLoader = await imageLoaderImportPromise;
+    } catch (e) {
+        showMessage(redirect, moduleImportError(e));
+        throw e;
+    }
+
+    if (targets.get(container) === undefined) {
+        return null;
+    }
+    return imageLoader.default(redirect, container, src, alt, withCredentials, onImageDraw, onDataLoad, onError);
+}
+
+function setCredentialPromise(isMediaSession: boolean, requestPromise: Promise<void> | null) {
+    if (isMediaSession) {
+        mediaSessionCredentialPromise = requestPromise;
+    } else {
+        newsSessionCredentialPromise = requestPromise;
+    }
+}
+
 export function unobserveAll() {
     observer.disconnect();
     targets.clear();
+    mediaSessionCredentialPromise = null;
+    newsSessionCredentialPromise = null;
 }

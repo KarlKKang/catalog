@@ -186,6 +186,7 @@ function imageProtection(elem: HTMLElement) {
 }
 
 export function clearAllImageEvents() {
+    webpMachineQueue.length = 0;
     for (const eventTarget of eventTargetsTracker) {
         removeAllEventListeners(eventTarget);
     }
