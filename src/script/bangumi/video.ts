@@ -1,8 +1,5 @@
 import { TOP_URL } from '../module/env/constant';
 import {
-    sendServerRequest,
-} from '../module/common';
-import {
     addEventListener,
     getById,
     addClass,
@@ -31,7 +28,6 @@ import {
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
-import { invalidResponse } from '../module/message/template/param/server';
 import type { VideoEPInfo, VideoFormatInfo } from '../module/type/BangumiInfo';
 
 import {
@@ -49,12 +45,13 @@ import {
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 
-import { updateURLParam, getLogoutParam, getFormatIndex } from './helper';
+import { updateURLParam, getFormatIndex } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { RedirectFunc } from '../module/type/RedirectFunc';
 import { HLS_BUFFER_APPEND_ERROR } from '../module/player/media_error';
+import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 
 let pageLoaded = true;
 
@@ -64,6 +61,7 @@ let epInfo: VideoEPInfo;
 let baseURL: string;
 let nativePlayerImportPromise: NativePlayerImportPromise;
 let hlsPlayerImportPromise: HlsPlayerImportPromise;
+let createMediaSessionPromise: Promise<MediaSessionInfo>;
 
 let currentFormat: VideoFormatInfo;
 let currentMediaInstance: PlayerType | null = null;
@@ -78,6 +76,7 @@ export default function (
     _baseURL: string,
     _nativePlayerImportPromise: NativePlayerImportPromise,
     _hlsPlayerImportPromise: HlsPlayerImportPromise,
+    _createMediaSessionPromise: Promise<MediaSessionInfo>,
     startTime: number | null,
     play: boolean
 ) {
@@ -91,6 +90,7 @@ export default function (
     baseURL = _baseURL;
     nativePlayerImportPromise = _nativePlayerImportPromise;
     hlsPlayerImportPromise = _hlsPlayerImportPromise;
+    createMediaSessionPromise = _createMediaSessionPromise;
 
     const mediaHolder = getById('media-holder');
     const contentContainer = getById('content');
@@ -146,12 +146,15 @@ export default function (
 
     insertBefore(formatContainer, mediaHolder);
 
-    // Download Accordion
-    const [downloadAccordion, containerSelector] = buildDownloadAccordion(redirect, epInfo.media_session_credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
-    appendChild(contentContainer, downloadAccordion);
+    createMediaSessionPromise.then((mediaSessionInfo) => {
+        if (!pageLoaded) {
+            return;
+        }
+        const [downloadAccordion, containerSelector] = buildDownloadAccordion(redirect, mediaSessionInfo.credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
+        appendChild(contentContainer, downloadAccordion);
+        addEventListener(selectMenu, 'change', () => { formatSwitch(redirect, mediaHolder, selectMenu, containerSelector); });
+    });
 
-    // Video Node
-    addEventListener(selectMenu, 'change', () => { formatSwitch(redirect, mediaHolder, selectMenu, containerSelector); });
     addVideoNode(
         redirect,
         mediaHolder,
@@ -172,47 +175,37 @@ function formatSwitch(redirect: RedirectFunc, mediaHolder: HTMLElement, formatSe
     currentFormat = format;
     updateURLParam(seriesID, epIndex, formatIndex);
 
-    sendServerRequest(redirect, 'authenticate_media_session', {
-        callback: function (response: string) {
-            if (response !== 'APPROVED') {
-                showMessage(redirect, invalidResponse());
-            }
+    if (format.direct_download) {
+        hideElement(containerSelector);
+    } else {
+        showElement(containerSelector);
+    }
 
-            if (format.direct_download) {
-                hideElement(containerSelector);
-            } else {
-                showElement(containerSelector);
-            }
+    let config: {
+        play?: boolean | undefined;
+        startTime?: number | undefined;
+    } | undefined;
 
-            let config: {
-                play?: boolean | undefined;
-                startTime?: number | undefined;
-            } | undefined;
+    if (currentMediaInstance !== null) {
+        config = {
+            play: currentMediaInstance.playing,
+            startTime: currentMediaInstance.media.currentTime
+        };
 
-            if (currentMediaInstance !== null) {
-                config = {
-                    play: currentMediaInstance.playing,
-                    startTime: currentMediaInstance.media.currentTime
-                };
+        currentMediaInstance.destroy();
+        currentMediaInstance = null;
+    }
 
-                currentMediaInstance.destroy();
-                currentMediaInstance = null;
-            }
-
-            hideElement(getById('format-display'));
-            replaceChildren(mediaHolder);
-            const errorMsgElem = getByIdNative('error');
-            errorMsgElem && remove(errorMsgElem);
-            for (const eventTarget of eventTargetsTracker) {
-                removeAllEventListeners(eventTarget);
-            }
-            eventTargetsTracker.clear();
-            showElement(mediaHolder);
-            addVideoNode(redirect, mediaHolder, config);
-        },
-        content: epInfo.media_session_credential + '&format=' + formatIndex,
-        logoutParam: getLogoutParam(seriesID, epIndex)
-    });
+    hideElement(getById('format-display'));
+    replaceChildren(mediaHolder);
+    const errorMsgElem = getByIdNative('error');
+    errorMsgElem && remove(errorMsgElem);
+    for (const eventTarget of eventTargetsTracker) {
+        removeAllEventListeners(eventTarget);
+    }
+    eventTargetsTracker.clear();
+    showElement(mediaHolder);
+    addVideoNode(redirect, mediaHolder, config);
 }
 
 async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, config?: {
@@ -331,6 +324,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
     if (USE_NATIVE_HLS) {
         let Player: typeof PlayerType;
         try {
+            await createMediaSessionPromise;
             Player = (await nativePlayerImportPromise).Player;
         } catch (e) {
             showMessage(redirect, moduleImportError(e));
@@ -356,6 +350,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
     } else {
         let HlsPlayer: typeof HlsPlayerType;
         try {
+            await createMediaSessionPromise;
             HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
         } catch (e) {
             showMessage(redirect, moduleImportError(e));

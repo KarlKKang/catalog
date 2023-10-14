@@ -26,6 +26,7 @@ import { addAccordionEvent } from './media_helper';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { RedirectFunc } from '../module/type/RedirectFunc';
+import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 
 let pageLoaded = true;
 
@@ -47,27 +48,8 @@ export default async function (
     baseURL: string,
     lazyloadImportPromise: LazyloadImportPromise,
     imageLoaderImportPromise: ImageLoaderImportPromise,
+    createMediaSessionPromise: Promise<MediaSessionInfo>
 ) {
-    if (!pageLoaded) {
-        return;
-    }
-
-    let lazyloadObserve: typeof LazyloadObserve;
-    try {
-        lazyload = await lazyloadImportPromise;
-        lazyloadObserve = lazyload.default;
-    } catch (e) {
-        showMessage(redirect, moduleImportError(e));
-        throw e;
-    }
-
-    try {
-        imageLoader = await imageLoaderImportPromise;
-    } catch (e) {
-        showMessage(redirect, moduleImportError(e));
-        throw e;
-    }
-
     if (!pageLoaded) {
         return;
     }
@@ -83,7 +65,44 @@ export default async function (
         prependChild(contentContainer, title);
     }
 
+    const downloadElem = createDivElement();
+    addClass(downloadElem, 'download');
+
+    const downloadAccordion = createButtonElement();
+    addClass(downloadAccordion, 'accordion');
+    appendText(downloadAccordion, 'ダウンロード');
+
+    const downloadPanel = createDivElement();
+    addClass(downloadPanel, 'panel');
+    appendChild(downloadPanel, createHRElement());
+    const downloadPanelContent = createUListElement();
+    const downloadPanelContentItem = createLIElement();
+    appendText(downloadPanelContentItem, '画像をクリックすると、ダウンロードできます。');
+    appendChild(downloadPanelContent, downloadPanelContentItem);
+    appendChild(downloadPanel, downloadPanelContent);
+    addAccordionEvent(downloadAccordion, downloadPanel, true);
+
+    appendChild(downloadElem, downloadAccordion);
+    appendChild(downloadElem, downloadPanel);
+    appendChild(contentContainer, downloadElem);
+
     const files = epInfo.files;
+
+    let lazyloadObserve: typeof LazyloadObserve;
+    let mediaSessionCredential: string;
+    try {
+        mediaSessionCredential = (await createMediaSessionPromise).credential;
+        lazyload = await lazyloadImportPromise;
+        lazyloadObserve = lazyload.default;
+        imageLoader = await imageLoaderImportPromise;
+    } catch (e) {
+        showMessage(redirect, moduleImportError(e));
+        throw e;
+    }
+
+    if (!pageLoaded) {
+        return;
+    }
 
     files.forEach((file, index) => {
         if (file.tag != '') {
@@ -126,7 +145,7 @@ export default async function (
 
         lazyloadObserve(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, redirect, {
             xhrParam: 'p=' + index,
-            mediaSessionCredential: epInfo.media_session_credential,
+            mediaSessionCredential: mediaSessionCredential,
             delay: 250,
             onDataLoad: function (data: Blob) {
                 addEventListener(downloadButton, 'click', () => {
@@ -145,27 +164,6 @@ export default async function (
             }
         });
     });
-
-    const downloadElem = createDivElement();
-    addClass(downloadElem, 'download');
-
-    const downloadAccordion = createButtonElement();
-    addClass(downloadAccordion, 'accordion');
-    appendText(downloadAccordion, 'ダウンロード');
-
-    const downloadPanel = createDivElement();
-    addClass(downloadPanel, 'panel');
-    appendChild(downloadPanel, createHRElement());
-    const downloadPanelContent = createUListElement();
-    const downloadPanelContentItem = createLIElement();
-    appendText(downloadPanelContentItem, '画像をクリックすると、ダウンロードできます。');
-    appendChild(downloadPanelContent, downloadPanelContentItem);
-    appendChild(downloadPanel, downloadPanelContent);
-    addAccordionEvent(downloadAccordion, downloadPanel, true);
-
-    appendChild(downloadElem, downloadAccordion);
-    appendChild(downloadElem, downloadPanel);
-    appendChild(contentContainer, downloadElem);
 }
 
 export function reload() {

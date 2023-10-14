@@ -19,7 +19,6 @@ interface EPInfo {
     age_restricted: string | false;
     dir: string;
     series_override?: string;
-    media_session_credential: string;
 }
 
 type Chapters = Array<[string, number]>;
@@ -238,10 +237,6 @@ function checkEPInfo(epInfo: any) {
 
     const ageRestricted = epInfo.age_restricted;
     if (!isString(ageRestricted) && ageRestricted !== false) {
-        throwError();
-    }
-
-    if (!isString(epInfo.media_session_credential)) {
         throwError();
     }
 

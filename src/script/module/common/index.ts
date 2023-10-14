@@ -42,7 +42,7 @@ interface SendServerRequestOption {
     withCredentials?: boolean;
     method?: 'POST' | 'GET';
     logoutParam?: string;
-    connectionErrorRetry?: number;
+    connectionErrorRetry?: number | undefined;
     connectionErrorRetryTimeout?: number;
     showSessionEndedMessage?: boolean;
 }

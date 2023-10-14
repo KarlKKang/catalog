@@ -40,7 +40,7 @@ export abstract class NonNativePlayer extends Player {
                 const currentTime = this.media.currentTime;
                 const playPromise = this.media.play();
                 if (playPromise !== undefined) {
-                    playPromise.catch(() => DEVELOPMENT && this.log?.('Initial play promise rejected. (This is harmless)')); // Some browsers will reject the initial play request if it is not from a user action.
+                    playPromise.catch(() => { DEVELOPMENT && this.log?.('Initial play promise rejected. (This is harmless)'); }); // Some browsers will reject the initial play request if it is not from a user action.
                 }
                 this.media.pause();
                 this.seek(currentTime);

@@ -4,7 +4,6 @@ import {
 } from '../module/env/constant';
 import {
     addNavBar,
-    sendServerRequest,
     getURLParam,
 } from '../module/common';
 import {
@@ -32,13 +31,13 @@ import {
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
-import { invalidResponse } from '../module/message/template/param/server';
-import { updateURLParam, getLogoutParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
+import { updateURLParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
 import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, LazyloadImportPromise, NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise, ImageLoaderImportPromise } from './get_import_promises';
 import { encodeCFURIComponent } from '../module/common/pure';
-import { addInterval, addTimeout } from '../module/timer';
+import { addTimeout } from '../module/timer';
 import type { RedirectFunc } from '../module/type/RedirectFunc';
+import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 
 let pageLoaded: boolean;
 let redirect: RedirectFunc;
@@ -61,6 +60,7 @@ export default async function (
     videojsPlayerImportPromise: VideojsPlayerImportPromise,
     lazyloadImportPromise: LazyloadImportPromise,
     imageLoaderImportPromise: ImageLoaderImportPromise,
+    createMediaSessionPromise: Promise<MediaSessionInfo>,
 ) {
     if (!pageLoaded) {
         return;
@@ -143,19 +143,7 @@ export default async function (
     }
 
     /////////////////////////////////////////////authenticate media session/////////////////////////////////////////////
-    addInterval(() => {
-        sendServerRequest(redirect, 'authenticate_media_session', {
-            callback: function (response: string) {
-                if (response != 'APPROVED') {
-                    showMessage(redirect, invalidResponse());
-                }
-            },
-            content: epInfo.media_session_credential,
-            logoutParam: getLogoutParam(seriesID, epIndex),
-            connectionErrorRetry: 5,
-            showSessionEndedMessage: true,
-        });
-    }, 30 * 1000);
+
 
     /////////////////////////////////////////////Add Media/////////////////////////////////////////////
     const type = epInfo.type;
@@ -173,7 +161,7 @@ export default async function (
             return;
         }
         currentPage.reload();
-        currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, startTime, play);
+        currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, createMediaSessionPromise, startTime, play);
     } else {
         if (type === 'audio') {
             try {
@@ -186,7 +174,7 @@ export default async function (
                 return;
             }
             currentPage.reload();
-            currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise);
+            currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise, createMediaSessionPromise);
         } else {
             try {
                 currentPage = await imageImportPromise;
@@ -198,7 +186,7 @@ export default async function (
                 return;
             }
             currentPage.reload();
-            currentPage.default(redirect, epInfo as BangumiInfo.ImageEPInfo, baseURL, lazyloadImportPromise, imageLoaderImportPromise);
+            currentPage.default(redirect, epInfo as BangumiInfo.ImageEPInfo, baseURL, lazyloadImportPromise, imageLoaderImportPromise, createMediaSessionPromise);
         }
         updateURLParam(seriesID, epIndex, 0);
     }
