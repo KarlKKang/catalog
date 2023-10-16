@@ -9,13 +9,11 @@ _notes/
 /init_sync.log
 /dev/
 __pycache__
-*.pem
 /src/font/dist/
-/src/font/**/*.css
-/dist/script/*
-/dist/script_legacy/*
-/dist/style/*
-/dist/font/*
+/dist/script/
+/dist/style/
+/dist/font/
+/dist/icon/
 /dist/*.html
 !/dist/google688e01234602d07d.html
 /webpack-bundle-analyzer-report.html

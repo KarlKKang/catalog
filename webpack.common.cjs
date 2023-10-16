@@ -51,7 +51,7 @@ const config = {
         clean: {
             keep: (filename) => {
                 return filename === 'style/unsupported_browser.css' ||
-                    filename === 'script_legacy' ||
+                    filename === 'script/browser.js' ||
                     filename === 'icon' ||
                     filename === 'google688e01234602d07d.html' ||
                     filename === 'IndexNowb922f0d0-3cbe-42b9-b913-accbbf92100f.txt' ||

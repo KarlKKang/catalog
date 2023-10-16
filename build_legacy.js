@@ -12,7 +12,7 @@ let destDirPrefix = './dist/';
 if (dev) {
     destDirPrefix = './dev/';
 }
-fs.mkdir(destDirPrefix + 'script_legacy');
+fs.mkdir(destDirPrefix + 'script');
 fs.mkdir(destDirPrefix + 'style');
 
 const jsEntries = ['browser'];
@@ -29,7 +29,7 @@ for (const entry of jsEntries) {
                     return;
                 }
                 if (dev) {
-                    fs.write(destDirPrefix + 'script_legacy/' + entry + '.js', result.code);
+                    fs.write(destDirPrefix + 'script/' + entry + '.js', result.code);
                     return;
                 }
                 terser(result.code, {
@@ -50,7 +50,7 @@ for (const entry of jsEntries) {
                     keep_fnames: false,
                     safari10: true,
                 }).then((minified) => {
-                    fs.write(destDirPrefix + 'script_legacy/' + entry + '.js', minified.code);
+                    fs.write(destDirPrefix + 'script/' + entry + '.js', minified.code);
                 }).catch((e) => {
                     console.error(e);
                 });
