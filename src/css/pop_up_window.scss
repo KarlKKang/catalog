@@ -20,6 +20,8 @@
     background-color: var(--pop-up-window-background-color);
     transition: opacity .3s ease-out;
     z-index: 100;
+    box-sizing: border-box;
+    padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
 
     @supports (backdrop-filter: blur(10px)) {
         background-color: var(--pop-up-window-blurred-background-color);

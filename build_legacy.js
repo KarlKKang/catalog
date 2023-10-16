@@ -1,11 +1,8 @@
 import lodashTemplate from 'lodash/template.js';
-import path from 'path';
-import { minify as htmlMinify } from 'html-minifier-terser';
 import babel from '@babel/core';
 import { minify as terser } from 'terser';
 import cssMinify from './css_minifier.js';
 import * as fs from './file_system.js';
-import { htmlMinifyOptions } from './build_config.cjs';
 import { DOMAIN } from './env/index.cjs';
 
 process.env.BROWSERSLIST_ENV = 'legacy';
@@ -17,16 +14,6 @@ if (dev) {
 }
 fs.mkdir(destDirPrefix + 'script_legacy');
 fs.mkdir(destDirPrefix + 'style');
-
-const htmlEntries = ['unsupported_browser'];
-for (const entry of htmlEntries) {
-    const html = ejsLoader('./src/html/' + entry + '.ejs').default({ title: DOMAIN + (dev ? ' (alpha)' : '') });
-    htmlMinify(html, htmlMinifyOptions).then((data) => {
-        fs.write(destDirPrefix + entry + '.html', data);
-    }).catch((e) => {
-        console.error(e);
-    });
-}
 
 const jsEntries = ['browser'];
 for (const entry of jsEntries) {
@@ -73,17 +60,3 @@ for (const entry of jsEntries) {
 }
 
 cssMinify('./src/css/', destDirPrefix + '/style/', 'unsupported_browser.css');
-
-function ejsLoader(file) {
-    const content = fs.readSync(file);
-    return {
-        default: function (options) {
-            return lodashTemplate(content)({
-                require: function (relativePath) {
-                    return ejsLoader(path.dirname(file) + '/' + relativePath);
-                },
-                data: options
-            });
-        }
-    };
-}

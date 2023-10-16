@@ -1,5 +1,5 @@
 import 'core-js';
-import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, redirect, deregisterAllEventTargets, replaceChildren, getById, d } from './module/dom';
+import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, redirect, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass } from './module/dom';
 import { LOGIN_URL, TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
@@ -41,7 +41,7 @@ type PageMap = {
     [key: string]: Page;
 };
 
-let windowLoaded = false;
+let body: HTMLElement | null = null;
 let currentScriptImportPromise: PageScriptImport | null = null;
 let currentPage: {
     script: PageScript;
@@ -352,7 +352,7 @@ function load(url: string, withoutHistory: boolean | null = false) {
     }
 }
 
-function loadPagePrepare(url: string, withoutHistory: boolean | null, page: Page, domain: DOMAIN) { // Specifying `null` for `withoutHistory` indicates the current state will not be changed.
+function loadPagePrepare(url: string, withoutHistory: boolean | null, domain: DOMAIN) { // Specifying `null` for `withoutHistory` indicates the current state will not be changed.
     const currentPageConst = currentPage;
     if (currentPageConst === null) {
         return true;
@@ -361,120 +361,108 @@ function loadPagePrepare(url: string, withoutHistory: boolean | null, page: Page
         redirect(url, withoutHistory === true);
         return false;
     }
-    const cleanUpExistingPage = () => {
-        currentPageConst.script.offload?.();
-        deregisterAllEventTargets();
-        removeAllTimers();
-        replaceChildren(getBody());
-        withoutHistory !== null && changeURL(url, withoutHistory);
-    };
-    if (currentPageConst.html_entry === page.html_entry) {
-        cleanUpExistingPage();
-        return true;
-    }
-    if (currentPageConst.html_entry === HTMLEntry.ENTRY_NO_THEME_NO_INDEX || page.html_entry === HTMLEntry.ENTRY_NO_THEME_NO_INDEX) {
-        redirect(url, withoutHistory === true);
-        return false;
-    }
-    cleanUpExistingPage();
+    currentPageConst.script.offload?.();
+    deregisterAllEventTargets();
+    removeAllTimers();
+    replaceChildren(getBody());
+    changeURL(url, withoutHistory === true);
     return true;
 }
 
 function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page, domain: DOMAIN) {
-    const executeScript = () => {
-        if (!loadPagePrepare(url, withoutHistory, page, domain)) { // This prepare should be just before currentScriptImportPromise. Otherwise offloaded pages may be reinitialized by themselves.
+    if (body === null) {
+        addEventListenerOnce(w, 'load', () => {
+            body = d.body;
+            loadPage(url, withoutHistory, pageName, page, domain);
+        });
+        return;
+    }
+
+    if (!loadPagePrepare(url, withoutHistory, domain)) { // This prepare should be just before currentScriptImportPromise. Otherwise offloaded pages may be reinitialized by themselves.
+        return;
+    }
+
+    body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
+    setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
+    const noThemeClassName = 'no-theme';
+    page.html_entry === HTMLEntry.ENTRY_NO_THEME_NO_INDEX ? addClass(body, noThemeClassName) : removeClass(body, noThemeClassName);
+
+    const scriptImportPromise = page.script();
+    const styleImportPromises = page.style();
+    const htmlImportPromise = page.html();
+    currentScriptImportPromise = scriptImportPromise;
+
+    addEventListener(w, 'popstate', () => {
+        if (page.customPopState) {
+            if (DEVELOPMENT) {
+                console.log('popstate handled by the page.');
+            }
             return;
         }
+        load(getFullURL(), null);
+        if (DEVELOPMENT) {
+            console.log('popstate handled by the loader.');
+        }
+    });
 
-        d.body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
-        setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
+    let loadingBarWidth: number = 33;
+    let loadingBarShown: boolean = false;
+    let pageLoaded: boolean = false;
+    const loadingBar = getById('loading-bar');
+    loadingBar.style.visibility = 'visible';
+    loadingBar.style.opacity = '1';
+    addTimeout(() => {
+        if (pageLoaded) {
+            loadingBar.style.visibility = 'hidden';
+            loadingBar.style.opacity = '0';
+        } else {
+            loadingBar.style.width = loadingBarWidth + '%';
+            loadingBarShown = true;
+        }
+    }, 300);
 
-        const scriptImportPromise = page.script();
-        const styleImportPromises = page.style();
-        const htmlImportPromise = page.html();
-        currentScriptImportPromise = scriptImportPromise;
-
-        addEventListener(w, 'popstate', () => {
-            if (page.customPopState) {
-                if (DEVELOPMENT) {
-                    console.log('popstate handled by the page.');
-                }
-                return;
-            }
-            load(getFullURL(), null);
-            if (DEVELOPMENT) {
-                console.log('popstate handled by the loader.');
-            }
-        });
-
-        let loadingBarWidth: number = 33;
-        let loadingBarShown: boolean = false;
-        let pageLoaded: boolean = false;
-        const loadingBar = getById('loading-bar');
-        loadingBar.style.visibility = 'visible';
-        loadingBar.style.opacity = '1';
-        addTimeout(() => {
-            if (pageLoaded) {
-                loadingBar.style.visibility = 'hidden';
-                loadingBar.style.opacity = '0';
-            } else {
-                loadingBar.style.width = loadingBarWidth + '%';
-                loadingBarShown = true;
-            }
-        }, 300);
-
-        scriptImportPromise.then((script) => {
-            if (currentScriptImportPromise !== scriptImportPromise) {
-                return;
-            }
-            currentPage = {
-                script: script,
-                html_entry: page.html_entry,
-                domain: domain,
-            };
-            script.default(
-                (callback?: () => void) => {
-                    Promise.all([htmlImportPromise, ...styleImportPromises]).then(([html]) => {
-                        if (currentScriptImportPromise !== scriptImportPromise) {
-                            return;
-                        }
-
-                        getBody().innerHTML = html.default;
-                        callback?.();
-
-                        pageLoaded = true;
-                        if (loadingBarShown) {
-                            loadingBar.style.width = '100%';
-                            addTimeout(() => {
-                                loadingBar.style.visibility = 'hidden';
-                                loadingBar.style.opacity = '0';
-                                addTimeout(() => {
-                                    loadingBar.style.width = '0';
-                                }, 100);
-                            }, 300);
-                        }
-                    });
-                },
-                (url: string, withoutHistory: boolean = false) => {
-                    if (currentScriptImportPromise === scriptImportPromise) {
-                        load(url, withoutHistory);
+    scriptImportPromise.then((script) => {
+        if (currentScriptImportPromise !== scriptImportPromise) {
+            return;
+        }
+        currentPage = {
+            script: script,
+            html_entry: page.html_entry,
+            domain: domain,
+        };
+        script.default(
+            (callback?: () => void) => {
+                Promise.all([htmlImportPromise, ...styleImportPromises]).then(([html]) => {
+                    if (currentScriptImportPromise !== scriptImportPromise) {
+                        return;
                     }
-                }
-            );
-            if (loadingBarShown) {
-                loadingBar.style.width = '67%';
-            } else {
-                loadingBarWidth = 67;
-            }
-        });
-    };
 
-    if (windowLoaded) {
-        executeScript();
-    } else {
-        addEventListenerOnce(w, 'load', () => {
-            windowLoaded = true;
-            executeScript();
-        });
-    }
+                    getBody().innerHTML = html.default;
+                    callback?.();
+
+                    pageLoaded = true;
+                    if (loadingBarShown) {
+                        loadingBar.style.width = '100%';
+                        addTimeout(() => {
+                            loadingBar.style.visibility = 'hidden';
+                            loadingBar.style.opacity = '0';
+                            addTimeout(() => {
+                                loadingBar.style.width = '0';
+                            }, 100);
+                        }, 300);
+                    }
+                });
+            },
+            (url: string, withoutHistory: boolean = false) => {
+                if (currentScriptImportPromise === scriptImportPromise) {
+                    load(url, withoutHistory);
+                }
+            }
+        );
+        if (loadingBarShown) {
+            loadingBar.style.width = '67%';
+        } else {
+            loadingBarWidth = 67;
+        }
+    });
 }

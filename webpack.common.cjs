@@ -5,6 +5,8 @@ const path = require('path');
 const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { cssMinifyOptions } = require('./build_config.cjs');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const { DOMAIN, DESCRIPTION } = require('./env/index.cjs');
 
 const config = {
     target: 'browserslist',
@@ -22,6 +24,25 @@ const config = {
         new BundleAnalyzerPlugin({
             analyzerMode: 'static',
             reportFilename: '../../webpack-bundle-analyzer-report.html'
+        }),
+        new FaviconsWebpackPlugin({
+            logo: './src/icon/icon.png',
+            logoMaskable: './src/icon/icon_maskable.png',
+            prefix: '/icon/',
+            mode: 'webapp',
+            devMode: 'webapp',
+            favicons: {
+                appName: DOMAIN,
+                appShortName: DOMAIN,
+                appDescription: DESCRIPTION,
+                developerName: DOMAIN,
+                developerURL: 'https://' + DOMAIN,
+                lang: "ja-JP",
+                start_url: "/",
+                icons: {
+                    appleStartup: { offset: 20 },
+                }
+            }
         })
     ],
     output: {
@@ -29,8 +50,7 @@ const config = {
         publicPath: '/',
         clean: {
             keep: (filename) => {
-                return filename === 'unsupported_browser.html' ||
-                    filename === 'style/unsupported_browser.css' ||
+                return filename === 'style/unsupported_browser.css' ||
                     filename === 'script_legacy' ||
                     filename === 'icon' ||
                     filename === 'google688e01234602d07d.html' ||

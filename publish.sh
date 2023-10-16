@@ -60,7 +60,12 @@ aws s3 sync "$2" "s3://$1/" --exclude "*" --include "*.png" --no-guess-mime-type
 echo "DONE"
 printf "\n"
 
-echo "Uploading site.webmanifest"
-aws s3 sync "$2" "s3://$1/" --exclude "*" --include "*site.webmanifest" --no-guess-mime-type --content-type="application/manifest+json" --metadata-directive="REPLACE" --delete 2>>"publish.log"
+echo "Uploading webmanifest"
+aws s3 sync "$2" "s3://$1/" --exclude "*" --include "*.webmanifest" --no-guess-mime-type --content-type="application/manifest+json" --metadata-directive="REPLACE" --delete 2>>"publish.log"
+echo "DONE"
+printf "\n"
+
+echo "Uploading json"
+aws s3 sync "$2" "s3://$1/" --exclude "*" --include "*.json" --no-guess-mime-type --content-type="application/json" --metadata-directive="REPLACE" --delete 2>>"publish.log"
 echo "DONE"
 printf "\n"

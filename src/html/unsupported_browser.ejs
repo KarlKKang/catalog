@@ -2,9 +2,13 @@
 <html lang="ja">
 
 <head>
-    <%= require("./module/main_header.ejs").default({ title: data.title, index: false, legacy: true }) %>
-    <%= require("./module/theme_header.ejs").default() %>
-
+    <%= require("./module/main_header.ejs").default({ title: title, description: description, index: false, legacy: true }) %>
+    <%= htmlWebpackPlugin
+    .tags
+    .headTags
+    .filter((tag) => tag.meta.plugin === 'favicons-webpack-plugin')
+    .join('') 
+    %>
     <link rel="stylesheet" type="text/css" href="/style/unsupported_browser.css">
 </head>
 
