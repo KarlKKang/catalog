@@ -1,7 +1,7 @@
 const config = require('./webpack.common.cjs');
 const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
-const { addHTMLConfig, addFontLoader, addDefinePlugin, addWorkboxPlugin } = require('./webpack_helper.cjs');
+const { addPlugins } = require('./webpack_helper.cjs');
 const { terserOptions } = require('./build_config.cjs');
 
 config.mode = 'production';
@@ -11,9 +11,6 @@ config.optimization.minimizer.push(
         terserOptions: terserOptions,
     })
 );
-addDefinePlugin(config, false);
-addHTMLConfig(config, false);
-addFontLoader(config, false);
-addWorkboxPlugin(config, false);
+addPlugins(config, false);
 
 module.exports = config;

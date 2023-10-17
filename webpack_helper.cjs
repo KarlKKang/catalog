@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 const { GenerateSW } = require('workbox-webpack-plugin');
 
-module.exports.addHTMLConfig = function (config, dev) {
+function addHTMLConfig(config, dev) {
     const pageTitle = DOMAIN + (dev ? ' (alpha)' : '');
 
     config.plugins.push(
@@ -33,7 +33,7 @@ module.exports.addHTMLConfig = function (config, dev) {
     );
 };
 
-module.exports.addFontLoader = function (config, dev) {
+function addFontLoader(config, dev) {
     config.module.rules.push({
         test: /\.woff2?$/i,
         type: 'asset/resource',
@@ -43,7 +43,7 @@ module.exports.addFontLoader = function (config, dev) {
     });
 }
 
-module.exports.addDefinePlugin = function (config, dev) {
+function addDefinePlugin(config, dev) {
     config.plugins.push(
         new DefinePlugin({
             DEVELOPMENT: JSON.stringify(dev),
@@ -52,7 +52,7 @@ module.exports.addDefinePlugin = function (config, dev) {
     );
 }
 
-module.exports.addWorkboxPlugin = function (config, dev) {
+function addWorkboxPlugin(config, dev) {
     const domain = (dev ? 'alpha.' : '') + DOMAIN;
     const domainEscaped = domain.replace(/\./g, '\\.');
     config.plugins.push(
@@ -140,4 +140,11 @@ module.exports.addWorkboxPlugin = function (config, dev) {
             ]
         }),
     );
+}
+
+module.exports.addPlugins = function (config, dev) {
+    addDefinePlugin(config, dev);
+    addHTMLConfig(config, dev);
+    addFontLoader(config, dev);
+    addWorkboxPlugin(config, dev);
 }
