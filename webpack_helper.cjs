@@ -4,24 +4,19 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 
 module.exports.addHTMLConfig = function (config, dev) {
-    const pages = [
-        'entry'
-    ];
     const pageTitle = DOMAIN + (dev ? ' (alpha)' : '');
 
-    for (const page of pages) {
-        config.plugins.push(
-            new HtmlWebpackPlugin({
-                minify: htmlMinifyOptions,
-                filename: page + '.html',
-                template: 'src/html/' + page + '.ejs',
-                templateParameters: {
-                    title: pageTitle,
-                    description: DESCRIPTION,
-                }
-            })
-        );
-    }
+    config.plugins.push(
+        new HtmlWebpackPlugin({
+            minify: htmlMinifyOptions,
+            filename: 'index.html',
+            template: 'src/html/index.ejs',
+            templateParameters: {
+                title: pageTitle,
+                description: DESCRIPTION,
+            }
+        })
+    );
 
     config.plugins.push(
         new HtmlWebpackPlugin({
