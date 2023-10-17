@@ -7,8 +7,8 @@
   "type": "module",
   "scripts": {
     "build:font": "python3 build_font.py",
-    "build": "npm run lint && tsc --noEmit && webpack --progress --config webpack.prod.cjs && node build_legacy.js && node sw_transpile.js",
-    "build-dev": "npm run lint && tsc --noEmit && webpack --progress --config webpack.dev.cjs && node build_legacy.js dev && node sw_transpile.js dev",
+    "build": "npm run lint && tsc --noEmit && webpack --progress --config webpack.prod.cjs && node sw_transpile.js && node build_legacy.js",
+    "build-dev": "npm run lint && tsc --noEmit && webpack --progress --config webpack.dev.cjs && node sw_transpile.js dev && node build_legacy.js dev",
     "lint": "npx eslint src/script/ --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "publish": "sh publish.sh featherine-website ./dist/",
