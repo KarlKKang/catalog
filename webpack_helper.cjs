@@ -3,6 +3,8 @@ const { DOMAIN, DESCRIPTION } = require('./env/index.cjs');;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 const { GenerateSW } = require('workbox-webpack-plugin');
+const fs = require('fs');
+const crypto = require('crypto');
 
 function addHTMLConfig(config, dev) {
     const pageTitle = DOMAIN + (dev ? ' (alpha)' : '');
@@ -53,6 +55,13 @@ function addDefinePlugin(config, dev) {
 }
 
 function addWorkboxPlugin(config, dev) {
+    const destDir = dev ? 'dev/' : 'dist/';
+    const browserScript = destDir + 'script/browser.js';
+    const buffer = fs.readFileSync(browserScript);
+    const hash = crypto.createHash('md5');
+    hash.update(buffer);
+    const browserScriptRevision = hash.digest('hex');
+
     const domain = (dev ? 'alpha.' : '') + DOMAIN;
     const domainEscaped = domain.replace(/\./g, '\\.');
     config.plugins.push(
@@ -66,6 +75,12 @@ function addWorkboxPlugin(config, dev) {
             navigateFallback: '/',
             navigateFallbackDenylist: [/^\/unsupported_browser$/],
             babelPresetEnvTargets: ['last 1 Chrome versions'], // Will be transpiled separately
+            additionalManifestEntries: [
+                {
+                    url: '/script/browser.js',
+                    revision: browserScriptRevision,
+                }
+            ],
             manifestTransforms: [
                 (manifestEntries, _) => {
                     return {
