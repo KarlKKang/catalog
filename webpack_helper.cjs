@@ -5,8 +5,7 @@ const { DefinePlugin } = require('webpack');
 
 module.exports.addHTMLConfig = function (config, dev) {
     const pages = [
-        'entry',
-        'entry_no_index',
+        'entry'
     ];
     const pageTitle = DOMAIN + (dev ? ' (alpha)' : '');
 
@@ -19,7 +18,6 @@ module.exports.addHTMLConfig = function (config, dev) {
                 templateParameters: {
                     title: pageTitle,
                     description: DESCRIPTION,
-                    dev: dev
                 }
             })
         );
@@ -34,7 +32,6 @@ module.exports.addHTMLConfig = function (config, dev) {
             templateParameters: {
                 title: pageTitle,
                 description: DESCRIPTION,
-                dev: dev
             }
         })
     );
