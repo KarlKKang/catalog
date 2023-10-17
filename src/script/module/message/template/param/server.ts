@@ -17,9 +17,6 @@ export const invalidResponse = () => {
     } else if (href === LOGIN_URL) {
         param.buttonText = null;
         return param;
-    } else if (href.startsWith(LOGIN_URL)) {
-        param.url = LOGIN_URL;
-        return param;
     } else {
         param.url = TOP_URL;
         return param;
@@ -58,10 +55,5 @@ export const status400And500 = (responseText: string) => ({
 export const notFound = {
     title: title.notFound,
     message: body.notFound,
-    url: function () {
-        if (getBaseURL().startsWith(LOGIN_URL)) { // Change the origin requires a page refresh.
-            return LOGIN_URL;
-        }
-        return TOP_URL;
-    }()
+    url: TOP_URL
 };

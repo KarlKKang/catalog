@@ -1,6 +1,6 @@
 import 'core-js';
-import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, redirect, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass } from './module/dom';
-import { LOGIN_URL, TOP_DOMAIN, TOP_URL } from './module/env/constant';
+import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass } from './module/dom';
+import { TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { HTMLImport } from './module/type/HTMLImport';
 import type { RedirectFunc } from './module/type/RedirectFunc';
@@ -12,11 +12,6 @@ import '../css/entry.scss';
 const enum HTMLEntry {
     DEFAULT,
     NO_THEME,
-}
-
-const enum DOMAIN {
-    MAIN,
-    LOGIN,
 }
 
 type PageInitCallback = (showPage: ShowPageFunc, redirect: RedirectFunc) => void;
@@ -45,7 +40,6 @@ let currentScriptImportPromise: PageScriptImport | null = null;
 let currentPage: {
     script: PageScript;
     html_entry: HTMLEntry;
-    domain: DOMAIN;
 } | null = null;
 
 const notoSansLightCss = () => import('../font/dist/NotoSans/NotoSans-Light.css');
@@ -232,6 +226,45 @@ const pages: PageMap = {
         title: '新規登録',
         html_entry: HTMLEntry.DEFAULT,
     },
+    'login': {
+        script: () => import('./login'),
+        style: () => [
+            notoSansJPLightCss(),
+            notoSansJPMediumCss(),
+            commonCss(),
+            portalFormCss(),
+            popUpWindowCss(),
+            import('../css/login.scss'),
+        ],
+        html: () => import('../html/login.html'),
+        title: 'ログイン',
+        html_entry: HTMLEntry.DEFAULT,
+        id: 'login',
+    },
+    'request_password_reset': {
+        script: () => import('./request_password_reset'),
+        style: () => [
+            notoSansJPLightCss(),
+            notoSansJPMediumCss(),
+            commonCss(),
+            portalFormCss(),
+        ],
+        html: () => import('../html/request_password_reset.html'),
+        title: 'パスワード再発行',
+        html_entry: HTMLEntry.DEFAULT,
+    },
+    'password_reset': {
+        script: () => import('./password_reset'),
+        style: () => [
+            notoSansJPLightCss(),
+            notoSansJPMediumCss(),
+            commonCss(),
+            portalFormCss(),
+        ],
+        html: () => import('../html/password_reset.html'),
+        title: 'パスワード再発行',
+        html_entry: HTMLEntry.DEFAULT,
+    },
 };
 const directories: PageMap = {
     'bangumi': {
@@ -272,55 +305,13 @@ const directories: PageMap = {
         html_entry: HTMLEntry.DEFAULT,
     },
 };
-const loginPages: PageMap = {
-    '': {
-        script: () => import('./login'),
-        style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
-            commonCss(),
-            portalFormCss(),
-            popUpWindowCss(),
-            import('../css/login.scss'),
-        ],
-        html: () => import('../html/login.html'),
-        title: 'ログイン',
-        html_entry: HTMLEntry.DEFAULT,
-        id: 'login',
-    },
-    'message': messagePage,
-    'request_password_reset': {
-        script: () => import('./request_password_reset'),
-        style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
-            commonCss(),
-            portalFormCss(),
-        ],
-        html: () => import('../html/request_password_reset.html'),
-        title: 'パスワード再発行',
-        html_entry: HTMLEntry.DEFAULT,
-    },
-    'password_reset': {
-        script: () => import('./password_reset'),
-        style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
-            commonCss(),
-            portalFormCss(),
-        ],
-        html: () => import('../html/password_reset.html'),
-        title: 'パスワード再発行',
-        html_entry: HTMLEntry.DEFAULT,
-    },
-};
 
 load(getFullURL(), null);
 
 function load(url: string, withoutHistory: boolean | null = false) {
     let baseURL = getBaseURL(url);
 
-    if (baseURL === TOP_URL || baseURL === LOGIN_URL) {
+    if (baseURL === TOP_URL) {
         baseURL += '/';
     }
 
@@ -328,37 +319,23 @@ function load(url: string, withoutHistory: boolean | null = false) {
         let pageName = baseURL.substring(TOP_URL.length + 1);
         if (objectKeyExists(pageName, pages)) {
             const page = pages[pageName]!;
-            loadPage(url, withoutHistory, pageName, page, DOMAIN.MAIN);
+            loadPage(url, withoutHistory, pageName, page);
             return;
         }
         pageName = pageName.substring(0, pageName.indexOf('/'));
         if (objectKeyExists(pageName, directories)) {
             const page = directories[pageName]!;
-            loadPage(url, withoutHistory, pageName, page, DOMAIN.MAIN);
+            loadPage(url, withoutHistory, pageName, page);
             return;
         }
-        loadPage(url, withoutHistory, '404', page404, DOMAIN.MAIN);
-    }
-
-    if (baseURL.startsWith(LOGIN_URL + '/')) {
-        const pageName = baseURL.substring(LOGIN_URL.length + 1);
-        if (objectKeyExists(pageName, loginPages)) {
-            const page = loginPages[pageName]!;
-            loadPage(url, withoutHistory, pageName, page, DOMAIN.LOGIN);
-            return;
-        }
-        loadPage(url, withoutHistory, '404', page404, DOMAIN.LOGIN);
+        loadPage(url, withoutHistory, '404', page404);
     }
 }
 
-function loadPagePrepare(url: string, withoutHistory: boolean | null, domain: DOMAIN) { // Specifying `null` for `withoutHistory` indicates the current state will not be changed.
+function loadPagePrepare(url: string, withoutHistory: boolean | null) { // Specifying `null` for `withoutHistory` indicates the current state will not be changed.
     const currentPageConst = currentPage;
     if (currentPageConst === null) {
         return true;
-    }
-    if (currentPageConst.domain !== domain) {
-        redirect(url, withoutHistory === true);
-        return false;
     }
     currentPageConst.script.offload?.();
     deregisterAllEventTargets();
@@ -368,19 +345,19 @@ function loadPagePrepare(url: string, withoutHistory: boolean | null, domain: DO
     return true;
 }
 
-function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page, domain: DOMAIN) {
+function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page) {
     if (body === null) {
         addEventListenerOnce(w, 'load', () => {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/sw.js');
             }
             body = d.body;
-            loadPage(url, withoutHistory, pageName, page, domain);
+            loadPage(url, withoutHistory, pageName, page);
         });
         return;
     }
 
-    if (!loadPagePrepare(url, withoutHistory, domain)) { // This prepare should be just before currentScriptImportPromise. Otherwise offloaded pages may be reinitialized by themselves.
+    if (!loadPagePrepare(url, withoutHistory)) { // This prepare should be just before currentScriptImportPromise. Otherwise offloaded pages may be reinitialized by themselves.
         return;
     }
 
@@ -430,7 +407,6 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
         currentPage = {
             script: script,
             html_entry: page.html_entry,
-            domain: domain,
         };
         script.default(
             (callback?: () => void) => {

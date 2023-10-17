@@ -1,6 +1,5 @@
 import {
     TOP_URL,
-    LOGIN_URL,
 } from './module/env/constant';
 import {
     sendServerRequest,
@@ -60,7 +59,7 @@ function showPageCallback(redirect: RedirectFunc) {
 
     addEventListener(submitButton, 'click', login);
     addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', () => {
-        redirect(LOGIN_URL + '/request_password_reset', true);
+        redirect(TOP_URL + '/request_password_reset', true);
     });
     passwordStyling(passwordInput);
 

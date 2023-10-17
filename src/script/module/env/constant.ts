@@ -11,4 +11,4 @@ export const SERVER_URL = 'https://server.' + DOMAIN;
 export const CDN_URL = 'https://cdn.' + DOMAIN;
 
 export const TOP_URL = 'https://' + DOMAIN;
-export const LOGIN_URL = 'https://login.' + DOMAIN;
+export const LOGIN_URL = TOP_URL + '/login';

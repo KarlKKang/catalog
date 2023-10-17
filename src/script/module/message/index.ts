@@ -1,8 +1,7 @@
 import {
-    LOGIN_URL,
     TOP_URL,
 } from '../env/constant';
-import { getTitle, setSessionStorage, getFullURL, getBaseURL } from '../dom/document';
+import { getTitle, setSessionStorage, getFullURL } from '../dom/document';
 
 import { defaultError } from './template/title';
 import { unknownError } from './template/body';
@@ -31,9 +30,5 @@ export function show(redirect: RedirectFunc, { message, title, color, url, butto
         setSessionStorage('replace-body', '1');
     }
 
-    if (getBaseURL().startsWith(LOGIN_URL)) {
-        redirect(LOGIN_URL + '/message', true);
-    } else {
-        redirect(TOP_URL + '/message', true);
-    }
+    redirect(TOP_URL + '/message', true);
 }
