@@ -55,4 +55,4 @@ fs.read(srcFile, function (code) {
     );
 });
 
-cssMinify('./src/css/', destDirPrefix + '/style/', 'unsupported_browser.css');
+cssMinify('./src/css/', destDirPrefix + 'style/', 'unsupported_browser.css');
