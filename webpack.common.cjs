@@ -52,6 +52,8 @@ const config = {
             keep: (filename) => {
                 return filename === 'style/unsupported_browser.css' ||
                     filename === 'script/browser.js' ||
+                    /^sw\.js(\.map)?$/.test(filename) ||
+                    /^workbox-.*\.js(\.map)?$/.test(filename) ||
                     filename === 'icon' ||
                     filename === 'google688e01234602d07d.html' ||
                     filename === 'IndexNowb922f0d0-3cbe-42b9-b913-accbbf92100f.txt' ||
@@ -84,7 +86,7 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.(ts|js)x?$/,
+                test: /\.(ts|js)x?$/i,
                 exclude: {
                     or: [
                         // Exclude libraries in node_modules ...
@@ -120,7 +122,7 @@ const config = {
                 }
             },
             {
-                test: /\.ejs$/,
+                test: /\.ejs$/i,
                 include: [
                     path.resolve(__dirname, "src/html/module")
                 ],

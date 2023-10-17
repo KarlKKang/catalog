@@ -10,9 +10,8 @@ import { addTimeout, removeAllTimers } from './module/timer';
 import '../css/entry.scss';
 
 const enum HTMLEntry {
-    ENTRY,
-    ENTRY_NO_INDEX,
-    ENTRY_NO_THEME_NO_INDEX,
+    DEFAULT,
+    NO_THEME,
 }
 
 const enum DOMAIN {
@@ -80,7 +79,7 @@ const messagePage: Page = {
         messageCss(),
     ],
     html: () => import('../html/message.html'),
-    html_entry: HTMLEntry.ENTRY_NO_INDEX,
+    html_entry: HTMLEntry.DEFAULT,
 };
 
 const page404: Page = {
@@ -92,7 +91,7 @@ const page404: Page = {
         messageCss(),
     ],
     html: () => import('../html/404.html'),
-    html_entry: HTMLEntry.ENTRY_NO_INDEX,
+    html_entry: HTMLEntry.DEFAULT,
     title: '404',
     id: 'message',
 };
@@ -111,7 +110,7 @@ const pages: PageMap = {
             import('../css/index.scss'),
         ],
         html: () => import('../html/index.html'),
-        html_entry: HTMLEntry.ENTRY,
+        html_entry: HTMLEntry.DEFAULT,
         id: 'top',
         customPopState: true,
     },
@@ -127,7 +126,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/confirm_new_email.html'),
         title: 'メールアドレス変更',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
     },
     'console': {
         script: () => import('./console'),
@@ -139,7 +138,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/console.html'),
         title: 'console',
-        html_entry: HTMLEntry.ENTRY_NO_THEME_NO_INDEX,
+        html_entry: HTMLEntry.NO_THEME,
     },
     'image': {
         script: () => import('./image'),
@@ -147,7 +146,7 @@ const pages: PageMap = {
             import('../css/image.scss'),
         ],
         html: () => import('../html/image.html'),
-        html_entry: HTMLEntry.ENTRY_NO_THEME_NO_INDEX,
+        html_entry: HTMLEntry.NO_THEME,
     },
     'info': {
         script: () => import('./info'),
@@ -170,7 +169,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/info.html'),
         title: 'ご利用ガイド',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
         id: 'news',
     },
     'message': messagePage,
@@ -190,7 +189,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/my_account.html'),
         title: 'マイページ',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
     },
     'new_email': {
         script: () => import('./new_email'),
@@ -202,7 +201,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/new_email.html'),
         title: 'メールアドレス変更',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
     },
     'register': {
         script: () => import('./register'),
@@ -218,7 +217,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/register.html'),
         title: '新規登録',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
     },
     'special_register': {
         script: () => import('./special_register'),
@@ -231,7 +230,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/special_register.html'),
         title: '新規登録',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
     },
 };
 const directories: PageMap = {
@@ -247,7 +246,7 @@ const directories: PageMap = {
             import('../css/player.scss'),
         ],
         html: () => import('../html/bangumi.html'),
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
     },
     'news': {
         script: () => import('./news'),
@@ -270,7 +269,7 @@ const directories: PageMap = {
         ],
         html: () => import('../html/news.html'),
         title: 'お知らせ',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
     },
 };
 const loginPages: PageMap = {
@@ -286,7 +285,7 @@ const loginPages: PageMap = {
         ],
         html: () => import('../html/login.html'),
         title: 'ログイン',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
         id: 'login',
     },
     'message': messagePage,
@@ -300,7 +299,7 @@ const loginPages: PageMap = {
         ],
         html: () => import('../html/request_password_reset.html'),
         title: 'パスワード再発行',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
     },
     'password_reset': {
         script: () => import('./password_reset'),
@@ -312,7 +311,7 @@ const loginPages: PageMap = {
         ],
         html: () => import('../html/password_reset.html'),
         title: 'パスワード再発行',
-        html_entry: HTMLEntry.ENTRY_NO_INDEX,
+        html_entry: HTMLEntry.DEFAULT,
     },
 };
 
@@ -372,6 +371,9 @@ function loadPagePrepare(url: string, withoutHistory: boolean | null, domain: DO
 function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page, domain: DOMAIN) {
     if (body === null) {
         addEventListenerOnce(w, 'load', () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js');
+            }
             body = d.body;
             loadPage(url, withoutHistory, pageName, page, domain);
         });
@@ -385,7 +387,7 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
     body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
     setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
     const noThemeClassName = 'no-theme';
-    page.html_entry === HTMLEntry.ENTRY_NO_THEME_NO_INDEX ? addClass(body, noThemeClassName) : removeClass(body, noThemeClassName);
+    page.html_entry === HTMLEntry.NO_THEME ? addClass(body, noThemeClassName) : removeClass(body, noThemeClassName);
 
     const scriptImportPromise = page.script();
     const styleImportPromises = page.style();

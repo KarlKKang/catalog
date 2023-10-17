@@ -7,8 +7,8 @@
   "type": "module",
   "scripts": {
     "build:font": "python3 build_font.py",
-    "build": "npm run lint && tsc --noEmit && webpack --progress --config webpack.prod.cjs && node build_legacy.js",
-    "build-dev": "npm run lint && tsc --noEmit && webpack --progress --config webpack.dev.cjs && node build_legacy.js dev",
+    "build": "npm run lint && tsc --noEmit && webpack --progress --config webpack.prod.cjs && node build_legacy.js && node sw_transpile.js",
+    "build-dev": "npm run lint && tsc --noEmit && webpack --progress --config webpack.dev.cjs && node build_legacy.js dev && node sw_transpile.js dev",
     "lint": "npx eslint src/script/ --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "publish": "sh publish.sh featherine-website ./dist/",
@@ -66,6 +66,7 @@
     "webp-hero": "0.0.2",
     "webpack": "5.88.2",
     "webpack-bundle-analyzer": "4.9.0",
-    "webpack-cli": "5.1.4"
+    "webpack-cli": "5.1.4",
+    "workbox-webpack-plugin": "7.0.0"
   }
 }

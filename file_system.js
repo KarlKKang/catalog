@@ -34,3 +34,15 @@ export function mkdir(dir) {
         fs.mkdirSync(dir, { recursive: true });
     }
 }
+
+export function unlink(file) {
+    fs.unlink(file, err => {
+        if (err) {
+            console.error(err);
+        }
+    });
+}
+
+export function readdirSync(dir) {
+    return fs.readdirSync(dir);
+}
