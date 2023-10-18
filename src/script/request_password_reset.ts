@@ -1,10 +1,8 @@
 import {
-    TOP_URL,
     LOGIN_URL,
 } from './module/env/constant';
 import {
     sendServerRequest,
-    authenticate,
     disableInput,
 } from './module/common';
 import {
@@ -24,17 +22,7 @@ import type { RedirectFunc } from './module/type/RedirectFunc';
 
 export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     clearSessionStorage();
-
-    authenticate(redirect, {
-        successful:
-            function () {
-                redirect(TOP_URL, true);
-            },
-        failed:
-            function () {
-                showPage(() => { showPageCallback(redirect); });
-            },
-    });
+    showPage(() => { showPageCallback(redirect); });
 }
 
 function showPageCallback(redirect: RedirectFunc) {
