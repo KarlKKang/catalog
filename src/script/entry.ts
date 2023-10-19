@@ -5,10 +5,18 @@ import { objectKeyExists } from './module/common/pure';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout, removeAllTimers } from './module/timer';
-
-import '../css/entry.scss';
 import { popupWindowImport } from './module/popup_window';
 import type { Workbox as WorkboxType } from 'workbox-window';
+import * as messagePageScript from './message';
+import { default as messagePageHTML } from '../html/message.html';
+import { show as showMessage } from './module/message';
+import { moduleImportError } from './module/message/template/param';
+
+import '../css/entry.scss';
+import '../font/dist/NotoSansJP/NotoSansJP-Light.css';
+import '../font/dist/NotoSansJP/NotoSansJP-Medium.css';
+import '../css/common.scss';
+import '../css/message.scss';
 
 const enum HTMLEntry {
     DEFAULT,
@@ -51,9 +59,7 @@ let serviceWorker: WorkboxType | null = null;
 const notoSansLightCss = () => import('../font/dist/NotoSans/NotoSans-Light.css');
 const notoSansRegularCss = () => import('../font/dist/NotoSans/NotoSans-Regular.css');
 const notoSansMediumCss = () => import('../font/dist/NotoSans/NotoSans-Medium.css');
-const notoSansJPLightCss = () => import('../font/dist/NotoSansJP/NotoSansJP-Light.css');
 const notoSansJPRegularCss = () => import('../font/dist/NotoSansJP/NotoSansJP-Regular.css');
-const notoSansJPMediumCss = () => import('../font/dist/NotoSansJP/NotoSansJP-Medium.css');
 const notoSansTCLightCss = () => import('../font/dist/NotoSansTC/NotoSansTC-Light.css');
 const notoSansTCRegularCss = () => import('../font/dist/NotoSansTC/NotoSansTC-Regular.css');
 const notoSansTCMediumCss = () => import('../font/dist/NotoSansTC/NotoSansTC-Medium.css');
@@ -62,33 +68,14 @@ const notoSansSCRegularCss = () => import('../font/dist/NotoSansSC/NotoSansSC-Re
 const notoSansSCMediumCss = () => import('../font/dist/NotoSansSC/NotoSansSC-Medium.css');
 const courierNewRegularCss = () => import('../font/dist/CourierNew/CourierNew-Regular.css');
 const segMDL2Css = () => import('../font/dist/Segoe/SegMDL2.css');
-const commonCss = () => import('../css/common.scss');
 const navBarCss = () => import('../css/nav_bar.scss');
 const portalFormCss = () => import('../css/portal_form.scss');
 const newsCss = () => import('../css/news.scss');
 const registerCss = () => import('../css/register.scss');
-const messageCss = () => import('../css/message.scss');
-
-const messagePage: Page = {
-    script: () => import('./message'),
-    style: () => [
-        notoSansJPLightCss(),
-        notoSansJPMediumCss(),
-        commonCss(),
-        messageCss(),
-    ],
-    html: () => import('../html/message.html'),
-    html_entry: HTMLEntry.DEFAULT,
-};
 
 const page404: Page = {
     script: () => import('./404'),
-    style: () => [
-        notoSansJPLightCss(),
-        notoSansJPMediumCss(),
-        commonCss(),
-        messageCss(),
-    ],
+    style: () => [],
     html: () => import('../html/404.html'),
     html_entry: HTMLEntry.DEFAULT,
     title: '404',
@@ -99,12 +86,9 @@ const pages: PageMap = {
     '': {
         script: () => import('./index'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
             notoSansTCLightCss(),
             notoSansSCLightCss(),
             notoSansLightCss(),
-            commonCss(),
             navBarCss(),
             import('../css/index.scss'),
         ],
@@ -117,9 +101,6 @@ const pages: PageMap = {
     'confirm_new_email': {
         script: () => import('./confirm_new_email'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
-            commonCss(),
             portalFormCss(),
         ],
         html: () => import('../html/confirm_new_email.html'),
@@ -129,7 +110,6 @@ const pages: PageMap = {
     'console': {
         script: () => import('./console'),
         style: () => [
-            notoSansJPLightCss(),
             notoSansTCLightCss(),
             notoSansSCLightCss(),
             import('../css/console.scss'),
@@ -152,16 +132,13 @@ const pages: PageMap = {
             notoSansLightCss(),
             notoSansRegularCss(),
             notoSansMediumCss(),
-            notoSansJPLightCss(),
             notoSansJPRegularCss(),
-            notoSansJPMediumCss(),
             notoSansTCLightCss(),
             notoSansTCRegularCss(),
             notoSansTCMediumCss(),
             notoSansSCLightCss(),
             notoSansSCRegularCss(),
             notoSansSCMediumCss(),
-            commonCss(),
             navBarCss(),
             newsCss(),
         ],
@@ -170,18 +147,20 @@ const pages: PageMap = {
         html_entry: HTMLEntry.DEFAULT,
         id: 'news',
     },
-    'message': messagePage,
+    'message': {
+        script: () => Promise.resolve(messagePageScript),
+        style: () => [],
+        html: () => Promise.resolve({ default: messagePageHTML }),
+        html_entry: HTMLEntry.DEFAULT,
+    },
     'my_account': {
         script: () => import('./my_account'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
             notoSansTCLightCss(),
             notoSansSCLightCss(),
             notoSansLightCss(),
             courierNewRegularCss(),
             navBarCss(),
-            commonCss(),
             import('../css/my_account.scss'),
         ],
         html: () => import('../html/my_account.html'),
@@ -191,9 +170,6 @@ const pages: PageMap = {
     'new_email': {
         script: () => import('./new_email'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
-            commonCss(),
             portalFormCss(),
         ],
         html: () => import('../html/new_email.html'),
@@ -203,12 +179,9 @@ const pages: PageMap = {
     'register': {
         script: () => import('./register'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
             notoSansLightCss(),
             notoSansTCLightCss(),
             notoSansSCLightCss(),
-            commonCss(),
             portalFormCss(),
             registerCss(),
         ],
@@ -219,9 +192,6 @@ const pages: PageMap = {
     'special_register': {
         script: () => import('./special_register'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
-            commonCss(),
             portalFormCss(),
             registerCss(),
         ],
@@ -232,9 +202,6 @@ const pages: PageMap = {
     'login': {
         script: () => import('./login'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
-            commonCss(),
             portalFormCss(),
             import('../css/login.scss'),
         ],
@@ -246,9 +213,6 @@ const pages: PageMap = {
     'request_password_reset': {
         script: () => import('./request_password_reset'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
-            commonCss(),
             portalFormCss(),
         ],
         html: () => import('../html/request_password_reset.html'),
@@ -258,9 +222,6 @@ const pages: PageMap = {
     'password_reset': {
         script: () => import('./password_reset'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
-            commonCss(),
             portalFormCss(),
         ],
         html: () => import('../html/password_reset.html'),
@@ -272,11 +233,8 @@ const directories: PageMap = {
     'bangumi': {
         script: () => import('./bangumi'),
         style: () => [
-            notoSansJPLightCss(),
-            notoSansJPMediumCss(),
             segMDL2Css(),
             navBarCss(),
-            commonCss(),
             import('../css/bangumi.scss'),
             import('../css/player.scss'),
         ],
@@ -289,16 +247,13 @@ const directories: PageMap = {
             notoSansLightCss(),
             notoSansRegularCss(),
             notoSansMediumCss(),
-            notoSansJPLightCss(),
             notoSansJPRegularCss(),
-            notoSansJPMediumCss(),
             notoSansTCLightCss(),
             notoSansTCRegularCss(),
             notoSansTCMediumCss(),
             notoSansSCLightCss(),
             notoSansSCRegularCss(),
             notoSansSCMediumCss(),
-            commonCss(),
             navBarCss(),
             newsCss(),
         ],
@@ -400,7 +355,17 @@ async function registerServiceWorker(redirect: RedirectFunc) { // This function 
         };
 
         if (serviceWorker === null) {
-            const { Workbox } = await import('workbox-window');
+            let Workbox: typeof WorkboxType;
+            try {
+                Workbox = (await import(
+                    /* webpackExports: ["Workbox"] */
+                    'workbox-window'
+                )).Workbox;
+            }
+            catch (e) {
+                showMessage(redirect, moduleImportError(e));
+                throw e;
+            }
             if (scriptImportPromise !== currentScriptImportPromise) {
                 return;
             }
@@ -416,7 +381,7 @@ async function registerServiceWorker(redirect: RedirectFunc) { // This function 
     }
 }
 
-function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page) {
+async function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page) {
     if (body === null) {
         addEventListenerOnce(w, 'load', () => {
             body = d.body;
@@ -472,44 +437,57 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
         }
     };
 
-    scriptImportPromise.then((script) => {
-        if (currentScriptImportPromise !== scriptImportPromise) {
-            return;
-        }
-        currentPage = {
-            script: script,
-            html_entry: page.html_entry,
-        };
-        script.default(
-            (callback?: () => void) => {
-                Promise.all([htmlImportPromise, ...styleImportPromises]).then(([html]) => {
-                    if (currentScriptImportPromise !== scriptImportPromise) {
-                        return;
-                    }
+    let script: Awaited<typeof scriptImportPromise>;
+    try {
+        script = await scriptImportPromise;
+    } catch (e) {
+        showMessage(redirect, moduleImportError(e));
+        throw e;
+    }
 
-                    getBody().innerHTML = html.default;
-                    registerServiceWorker(redirect);
-                    callback?.();
+    if (currentScriptImportPromise !== scriptImportPromise) {
+        return;
+    }
 
-                    pageLoaded = true;
-                    if (loadingBarShown) {
-                        loadingBar.style.width = '100%';
-                        addTimeout(() => {
-                            loadingBar.style.visibility = 'hidden';
-                            loadingBar.style.opacity = '0';
-                            addTimeout(() => {
-                                loadingBar.style.width = '0';
-                            }, 100);
-                        }, 300);
-                    }
-                });
-            },
-            redirect
-        );
-        if (loadingBarShown) {
-            loadingBar.style.width = '67%';
-        } else {
-            loadingBarWidth = 67;
-        }
-    });
+    currentPage = {
+        script: script,
+        html_entry: page.html_entry,
+    };
+    script.default(
+        async (callback?: () => void) => {
+            let html: Awaited<typeof htmlImportPromise>;
+            try {
+                [html] = await Promise.all([htmlImportPromise, ...styleImportPromises]);
+            } catch (e) {
+                showMessage(redirect, moduleImportError(e));
+                throw e;
+            }
+
+            if (currentScriptImportPromise !== scriptImportPromise) {
+                return;
+            }
+
+            getBody().innerHTML = html.default;
+            registerServiceWorker(redirect);
+            callback?.();
+
+            pageLoaded = true;
+            if (loadingBarShown) {
+                loadingBar.style.width = '100%';
+                addTimeout(() => {
+                    loadingBar.style.visibility = 'hidden';
+                    loadingBar.style.opacity = '0';
+                    addTimeout(() => {
+                        loadingBar.style.width = '0';
+                    }, 100);
+                }, 300);
+            }
+        },
+        redirect
+    );
+    if (loadingBarShown) {
+        loadingBar.style.width = '67%';
+    } else {
+        loadingBarWidth = 67;
+    }
 }
