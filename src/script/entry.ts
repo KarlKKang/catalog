@@ -75,7 +75,7 @@ const registerCss = () => import('../css/register.scss');
 const page404: Page = {
     script: () => import('./404'),
     style: () => [],
-    html: () => import('../html/404.html'),
+    html: () => Promise.resolve({ default: messagePageHTML }),
     html_entry: HTMLEntry.DEFAULT,
     title: '404',
     id: 'message',
@@ -96,7 +96,6 @@ const pages: PageMap = {
         id: 'top',
         customPopState: true,
     },
-    '404': page404,
     'confirm_new_email': {
         script: () => import('./confirm_new_email'),
         style: () => [
@@ -284,8 +283,9 @@ function load(url: string, withoutHistory: boolean | null = false) {
             loadPage(url, withoutHistory, pageName, page);
             return;
         }
-        loadPage(url, withoutHistory, '404', page404);
     }
+
+    loadPage(url, withoutHistory, '404', page404);
 }
 
 function loadPagePrepare(url: string, withoutHistory: boolean | null) { // Specifying `null` for `withoutHistory` indicates the current state will not be changed.
