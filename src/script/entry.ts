@@ -12,7 +12,6 @@ import { default as messagePageHTML } from '../html/message.html';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 
-import '../css/entry.scss';
 import '../font/dist/NotoSansJP/NotoSansJP-Light.css';
 import '../font/dist/NotoSansJP/NotoSansJP-Medium.css';
 import '../css/common.scss';

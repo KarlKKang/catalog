@@ -2,10 +2,12 @@
 /* CSS Document */
 
 :root {
+    --background-color: rgba(252, 252, 252, 1);
     --foreground-color: rgba(255, 255, 255, 1);
     --background-color-transparent: rgba(251, 251, 251, 0);
     --grey-background-color: rgba(235, 235, 235, 1);
 
+    --text-color: rgba(0, 0, 0, 1);
     --text-color-transparent: rgba(0, 0, 0, 0);
     --alt-text-color: rgba(173, 173, 181, 1);
     --link-text-color: rgba(16, 105, 201, 1);
@@ -24,11 +26,18 @@
     --shadow: var(--shadow-size) var(--shadow-color);
     --shadow-hover: var(--shadow-size-hover) var(--shadow-color-hover);
 
+    --safe-area-inset-top: 0;
+    --safe-area-inset-right: 0;
+    --safe-area-inset-bottom: 0;
+    --safe-area-inset-left: 0;
+
     @media only screen and (prefers-color-scheme: dark) {
+        --background-color: rgba(40, 41, 49, 1);
         --foreground-color: rgba(43, 44, 52, 1);
         --background-color-transparent: rgba(40, 41, 49, 0);
         --grey-background-color: rgba(65, 68, 80, 1);
 
+        --text-color: rgba(210, 213, 220, 1);
         --text-color-transparent: rgba(210, 213, 220, 0);
         --alt-text-color: rgba(95, 97, 106, 1);
         --link-text-color: rgba(28, 98, 221, 1);
@@ -47,10 +56,80 @@
     @media not screen and (hover: hover) and (pointer: fine) {
         --shadow-hover: var(--shadow);
     }
+
+    @supports (--safe-area-inset-top: constant(safe-area-inset-top, 0px)) {
+        --safe-area-inset-top: constant(safe-area-inset-top, 0px);
+    }
+
+    @supports (--safe-area-inset-right: constant(safe-area-inset-right, 0px)) {
+        --safe-area-inset-right: constant(safe-area-inset-right, 0px);
+    }
+
+    @supports (--safe-area-inset-bottom: constant(safe-area-inset-bottom, 0px)) {
+        --safe-area-inset-bottom: constant(safe-area-inset-bottom, 0px);
+    }
+
+    @supports (--safe-area-inset-left: constant(safe-area-inset-left, 0px)) {
+        --safe-area-inset-left: constant(safe-area-inset-left, 0px);
+    }
+
+    @supports (--safe-area-inset-top: env(safe-area-inset-top, 0px)) {
+        --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    }
+
+    @supports (--safe-area-inset-right: env(safe-area-inset-right, 0px)) {
+        --safe-area-inset-right: env(safe-area-inset-right, 0px);
+    }
+
+    @supports (--safe-area-inset-bottom: env(safe-area-inset-bottom, 0px)) {
+        --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    @supports (--safe-area-inset-left: env(safe-area-inset-left, 0px)) {
+        --safe-area-inset-left: env(safe-area-inset-left, 0px);
+    }
 }
 
 * {
     outline: none;
+}
+
+html {
+    display: none;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
+    min-height: 100%;
+
+    @media screen {
+        display: block;
+    }
+}
+
+html,
+body {
+    margin: 0px;
+}
+
+body {
+    padding: 0px;
+
+    &:not(.no-theme) {
+        background: var(--background-color);
+    }
+}
+
+#loading-bar {
+    background-color: var(--text-color);
+    height: 1.5px;
+    position: fixed;
+    top: var(--safe-area-inset-top);
+    left: 0;
+    width: 0;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: width .4s ease-out, opacity .1s ease-out, visibility .1s ease-out;
 }
 
 html,
