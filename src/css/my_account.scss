@@ -47,15 +47,9 @@
     }
 
     .button {
-        width: 150px;
-
         &.not-allowed {
             cursor: not-allowed;
         }
-    }
-
-    .input-field {
-        width: 300px;
     }
 
     .note>ul {

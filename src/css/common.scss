@@ -102,6 +102,7 @@ input {
 }
 
 .button {
+    width: 150px;
     /* Set color on 'input' elements will override placeholder color in some older browsers */
     color: var(--text-color);
     cursor: pointer;
@@ -110,6 +111,7 @@ input {
 }
 
 .input-field {
+    width: 300px;
     padding: 0px;
 
     >input {

@@ -50,6 +50,11 @@
             @supports (margin: min(2em, 5%)) {
                 margin: min(2em, 5%);
             }
+
+            >.title {
+                font-size: x-large;
+                font-weight: 500;
+            }
         }
     }
 
