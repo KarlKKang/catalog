@@ -35,8 +35,8 @@ files.forEach(file => {
                     return;
                 }
                 fs.unlink(srcFilePath);
-                fs.unlink(srcFilePath + '.map');
                 if (dev) {
+                    fs.unlink(srcFilePath + '.map');
                     result.code += '\n//# sourceMappingURL=' + file + '.map';
                     fs.write(destFilePath, result.code);
                     if (file === 'sw.js') {
