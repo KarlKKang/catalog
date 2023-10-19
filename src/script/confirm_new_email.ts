@@ -18,12 +18,16 @@ import {
 import { show as showMessage } from './module/message';
 import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/message/template/inline';
-import { destroy as destroyPopUpWindow, promptForTotp } from './module/pop_up_window';
+import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 
+let pageLoaded: boolean;
+let destroyPopupWindow: null | (() => void) = null;
+
 export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+    pageLoaded = true;
     clearSessionStorage();
 
     const param = getURLParam('p');
@@ -100,10 +104,21 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
             return;
         }
 
+        const popupWindowImportPromise = popupWindowImport(redirect);
+        const promptForTotpImportPromise = promptForTotpImport(redirect);
+
         sendChangeEmailRequest(
             'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
-            () => {
+            async () => {
+                const popupWindowModule = await popupWindowImportPromise;
+                const promptForTotp = (await promptForTotpImportPromise).promptForTotp;
+                if (!pageLoaded) {
+                    return;
+                }
+                destroyPopupWindow = popupWindowModule.destroy;
+
                 promptForTotp(
+                    popupWindowModule.initializePopupWindow,
                     (totp, closeWindow, showWarning) => {
                         sendChangeEmailRequest(
                             'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&totp=' + totp,
@@ -174,5 +189,6 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
 }
 
 export function offload() {
-    destroyPopUpWindow();
+    pageLoaded = false;
+    destroyPopupWindow?.();
 }

@@ -21,12 +21,16 @@ import { show as showMessage } from './module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/message/template/inline';
 import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
-import { destroy as destroyPopUpWindow, promptForTotp } from './module/pop_up_window';
+import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 
+let pageLoaded: boolean;
+let destroyPopupWindow: null | (() => void) = null;
+
 export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+    pageLoaded = true;
     clearSessionStorage();
 
     authenticate(redirect, {
@@ -83,10 +87,21 @@ function showPageCallback(redirect: RedirectFunc) {
             return;
         }
 
+        const popupWindowImportPromise = popupWindowImport(redirect);
+        const promptForTotpImportPromise = promptForTotpImport(redirect);
+
         sendLoginRequest(
             'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0'),
-            () => {
+            async () => {
+                const popupWindowModule = await popupWindowImportPromise;
+                const promptForTotp = (await promptForTotpImportPromise).promptForTotp;
+                if (!pageLoaded) {
+                    return;
+                }
+                destroyPopupWindow = popupWindowModule.destroy;
+
                 promptForTotp(
+                    popupWindowModule.initializePopupWindow,
                     (totp, closeWindow, showWarning) => {
                         sendLoginRequest(
                             'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0') + '&totp=' + totp,
@@ -193,5 +208,6 @@ function showPageCallback(redirect: RedirectFunc) {
 }
 
 export function offload() {
-    destroyPopUpWindow();
+    pageLoaded = false;
+    destroyPopupWindow?.();
 }

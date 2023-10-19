@@ -66,7 +66,7 @@ import {
 import * as AccountInfo from './module/type/AccountInfo';
 import * as TOTPInfo from './module/type/TOTPInfo';
 import * as RecoveryCodeInfo from './module/type/RecoveryCodeInfo';
-import { destroy as destroyPopUpWindow, initializePopUpWindow, promptForTotp } from './module/pop_up_window';
+import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { toCanvas } from 'qrcode';
 import { isString } from './module/type/helper';
 import { EMAIL_REGEX, PASSWORD_REGEX, getLocalTimeString, handleAuthenticationResult } from './module/common/pure';
@@ -75,7 +75,11 @@ import { addInterval, removeInterval } from './module/timer';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 import { UAParser } from 'ua-parser-js';
 
+let pageLoaded: boolean;
+let destroyPopupWindow: null | (() => void) = null;
+
 export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+    pageLoaded = true;
     clearSessionStorage();
 
     sendServerRequest(redirect, 'get_account', {
@@ -125,6 +129,9 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     const recoveryCodeInfo = getById('recovery-code-info');
     const loginNotificationInfo = getById('login-notification-info');
     const sessionsContainer = getById('sessions');
+
+    const popupWindowImportPromise = popupWindowImport(redirect);
+    const promptForTotpImportPromise = promptForTotpImport(redirect);
 
     addEventListener(emailChangeButton, 'click', changeEmail);
     addEventListener(usernameChangeButton, 'click', changeUsername);
@@ -644,8 +651,16 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 const emailEncoded = encodeURIComponent(email);
                 const passwordEncoded = encodeURIComponent(password);
 
-                const failedTotpCallback = () => {
+                const failedTotpCallback = async () => {
+                    const popupWindowModule = await popupWindowImportPromise;
+                    const promptForTotp = (await promptForTotpImportPromise).promptForTotp;
+                    if (!pageLoaded) {
+                        return;
+                    }
+                    destroyPopupWindow = popupWindowModule.destroy;
+
                     promptForTotp(
+                        popupWindowModule.initializePopupWindow,
                         (totp, closeWindow, showWarning) => {
                             sendRequestCallback(
                                 'email=' + emailEncoded + '&password=' + passwordEncoded + '&totp=' + totp,
@@ -723,7 +738,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         );
     }
 
-    function promptForEmailOtp(
+    async function promptForEmailOtp(
         submitCallback: (
             otp: string,
             closeWindow: () => void,
@@ -734,7 +749,13 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             closeWindow: () => void,
         ) => void
     ) {
-        initializePopUpWindow().then((popUpWindow) => {
+        const popupWindowModule = await popupWindowImportPromise;
+        if (!pageLoaded) {
+            return;
+        }
+        destroyPopupWindow = popupWindowModule.destroy;
+
+        popupWindowModule.initializePopupWindow().then((popUpWindow) => {
             const promptText = createParagraphElement();
             appendText(promptText, 'メールに送信された認証コードを入力してください。');
 
@@ -806,7 +827,6 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 }
                 submitButton.disabled = disabled;
                 cancelButton.disabled = disabled;
-
             };
             const submit = () => {
                 disableAllPopUpWindowInputs(true);
@@ -843,7 +863,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         });
     }
 
-    function promptForLogin(
+    async function promptForLogin(
         submitCallback: (
             email: string,
             password: string,
@@ -852,7 +872,13 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         ) => void,
         message?: string | Node[]
     ) {
-        initializePopUpWindow().then((popUpWindow) => {
+        const popupWindowModule = await popupWindowImportPromise;
+        if (!pageLoaded) {
+            return;
+        }
+        destroyPopupWindow = popupWindowModule.destroy;
+
+        popupWindowModule.initializePopupWindow().then((popUpWindow) => {
             const promptText = createParagraphElement();
             appendText(promptText, 'メールアドレスとパスワードを入力してください。');
 
@@ -952,8 +978,14 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         });
     }
 
-    function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
-        initializePopUpWindow().then((popUpWindow) => {
+    async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
+        const popupWindowModule = await popupWindowImportPromise;
+        if (!pageLoaded) {
+            return;
+        }
+        destroyPopupWindow = popupWindowModule.destroy;
+
+        popupWindowModule.initializePopupWindow().then((popUpWindow) => {
             const promptText = createParagraphElement();
             appendText(promptText, '二要素認証を有効にするには、Authenticatorアプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
@@ -1072,8 +1104,14 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         });
     }
 
-    function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo, completedCallback: () => void) {
-        initializePopUpWindow().then((popUpWindow) => {
+    async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo, completedCallback: () => void) {
+        const popupWindowModule = await popupWindowImportPromise;
+        if (!pageLoaded) {
+            return;
+        }
+        destroyPopupWindow = popupWindowModule.destroy;
+
+        popupWindowModule.initializePopupWindow().then((popUpWindow) => {
             const promptText = createParagraphElement();
             appendText(promptText, 'リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
 
@@ -1188,5 +1226,6 @@ function appendParagraph(text: string, container: HTMLElement) {
 }
 
 export function offload() {
-    destroyPopUpWindow();
+    pageLoaded = false;
+    destroyPopupWindow?.();
 } 

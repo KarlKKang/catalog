@@ -2,7 +2,6 @@ import 'core-js';
 import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass } from './module/dom';
 import { TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
-import type { HTMLImport } from './module/type/HTMLImport';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout, removeAllTimers } from './module/timer';
@@ -24,7 +23,9 @@ type PageScriptImport = Promise<PageScript>;
 type Page = {
     script: () => PageScriptImport;
     style: () => Promise<any>[];
-    html: () => HTMLImport;
+    html: () => Promise<{
+        default: string;
+    }>;
     html_entry: HTMLEntry;
     title?: string;
     id?: string;
@@ -57,7 +58,6 @@ const notoSansSCMediumCss = () => import('../font/dist/NotoSansSC/NotoSansSC-Med
 const courierNewRegularCss = () => import('../font/dist/CourierNew/CourierNew-Regular.css');
 const segMDL2Css = () => import('../font/dist/Segoe/SegMDL2.css');
 const commonCss = () => import('../css/common.scss');
-const popUpWindowCss = () => import('../css/pop_up_window.scss');
 const navBarCss = () => import('../css/nav_bar.scss');
 const portalFormCss = () => import('../css/portal_form.scss');
 const newsCss = () => import('../css/news.scss');
@@ -116,7 +116,6 @@ const pages: PageMap = {
             notoSansJPMediumCss(),
             commonCss(),
             portalFormCss(),
-            popUpWindowCss(),
         ],
         html: () => import('../html/confirm_new_email.html'),
         title: 'メールアドレス変更',
@@ -176,7 +175,6 @@ const pages: PageMap = {
             notoSansSCLightCss(),
             notoSansLightCss(),
             courierNewRegularCss(),
-            popUpWindowCss(),
             navBarCss(),
             commonCss(),
             import('../css/my_account.scss'),
@@ -233,7 +231,6 @@ const pages: PageMap = {
             notoSansJPMediumCss(),
             commonCss(),
             portalFormCss(),
-            popUpWindowCss(),
             import('../css/login.scss'),
         ],
         html: () => import('../html/login.html'),

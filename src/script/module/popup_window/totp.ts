@@ -1,68 +1,11 @@
-import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, getBody, removeClass, replaceChildren, w, createInputElement, hideElement, showElement } from './dom';
-import { changeColor, disableInput } from './common';
-import { failedTotp } from './message/template/inline';
-import { addInterval, addTimeout, removeInterval } from './timer';
-
-type PopUpWindow = {
-    show: (...contents: Node[]) => void;
-    hide: () => void;
-};
-
-let instance: Promise<PopUpWindow> | null = null;
-
-export function initializePopUpWindow() {
-    if (instance !== null) {
-        return instance;
-    }
-
-    const container = createDivElement();
-    container.id = 'pop-up-window';
-    const popUpWindow = createDivElement();
-    const popUpWindowcontent = createDivElement();
-    appendChild(container, popUpWindow);
-    appendChild(popUpWindow, popUpWindowcontent);
-
-    let currentTimeout: NodeJS.Timeout | null = null;
-
-    const newInstance = new Promise<PopUpWindow>((resolve) => {
-        w.requestAnimationFrame(() => {
-            if (newInstance !== instance) {
-                return;
-            }
-            addClass(container, 'invisible');
-            addClass(container, 'transparent');
-            appendChild(getBody(), container);
-            w.requestAnimationFrame(() => {
-                if (newInstance !== instance) {
-                    return;
-                }
-                resolve({
-                    show: (...contents: Node[]) => {
-                        currentTimeout = null;
-                        replaceChildren(popUpWindowcontent, ...contents);
-                        removeClass(container, 'invisible');
-                        removeClass(container, 'transparent');
-                    },
-                    hide: () => {
-                        addClass(container, 'transparent');
-                        const timeout = addTimeout(() => {
-                            if (currentTimeout === timeout) {
-                                addClass(container, 'invisible');
-                                replaceChildren(popUpWindowcontent);
-                            }
-                        }, 300);
-                        currentTimeout = timeout;
-                    }
-                });
-            });
-        });
-    });
-    instance = newInstance;
-
-    return instance;
-}
+import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, createInputElement, hideElement, showElement } from '../dom';
+import { changeColor, disableInput } from '../common';
+import { failedTotp } from '../message/template/inline';
+import { addInterval, removeInterval } from '../timer';
+import type { PopupWindow } from './core';
 
 export function promptForTotp(
+    initializePopupWindow: () => Promise<PopupWindow>,
     submitCallback: (
         totp: string,
         closeWindow: () => void,
@@ -71,7 +14,7 @@ export function promptForTotp(
     closeWindowCallback: () => void,
     timeoutCallback: () => void,
 ) {
-    initializePopUpWindow().then((popUpWindow) => {
+    initializePopupWindow().then((popUpWindow) => {
         const promptText = createParagraphElement();
         appendText(promptText, '二要素認証コードまたはリカバリーコードを入力してください。');
 
@@ -152,8 +95,4 @@ export function promptForTotp(
 
         popUpWindow.show(promptText, warningText, totpInputContainer, buttonFlexbox);
     });
-}
-
-export function destroy() {
-    instance = null;
 }
