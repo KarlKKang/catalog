@@ -1,5 +1,5 @@
 import 'core-js';
-import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass } from './module/dom';
+import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, appendText, createButtonElement, createDivElement, appendChild } from './module/dom';
 import { TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { RedirectFunc } from './module/type/RedirectFunc';
@@ -7,6 +7,8 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout, removeAllTimers } from './module/timer';
 
 import '../css/entry.scss';
+import { popupWindowImport } from './module/popup_window';
+import type { Workbox as WorkboxType } from 'workbox-window';
 
 const enum HTMLEntry {
     DEFAULT,
@@ -42,6 +44,9 @@ let currentPage: {
     script: PageScript;
     html_entry: HTMLEntry;
 } | null = null;
+let destroyPopupWindow: null | (() => void) = null;
+let swUpdateLastPromptTime: number = 0;
+let serviceWorker: WorkboxType | null = null;
 
 const notoSansLightCss = () => import('../font/dist/NotoSans/NotoSans-Light.css');
 const notoSansRegularCss = () => import('../font/dist/NotoSans/NotoSans-Regular.css');
@@ -332,31 +337,95 @@ function load(url: string, withoutHistory: boolean | null = false) {
 function loadPagePrepare(url: string, withoutHistory: boolean | null) { // Specifying `null` for `withoutHistory` indicates the current state will not be changed.
     const currentPageConst = currentPage;
     if (currentPageConst === null) {
-        return true;
+        return;
     }
     currentPageConst.script.offload?.();
     deregisterAllEventTargets();
     removeAllTimers();
+    destroyPopupWindow?.();
     replaceChildren(getBody());
     changeURL(url, withoutHistory === true);
-    return true;
+    return;
+}
+
+async function registerServiceWorker(redirect: RedirectFunc) { // This function should be called after setting the `currentScriptImportPromise`.
+    if ('serviceWorker' in navigator) {
+        const scriptImportPromise = currentScriptImportPromise;
+
+        const showSkipWaitingPrompt = async (wb: WorkboxType) => {
+            const popupWindowModule = await popupWindowImport(redirect);
+            if (scriptImportPromise !== currentScriptImportPromise) {
+                return;
+            }
+            destroyPopupWindow = popupWindowModule.destroy;
+
+            popupWindowModule.initializePopupWindow().then((popupWindow) => {
+                const titleText = createParagraphElement();
+                addClass(titleText, 'title');
+                appendText(titleText, 'アップデートが利用可能です');
+
+                const promptText = createParagraphElement();
+                appendText(promptText, '今すぐインストールすると、ページが再読み込みされます。featherine.comの複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、featherine.comのすべてのタブを閉じてから再読み込みしてください。');
+
+                const updateButton = createButtonElement();
+                addClass(updateButton, 'button');
+                appendText(updateButton, 'インストール');
+                const cancelButton = createButtonElement();
+                addClass(cancelButton, 'button');
+                appendText(cancelButton, '後で');
+                const buttonFlexbox = createDivElement();
+                addClass(buttonFlexbox, 'input-flexbox');
+                appendChild(buttonFlexbox, updateButton);
+                appendChild(buttonFlexbox, cancelButton);
+
+                addEventListener(updateButton, 'click', () => {
+                    addEventListener(wb as unknown as EventTarget, 'controlling', () => {
+                        w.location.reload();
+                    });
+                    wb.messageSkipWaiting();
+                });
+                addEventListener(cancelButton, 'click', () => {
+                    swUpdateLastPromptTime = new Date().getTime();
+                    popupWindow.hide();
+                });
+
+                popupWindow.show(titleText, promptText, buttonFlexbox);
+            });
+        };
+
+        const addWaitingListener = (wb: WorkboxType) => {
+            addEventListener(serviceWorker as unknown as EventTarget, 'waiting', () => {
+                showSkipWaitingPrompt(wb);
+            });
+        };
+
+        if (serviceWorker === null) {
+            const { Workbox } = await import('workbox-window');
+            if (scriptImportPromise !== currentScriptImportPromise) {
+                return;
+            }
+            serviceWorker = new Workbox('/sw.js');
+            addWaitingListener(serviceWorker);
+            serviceWorker.register();
+        } else {
+            if (swUpdateLastPromptTime < Date.now() - 24 * 60 * 60 * 1000) {
+                addWaitingListener(serviceWorker);
+                serviceWorker.update();
+            }
+        }
+    }
 }
 
 function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page) {
     if (body === null) {
         addEventListenerOnce(w, 'load', () => {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js');
-            }
             body = d.body;
             loadPage(url, withoutHistory, pageName, page);
         });
         return;
     }
 
-    if (!loadPagePrepare(url, withoutHistory)) { // This prepare should be just before currentScriptImportPromise. Otherwise offloaded pages may be reinitialized by themselves.
-        return;
-    }
+    loadPagePrepare(url, withoutHistory); // This prepare should be just before currentScriptImportPromise. Otherwise offloaded pages may be reinitialized by themselves.
 
     body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
     setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
@@ -397,6 +466,12 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
         }
     }, 300);
 
+    const redirect = (url: string, withoutHistory: boolean = false) => {
+        if (currentScriptImportPromise === scriptImportPromise) {
+            load(url, withoutHistory);
+        }
+    };
+
     scriptImportPromise.then((script) => {
         if (currentScriptImportPromise !== scriptImportPromise) {
             return;
@@ -413,6 +488,7 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
                     }
 
                     getBody().innerHTML = html.default;
+                    registerServiceWorker(redirect);
                     callback?.();
 
                     pageLoaded = true;
@@ -428,11 +504,7 @@ function loadPage(url: string, withoutHistory: boolean | null, pageName: string,
                     }
                 });
             },
-            (url: string, withoutHistory: boolean = false) => {
-                if (currentScriptImportPromise === scriptImportPromise) {
-                    load(url, withoutHistory);
-                }
-            }
+            redirect
         );
         if (loadingBarShown) {
             loadingBar.style.width = '67%';

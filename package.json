@@ -67,6 +67,7 @@
     "webpack": "5.88.2",
     "webpack-bundle-analyzer": "4.9.0",
     "webpack-cli": "5.1.4",
-    "workbox-webpack-plugin": "7.0.0"
+    "workbox-webpack-plugin": "7.0.0",
+    "workbox-window": "7.0.0"
   }
 }
