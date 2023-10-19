@@ -755,7 +755,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         }
         destroyPopupWindow = popupWindowModule.destroy;
 
-        popupWindowModule.initializePopupWindow().then((popUpWindow) => {
+        popupWindowModule.initializePopupWindow().then((popupWindow) => {
             const promptText = createParagraphElement();
             appendText(promptText, 'メールに送信された認証コードを入力してください。');
 
@@ -805,7 +805,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             addEventListener(resendButton, 'click', () => {
                 resetResendTimerCallback(
                     resetResendTimer,
-                    popUpWindow.hide
+                    popupWindow.hide
                 );
             });
 
@@ -841,7 +841,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
 
                 submitCallback(
                     otp,
-                    popUpWindow.hide,
+                    popupWindow.hide,
                     () => {
                         showElement(warningText);
                         disableAllPopUpWindowInputs(false);
@@ -856,10 +856,10 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             });
             addEventListener(cancelButton, 'click', () => {
                 disableAllInputs(false);
-                popUpWindow.hide();
+                popupWindow.hide();
             });
 
-            popUpWindow.show(promptText, warningText, inputFlexbox, buttonFlexbox);
+            popupWindow.show(promptText, warningText, inputFlexbox, buttonFlexbox);
         });
     }
 
@@ -878,7 +878,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         }
         destroyPopupWindow = popupWindowModule.destroy;
 
-        popupWindowModule.initializePopupWindow().then((popUpWindow) => {
+        popupWindowModule.initializePopupWindow().then((popupWindow) => {
             const promptText = createParagraphElement();
             appendText(promptText, 'メールアドレスとパスワードを入力してください。');
 
@@ -957,7 +957,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 submitCallback(
                     email,
                     password,
-                    popUpWindow.hide,
+                    popupWindow.hide,
                     showWarning
                 );
             };
@@ -971,10 +971,10 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             addEventListener(passwordInput, 'keydown', submitOnKeyDown);
             addEventListener(cancelButton, 'click', () => {
                 disableAllInputs(false);
-                popUpWindow.hide();
+                popupWindow.hide();
             });
 
-            popUpWindow.show(promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox);
+            popupWindow.show(promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox);
         });
     }
 
@@ -985,7 +985,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         }
         destroyPopupWindow = popupWindowModule.destroy;
 
-        popupWindowModule.initializePopupWindow().then((popUpWindow) => {
+        popupWindowModule.initializePopupWindow().then((popupWindow) => {
             const promptText = createParagraphElement();
             appendText(promptText, '二要素認証を有効にするには、Authenticatorアプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
@@ -1050,7 +1050,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 sendServerRequest(redirect, 'set_totp', {
                     callback: (response: string) => {
                         if (response === 'EXPIRED') {
-                            popUpWindow.hide();
+                            popupWindow.hide();
                             changeColor(mfaWarning, 'red');
                             replaceText(mfaWarning, sessionEnded);
                             showElement(mfaWarning);
@@ -1059,7 +1059,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                             showElement(warningText);
                             disableAllPopUpWindowInputs(false);
                         } else if (response === 'ALREADY SET') {
-                            popUpWindow.hide();
+                            popupWindow.hide();
                             changeColor(mfaWarning, 'green');
                             replaceText(mfaWarning, mfaAlreadySet);
                             showElement(mfaWarning);
@@ -1097,10 +1097,10 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             });
             addEventListener(cancelButton, 'click', () => {
                 disableAllInputs(false);
-                popUpWindow.hide();
+                popupWindow.hide();
             });
 
-            popUpWindow.show(promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox);
+            popupWindow.show(promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox);
         });
     }
 
@@ -1111,7 +1111,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         }
         destroyPopupWindow = popupWindowModule.destroy;
 
-        popupWindowModule.initializePopupWindow().then((popUpWindow) => {
+        popupWindowModule.initializePopupWindow().then((popupWindow) => {
             const promptText = createParagraphElement();
             appendText(promptText, 'リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
 
@@ -1145,11 +1145,11 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             }, 1000);
 
             addEventListener(closeButton, 'click', () => {
-                popUpWindow.hide();
+                popupWindow.hide();
                 completedCallback();
             });
 
-            popUpWindow.show(promptText, recoveryCodeContainer, closeButton);
+            popupWindow.show(promptText, recoveryCodeContainer, closeButton);
         });
     }
 

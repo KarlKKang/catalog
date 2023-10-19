@@ -14,7 +14,7 @@ export function promptForTotp(
     closeWindowCallback: () => void,
     timeoutCallback: () => void,
 ) {
-    initializePopupWindow().then((popUpWindow) => {
+    initializePopupWindow().then((popupWindow) => {
         const promptText = createParagraphElement();
         appendText(promptText, '二要素認証コードまたはリカバリーコードを入力してください。');
 
@@ -49,7 +49,7 @@ export function promptForTotp(
             if (Date.now() - startTime > 90 * 1000) {
                 closeWindowCallback();
                 timeoutCallback();
-                popUpWindow.hide();
+                popupWindow.hide();
             }
         }, 1000);
 
@@ -73,7 +73,7 @@ export function promptForTotp(
                 totp,
                 () => {
                     removeInterval(timer);
-                    popUpWindow.hide();
+                    popupWindow.hide();
                 },
                 () => {
                     disableAllInputs(false);
@@ -90,9 +90,9 @@ export function promptForTotp(
         addEventListener(cancelButton, 'click', () => {
             closeWindowCallback();
             removeInterval(timer);
-            popUpWindow.hide();
+            popupWindow.hide();
         });
 
-        popUpWindow.show(promptText, warningText, totpInputContainer, buttonFlexbox);
+        popupWindow.show(promptText, warningText, totpInputContainer, buttonFlexbox);
     });
 }

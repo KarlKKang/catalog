@@ -16,10 +16,10 @@ export function initializePopupWindow() {
 
     const container = createDivElement();
     container.id = 'pop-up-window';
-    const popUpWindow = createDivElement();
-    const popUpWindowcontent = createDivElement();
-    appendChild(container, popUpWindow);
-    appendChild(popUpWindow, popUpWindowcontent);
+    const popupWindow = createDivElement();
+    const popupWindowcontent = createDivElement();
+    appendChild(container, popupWindow);
+    appendChild(popupWindow, popupWindowcontent);
 
     let currentTimeout: NodeJS.Timeout | null = null;
 
@@ -38,7 +38,7 @@ export function initializePopupWindow() {
                 resolve({
                     show: (...contents: Node[]) => {
                         currentTimeout = null;
-                        replaceChildren(popUpWindowcontent, ...contents);
+                        replaceChildren(popupWindowcontent, ...contents);
                         removeClass(container, 'invisible');
                         removeClass(container, 'transparent');
                     },
@@ -47,7 +47,7 @@ export function initializePopupWindow() {
                         const timeout = addTimeout(() => {
                             if (currentTimeout === timeout) {
                                 addClass(container, 'invisible');
-                                replaceChildren(popUpWindowcontent);
+                                replaceChildren(popupWindowcontent);
                             }
                         }, 300);
                         currentTimeout = timeout;
