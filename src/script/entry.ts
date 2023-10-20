@@ -51,10 +51,13 @@ let currentPage: {
     script: PageScript;
     html_entry: HTMLEntry;
 } | null = null;
+
 let destroyPopupWindow: null | (() => void) = null;
 let swUpdateLastPromptTime: number = 0;
 let serviceWorker: WorkboxType | null = null;
 let serviceWorkerUpToDate: boolean = true;
+
+let loadingBarShown: boolean = false;
 
 const notoSansLightCss = () => import('../font/dist/NotoSans/NotoSans-Light.css');
 const notoSansRegularCss = () => import('../font/dist/NotoSans/NotoSans-Regular.css');
@@ -433,20 +436,39 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     });
 
     let loadingBarWidth: number = 33;
-    let loadingBarShown: boolean = false;
-    let pageLoaded: boolean = false;
     const loadingBar = getById('loading-bar');
-    loadingBar.style.visibility = 'visible';
-    loadingBar.style.opacity = '1';
-    addTimeout(() => {
-        if (pageLoaded) {
-            loadingBar.style.visibility = 'hidden';
-            loadingBar.style.opacity = '0';
-        } else {
-            loadingBar.style.width = loadingBarWidth + '%';
-            loadingBarShown = true;
-        }
-    }, 300);
+    if (loadingBarShown) {
+        loadingBar.style.width = loadingBarWidth + '%';
+    } else {
+        addTimeout(() => {
+            if (loadingBarWidth === 100) { // This check isn't necessarily needed since `requestLoadingBarAnimationFrame` will check it anyway. It's here just to avoid unnecessary `requestAnimationFrame` calls.
+                return;
+            }
+            const requestLoadingBarAnimationFrame = (callback: () => void) => {
+                w.requestAnimationFrame(() => {
+                    if (loadingBarWidth === 100 && currentScriptImportPromise !== scriptImportPromise) {
+                        return;
+                    }
+                    callback();
+                });
+            };
+            requestLoadingBarAnimationFrame(() => {
+                loadingBar.style.transition = 'none';
+                requestLoadingBarAnimationFrame(() => {
+                    loadingBar.style.visibility = 'visible';
+                    loadingBar.style.opacity = '1';
+                    loadingBar.style.width = '0%';
+                    requestLoadingBarAnimationFrame(() => {
+                        loadingBar.style.removeProperty('transition');
+                        requestLoadingBarAnimationFrame(() => {
+                            loadingBar.style.width = loadingBarWidth + '%';
+                            loadingBarShown = true;
+                        });
+                    });
+                });
+            });
+        }, 300);
+    }
 
     const redirect = (url: string, withoutHistory: boolean = false) => {
         if (currentScriptImportPromise === scriptImportPromise) {
@@ -488,15 +510,13 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
             registerServiceWorker(redirect);
             callback?.();
 
-            pageLoaded = true;
+            loadingBarWidth = 100;
             if (loadingBarShown) {
                 loadingBar.style.width = '100%';
                 addTimeout(() => {
+                    loadingBarShown = false;
                     loadingBar.style.visibility = 'hidden';
                     loadingBar.style.opacity = '0';
-                    addTimeout(() => {
-                        loadingBar.style.width = '0';
-                    }, 100);
                 }, 300);
             }
         },
