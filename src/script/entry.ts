@@ -54,6 +54,7 @@ let currentPage: {
 let destroyPopupWindow: null | (() => void) = null;
 let swUpdateLastPromptTime: number = 0;
 let serviceWorker: WorkboxType | null = null;
+let serviceWorkerUpToDate: boolean = true;
 
 const notoSansLightCss = () => import('../font/dist/NotoSans/NotoSans-Light.css');
 const notoSansRegularCss = () => import('../font/dist/NotoSans/NotoSans-Regular.css');
@@ -333,6 +334,10 @@ async function registerServiceWorker(redirect: RedirectFunc) { // This function 
                 appendChild(buttonFlexbox, cancelButton);
 
                 addEventListener(updateButton, 'click', () => {
+                    if (serviceWorkerUpToDate) {
+                        w.location.reload();
+                        return;
+                    }
                     addEventListener(wb as unknown as EventTarget, 'controlling', () => {
                         w.location.reload();
                     });
@@ -365,16 +370,29 @@ async function registerServiceWorker(redirect: RedirectFunc) { // This function 
                 showMessage(redirect, moduleImportError(e));
                 throw e;
             }
-            if (scriptImportPromise !== currentScriptImportPromise) {
+            if (scriptImportPromise !== currentScriptImportPromise) { // If a redirect has happened the new page will handle the registration.
                 return;
             }
             serviceWorker = new Workbox('/sw.js');
+
+            // These two event should never be removed.
+            serviceWorker.addEventListener('waiting', () => {
+                serviceWorkerUpToDate = false;
+            });
+            serviceWorker.addEventListener('controlling', () => {
+                serviceWorkerUpToDate = true;
+            });
+
             addWaitingListener(serviceWorker);
             serviceWorker.register();
         } else {
             if (swUpdateLastPromptTime < Date.now() - 24 * 60 * 60 * 1000) {
-                addWaitingListener(serviceWorker);
-                serviceWorker.update();
+                if (serviceWorkerUpToDate) {
+                    addWaitingListener(serviceWorker);
+                    serviceWorker.update();
+                } else {
+                    showSkipWaitingPrompt(serviceWorker);
+                }
             }
         }
     }
