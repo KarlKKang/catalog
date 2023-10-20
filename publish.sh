@@ -16,7 +16,7 @@ echo "DONE"
 printf "\n"
 
 echo "Uploading js"
-aws s3 sync "$2" "s3://$1/" --exclude "*" --include "*.js" --no-guess-mime-type --content-type="text/javascript" --metadata-directive="REPLACE" --delete 2>>"publish.log"
+aws s3 sync "$2" "s3://$1/" --exclude "*" --include "*.js" --no-guess-mime-type --content-type="application/javascript;charset=utf-8" --metadata-directive="REPLACE" --delete 2>>"publish.log"
 echo "DONE"
 printf "\n"
 
@@ -36,7 +36,7 @@ echo "DONE"
 printf "\n"
 
 echo "Uploading txt"
-aws s3 sync "$2" "s3://$1/" --exclude "*" --include "*.txt" --no-guess-mime-type --content-type="text/plain" --metadata-directive="REPLACE" --delete 2>>"publish.log"
+aws s3 sync "$2" "s3://$1/" --exclude "*" --include "*.txt" --no-guess-mime-type --content-type="text/plain;charset=utf-8" --metadata-directive="REPLACE" --delete 2>>"publish.log"
 echo "DONE"
 printf "\n"
 
