@@ -1,26 +1,16 @@
 import * as body from '../body/server';
 import * as title from '../title/server';
 import { LOGIN_URL, TOP_URL } from '../../../env/constant';
-import { MaintenanceInfo } from '../../../type/MaintenanceInfo';
+import type { MaintenanceInfo } from '../../../type/MaintenanceInfo';
 import { getBaseURL } from '../../../dom';
-import { MessageParam } from '../comm';
+import type { MessageParam } from '../comm';
 
 export const invalidResponse = () => {
-    const href = getBaseURL();
     const param: MessageParam = {
         message: body.invalidResponse,
     };
-    if (href === TOP_URL) {
-        param.url = LOGIN_URL;
-        param.logout = true;
-        return param;
-    } else if (href === LOGIN_URL) {
-        param.buttonText = null;
-        return param;
-    } else {
-        param.url = TOP_URL;
-        return param;
-    }
+    setRedirectUrl(param);
+    return param;
 };
 export const sessionEnded = (url: string) => ({
     title: title.sessionEnded,
@@ -37,7 +27,8 @@ export const mediaSessionEnded = {
 export const connectionError = {
     title: title.connectionError,
     message: body.connectionError,
-    replaceBody: true
+    replaceBody: true,
+    url: TOP_URL // In case of request containing malicious string, the page needs to be reset to the top page.
 };
 export const status429 = {
     title: title.status429,
@@ -49,11 +40,27 @@ export const status503 = (maintenanceInfo: MaintenanceInfo) => ({
     color: 'orange',
     buttonText: null
 });
-export const status400And500 = (responseText: string) => ({
-    message: body.status400And500(responseText)
-});
+export const status400And500 = (responseText: string) => {
+    const param = {
+        message: body.status400And500(responseText)
+    };
+    setRedirectUrl(param);
+    return param;
+};
 export const notFound = {
     title: title.notFound,
     message: body.notFound,
     url: TOP_URL
 };
+
+function setRedirectUrl(param: MessageParam) {
+    const href = getBaseURL();
+    if (href === TOP_URL) {
+        param.url = LOGIN_URL;
+        param.logout = true;
+    } else if (href === LOGIN_URL) {
+        param.buttonText = null;
+    } else {
+        param.url = TOP_URL;
+    }
+}
