@@ -275,7 +275,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void, showSe
         return;
     }
 
-    sendServerRequest(redirect, 'get_series', {
+    sendServerRequest(redirect, 'get_series?' + keywords + 'pivot=' + pivot, {
         callback: function (response: string) {
             let parsedResponse: SeriesInfo.SeriesInfo;
             try {
@@ -287,9 +287,9 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void, showSe
             }
             callback(parsedResponse);
         },
-        content: keywords + 'pivot=' + pivot,
         logoutParam: keywords.slice(0, -1),
         showSessionEndedMessage: showSessionEndedMessage,
+        method: 'GET',
     });
 }
 

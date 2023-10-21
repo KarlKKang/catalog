@@ -279,7 +279,7 @@ function getAllNews(containerOrShowPage: unknown): void {
         return;
     }
 
-    sendServerRequest(redirect, 'get_all_news', {
+    sendServerRequest(redirect, 'get_all_news?pivot=' + pivot, {
         callback: function (response: string) {
             let parsedResponse: AllNewsInfo.AllNewsInfo;
             try {
@@ -301,7 +301,7 @@ function getAllNews(containerOrShowPage: unknown): void {
                 });
             }
         },
-        content: 'pivot=' + pivot
+        method: 'GET',
     });
 }
 

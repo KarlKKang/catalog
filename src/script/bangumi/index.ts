@@ -83,7 +83,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
         });
     });
 
-    sendServerRequest(redirect, 'get_ep', {
+    sendServerRequest(redirect, 'get_ep?series=' + seriesID + '&ep=' + epIndex, {
         callback: async function (response: string) {
             let parsedResponse: BangumiInfo.BangumiInfo;
             try {
@@ -128,8 +128,8 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
                 );
             });
         },
-        content: 'series=' + seriesID + '&ep=' + epIndex,
-        logoutParam: getLogoutParam(seriesID, epIndex)
+        logoutParam: getLogoutParam(seriesID, epIndex),
+        method: 'GET',
     });
 }
 
