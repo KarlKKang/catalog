@@ -446,7 +446,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
             }
             const requestLoadingBarAnimationFrame = (callback: () => void) => {
                 w.requestAnimationFrame(() => {
-                    if (loadingBarWidth === 100 && currentScriptImportPromise !== scriptImportPromise) {
+                    if (loadingBarWidth === 100 || currentScriptImportPromise !== scriptImportPromise) {
                         return;
                     }
                     callback();
