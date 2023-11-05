@@ -165,6 +165,13 @@
 
     .select {
         position: relative;
+        box-shadow: var(--shadow);
+        transition: box-shadow .4s ease-out;
+        background: var(--foreground-color);
+
+        &:not(.disabled):hover {
+            box-shadow: var(--shadow-hover);
+        }
 
         &:after {
             content: '\E70D';
@@ -192,6 +199,14 @@
 
         &::-ms-expand {
             display: none;
+        }
+
+        &:disabled {
+            color: var(--alt-text-color);
+            /* required on iOS */
+            -webkit-text-fill-color: var(--alt-text-color);
+            opacity: 1;
+            cursor: wait;
         }
     }
 
@@ -436,8 +451,7 @@
     .image,
     .chapters,
     .download,
-    .message,
-    select {
+    .message {
         box-shadow: var(--shadow);
         transition: box-shadow .4s ease-out;
         /* Make sure these elements don't have other transitions. */

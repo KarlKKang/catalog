@@ -25,6 +25,8 @@ import {
     replaceChildren,
     replaceText,
     removeAllEventListeners,
+    getParentElement,
+    removeClass,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -137,6 +139,7 @@ export default function (
     });
 
     appendChild(formatSelector, selectMenu);
+    disableDropdown(selectMenu, true);
     appendChild(formatContainer, formatSelector);
 
     const formatDisplay = createDivElement();
@@ -162,10 +165,13 @@ export default function (
             startTime: startTime === null ? undefined : startTime,
             play: play
         }
-    );
+    ).then(() => {
+        disableDropdown(selectMenu, false);
+    });
 }
 
 function formatSwitch(redirect: RedirectFunc, mediaHolder: HTMLElement, formatSelectMenu: HTMLSelectElement, containerSelector: HTMLElement) {
+    disableDropdown(formatSelectMenu, true);
     const formatIndex = formatSelectMenu.selectedIndex;
 
     const format = epInfo.formats[formatIndex];
@@ -186,26 +192,25 @@ function formatSwitch(redirect: RedirectFunc, mediaHolder: HTMLElement, formatSe
         startTime?: number | undefined;
     } | undefined;
 
-    if (currentMediaInstance !== null) {
+    const mediaInstance = currentMediaInstance;
+    if (mediaInstance !== null) {
         config = {
-            play: currentMediaInstance.playing,
-            startTime: currentMediaInstance.media.currentTime
+            play: mediaInstance.playing,
+            startTime: mediaInstance.media.currentTime
         };
-
-        currentMediaInstance.destroy();
-        currentMediaInstance = null;
     }
 
-    hideElement(getById('format-display'));
-    replaceChildren(mediaHolder);
-    const errorMsgElem = getByIdNative('error');
-    errorMsgElem && remove(errorMsgElem);
-    for (const eventTarget of eventTargetsTracker) {
-        removeAllEventListeners(eventTarget);
-    }
-    eventTargetsTracker.clear();
-    showElement(mediaHolder);
-    addVideoNode(redirect, mediaHolder, config);
+    addVideoNode(redirect, mediaHolder, config).then(() => {
+        if (mediaInstance === currentMediaInstance && mediaInstance !== null) {
+            mediaInstance.destroy();
+            currentMediaInstance = null;
+            cleanupEvents();
+        }
+        if (currentMediaInstance === null) {
+            hideElement(getById('format-display'));
+        }
+        disableDropdown(formatSelectMenu, false);
+    });
 }
 
 async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, config?: {
@@ -218,6 +223,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
     }
 
     let formatString = '';
+    const mediaMessageQueue: [string, string, string | null][] = [];
 
     let USE_NATIVE_HLS = NATIVE_HLS;
     let USE_AVC = true;
@@ -239,7 +245,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
         }
         formatString = 'HEVC/Main 10/L5.1/High';
         USE_AVC = false;
-        showMediaMessage('HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null);
+        mediaMessageQueue.push(['HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null]);
     } else if (currentFormat.video === 'hevc41') {
         const CAN_PLAY_HEVC = await canPlayHEVC(USE_NATIVE_HLS, currentFormat.avc_fallback);
         if (!pageLoaded) {
@@ -273,7 +279,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
 
         if (currentFormat.audio !== undefined) {
             if (currentFormat.audio.startsWith('atmos')) {
-                showMediaMessage('Dolby Atmos®について', `Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは<a class="link" href="${TOP_URL}/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。`, null);
+                mediaMessageQueue.push(['Dolby Atmos®について', `Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは<a class="link" href="${TOP_URL}/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。`, null]);
             }
 
             if (currentFormat.audio.startsWith('atmos_ac3')) {
@@ -305,16 +311,29 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
 
     const _config = config ?? {};
 
-    function _onInit(mediaInstance: PlayerType) {
+    const playerContainer = createDivElement();
+    playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
+
+    const beforeLoad = () => {
+        if (currentMediaInstance !== null) {
+            currentMediaInstance.destroy();
+            currentMediaInstance = null;
+            cleanupEvents();
+        }
+        replaceChildren(mediaHolder, playerContainer);
+        for (const mediaMessage of mediaMessageQueue) {
+            showMediaMessage(...mediaMessage);
+        }
+        showElement(mediaHolder);
+        const errorMsgElem = getByIdNative('error');
+        errorMsgElem && remove(errorMsgElem);
+    };
+    const afterLoad = (mediaInstance: PlayerType) => {
         mediaInstance.media.title = getTitle();
         if (epInfo.chapters.length > 0) {
             displayChapters(mediaHolder, mediaInstance, USE_AAC ? 44 : 0);
         }
-    }
-
-    const playerContainer = createDivElement();
-    appendChild(mediaHolder, playerContainer);
-    playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
+    };
 
     const url = baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
     if (USE_NATIVE_HLS) {
@@ -332,17 +351,19 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
         }
 
         const mediaInstance = new Player(playerContainer);
+        beforeLoad();
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {
                 showPlayerError(errorCode);
                 currentMediaInstance = null;
                 mediaInstance.destroy();
+                cleanupEvents();
             },
             play: _config.play,
             startTime: _config.startTime
         });
-        _onInit(mediaInstance);
+        afterLoad(mediaInstance);
     } else {
         let HlsPlayer: typeof HlsPlayerType;
         try {
@@ -375,6 +396,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
         };
 
         const mediaInstance = new HlsPlayer(playerContainer, hlsConfig);
+        beforeLoad();
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {
@@ -391,11 +413,12 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
                 }
                 currentMediaInstance = null;
                 mediaInstance.destroy();
+                cleanupEvents();
             },
             play: _config.play,
             startTime: _config.startTime
         });
-        _onInit(mediaInstance);
+        afterLoad(mediaInstance);
     }
 }
 
@@ -496,6 +519,22 @@ async function canPlayHEVC(native: boolean, withFallback: boolean | undefined): 
     return decodingInfo.supported && decodingInfo.powerEfficient;
 }
 
+function disableDropdown(selectElement: HTMLSelectElement, disabled: boolean) {
+    selectElement.disabled = disabled;
+    if (disabled) {
+        addClass(getParentElement(selectElement), 'disabled');
+    } else {
+        removeClass(getParentElement(selectElement), 'disabled');
+    }
+}
+
+function cleanupEvents() {
+    for (const eventTarget of eventTargetsTracker) {
+        removeAllEventListeners(eventTarget);
+    }
+    eventTargetsTracker.clear();
+}
+
 export function reload() {
     pageLoaded = true;
 }
@@ -503,5 +542,6 @@ export function reload() {
 export function offload() {
     pageLoaded = false;
     currentMediaInstance?.destroy();
+    currentMediaInstance = null;
     eventTargetsTracker.clear();
 }
