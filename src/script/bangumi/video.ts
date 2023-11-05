@@ -212,10 +212,6 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
     play?: boolean | undefined;
     startTime?: number | undefined;
 }) {
-    if (!pageLoaded) {
-        return;
-    }
-
     if (!MSE && !NATIVE_HLS) {
         showHLSCompatibilityError();
         return;

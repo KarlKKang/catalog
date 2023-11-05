@@ -104,7 +104,7 @@ export default function (
 }
 
 async function addAudioNode(redirect: RedirectFunc, index: number, mediaHolder: HTMLElement) {
-    if (!pageLoaded || error) {
+    if (error) {
         return;
     }
 
