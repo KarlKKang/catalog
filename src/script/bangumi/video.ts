@@ -27,6 +27,7 @@ import {
     removeAllEventListeners,
     getParentElement,
     removeClass,
+    containsClass,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -314,7 +315,12 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
     const playerContainer = createDivElement();
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
+    let chaptersActive = true;
     const beforeLoad = () => {
+        const chaptersAccordion = getByIdNative('chapters-accordion');
+        if (chaptersAccordion !== null) {
+            chaptersActive = containsClass(chaptersAccordion, 'active');
+        }
         if (currentMediaInstance !== null) {
             currentMediaInstance.destroy();
             currentMediaInstance = null;
@@ -331,7 +337,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
     const afterLoad = (mediaInstance: PlayerType) => {
         mediaInstance.media.title = getTitle();
         if (epInfo.chapters.length > 0) {
-            displayChapters(mediaHolder, mediaInstance, USE_AAC ? 44 : 0);
+            displayChapters(mediaHolder, mediaInstance, USE_AAC ? 44 : 0, chaptersActive);
         }
     };
 
@@ -422,8 +428,9 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
     }
 }
 
-function displayChapters(mediaHolder: HTMLElement, mediaInstance: Player, offset: number) {
+function displayChapters(mediaHolder: HTMLElement, mediaInstance: Player, offset: number, active: boolean) {
     const accordion = createButtonElement();
+    accordion.id = 'chapters-accordion';
     addClass(accordion, 'accordion');
     appendText(accordion, 'チャプター');
 
@@ -454,7 +461,7 @@ function displayChapters(mediaHolder: HTMLElement, mediaInstance: Player, offset
     addClass(chaptersNode, 'chapters');
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);
-    addAccordionEvent(accordion, accordionPanel, true);
+    addAccordionEvent(accordion, accordionPanel, active);
     eventTargetsTracker.add(accordion);
     appendChild(mediaHolder, chaptersNode);
 
