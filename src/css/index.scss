@@ -9,7 +9,7 @@
         flex-wrap: wrap;
         justify-content: center;
         padding: 0px;
-        margin: calc(3vh - 12px) 5% 3vh 5%;
+        margin: calc(3vh - 12px) calc(5% - 12px);
         transition: opacity .4s ease-out;
 
         >div {
@@ -74,8 +74,8 @@
             }
         }
 
-        @supports (max-width:calc(50% - min(2%, 12px) * 2)) and (margin: calc(3vh - min(2%, 12px)) 5% 3vh 5%) and (margin: min(2%, 12px)) {
-            margin: calc(3vh - min(2%, 12px)) 5% 3vh 5%;
+        @supports (max-width: calc(50% - min(2%, 12px) * 2)) and (margin: calc(3vh - min(2%, 12px)) calc(5% - min(2%, 12px))) and (margin: min(2%, 12px)) {
+            margin: calc(3vh - min(2%, 12px)) calc(5% - min(2%, 12px));
 
             >div {
                 max-width: calc(50% - min(2%, 12px) * 2);
@@ -91,8 +91,8 @@
         box-shadow: var(--shadow);
         transition: box-shadow .4s ease-out;
         margin: 3vh auto 0px auto;
-        width: 75%;
-        max-width: 1000px;
+        width: 500px;
+        max-width: 90%;
 
         .icon {
             margin: 0px;
