@@ -860,6 +860,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             });
 
             popupWindow.show(promptText, warningText, inputFlexbox, buttonFlexbox);
+            otpInput.focus();
         });
     }
 
@@ -975,6 +976,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             });
 
             popupWindow.show(promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox);
+            emailInput.focus();
         });
     }
 
@@ -1101,6 +1103,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             });
 
             popupWindow.show(promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox);
+            totpInput.focus();
         });
     }
 

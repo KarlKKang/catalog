@@ -94,5 +94,6 @@ export function promptForTotp(
         });
 
         popupWindow.show(promptText, warningText, totpInputContainer, buttonFlexbox);
+        totpInput.focus();
     });
 }
