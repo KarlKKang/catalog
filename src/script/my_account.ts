@@ -1200,8 +1200,8 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         inviteButton.disabled = disabled;
         logoutButton.disabled = disabled;
 
-        recoveryCodeButton.disabled = !disabled && currentMfaStatus;
-        loginNotificationButton.disabled = !disabled && currentMfaStatus;
+        recoveryCodeButton.disabled = disabled || !currentMfaStatus;
+        loginNotificationButton.disabled = disabled || !currentMfaStatus;
     }
 }
 
