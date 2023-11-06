@@ -26,14 +26,14 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        margin: 0px 0px -0.5em 0px;
+        margin: 0px 0px -0.5em;
         /*Offset #season-button-wrapper > div > p margin for underline spacing.*/
-        padding: 2em 5% 0px 5%;
+        padding: 2em 5% 0px;
 
         >div {
             height: auto;
             transition: .4s ease-out;
-            margin: 0px 1.5em;
+            margin: 0px 1em;
             cursor: pointer;
             border-bottom-style: solid;
             border-bottom-width: 1px;
@@ -44,6 +44,7 @@
                 margin: 0.5em 0px;
                 transition: .4s ease-out;
                 color: var(--alt-text-color);
+                text-align: center;
             }
 
             &:hover {
@@ -73,15 +74,10 @@
         flex-wrap: wrap;
         justify-content: center;
         margin: 0px;
-        padding: 2em 5%;
+        padding: calc(2em - 12px) calc(5% - 12px);
         overflow-y: hidden;
         box-sizing: content-box;
         transition: max-height .4s ease-out, padding-bottom .4s ease-out;
-
-        &.expanded {
-            padding-bottom: 4.5em;
-            /*Repel the show-more-button*/
-        }
 
         >div {
             position: relative;
@@ -90,10 +86,6 @@
             padding: 0.6em 1em;
             margin: 12px;
             cursor: pointer;
-
-            @supports (margin: min(2%, 12px)) {
-                margin: min(2%, 12px);
-            }
 
             >* {
                 margin: 0px;
@@ -105,17 +97,27 @@
                 text-decoration: underline;
             }
         }
+
+        @supports (padding: calc(2em - min(2%, 12px)) calc(5% - min(2%, 12px))) and (margin: min(2%, 12px)) {
+            padding: calc(2em - min(2%, 12px)) calc(5% - min(2%, 12px));
+
+            >div {
+                margin: min(2%, 12px);
+            }
+        }
     }
 
     #show-more-button {
         background: linear-gradient(to bottom, var(--background-color-transparent) 0%, var(--background-color) 1.5em);
-        width: 100%;
-        margin: -4.5em 0px 0px 0px;
+        width: 90%;
+        margin: 0px;
         /*Total height = padding-top 1.5em + padding-bottom 2em + line-height 1em*/
-        padding: 1.5em 0px 2em 0px;
+        padding: 1.5em 5% 2em 5%;
         /*padding-top for gradient, padding bottom to fill in #ep-button-wrapper padding*/
         text-align: center;
-        position: relative;
+        position: absolute;
+        left: 0;
+        bottom: 0;
         text-decoration: none;
         line-height: 1;
         /*Line height 1em*/
@@ -134,8 +136,8 @@
     hr {
         margin: 0px auto;
         height: 1px;
-        width: 80%;
-        max-width: 1280px;
+        width: 1280px;
+        max-width: 90%;
         border-width: 0;
         background-color: var(--horizontal-line-background-color);
     }
@@ -143,8 +145,8 @@
     #content,
     #warning {
         margin: 2em auto;
-        width: 80%;
-        max-width: 1280px;
+        width: 1280px;
+        max-width: 90%;
     }
 
     #content {
@@ -158,8 +160,8 @@
     }
 
     #format-selector {
-        max-width: 200px;
-        width: 70%;
+        width: 200px;
+        max-width: 70%;
         margin: 0px 16px 16px 0px;
     }
 
@@ -392,6 +394,7 @@
 
         >hr {
             width: 100%;
+            max-width: none;
             background-color: var(--horizontal-line-foreground-color);
         }
     }

@@ -213,9 +213,8 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
         addEventListener(epButton, 'click', () => { goToEP(seriesID, targetEP); });
         appendChild(epButtonWrapper, epButton);
 
-        const height = getContentBoxHeight(epButtonWrapper);
-        if (height < minHeight) {
-            minHeight = height;
+        if (index === 0) {
+            minHeight = getContentBoxHeight(epButtonWrapper);
         }
     });
 
@@ -223,7 +222,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     showMoreButton.id = 'show-more-button';
     addClass(showMoreButton, 'invisible');
     addClass(showMoreButton, 'transparent');
-    appendChild(epSelector, showMoreButton);
+    appendChild(epButtonWrapper, showMoreButton);
 
     const showMoreButtonFoldedText = [createTextNode('すべてを見る '), createSpanElement()] as const;
     appendText(showMoreButtonFoldedText[1], '');
@@ -248,7 +247,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
                             isExpanded = false;
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
                             epButtonWrapper.style.maxHeight = '30vh';
-                            removeClass(epButtonWrapper, 'expanded');
+                            epButtonWrapper.style.removeProperty('padding-bottom');
                         }
                     });
                     currentToggleAnimationFrame = animationFrame;
@@ -260,7 +259,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             isExpanded = true;
             replaceChildren(showMoreButton, ...showMoreButtonExpandedText);
             epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
-            addClass(epButtonWrapper, 'expanded');
+            epButtonWrapper.style.paddingBottom = showMoreButton.scrollHeight + 'px';
             const timeout = addTimeout(() => {
                 if (currentToggleTimeout === timeout) {
                     epButtonWrapper.style.removeProperty('max-height');
@@ -286,21 +285,24 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
 
         if (height / w.innerHeight > 0.40 && reachedThreshold) {
             if (isOversized) {
+                if (isExpanded) {
+                    epButtonWrapper.style.paddingBottom = showMoreButton.scrollHeight + 'px';
+                }
                 return;
             }
             currentStylingTimeout = null;
             currentToggleAnimationFrame = null;
             currentToggleTimeout = null;
             isOversized = true;
+            isExpanded = false;
             let animationFrame = w.requestAnimationFrame(() => {
                 if (currentStylingAnimationFrame === animationFrame) {
-                    epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
+                    epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px'; // Use `getContentBoxHeight` to get the most recent height.
                     animationFrame = w.requestAnimationFrame(() => {
                         if (currentStylingAnimationFrame === animationFrame) {
-                            isExpanded = false;
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
                             epButtonWrapper.style.maxHeight = '30vh';
-                            removeClass(epButtonWrapper, 'expanded');
+                            epButtonWrapper.style.removeProperty('padding-bottom');
                             removeClass(showMoreButton, 'invisible');
                             removeClass(showMoreButton, 'transparent');
                         }
@@ -317,9 +319,9 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             currentToggleAnimationFrame = null;
             currentToggleTimeout = null;
             isOversized = false;
-            epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
+            epButtonWrapper.style.maxHeight = height + 'px';
             addClass(showMoreButton, 'transparent');
-            removeClass(epButtonWrapper, 'expanded');
+            epButtonWrapper.style.removeProperty('padding-bottom');
             const timeout = addTimeout(() => {
                 if (currentStylingTimeout === timeout) {
                     epButtonWrapper.style.removeProperty('max-height');
