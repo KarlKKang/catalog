@@ -23,7 +23,7 @@ export const emailChanged = {
     title: title.completed,
     message: body.emailChanged,
     color: 'green',
-    buttonText: null
+    buttonText: 'トップページへ'
 };
 export const registerComplete = {
     title: title.completed,
