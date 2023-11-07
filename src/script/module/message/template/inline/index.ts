@@ -6,7 +6,7 @@ export { passwordChanged, emailAlreadyRegistered } from '../comm';
 export const invalidEmailFormat = '有効なメールアドレスを入力してください。';
 
 export const emailSent = 'メールを送信しました。届くまでに時間がかかる場合があります。';
-export const invitationNotQualified = '使える招待状が残っていません。';
+export const invitationNotQualified = '使える招待券が残っていません。';
 export const invitationClosed = '現在、新規登録は受け付けておりません。';
 export const invitationOnly = '現在、登録は招待制となっています。';
 
