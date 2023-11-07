@@ -33,14 +33,13 @@ import {
     removeClass,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { emailSent as emailSentParam } from './module/message/template/param';
 import { invalidResponse } from './module/message/template/param/server';
 import {
     invitationNotQualified,
     invalidEmailFormat,
     emailAlreadyRegistered,
     invitationClosed,
-    emailSent as emailSentInline,
+    emailSent,
     invalidPasswordFormat,
     passwordConfirmationMismatch,
     passwordChanged,
@@ -74,6 +73,7 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addInterval, removeInterval } from './module/timer';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 import { UAParser } from 'ua-parser-js';
+import * as InviteResult from './module/type/InviteResult';
 
 let pageLoaded: boolean;
 let destroyPopupWindow: null | (() => void) = null;
@@ -125,6 +125,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     const recoveryCodeWarning = getById('recovery-code-warning');
     const loginNotificationWarning = getById('login-notification-warning');
 
+    const inviteCount = getById('invite-count');
     const mfaInfo = getById('mfa-info');
     const recoveryCodeInfo = getById('recovery-code-info');
     const loginNotificationInfo = getById('login-notification-info');
@@ -169,7 +170,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         }
     }
 
-    appendText(getById('invite-count'), userInfo.invite_quota.toString());
+    appendText(inviteCount, userInfo.invite_quota.toString());
     newUsernameInput.value = currentUsername;
     showSessions();
 
@@ -290,6 +291,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                     callback: (response: string) => {
                         serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
                             if (response == 'NOT QUALIFIED') {
+                                replaceText(inviteCount, '0');
                                 replaceText(warningElem, invitationNotQualified);
                             } else if (response == 'INVALID FORMAT') {
                                 replaceText(warningElem, invalidEmailFormat);
@@ -297,12 +299,22 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                 replaceText(warningElem, emailAlreadyRegistered);
                             } else if (response == 'CLOSED') {
                                 replaceText(warningElem, invitationClosed);
-                            } else if (response == 'DONE') {
-                                showMessage(redirect, emailSentParam(true));
-                                return;
                             } else {
-                                showMessage(redirect, invalidResponse());
-                                return;
+                                let parsedResponse: InviteResult.InviteResult;
+                                try {
+                                    parsedResponse = JSON.parse(response);
+                                    InviteResult.check(parsedResponse);
+                                } catch (e) {
+                                    showMessage(redirect, invalidResponse());
+                                    return;
+                                }
+                                replaceText(inviteCount, parsedResponse.quota.toString());
+                                let message = emailSent;
+                                if (parsedResponse.special) {
+                                    message += '現在、一般登録を受け付けているため、招待券はかかりませんでした。';
+                                }
+                                replaceText(warningElem, message);
+                                changeColor(warningElem, 'green');
                             }
                             showElement(warningElem);
                             disableAllInputs(false);
@@ -352,6 +364,8 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                             if (response == 'DONE') {
                                 replaceText(warningElem, passwordChanged);
                                 changeColor(warningElem, 'green');
+                                newPasswordInput.value = '';
+                                newPasswordComfirmInput.value = '';
                             } else if (response === 'PASSWORD INVALID') {
                                 replaceText(warningElem, invalidPasswordFormat);
                             } else {
@@ -384,7 +398,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 if (response == 'WAIT') {
                     replaceText(warningElem, emailChangeWait);
                 } else if (response == 'DONE') {
-                    replaceText(warningElem, emailSentInline);
+                    replaceText(warningElem, emailSent);
                     changeColor(warningElem, 'green');
                 } else {
                     showMessage(redirect);
