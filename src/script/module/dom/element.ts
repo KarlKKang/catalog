@@ -131,8 +131,8 @@ export function insertBefore(newNode: Node, beforeNode: Node) {
     getParentNode(beforeNode).insertBefore(newNode, beforeNode);
 }
 
-export function insertAfter(newNode: Node, beforeNode: Node) {
-    getParentNode(beforeNode).insertBefore(newNode, beforeNode.nextSibling);
+export function insertAfter(newNode: Node, afterNode: Node) {
+    getParentNode(afterNode).insertBefore(newNode, afterNode.nextSibling);
 }
 
 export function remove(elem: Node) {

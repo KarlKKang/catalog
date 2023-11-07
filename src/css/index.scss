@@ -3,13 +3,14 @@
 #page-top {
     @include common.lazyload;
     @include common.ellipsis-clipping-2;
+    @include common.position-detector;
 
     #container {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         padding: 0px;
-        margin: calc(3vh - 12px) calc(5% - 12px);
+        margin: calc(3vh - 12px) calc(5% - 12px) -12px;
         transition: opacity .4s ease-out;
 
         >div {
@@ -74,13 +75,17 @@
             }
         }
 
-        @supports (max-width: calc(50% - min(2%, 12px) * 2)) and (margin: calc(3vh - min(2%, 12px)) calc(5% - min(2%, 12px))) and (margin: min(2%, 12px)) {
-            margin: calc(3vh - min(2%, 12px)) calc(5% - min(2%, 12px));
+        @supports (max-width: calc(50% - min(2%, 12px) * 2)) and (margin: calc(3vh - min(2%, 12px)) calc(5% - min(2%, 12px)) max(-2%, -12px)) and (margin: min(2%, 12px)) {
+            margin: calc(3vh - min(2%, 12px)) calc(5% - min(2%, 12px)) max(-2%, -12px);
 
             >div {
                 max-width: calc(50% - min(2%, 12px) * 2);
                 margin: min(2%, 12px);
             }
+        }
+
+        &.empty {
+            margin: 0px;
         }
     }
 
@@ -136,13 +141,6 @@
         }
     }
 
-    #position-detector {
-        width: 100%;
-        height: 0px;
-        margin: 0px;
-        padding: 0px;
-    }
-
     .announcement {
         margin: 3vh auto 0px auto;
         width: 75%;
@@ -170,5 +168,12 @@
         margin: 1em 0px 0px 0px;
         padding: 0px;
         text-align: center;
+    }
+
+    #loading-text {
+        text-align: center;
+        color: var(--alt-text-color);
+        transition: opacity .4s ease-out;
+        margin: 3vh 0px;
     }
 }

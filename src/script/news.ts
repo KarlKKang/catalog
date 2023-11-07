@@ -31,6 +31,8 @@ import {
     removeAllEventListeners,
     setSessionStorage,
     clearSessionStorage,
+    insertAfter,
+    replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/message/template/param/server';
@@ -42,6 +44,7 @@ import type { default as LazyloadObserve } from './module/lazyload';
 import { encodeCFURIComponent, getLocalTime, getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
+import { allResultsShown, loading, noResult } from './module/message/template/inline';
 
 let pageLoaded: boolean;
 
@@ -74,7 +77,9 @@ export default function (showPage: ShowPageFunc, _redirect: RedirectFunc) {
         if (getBaseURL() !== NEWS_TOP_URL) {
             changeURL(NEWS_TOP_URL, true);
         }
-        getAllNews(showPage);
+        const loadingTextContainer = createParagraphElement();
+        loadingTextContainer.id = 'loading-text';
+        getAllNews(showPage, loadingTextContainer);
     } else {
         const lazyloadImportPromise = import(
             /* webpackExports: ["default", "unobserveAll"] */
@@ -108,13 +113,17 @@ function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showP
                 return;
             }
 
-            const showPagePromise = new Promise<HTMLDivElement>((resolve) => {
-                showPage(() => {
-                    const contentContainer = showNews(getById('container'), parsedResponse);
-                    addNavBar(redirect, NAV_BAR_NEWS, () => {
-                        redirect(NEWS_TOP_URL);
-                    });
-                    resolve(contentContainer);
+            const contentContainer = createDivElement();
+            contentContainer.id = 'content';
+            const loadingText = createParagraphElement();
+            loadingText.id = 'loading-text';
+            appendText(loadingText, loading);
+            appendChild(contentContainer, loadingText);
+
+            showPage(() => {
+                showNews(getById('container'), contentContainer, parsedResponse);
+                addNavBar(redirect, NAV_BAR_NEWS, () => {
+                    redirect(NEWS_TOP_URL);
                 });
             });
 
@@ -132,15 +141,10 @@ function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showP
             addEventListener(xhr, 'load', () => {
                 removeAllEventListeners(xhr);
                 if (xhr.status === 200) {
-                    showPagePromise.then((contentContainer) => {
-                        if (!pageLoaded) {
-                            return;
-                        }
-                        contentContainer.innerHTML = xhr.responseText;
-                        bindEventListners(contentContainer);
-                        attachImage(lazyloadImportPromise, contentContainer, newsID);
-                        scrollToHash();
-                    });
+                    contentContainer.innerHTML = xhr.responseText;
+                    bindEventListners(contentContainer);
+                    attachImage(lazyloadImportPromise, contentContainer, newsID);
+                    scrollToHash();
                 } else {
                     showMessage(redirect, notFound);
                 }
@@ -153,25 +157,25 @@ function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showP
     });
 }
 
-function showNews(container: HTMLElement, newsInfo: NewsInfo.NewsInfo): HTMLDivElement {
+function showNews(container: HTMLElement, contentContainer: HTMLElement, newsInfo: NewsInfo.NewsInfo) {
     const contentOuterContainer = createDivElement();
     contentOuterContainer.id = 'content-outer-container';
-    const contentContainer = createDivElement();
-    contentContainer.id = 'content-container';
+    const contentInnerContainer = createDivElement();
+    contentInnerContainer.id = 'content-container';
 
     const titleContainer = createParagraphElement();
     titleContainer.id = 'title';
 
     appendText(titleContainer, newsInfo.title);
     setTitle(newsInfo.title + ' | ' + getTitle());
-    appendChild(contentContainer, titleContainer);
+    appendChild(contentInnerContainer, titleContainer);
 
     const createTimeContainer = createParagraphElement();
     addClass(createTimeContainer, 'date');
 
     const createTime = getLocalTimeString(newsInfo.create_time, true, false);
     appendText(createTimeContainer, '初回掲載日：' + createTime);
-    appendChild(contentContainer, createTimeContainer);
+    appendChild(contentInnerContainer, createTimeContainer);
 
     if (newsInfo.update_time !== null) {
         const updateTimeContainer = createParagraphElement();
@@ -179,19 +183,14 @@ function showNews(container: HTMLElement, newsInfo: NewsInfo.NewsInfo): HTMLDivE
 
         const updateTime = getLocalTimeString(newsInfo.update_time, true, false);
         appendText(updateTimeContainer, '最終更新日：' + updateTime);
-        appendChild(contentContainer, updateTimeContainer);
+        appendChild(contentInnerContainer, updateTimeContainer);
     }
 
-    appendChild(contentContainer, createHRElement());
+    appendChild(contentInnerContainer, createHRElement());
+    appendChild(contentInnerContainer, contentContainer);
 
-    const content = createDivElement();
-    content.id = 'content';
-    appendChild(contentContainer, content);
-
-    appendChild(contentOuterContainer, contentContainer);
+    appendChild(contentOuterContainer, contentInnerContainer);
     appendChild(container, contentOuterContainer);
-
-    return content;
 }
 
 async function attachImage(lazyloadImportPromise: Promise<Lazyload>, contentContainer: HTMLElement, newsID: string): Promise<void> {
@@ -272,9 +271,9 @@ function bindEventListners(contentContainer: HTMLElement): void {
     }
 }
 
-function getAllNews(showPage: ShowPageFunc): void;
-function getAllNews(container: HTMLElement): void;
-function getAllNews(containerOrShowPage: unknown): void {
+function getAllNews(showPage: ShowPageFunc, loadingTextContainer: HTMLElement): void;
+function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement): void;
+function getAllNews(containerOrShowPage: unknown, loadingTextContainer: HTMLElement): void {
     if (pivot === 'EOF') {
         return;
     }
@@ -291,13 +290,14 @@ function getAllNews(containerOrShowPage: unknown): void {
             }
 
             if (containerOrShowPage instanceof HTMLElement) {
-                showAllNews(containerOrShowPage, parsedResponse);
+                showAllNews(containerOrShowPage, parsedResponse, loadingTextContainer);
             } else {
                 (containerOrShowPage as ShowPageFunc)(() => {
                     addNavBar(redirect, NAV_BAR_NEWS);
                     const container = getById('container');
-                    initializeInfiniteScrolling(() => { getAllNews(container); });
-                    showAllNews(container, parsedResponse);
+                    insertAfter(loadingTextContainer, container);
+                    initializeInfiniteScrolling(() => { getAllNews(container, loadingTextContainer); });
+                    showAllNews(container, parsedResponse, loadingTextContainer);
                 });
             }
         },
@@ -305,9 +305,21 @@ function getAllNews(containerOrShowPage: unknown): void {
     });
 }
 
-function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInfo): void {
-    pivot = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.PivotInfo;
+function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInfo, loadingTextContainer: HTMLElement): void {
+    const newPivot = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.PivotInfo;
     const allNewsInfoEntries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
+
+    if (pivot === 0 && allNewsInfoEntries.length === 0) {
+        replaceText(loadingTextContainer, noResult);
+    } else {
+        if (newPivot === 'EOF') {
+            replaceText(loadingTextContainer, allResultsShown);
+        } else {
+            replaceText(loadingTextContainer, loading);
+        }
+    }
+
+    pivot = newPivot;
     for (const entry of allNewsInfoEntries) {
         const overviewContainer = createDivElement();
         addClass(overviewContainer, 'overview-container');

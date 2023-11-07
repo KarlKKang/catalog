@@ -47,3 +47,7 @@ export const loginNotificationEnabled = 'ログイン通知が有効になりま
 export const loginNotificationDisabled = 'ログイン通知が無効になりました。';
 
 export const sessionEnded = 'セッションは終了した。もう一度お試しください。';
+
+export const loading = '読み込み中…';
+export const allResultsShown = 'すべての結果が表示されました。';
+export const noResult = '何も見つかりませんでした。';

@@ -28,6 +28,7 @@ import {
     replaceChildren,
     removeAllEventListeners,
     clearSessionStorage,
+    replaceText,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -39,6 +40,7 @@ import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 import { addTimeout } from './module/timer';
+import { allResultsShown, loading, noResult } from './module/message/template/inline';
 
 let pageLoaded: boolean;
 
@@ -114,8 +116,9 @@ function showPageCallback(
 ) {
     const searchBar = getById('search-bar');
     const searchBarInput = getDescendantsByTagAt(searchBar, 'input', 0) as HTMLInputElement;
-    const containerElem = getById('container');
     searchBarInput.value = urlKeywords;
+    const containerElem = getById('container');
+    const loadingTextContainer = getById('loading-text');
 
     initializeInfiniteScrolling(() => { getSeries(showSeries, true); }, - 256 - 24);
     if (seriesInfo.maintenance !== undefined) {
@@ -173,8 +176,23 @@ function showPageCallback(
     });
 
     function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
-        pivot = seriesInfo.pivot;
-        for (const seriesEntry of seriesInfo.series) {
+        const series = seriesInfo.series;
+        const newPivot = seriesInfo.pivot;
+
+        if (pivot === 0 && series.length === 0) {
+            addClass(containerElem, 'empty');
+            replaceText(loadingTextContainer, noResult);
+        } else {
+            removeClass(containerElem, 'empty');
+            if (newPivot === 'EOF') {
+                replaceText(loadingTextContainer, allResultsShown);
+            } else {
+                replaceText(loadingTextContainer, loading);
+            }
+        }
+
+        pivot = newPivot;
+        for (const seriesEntry of series) {
             const seriesNode = createDivElement();
             const thumbnailNode = createDivElement();
             const overlay = createDivElement();
@@ -222,6 +240,7 @@ function showPageCallback(
         getInfiniteScrolling().setEnabled(false);
 
         addClass(containerElem, 'transparent');
+        addClass(loadingTextContainer, 'transparent');
         const animationTimeout = new Promise<void>((resolve) => {
             addTimeout(() => {
                 for (const eventTarget of eventTargetsTracker) {
@@ -242,6 +261,7 @@ function showPageCallback(
                 replaceChildren(containerElem);
                 showSeries(seriesInfo);
                 removeClass(containerElem, 'transparent');
+                removeClass(loadingTextContainer, 'transparent');
                 disableSearchBarInput(false);
             });
         }, true);
