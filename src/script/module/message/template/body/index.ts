@@ -4,7 +4,7 @@ export { passwordChanged, emailAlreadyRegistered } from '../comm';
 export { defaultErrorSuffix, browserCompatibilitySuffix };
 
 export const unknownError = `不明なエラーが発生しました。${defaultErrorSuffix}`;
-export const expired = 'もう一度やり直してください。';
+export const expired = 'もう一度最初からやり直してください。';
 export const emailChanged = 'メールアドレスが変更されました。';
 export const registerComplete = 'アカウントが登録されました。';
 export const emailSent = '届くまでに時間がかかる場合があります。';
