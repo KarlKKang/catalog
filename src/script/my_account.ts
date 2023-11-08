@@ -178,10 +178,12 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
 
     function showSessions() {
         for (const session of userInfo.sessions) {
-            const sessionContainer = createDivElement();
+            const outerContainer = createDivElement();
+            const innerContainer = createDivElement();
+            appendChild(outerContainer, innerContainer);
 
-            appendParagraph('場所：' + session.country, sessionContainer);
-            appendParagraph('IPアドレス：' + session.ip, sessionContainer);
+            appendParagraph('場所：' + session.country, innerContainer);
+            appendParagraph('IPアドレス：' + session.ip, innerContainer);
 
             const ua = UAParser(session.ua);
             const UNKNOWN = '不明';
@@ -203,11 +205,11 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                     os += ' ' + osVer;
                 }
             }
-            appendParagraph('ブラウザ：' + browser, sessionContainer);
-            appendParagraph('OS：' + os, sessionContainer);
+            appendParagraph('ブラウザ：' + browser, innerContainer);
+            appendParagraph('OS：' + os, innerContainer);
 
-            appendParagraph('最初のログイン：' + getLocalTimeString(session.login_time, true, true), sessionContainer);
-            appendParagraph('最近のアクティビティ：' + getLocalTimeString(session.last_active_time, true, true), sessionContainer);
+            appendParagraph('最初のログイン：' + getLocalTimeString(session.login_time, true, true), innerContainer);
+            appendParagraph('最近のアクティビティ：' + getLocalTimeString(session.last_active_time, true, true), innerContainer);
 
             const sessionID = session.id;
 
@@ -215,18 +217,18 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 const thisDevicePrompt = createParagraphElement();
                 addClass(thisDevicePrompt, 'warning');
                 appendText(thisDevicePrompt, '※このデバイスです。');
-                appendChild(sessionContainer, thisDevicePrompt);
-                prependChild(sessionsContainer, sessionContainer);
+                appendChild(innerContainer, thisDevicePrompt);
+                prependChild(sessionsContainer, outerContainer);
             } else {
                 const sessionWarningElem = createParagraphElement();
                 addClass(sessionWarningElem, 'warning');
                 hideElement(sessionWarningElem);
-                appendChild(sessionContainer, sessionWarningElem);
+                appendChild(innerContainer, sessionWarningElem);
 
                 const sessionLogoutButton = createButtonElement();
                 addClass(sessionLogoutButton, 'button');
                 appendText(sessionLogoutButton, 'ログアウト');
-                appendChild(sessionContainer, sessionLogoutButton);
+                appendChild(innerContainer, sessionLogoutButton);
 
                 addEventListener(sessionLogoutButton, 'click', () => {
                     hideElement(sessionWarningElem);
@@ -260,7 +262,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                         sessionWarningElem
                     );
                 });
-                appendChild(sessionsContainer, sessionContainer);
+                appendChild(sessionsContainer, outerContainer);
             }
         }
     }

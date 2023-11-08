@@ -81,22 +81,33 @@
             box-sizing: border-box;
             box-shadow: var(--shadow);
             transition: box-shadow .4s ease-out;
-            padding: 2em;
-
-            >p {
-                margin: 0px 0px 1em 0px;
-            }
-
-            >.warning {
-                margin: 0px;
-            }
-
-            >.button {
-                margin: 0px;
-            }
+            padding: 0px;
 
             &:hover {
                 box-shadow: var(--shadow-hover);
+            }
+
+            >div {
+                display: inline-block;
+                margin: 2em;
+                max-width: calc(100% - 4em);
+
+                @supports (margin: min(2em, 5%)) and (max-width: calc(100% - min(4em, 10%))) {
+                    margin: min(2em, 5%);
+                    max-width: calc(100% - min(4em, 10%));
+                }
+
+                >p {
+                    margin: 0px 0px 1em 0px;
+                }
+
+                >.warning {
+                    margin: 0px;
+                }
+
+                >.button {
+                    margin: 0px;
+                }
             }
         }
     }
