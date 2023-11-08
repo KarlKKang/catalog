@@ -88,17 +88,22 @@ export function getFormatIndex(): number {
     return formatIndex;
 }
 
-export function createMessageElem(title: string, body: string, titleColor: string | null) {
-    const container = createDivElement();
+export function createMessageElem(title: string, body: string, titleColor: string | null, additionalContent: HTMLElement | null = null) {
+    const outerContainer = createDivElement();
+    const innerContainer = createDivElement();
+    addClass(outerContainer, 'message');
+    appendChild(outerContainer, innerContainer);
+
     const titleElem = createParagraphElement();
     const bodyElem = createDivElement();
-    addClass(container, 'message');
     addClass(titleElem, 'message-title');
     addClass(bodyElem, 'message-body');
     titleElem.innerHTML = title;
     bodyElem.innerHTML = body;
     titleColor !== null && changeColor(titleElem, titleColor);
-    appendChild(container, titleElem);
-    appendChild(container, bodyElem);
-    return container;
+    appendChild(innerContainer, titleElem);
+    appendChild(innerContainer, bodyElem);
+    additionalContent !== null && appendChild(innerContainer, additionalContent);
+
+    return outerContainer;
 }

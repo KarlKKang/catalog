@@ -90,11 +90,11 @@
             >div {
                 display: inline-block;
                 margin: 2em;
-                max-width: calc(100% - 4em);
+                width: calc(100% - 4em);
 
-                @supports (margin: min(2em, 5%)) and (max-width: calc(100% - min(4em, 10%))) {
+                @supports (margin: min(2em, 5%)) and (width: calc(100% - min(4em, 10%))) {
                     margin: min(2em, 5%);
-                    max-width: calc(100% - min(4em, 10%));
+                    width: calc(100% - min(4em, 10%));
                 }
 
                 >p {

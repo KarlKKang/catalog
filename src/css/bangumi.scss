@@ -222,8 +222,7 @@
         margin: 0px 0px 2em 0px;
     }
 
-    #content.video #media-holder,
-    #message {
+    #content.video #media-holder {
         margin: 0px 0px 1em 0px;
     }
 
@@ -305,39 +304,50 @@
 
     .message {
         margin: 0px 0px 1em 0px;
-        padding: 2em;
+        padding: 0px;
         background-color: var(--foreground-color);
         box-sizing: border-box;
-    }
 
-    .message-title {
-        text-align: center;
-        margin: 0px 0px 1em 0px;
-        padding: 0px;
-        font-size: x-large;
-        font-weight: 500;
-    }
+        >div {
+            display: inline-block;
+            margin: 2em;
+            width: calc(100% - 4em);
 
-    .message-body {
-        margin: 1em 0px 0px 0px;
-        padding: 0px;
-        text-align: center;
+            @supports (margin: min(2em, 5%)) and (width: calc(100% - min(4em, 10%))) {
+                margin: min(2em, 5%);
+                width: calc(100% - min(4em, 10%));
+            }
 
-        >p {
-            /*margin and padding already done in #message-body wrapper*/
-            margin: 0px;
-            padding: 0px;
-        }
-    }
+            .message-title {
+                text-align: center;
+                margin: 0px 0px 1em 0px;
+                padding: 0px;
+                font-size: x-large;
+                font-weight: 500;
+            }
 
-    #warning-button-group {
-        margin: 0px -1em 0px -1em;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+            .message-body {
+                margin: 1em 0px 0px 0px;
+                padding: 0px;
+                text-align: center;
 
-        >.button {
-            margin: 1em 1em 0px 1em;
+                >p {
+                    /*margin and padding already done in #message-body wrapper*/
+                    margin: 0px;
+                    padding: 0px;
+                }
+            }
+
+            #warning-button-group {
+                margin: 0px -1em 0px -1em;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+
+                >.button {
+                    margin: 1em 1em 0px 1em;
+                }
+            }
         }
     }
 

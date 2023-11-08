@@ -116,8 +116,6 @@ export default async function (
         } else if (ageRestricted.toLowerCase() == 'r18+') {
             warningTitle = '「R18+指定」<br>年齢認証';
         }
-        const warningElem = createMessageElem(warningTitle, 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？', 'red');
-        warningElem.id = 'warning';
 
         const warningButtonGroup = createDivElement();
         warningButtonGroup.id = 'warning-button-group';
@@ -129,6 +127,10 @@ export default async function (
         addClass(warningButtonNo, 'button');
         appendChild(warningButtonGroup, warningButtonYes);
         appendChild(warningButtonGroup, warningButtonNo);
+
+        const warningElem = createMessageElem(warningTitle, 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？', 'red', warningButtonGroup);
+        warningElem.id = 'warning';
+
         addEventListener(warningButtonYes, 'click', () => {
             hideElement(warningElem);
             showElement(contentContainer);
@@ -136,7 +138,6 @@ export default async function (
         addEventListener(warningButtonNo, 'click', () => {
             redirect(TOP_URL);
         });
-        appendChild(warningElem, warningButtonGroup);
 
         hideElement(contentContainer);
         insertBefore(warningElem, contentContainer);
