@@ -157,6 +157,8 @@ input {
     box-shadow: var(--shadow);
     transition: box-shadow .4s ease-out;
     background: var(--foreground-color);
+    max-width: 100%;
+    margin: 1em 0px;
 }
 
 .input-field:not(.disabled):hover,
