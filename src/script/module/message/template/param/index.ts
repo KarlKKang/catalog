@@ -23,6 +23,7 @@ export const emailChanged = {
     title: title.completed,
     message: body.emailChanged,
     color: 'green',
+    url: TOP_URL,
     buttonText: 'トップページへ'
 };
 export const registerComplete = {
