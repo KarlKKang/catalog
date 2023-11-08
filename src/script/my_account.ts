@@ -1006,7 +1006,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
 
         popupWindowModule.initializePopupWindow().then((popupWindow) => {
             const promptText = createParagraphElement();
-            appendText(promptText, '二要素認証を有効にするには、Authenticatorアプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
+            appendText(promptText, '二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
             const qrcode = createCanvasElement();
             addClass(qrcode, 'totp-qrcode');
