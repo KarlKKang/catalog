@@ -470,6 +470,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     function enableMfa() {
         disableAllInputs(true);
         hideElement(mfaWarning);
+        changeColor(mfaWarning, 'red');
 
         modifyMfaReauthenticationPrompt(
             (
@@ -517,6 +518,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     function disableMfa() {
         disableAllInputs(true);
         hideElement(mfaWarning);
+        changeColor(mfaWarning, 'red');
 
         modifyMfaReauthenticationPrompt(
             (
@@ -557,6 +559,8 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     function generateRecoveryCode() {
         disableAllInputs(true);
         hideElement(recoveryCodeWarning);
+        changeColor(recoveryCodeWarning, 'red');
+
         reauthenticationPrompt(
             (
                 authenticationParam: string,
@@ -569,13 +573,11 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                         serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
                             if (response == 'TOTP NOT SET') {
                                 closeWindow();
-                                changeColor(recoveryCodeWarning, 'red');
                                 replaceText(recoveryCodeWarning, mfaNotSet);
                                 showElement(recoveryCodeWarning);
                                 disableAllInputs(false);
                             } else if (response == 'WAIT') {
                                 closeWindow();
-                                changeColor(recoveryCodeWarning, 'red');
                                 replaceText(recoveryCodeWarning, generateRecoveryCodeWait);
                                 showElement(recoveryCodeWarning);
                                 disableAllInputs(false);
@@ -589,6 +591,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                     return;
                                 }
                                 showRecoveryCode(parsedResponse, () => {
+                                    hideElement(recoveryCodeInfo);
                                     disableAllInputs(false);
                                 });
                             }
@@ -846,7 +849,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 disableAllPopUpWindowInputs(true);
                 hideElement(warningText);
 
-                const otp = otpInput.value;
+                const otp = otpInput.value.toUpperCase();
                 if (!/^[2-9A-HJ-NP-Z]{6}$/.test(otp)) {
                     showElement(warningText);
                     disableAllPopUpWindowInputs(false);
@@ -1008,7 +1011,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
             const qrcode = createCanvasElement();
             addClass(qrcode, 'totp-qrcode');
             addClass(qrcode, 'hcenter');
-            toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H' }, () => {
+            toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H', margin: 0 }, () => {
                 qrcode.style.removeProperty('height');
             });
 
@@ -1067,7 +1070,6 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                     callback: (response: string) => {
                         if (response === 'EXPIRED') {
                             popupWindow.hide();
-                            changeColor(mfaWarning, 'red');
                             replaceText(mfaWarning, sessionEnded);
                             showElement(mfaWarning);
                             disableAllInputs(false);
