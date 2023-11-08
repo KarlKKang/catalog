@@ -16,7 +16,7 @@ import {
     clearSessionStorage,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { expired, emailChanged, emailAlreadyRegistered } from './module/message/template/param';
+import { expired, emailChanged } from './module/message/template/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/message/template/inline';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
@@ -50,8 +50,6 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
                 showMessage(redirect, expired);
-            } else if (response == 'DUPLICATED') {
-                showMessage(redirect, emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
                 showPage(() => {
                     showPageCallback(redirect, param, signature);
@@ -169,8 +167,6 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
 
                 if (response == 'EXPIRED') {
                     showMessage(redirect, expired);
-                } else if (response == 'DUPLICATED') {
-                    showMessage(redirect, emailAlreadyRegistered);
                 } else if (response == 'DONE') {
                     showMessage(redirect, emailChanged);
                 } else {
