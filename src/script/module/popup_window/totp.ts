@@ -50,6 +50,7 @@ export function promptForTotp(
                 closeWindowCallback();
                 timeoutCallback();
                 popupWindow.hide();
+                removeInterval(timer);
             }
         }, 1000);
 
@@ -64,7 +65,7 @@ export function promptForTotp(
             hideElement(warningText);
 
             const totp = totpInput.value;
-            if (!/^\d{6}$/.test(totp) && !/^[A-Za-z\d/+=]{32}$/.test(totp)) {
+            if (!/^\d{6}$/.test(totp) && !/^[a-zA-Z0-9~_-]{32}$/.test(totp)) {
                 showElement(warningText);
                 return;
             }
