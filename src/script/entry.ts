@@ -339,6 +339,9 @@ async function registerServiceWorker(redirect: RedirectFunc) { // This function 
 
                 addEventListener(updateButton, 'click', () => {
                     if (serviceWorkerUpToDate) {
+                        if (DEVELOPMENT) {
+                            console.log('Service worker already up to date.');
+                        }
                         w.location.reload();
                         return;
                     }
@@ -381,9 +384,15 @@ async function registerServiceWorker(redirect: RedirectFunc) { // This function 
 
             // These two event should never be removed.
             serviceWorker.addEventListener('waiting', () => {
+                if (DEVELOPMENT) {
+                    console.log('Service worker waiting.');
+                }
                 serviceWorkerUpToDate = false;
             });
             serviceWorker.addEventListener('controlling', () => {
+                if (DEVELOPMENT) {
+                    console.log('Service worker controlling.');
+                }
                 serviceWorkerUpToDate = true;
             });
 
@@ -412,6 +421,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     }
 
     loadPagePrepare(url, withoutHistory); // This prepare should be just before currentScriptImportPromise. Otherwise offloaded pages may be reinitialized by themselves.
+    d.documentElement.style.minHeight = '0'; // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
 
     body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
     setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
@@ -507,6 +517,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
                 return;
             }
 
+            d.documentElement.style.removeProperty('min-height');
             getBody().innerHTML = html.default;
             registerServiceWorker(redirect);
             callback?.();
