@@ -135,25 +135,32 @@
     }
 
     .player-big-play-button {
-        font-size: 4.0em;
-        height: 1.6em;
-        width: 1.6em;
+        width: 6em;
         display: block;
         position: absolute;
         padding: 0;
-        cursor: pointer;
-        opacity: 1;
-        border: 0px;
-        background-color: var(--foreground-color);
-        border-radius: 50%;
-        transition: all 0.4s;
-        color: var(--text-color);
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
 
+        >button {
+            display: block;
+            position: relative;
+            width: 100%;
+            padding: 0px 0px 100% 0px;
+            cursor: pointer;
+            border: 0px;
+            background-color: var(--foreground-color);
+            border-radius: 50%;
+            color: var(--text-color);
+        }
+
         .player-icon-placeholder>svg {
-            height: 1em;
+            height: 70%;
+        }
+
+        @supports (width: min(30%, 7em)) {
+            width: min(30%, 7em);
         }
     }
 

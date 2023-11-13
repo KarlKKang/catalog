@@ -194,13 +194,15 @@ export class Player {
         this.IS_VIDEO && appendChild(controls, loadingSpinner);
 
         // Big play button
+        const bigPlayButtonContainer = createDivElement();
         const bigPlayButton = createButtonElement();
+        appendChild(bigPlayButtonContainer, bigPlayButton);
         this.bigPlayButton = bigPlayButton;
         bigPlayButton.type = 'button';
         bigPlayButton.title = 'Play Video';
-        addPlayerClass(bigPlayButton, 'big-play-button');
+        addPlayerClass(bigPlayButtonContainer, 'big-play-button');
         const bigPlayButtonPlaceholder = addPlayerPlaceholder(bigPlayButton);
-        this.IS_VIDEO && appendChild(controls, bigPlayButton);
+        this.IS_VIDEO && appendChild(controls, bigPlayButtonContainer);
 
         // Control bar
         const controlBar = createDivElement();
