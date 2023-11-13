@@ -10,7 +10,6 @@ import {
     getById,
     createElement,
     addClass,
-    toggleClass,
     appendChild,
     insertBefore,
     prependChild,
@@ -18,7 +17,6 @@ import {
     getDescendantsByClassAt,
     hideElement,
     getBaseURL,
-    containsClass,
     createButtonElement,
     createDivElement,
     createSelectElement,
@@ -27,6 +25,7 @@ import {
     createUListElement,
     appendText,
     appendListItems,
+    replaceText,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -112,13 +111,7 @@ export function buildDownloadAccordion(
         initialFormat: VideoFormatInfo;
     }
 ): [HTMLDivElement, HTMLDivElement] {
-    const accordion = createButtonElement();
-    addClass(accordion, 'accordion');
-    appendText(accordion, 'ダウンロード');
-
-    const accordionPanel = createDivElement();
-    addClass(accordionPanel, 'panel');
-    appendChild(accordionPanel, createHRElement());
+    const [accordion, accordionPanel] = buildAccordion('ダウンロード', true);
 
     const accordionPanelContent = createUListElement();
     appendListItems(
@@ -228,26 +221,51 @@ export function buildDownloadAccordion(
     appendChild(downloadElem, accordion);
     appendChild(downloadElem, accordionPanel);
     appendChild(downloadElem, iframe);
-    addAccordionEvent(accordion, accordionPanel, true);
     return [downloadElem, containerSelector];
 }
 
-export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, active: boolean): void {
+export function buildAccordion(title: string, active: boolean): [HTMLDivElement, HTMLDivElement] {
+    const accordion = createDivElement();
+    addClass(accordion, 'accordion');
+
+    const titleElem = createDivElement();
+    addClass(titleElem, 'accordion-title');
+    appendText(titleElem, title);
+    appendChild(accordion, titleElem);
+
+    const iconElem = createDivElement();
+    addClass(iconElem, 'accordion-icon');
+    appendChild(accordion, iconElem);
+
+    const accordionPanel = createDivElement();
+    addClass(accordionPanel, 'panel');
+    appendChild(accordionPanel, createHRElement());
+    addAccordionEvent(accordion, accordionPanel, iconElem, active);
+    return [accordion, accordionPanel];
+}
+
+export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HTMLElement | null, active: boolean): void {
     const hidePanel = () => {
         panel.style.maxHeight = '0px';
     };
 
-    if (active) {
-        addClass(acc, 'active');
-    } else {
+    const changeIcon = () => {
+        if (icon !== null) {
+            replaceText(icon, active ? '-' : '+');
+        }
+    };
+
+    if (!active) {
         hidePanel();
     }
+    changeIcon();
 
     let currentTimeout: NodeJS.Timeout | null = null;
     let currentAnimationFrame: number | null = null;
     addEventListener(acc, 'click', () => {
-        toggleClass(acc, 'active');
-        if (containsClass(acc, 'active')) {
+        active = !active;
+        changeIcon();
+        if (active) {
             currentAnimationFrame = null;
             panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
             const timeout = addTimeout(() => {

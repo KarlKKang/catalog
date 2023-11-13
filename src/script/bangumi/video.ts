@@ -18,9 +18,7 @@ import {
     createDivElement,
     createSelectElement,
     createOptionElement,
-    createButtonElement,
     createSpanElement,
-    createHRElement,
     appendText,
     replaceChildren,
     replaceText,
@@ -49,7 +47,7 @@ import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 
 import { updateURLParam, getFormatIndex } from './helper';
-import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, addAccordionEvent, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError } from './media_helper';
+import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { RedirectFunc } from '../module/type/RedirectFunc';
@@ -429,14 +427,9 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
 }
 
 function displayChapters(mediaHolder: HTMLElement, mediaInstance: Player, offset: number, active: boolean) {
-    const accordion = createButtonElement();
+    const [accordion, accordionPanel] = buildAccordion('チャプター', active);
     accordion.id = 'chapters-accordion';
-    addClass(accordion, 'accordion');
-    appendText(accordion, 'チャプター');
-
-    const accordionPanel = createDivElement();
-    addClass(accordionPanel, 'panel');
-    appendChild(accordionPanel, createHRElement());
+    eventTargetsTracker.add(accordion);
 
     const chapterElements: HTMLParagraphElement[] = [];
     for (const chapter of epInfo.chapters) {
@@ -461,8 +454,6 @@ function displayChapters(mediaHolder: HTMLElement, mediaInstance: Player, offset
     addClass(chaptersNode, 'chapters');
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);
-    addAccordionEvent(accordion, accordionPanel, active);
-    eventTargetsTracker.add(accordion);
     appendChild(mediaHolder, chaptersNode);
 
     const video = mediaInstance.media;

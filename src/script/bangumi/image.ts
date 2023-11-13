@@ -12,7 +12,6 @@ import {
     createParagraphElement,
     createDivElement,
     createButtonElement,
-    createHRElement,
     createUListElement,
     createLIElement,
     appendText,
@@ -22,7 +21,7 @@ import type { ImageLoaderImportPromise, LazyloadImportPromise } from './get_impo
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import type { default as LazyloadObserve } from '../module/lazyload';
-import { addAccordionEvent } from './media_helper';
+import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { RedirectFunc } from '../module/type/RedirectFunc';
@@ -68,19 +67,12 @@ export default async function (
     const downloadElem = createDivElement();
     addClass(downloadElem, 'download');
 
-    const downloadAccordion = createButtonElement();
-    addClass(downloadAccordion, 'accordion');
-    appendText(downloadAccordion, 'ダウンロード');
-
-    const downloadPanel = createDivElement();
-    addClass(downloadPanel, 'panel');
-    appendChild(downloadPanel, createHRElement());
+    const [downloadAccordion, downloadPanel] = buildAccordion('ダウンロード', true);
     const downloadPanelContent = createUListElement();
     const downloadPanelContentItem = createLIElement();
     appendText(downloadPanelContentItem, '画像をクリックすると、ダウンロードできます。');
     appendChild(downloadPanelContent, downloadPanelContentItem);
     appendChild(downloadPanel, downloadPanelContent);
-    addAccordionEvent(downloadAccordion, downloadPanel, true);
 
     appendChild(downloadElem, downloadAccordion);
     appendChild(downloadElem, downloadPanel);
@@ -137,7 +129,7 @@ export default async function (
         appendChild(downloadPanel, downloadAnchor); // The element need to be in the document for some old browsers like Firefox <= 69.
 
         removeRightClick(lazyloadNode);
-        addAccordionEvent(lazyloadNode, downloadPanel, false);
+        addAccordionEvent(lazyloadNode, downloadPanel, null, false);
 
         appendChild(imageNode, lazyloadNode);
         appendChild(imageNode, downloadPanel);

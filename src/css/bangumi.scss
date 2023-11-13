@@ -361,31 +361,29 @@
 /* Style the buttons that are used to open and close the accordion panel */
     .accordion {
         background-color: var(--foreground-color);
-        font-size: medium;
-        font-weight: 500;
+        display: flex;
         cursor: pointer;
-        padding: 1em 2em 1em 1em;
-        /*Right 2em padding to avoid overflow into the icon section*/
         margin: 0px;
+        padding: 0px 1em;
         width: 100%;
-        text-align: left;
-        border: none;
-        outline: none;
-        overflow-wrap: anywhere;
+        align-items: center;
+        box-sizing: border-box;
 
-        &:after {
-            content: '\002B';
-            /* Unicode character for "plus" sign (+) */
-            font-size: 1em;
-            color: var(--alt-text-color);
-            float: right;
-            margin: 0px -1em 0px 0px;
-            /*Offset into the padding region to avoid collision with accodion text*/
+        >.accordion-title {
+            flex: 1;
+            font-weight: 500;
+            margin: 1em 0px;
+            padding: 0px;
+            overflow-wrap: anywhere;
         }
 
-        &.active:after {
-            content: "\2212";
-            /* Unicode character for "minus" sign (-) */
+        >.accordion-icon {
+            flex: none;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1em;
+            color: var(--alt-text-color);
+            margin: 0px 0px 0px 1em;
+            padding: 0px;
         }
     }
 
@@ -404,6 +402,21 @@
             background-color: var(--horizontal-line-foreground-color);
         }
     }
+
+    @supports (padding: 0px min(5%, 1em)) and (margin: 0px 0px 0px min(5%, 1em)) {
+        .accordion {
+            padding: 0px min(5%, 1em);
+
+            >.accordion-icon {
+                margin: 0px 0px 0px min(5%, 1em);
+            }
+        }
+
+        .panel {
+            padding: 0px min(5%, 1em);
+        }
+    }
+
 
     /*Chapters*/
     .chapters>.panel {
@@ -426,12 +439,6 @@
         }
     }
 
-    /*Download*/
-    .download,
-    .image>.panel {
-        text-align: center;
-    }
-
     #download-options {
         display: flex;
         flex-wrap: wrap;
@@ -448,7 +455,6 @@
 
     .download>.panel>ul {
         padding: 0px 0px 0px 2em;
-        text-align: left;
     }
 
     #ep-button-wrapper>div,

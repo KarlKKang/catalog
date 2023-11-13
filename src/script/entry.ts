@@ -236,6 +236,7 @@ const directories: PageMap = {
         script: () => import('./bangumi'),
         style: () => [
             segMDL2Css(),
+            courierNewRegularCss(),
             navBarCss(),
             import('../css/bangumi.scss'),
             import('../css/player.scss'),
