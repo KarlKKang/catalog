@@ -431,10 +431,8 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
     const styleImportPromises = page.style();
     const htmlImportPromise = page.html();
 
-    let newPgid = performance.now();
-    while (setPgid(newPgid) === newPgid) {
-        newPgid = performance.now();
-    }
+    const newPgid = {};
+    setPgid(newPgid);
 
     addEventListener(w, 'popstate', () => {
         if (page.customPopState) {
