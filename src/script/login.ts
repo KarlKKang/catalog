@@ -26,8 +26,6 @@ import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { pgid, redirect } from './module/global';
 
-let destroyPopupWindow: null | (() => void) = null;
-
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
@@ -92,15 +90,14 @@ function showPageCallback() {
             'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0'),
             async () => {
                 const currentPgid = pgid;
-                const popupWindowModule = await popupWindowImportPromise;
+                const popupWindow = await popupWindowImportPromise;
                 const promptForTotp = (await promptForTotpImportPromise).promptForTotp;
                 if (currentPgid !== pgid) {
                     return;
                 }
-                destroyPopupWindow = popupWindowModule.destroy;
 
                 promptForTotp(
-                    popupWindowModule.initializePopupWindow,
+                    popupWindow,
                     (totp, closeWindow, showWarning) => {
                         sendLoginRequest(
                             'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0') + '&totp=' + totp,
@@ -201,8 +198,4 @@ function showPageCallback() {
 
         return TOP_URL;
     }
-}
-
-export function offload() {
-    destroyPopupWindow?.();
 }

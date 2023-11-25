@@ -75,8 +75,6 @@ import { UAParser } from 'ua-parser-js';
 import * as InviteResult from './module/type/InviteResult';
 import { pgid, redirect } from './module/global';
 
-let destroyPopupWindow: null | (() => void) = null;
-
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
@@ -671,15 +669,14 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
                 const passwordEncoded = encodeURIComponent(password);
 
                 const failedTotpCallback = async () => {
-                    const popupWindowModule = await popupWindowImportPromise;
+                    const popupWindow = await popupWindowImportPromise;
                     const promptForTotp = (await promptForTotpImportPromise).promptForTotp;
                     if (currentPgid !== pgid) {
                         return;
                     }
-                    destroyPopupWindow = popupWindowModule.destroy;
 
                     promptForTotp(
-                        popupWindowModule.initializePopupWindow,
+                        popupWindow,
                         (totp, closeWindow, showWarning) => {
                             sendRequestCallback(
                                 'email=' + emailEncoded + '&password=' + passwordEncoded + '&totp=' + totp,
@@ -768,13 +765,16 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
             closeWindow: () => void,
         ) => void
     ) {
-        const popupWindowModule = await popupWindowImportPromise;
+        const popupWindowInitialize = await popupWindowImportPromise;
         if (currentPgid !== pgid) {
             return;
         }
-        destroyPopupWindow = popupWindowModule.destroy;
 
-        popupWindowModule.initializePopupWindow().then((popupWindow) => {
+        popupWindowInitialize().then((popupWindow) => {
+            if (currentPgid !== pgid) {
+                return;
+            }
+
             const promptText = createParagraphElement();
             appendText(promptText, 'メールに送信された認証コードを入力してください。');
 
@@ -892,13 +892,16 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
         ) => void,
         message?: string | Node[]
     ) {
-        const popupWindowModule = await popupWindowImportPromise;
+        const popupWindowInitialize = await popupWindowImportPromise;
         if (currentPgid !== pgid) {
             return;
         }
-        destroyPopupWindow = popupWindowModule.destroy;
 
-        popupWindowModule.initializePopupWindow().then((popupWindow) => {
+        popupWindowInitialize().then((popupWindow) => {
+            if (currentPgid !== pgid) {
+                return;
+            }
+
             const promptText = createParagraphElement();
             appendText(promptText, 'メールアドレスとパスワードを入力してください。');
 
@@ -1000,13 +1003,16 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     }
 
     async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
-        const popupWindowModule = await popupWindowImportPromise;
+        const popupWindowInitialize = await popupWindowImportPromise;
         if (currentPgid !== pgid) {
             return;
         }
-        destroyPopupWindow = popupWindowModule.destroy;
 
-        popupWindowModule.initializePopupWindow().then((popupWindow) => {
+        popupWindowInitialize().then((popupWindow) => {
+            if (currentPgid !== pgid) {
+                return;
+            }
+
             const promptText = createParagraphElement();
             appendText(promptText, '二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
@@ -1126,13 +1132,16 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     }
 
     async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo, completedCallback: () => void) {
-        const popupWindowModule = await popupWindowImportPromise;
+        const popupWindowInitialize = await popupWindowImportPromise;
         if (currentPgid !== pgid) {
             return;
         }
-        destroyPopupWindow = popupWindowModule.destroy;
 
-        popupWindowModule.initializePopupWindow().then((popupWindow) => {
+        popupWindowInitialize().then((popupWindow) => {
+            if (currentPgid !== pgid) {
+                return;
+            }
+
             const promptText = createParagraphElement();
             appendText(promptText, 'リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
 
@@ -1249,8 +1258,4 @@ function appendParagraph(text: string, container: HTMLElement) {
     const elem = createParagraphElement();
     appendText(elem, text);
     appendChild(container, elem);
-}
-
-export function offload() {
-    destroyPopupWindow?.();
 }

@@ -4,7 +4,7 @@ import { TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout, removeAllTimers } from './module/timer';
-import { popupWindowImport } from './module/popup_window';
+import { popupWindowImport, destroy as destroyPopupWindow } from './module/popup_window';
 import type { Workbox as WorkboxType } from 'workbox-window';
 import * as messagePageScript from './message';
 import { default as messagePageHTML } from '../html/message.html';
@@ -51,7 +51,6 @@ let currentPage: {
     html_entry: HTMLEntry;
 } | null = null;
 
-let destroyPopupWindow: null | (() => void) = null;
 let swUpdateLastPromptTime: number = 0;
 let serviceWorker: WorkboxType | null = null;
 let serviceWorkerUpToDate: boolean = true;
@@ -300,7 +299,7 @@ function loadPagePrepare(url: string, withoutHistory: boolean) {
     currentPage.script.offload?.();
     deregisterAllEventTargets();
     removeAllTimers();
-    destroyPopupWindow?.();
+    destroyPopupWindow();
     replaceChildren(getBody());
     changeURL(url, withoutHistory);
     return;
@@ -310,13 +309,15 @@ async function registerServiceWorker() { // This function should be called after
     if ('serviceWorker' in navigator) {
         const currentPgid = pgid;
         const showSkipWaitingPrompt = async (wb: WorkboxType) => {
-            const popupWindowModule = await popupWindowImport();
+            const popupWindowInitialize = await popupWindowImport();
             if (pgid !== currentPgid) {
                 return;
             }
-            destroyPopupWindow = popupWindowModule.destroy;
 
-            popupWindowModule.initializePopupWindow().then((popupWindow) => {
+            popupWindowInitialize().then((popupWindow) => {
+                if (pgid !== currentPgid) {
+                    return;
+                }
                 const titleText = createParagraphElement();
                 addClass(titleText, 'title');
                 appendText(titleText, 'アップデートが利用可能です');

@@ -3,6 +3,7 @@ import { changeColor, disableInput } from '../common';
 import { failedTotp } from '../message/template/inline';
 import { addInterval, removeInterval } from '../timer';
 import type { PopupWindow } from './core';
+import { pgid } from '../global';
 
 export function promptForTotp(
     initializePopupWindow: () => Promise<PopupWindow>,
@@ -14,7 +15,11 @@ export function promptForTotp(
     closeWindowCallback: () => void,
     timeoutCallback: () => void,
 ) {
+    const currentPgid = pgid;
     initializePopupWindow().then((popupWindow) => {
+        if (currentPgid !== pgid) {
+            return;
+        }
         const promptText = createParagraphElement();
         appendText(promptText, '二要素認証コードまたはリカバリーコードを入力してください。');
 
