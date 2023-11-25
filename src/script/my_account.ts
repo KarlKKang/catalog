@@ -68,7 +68,7 @@ import * as RecoveryCodeInfo from './module/type/RecoveryCodeInfo';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { toCanvas } from 'qrcode';
 import { isString } from './module/type/helper';
-import { EMAIL_REGEX, PASSWORD_REGEX, getLocalTimeString, handleAuthenticationResult } from './module/common/pure';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX, getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addInterval, removeInterval } from './module/timer';
 import { UAParser } from 'ua-parser-js';
@@ -1227,17 +1227,22 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
 }
 
 function serverResponseCallback(response: string, failedCallback: (message: string | Node[]) => void, failedTotpCallback: () => void, successCallback: () => void) {
-    const authenticationResult = handleAuthenticationResult(
-        response,
-        () => { failedCallback(loginFailed); },
-        failedTotpCallback,
-        () => { failedCallback([...accountDeactivated()]); },
-        () => { failedCallback(tooManyFailedLogin); },
-    );
-    if (!authenticationResult) {
-        return;
+    switch (response) {
+        case AUTH_FAILED:
+            failedCallback(loginFailed);
+            break;
+        case AUTH_FAILED_TOTP:
+            failedTotpCallback();
+            break;
+        case AUTH_DEACTIVATED:
+            failedCallback([...accountDeactivated()]);
+            break;
+        case AUTH_TOO_MANY_REQUESTS:
+            failedCallback(tooManyFailedLogin);
+            break;
+        default:
+            successCallback();
     }
-    successCallback();
 }
 
 function appendParagraph(text: string, container: HTMLElement) {

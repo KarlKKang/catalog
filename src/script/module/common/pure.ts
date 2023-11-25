@@ -65,28 +65,10 @@ export function objectKeyExists(key: PropertyKey, obj: object) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-export function handleAuthenticationResult(
-    response: string,
-    failedCallback: () => void,
-    failedTotpCallback: () => void,
-    deactivatedCallback: () => void,
-    tooManyRequestsCallback: () => void,
-): boolean {
-    if (response == 'FAILED') {
-        failedCallback();
-        return false;
-    } else if (response == 'DEACTIVATED') {
-        deactivatedCallback();
-        return false;
-    } else if (response == 'TOO MANY REQUESTS') {
-        tooManyRequestsCallback();
-        return false;
-    } else if (response == 'FAILED TOTP') {
-        failedTotpCallback();
-        return false;
-    }
-    return true;
-}
+export const AUTH_FAILED = 'FAILED';
+export const AUTH_FAILED_TOTP = 'FAILED TOTP';
+export const AUTH_DEACTIVATED = 'DEACTIVATED';
+export const AUTH_TOO_MANY_REQUESTS = 'TOO MANY REQUESTS';
 
 export function secToTimestamp(sec: number, templateSec?: number) {
     if (isNaN(sec)) {

@@ -19,7 +19,7 @@ import { show as showMessage } from './module/message';
 import { expired, emailChanged } from './module/message/template/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/message/template/inline';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
-import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { pgid, redirect } from './module/global';
 
@@ -138,38 +138,36 @@ function showPageCallback(param: string, signature: string) {
     function sendChangeEmailRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
         sendServerRequest('change_email', {
             callback: function (response: string) {
-                const authenticationResult = handleAuthenticationResult(
-                    response,
-                    () => {
+                switch (response) {
+                    case AUTH_FAILED:
                         closePopUpWindow?.();
                         replaceText(warningElem, loginFailed);
                         showElement(warningElem);
                         disableAllInputs(false);
-                    },
-                    failedTotpCallback,
-                    () => {
+                        break;
+                    case AUTH_FAILED_TOTP:
+                        failedTotpCallback();
+                        break;
+                    case AUTH_DEACTIVATED:
                         closePopUpWindow?.();
                         replaceChildren(warningElem, ...accountDeactivated());
                         showElement(warningElem);
                         disableAllInputs(false);
-                    },
-                    () => {
+                        break;
+                    case AUTH_TOO_MANY_REQUESTS:
                         closePopUpWindow?.();
                         replaceText(warningElem, tooManyFailedLogin);
                         showElement(warningElem);
                         disableAllInputs(false);
-                    },
-                );
-                if (!authenticationResult) {
-                    return;
-                }
-
-                if (response == 'EXPIRED') {
-                    showMessage(expired);
-                } else if (response == 'DONE') {
-                    showMessage(emailChanged);
-                } else {
-                    showMessage();
+                        break;
+                    case 'EXPIRED':
+                        showMessage(expired);
+                        break;
+                    case 'DONE':
+                        showMessage(emailChanged);
+                        break;
+                    default:
+                        showMessage();
                 }
             },
             content: content

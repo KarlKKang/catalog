@@ -22,7 +22,7 @@ import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } fro
 import { unrecommendedBrowser } from './module/message/template/param';
 import { UNRECOMMENDED_BROWSER } from './module/browser';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
-import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { pgid, redirect } from './module/global';
 
@@ -123,40 +123,37 @@ function showPageCallback() {
     function sendLoginRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
         sendServerRequest('login', {
             callback: function (response: string) {
-                const authenticationResult = handleAuthenticationResult(
-                    response,
-                    () => {
+                switch (response) {
+                    case AUTH_FAILED:
                         closePopUpWindow?.();
                         replaceText(warningElem, loginFailed);
                         showElement(warningElem);
                         disableAllInputs(false);
-                    },
-                    failedTotpCallback,
-                    () => {
+                        break;
+                    case AUTH_FAILED_TOTP:
+                        failedTotpCallback();
+                        break;
+                    case AUTH_DEACTIVATED:
                         closePopUpWindow?.();
                         replaceChildren(warningElem, ...accountDeactivated());
                         showElement(warningElem);
                         disableAllInputs(false);
-                    },
-                    () => {
+                        break;
+                    case AUTH_TOO_MANY_REQUESTS:
                         closePopUpWindow?.();
                         replaceText(warningElem, tooManyFailedLogin);
                         showElement(warningElem);
                         disableAllInputs(false);
-                    },
-                );
-                if (!authenticationResult) {
-                    return;
-                }
-
-                if (response == 'APPROVED') {
-                    if (UNRECOMMENDED_BROWSER) {
-                        showMessage(unrecommendedBrowser(getForwardURL()));
-                    } else {
-                        redirect(getForwardURL(), true);
-                    }
-                } else {
-                    showMessage();
+                        break;
+                    case 'APPROVED':
+                        if (UNRECOMMENDED_BROWSER) {
+                            showMessage(unrecommendedBrowser(getForwardURL()));
+                        } else {
+                            redirect(getForwardURL(), true);
+                        }
+                        break;
+                    default:
+                        showMessage();
                 }
             },
             content: content
