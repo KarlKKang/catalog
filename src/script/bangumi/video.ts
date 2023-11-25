@@ -53,8 +53,9 @@ import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { RedirectFunc } from '../module/type/RedirectFunc';
 import { HLS_BUFFER_APPEND_ERROR } from '../module/player/media_error';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
+import { pgid } from '../module/global';
 
-let pageLoaded = true;
+let currentPgid: unknown;
 
 let seriesID: string;
 let epIndex: number;
@@ -81,9 +82,7 @@ export default function (
     startTime: number | null,
     play: boolean
 ) {
-    if (!pageLoaded) {
-        return;
-    }
+    currentPgid = pgid;
 
     seriesID = _seriesID;
     epIndex = _epIndex;
@@ -149,7 +148,7 @@ export default function (
     insertBefore(formatContainer, mediaHolder);
 
     createMediaSessionPromise.then((mediaSessionInfo) => {
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
         const [downloadAccordion, containerSelector] = buildDownloadAccordion(redirect, mediaSessionInfo.credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
@@ -247,7 +246,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
         mediaMessageQueue.push(['HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null]);
     } else if (currentFormat.video === 'hevc41') {
         const CAN_PLAY_HEVC = await canPlayHEVC(USE_NATIVE_HLS, currentFormat.avc_fallback);
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
         if (CAN_PLAY_HEVC) {
@@ -350,7 +349,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
             throw e;
         }
 
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
 
@@ -378,7 +377,7 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
             throw e;
         }
 
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
 
@@ -533,12 +532,7 @@ function cleanupEvents() {
     eventTargetsTracker.clear();
 }
 
-export function reload() {
-    pageLoaded = true;
-}
-
 export function offload() {
-    pageLoaded = false;
     currentMediaInstance?.destroy();
     currentMediaInstance = null;
     eventTargetsTracker.clear();

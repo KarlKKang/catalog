@@ -50,14 +50,6 @@ export function getHash() {
     return windowLocation.hash.substring(1);
 }
 
-export function redirect(url: string, withoutHistory?: boolean) {
-    if (withoutHistory === true) {
-        windowLocation.replace(url);
-    } else {
-        windowLocation.href = url;
-    }
-}
-
 export function changeURL(url: string, withoutHistory?: boolean) {
     if (withoutHistory === true) {
         history.replaceState(null, '', url);
@@ -74,7 +66,7 @@ export function setSessionStorage(key: string, value: string) {
     try {
         w.sessionStorage.setItem(key, value);
     } catch (e) {
-        redirect(TOP_URL + '/unsupported_browser', true); // Since the support for SessionStorage is already checked, this is likely a QuotaExceededError. This will be treated as unsupported browser. The storage should never reach the quota of a properly configured browser in normal operation.
+        windowLocation.replace(TOP_URL + '/unsupported_browser');
         throw e;
     }
 }

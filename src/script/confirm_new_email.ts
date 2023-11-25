@@ -22,12 +22,11 @@ import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
+import { pgid } from './module/global';
 
-let pageLoaded: boolean;
 let destroyPopupWindow: null | (() => void) = null;
 
 export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
-    pageLoaded = true;
     clearSessionStorage();
 
     const param = getURLParam('p');
@@ -108,9 +107,10 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
         sendChangeEmailRequest(
             'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
             async () => {
+                const currentPgid = pgid;
                 const popupWindowModule = await popupWindowImportPromise;
                 const promptForTotp = (await promptForTotpImportPromise).promptForTotp;
-                if (!pageLoaded) {
+                if (currentPgid !== pgid) {
                     return;
                 }
                 destroyPopupWindow = popupWindowModule.destroy;
@@ -185,6 +185,5 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
 }
 
 export function offload() {
-    pageLoaded = false;
     destroyPopupWindow?.();
 }

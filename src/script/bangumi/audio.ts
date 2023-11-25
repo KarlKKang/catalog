@@ -38,8 +38,9 @@ import {
 import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
 import type { RedirectFunc } from '../module/type/RedirectFunc';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
+import { pgid } from '../module/global';
 
-let pageLoaded = true;
+let currentPgid: unknown;
 
 let seriesID: string;
 let epIndex: number;
@@ -66,9 +67,7 @@ export default function (
     _videojsPlayerImportPromise: VideojsPlayerImportPromise,
     _createMediaSessionPromise: Promise<MediaSessionInfo>
 ) {
-    if (!pageLoaded) {
-        return;
-    }
+    currentPgid = pgid;
 
     seriesID = _seriesID;
     epIndex = _epIndex;
@@ -86,7 +85,7 @@ export default function (
 
     addAlbumInfo();
     createMediaSessionPromise.then((mediaSessionInfo) => {
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
         appendChild(getById('content'), buildDownloadAccordion(redirect, mediaSessionInfo.credential, seriesID, epIndex, null)[0]);
@@ -140,7 +139,7 @@ async function addAudioNode(redirect: RedirectFunc, index: number, mediaHolder: 
             throw e;
         }
 
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
 
@@ -187,7 +186,7 @@ async function addAudioNode(redirect: RedirectFunc, index: number, mediaHolder: 
                 throw e;
             }
 
-            if (!pageLoaded) {
+            if (currentPgid !== pgid) {
                 return;
             }
 
@@ -216,7 +215,7 @@ async function addAudioNode(redirect: RedirectFunc, index: number, mediaHolder: 
                 throw e;
             }
 
-            if (!pageLoaded) {
+            if (currentPgid !== pgid) {
                 return;
             }
 
@@ -376,7 +375,7 @@ function audioReady() {
 }
 
 function destroyAll() {
-    pageLoaded = false;
+    currentPgid = null;
     let mediaInstance = mediaInstances.pop();
     while (mediaInstance !== undefined) {
         mediaInstance.destroy();
@@ -384,11 +383,6 @@ function destroyAll() {
     }
 }
 
-export function reload() {
-    pageLoaded = true;
-}
-
 export function offload() {
-    pageLoaded = false;
     destroyAll();
 }

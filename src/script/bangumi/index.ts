@@ -110,7 +110,6 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
             }
 
             showPage(() => {
-                updatePage.reload();
                 updatePage.default(
                     redirect,
                     parsedResponse,

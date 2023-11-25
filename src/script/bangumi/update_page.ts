@@ -38,8 +38,8 @@ import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { RedirectFunc } from '../module/type/RedirectFunc';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
+import { pgid } from '../module/global';
 
-let pageLoaded: boolean;
 let redirect: RedirectFunc;
 
 let seriesID: string;
@@ -62,10 +62,6 @@ export default async function (
     imageLoaderImportPromise: ImageLoaderImportPromise,
     createMediaSessionPromise: Promise<MediaSessionInfo>,
 ) {
-    if (!pageLoaded) {
-        return;
-    }
-
     redirect = _redirect;
     seriesID = _seriesID;
     epIndex = _epIndex;
@@ -151,6 +147,7 @@ export default async function (
     const seriesOverride = epInfo.series_override;
     const baseURL = CDN_URL + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
 
+    const currentPgid = pgid;
     if (type === 'video') {
         try {
             currentPage = await videoImportPromise;
@@ -158,10 +155,9 @@ export default async function (
             showMessage(redirect, moduleImportError(e));
             throw e;
         }
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
-        currentPage.reload();
         currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, createMediaSessionPromise, startTime, play);
     } else {
         if (type === 'audio') {
@@ -171,10 +167,9 @@ export default async function (
                 showMessage(redirect, moduleImportError(e));
                 throw e;
             }
-            if (!pageLoaded) {
+            if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.reload();
             currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise, createMediaSessionPromise);
         } else {
             try {
@@ -183,10 +178,9 @@ export default async function (
                 showMessage(redirect, moduleImportError(e));
                 throw e;
             }
-            if (!pageLoaded) {
+            if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.reload();
             currentPage.default(redirect, epInfo as BangumiInfo.ImageEPInfo, baseURL, lazyloadImportPromise, imageLoaderImportPromise, createMediaSessionPromise);
         }
         updateURLParam(seriesID, epIndex, 0);
@@ -369,11 +363,6 @@ function goToEP(dest_series: string, dest_ep: number) {
     redirect(url);
 }
 
-export function reload() {
-    pageLoaded = true;
-}
-
 export function offload() {
-    pageLoaded = false;
     currentPage?.offload();
 }

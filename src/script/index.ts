@@ -41,8 +41,7 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 import { addTimeout } from './module/timer';
 import { allResultsShown, loading, noResult } from './module/message/template/inline';
-
-let pageLoaded: boolean;
+import { pgid } from './module/global';
 
 let pivot: SeriesInfo.Pivot;
 let keywords: string;
@@ -64,7 +63,6 @@ let imageLoader: ImageLoader | null = null;
 const eventTargetsTracker = new Set<EventTarget>();
 
 export default function (showPage: ShowPageFunc, _redirect: RedirectFunc) {
-    pageLoaded = true;
     pivot = 0;
     keywords = '';
     redirect = _redirect;
@@ -254,8 +252,9 @@ function showPageCallback(
         });
 
         getSeries((seriesInfo: SeriesInfo.SeriesInfo) => {
+            const currentPgid = pgid;
             animationTimeout.then(() => {
-                if (!pageLoaded) {
+                if (currentPgid !== pgid) {
                     return;
                 }
                 replaceChildren(containerElem);
@@ -320,5 +319,4 @@ export function offload() {
     imageLoader = null;
     destroyInfiniteScrolling();
     eventTargetsTracker.clear();
-    pageLoaded = false;
 }

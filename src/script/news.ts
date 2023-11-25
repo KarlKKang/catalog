@@ -45,8 +45,7 @@ import { encodeCFURIComponent, getLocalTime, getLocalTimeString } from './module
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 import { allResultsShown, loading, noResult } from './module/message/template/inline';
-
-let pageLoaded: boolean;
+import { pgid } from './module/global';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo;
@@ -66,7 +65,6 @@ let imageLoader: ImageLoader | null = null;
 let redirect: RedirectFunc;
 
 export default function (showPage: ShowPageFunc, _redirect: RedirectFunc) {
-    pageLoaded = true;
     pivot = 0;
     redirect = _redirect;
 
@@ -196,8 +194,9 @@ function showNews(container: HTMLElement, contentContainer: HTMLElement, newsInf
 async function attachImage(lazyloadImportPromise: Promise<Lazyload>, contentContainer: HTMLElement, newsID: string): Promise<void> {
     let lazyloadObserve: typeof LazyloadObserve;
     try {
+        const currentPgid = pgid;
         lazyload = (await lazyloadImportPromise);
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
         lazyloadObserve = lazyload.default;
@@ -351,7 +350,6 @@ function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInf
 }
 
 export function offload() {
-    pageLoaded = false;
     lazyload?.unobserveAll();
     lazyload = null;
     imageLoader?.clearAllImageEvents();

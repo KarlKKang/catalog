@@ -50,19 +50,19 @@ type AllPromises = {
 export default function (): AllPromises {
     return {
         updatePage: import(
-            /* webpackExports: ["default", "reload", "offload"] */
+            /* webpackExports: ["default", "offload"] */
             './update_page'
         ),
         image: import(
-            /* webpackExports: ["default", "reload", "offload"] */
+            /* webpackExports: ["default", "offload"] */
             './image'
         ),
         audio: import(
-            /* webpackExports: ["default", "reload", "offload"] */
+            /* webpackExports: ["default", "offload"] */
             './audio'
         ),
         video: import(
-            /* webpackExports: ["default", "reload", "offload"] */
+            /* webpackExports: ["default", "offload"] */
             './video'
         ),
         lazyload: import(

@@ -74,12 +74,11 @@ import { addInterval, removeInterval } from './module/timer';
 import type { RedirectFunc } from './module/type/RedirectFunc';
 import { UAParser } from 'ua-parser-js';
 import * as InviteResult from './module/type/InviteResult';
+import { pgid } from './module/global';
 
-let pageLoaded: boolean;
 let destroyPopupWindow: null | (() => void) = null;
 
 export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
-    pageLoaded = true;
     clearSessionStorage();
 
     sendServerRequest(redirect, 'get_account', {
@@ -99,6 +98,8 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
 }
 
 function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectFunc) {
+    const currentPgid = pgid;
+
     let currentUsername = userInfo.username;
     let currentMfaStatus = userInfo.mfa_status;
     let currentLoginNotificationStatus = userInfo.login_notification;
@@ -673,7 +674,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 const failedTotpCallback = async () => {
                     const popupWindowModule = await popupWindowImportPromise;
                     const promptForTotp = (await promptForTotpImportPromise).promptForTotp;
-                    if (!pageLoaded) {
+                    if (currentPgid !== pgid) {
                         return;
                     }
                     destroyPopupWindow = popupWindowModule.destroy;
@@ -769,7 +770,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         ) => void
     ) {
         const popupWindowModule = await popupWindowImportPromise;
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
         destroyPopupWindow = popupWindowModule.destroy;
@@ -893,7 +894,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         message?: string | Node[]
     ) {
         const popupWindowModule = await popupWindowImportPromise;
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
         destroyPopupWindow = popupWindowModule.destroy;
@@ -1001,7 +1002,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
 
     async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
         const popupWindowModule = await popupWindowImportPromise;
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
         destroyPopupWindow = popupWindowModule.destroy;
@@ -1127,7 +1128,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
 
     async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo, completedCallback: () => void) {
         const popupWindowModule = await popupWindowImportPromise;
-        if (!pageLoaded) {
+        if (currentPgid !== pgid) {
             return;
         }
         destroyPopupWindow = popupWindowModule.destroy;
@@ -1247,6 +1248,5 @@ function appendParagraph(text: string, container: HTMLElement) {
 }
 
 export function offload() {
-    pageLoaded = false;
     destroyPopupWindow?.();
-} 
+}

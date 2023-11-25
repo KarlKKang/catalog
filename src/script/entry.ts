@@ -11,6 +11,7 @@ import * as messagePageScript from './message';
 import { default as messagePageHTML } from '../html/message.html';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
+import { pgid, setPgid } from './module/global';
 
 import '../font/dist/NotoSansJP/NotoSansJP-Light.css';
 import '../font/dist/NotoSansJP/NotoSansJP-Medium.css';
@@ -46,7 +47,6 @@ type PageMap = {
 };
 
 let body: HTMLElement | null = null;
-let currentScriptImportPromise: PageScriptImport | null = null;
 let currentPage: {
     script: PageScript;
     html_entry: HTMLEntry;
@@ -266,9 +266,9 @@ const directories: PageMap = {
     },
 };
 
-load(getFullURL(), null);
+load(getFullURL());
 
-function load(url: string, withoutHistory: boolean | null = false) {
+function load(url: string, withoutHistory: boolean = false) {
     let baseURL = getBaseURL(url);
 
     if (baseURL === TOP_URL) {
@@ -293,27 +293,25 @@ function load(url: string, withoutHistory: boolean | null = false) {
     loadPage(url, withoutHistory, '404', page404);
 }
 
-function loadPagePrepare(url: string, withoutHistory: boolean | null) { // Specifying `null` for `withoutHistory` indicates the current state will not be changed.
-    const currentPageConst = currentPage;
-    if (currentPageConst === null) {
+function loadPagePrepare(url: string, withoutHistory: boolean) {
+    if (currentPage === null) {
         return;
     }
-    currentPageConst.script.offload?.();
+    currentPage.script.offload?.();
     deregisterAllEventTargets();
     removeAllTimers();
     destroyPopupWindow?.();
     replaceChildren(getBody());
-    changeURL(url, withoutHistory === true);
+    changeURL(url, withoutHistory);
     return;
 }
 
 async function registerServiceWorker(redirect: RedirectFunc) { // This function should be called after setting the `currentScriptImportPromise`.
     if ('serviceWorker' in navigator) {
-        const scriptImportPromise = currentScriptImportPromise;
-
+        const currentPgid = pgid;
         const showSkipWaitingPrompt = async (wb: WorkboxType) => {
             const popupWindowModule = await popupWindowImport(redirect);
-            if (scriptImportPromise !== currentScriptImportPromise) {
+            if (pgid !== currentPgid) {
                 return;
             }
             destroyPopupWindow = popupWindowModule.destroy;
@@ -377,7 +375,7 @@ async function registerServiceWorker(redirect: RedirectFunc) { // This function 
                 showMessage(redirect, moduleImportError(e));
                 throw e;
             }
-            if (scriptImportPromise !== currentScriptImportPromise) { // If a redirect has happened the new page will handle the registration.
+            if (pgid !== currentPgid) { // If a redirect has happened the new page will handle the registration.
                 return;
             }
             serviceWorker = new Workbox('/sw.js');
@@ -411,7 +409,7 @@ async function registerServiceWorker(redirect: RedirectFunc) { // This function 
     }
 }
 
-async function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page) {
+async function loadPage(url: string, withoutHistory: boolean, pageName: string, page: Page) {
     if (body === null) {
         addEventListenerOnce(w, 'load', () => {
             body = d.body;
@@ -420,7 +418,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
         return;
     }
 
-    loadPagePrepare(url, withoutHistory); // This prepare should be just before currentScriptImportPromise. Otherwise offloaded pages may be reinitialized by themselves.
+    loadPagePrepare(url, withoutHistory); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     d.documentElement.style.minHeight = '0'; // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
 
     body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
@@ -431,7 +429,11 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     const scriptImportPromise = page.script();
     const styleImportPromises = page.style();
     const htmlImportPromise = page.html();
-    currentScriptImportPromise = scriptImportPromise;
+
+    let newPgid = performance.now();
+    while (setPgid(newPgid) === newPgid) {
+        newPgid = performance.now();
+    }
 
     addEventListener(w, 'popstate', () => {
         if (page.customPopState) {
@@ -440,7 +442,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
             }
             return;
         }
-        load(getFullURL(), null);
+        load(getFullURL());
         if (DEVELOPMENT) {
             console.log('popstate handled by the loader.');
         }
@@ -457,7 +459,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
             }
             const requestLoadingBarAnimationFrame = (callback: () => void) => {
                 w.requestAnimationFrame(() => {
-                    if (loadingBarWidth === 100 || currentScriptImportPromise !== scriptImportPromise) {
+                    if (loadingBarWidth === 100 || pgid !== newPgid) {
                         return;
                     }
                     callback();
@@ -482,7 +484,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     }
 
     const redirect = (url: string, withoutHistory: boolean = false) => {
-        if (currentScriptImportPromise === scriptImportPromise) {
+        if (pgid === newPgid) {
             load(url, withoutHistory);
         }
     };
@@ -495,7 +497,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
         throw e;
     }
 
-    if (currentScriptImportPromise !== scriptImportPromise) {
+    if (pgid !== newPgid) {
         return;
     }
 
@@ -513,7 +515,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
                 throw e;
             }
 
-            if (currentScriptImportPromise !== scriptImportPromise) {
+            if (pgid !== newPgid) {
                 return;
             }
 

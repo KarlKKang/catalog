@@ -26,8 +26,7 @@ import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { RedirectFunc } from '../module/type/RedirectFunc';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
-
-let pageLoaded = true;
+import { pgid } from '../module/global';
 
 type Lazyload = typeof import(
     /* webpackExports: ["default", "unobserveAll"] */
@@ -49,10 +48,6 @@ export default async function (
     imageLoaderImportPromise: ImageLoaderImportPromise,
     createMediaSessionPromise: Promise<MediaSessionInfo>
 ) {
-    if (!pageLoaded) {
-        return;
-    }
-
     const contentContainer = getById('content');
     const mediaHolder = getById('media-holder');
 
@@ -82,6 +77,7 @@ export default async function (
 
     let lazyloadObserve: typeof LazyloadObserve;
     let mediaSessionCredential: string;
+    const currentPgid = pgid;
     try {
         mediaSessionCredential = (await createMediaSessionPromise).credential;
         lazyload = await lazyloadImportPromise;
@@ -92,7 +88,7 @@ export default async function (
         throw e;
     }
 
-    if (!pageLoaded) {
+    if (currentPgid !== pgid) {
         return;
     }
 
@@ -158,12 +154,7 @@ export default async function (
     });
 }
 
-export function reload() {
-    pageLoaded = true;
-}
-
 export function offload() {
-    pageLoaded = false;
     lazyload?.unobserveAll();
     lazyload = null;
     imageLoader?.clearAllImageEvents();
