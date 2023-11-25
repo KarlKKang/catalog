@@ -24,27 +24,26 @@ import { UNRECOMMENDED_BROWSER } from './module/browser';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
-import { pgid } from './module/global';
+import { pgid, redirect } from './module/global';
 
 let destroyPopupWindow: null | (() => void) = null;
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
-    authenticate(redirect, {
+    authenticate({
         successful:
             function () {
                 redirect(TOP_URL, true);
             },
         failed:
             function () {
-                showPage(() => { showPageCallback(redirect); });
+                showPage(() => { showPageCallback(); });
             }
     });
 }
 
-function showPageCallback(redirect: RedirectFunc) {
+function showPageCallback() {
     const submitButton = getById('submit-button') as HTMLButtonElement;
     const passwordInput = getById('current-password') as HTMLInputElement;
     const usernameInput = getById('username') as HTMLInputElement;
@@ -86,8 +85,8 @@ function showPageCallback(redirect: RedirectFunc) {
             return;
         }
 
-        const popupWindowImportPromise = popupWindowImport(redirect);
-        const promptForTotpImportPromise = promptForTotpImport(redirect);
+        const popupWindowImportPromise = popupWindowImport();
+        const promptForTotpImportPromise = promptForTotpImport();
 
         sendLoginRequest(
             'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0'),
@@ -122,7 +121,7 @@ function showPageCallback(redirect: RedirectFunc) {
     }
 
     function sendLoginRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
-        sendServerRequest(redirect, 'login', {
+        sendServerRequest('login', {
             callback: function (response: string) {
                 const authenticationResult = handleAuthenticationResult(
                     response,
@@ -152,12 +151,12 @@ function showPageCallback(redirect: RedirectFunc) {
 
                 if (response == 'APPROVED') {
                     if (UNRECOMMENDED_BROWSER) {
-                        showMessage(redirect, unrecommendedBrowser(getForwardURL()));
+                        showMessage(unrecommendedBrowser(getForwardURL()));
                     } else {
                         redirect(getForwardURL(), true);
                     }
                 } else {
-                    showMessage(redirect);
+                    showMessage();
                 }
             },
             content: content

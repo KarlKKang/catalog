@@ -38,15 +38,12 @@ import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyIn
 import isbot from 'isbot';
 import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
 import { addTimeout } from './module/timer';
 import { allResultsShown, loading, noResult } from './module/message/template/inline';
-import { pgid } from './module/global';
+import { pgid, redirect } from './module/global';
 
 let pivot: SeriesInfo.Pivot;
 let keywords: string;
-
-let redirect: RedirectFunc;
 
 type Lazyload = typeof import(
     /* webpackExports: ["default", "unobserveAll"] */
@@ -62,10 +59,9 @@ let imageLoader: ImageLoader | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
-export default function (showPage: ShowPageFunc, _redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     pivot = 0;
     keywords = '';
-    redirect = _redirect;
 
     clearSessionStorage();
 
@@ -90,19 +86,26 @@ export default function (showPage: ShowPageFunc, _redirect: RedirectFunc) {
     }
 
     getSeries(async (seriesInfo: SeriesInfo.SeriesInfo) => {
-        let lazyloadModule: Lazyload;
-        let imageLoaderModule: ImageLoader;
-        try {
-            lazyload = await lazyloadImportPromise;
-            lazyloadModule = lazyload;
-            imageLoader = await imageLoaderImportPromise;
-            imageLoaderModule = imageLoader;
-        } catch (e) {
-            showMessage(redirect, moduleImportError(e));
-            throw e;
-        }
-
-        showPage(() => { showPageCallback(seriesInfo, urlKeywords, lazyloadModule, imageLoaderModule); });
+        showPage(async () => {
+            let lazyloadModule: Lazyload;
+            let imageLoaderModule: ImageLoader;
+            const currentPgid = pgid;
+            try {
+                lazyload = await lazyloadImportPromise;
+                imageLoader = await imageLoaderImportPromise;
+                lazyloadModule = lazyload;
+                imageLoaderModule = imageLoader;
+            } catch (e) {
+                if (currentPgid === pgid) {
+                    showMessage(moduleImportError(e));
+                }
+                throw e;
+            }
+            if (currentPgid !== pgid) {
+                return;
+            }
+            showPageCallback(seriesInfo, urlKeywords, lazyloadModule, imageLoaderModule);
+        });
     }, false);
 }
 
@@ -145,7 +148,7 @@ function showPageCallback(
         appendText(announcementBody, message);
     }
     showSeries(seriesInfo);
-    addNavBar(redirect, NAV_BAR_HOME, () => {
+    addNavBar(NAV_BAR_HOME, () => {
         scrollToTop();
         if (keywords !== '') {
             searchBarInput.value = '';
@@ -210,7 +213,7 @@ function showPageCallback(
             addClass(seriesNode, 'series');
 
             appendChild(containerElem, seriesNode);
-            lazyloadModule.default(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title, redirect);
+            lazyloadModule.default(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title);
         }
 
         const infiniteScrolling = getInfiniteScrolling();
@@ -294,14 +297,14 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void, showSe
         return;
     }
 
-    sendServerRequest(redirect, 'get_series?' + keywords + 'pivot=' + pivot, {
+    sendServerRequest('get_series?' + keywords + 'pivot=' + pivot, {
         callback: function (response: string) {
             let parsedResponse: SeriesInfo.SeriesInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 SeriesInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse());
+                showMessage(invalidResponse());
                 return;
             }
             callback(parsedResponse);

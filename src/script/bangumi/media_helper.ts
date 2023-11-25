@@ -35,7 +35,6 @@ import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import { VideoFormatInfo } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
-import type { RedirectFunc } from '../module/type/RedirectFunc';
 import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from '../module/player/media_error';
 
 export const incompatibleTitle = '再生できません';
@@ -101,7 +100,6 @@ export function showMediaMessage(title: string, body: string, titleColor: string
 }
 
 export function buildDownloadAccordion(
-    redirect: RedirectFunc,
     mediaSessionCredential: string,
     seriesID: string,
     epIndex: number,
@@ -200,13 +198,13 @@ export function buildDownloadAccordion(
                 requestContent += '&container=' + containerSelectMenu.value;
             }
         }
-        sendServerRequest(redirect, 'start_download', {
+        sendServerRequest('start_download', {
             callback: function (response: string) {
                 if (getBaseURL(response).startsWith(CDN_URL + '/download/')) {
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {
-                    showMessage(redirect, invalidResponse());
+                    showMessage(invalidResponse());
                 }
             },
             content: requestContent,

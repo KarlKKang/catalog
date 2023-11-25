@@ -17,7 +17,7 @@ import { invalidResponse } from './module/message/template/param/server';
 import { encodeCFURIComponent } from './module/common/pure';
 import { addInterval } from './module/timer';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
+import { pgid, redirect } from './module/global';
 
 type ImageLoader = typeof import(
     /* webpackExports: ["clearAllImageEvents"] */
@@ -25,7 +25,7 @@ type ImageLoader = typeof import(
 );
 let imageLoader: ImageLoader | null = null;
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     const baseURL = getSessionStorage('base-url');
     const fileName = getSessionStorage('file-name');
     const xhrParam = getSessionStorage('xhr-param');
@@ -51,10 +51,10 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     } else {
         content = mediaSessionCredential + '&' + content;
         addInterval(() => {
-            sendServerRequest(redirect, 'authenticate_media_session', {
+            sendServerRequest('authenticate_media_session', {
                 callback: function (response: string) {
                     if (response != 'APPROVED') {
-                        showMessage(redirect, invalidResponse());
+                        showMessage(invalidResponse());
                     }
                 },
                 content: mediaSessionCredential,
@@ -66,21 +66,27 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
 
     setTitle(title);
 
-    sendServerRequest(redirect, uri, {
+    sendServerRequest(uri, {
         callback: function (response: string) {
             if (response !== 'APPROVED') {
-                showMessage(redirect, invalidResponse());
+                showMessage(invalidResponse());
                 return;
             }
             showPage(() => {
                 const container = getById('image-container');
                 removeRightClick(container);
-
+                const currentPgid = pgid;
                 imageLoaderImportPromise.then((imageLoaderModule) => {
+                    if (currentPgid !== pgid) {
+                        return;
+                    }
                     imageLoader = imageLoaderModule;
-                    imageLoader.default(redirect, container, baseURL + encodeCFURIComponent(fileName), fileName, true);
+                    imageLoader.default(container, baseURL + encodeCFURIComponent(fileName), fileName, true);
                 }).catch((e) => {
-                    showMessage(redirect, moduleImportError(e));
+                    if (currentPgid !== pgid) {
+                        showMessage(moduleImportError(e));
+                    }
+                    throw e;
                 });
             });
         },

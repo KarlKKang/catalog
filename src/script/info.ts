@@ -7,17 +7,16 @@ import {
 import {
     clearSessionStorage,
 } from './module/dom';
-import type { RedirectFunc } from './module/type/RedirectFunc';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
-    authenticate(redirect, {
+    authenticate({
         successful:
             function () {
                 showPage(() => {
-                    addNavBar(redirect, NAV_BAR_INFO);
+                    addNavBar(NAV_BAR_INFO);
                     scrollToHash();
                 });
             },

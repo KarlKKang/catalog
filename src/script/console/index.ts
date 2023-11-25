@@ -11,17 +11,18 @@ import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse } from '../module/message/template/param/server';
 import { getTable, setOutput } from './helper';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
-import type { RedirectFunc } from '../module/type/RedirectFunc';
+import { pgid } from '../module/global';
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
-    sendServerRequest(redirect, 'console', {
+    sendServerRequest('console', {
         callback: function (response: string) {
             if (response != 'APPROVED') {
-                showMessage(redirect, invalidResponse());
+                showMessage(invalidResponse());
                 return;
             }
+            const currentPgid = pgid;
             Promise.all([
                 import(
                     /* webpackExports: ["getSeriesTable"] */
@@ -38,22 +39,22 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
             ]).then(([{ getSeriesTable }, { getAccountTable }, { getNewsTable }]) => {
                 showPage(() => {
                     addEventListener(getById('get-series-table'), 'click', () => {
-                        getSeriesTable(redirect);
+                        getSeriesTable();
                     });
                     addEventListener(getById('get-account-table'), 'click', () => {
-                        getAccountTable(redirect);
+                        getAccountTable();
                     });
                     addEventListener(getById('get-invite-table'), 'click', () => {
-                        getTable(redirect, 'invite');
+                        getTable('invite');
                     });
                     addEventListener(getById('get-email-change-table'), 'click', () => {
-                        getTable(redirect, 'email_change');
+                        getTable('email_change');
                     });
                     addEventListener(getById('get-news-table'), 'click', () => {
-                        getNewsTable(redirect);
+                        getNewsTable();
                     });
                     addEventListener(getById('get-log-table'), 'click', () => {
-                        getTable(redirect, 'log');
+                        getTable('log');
                     });
                     addEventListener(getById('generate-id'), 'click', () => {
                         generate('id');
@@ -77,13 +78,13 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
                         verify();
                     });
                     addEventListener(getById('show-all-column'), 'click', () => {
-                        getTable(redirect, 'all_column');
+                        getTable('all_column');
                     });
                     addEventListener(getById('show-all-index'), 'click', () => {
-                        getTable(redirect, 'all_index');
+                        getTable('all_index');
                     });
                     addEventListener(getById('show-create-table'), 'click', () => {
-                        getTable(redirect, 'create_table');
+                        getTable('create_table');
                     });
                     addEventListener(getById('run-debug'), 'click', () => {
                         misc('run', 'debug');
@@ -111,7 +112,9 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
                     });
                 });
             }).catch((e) => {
-                showMessage(redirect, moduleImportError(e));
+                if (currentPgid === pgid) {
+                    showMessage(moduleImportError(e));
+                }
             });
         },
         content: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
@@ -123,7 +126,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
             type: type
         };
 
-        sendServerRequest(redirect, 'console', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 setOutput(response, undefined, 'id-output');
             },
@@ -137,7 +140,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
             type: type
         };
 
-        sendServerRequest(redirect, 'console', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 setOutput(response);
             },
@@ -166,7 +169,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
             dir: dir
         };
 
-        sendServerRequest(redirect, 'console', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 alert(response);
             },
@@ -188,7 +191,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
             type: 'key_cache'
         };
 
-        sendServerRequest(redirect, 'console', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 alert(response);
             },
@@ -210,7 +213,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
             type: type
         };
 
-        sendServerRequest(redirect, 'console', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 alert(response);
             },
@@ -238,7 +241,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
             series: id
         };
 
-        sendServerRequest(redirect, 'console', {
+        sendServerRequest('console', {
             callback: function (response: string) {
                 alert(response);
             },

@@ -19,9 +19,9 @@ import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged 
 import { expired, passwordChanged } from './module/message/template/param';
 import { PASSWORD_REGEX } from './module/common/pure';
 import { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
+import { redirect } from './module/global';
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     const user = getURLParam('user');
@@ -47,24 +47,24 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
         return;
     }
 
-    sendServerRequest(redirect, 'reset_password', {
+    sendServerRequest('reset_password', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                showMessage(redirect, expired);
+                showMessage(expired);
                 return;
             } else if (response != 'APPROVED') {
-                showMessage(redirect);
+                showMessage();
                 return;
             }
 
-            showPage(() => { showPageCallback(redirect, user, signature, expires); });
+            showPage(() => { showPageCallback(user, signature, expires); });
         },
         content: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
         withCredentials: false
     });
 }
 
-function showPageCallback(redirect: RedirectFunc, user: string, signature: string, expires: string) {
+function showPageCallback(user: string, signature: string, expires: string) {
     const newPasswordInput = getById('new-password') as HTMLInputElement;
     const newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
     const submitButton = getById('submit-button') as HTMLButtonElement;
@@ -107,10 +107,10 @@ function showPageCallback(redirect: RedirectFunc, user: string, signature: strin
             return;
         }
 
-        sendServerRequest(redirect, 'reset_password', {
+        sendServerRequest('reset_password', {
             callback: function (response: string) {
                 if (response == 'EXPIRED') {
-                    showMessage(redirect, expired);
+                    showMessage(expired);
                 } else if (response == 'SAME') {
                     replaceText(warningElem, passwordUnchanged);
                     showElement(warningElem);
@@ -120,9 +120,9 @@ function showPageCallback(redirect: RedirectFunc, user: string, signature: strin
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    showMessage(redirect, passwordChanged);
+                    showMessage(passwordChanged);
                 } else {
-                    showMessage(redirect);
+                    showMessage();
                 }
             },
             content: 'user=' + user + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),

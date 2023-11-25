@@ -36,7 +36,6 @@ import {
     showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError
 } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
-import type { RedirectFunc } from '../module/type/RedirectFunc';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 
@@ -57,7 +56,6 @@ let error: boolean;
 const mediaInstances: Array<PlayerType> = [];
 
 export default function (
-    redirect: RedirectFunc,
     _seriesID: string,
     _epIndex: number,
     _epInfo: AudioEPInfo,
@@ -88,7 +86,7 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        appendChild(getById('content'), buildDownloadAccordion(redirect, mediaSessionInfo.credential, seriesID, epIndex, null)[0]);
+        appendChild(getById('content'), buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, null)[0]);
     });
 
     if (!MSE && !NATIVE_HLS) {
@@ -98,11 +96,11 @@ export default function (
 
     const mediaHolder = getById('media-holder');
     for (let i = 0; i < audioEPInfo.files.length; i++) {
-        addAudioNode(redirect, i, mediaHolder);
+        addAudioNode(i, mediaHolder);
     }
 }
 
-async function addAudioNode(redirect: RedirectFunc, index: number, mediaHolder: HTMLElement) {
+async function addAudioNode(index: number, mediaHolder: HTMLElement) {
     if (error) {
         return;
     }
@@ -135,7 +133,9 @@ async function addAudioNode(redirect: RedirectFunc, index: number, mediaHolder: 
             await createMediaSessionPromise;
             VideojsPlayer = (await videojsPlayerImportPromise).VideojsPlayer;
         } catch (e) {
-            showMessage(redirect, moduleImportError(e));
+            if (currentPgid === pgid) {
+                showMessage(moduleImportError(e));
+            }
             throw e;
         }
 
@@ -182,7 +182,9 @@ async function addAudioNode(redirect: RedirectFunc, index: number, mediaHolder: 
                 await createMediaSessionPromise;
                 Player = (await nativePlayerImportPromise).Player;
             } catch (e) {
-                showMessage(redirect, moduleImportError(e));
+                if (currentPgid === pgid) {
+                    showMessage(moduleImportError(e));
+                }
                 throw e;
             }
 
@@ -211,7 +213,9 @@ async function addAudioNode(redirect: RedirectFunc, index: number, mediaHolder: 
                 await createMediaSessionPromise;
                 HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
             } catch (e) {
-                showMessage(redirect, moduleImportError(e));
+                if (currentPgid === pgid) {
+                    showMessage(moduleImportError(e));
+                }
                 throw e;
             }
 

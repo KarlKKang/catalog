@@ -10,15 +10,10 @@ import {
     containsClass,
     getDataAttribute
 } from '../module/dom';
-import type { RedirectFunc } from '../module/type/RedirectFunc';
-
 import { completeCallback, getTable } from './helper';
 
-let redirect: RedirectFunc;
-
-export function getNewsTable(_redirect: RedirectFunc) {
-    redirect = _redirect;
-    getTable(redirect, 'news', updateEventHandlers);
+export function getNewsTable() {
+    getTable('news', updateEventHandlers);
 }
 
 function modifyNews(button: Element) {
@@ -46,7 +41,7 @@ function modifyNews(button: Element) {
         }
     } while (confirm != 'modify');
 
-    sendServerRequest(redirect, 'console', {
+    sendServerRequest('console', {
         callback: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
@@ -70,7 +65,7 @@ function deleteNews(id: string) {
         id: id
     };
 
-    sendServerRequest(redirect, 'console', {
+    sendServerRequest('console', {
         callback: (response) => { completeCallback(response, updateEventHandlers); },
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -100,7 +95,7 @@ function addNews(button: Element) {
         }
     } while (confirm != 'insert');
 
-    sendServerRequest(redirect, 'console', {
+    sendServerRequest('console', {
         callback: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
@@ -138,7 +133,7 @@ function updateNewsTime(id: string) {
         id: id
     };
 
-    sendServerRequest(redirect, 'console', {
+    sendServerRequest('console', {
         callback: (response) => { completeCallback(response, updateEventHandlers); },
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });

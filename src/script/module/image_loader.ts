@@ -11,7 +11,7 @@ import {
 } from './dom';
 import { show as showMessage } from './message';
 import { moduleImportError } from './message/template/param';
-import { RedirectFunc } from './type/RedirectFunc';
+import { pgid } from './global';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
@@ -21,7 +21,7 @@ let webpSupported: boolean;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
-export default function (redirect: RedirectFunc, container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: () => void, onDataLoad?: (data: Blob) => void, onError?: () => void): XMLHttpRequest {
+export default function (container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: () => void, onDataLoad?: (data: Blob) => void, onError?: () => void): XMLHttpRequest {
     let imageData: Blob;
     let isWebp: boolean;
 
@@ -64,7 +64,7 @@ export default function (redirect: RedirectFunc, container: Element, src: string
                 }
             } else {
                 webpMachineActive = true;
-                startWebpMachine(redirect);
+                startWebpMachine();
                 if (DEVELOPMENT) {
                     console.log('Webp Machine NOT active. Pushed ' + image.alt + ' to queue. Webp Machine started.');
                 }
@@ -130,8 +130,9 @@ export default function (redirect: RedirectFunc, container: Element, src: string
     return xhr;
 }
 
-async function startWebpMachine(redirect: RedirectFunc) {
+async function startWebpMachine() {
     if (webpMachine === null) {
+        const currentPgid = pgid;
         try {
             const { WebpMachine, detectWebpSupport } = await import(
                 'webp-hero/dist-cjs'
@@ -139,7 +140,9 @@ async function startWebpMachine(redirect: RedirectFunc) {
             webpMachine = new WebpMachine();
             webpSupported = await detectWebpSupport();
         } catch (e: unknown) {
-            showMessage(redirect, moduleImportError(e));
+            if (currentPgid === pgid) {
+                showMessage(moduleImportError(e));
+            }
             throw e;
         }
     }

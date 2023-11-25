@@ -18,9 +18,9 @@ import {
     createDivElement,
 } from './module/dom';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
+import { redirect } from './module/global';
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     const message = getSessionStorage('message');
     const title = getSessionStorage('title');
     const color = getSessionStorage('color');
@@ -83,7 +83,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     };
 
     if (logoutParam) {
-        logout(redirect, callback);
+        logout(callback);
         return;
     }
 

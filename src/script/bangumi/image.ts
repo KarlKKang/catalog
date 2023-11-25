@@ -24,7 +24,6 @@ import type { default as LazyloadObserve } from '../module/lazyload';
 import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
-import type { RedirectFunc } from '../module/type/RedirectFunc';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 
@@ -41,7 +40,6 @@ type ImageLoader = typeof import(
 let imageLoader: ImageLoader | null = null;
 
 export default async function (
-    redirect: RedirectFunc,
     epInfo: ImageEPInfo,
     baseURL: string,
     lazyloadImportPromise: LazyloadImportPromise,
@@ -84,7 +82,9 @@ export default async function (
         lazyloadObserve = lazyload.default;
         imageLoader = await imageLoaderImportPromise;
     } catch (e) {
-        showMessage(redirect, moduleImportError(e));
+        if (currentPgid === pgid) {
+            showMessage(moduleImportError(e));
+        }
         throw e;
     }
 
@@ -131,7 +131,7 @@ export default async function (
         appendChild(imageNode, downloadPanel);
         appendChild(mediaHolder, imageNode);
 
-        lazyloadObserve(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, redirect, {
+        lazyloadObserve(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
             xhrParam: 'p=' + index,
             mediaSessionCredential: mediaSessionCredential,
             delay: 250,

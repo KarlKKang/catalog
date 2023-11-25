@@ -13,17 +13,13 @@ import {
 } from '../module/dom';
 import { completeCallback, getTable } from './helper';
 import { PASSWORD_REGEX } from '../module/common/pure';
-import type { RedirectFunc } from '../module/type/RedirectFunc';
-
-let redirect: RedirectFunc;
 
 function accountCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
 }
 
-export function getAccountTable(_redirect: RedirectFunc) {
-    redirect = _redirect;
-    getTable(redirect, 'account', updateEventHandlers);
+export function getAccountTable() {
+    getTable('account', updateEventHandlers);
 }
 
 function addAccount(button: Element) {
@@ -76,7 +72,7 @@ function addAccount(button: Element) {
         }
     } while (confirm != 'insert');
 
-    sendServerRequest(redirect, 'console', {
+    sendServerRequest('console', {
         callback: accountCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -128,7 +124,7 @@ function modifyAccount(button: Element, id: string) {
         }
     } while (confirm != 'modify');
 
-    sendServerRequest(redirect, 'console', {
+    sendServerRequest('console', {
         callback: accountCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
@@ -213,7 +209,7 @@ function deleteAccount(id: string) {
         id: id
     };
 
-    sendServerRequest(redirect, 'console', {
+    sendServerRequest('console', {
         callback: accountCompleteCallback,
         content: 'p=' + encodeURIComponent(JSON.stringify(param))
     });

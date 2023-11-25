@@ -43,9 +43,8 @@ import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyIn
 import type { default as LazyloadObserve } from './module/lazyload';
 import { encodeCFURIComponent, getLocalTime, getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
 import { allResultsShown, loading, noResult } from './module/message/template/inline';
-import { pgid } from './module/global';
+import { pgid, redirect } from './module/global';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo;
@@ -62,11 +61,8 @@ type ImageLoader = typeof import(
 );
 let imageLoader: ImageLoader | null = null;
 
-let redirect: RedirectFunc;
-
-export default function (showPage: ShowPageFunc, _redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     pivot = 0;
-    redirect = _redirect;
 
     clearSessionStorage();
 
@@ -100,14 +96,14 @@ function getNewsID(): string | null {
 
 function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showPage: ShowPageFunc): void {
     const hash = getHash();
-    sendServerRequest(redirect, 'get_news', {
+    sendServerRequest('get_news', {
         callback: function (response: string) {
             let parsedResponse: NewsInfo.NewsInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 NewsInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse());
+                showMessage(invalidResponse());
                 return;
             }
 
@@ -120,7 +116,7 @@ function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showP
 
             showPage(() => {
                 showNews(getById('container'), contentContainer, parsedResponse);
-                addNavBar(redirect, NAV_BAR_NEWS, () => {
+                addNavBar(NAV_BAR_NEWS, () => {
                     redirect(NEWS_TOP_URL);
                 });
             });
@@ -131,7 +127,7 @@ function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showP
 
             addEventListener(xhr, 'error', () => {
                 removeAllEventListeners(xhr);
-                showMessage(redirect, notFound);
+                showMessage(notFound);
             });
             addEventListener(xhr, 'abort', () => {
                 removeAllEventListeners(xhr);
@@ -144,7 +140,7 @@ function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showP
                     attachImage(lazyloadImportPromise, contentContainer, newsID);
                     scrollToHash();
                 } else {
-                    showMessage(redirect, notFound);
+                    showMessage(notFound);
                 }
             });
 
@@ -193,16 +189,18 @@ function showNews(container: HTMLElement, contentContainer: HTMLElement, newsInf
 
 async function attachImage(lazyloadImportPromise: Promise<Lazyload>, contentContainer: HTMLElement, newsID: string): Promise<void> {
     let lazyloadObserve: typeof LazyloadObserve;
+    const currentPgid = pgid;
     try {
-        const currentPgid = pgid;
-        lazyload = (await lazyloadImportPromise);
-        if (currentPgid !== pgid) {
-            return;
-        }
+        lazyload = await lazyloadImportPromise;
         lazyloadObserve = lazyload.default;
     } catch (e) {
-        showMessage(redirect, moduleImportError(e));
+        if (currentPgid === pgid) {
+            showMessage(moduleImportError(e));
+        }
         throw e;
+    }
+    if (currentPgid !== pgid) {
+        return;
     }
 
     const baseURL = CDN_URL + '/news/' + newsID + '/';
@@ -214,7 +212,7 @@ async function attachImage(lazyloadImportPromise: Promise<Lazyload>, contentCont
             continue;
         }
         const xhrParam = 'news=' + newsID;
-        lazyloadObserve(elem, baseURL + encodeCFURIComponent(src), src, redirect, { xhrParam: xhrParam });
+        lazyloadObserve(elem, baseURL + encodeCFURIComponent(src), src, { xhrParam: xhrParam });
         if (containsClass(elem, 'image-enlarge')) {
             addEventListener(elem, 'click', () => {
                 setSessionStorage('base-url', baseURL);
@@ -277,14 +275,14 @@ function getAllNews(containerOrShowPage: unknown, loadingTextContainer: HTMLElem
         return;
     }
 
-    sendServerRequest(redirect, 'get_all_news?pivot=' + pivot, {
+    sendServerRequest('get_all_news?pivot=' + pivot, {
         callback: function (response: string) {
             let parsedResponse: AllNewsInfo.AllNewsInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 AllNewsInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse());
+                showMessage(invalidResponse());
                 return;
             }
 
@@ -292,7 +290,7 @@ function getAllNews(containerOrShowPage: unknown, loadingTextContainer: HTMLElem
                 showAllNews(containerOrShowPage, parsedResponse, loadingTextContainer);
             } else {
                 (containerOrShowPage as ShowPageFunc)(() => {
-                    addNavBar(redirect, NAV_BAR_NEWS);
+                    addNavBar(NAV_BAR_NEWS);
                     const container = getById('container');
                     insertAfter(loadingTextContainer, container);
                     initializeInfiniteScrolling(() => { getAllNews(container, loadingTextContainer); });

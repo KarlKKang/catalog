@@ -2,7 +2,6 @@ import 'core-js';
 import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, appendText, createButtonElement, createDivElement, appendChild } from './module/dom';
 import { TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
-import type { RedirectFunc } from './module/type/RedirectFunc';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout, removeAllTimers } from './module/timer';
 import { popupWindowImport } from './module/popup_window';
@@ -11,7 +10,7 @@ import * as messagePageScript from './message';
 import { default as messagePageHTML } from '../html/message.html';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
-import { pgid, setPgid } from './module/global';
+import { pgid, setPgid, setRedirect } from './module/global';
 
 import '../font/dist/NotoSansJP/NotoSansJP-Light.css';
 import '../font/dist/NotoSansJP/NotoSansJP-Medium.css';
@@ -23,7 +22,7 @@ const enum HTMLEntry {
     NO_THEME,
 }
 
-type PageInitCallback = (showPage: ShowPageFunc, redirect: RedirectFunc) => void;
+type PageInitCallback = (showPage: ShowPageFunc) => void;
 type PageScript = {
     default: PageInitCallback;
     offload?: () => void;
@@ -266,6 +265,7 @@ const directories: PageMap = {
     },
 };
 
+setRedirect(load);
 load(getFullURL());
 
 function load(url: string, withoutHistory: boolean = false) {
@@ -306,11 +306,11 @@ function loadPagePrepare(url: string, withoutHistory: boolean) {
     return;
 }
 
-async function registerServiceWorker(redirect: RedirectFunc) { // This function should be called after setting the `currentScriptImportPromise`.
+async function registerServiceWorker() { // This function should be called after setting the `currentScriptImportPromise`.
     if ('serviceWorker' in navigator) {
         const currentPgid = pgid;
         const showSkipWaitingPrompt = async (wb: WorkboxType) => {
-            const popupWindowModule = await popupWindowImport(redirect);
+            const popupWindowModule = await popupWindowImport();
             if (pgid !== currentPgid) {
                 return;
             }
@@ -370,9 +370,10 @@ async function registerServiceWorker(redirect: RedirectFunc) { // This function 
                     /* webpackExports: ["Workbox"] */
                     'workbox-window'
                 )).Workbox;
-            }
-            catch (e) {
-                showMessage(redirect, moduleImportError(e));
+            } catch (e) {
+                if (pgid === currentPgid) {
+                    showMessage(moduleImportError(e));
+                }
                 throw e;
             }
             if (pgid !== currentPgid) { // If a redirect has happened the new page will handle the registration.
@@ -483,17 +484,13 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
         }, 300);
     }
 
-    const redirect = (url: string, withoutHistory: boolean = false) => {
-        if (pgid === newPgid) {
-            load(url, withoutHistory);
-        }
-    };
-
     let script: Awaited<typeof scriptImportPromise>;
     try {
         script = await scriptImportPromise;
     } catch (e) {
-        showMessage(redirect, moduleImportError(e));
+        if (pgid === newPgid) {
+            showMessage(moduleImportError(e));
+        }
         throw e;
     }
 
@@ -511,7 +508,9 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
             try {
                 [html] = await Promise.all([htmlImportPromise, ...styleImportPromises]);
             } catch (e) {
-                showMessage(redirect, moduleImportError(e));
+                if (pgid === newPgid) {
+                    showMessage(moduleImportError(e));
+                }
                 throw e;
             }
 
@@ -521,7 +520,7 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
 
             d.documentElement.style.removeProperty('min-height');
             getBody().innerHTML = html.default;
-            registerServiceWorker(redirect);
+            registerServiceWorker();
             callback?.();
 
             loadingBarWidth = 100;
@@ -533,8 +532,7 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
                     loadingBar.style.opacity = '0';
                 }, 300);
             }
-        },
-        redirect
+        }
     );
     if (loadingBarShown) {
         loadingBar.style.width = '67%';

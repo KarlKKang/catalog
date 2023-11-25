@@ -21,9 +21,9 @@ import { expired, registerComplete, emailAlreadyRegistered } from './module/mess
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
 import { PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
+import { redirect } from './module/global';
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     const param = getURLParam('p');
@@ -43,16 +43,16 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
         return;
     }
 
-    sendServerRequest(redirect, 'register', {
+    sendServerRequest('register', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                showMessage(redirect, expired);
+                showMessage(expired);
             } else if (response == 'ALREADY REGISTERED') {
-                showMessage(redirect, emailAlreadyRegistered);
+                showMessage(emailAlreadyRegistered);
             } else if (response == 'APPROVED') {
-                showPage(() => { showPageCallback(redirect, param, signature); });
+                showPage(() => { showPageCallback(param, signature); });
             } else {
-                showMessage(redirect);
+                showMessage();
             }
         },
         content: 'p=' + param + '&signature=' + signature,
@@ -60,7 +60,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     });
 }
 
-function showPageCallback(redirect: RedirectFunc, param: string, signature: string) {
+function showPageCallback(param: string, signature: string) {
     const submitButton = getById('submit-button') as HTMLButtonElement;
     const usernameInput = getById('username') as HTMLInputElement;
     const passwordInput = getById('password') as HTMLInputElement;
@@ -118,10 +118,10 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
             return;
         }
 
-        sendServerRequest(redirect, 'register', {
+        sendServerRequest('register', {
             callback: function (response: string) {
                 if (response == 'EXPIRED') {
-                    showMessage(redirect, expired);
+                    showMessage(expired);
                 } else if (response == 'USERNAME DUPLICATED') {
                     replaceText(warningElem, usernameTaken);
                     showElement(warningElem);
@@ -135,11 +135,11 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'ALREADY REGISTERED') {
-                    showMessage(redirect, emailAlreadyRegistered);
+                    showMessage(emailAlreadyRegistered);
                 } else if (response == 'DONE') {
-                    showMessage(redirect, registerComplete);
+                    showMessage(registerComplete);
                 } else {
-                    showMessage(redirect);
+                    showMessage();
                 }
             },
             content: 'p=' + param + '&signature=' + signature + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),

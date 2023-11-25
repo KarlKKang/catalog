@@ -18,14 +18,14 @@ import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat } from './module/message/template/inline';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
+import { redirect } from './module/global';
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
-    showPage(() => { showPageCallback(redirect); });
+    showPage(() => { showPageCallback(); });
 }
 
-function showPageCallback(redirect: RedirectFunc) {
+function showPageCallback() {
     const emailInput = getById('email') as HTMLInputElement;
     const submitButton = getById('submit-button') as HTMLButtonElement;
     const warningElem = getById('warning');
@@ -55,16 +55,16 @@ function showPageCallback(redirect: RedirectFunc) {
             return;
         }
 
-        sendServerRequest(redirect, 'send_password_reset', {
+        sendServerRequest('send_password_reset', {
             callback: function (response: string) {
                 if (response == 'INVALID FORMAT') {
                     replaceText(warningElem, invalidEmailFormat);
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    showMessage(redirect, emailSent(false));
+                    showMessage(emailSent(false));
                 } else {
-                    showMessage(redirect);
+                    showMessage();
                 }
             },
             content: 'email=' + encodeURIComponent(email),

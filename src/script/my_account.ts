@@ -71,33 +71,32 @@ import { isString } from './module/type/helper';
 import { EMAIL_REGEX, PASSWORD_REGEX, getLocalTimeString, handleAuthenticationResult } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addInterval, removeInterval } from './module/timer';
-import type { RedirectFunc } from './module/type/RedirectFunc';
 import { UAParser } from 'ua-parser-js';
 import * as InviteResult from './module/type/InviteResult';
-import { pgid } from './module/global';
+import { pgid, redirect } from './module/global';
 
 let destroyPopupWindow: null | (() => void) = null;
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
-    sendServerRequest(redirect, 'get_account', {
+    sendServerRequest('get_account', {
         callback: function (response: string) {
             let parsedResponse: AccountInfo.AccountInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 AccountInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse());
+                showMessage(invalidResponse());
                 return;
             }
 
-            showPage(() => { showPageCallback(parsedResponse, redirect); });
+            showPage(() => { showPageCallback(parsedResponse); });
         }
     });
 }
 
-function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectFunc) {
+function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     const currentPgid = pgid;
 
     let currentUsername = userInfo.username;
@@ -132,8 +131,8 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     const loginNotificationInfo = getById('login-notification-info');
     const sessionsContainer = getById('sessions');
 
-    const popupWindowImportPromise = popupWindowImport(redirect);
-    const promptForTotpImportPromise = promptForTotpImport(redirect);
+    const popupWindowImportPromise = popupWindowImport();
+    const promptForTotpImportPromise = promptForTotpImport();
 
     addEventListener(emailChangeButton, 'click', changeEmail);
     addEventListener(usernameChangeButton, 'click', changeUsername);
@@ -149,7 +148,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     addEventListener(inviteButton, 'click', invite);
     addEventListener(logoutButton, 'click', () => {
         disableAllInputs(true);
-        logout(redirect, () => {
+        logout(() => {
             redirect(LOGIN_URL);
         });
     });
@@ -175,7 +174,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
     newUsernameInput.value = currentUsername;
     showSessions();
 
-    addNavBar(redirect, NAV_BAR_MY_ACCOUNT);
+    addNavBar(NAV_BAR_MY_ACCOUNT);
 
     function showSessions() {
         for (const session of userInfo.sessions) {
@@ -241,7 +240,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                             failedCallback: (message: string | Node[]) => void,
                             failedTotpCallback: () => void,
                         ) => {
-                            sendServerRequest(redirect, 'logout_session', {
+                            sendServerRequest('logout_session', {
                                 callback: (response: string) => {
                                     serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
                                         if (response == 'DONE') {
@@ -249,7 +248,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                             changeColor(sessionWarningElem, 'green');
                                             replaceText(sessionWarningElem, logoutDone);
                                         } else {
-                                            showMessage(redirect, invalidResponse());
+                                            showMessage(invalidResponse());
                                             return;
                                         }
                                         showElement(sessionWarningElem);
@@ -290,7 +289,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 failedCallback: (message: string | Node[]) => void,
                 failedTotpCallback: () => void,
             ) => {
-                sendServerRequest(redirect, 'send_invite', {
+                sendServerRequest('send_invite', {
                     callback: (response: string) => {
                         serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
                             if (response == 'NOT QUALIFIED') {
@@ -308,7 +307,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                     parsedResponse = JSON.parse(response);
                                     InviteResult.check(parsedResponse);
                                 } catch (e) {
-                                    showMessage(redirect, invalidResponse());
+                                    showMessage(invalidResponse());
                                     return;
                                 }
                                 replaceText(inviteCount, parsedResponse.quota.toString());
@@ -361,7 +360,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 failedCallback: (message: string | Node[]) => void,
                 failedTotpCallback: () => void,
             ) => {
-                sendServerRequest(redirect, 'change_password', {
+                sendServerRequest('change_password', {
                     callback: (response: string) => {
                         serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
                             if (response == 'DONE') {
@@ -372,7 +371,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                             } else if (response === 'PASSWORD INVALID') {
                                 replaceText(warningElem, invalidPasswordFormat);
                             } else {
-                                showMessage(redirect);
+                                showMessage();
                                 return;
                             }
                             showElement(warningElem);
@@ -396,7 +395,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
         hideElement(warningElem);
         changeColor(warningElem, 'red');
 
-        sendServerRequest(redirect, 'send_email_change', {
+        sendServerRequest('send_email_change', {
             callback: function (response: string) {
                 if (response == 'WAIT') {
                     replaceText(warningElem, emailChangeWait);
@@ -404,7 +403,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                     replaceText(warningElem, emailSent);
                     changeColor(warningElem, 'green');
                 } else {
-                    showMessage(redirect);
+                    showMessage();
                     return;
                 }
                 showElement(warningElem);
@@ -442,7 +441,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 failedCallback: (message: string | Node[]) => void,
                 failedTotpCallback: () => void,
             ) => {
-                sendServerRequest(redirect, 'change_username', {
+                sendServerRequest('change_username', {
                     callback: (response: string) => {
                         serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
                             if (response == 'DONE') {
@@ -454,7 +453,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                             } else if (response == 'EMPTY') {
                                 replaceText(warningElem, usernameEmpty);
                             } else {
-                                showMessage(redirect);
+                                showMessage();
                                 return;
                             }
                             showElement(warningElem);
@@ -483,7 +482,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 otpSentCallback?: () => void,
                 failedOtpCallback?: () => void,
             ) => {
-                sendServerRequest(redirect, 'generate_totp', {
+                sendServerRequest('generate_totp', {
                     callback: (response: string) => {
                         serverResponseCallback(response, failedCallback, () => {
                             closeWindow();
@@ -504,7 +503,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                     parsedResponse = JSON.parse(response);
                                     TOTPInfo.check(parsedResponse);
                                 } catch (e) {
-                                    showMessage(redirect, invalidResponse());
+                                    showMessage(invalidResponse());
                                     return;
                                 }
                                 promptForTotpSetup(parsedResponse);
@@ -531,7 +530,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 otpSentCallback?: () => void,
                 failedOtpCallback?: () => void,
             ) => {
-                sendServerRequest(redirect, 'disable_totp', {
+                sendServerRequest('disable_totp', {
                     callback: (response: string) => {
                         serverResponseCallback(response, failedCallback, () => { /* This page will never respond with `FAILED TOTP` */ }, () => {
                             if (response == 'FAILED EMAIL OTP') {
@@ -548,7 +547,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                 changeMfaStatus();
                                 disableAllInputs(false);
                             } else {
-                                showMessage(redirect);
+                                showMessage();
                             }
                         });
                     },
@@ -571,7 +570,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 failedCallback: (message: string | Node[]) => void,
                 failedTotpCallback: () => void,
             ) => {
-                sendServerRequest(redirect, 'generate_recovery_code', {
+                sendServerRequest('generate_recovery_code', {
                     callback: (response: string) => {
                         serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
                             if (response == 'TOTP NOT SET') {
@@ -590,7 +589,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                     parsedResponse = JSON.parse(response);
                                     RecoveryCodeInfo.check(parsedResponse);
                                 } catch (e) {
-                                    showMessage(redirect, invalidResponse());
+                                    showMessage(invalidResponse());
                                     return;
                                 }
                                 showRecoveryCode(parsedResponse, () => {
@@ -626,7 +625,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                 failedCallback: (message: string | Node[]) => void,
                 failedTotpCallback: () => void,
             ) => {
-                sendServerRequest(redirect, 'change_login_notification', {
+                sendServerRequest('change_login_notification', {
                     callback: (response: string) => {
                         serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
                             if (response == 'DONE') {
@@ -638,7 +637,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                 currentMfaStatus = false;
                                 replaceText(warningElem, mfaNotSet);
                             } else {
-                                showMessage(redirect, invalidResponse());
+                                showMessage(invalidResponse());
                                 return;
                             }
                             showElement(warningElem);
@@ -1069,7 +1068,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                     return;
                 }
 
-                sendServerRequest(redirect, 'set_totp', {
+                sendServerRequest('set_totp', {
                     callback: (response: string) => {
                         if (response === 'EXPIRED') {
                             popupWindow.hide();
@@ -1093,7 +1092,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo, redirect: RedirectF
                                 parsedResponse = JSON.parse(response);
                                 RecoveryCodeInfo.check(parsedResponse);
                             } catch (e) {
-                                showMessage(redirect, invalidResponse());
+                                showMessage(invalidResponse());
                                 return;
                             }
                             showRecoveryCode(parsedResponse, () => {

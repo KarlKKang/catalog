@@ -50,7 +50,6 @@ import { updateURLParam, getFormatIndex } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion } from './media_helper';
 import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
-import { RedirectFunc } from '../module/type/RedirectFunc';
 import { HLS_BUFFER_APPEND_ERROR } from '../module/player/media_error';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
@@ -71,7 +70,6 @@ let currentMediaInstance: PlayerType | null = null;
 const eventTargetsTracker = new Set<EventTarget>();
 
 export default function (
-    redirect: RedirectFunc,
     _seriesID: string,
     _epIndex: number,
     _epInfo: VideoEPInfo,
@@ -151,13 +149,12 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        const [downloadAccordion, containerSelector] = buildDownloadAccordion(redirect, mediaSessionInfo.credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
+        const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
         appendChild(contentContainer, downloadAccordion);
-        addEventListener(selectMenu, 'change', () => { formatSwitch(redirect, mediaHolder, selectMenu, containerSelector); });
+        addEventListener(selectMenu, 'change', () => { formatSwitch(mediaHolder, selectMenu, containerSelector); });
     });
 
     addVideoNode(
-        redirect,
         mediaHolder,
         {
             startTime: startTime === null ? undefined : startTime,
@@ -168,7 +165,7 @@ export default function (
     });
 }
 
-function formatSwitch(redirect: RedirectFunc, mediaHolder: HTMLElement, formatSelectMenu: HTMLSelectElement, containerSelector: HTMLElement) {
+function formatSwitch(mediaHolder: HTMLElement, formatSelectMenu: HTMLSelectElement, containerSelector: HTMLElement) {
     disableDropdown(formatSelectMenu, true);
     const formatIndex = formatSelectMenu.selectedIndex;
 
@@ -198,7 +195,7 @@ function formatSwitch(redirect: RedirectFunc, mediaHolder: HTMLElement, formatSe
         };
     }
 
-    addVideoNode(redirect, mediaHolder, config).then(() => {
+    addVideoNode(mediaHolder, config).then(() => {
         if (mediaInstance === currentMediaInstance && mediaInstance !== null) {
             mediaInstance.destroy();
             currentMediaInstance = null;
@@ -211,7 +208,7 @@ function formatSwitch(redirect: RedirectFunc, mediaHolder: HTMLElement, formatSe
     });
 }
 
-async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, config?: {
+async function addVideoNode(mediaHolder: HTMLElement, config?: {
     play?: boolean | undefined;
     startTime?: number | undefined;
 }) {
@@ -345,7 +342,9 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
             await createMediaSessionPromise;
             Player = (await nativePlayerImportPromise).Player;
         } catch (e) {
-            showMessage(redirect, moduleImportError(e));
+            if (currentPgid === pgid) {
+                showMessage(moduleImportError(e));
+            }
             throw e;
         }
 
@@ -373,7 +372,9 @@ async function addVideoNode(redirect: RedirectFunc, mediaHolder: HTMLElement, co
             await createMediaSessionPromise;
             HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
         } catch (e) {
-            showMessage(redirect, moduleImportError(e));
+            if (currentPgid === pgid) {
+                showMessage(moduleImportError(e));
+            }
             throw e;
         }
 

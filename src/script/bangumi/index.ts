@@ -17,13 +17,13 @@ import { getLogoutParam } from './helper';
 import { default as getImportPromises } from './get_import_promises';
 import type { UpdatePageImportPromise } from './get_import_promises';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
-import type { RedirectFunc } from '../module/type/RedirectFunc';
 import { addInterval } from '../module/timer';
 import * as MediaSessionInfo from '../module/type/MediaSessionInfo';
+import { pgid, redirect } from '../module/global';
 
 let updatePageModule: Awaited<UpdatePageImportPromise> | null = null;
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     // Parse parameters
@@ -53,21 +53,21 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
 
     //send requests
     const createMediaSessionPromise = new Promise<MediaSessionInfo.MediaSessionInfo>((resolve) => {
-        sendServerRequest(redirect, 'create_media_session', {
+        sendServerRequest('create_media_session', {
             callback: function (response: string) {
                 let parsedResponse: MediaSessionInfo.MediaSessionInfo;
                 try {
                     parsedResponse = JSON.parse(response);
                     MediaSessionInfo.check(parsedResponse);
                 } catch (e) {
-                    showMessage(redirect, invalidResponse());
+                    showMessage(invalidResponse());
                     return;
                 }
                 addInterval(() => {
-                    sendServerRequest(redirect, 'authenticate_media_session', {
+                    sendServerRequest('authenticate_media_session', {
                         callback: function (response: string) {
                             if (response !== 'APPROVED') {
-                                showMessage(redirect, invalidResponse());
+                                showMessage(invalidResponse());
                             }
                         },
                         content: parsedResponse.credential,
@@ -83,20 +83,24 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
         });
     });
 
-    sendServerRequest(redirect, 'get_ep?series=' + seriesID + '&ep=' + epIndex, {
+    sendServerRequest('get_ep?series=' + seriesID + '&ep=' + epIndex, {
         callback: async function (response: string) {
             let parsedResponse: BangumiInfo.BangumiInfo;
             try {
                 parsedResponse = JSON.parse(response);
                 BangumiInfo.check(parsedResponse);
             } catch (e) {
-                showMessage(redirect, invalidResponse());
+                showMessage(invalidResponse());
                 return;
             }
 
+            const currentPgid = pgid;
             createMediaSessionPromise.then((mediaSessionInfo) => {
+                if (currentPgid !== pgid) {
+                    return;
+                }
                 if (mediaSessionInfo.type !== parsedResponse.ep_info.type) {
-                    showMessage(redirect, notFound);
+                    showMessage(notFound);
                 }
             });
 
@@ -105,13 +109,14 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
                 updatePageModule = await importPromises.updatePage;
                 updatePage = updatePageModule;
             } catch (e) {
-                showMessage(redirect, moduleImportError(e));
+                if (currentPgid === pgid) {
+                    showMessage(moduleImportError(e));
+                }
                 throw e;
             }
 
             showPage(() => {
                 updatePage.default(
-                    redirect,
                     parsedResponse,
                     seriesID,
                     epIndex,

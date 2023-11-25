@@ -18,9 +18,9 @@ import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/tem
 import { expired, emailSent } from './module/message/template/param';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
+import { redirect } from './module/global';
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     const param = getURLParam('p');
@@ -39,14 +39,14 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
         return;
     }
 
-    sendServerRequest(redirect, 'verify_email_change', {
+    sendServerRequest('verify_email_change', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                showMessage(redirect, expired);
+                showMessage(expired);
             } else if (response == 'APPROVED') {
-                showPage(() => { showPageCallback(redirect, param, signature); });
+                showPage(() => { showPageCallback(param, signature); });
             } else {
-                showMessage(redirect);
+                showMessage();
             }
         },
         content: 'p=' + param + '&signature=' + signature,
@@ -54,7 +54,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     });
 }
 
-function showPageCallback(redirect: RedirectFunc, param: string, signature: string) {
+function showPageCallback(param: string, signature: string) {
     const newEmailInput = getById('new-email') as HTMLInputElement;
     const submitButton = getById('submit-button') as HTMLButtonElement;
     const warningElem = getById('warning');
@@ -81,10 +81,10 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
             return;
         }
 
-        sendServerRequest(redirect, 'verify_email_change', {
+        sendServerRequest('verify_email_change', {
             callback: function (response: string) {
                 if (response == 'EXPIRED') {
-                    showMessage(redirect, expired);
+                    showMessage(expired);
                 } else if (response == 'DUPLICATED') {
                     replaceText(warningElem, emailAlreadyRegistered);
                     showElement(warningElem);
@@ -94,9 +94,9 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    showMessage(redirect, emailSent(false));
+                    showMessage(emailSent(false));
                 } else {
-                    showMessage(redirect);
+                    showMessage();
                 }
             },
             content: 'p=' + param + '&signature=' + signature + '&new=' + newEmail,

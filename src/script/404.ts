@@ -10,10 +10,10 @@ import {
 import { notFound as notFoundTitle } from './module/message/template/title/server';
 import { notFound as notFoundBody } from './module/message/template/body/server';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
 import { changeColor } from './module/common';
+import { redirect } from './module/global';
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
     showPage(() => {
         const title = getById('title');

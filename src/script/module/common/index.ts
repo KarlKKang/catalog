@@ -27,7 +27,7 @@ import {
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
 import { addTimeout } from '../timer';
-import { RedirectFunc } from '../type/RedirectFunc';
+import { pgid, redirect } from '../global';
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
@@ -47,7 +47,7 @@ interface SendServerRequestOption {
     showSessionEndedMessage?: boolean;
 }
 
-function xhrOnErrorCallback(redirect: RedirectFunc, uri: string, options: SendServerRequestOption) {
+function xhrOnErrorCallback(uri: string, options: SendServerRequestOption) {
     if (options.connectionErrorRetry === undefined) {
         options.connectionErrorRetry = 2;
     } else {
@@ -61,62 +61,62 @@ function xhrOnErrorCallback(redirect: RedirectFunc, uri: string, options: SendSe
     }
 
     if (options.connectionErrorRetry < 0) {
-        showMessage(redirect, connectionError);
+        showMessage(connectionError);
     } else {
         addTimeout(() => {
-            sendServerRequest(redirect, uri, options);
+            sendServerRequest(uri, options);
         }, options.connectionErrorRetryTimeout);
     }
 }
 
-function checkXHRStatus(redirect: RedirectFunc, response: XMLHttpRequest, uri: string, options: SendServerRequestOption): boolean {
+function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServerRequestOption): boolean {
     const status = response.status;
     const responseText = response.responseText;
     if (status === 200) {
         return true;
     } else if (status === 403) {
         if (responseText === 'SESSION ENDED') {
-            showMessage(redirect, mediaSessionEnded);
+            showMessage(mediaSessionEnded);
         } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
-            showMessage(redirect, insufficientPermissions);
+            showMessage(insufficientPermissions);
         } else if (responseText === 'UNAUTHORIZED') {
             const logoutParam = options.logoutParam;
             const url = LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam));
             if (options.showSessionEndedMessage) {
-                showMessage(redirect, sessionEnded(url));
+                showMessage(sessionEnded(url));
             } else {
                 redirect(url, true);
             }
         } else {
-            xhrOnErrorCallback(redirect, uri, options);
+            xhrOnErrorCallback(uri, options);
         }
     } else if (status === 429) {
-        showMessage(redirect, status429);
+        showMessage(status429);
     } else if (status === 503) {
         let parsedResponse: MaintenanceInfo.MaintenanceInfo;
         try {
             parsedResponse = JSON.parse(responseText);
             MaintenanceInfo.check(parsedResponse);
         } catch (e) {
-            showMessage(redirect, invalidResponse());
+            showMessage(invalidResponse());
             return false;
         }
-        showMessage(redirect, status503(parsedResponse));
+        showMessage(status503(parsedResponse));
     } else if (status === 500 || status === 400) {
         if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
-            showMessage(redirect, status400And500(responseText));
+            showMessage(status400And500(responseText));
         } else {
-            showMessage(redirect);
+            showMessage();
         }
     } else if (status === 404 && response.responseText === 'REJECTED') {
-        showMessage(redirect, notFound);
+        showMessage(notFound);
     } else {
-        xhrOnErrorCallback(redirect, uri, options);
+        xhrOnErrorCallback(uri, options);
     }
     return false;
 }
 
-export function sendServerRequest(redirect: RedirectFunc, uri: string, options: SendServerRequestOption): XMLHttpRequest {
+export function sendServerRequest(uri: string, options: SendServerRequestOption): XMLHttpRequest {
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.open(options.method ?? 'POST', SERVER_URL + '/' + uri, true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -124,14 +124,14 @@ export function sendServerRequest(redirect: RedirectFunc, uri: string, options: 
 
     addEventListener(xmlhttp, 'error', () => {
         removeAllEventListeners(xmlhttp);
-        xhrOnErrorCallback(redirect, uri, options);
+        xhrOnErrorCallback(uri, options);
     });
     addEventListener(xmlhttp, 'abort', () => {
         removeAllEventListeners(xmlhttp);
     });
     addEventListener(xmlhttp, 'load', () => {
         removeAllEventListeners(xmlhttp);
-        if (checkXHRStatus(redirect, xmlhttp, uri, options)) {
+        if (checkXHRStatus(xmlhttp, uri, options)) {
             options.callback && options.callback(xmlhttp.responseText);
         }
     });
@@ -140,22 +140,22 @@ export function sendServerRequest(redirect: RedirectFunc, uri: string, options: 
     return xmlhttp;
 }
 
-export function authenticate(redirect: RedirectFunc, callback: { successful?: () => void; failed?: () => void }) {
-    sendServerRequest(redirect, 'get_authentication_state', {
+export function authenticate(callback: { successful?: () => void; failed?: () => void }) {
+    sendServerRequest('get_authentication_state', {
         callback: function (response: string) {
             if (response === 'APPROVED') {
                 callback.successful && callback.successful();
             } else if (response === 'FAILED') {
                 callback.failed && callback.failed();
             } else {
-                showMessage(redirect);
+                showMessage();
             }
         }
     });
 }
 
-export function logout(redirect: RedirectFunc, callback: () => void,) {
-    sendServerRequest(redirect, 'logout', {
+export function logout(callback: () => void,) {
+    sendServerRequest('logout', {
         callback: function (response: string) {
             if (response === 'PARTIAL' || response === 'DONE') {
                 if (DEVELOPMENT) {
@@ -163,7 +163,7 @@ export function logout(redirect: RedirectFunc, callback: () => void,) {
                 }
                 callback();
             } else {
-                showMessage(redirect);
+                showMessage();
             }
         }
     });
@@ -207,7 +207,7 @@ export const NAV_BAR_NEWS = NavBarPage.NEWS;
 export const NAV_BAR_MY_ACCOUNT = NavBarPage.MY_ACCOUNT;
 export const NAV_BAR_INFO = NavBarPage.INFO;
 
-export function addNavBar(redirect: RedirectFunc, page?: NavBarPage, currentPageCallback?: () => void) {
+export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => void) {
     const getNavButton = (name: string): [HTMLDivElement, HTMLDivElement] => {
         const container = createDivElement();
         const containerInner = createDivElement();
@@ -272,24 +272,24 @@ export function addNavBar(redirect: RedirectFunc, page?: NavBarPage, currentPage
     navBarPadding.id = 'nav-bar-padding';
     appendChild(getBody(), navBarPadding);
 
-    const addNavBarIcon = async () => {
-        let icons: typeof import(
+    let icons: typeof import(
+        './icons'
+    );
+    const currentPgid = pgid;
+    try {
+        icons = await import(
             './icons'
         );
-        try {
-            icons = await import(
-                './icons'
-            );
-        } catch (e) {
-            showMessage(redirect, moduleImportError(e));
-            throw e;
+    } catch (e) {
+        if (currentPgid === pgid) {
+            showMessage(moduleImportError(e));
         }
-        appendChild(navButton1[1], page === NavBarPage.HOME ? icons.getHomeFillIcon() : icons.getHomeIcon());
-        appendChild(navButton2[1], page === NavBarPage.NEWS ? icons.getNewsFillIcon() : icons.getNewsIcon());
-        appendChild(navButton3[1], page === NavBarPage.MY_ACCOUNT ? icons.getMyAccountFillIcon() : icons.getMyAccountIcon());
-        appendChild(navButton4[1], page === NavBarPage.INFO ? icons.getInfoFillIcon() : icons.getInfoIcon());
-    };
-    addNavBarIcon();
+        throw e;
+    }
+    appendChild(navButton1[1], page === NavBarPage.HOME ? icons.getHomeFillIcon() : icons.getHomeIcon());
+    appendChild(navButton2[1], page === NavBarPage.NEWS ? icons.getNewsFillIcon() : icons.getNewsIcon());
+    appendChild(navButton3[1], page === NavBarPage.MY_ACCOUNT ? icons.getMyAccountFillIcon() : icons.getMyAccountIcon());
+    appendChild(navButton4[1], page === NavBarPage.INFO ? icons.getInfoFillIcon() : icons.getInfoIcon());
 }
 
 export function scrollToTop() {

@@ -36,11 +36,8 @@ import type * as BangumiInfo from '../module/type/BangumiInfo';
 import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, LazyloadImportPromise, NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise, ImageLoaderImportPromise } from './get_import_promises';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
-import type { RedirectFunc } from '../module/type/RedirectFunc';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
-import { pgid } from '../module/global';
-
-let redirect: RedirectFunc;
+import { pgid, redirect } from '../module/global';
 
 let seriesID: string;
 let epIndex: number;
@@ -48,7 +45,6 @@ let epIndex: number;
 let currentPage: Awaited<VideoImportPromise> | Awaited<AudioImportPromise> | Awaited<ImageImportPromise> | null = null;
 
 export default async function (
-    _redirect: RedirectFunc,
     response: BangumiInfo.BangumiInfo,
     _seriesID: string,
     _epIndex: number,
@@ -62,11 +58,10 @@ export default async function (
     imageLoaderImportPromise: ImageLoaderImportPromise,
     createMediaSessionPromise: Promise<MediaSessionInfo>,
 ) {
-    redirect = _redirect;
     seriesID = _seriesID;
     epIndex = _epIndex;
 
-    addNavBar(redirect);
+    addNavBar();
 
     const contentContainer = getById('content');
     const startTimeText = getURLParam('timestamp');
@@ -152,36 +147,42 @@ export default async function (
         try {
             currentPage = await videoImportPromise;
         } catch (e) {
-            showMessage(redirect, moduleImportError(e));
+            if (currentPgid === pgid) {
+                showMessage(moduleImportError(e));
+            }
             throw e;
         }
         if (currentPgid !== pgid) {
             return;
         }
-        currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, createMediaSessionPromise, startTime, play);
+        currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, createMediaSessionPromise, startTime, play);
     } else {
         if (type === 'audio') {
             try {
                 currentPage = await audioImportPromise;
             } catch (e) {
-                showMessage(redirect, moduleImportError(e));
+                if (currentPgid === pgid) {
+                    showMessage(moduleImportError(e));
+                }
                 throw e;
             }
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(redirect, seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise, createMediaSessionPromise);
+            currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise, createMediaSessionPromise);
         } else {
             try {
                 currentPage = await imageImportPromise;
             } catch (e) {
-                showMessage(redirect, moduleImportError(e));
+                if (currentPgid === pgid) {
+                    showMessage(moduleImportError(e));
+                }
                 throw e;
             }
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(redirect, epInfo as BangumiInfo.ImageEPInfo, baseURL, lazyloadImportPromise, imageLoaderImportPromise, createMediaSessionPromise);
+            currentPage.default(epInfo as BangumiInfo.ImageEPInfo, baseURL, lazyloadImportPromise, imageLoaderImportPromise, createMediaSessionPromise);
         }
         updateURLParam(seriesID, epIndex, 0);
     }

@@ -21,12 +21,11 @@ import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } fro
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { EMAIL_REGEX, PASSWORD_REGEX, handleAuthenticationResult } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import type { RedirectFunc } from './module/type/RedirectFunc';
-import { pgid } from './module/global';
+import { pgid, redirect } from './module/global';
 
 let destroyPopupWindow: null | (() => void) = null;
 
-export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
+export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     const param = getURLParam('p');
@@ -45,16 +44,16 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
         return;
     }
 
-    sendServerRequest(redirect, 'change_email', {
+    sendServerRequest('change_email', {
         callback: function (response: string) {
             if (response == 'EXPIRED') {
-                showMessage(redirect, expired);
+                showMessage(expired);
             } else if (response == 'APPROVED') {
                 showPage(() => {
-                    showPageCallback(redirect, param, signature);
+                    showPageCallback(param, signature);
                 });
             } else {
-                showMessage(redirect);
+                showMessage();
             }
         },
         content: 'p=' + param + '&signature=' + signature,
@@ -62,7 +61,7 @@ export default function (showPage: ShowPageFunc, redirect: RedirectFunc) {
     });
 }
 
-function showPageCallback(redirect: RedirectFunc, param: string, signature: string) {
+function showPageCallback(param: string, signature: string) {
     const emailInput = getById('email') as HTMLInputElement;
     const passwordInput = getById('password') as HTMLInputElement;
     const submitButton = getById('submit-button') as HTMLButtonElement;
@@ -101,8 +100,8 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
             return;
         }
 
-        const popupWindowImportPromise = popupWindowImport(redirect);
-        const promptForTotpImportPromise = promptForTotpImport(redirect);
+        const popupWindowImportPromise = popupWindowImport();
+        const promptForTotpImportPromise = promptForTotpImport();
 
         sendChangeEmailRequest(
             'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
@@ -137,7 +136,7 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
     }
 
     function sendChangeEmailRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
-        sendServerRequest(redirect, 'change_email', {
+        sendServerRequest('change_email', {
             callback: function (response: string) {
                 const authenticationResult = handleAuthenticationResult(
                     response,
@@ -166,11 +165,11 @@ function showPageCallback(redirect: RedirectFunc, param: string, signature: stri
                 }
 
                 if (response == 'EXPIRED') {
-                    showMessage(redirect, expired);
+                    showMessage(expired);
                 } else if (response == 'DONE') {
-                    showMessage(redirect, emailChanged);
+                    showMessage(emailChanged);
                 } else {
-                    showMessage(redirect);
+                    showMessage();
                 }
             },
             content: content
