@@ -36,30 +36,17 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/message/template/param/server';
-import { moduleImportError } from './module/message/template/param';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
-import type { default as LazyloadObserve } from './module/lazyload';
 import { encodeCFURIComponent, getLocalTime, getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { allResultsShown, loading, noResult } from './module/message/template/inline';
 import { pgid, redirect } from './module/global';
+import { lazyloadImport, unloadLazyload } from './module/lazyload';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo;
-
-type Lazyload = typeof import(
-    /* webpackExports: ["default", "unobserveAll"] */
-    './module/lazyload'
-);
-let lazyload: Lazyload | null = null;
-
-type ImageLoader = typeof import(
-    /* webpackExports: ["clearAllImageEvents"] */
-    './module/image_loader'
-);
-let imageLoader: ImageLoader | null = null;
 
 export default function (showPage: ShowPageFunc) {
     pivot = 0;
@@ -75,16 +62,7 @@ export default function (showPage: ShowPageFunc) {
         loadingTextContainer.id = 'loading-text';
         getAllNews(showPage, loadingTextContainer);
     } else {
-        const lazyloadImportPromise = import(
-            /* webpackExports: ["default", "unobserveAll"] */
-            './module/lazyload'
-        );
-        import(
-            /* webpackExports: ["clearAllImageEvents"] */
-            './module/image_loader'
-        ).then((imageLoaderModule) => {
-            imageLoader = imageLoaderModule;
-        }); // Lazyload will handle if this import fails.
+        const lazyloadImportPromise = lazyloadImport();
         getNews(lazyloadImportPromise, newsID, showPage);
     }
 }
@@ -94,7 +72,7 @@ function getNewsID(): string | null {
     return getBaseURL().substring(start);
 }
 
-function getNews(lazyloadImportPromise: Promise<Lazyload>, newsID: string, showPage: ShowPageFunc): void {
+function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsID: string, showPage: ShowPageFunc): void {
     const hash = getHash();
     sendServerRequest('get_news', {
         callback: function (response: string) {
@@ -187,18 +165,9 @@ function showNews(container: HTMLElement, contentContainer: HTMLElement, newsInf
     appendChild(container, contentOuterContainer);
 }
 
-async function attachImage(lazyloadImportPromise: Promise<Lazyload>, contentContainer: HTMLElement, newsID: string): Promise<void> {
-    let lazyloadObserve: typeof LazyloadObserve;
+async function attachImage(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, contentContainer: HTMLElement, newsID: string): Promise<void> {
     const currentPgid = pgid;
-    try {
-        lazyload = await lazyloadImportPromise;
-        lazyloadObserve = lazyload.default;
-    } catch (e) {
-        if (currentPgid === pgid) {
-            showMessage(moduleImportError(e));
-        }
-        throw e;
-    }
+    const lazyload = await lazyloadImportPromise;
     if (currentPgid !== pgid) {
         return;
     }
@@ -212,7 +181,7 @@ async function attachImage(lazyloadImportPromise: Promise<Lazyload>, contentCont
             continue;
         }
         const xhrParam = 'news=' + newsID;
-        lazyloadObserve(elem, baseURL + encodeCFURIComponent(src), src, { xhrParam: xhrParam });
+        lazyload.default(elem, baseURL + encodeCFURIComponent(src), src, { xhrParam: xhrParam });
         if (containsClass(elem, 'image-enlarge')) {
             addEventListener(elem, 'click', () => {
                 setSessionStorage('base-url', baseURL);
@@ -348,9 +317,6 @@ function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInf
 }
 
 export function offload() {
-    lazyload?.unobserveAll();
-    lazyload = null;
-    imageLoader?.clearAllImageEvents();
-    imageLoader = null;
+    unloadLazyload();
     destroyInfiniteScrolling();
 }

@@ -16,22 +16,14 @@ import {
     appendText,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
-import { show as showMessage } from '../module/message';
-import { moduleImportError } from '../module/message/template/param';
-import type { default as LazyloadObserve } from '../module/lazyload';
 import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
-import { lazyloadImportPromise, imageLoaderImportPromise } from './import_promise';
+import { lazyloadImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
-
-type Lazyload = typeof import(
-    /* webpackExports: ["default", "unobserveAll"] */
-    '../module/lazyload'
-);
-let lazyload: Lazyload | null = null;
+import { unloadLazyload } from '../module/lazyload';
 
 type ImageLoader = typeof import(
     /* webpackExports: ["clearAllImageEvents"] */
@@ -71,21 +63,8 @@ export default async function (
 
     const files = epInfo.files;
 
-    let lazyloadObserve: typeof LazyloadObserve;
-    let mediaSessionCredential: string;
     const currentPgid = pgid;
-    try {
-        mediaSessionCredential = (await createMediaSessionPromise).credential;
-        lazyload = await lazyloadImportPromise;
-        lazyloadObserve = lazyload.default;
-        imageLoader = await imageLoaderImportPromise;
-    } catch (e) {
-        if (currentPgid === pgid) {
-            showMessage(moduleImportError(e));
-        }
-        throw e;
-    }
-
+    const [lazyloadModule, mediaSessionCredential] = await Promise.all([lazyloadImportPromise, createMediaSessionPromise]);
     if (currentPgid !== pgid) {
         return;
     }
@@ -129,9 +108,9 @@ export default async function (
         appendChild(imageNode, downloadPanel);
         appendChild(mediaHolder, imageNode);
 
-        lazyloadObserve(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
+        lazyloadModule.default(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
             xhrParam: 'p=' + index,
-            mediaSessionCredential: mediaSessionCredential,
+            mediaSessionCredential: mediaSessionCredential.credential,
             delay: 250,
             onDataLoad: function (data: Blob) {
                 addEventListener(downloadButton, 'click', () => {
@@ -153,8 +132,7 @@ export default async function (
 }
 
 export function offload() {
-    lazyload?.unobserveAll();
-    lazyload = null;
+    unloadLazyload();
     imageLoader?.clearAllImageEvents();
     imageLoader = null;
 }

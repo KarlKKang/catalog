@@ -32,7 +32,6 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
-import { moduleImportError } from './module/message/template/param';
 import * as SeriesInfo from './module/type/SeriesInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
 import isbot from 'isbot';
@@ -41,21 +40,10 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout } from './module/timer';
 import { allResultsShown, loading, noResult } from './module/message/template/inline';
 import { pgid, redirect } from './module/global';
+import { lazyloadImport, unloadLazyload } from './module/lazyload';
 
 let pivot: SeriesInfo.Pivot;
 let keywords: string;
-
-type Lazyload = typeof import(
-    /* webpackExports: ["default", "unobserveAll"] */
-    './module/lazyload'
-);
-let lazyload: Lazyload | null = null;
-
-type ImageLoader = typeof import(
-    /* webpackExports: ["clearAllImageEvents"] */
-    './module/image_loader'
-);
-let imageLoader: ImageLoader | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
@@ -70,15 +58,7 @@ export default function (showPage: ShowPageFunc) {
     }
 
     // Preload module
-    const lazyloadImportPromise = import(
-        /* webpackExports: ["default", "unobserveAll"] */
-        './module/lazyload'
-    );
-
-    const imageLoaderImportPromise = import(
-        /* webpackExports: ["clearAllImageEvents"] */
-        './module/image_loader'
-    );
+    const lazyloadImportPromise = lazyloadImport();
 
     const urlKeywords = getURLKeywords();
     if (urlKeywords !== '') {
@@ -87,24 +67,12 @@ export default function (showPage: ShowPageFunc) {
 
     getSeries(async (seriesInfo: SeriesInfo.SeriesInfo) => {
         showPage(async () => {
-            let lazyloadModule: Lazyload;
-            let imageLoaderModule: ImageLoader;
             const currentPgid = pgid;
-            try {
-                lazyload = await lazyloadImportPromise;
-                imageLoader = await imageLoaderImportPromise;
-                lazyloadModule = lazyload;
-                imageLoaderModule = imageLoader;
-            } catch (e) {
-                if (currentPgid === pgid) {
-                    showMessage(moduleImportError(e));
-                }
-                throw e;
-            }
+            const lazyload = await lazyloadImportPromise;
             if (currentPgid !== pgid) {
                 return;
             }
-            showPageCallback(seriesInfo, urlKeywords, lazyloadModule, imageLoaderModule);
+            showPageCallback(seriesInfo, urlKeywords, lazyload);
         });
     }, false);
 }
@@ -112,8 +80,7 @@ export default function (showPage: ShowPageFunc) {
 function showPageCallback(
     seriesInfo: SeriesInfo.SeriesInfo,
     urlKeywords: string,
-    lazyloadModule: Lazyload,
-    imageLoaderModule: ImageLoader
+    lazyload: Awaited<ReturnType<typeof lazyloadImport>>,
 ) {
     const searchBar = getById('search-bar');
     const searchBarInput = getDescendantsByTagAt(searchBar, 'input', 0) as HTMLInputElement;
@@ -213,7 +180,7 @@ function showPageCallback(
             addClass(seriesNode, 'series');
 
             appendChild(containerElem, seriesNode);
-            lazyloadModule.default(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title);
+            lazyload.default(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title);
         }
 
         const infiniteScrolling = getInfiniteScrolling();
@@ -248,8 +215,7 @@ function showPageCallback(
                     removeAllEventListeners(eventTarget);
                 }
                 eventTargetsTracker.clear();
-                lazyloadModule.unobserveAll();
-                imageLoaderModule.clearAllImageEvents();
+                lazyload.unobserveAll();
                 resolve();
             }, 400);
         });
@@ -316,10 +282,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void, showSe
 }
 
 export function offload() {
-    lazyload?.unobserveAll();
-    lazyload = null;
-    imageLoader?.clearAllImageEvents();
-    imageLoader = null;
+    unloadLazyload();
     destroyInfiniteScrolling();
     eventTargetsTracker.clear();
 }
