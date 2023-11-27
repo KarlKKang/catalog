@@ -48,11 +48,12 @@ import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 
 import { updateURLParam, getFormatIndex } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion } from './media_helper';
-import type { NativePlayerImportPromise, HlsPlayerImportPromise } from './get_import_promises';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { HLS_BUFFER_APPEND_ERROR } from '../module/player/media_error';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
+import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
+import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 
 let currentPgid: unknown;
 
@@ -60,8 +61,6 @@ let seriesID: string;
 let epIndex: number;
 let epInfo: VideoEPInfo;
 let baseURL: string;
-let nativePlayerImportPromise: NativePlayerImportPromise;
-let hlsPlayerImportPromise: HlsPlayerImportPromise;
 let createMediaSessionPromise: Promise<MediaSessionInfo>;
 
 let currentFormat: VideoFormatInfo;
@@ -74,8 +73,6 @@ export default function (
     _epIndex: number,
     _epInfo: VideoEPInfo,
     _baseURL: string,
-    _nativePlayerImportPromise: NativePlayerImportPromise,
-    _hlsPlayerImportPromise: HlsPlayerImportPromise,
     _createMediaSessionPromise: Promise<MediaSessionInfo>,
     startTime: number | null,
     play: boolean
@@ -86,12 +83,10 @@ export default function (
     epIndex = _epIndex;
     epInfo = _epInfo;
     baseURL = _baseURL;
-    nativePlayerImportPromise = _nativePlayerImportPromise;
-    hlsPlayerImportPromise = _hlsPlayerImportPromise;
     createMediaSessionPromise = _createMediaSessionPromise;
 
-    const mediaHolder = getById('media-holder');
-    const contentContainer = getById('content');
+    const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
+
     addClass(contentContainer, 'video');
 
     // Title
@@ -143,7 +138,7 @@ export default function (
     hideElement(formatDisplay);
     appendChild(formatContainer, formatDisplay);
 
-    insertBefore(formatContainer, mediaHolder);
+    insertBefore(formatContainer, getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER));
 
     createMediaSessionPromise.then((mediaSessionInfo) => {
         if (currentPgid !== pgid) {
@@ -151,21 +146,18 @@ export default function (
         }
         const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
         appendChild(contentContainer, downloadAccordion);
-        addEventListener(selectMenu, 'change', () => { formatSwitch(mediaHolder, selectMenu, containerSelector); });
+        addEventListener(selectMenu, 'change', () => { formatSwitch(selectMenu, containerSelector); });
     });
 
-    addVideoNode(
-        mediaHolder,
-        {
-            startTime: startTime === null ? undefined : startTime,
-            play: play
-        }
-    ).then(() => {
+    addVideoNode({
+        startTime: startTime === null ? undefined : startTime,
+        play: play
+    }).then(() => {
         disableDropdown(selectMenu, false);
     });
 }
 
-function formatSwitch(mediaHolder: HTMLElement, formatSelectMenu: HTMLSelectElement, containerSelector: HTMLElement) {
+function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HTMLElement) {
     disableDropdown(formatSelectMenu, true);
     const formatIndex = formatSelectMenu.selectedIndex;
 
@@ -195,7 +187,7 @@ function formatSwitch(mediaHolder: HTMLElement, formatSelectMenu: HTMLSelectElem
         };
     }
 
-    addVideoNode(mediaHolder, config).then(() => {
+    addVideoNode(config).then(() => {
         if (mediaInstance === currentMediaInstance && mediaInstance !== null) {
             mediaInstance.destroy();
             currentMediaInstance = null;
@@ -208,7 +200,7 @@ function formatSwitch(mediaHolder: HTMLElement, formatSelectMenu: HTMLSelectElem
     });
 }
 
-async function addVideoNode(mediaHolder: HTMLElement, config?: {
+async function addVideoNode(config?: {
     play?: boolean | undefined;
     startTime?: number | undefined;
 }) {
@@ -320,6 +312,7 @@ async function addVideoNode(mediaHolder: HTMLElement, config?: {
             currentMediaInstance = null;
             cleanupEvents();
         }
+        const mediaHolder = getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER);
         replaceChildren(mediaHolder, playerContainer);
         for (const mediaMessage of mediaMessageQueue) {
             showMediaMessage(...mediaMessage);
@@ -331,7 +324,7 @@ async function addVideoNode(mediaHolder: HTMLElement, config?: {
     const afterLoad = (mediaInstance: PlayerType) => {
         mediaInstance.media.title = getTitle();
         if (epInfo.chapters.length > 0) {
-            displayChapters(mediaHolder, mediaInstance, USE_AAC ? 44 : 0, chaptersActive);
+            displayChapters(mediaInstance, USE_AAC ? 44 : 0, chaptersActive);
         }
     };
 
@@ -426,7 +419,7 @@ async function addVideoNode(mediaHolder: HTMLElement, config?: {
     }
 }
 
-function displayChapters(mediaHolder: HTMLElement, mediaInstance: Player, offset: number, active: boolean) {
+function displayChapters(mediaInstance: Player, offset: number, active: boolean) {
     const [accordion, accordionPanel] = buildAccordion('チャプター', active);
     accordion.id = 'chapters-accordion';
     eventTargetsTracker.add(accordion);
@@ -454,7 +447,7 @@ function displayChapters(mediaHolder: HTMLElement, mediaInstance: Player, offset
     addClass(chaptersNode, 'chapters');
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);
-    appendChild(mediaHolder, chaptersNode);
+    appendChild(getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER), chaptersNode);
 
     const video = mediaInstance.media;
     function updateChapterDisplay() {

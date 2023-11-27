@@ -14,14 +14,13 @@ import { moduleImportError } from '../module/message/template/param';
 import { invalidResponse, notFound } from '../module/message/template/param/server';
 import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam } from './helper';
-import { default as getImportPromises } from './get_import_promises';
-import type { UpdatePageImportPromise } from './get_import_promises';
+import { importAll, updatePageImportPromise } from './import_promise';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { addInterval } from '../module/timer';
 import * as MediaSessionInfo from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 
-let updatePageModule: Awaited<UpdatePageImportPromise> | null = null;
+let updatePageModule: Awaited<typeof updatePageImportPromise> | null = null;
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -35,7 +34,7 @@ export default function (showPage: ShowPageFunc) {
     const seriesID = seriesIDParam;
 
     // Preload modules
-    const importPromises = getImportPromises();
+    importAll();
 
     // Parse other parameters
     const epIndexParam = getURLParam('ep');
@@ -104,9 +103,9 @@ export default function (showPage: ShowPageFunc) {
                 }
             });
 
-            let updatePage: Awaited<UpdatePageImportPromise>;
+            let updatePage: Awaited<typeof updatePageImportPromise>;
             try {
-                updatePageModule = await importPromises.updatePage;
+                updatePageModule = await updatePageImportPromise;
                 updatePage = updatePageModule;
             } catch (e) {
                 if (currentPgid === pgid) {
@@ -120,14 +119,6 @@ export default function (showPage: ShowPageFunc) {
                     parsedResponse,
                     seriesID,
                     epIndex,
-                    importPromises.video,
-                    importPromises.audio,
-                    importPromises.image,
-                    importPromises.nativePlayer,
-                    importPromises.hlsPlayer,
-                    importPromises.videojsPlayer,
-                    importPromises.lazyload,
-                    importPromises.imageLoader,
                     createMediaSessionPromise,
                 );
             });

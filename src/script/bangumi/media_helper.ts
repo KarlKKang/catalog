@@ -36,6 +36,7 @@ import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import { VideoFormatInfo } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
 import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from '../module/player/media_error';
+import { SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -79,8 +80,8 @@ export function showPlayerError(errorCode: number | null) {
 }
 
 export function showErrorMessage(title: string, body: string) {
+    const mediaHolder = getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER);
     let messageElem = getByIdNative('error');
-    const mediaHolder = getById('media-holder');
     if (messageElem === null) {
         messageElem = createMessageElem(title, body, 'red');
         messageElem.id = 'error';

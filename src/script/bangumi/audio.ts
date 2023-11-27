@@ -35,9 +35,10 @@ import { parseCharacters } from './helper';
 import {
     showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError
 } from './media_helper';
-import type { NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise } from './get_import_promises';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
+import { hlsPlayerImportPromise, nativePlayerImportPromise, videojsPlayerImportPromise } from './import_promise';
+import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 
 let currentPgid: unknown;
 
@@ -46,9 +47,6 @@ let epIndex: number;
 let epInfo: AudioEPInfo;
 let baseURL: string;
 
-let nativePlayerImportPromise: NativePlayerImportPromise;
-let hlsPlayerImportPromise: HlsPlayerImportPromise;
-let videojsPlayerImportPromise: VideojsPlayerImportPromise;
 let createMediaSessionPromise: Promise<MediaSessionInfo>;
 
 let audioReadyCounter: number;
@@ -60,9 +58,6 @@ export default function (
     _epIndex: number,
     _epInfo: AudioEPInfo,
     _baseURL: string,
-    _nativePlayerImportPromise: NativePlayerImportPromise,
-    _hlsPlayerImportPromise: HlsPlayerImportPromise,
-    _videojsPlayerImportPromise: VideojsPlayerImportPromise,
     _createMediaSessionPromise: Promise<MediaSessionInfo>
 ) {
     currentPgid = pgid;
@@ -71,9 +66,6 @@ export default function (
     epIndex = _epIndex;
     epInfo = _epInfo;
     baseURL = _baseURL;
-    nativePlayerImportPromise = _nativePlayerImportPromise;
-    hlsPlayerImportPromise = _hlsPlayerImportPromise;
-    videojsPlayerImportPromise = _videojsPlayerImportPromise;
     createMediaSessionPromise = _createMediaSessionPromise;
 
     audioReadyCounter = 0;
@@ -86,7 +78,7 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        appendChild(getById('content'), buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, null)[0]);
+        appendChild(getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, null)[0]);
     });
 
     if (!MSE && !NATIVE_HLS) {
@@ -94,16 +86,17 @@ export default function (
         return;
     }
 
-    const mediaHolder = getById('media-holder');
     for (let i = 0; i < audioEPInfo.files.length; i++) {
-        addAudioNode(i, mediaHolder);
+        addAudioNode(i);
     }
 }
 
-async function addAudioNode(index: number, mediaHolder: HTMLElement) {
+async function addAudioNode(index: number) {
     if (error) {
         return;
     }
+
+    const mediaHolder = getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER);
 
     const audioEPInfo = epInfo as AudioEPInfo;
     const file = audioEPInfo.files[index] as AudioFile;
@@ -263,13 +256,13 @@ async function addAudioNode(index: number, mediaHolder: HTMLElement) {
 }
 
 function addAlbumInfo() {
-    const contentContainer = getById('content');
     const albumInfo = (epInfo as AudioEPInfo).album_info;
     if (albumInfo.album_title != '') {
         const albumTitleElem = createParagraphElement();
         addClass(albumTitleElem, 'sub-title');
         addClass(albumTitleElem, 'center-align');
         albumTitleElem.innerHTML = albumInfo.album_title; // Album title is in HTML syntax.
+        const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
         if (albumInfo.album_artist != '') {
             const albumArtist = createParagraphElement();
             addClass(albumArtist, 'artist');

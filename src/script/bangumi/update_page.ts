@@ -33,29 +33,22 @@ import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import { updateURLParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
-import type { VideoImportPromise, AudioImportPromise, ImageImportPromise, LazyloadImportPromise, NativePlayerImportPromise, HlsPlayerImportPromise, VideojsPlayerImportPromise, ImageLoaderImportPromise } from './get_import_promises';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
+import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
+import { SHARED_VAR_IDX_CONTENT_CONTAINER, dereferenceSharedVars, getSharedElement, initializeSharedVars } from './shared_var';
 
 let seriesID: string;
 let epIndex: number;
 
-let currentPage: Awaited<VideoImportPromise> | Awaited<AudioImportPromise> | Awaited<ImageImportPromise> | null = null;
+let currentPage: Awaited<typeof videoImportPromise> | Awaited<typeof audioImportPromise> | Awaited<typeof imageImportPromise> | null = null;
 
 export default async function (
     response: BangumiInfo.BangumiInfo,
     _seriesID: string,
     _epIndex: number,
-    videoImportPromise: VideoImportPromise,
-    audioImportPromise: AudioImportPromise,
-    imageImportPromise: ImageImportPromise,
-    nativePlayerImportPromise: NativePlayerImportPromise,
-    hlsPlayerImportPromise: HlsPlayerImportPromise,
-    videojsPlayerImportPromise: VideojsPlayerImportPromise,
-    lazyloadImportPromise: LazyloadImportPromise,
-    imageLoaderImportPromise: ImageLoaderImportPromise,
     createMediaSessionPromise: Promise<MediaSessionInfo>,
 ) {
     seriesID = _seriesID;
@@ -63,7 +56,8 @@ export default async function (
 
     addNavBar();
 
-    const contentContainer = getById('content');
+    initializeSharedVars();
+    const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
     const startTimeText = getURLParam('timestamp');
     let startTime: number | null = null;
     if (startTimeText !== null) {
@@ -155,7 +149,7 @@ export default async function (
         if (currentPgid !== pgid) {
             return;
         }
-        currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, createMediaSessionPromise, startTime, play);
+        currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, createMediaSessionPromise, startTime, play);
     } else {
         if (type === 'audio') {
             try {
@@ -169,7 +163,7 @@ export default async function (
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, nativePlayerImportPromise, hlsPlayerImportPromise, videojsPlayerImportPromise, createMediaSessionPromise);
+            currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, createMediaSessionPromise);
         } else {
             try {
                 currentPage = await imageImportPromise;
@@ -182,7 +176,7 @@ export default async function (
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(epInfo as BangumiInfo.ImageEPInfo, baseURL, lazyloadImportPromise, imageLoaderImportPromise, createMediaSessionPromise);
+            currentPage.default(epInfo as BangumiInfo.ImageEPInfo, baseURL, createMediaSessionPromise);
         }
         updateURLParam(seriesID, epIndex, 0);
     }
@@ -366,4 +360,5 @@ function goToEP(dest_series: string, dest_ep: number) {
 
 export function offload() {
     currentPage?.offload();
+    dereferenceSharedVars();
 }

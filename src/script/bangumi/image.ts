@@ -6,7 +6,6 @@ import {
     addClass,
     appendChild,
     prependChild,
-    getById,
     addEventListener,
     hideElement,
     createParagraphElement,
@@ -17,7 +16,6 @@ import {
     appendText,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
-import type { ImageLoaderImportPromise, LazyloadImportPromise } from './get_import_promises';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
 import type { default as LazyloadObserve } from '../module/lazyload';
@@ -26,6 +24,8 @@ import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
+import { lazyloadImportPromise, imageLoaderImportPromise } from './import_promise';
+import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 
 type Lazyload = typeof import(
     /* webpackExports: ["default", "unobserveAll"] */
@@ -42,12 +42,10 @@ let imageLoader: ImageLoader | null = null;
 export default async function (
     epInfo: ImageEPInfo,
     baseURL: string,
-    lazyloadImportPromise: LazyloadImportPromise,
-    imageLoaderImportPromise: ImageLoaderImportPromise,
     createMediaSessionPromise: Promise<MediaSessionInfo>
 ) {
-    const contentContainer = getById('content');
-    const mediaHolder = getById('media-holder');
+    const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
+    const mediaHolder = getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER);
 
     if (epInfo.gallery_title != '') {
         const title = createParagraphElement();
