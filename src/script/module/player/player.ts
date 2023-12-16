@@ -81,7 +81,7 @@ export class Player {
     protected attached = false;
     protected dragging = false;
 
-    protected timer: NodeJS.Timer | undefined;
+    protected timer: ReturnType<typeof setInterval> | undefined;
     private inactiveTimeout = 12; // 3000 / 250
     private draggingPreviewTimeout = 4; // 1000 / 250
     private droppedFrames = 0;

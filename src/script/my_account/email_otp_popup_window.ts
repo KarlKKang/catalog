@@ -55,7 +55,7 @@ export function promptForEmailOtp(initializePopupWindow: () => Promise<PopupWind
         const resendButton = createButtonElement();
         addClass(resendButton, 'button');
         const resendButtonText = '再送信する';
-        let currentResendInterval: NodeJS.Timer | null = null;
+        let currentResendInterval: ReturnType<typeof setInterval> | null = null;
         const resetResendTimer = () => {
             resendButton.style.cursor = 'not-allowed';
             resendButton.style.width = 'auto';
