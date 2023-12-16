@@ -449,10 +449,8 @@ export class Player {
         }
     }
 
-    public pause(this: Player, setStatus = true) {
-        if (setStatus) {
-            this.playing = false; // This is necessary for the ended setter to work otherwise the player may resume playback after ended.
-        }
+    public pause(this: Player) {
+        this.playing = false; // This is necessary for the ended setter to work otherwise the player may resume playback after ended.
         const playPromise = this.playPromise;
         if (this.playPromise === undefined) {
             this.media.pause();
@@ -542,9 +540,7 @@ export class Player {
         addEventsListener(this.progressControl, ['mousedown', 'touchstart'], (event) => {
             this.dragging = true;
             this.draggingPreviewTimeout = 4;
-            if (this.playing) {
-                this.pause(false);
-            }
+            this.media.playbackRate = 0;
             this.ended = false;
             this.progressUpdate(event as MouseEvent | TouchEvent);
         });
@@ -557,24 +553,9 @@ export class Player {
         });
 
         //Activity on media
-        addEventListener(this.media, 'play', () => {
-            if (this.dragging) {
-                DEVELOPMENT && this.log?.('Playback started while dragging at ' + this.media.currentTime + '.');
-                this.media.pause(); // onplay event while dragging is probably initiated by some system controls, thus it's enough to directly intercept it.
-                return;
-            }
-            this.onplay();
-        });
-
-        addEventListener(this.media, 'pause', () => {
-            if (this.dragging) {
-                DEVELOPMENT && this.log?.('Paused while dragging at ' + this.media.currentTime + '.');
-                return;
-            }
-            this.onpause();
-        });
-
-        addEventListener(this.media, 'ended', () => { this.onended; });
+        addEventListener(this.media, 'play', () => { this.onplay(); });
+        addEventListener(this.media, 'pause', () => { this.onpause(); });
+        addEventListener(this.media, 'ended', () => { this.onended(); });
 
         //Redundent
         addEventListener(this.media, 'seeking', () => {
@@ -642,7 +623,7 @@ export class Player {
         });
 
         addEventListener(this.media, 'waiting', () => {
-            if (this.media.currentTime >= this.media.duration - this.maxBufferHole) {
+            if (this.media.currentTime >= this.media.duration - this.maxBufferHole && !this.dragging) {
                 DEVELOPMENT && this.log?.('Playback entered waiting state before ended at ' + this.media.currentTime + '.');
                 this.ended = true;
             } else {
@@ -804,9 +785,7 @@ export class Player {
         const currentTime = this.progressUpdate(event);
         this.seek(currentTime);
 
-        if (this.playing) {
-            this.play();
-        }
+        this.media.playbackRate = 1;
         this.focus();
     }
 
@@ -859,7 +838,7 @@ export class Player {
         this.playing = true;
     }
 
-    protected onpause(this: Player): void {
+    private onpause(this: Player): void {
         DEVELOPMENT && this.log?.('Playback paused at ' + this.media.currentTime + '.');
         this.playing = false;
         this.active = true;

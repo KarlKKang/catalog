@@ -45,10 +45,9 @@ export abstract class NonNativePlayer extends Player {
                 this.media.pause();
                 this.seek(currentTime);
             }
-            this.onplay();
-        } else {
-            super.play();
+            this.startBuffer();
         }
+        super.play();
     }
 
     private checkBuffer(this: NonNativePlayer) {
@@ -73,8 +72,8 @@ export abstract class NonNativePlayer extends Player {
                 if (buffer.start <= this.media.currentTime + this.maxBufferHole && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - this.maxBufferHole)) {
                     endBuffer();
                     DEVELOPMENT && this.log?.('Buffer complete!');
-                    if (this.playing && !this.dragging) {
-                        super.play();
+                    if (!this.dragging) {
+                        this.media.playbackRate = 1;
                     }
                     return;
                 }
@@ -83,7 +82,8 @@ export abstract class NonNativePlayer extends Player {
         }
 
         addTimeout(this.checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
-        this.pause(false);
+        addPlayerClass(this.controls, 'seeking');
+        this.media.playbackRate = 0;
     }
 
     private startBuffer(this: NonNativePlayer) {
@@ -92,39 +92,9 @@ export abstract class NonNativePlayer extends Player {
             return;
         }
 
-        const addCheckBuffer = () => {
-            this.buffering = true;
-            addPlayerClass(this.controls, 'seeking');
-            addEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
-            this.checkBuffer();
-        };
-
-        const bufferedRange = this.getBufferedRange();
-        if (bufferedRange.length == 0) {
-            if (this.media.currentTime >= this.media.duration - this.maxBufferHole) { // Media should be ended when it's near the end there's no more buffer.
-                this.ended = true;
-            } else {
-                addCheckBuffer();
-                DEVELOPMENT && this.log?.('Buffer empty, start buffering.');
-            }
-        } else {
-            for (const buffer of bufferedRange) {
-                if (this.media.currentTime < buffer.end) {
-                    if (buffer.start > this.media.currentTime + this.maxBufferHole || buffer.end < Math.min(this.media.currentTime + 14.9, this.media.duration - this.maxBufferHole)) {
-                        addCheckBuffer();
-                        DEVELOPMENT && this.log?.('Buffer under threshold, start buffering.');
-                    } else {
-                        DEVELOPMENT && this.log?.('Buffer above threshold.');
-                        if (this.playing && !this.dragging) {
-                            super.play();
-                        }
-                    }
-                    return;
-                }
-            }
-            addCheckBuffer();
-            DEVELOPMENT && this.log?.('No buffer beyond current position, start buffering.');
-        }
+        this.buffering = true;
+        addEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
+        this.checkBuffer();
     }
 
     protected override onloadedmetadata(this: NonNativePlayer): void {
@@ -141,24 +111,12 @@ export abstract class NonNativePlayer extends Player {
         }
     }
 
-    protected override onpause(this: NonNativePlayer): void {
-        if (this.IS_VIDEO) {
-            if (!this.buffering) {
-                super.onpause();
-            }
-        } else {
-            super.onpause();
-        }
-    }
-
     protected override oncanplaythrough(this: NonNativePlayer): void {
-        DEVELOPMENT && this.log?.('Playback can play through at ' + this.media.currentTime + '.');
-
-        if (!this.buffering) {
-            removePlayerClass(this.controls, 'seeking');
+        if (this.IS_VIDEO) {
+            this.startBuffer();
         }
-        if (this.playing) {
-            this.play();
+        if (!this.buffering) {
+            super.oncanplaythrough();
         }
     }
 
