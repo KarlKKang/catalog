@@ -1,4 +1,4 @@
-type ListenerMap = Map<EventListener, [boolean, boolean]>;
+type ListenerMap = Map<EventListener, [EventListener | null, EventListener | null]>;
 type EventMap = Map<string, ListenerMap>;
 type ElementMap = Map<EventTarget, EventMap>;
 
@@ -27,12 +27,24 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
         }
     }
     let listenerConfig = listenerMap.get(callback);
+    const listenerConfigIdx = useCapture ? 1 : 0;
     if (listenerConfig === undefined) {
-        listenerConfig = [false, false];
+        listenerConfig = [null, null];
         listenerMap.set(callback, listenerConfig);
+    } else if (listenerConfig[listenerConfigIdx] !== null) {
+        if (DEVELOPMENT) {
+            console.warn('Listener already added.', elem, event, callback, useCapture);
+        }
+        return;
     }
-    listenerConfig[useCapture ? 1 : 0] = true;
-    elem.addEventListener(event, callback, useCapture);
+    const _listenerConfig = listenerConfig;
+    const _callback = (...args: [evt: Event]) => {
+        if (_listenerConfig[listenerConfigIdx] === _callback) {
+            callback.apply(elem, args);
+        }
+    };
+    listenerConfig[listenerConfigIdx] = _callback;
+    elem.addEventListener(event, _callback, useCapture);
     if (DEVELOPMENT) {
         console.log('Event listener added. Total elements listening: ' + elementCount + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
         LOG_ELEMENT_MAP && console.log(elementMap);
@@ -46,7 +58,6 @@ export function addEventsListener(elem: EventTarget, events: Array<string>, call
 }
 
 export function removeEventListener(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
-    elem.removeEventListener(event, callback, useCapture);
     const eventMap = elementMap.get(elem);
     if (eventMap === undefined) {
         if (DEVELOPMENT) {
@@ -68,12 +79,18 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
         }
         return;
     }
-    if (DEVELOPMENT && !listenerConfig[useCapture ? 1 : 0]) {
-        console.warn('Listener config not set.', elem, event, callback, useCapture);
+    const listenerConfigIdx = useCapture ? 1 : 0;
+    const _callback = listenerConfig[listenerConfigIdx];
+    if (_callback === null) {
+        if (DEVELOPMENT) {
+            console.warn('Listener config not set.', elem, event, callback, useCapture);
+        }
+        return;
     }
-    listenerConfig[useCapture ? 1 : 0] = false;
+    elem.removeEventListener(event, _callback, useCapture);
+    listenerConfig[listenerConfigIdx] = null;
 
-    if (!listenerConfig[0] && !listenerConfig[1]) {
+    if (listenerConfig[0] === null && listenerConfig[1] === null) {
         listenerMap.delete(callback);
     }
     if (listenerMap.size === 0) {
@@ -98,9 +115,9 @@ export function removeEventsListener(elem: EventTarget, events: Array<string>, c
 }
 
 export function addEventListenerOnce(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
-    const callbackOnce = (arg: Event) => {
+    const callbackOnce = (...args: [evt: Event]) => {
         removeEventListener(elem, event, callbackOnce, useCapture);
-        callback(arg);
+        callback.apply(elem, args);
     };
     addEventListener(elem, event, callbackOnce, useCapture);
 }
@@ -124,14 +141,18 @@ export function deregisterAllEventTargets() {
 
 function removeAllEventListenersHelper(elem: EventTarget, eventMap: EventMap) {
     for (const [event, listenerMap] of eventMap) {
-        for (const [listener, listenerConfig] of listenerMap) {
-            if (listenerConfig[0]) {
-                elem.removeEventListener(event, listener, false);
+        for (const [callback, listenerConfig] of listenerMap) {
+            if (listenerConfig[0] !== null) {
+                elem.removeEventListener(event, listenerConfig[0], false);
+                listenerConfig[0] = null;
             }
-            if (listenerConfig[1]) {
-                elem.removeEventListener(event, listener, true);
+            if (listenerConfig[1] !== null) {
+                elem.removeEventListener(event, listenerConfig[1], true);
+                listenerConfig[1] = null;
             }
+            listenerMap.delete(callback);
         }
+        eventMap.delete(event);
     }
     elementMap.delete(elem);
     if (DEVELOPMENT) {
