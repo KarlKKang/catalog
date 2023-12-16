@@ -4,9 +4,14 @@ import {
     prependChild,
     remove,
 } from '../dom';
+import { mediaErrorCodeLookup } from './media_error';
 
 export class VideojsPlayer extends NonNativePlayer {
     private readonly videojsInstance: videojs.Player;
+    private destroyed = false;
+
+    private onVideojsError: undefined | (() => void) = undefined;
+    private onVideojsLoadedMetadata: undefined | ((...args: any[]) => void) = undefined;
 
     constructor(
         container: HTMLDivElement,
@@ -22,17 +27,28 @@ export class VideojsPlayer extends NonNativePlayer {
         remove(this.videojsInstance.el());
     }
 
-    protected attach(this: VideojsPlayer, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
+    protected attach(this: VideojsPlayer, onload: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
         this.preattach();
 
-        this.videojsInstance.on('error', () => {
+        this.onVideojsError = () => {
+            if (this.destroyed) {
+                return;
+            }
             const mediaError = this.videojsInstance.error();
-            onerror && onerror(mediaError === null ? null : mediaError.code);  // videojs mimics the standard HTML5 `MediaError` class.
+            onerror && onerror(mediaErrorCodeLookup(mediaError));  // videojs mimics the standard HTML5 `MediaError` class.
             console.error(mediaError);
-        });
-        this.videojsInstance.on('loadedmetadata', (...args: any[]) => {
-            onload && onload(...args);
-        });
+        };
+        this.videojsInstance.on('error', this.onVideojsError);
+
+        this.onVideojsLoadedMetadata = (...args: any[]) => {
+            if (this.destroyed) {
+                return;
+            }
+            this.onVideojsLoadedMetadata = undefined;
+            onload(...args);
+        };
+        this.videojsInstance.one('loadedmetadata', this.onVideojsLoadedMetadata);
+
         this.videojsInstance.volume(1);
         DEVELOPMENT && this.log?.('Videojs is attached.');
     }
@@ -48,24 +64,22 @@ export class VideojsPlayer extends NonNativePlayer {
         }
     ): void {
         config = config ?? {};
-
-        if (!this.attached) {
-            this.attach(config.onload, config.onerror);
-        }
-
         const play = config.play === true;
         const startTime = config.startTime;
 
-        const callback = () => {
-            if (startTime !== undefined) {
-                this.seek(startTime);
-            }
-            if (play) {
-                this.play();
-            }
-        };
+        if (!this.attached) {
+            const onload = config.onload;
+            this.attach((...args: any[]) => {
+                if (startTime !== undefined) {
+                    this.seek(startTime);
+                }
+                if (play) {
+                    this.play();
+                }
+                onload && onload(...args);
+            }, config.onerror);
+        }
 
-        this.videojsInstance.one('loadedmetadata', callback);
         this.videojsInstance.src({
             src: url,
             type: 'application/vnd.apple.mpegurl'
@@ -74,6 +88,9 @@ export class VideojsPlayer extends NonNativePlayer {
     }
 
     protected disattach(this: VideojsPlayer) {
+        this.destroyed = true;
+        this.onVideojsError && this.videojsInstance.off('error', this.onVideojsError);
+        this.onVideojsLoadedMetadata && this.videojsInstance.off('loadedmetadata', this.onVideojsLoadedMetadata);
         this.videojsInstance.dispose();
     }
 }

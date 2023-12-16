@@ -31,7 +31,7 @@ import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClas
 import * as icons from './icons';
 import { getLocalTime, secToTimestamp } from '../common/pure';
 import { addInterval, addTimeout, removeInterval } from '../timer';
-import { MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
+import { mediaErrorCodeLookup } from './media_error';
 
 declare global {
     interface HTMLVideoElement {
@@ -343,30 +343,15 @@ export class Player {
         this.setMediaAttributes();
     }
 
-    protected attach(this: Player, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
+    protected attach(this: Player, onload: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
         this.preattach();
 
         this.media.crossOrigin = 'use-credentials';
         addEventListener(this.media, 'error', () => {
-            let errorCode = null;
-            if (this.media.error !== null) {
-                const code = this.media.error.code;
-                if (code === MediaError.MEDIA_ERR_ABORTED) {
-                    errorCode = MEDIA_ERR_ABORTED;
-                } else if (code === MediaError.MEDIA_ERR_NETWORK) {
-                    errorCode = MEDIA_ERR_NETWORK;
-                } else if (code === MediaError.MEDIA_ERR_DECODE) {
-                    errorCode = MEDIA_ERR_DECODE;
-                } else if (code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
-                    errorCode = MEDIA_ERR_SRC_NOT_SUPPORTED;
-                }
-            }
-            onerror && onerror(errorCode);
+            onerror && onerror(mediaErrorCodeLookup(this.media.error));
             console.error(this.media.error);
         });
-        addEventListener(this.media, 'loadedmetadata', (event) => {
-            onload && onload(event);
-        });
+        addEventListenerOnce(this.media, 'loadedmetadata', onload);
         this.media.volume = 1;
         DEVELOPMENT && this.log?.('Native HLS is attached.');
     }
@@ -382,31 +367,29 @@ export class Player {
         }
     ): void {
         config = config ?? {};
-
-        if (!this.attached) {
-            this.attach(config.onload, config.onerror);
-        }
-
         const play = config.play === true;
         const startTime = config.startTime;
 
-        const callback = () => {
-            if (play) {
-                const playPromise = this.media.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                        if (startTime !== undefined) {
-                            this.seek(startTime); // If the play promise is rejected, currentTime will be reset to 0 on older versions of Safari.
-                        }
-                    });
+        if (!this.attached) {
+            const onload = config.onload;
+            this.attach((event) => {
+                if (play) {
+                    const playPromise = this.media.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(() => {
+                            if (startTime !== undefined) {
+                                this.seek(startTime); // If the play promise is rejected, currentTime will be reset to 0 on older versions of Safari.
+                            }
+                        });
+                    }
                 }
-            }
-            if (startTime !== undefined) {
-                this.seek(startTime); // Calling the play method will reset the currentTime to 0 on older versions of Safari. So it should be set after calling the play().
-            }
-        };
+                if (startTime !== undefined) {
+                    this.seek(startTime); // Calling the play method will reset the currentTime to 0 on older versions of Safari. So it should be set after calling the play().
+                }
+                onload && onload(event);
+            }, config.onerror);
+        }
 
-        addEventListenerOnce(this.media, 'loadedmetadata', callback);
         this.media.src = url;
         this.media.load();
         DEVELOPMENT && this.log?.('Native HLS source loaded.');
@@ -417,10 +400,10 @@ export class Player {
         this.disattach();
         removeAllEventListeners(this.media);
         removeAllEventListeners(this.controls);
-        removeAllEventListeners(this.controlBar);
         removeAllEventListeners(this.playButton);
         removeAllEventListeners(this.progressControl);
         if (this.IS_VIDEO) {
+            removeAllEventListeners(this.controlBar);
             removeAllEventListeners(this.bigPlayButton);
             this.PIPButton && removeAllEventListeners(this.PIPButton);
             removeAllEventListeners(this.fullscreenButton);
