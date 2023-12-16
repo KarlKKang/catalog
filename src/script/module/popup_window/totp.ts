@@ -76,8 +76,8 @@ export function promptForTotp(initializePopupWindow: () => Promise<PopupWindow>)
             disableInput(totpInput, disabled);
             submitButton.disabled = disabled;
             cancelButton.disabled = disabled;
-
         };
+
         const submit = () => {
             disableAllInputs(true);
             hideElement(warningText);

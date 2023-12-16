@@ -336,7 +336,13 @@ async function registerServiceWorker() { // This function should be called after
                 appendChild(buttonFlexbox, updateButton);
                 appendChild(buttonFlexbox, cancelButton);
 
+                const disableAllInputs = (disabled: boolean) => {
+                    updateButton.disabled = disabled;
+                    cancelButton.disabled = disabled;
+                };
+
                 addEventListener(updateButton, 'click', () => {
+                    disableAllInputs(true);
                     if (serviceWorkerUpToDate) {
                         if (DEVELOPMENT) {
                             console.log('Service worker already up to date.');
