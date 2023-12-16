@@ -6,6 +6,7 @@ import {
     getURLParam,
     passwordStyling,
     disableInput,
+    handleFailedTotp,
 } from './module/common';
 import {
     addEventListener,
@@ -21,7 +22,8 @@ import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } fro
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import { pgid, redirect } from './module/global';
+import { redirect } from './module/global';
+import type { TotpPopupWindow } from './module/popup_window/totp';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -65,6 +67,9 @@ function showPageCallback(param: string, signature: string) {
     const submitButton = getById('submit-button') as HTMLButtonElement;
     const warningElem = getById('warning');
 
+    const popupWindowImportPromise = popupWindowImport();
+    const promptForTotpImportPromise = promptForTotpImport();
+
     const changeEmailOnKeyDown = (event: Event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
             changeEmail();
@@ -98,61 +103,47 @@ function showPageCallback(param: string, signature: string) {
             return;
         }
 
-        const popupWindowImportPromise = popupWindowImport();
-        const promptForTotpImportPromise = promptForTotpImport();
-
-        sendChangeEmailRequest(
-            'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password),
-            async () => {
-                const currentPgid = pgid;
-                const popupWindow = await popupWindowImportPromise;
-                const promptForTotp = (await promptForTotpImportPromise).promptForTotp;
-                if (currentPgid !== pgid) {
-                    return;
-                }
-
-                promptForTotp(
-                    popupWindow,
-                    (totp, closeWindow, showWarning) => {
-                        sendChangeEmailRequest(
-                            'p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&totp=' + totp,
-                            showWarning,
-                            closeWindow
-                        );
-                    },
-                    () => { disableAllInputs(false); },
-                    () => {
-                        emailInput.value = '';
-                        passwordInput.value = '';
-                        replaceText(warningElem, sessionEnded);
-                        showElement(warningElem);
-                    }
-                );
-            }
-        );
+        sendChangeEmailRequest('p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password));
     }
 
-    function sendChangeEmailRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
+    function sendChangeEmailRequest(content: string, totpPopupWindow?: TotpPopupWindow) {
         sendServerRequest('change_email', {
-            callback: function (response: string) {
+            callback: async function (response: string) {
                 switch (response) {
                     case AUTH_FAILED:
-                        closePopUpWindow?.();
+                        totpPopupWindow?.[2]();
                         replaceText(warningElem, loginFailed);
                         showElement(warningElem);
                         disableAllInputs(false);
                         break;
                     case AUTH_FAILED_TOTP:
-                        failedTotpCallback();
+                        handleFailedTotp(
+                            popupWindowImportPromise,
+                            promptForTotpImportPromise,
+                            totpPopupWindow,
+                            () => {
+                                disableAllInputs(false);
+                            },
+                            () => {
+                                disableAllInputs(false);
+                                emailInput.value = '';
+                                passwordInput.value = '';
+                                replaceText(warningElem, sessionEnded);
+                                showElement(warningElem);
+                            },
+                            (totpPopupWindow: TotpPopupWindow) => {
+                                sendChangeEmailRequest(content, totpPopupWindow);
+                            }
+                        );
                         break;
                     case AUTH_DEACTIVATED:
-                        closePopUpWindow?.();
+                        totpPopupWindow?.[2]();
                         replaceChildren(warningElem, ...accountDeactivated());
                         showElement(warningElem);
                         disableAllInputs(false);
                         break;
                     case AUTH_TOO_MANY_REQUESTS:
-                        closePopUpWindow?.();
+                        totpPopupWindow?.[2]();
                         replaceText(warningElem, tooManyFailedLogin);
                         showElement(warningElem);
                         disableAllInputs(false);

@@ -37,15 +37,21 @@ export function initializePopupWindow() {
                 }
                 resolve({
                     show: (...contents: Node[]) => {
+                        if (instance !== newInstance) {
+                            return;
+                        }
                         currentTimeout = null;
                         replaceChildren(popupWindowcontent, ...contents);
                         removeClass(container, 'invisible');
                         removeClass(container, 'transparent');
                     },
                     hide: () => {
+                        if (instance !== newInstance) {
+                            return;
+                        }
                         addClass(container, 'transparent');
                         const timeout = addTimeout(() => {
-                            if (currentTimeout === timeout) {
+                            if (instance === newInstance && currentTimeout === timeout) {
                                 addClass(container, 'invisible');
                                 replaceChildren(popupWindowcontent);
                             }

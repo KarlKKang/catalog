@@ -34,7 +34,7 @@ import {
     logoutDone,
 } from '../module/message/template/inline';
 import { SHARED_VAR_IDX_EMAIL_WARNING, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_INVITE_WARNING, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_WARNING, SHARED_VAR_IDX_SESSIONS_CONTAINER, SHARED_VAR_IDX_USERNAME_WARNING, getSharedElement, getSharedInput } from './shared_var';
-import { disableAllInputs, reauthenticationPrompt, serverResponseCallback } from './helper';
+import { disableAllInputs, reauthenticationPrompt } from './helper';
 import { EMAIL_REGEX, PASSWORD_REGEX, getLocalTimeString } from '../module/common/pure';
 import type { AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -92,36 +92,25 @@ export function changePassword() {
     }
 
     reauthenticationPrompt(
-        (
-            authenticationParam: string,
-            closeWindow: () => void,
-            failedCallback: (message: string | Node[]) => void,
-            failedTotpCallback: () => void,
-        ) => {
-            sendServerRequest('change_password', {
-                callback: (response: string) => {
-                    serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
-                        if (response == 'DONE') {
-                            replaceText(warningElem, passwordChanged);
-                            changeColor(warningElem, 'green');
-                            newPasswordInput.value = '';
-                            newPasswordComfirmInput.value = '';
-                        } else if (response === 'PASSWORD INVALID') {
-                            replaceText(warningElem, invalidPasswordFormat);
-                        } else {
-                            showMessage();
-                            return;
-                        }
-                        showElement(warningElem);
-                        disableAllInputs(false);
-                        closeWindow();
-                    });
-                },
-                content: authenticationParam + '&new=' + encodeURIComponent(newPassword),
-                showSessionEndedMessage: true,
-            });
+        'change_password',
+        (response: string) => {
+            if (response == 'DONE') {
+                replaceText(warningElem, passwordChanged);
+                changeColor(warningElem, 'green');
+                newPasswordInput.value = '';
+                newPasswordComfirmInput.value = '';
+            } else if (response === 'PASSWORD INVALID') {
+                replaceText(warningElem, invalidPasswordFormat);
+            } else {
+                showMessage();
+                return false;
+            }
+            showElement(warningElem);
+            disableAllInputs(false);
+            return true;
         },
-        warningElem
+        warningElem,
+        'new=' + encodeURIComponent(newPassword),
     );
 }
 
@@ -147,37 +136,26 @@ export function changeUsername(userInfo: AccountInfo) {
     }
 
     reauthenticationPrompt(
-        (
-            authenticationParam: string,
-            closeWindow: () => void,
-            failedCallback: (message: string | Node[]) => void,
-            failedTotpCallback: () => void,
-        ) => {
-            sendServerRequest('change_username', {
-                callback: (response: string) => {
-                    serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
-                        if (response == 'DONE') {
-                            replaceText(warningElem, usernameChanged);
-                            changeColor(warningElem, 'green');
-                            userInfo.username = newUsername;
-                        } else if (response == 'DUPLICATED') {
-                            replaceText(warningElem, usernameTaken);
-                        } else if (response == 'EMPTY') {
-                            replaceText(warningElem, usernameEmpty);
-                        } else {
-                            showMessage();
-                            return;
-                        }
-                        showElement(warningElem);
-                        disableAllInputs(false);
-                        closeWindow();
-                    });
-                },
-                content: authenticationParam + '&new=' + encodeURIComponent(newUsername),
-                showSessionEndedMessage: true,
-            });
+        'change_username',
+        (response: string) => {
+            if (response == 'DONE') {
+                replaceText(warningElem, usernameChanged);
+                changeColor(warningElem, 'green');
+                userInfo.username = newUsername;
+            } else if (response == 'DUPLICATED') {
+                replaceText(warningElem, usernameTaken);
+            } else if (response == 'EMPTY') {
+                replaceText(warningElem, usernameEmpty);
+            } else {
+                showMessage();
+                return false;
+            }
+            showElement(warningElem);
+            disableAllInputs(false);
+            return true;
         },
-        warningElem
+        warningElem,
+        'new=' + encodeURIComponent(newUsername),
     );
 }
 
@@ -200,51 +178,40 @@ export function invite() {
     }
 
     reauthenticationPrompt(
-        (
-            authenticationParam: string,
-            closeWindow: () => void,
-            failedCallback: (message: string | Node[]) => void,
-            failedTotpCallback: () => void,
-        ) => {
-            sendServerRequest('send_invite', {
-                callback: (response: string) => {
-                    serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
-                        if (response == 'NOT QUALIFIED') {
-                            replaceText(inviteCount, '0');
-                            replaceText(warningElem, invitationNotQualified);
-                        } else if (response == 'INVALID FORMAT') {
-                            replaceText(warningElem, invalidEmailFormat);
-                        } else if (response == 'ALREADY REGISTERED') {
-                            replaceText(warningElem, emailAlreadyRegistered);
-                        } else if (response == 'CLOSED') {
-                            replaceText(warningElem, invitationClosed);
-                        } else {
-                            let parsedResponse: InviteResult.InviteResult;
-                            try {
-                                parsedResponse = JSON.parse(response);
-                                InviteResult.check(parsedResponse);
-                            } catch (e) {
-                                showMessage(invalidResponse());
-                                return;
-                            }
-                            replaceText(inviteCount, parsedResponse.quota.toString());
-                            let message = emailSent;
-                            if (parsedResponse.special) {
-                                message += '現在、一般登録を受け付けているため、招待券はかかりませんでした。';
-                            }
-                            replaceText(warningElem, message);
-                            changeColor(warningElem, 'green');
-                        }
-                        showElement(warningElem);
-                        disableAllInputs(false);
-                        closeWindow();
-                    });
-                },
-                content: authenticationParam + '&receiver=' + encodeURIComponent(receiver),
-                showSessionEndedMessage: true,
-            });
+        'send_invite',
+        (response: string) => {
+            if (response == 'NOT QUALIFIED') {
+                replaceText(inviteCount, '0');
+                replaceText(warningElem, invitationNotQualified);
+            } else if (response == 'INVALID FORMAT') {
+                replaceText(warningElem, invalidEmailFormat);
+            } else if (response == 'ALREADY REGISTERED') {
+                replaceText(warningElem, emailAlreadyRegistered);
+            } else if (response == 'CLOSED') {
+                replaceText(warningElem, invitationClosed);
+            } else {
+                let parsedResponse: InviteResult.InviteResult;
+                try {
+                    parsedResponse = JSON.parse(response);
+                    InviteResult.check(parsedResponse);
+                } catch (e) {
+                    showMessage(invalidResponse());
+                    return false;
+                }
+                replaceText(inviteCount, parsedResponse.quota.toString());
+                let message = emailSent;
+                if (parsedResponse.special) {
+                    message += '現在、一般登録を受け付けているため、招待券はかかりませんでした。';
+                }
+                replaceText(warningElem, message);
+                changeColor(warningElem, 'green');
+            }
+            showElement(warningElem);
+            disableAllInputs(false);
+            return true;
         },
-        warningElem
+        warningElem,
+        'receiver=' + encodeURIComponent(receiver),
     );
 }
 
@@ -306,32 +273,21 @@ export function showSessions(userInfo: AccountInfo) {
                 hideElement(sessionWarningElem);
                 changeColor(sessionWarningElem, 'red');
                 reauthenticationPrompt(
-                    (
-                        authenticationParam: string,
-                        closeWindow: () => void,
-                        failedCallback: (message: string | Node[]) => void,
-                        failedTotpCallback: () => void,
-                    ) => {
-                        sendServerRequest('logout_session', {
-                            callback: (response: string) => {
-                                serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
-                                    if (response == 'DONE') {
-                                        remove(sessionLogoutButton);
-                                        changeColor(sessionWarningElem, 'green');
-                                        replaceText(sessionWarningElem, logoutDone);
-                                    } else {
-                                        showMessage(invalidResponse());
-                                        return;
-                                    }
-                                    showElement(sessionWarningElem);
-                                    closeWindow();
-                                });
-                            },
-                            content: authenticationParam + '&id=' + sessionID,
-                            showSessionEndedMessage: true,
-                        });
+                    'logout_session',
+                    (response: string) => {
+                        if (response == 'DONE') {
+                            remove(sessionLogoutButton);
+                            changeColor(sessionWarningElem, 'green');
+                            replaceText(sessionWarningElem, logoutDone);
+                        } else {
+                            showMessage(invalidResponse());
+                            return false;
+                        }
+                        showElement(sessionWarningElem);
+                        return true;
                     },
-                    sessionWarningElem
+                    sessionWarningElem,
+                    'id=' + sessionID,
                 );
             });
             appendChild(sessionsContainer, outerContainer);

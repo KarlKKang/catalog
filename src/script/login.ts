@@ -7,6 +7,7 @@ import {
     authenticate,
     disableInput,
     getURLParam,
+    handleFailedTotp,
 } from './module/common';
 import {
     addEventListener,
@@ -24,7 +25,8 @@ import { UNRECOMMENDED_BROWSER } from './module/browser';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import { pgid, redirect } from './module/global';
+import { redirect } from './module/global';
+import type { TotpPopupWindow } from './module/popup_window/totp';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -47,6 +49,9 @@ function showPageCallback() {
     const usernameInput = getById('username') as HTMLInputElement;
     const rememberMeInput = getById('remember-me-checkbox') as HTMLInputElement;
     const warningElem = getById('warning');
+
+    const popupWindowImportPromise = popupWindowImport();
+    const promptForTotpImportPromise = promptForTotpImport();
 
     const loginOnKeyDown = (event: Event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
@@ -83,61 +88,47 @@ function showPageCallback() {
             return;
         }
 
-        const popupWindowImportPromise = popupWindowImport();
-        const promptForTotpImportPromise = promptForTotpImport();
-
-        sendLoginRequest(
-            'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0'),
-            async () => {
-                const currentPgid = pgid;
-                const popupWindow = await popupWindowImportPromise;
-                const promptForTotp = (await promptForTotpImportPromise).promptForTotp;
-                if (currentPgid !== pgid) {
-                    return;
-                }
-
-                promptForTotp(
-                    popupWindow,
-                    (totp, closeWindow, showWarning) => {
-                        sendLoginRequest(
-                            'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0') + '&totp=' + totp,
-                            showWarning,
-                            closeWindow
-                        );
-                    },
-                    () => { disableAllInputs(false); },
-                    () => {
-                        usernameInput.value = '';
-                        passwordInput.value = '';
-                        replaceText(warningElem, sessionEnded);
-                        showElement(warningElem);
-                    }
-                );
-            }
-        );
+        sendLoginRequest('email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&remember_me=' + (rememberMeInput.checked ? '1' : '0'));
     }
 
-    function sendLoginRequest(content: string, failedTotpCallback: () => void, closePopUpWindow?: () => void) {
+    function sendLoginRequest(content: string, totpPopupWindow?: TotpPopupWindow) {
         sendServerRequest('login', {
             callback: function (response: string) {
                 switch (response) {
                     case AUTH_FAILED:
-                        closePopUpWindow?.();
+                        totpPopupWindow?.[2];
                         replaceText(warningElem, loginFailed);
                         showElement(warningElem);
                         disableAllInputs(false);
                         break;
                     case AUTH_FAILED_TOTP:
-                        failedTotpCallback();
+                        handleFailedTotp(
+                            popupWindowImportPromise,
+                            promptForTotpImportPromise,
+                            totpPopupWindow,
+                            () => {
+                                disableAllInputs(false);
+                            },
+                            () => {
+                                disableAllInputs(false);
+                                usernameInput.value = '';
+                                passwordInput.value = '';
+                                replaceText(warningElem, sessionEnded);
+                                showElement(warningElem);
+                            },
+                            (totpPopupWindow: TotpPopupWindow) => {
+                                sendLoginRequest(content, totpPopupWindow);
+                            }
+                        );
                         break;
                     case AUTH_DEACTIVATED:
-                        closePopUpWindow?.();
+                        totpPopupWindow?.[2];
                         replaceChildren(warningElem, ...accountDeactivated());
                         showElement(warningElem);
                         disableAllInputs(false);
                         break;
                     case AUTH_TOO_MANY_REQUESTS:
-                        closePopUpWindow?.();
+                        totpPopupWindow?.[2];
                         replaceText(warningElem, tooManyFailedLogin);
                         showElement(warningElem);
                         disableAllInputs(false);
@@ -153,7 +144,7 @@ function showPageCallback() {
                         showMessage();
                 }
             },
-            content: content
+            content: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
         });
     }
 

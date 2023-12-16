@@ -23,11 +23,11 @@ export const loginFailed = 'メールアドレスまたはパスワードが正�
 export const tooManyFailedLogin = 'ログイン試行の回数が上限を超えました。ユーザー保護のため、現在ログインすることはできません。しばらくしてからもう一度お試しください。';
 export const failedTotp = '入力されたコードが正しくありません。';
 export const accountDeactivated = () => {
-    const message = [
+    const message: [Text, HTMLAnchorElement, Text] = [
         createTextNode('お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（'),
         createAnchorElement(),
         createTextNode('）にご連絡ください。')
-    ] as const;
+    ];
     addClass(message[1], 'link');
     message[1].href = 'mailto:admin@' + TOP_DOMAIN;
     appendText(message[1], 'admin@' + TOP_DOMAIN);

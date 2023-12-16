@@ -30,7 +30,6 @@ export async function promptForTotpImport() {
     const currentPgid = pgid;
     try {
         return await import(
-            /* webpackExports: ["promptForTotp"] */
             './totp'
         );
     } catch (e) {

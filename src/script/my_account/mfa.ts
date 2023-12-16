@@ -19,6 +19,7 @@ import {
     createButtonElement,
     createAnchorElement,
     removeClass,
+    replaceChildren,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -32,6 +33,9 @@ import {
     mfaEnabled,
     loginNotificationEnabled,
     loginNotificationDisabled,
+    accountDeactivated,
+    tooManyFailedLogin,
+    loginFailed,
 } from '../module/message/template/inline';
 import * as TOTPInfo from '../module/type/TOTPInfo';
 import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
@@ -39,8 +43,11 @@ import { toCanvas } from 'qrcode';
 import { addInterval, removeInterval } from '../module/timer';
 import { pgid } from '../module/global';
 import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_MFA_WARNING, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, getSharedBool, getSharedElement, setCurrentLoginNotificationStatus, setCurrentMfaStatus } from './shared_var';
-import { changeMfaStatus, disableAllInputs, promptForLogin, reauthenticationPrompt, serverResponseCallback } from './helper';
+import { changeMfaStatus, disableAllInputs, handleFailedLogin, reauthenticationPrompt } from './helper';
 import { popupWindowImportPromise } from './import_promise';
+import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
+import type { LoginPopupWindow } from './login_popup_window';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 
 export function enableMfa() {
     disableAllInputs(true);
@@ -50,45 +57,29 @@ export function enableMfa() {
     changeColor(mfaWarning, 'red');
 
     modifyMfaReauthenticationPrompt(
-        (
-            content: string,
-            closeWindow: () => void,
-            failedCallback: (message: string | Node[]) => void,
-            otpSentCallback?: () => void,
-            failedOtpCallback?: () => void,
-        ) => {
-            sendServerRequest('generate_totp', {
-                callback: (response: string) => {
-                    serverResponseCallback(response, failedCallback, () => {
-                        closeWindow();
-                        changeColor(mfaWarning, 'green');
-                        replaceText(mfaWarning, mfaAlreadySet);
-                        showElement(mfaWarning);
-                        setCurrentMfaStatus(true);
-                        changeMfaStatus();
-                        disableAllInputs(false);
-                    }, () => {
-                        if (response == 'FAILED EMAIL OTP') {
-                            failedOtpCallback?.();
-                        } else if (response == 'SENT') {
-                            otpSentCallback?.();
-                        } else {
-                            let parsedResponse: TOTPInfo.TOTPInfo;
-                            try {
-                                parsedResponse = JSON.parse(response);
-                                TOTPInfo.check(parsedResponse);
-                            } catch (e) {
-                                showMessage(invalidResponse());
-                                return;
-                            }
-                            promptForTotpSetup(parsedResponse);
-                        }
-                    });
-                },
-                content: content,
-                showSessionEndedMessage: true,
-            });
-        }
+        'generate_totp',
+        (response: string) => {
+            if (response == AUTH_FAILED_TOTP) {
+                changeColor(mfaWarning, 'green');
+                replaceText(mfaWarning, mfaAlreadySet);
+                showElement(mfaWarning);
+                setCurrentMfaStatus(true);
+                changeMfaStatus();
+                disableAllInputs(false);
+                return true;
+            }
+            let parsedResponse: TOTPInfo.TOTPInfo;
+            try {
+                parsedResponse = JSON.parse(response);
+                TOTPInfo.check(parsedResponse);
+            } catch (e) {
+                showMessage(invalidResponse());
+                return false;
+            }
+            promptForTotpSetup(parsedResponse);
+            return false;
+        },
+        mfaWarning
     );
 }
 
@@ -100,38 +91,23 @@ export function disableMfa() {
     changeColor(mfaWarning, 'red');
 
     modifyMfaReauthenticationPrompt(
-        (
-            content: string,
-            closeWindow: () => void,
-            failedCallback: (message: string | Node[]) => void,
-            otpSentCallback?: () => void,
-            failedOtpCallback?: () => void,
-        ) => {
-            sendServerRequest('disable_totp', {
-                callback: (response: string) => {
-                    serverResponseCallback(response, failedCallback, () => { /* This page will never respond with `FAILED TOTP` */ }, () => {
-                        if (response == 'FAILED EMAIL OTP') {
-                            failedOtpCallback?.();
-                        } else if (response == 'SENT') {
-                            otpSentCallback?.();
-                        } else if (response == 'DONE') {
-                            closeWindow();
-                            changeColor(mfaWarning, 'green');
-                            replaceText(mfaWarning, mfaDisabled);
-                            showElement(mfaWarning);
-                            setCurrentMfaStatus(false);
-                            setCurrentLoginNotificationStatus(true);
-                            changeMfaStatus();
-                            disableAllInputs(false);
-                        } else {
-                            showMessage();
-                        }
-                    });
-                },
-                content: content,
-                showSessionEndedMessage: true,
-            });
-        }
+        'disable_totp',
+        (response: string) => {
+            if (response == 'DONE') {
+                changeColor(mfaWarning, 'green');
+                replaceText(mfaWarning, mfaDisabled);
+                showElement(mfaWarning);
+                setCurrentMfaStatus(false);
+                setCurrentLoginNotificationStatus(true);
+                changeMfaStatus();
+            } else {
+                showMessage(invalidResponse());
+                return false;
+            }
+            disableAllInputs(false);
+            return true;
+        },
+        mfaWarning
     );
 }
 
@@ -143,47 +119,36 @@ export function generateRecoveryCode() {
     changeColor(recoveryCodeWarning, 'red');
 
     reauthenticationPrompt(
-        (
-            authenticationParam: string,
-            closeWindow: () => void,
-            failedCallback: (message: string | Node[]) => void,
-            failedTotpCallback: () => void,
-        ) => {
-            sendServerRequest('generate_recovery_code', {
-                callback: (response: string) => {
-                    serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
-                        if (response == 'TOTP NOT SET') {
-                            closeWindow();
-                            replaceText(recoveryCodeWarning, mfaNotSet);
-                            showElement(recoveryCodeWarning);
-                            disableAllInputs(false);
-                        } else if (response == 'WAIT') {
-                            closeWindow();
-                            replaceText(recoveryCodeWarning, generateRecoveryCodeWait);
-                            showElement(recoveryCodeWarning);
-                            disableAllInputs(false);
-                        } else {
-                            let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
-                            try {
-                                parsedResponse = JSON.parse(response);
-                                RecoveryCodeInfo.check(parsedResponse);
-                            } catch (e) {
-                                showMessage(invalidResponse());
-                                return;
-                            }
-                            showRecoveryCode(parsedResponse, () => {
-                                hideElement(getSharedElement(SHARED_VAR_IDX_RECOVERY_CODE_INFO));
-                                disableAllInputs(false);
-                            });
-                        }
-                    });
-                },
-                content: authenticationParam,
-                showSessionEndedMessage: true,
-            });
+        'generate_recovery_code',
+        (response: string) => {
+            if (response == 'TOTP NOT SET') {
+                replaceText(recoveryCodeWarning, mfaNotSet);
+                showElement(recoveryCodeWarning);
+                disableAllInputs(false);
+            } else if (response == 'WAIT') {
+                replaceText(recoveryCodeWarning, generateRecoveryCodeWait);
+                showElement(recoveryCodeWarning);
+                disableAllInputs(false);
+            } else {
+                let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
+                try {
+                    parsedResponse = JSON.parse(response);
+                    RecoveryCodeInfo.check(parsedResponse);
+                } catch (e) {
+                    showMessage(invalidResponse());
+                    return false;
+                }
+                showRecoveryCode(parsedResponse, () => {
+                    hideElement(getSharedElement(SHARED_VAR_IDX_RECOVERY_CODE_INFO));
+                    disableAllInputs(false);
+                });
+                return false;
+            }
+            return true;
         },
         recoveryCodeWarning,
-        true
+        undefined,
+        true,
     );
 }
 
@@ -198,215 +163,135 @@ export function changeLoginNotification() {
     const loginNotificationTargetStatus = !getSharedBool(SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS);
 
     reauthenticationPrompt(
-        (
-            authenticationParam: string,
-            closeWindow: () => void,
-            failedCallback: (message: string | Node[]) => void,
-            failedTotpCallback: () => void,
-        ) => {
-            sendServerRequest('change_login_notification', {
-                callback: (response: string) => {
-                    serverResponseCallback(response, failedCallback, failedTotpCallback, () => {
-                        if (response == 'DONE') {
-                            setCurrentLoginNotificationStatus(loginNotificationTargetStatus);
-                            replaceText(warningElem, loginNotificationTargetStatus ? loginNotificationEnabled : loginNotificationDisabled);
-                            changeColor(warningElem, 'green');
-                        } else if (response == 'TOTP NOT SET') {
-                            setCurrentLoginNotificationStatus(true);
-                            setCurrentMfaStatus(false);
-                            replaceText(warningElem, mfaNotSet);
-                        } else {
-                            showMessage(invalidResponse());
-                            return;
-                        }
-                        showElement(warningElem);
-                        changeMfaStatus();
-                        disableAllInputs(false);
-                        closeWindow();
-                    });
-                },
-                content: authenticationParam + '&p=' + (loginNotificationTargetStatus ? '1' : '0'),
-                showSessionEndedMessage: true,
-            });
+        'change_login_notification',
+        (response: string) => {
+            if (response == 'DONE') {
+                setCurrentLoginNotificationStatus(loginNotificationTargetStatus);
+                replaceText(warningElem, loginNotificationTargetStatus ? loginNotificationEnabled : loginNotificationDisabled);
+                changeColor(warningElem, 'green');
+            } else if (response == 'TOTP NOT SET') {
+                setCurrentLoginNotificationStatus(true);
+                setCurrentMfaStatus(false);
+                replaceText(warningElem, mfaNotSet);
+            } else {
+                showMessage(invalidResponse());
+                return false;
+            }
+            showElement(warningElem);
+            changeMfaStatus();
+            disableAllInputs(false);
+            return true;
         },
-        warningElem
+        warningElem,
+        'p=' + (loginNotificationTargetStatus ? '1' : '0'),
+        true,
     );
 }
 
-function modifyMfaReauthenticationPrompt(
-    sendRequestCallback: (
-        content: string,
-        closeWindow: () => void,
-        failedCallback: (message: string | Node[]) => void,
-        otpSentCallback?: () => void,
-        failedOtpCallback?: () => void,
-    ) => void,
-    message?: string | Node[]
+export function modifyMfaReauthenticationPrompt(
+    uri: string,
+    callback: (response: string) => boolean,
+    warningElem: HTMLElement,
+    content?: string,
+    loginPopupWindow?: LoginPopupWindow,
+    emailOtpPopupWindow?: EmailOtpPopupWindow,
 ) {
-    promptForLogin(
-        (email, password, closeWindow, showWarning) => {
-            const emailEncoded = encodeURIComponent(email);
-            const passwordEncoded = encodeURIComponent(password);
-
-            sendRequestCallback(
-                'email=' + emailEncoded + '&password=' + passwordEncoded,
-                closeWindow,
-                showWarning,
-                () => {
-                    promptForEmailOtp(
-                        (otp, closeWindow, showWarning) => {
-                            sendRequestCallback(
-                                'email=' + emailEncoded + '&password=' + passwordEncoded + '&otp=' + otp,
-                                closeWindow,
-                                (message?: string | Node[]) => { modifyMfaReauthenticationPrompt(sendRequestCallback, message); },
-                                undefined,
-                                showWarning
-                            );
-                        },
-                        (resetResentTimer, closeWindow) => {
-                            sendRequestCallback(
-                                'email=' + emailEncoded + '&password=' + passwordEncoded,
-                                closeWindow,
-                                (message: string | Node[]) => { modifyMfaReauthenticationPrompt(sendRequestCallback, message); },
-                                resetResentTimer,
-                            );
-                        }
-                    );
-                },
-            );
-        },
-        message,
-    );
-}
-
-async function promptForEmailOtp(
-    submitCallback: (
-        otp: string,
-        closeWindow: () => void,
-        showWarning: () => void,
-    ) => void,
-    resetResendTimerCallback: (
-        resetResendTimer: () => void,
-        closeWindow: () => void,
-    ) => void
-) {
-    const currentPgid = pgid;
-    const popupWindowInitialize = await popupWindowImportPromise;
-    if (currentPgid !== pgid) {
+    if (loginPopupWindow === undefined) {
+        handleFailedLogin(
+            undefined,
+            () => {
+                disableAllInputs(false);
+            },
+            (loginPopupWindow) => {
+                modifyMfaReauthenticationPrompt(uri, callback, warningElem, content, loginPopupWindow);
+            },
+        );
         return;
     }
+    sendServerRequest(uri, {
+        callback: (response: string) => {
+            const closeAll = () => {
+                emailOtpPopupWindow?.[2]();
+                loginPopupWindow[3]();
+            };
+            switch (response) {
+                case AUTH_DEACTIVATED:
+                    replaceChildren(warningElem, ...accountDeactivated());
+                    closeAll();
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                    break;
+                case AUTH_TOO_MANY_REQUESTS:
+                    replaceText(warningElem, tooManyFailedLogin);
+                    closeAll();
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                    break;
+                case AUTH_FAILED:
+                    handleFailedLogin(
+                        emailOtpPopupWindow === undefined ? loginPopupWindow : undefined,
+                        () => {
+                            disableAllInputs(false);
+                        },
+                        (loginPopupWindow) => {
+                            modifyMfaReauthenticationPrompt(uri, callback, warningElem, content, loginPopupWindow);
+                        },
+                        loginFailed,
+                    );
+                    break;
+                case 'FAILED EMAIL OTP':
+                case 'SENT':
+                    handleFailedEmailOtp(
+                        emailOtpPopupWindow,
+                        () => {
+                            disableAllInputs(false);
+                        },
+                        (emailOtpPopupWindow) => {
+                            modifyMfaReauthenticationPrompt(uri, callback, warningElem, content, loginPopupWindow, emailOtpPopupWindow);
+                        },
+                    );
+                    break;
+                default:
+                    if (callback(response)) {
+                        closeAll();
+                    }
+            }
+        },
+        content: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (emailOtpPopupWindow === undefined || emailOtpPopupWindow[0] === undefined ? '' : '&totp=' + emailOtpPopupWindow[0]),
+        showSessionEndedMessage: true,
+    });
+}
 
-    popupWindowInitialize().then((popupWindow) => {
+async function handleFailedEmailOtp(
+    currentEmailOtpPopupWindow: EmailOtpPopupWindow | undefined,
+    closeCallback: () => void,
+    retryCallback: (emailOtpPopupWindow: EmailOtpPopupWindow) => void,
+) {
+    const currentPgid = pgid;
+    let emailOtpPopupWindowPromise: Promise<EmailOtpPopupWindow>;
+    if (currentEmailOtpPopupWindow === undefined) {
+        const popupWindow = await popupWindowImportPromise;
         if (currentPgid !== pgid) {
             return;
         }
+        emailOtpPopupWindowPromise = promptForEmailOtp(popupWindow);
+    } else {
+        emailOtpPopupWindowPromise = currentEmailOtpPopupWindow[1]();
+    }
 
-        const promptText = createParagraphElement();
-        appendText(promptText, 'メールに送信された認証コードを入力してください。');
-
-        const warningText = createParagraphElement();
-        appendText(warningText, failedTotp);
-        changeColor(warningText, 'red');
-        hideElement(warningText);
-
-        const inputFlexbox = createDivElement();
-        addClass(inputFlexbox, 'input-flexbox');
-
-        const otpInputContainer = createDivElement();
-        addClass(otpInputContainer, 'input-field');
-        const otpInput = createInputElement();
-        otpInput.type = 'text';
-        otpInput.autocomplete = 'one-time-code';
-        otpInput.placeholder = '認証コード';
-        otpInput.maxLength = 6;
-        appendChild(otpInputContainer, otpInput);
-        appendChild(inputFlexbox, otpInputContainer);
-
-        const resendButton = createButtonElement();
-        addClass(resendButton, 'button');
-        const resendButtonText = '再送信する';
-        const resetResendTimer = () => {
-            resendButton.disabled = true;
-            resendButton.style.cursor = 'not-allowed';
-            resendButton.style.width = 'auto';
-            resendButton.innerText = resendButtonText + '（60秒）';
-            let count = 60;
-            const interval = addInterval(() => {
-                count--;
-                if (count <= 0) {
-                    resendButton.disabled = false;
-                    resendButton.style.removeProperty('cursor');
-                    resendButton.style.removeProperty('width');
-                    replaceText(resendButton, resendButtonText);
-                    removeInterval(interval);
-                } else {
-                    replaceText(resendButton, resendButtonText + '（' + count + '秒）');
-                }
-            }, 1000);
-        };
-        resetResendTimer();
-        appendChild(inputFlexbox, resendButton);
-
-        addEventListener(resendButton, 'click', () => {
-            resetResendTimerCallback(
-                resetResendTimer,
-                popupWindow.hide
-            );
-        });
-
-        const submitButton = createButtonElement();
-        addClass(submitButton, 'button');
-        appendText(submitButton, '送信する');
-        const cancelButton = createButtonElement();
-        addClass(cancelButton, 'button');
-        appendText(cancelButton, 'キャンセル');
-        const buttonFlexbox = createDivElement();
-        addClass(buttonFlexbox, 'input-flexbox');
-        appendChild(buttonFlexbox, submitButton);
-        appendChild(buttonFlexbox, cancelButton);
-
-        const disableAllPopUpWindowInputs = (disabled: boolean) => {
-            disableInput(otpInput, disabled);
-            if (resendButton.textContent === resendButtonText) {
-                resendButton.disabled = disabled;
-            }
-            submitButton.disabled = disabled;
-            cancelButton.disabled = disabled;
-        };
-        const submit = () => {
-            disableAllPopUpWindowInputs(true);
-            hideElement(warningText);
-
-            const otp = otpInput.value.toUpperCase();
-            if (!/^[2-9A-HJ-NP-Z]{6}$/.test(otp)) {
-                showElement(warningText);
-                disableAllPopUpWindowInputs(false);
-                return;
-            }
-
-            submitCallback(
-                otp,
-                popupWindow.hide,
-                () => {
-                    showElement(warningText);
-                    disableAllPopUpWindowInputs(false);
-                }
-            );
-        };
-        addEventListener(submitButton, 'click', submit);
-        addEventListener(otpInput, 'keydown', (event) => {
-            if ((event as KeyboardEvent).key === 'Enter') {
-                submit();
-            }
-        });
-        addEventListener(cancelButton, 'click', () => {
-            disableAllInputs(false);
-            popupWindow.hide();
-        });
-
-        popupWindow.show(promptText, warningText, inputFlexbox, buttonFlexbox);
-        otpInput.focus();
-    });
+    try {
+        currentEmailOtpPopupWindow = await emailOtpPopupWindowPromise;
+    } catch (e) {
+        if (currentPgid !== pgid) {
+            return;
+        }
+        closeCallback();
+        return;
+    }
+    if (currentPgid !== pgid) {
+        return;
+    }
+    retryCallback(currentEmailOtpPopupWindow);
 }
 
 async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {

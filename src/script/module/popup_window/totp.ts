@@ -5,17 +5,30 @@ import { addInterval, removeInterval } from '../timer';
 import type { PopupWindow } from './core';
 import { pgid } from '../global';
 
-export function promptForTotp(
-    initializePopupWindow: () => Promise<PopupWindow>,
-    submitCallback: (
-        totp: string,
-        closeWindow: () => void,
-        showWarning: () => void,
-    ) => void,
-    closeWindowCallback: () => void,
-    timeoutCallback: () => void,
-) {
+export type TotpPopupWindow = [
+    string, // totp
+    () => Promise<TotpPopupWindow>, // show warning
+    () => void, // close
+];
+
+const enum RejectReason {
+    TIMEOUT,
+    CLOSE,
+}
+
+export const TOTP_POPUP_WINDOW_TIMEOUT = RejectReason.TIMEOUT;
+
+export function promptForTotp(initializePopupWindow: () => Promise<PopupWindow>) {
     const currentPgid = pgid;
+
+    let returnPromiseResolve: (value: TotpPopupWindow) => void;
+    let returnPromiseReject: (reason: unknown) => void;
+
+    const returnPromise = new Promise<TotpPopupWindow>((resolve, reject) => {
+        returnPromiseResolve = resolve;
+        returnPromiseReject = reject;
+    });
+
     initializePopupWindow().then((popupWindow) => {
         if (currentPgid !== pgid) {
             return;
@@ -50,10 +63,10 @@ export function promptForTotp(
         appendChild(buttonFlexbox, cancelButton);
 
         const startTime = Date.now();
+        let timerBlocked = false;
         const timer = addInterval(() => {
-            if (Date.now() - startTime > 90 * 1000) {
-                closeWindowCallback();
-                timeoutCallback();
+            if (!timerBlocked && Date.now() - startTime > 90 * 1000) {
+                returnPromiseReject(RejectReason.TIMEOUT);
                 popupWindow.hide();
                 removeInterval(timer);
             }
@@ -72,20 +85,27 @@ export function promptForTotp(
             const totp = totpInput.value;
             if (!/^\d{6}$/.test(totp) && !/^[a-zA-Z0-9~_-]{32}$/.test(totp)) {
                 showElement(warningText);
+                disableAllInputs(false);
                 return;
             }
 
-            submitCallback(
+            timerBlocked = true;
+            returnPromiseResolve([
                 totp,
-                () => {
-                    removeInterval(timer);
-                    popupWindow.hide();
-                },
                 () => {
                     disableAllInputs(false);
                     showElement(warningText);
+                    timerBlocked = false;
+                    return new Promise<TotpPopupWindow>((resolve, reject) => {
+                        returnPromiseResolve = resolve;
+                        returnPromiseReject = reject;
+                    });
+                },
+                () => {
+                    removeInterval(timer);
+                    popupWindow.hide();
                 }
-            );
+            ]);
         };
         addEventListener(submitButton, 'click', submit);
         addEventListener(totpInput, 'keydown', (event) => {
@@ -94,7 +114,7 @@ export function promptForTotp(
             }
         });
         addEventListener(cancelButton, 'click', () => {
-            closeWindowCallback();
+            returnPromiseReject(RejectReason.CLOSE);
             removeInterval(timer);
             popupWindow.hide();
         });
@@ -102,4 +122,6 @@ export function promptForTotp(
         popupWindow.show(promptText, warningText, totpInputContainer, buttonFlexbox);
         totpInput.focus();
     });
+
+    return returnPromise;
 }

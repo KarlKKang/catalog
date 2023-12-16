@@ -28,6 +28,8 @@ import {
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
 import { addTimeout } from '../timer';
 import { pgid, redirect } from '../global';
+import type { TotpPopupWindow } from '../popup_window/totp';
+import type { popupWindowImport, promptForTotpImport } from '../popup_window';
 
 //////////////////////////////////////// Helper functions ////////////////////////////////////////
 
@@ -327,4 +329,44 @@ export function scrollToHash() {
             }, 500); //Give UI some time to load.
         }
     }
+}
+
+export async function handleFailedTotp(
+    popupWindowImportPromise: ReturnType<typeof popupWindowImport>,
+    promptForTotpImportPromise: ReturnType<typeof promptForTotpImport>,
+    currentTotpPopupWindow: TotpPopupWindow | undefined,
+    closeCallback: () => void,
+    timeoutCallback: () => void,
+    retryCallback: (totpPopupWindow: TotpPopupWindow) => void,
+) {
+    const currentPgid = pgid;
+    const promptForTotp = await promptForTotpImportPromise;
+    let totpPopupWindowPromise: Promise<TotpPopupWindow>;
+    if (currentTotpPopupWindow === undefined) {
+        const popupWindow = await popupWindowImportPromise;
+        if (currentPgid !== pgid) {
+            return;
+        }
+        totpPopupWindowPromise = promptForTotp.promptForTotp(popupWindow);
+    } else {
+        totpPopupWindowPromise = currentTotpPopupWindow[1]();
+    }
+
+    try {
+        currentTotpPopupWindow = await totpPopupWindowPromise;
+    } catch (e) {
+        if (currentPgid !== pgid) {
+            return;
+        }
+        if (e === promptForTotp.TOTP_POPUP_WINDOW_TIMEOUT) {
+            timeoutCallback();
+        } else {
+            closeCallback();
+        }
+        return;
+    }
+    if (currentPgid !== pgid) {
+        return;
+    }
+    retryCallback(currentTotpPopupWindow);
 }
