@@ -4,8 +4,9 @@ const intervalTimers = new Set<ReturnType<typeof setInterval>>();
 export function addTimeout(callback: () => void, ms?: number) {
     const timerID = setTimeout(
         () => {
-            timeoutTimers.delete(timerID);
-            callback();
+            if (timeoutTimers.delete(timerID)) {
+                callback();
+            }
         },
         ms
     );
@@ -14,7 +15,11 @@ export function addTimeout(callback: () => void, ms?: number) {
 }
 
 export function addInterval(callback: () => void, ms?: number) {
-    const timerID = setInterval(callback, ms);
+    const timerID = setInterval(() => {
+        if (intervalTimers.has(timerID)) {
+            callback();
+        }
+    }, ms);
     intervalTimers.add(timerID);
     return timerID;
 }
