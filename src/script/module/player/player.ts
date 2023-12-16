@@ -586,6 +586,7 @@ export class Player {
             event.stopPropagation();
             this.play();
             this.focus();
+            this.active = true;
         });
 
         //Load progress
