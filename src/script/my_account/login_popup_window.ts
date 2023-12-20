@@ -1,9 +1,10 @@
-import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, createInputElement, hideElement, showElement, replaceText } from '../module/dom';
+import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, createInputElement, hideElement, showElement, replaceText, createSpanElement, openWindow } from '../module/dom';
 import { changeColor, disableInput, passwordStyling } from '../module/common';
 import type { PopupWindow } from '../module/popup_window/core';
 import { pgid } from '../module/global';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { loginFailed } from '../module/message/template/inline';
+import { TOP_URL } from '../module/env/constant';
 
 export type LoginPopupWindow = [
     string, // email
@@ -75,6 +76,15 @@ export function promptForLogin(initializePopupWindow: () => Promise<PopupWindow>
         appendChild(buttonFlexbox, submitButton);
         appendChild(buttonFlexbox, cancelButton);
 
+        const forgetPasswordParagraph = createParagraphElement();
+        const forgetPasswordLink = createSpanElement();
+        addClass(forgetPasswordLink, 'link');
+        appendText(forgetPasswordLink, 'パスワードを忘れた方はこちら');
+        appendChild(forgetPasswordParagraph, forgetPasswordLink);
+        addEventListener(forgetPasswordLink, 'click', () => {
+            openWindow(TOP_URL + '/request_password_reset');
+        });
+
         const disableAllInputs = (disabled: boolean) => {
             disableInput(emailInput, disabled);
             disableInput(passwordInput, disabled);
@@ -123,7 +133,7 @@ export function promptForLogin(initializePopupWindow: () => Promise<PopupWindow>
             popupWindow.hide();
         });
 
-        popupWindow.show(promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox);
+        popupWindow.show(promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox, forgetPasswordParagraph);
         emailInput.focus();
     });
 
