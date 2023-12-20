@@ -26,6 +26,7 @@ import {
     appendText,
     appendListItems,
     replaceText,
+    removeClass,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -256,6 +257,8 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HT
 
     if (!active) {
         hidePanel();
+    } else {
+        addClass(acc, 'active');
     }
     changeIcon();
 
@@ -265,6 +268,7 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HT
         active = !active;
         changeIcon();
         if (active) {
+            addClass(acc, 'active');
             currentAnimationFrame = null;
             panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
             const timeout = addTimeout(() => {
@@ -274,6 +278,7 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HT
             }, 200);
             currentTimeout = timeout;
         } else {
+            removeClass(acc, 'active');
             currentTimeout = null;
             let animationFrame = w.requestAnimationFrame(() => {
                 if (currentAnimationFrame === animationFrame) {
