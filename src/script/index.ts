@@ -116,11 +116,16 @@ function showPageCallback(
     }
     showSeries(seriesInfo);
     addNavBar(NAV_BAR_HOME, () => {
-        scrollToTop();
-        if (keywords !== '') {
-            searchBarInput.value = '';
-            search();
+        if (w.scrollY !== 0) {
+            scrollToTop();
+            return;
         }
+        if (keywords === '') {
+            redirect(TOP_URL);
+            return;
+        }
+        searchBarInput.value = '';
+        search();
     });
     addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', () => {
         if (!searchBarInput.disabled) {

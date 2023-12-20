@@ -236,36 +236,50 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
     appendChild(navBar, navButton3[0]);
     appendChild(navBar, navButton4[0]);
 
-    const callback = currentPageCallback || scrollToTop;
+    const callback = () => {
+        if (currentPageCallback !== undefined) {
+            currentPageCallback();
+            return true;
+        }
+        if (w.scrollY === 0) {
+            return false;
+        }
+        scrollToTop();
+        return true;
+    };
 
     addEventListener(navButton1[0], 'click', () => {
         if (page === NavBarPage.HOME) {
-            callback();
-            return;
+            if (callback()) {
+                return;
+            }
         }
         redirect(TOP_URL);
     });
 
     addEventListener(navButton2[0], 'click', () => {
         if (page === NavBarPage.NEWS) {
-            callback();
-            return;
+            if (callback()) {
+                return;
+            }
         }
         redirect(TOP_URL + '/news/');
     });
 
     addEventListener(navButton3[0], 'click', () => {
         if (page === NavBarPage.MY_ACCOUNT) {
-            callback();
-            return;
+            if (callback()) {
+                return;
+            }
         }
         redirect(TOP_URL + '/my_account');
     });
 
     addEventListener(navButton4[0], 'click', () => {
         if (page === NavBarPage.INFO) {
-            callback();
-            return;
+            if (callback()) {
+                return;
+            }
         }
         redirect(TOP_URL + '/info');
     });
