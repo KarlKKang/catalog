@@ -20,7 +20,7 @@ import { invalidResponse } from '../module/message/template/param/server';
 import * as AccountInfo from '../module/type/AccountInfo';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { redirect } from '../module/global';
-import { SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, SHARED_VAR_IDX_INVITE_BUTTON, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGOUT_BUTTON, SHARED_VAR_IDX_MFA_BUTTON, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars } from './shared_var';
+import { SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, SHARED_VAR_IDX_INVITE_BUTTON, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGOUT_BUTTON, SHARED_VAR_IDX_MFA_BUTTON, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setCurrentLoginNotificationStatus } from './shared_var';
 import { changeMfaStatus, disableAllInputs } from './helper';
 import { changeEmail, changePassword, changeUsername, invite, showSessions } from './basic';
 import { changeLoginNotification, disableMfa, enableMfa, generateRecoveryCode } from './mfa';
@@ -45,7 +45,9 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function showPageCallback(userInfo: AccountInfo.AccountInfo) {
-    initializeSharedVars(userInfo);
+    initializeSharedVars();
+    setCurrentLoginNotificationStatus(userInfo.login_notification);
+    changeMfaStatus(userInfo.mfa_status);
 
     addEventListener(getSharedButton(SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON), 'click', changeEmail);
     addEventListener(getSharedButton(SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON), 'click', () => { changeUsername(userInfo); });
@@ -70,8 +72,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     passwordStyling(getSharedInput(SHARED_VAR_IDX_NEW_PASSWORD_INPUT));
     passwordStyling(getSharedInput(SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT));
 
-    changeMfaStatus();
-    if (getSharedBool(SHARED_VAR_IDX_CURRENT_MFA_STATUS)) {
+    if (userInfo.mfa_status) {
         const recoveryCodeInfo = getSharedElement(SHARED_VAR_IDX_RECOVERY_CODE_INFO);
         if (userInfo.recovery_code_status === 0) {
             changeColor(recoveryCodeInfo, 'red');

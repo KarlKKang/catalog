@@ -1,12 +1,11 @@
 import {
     getById,
 } from '../module/dom';
-import type { AccountInfo } from '../module/type/AccountInfo';
 
-let sharedBoolVars: boolean[] = [];
-let sharedInputVars: HTMLInputElement[] = [];
-let sharedButtonVars: HTMLButtonElement[] = [];
-let sharedElementVars: HTMLElement[] = [];
+let sharedBoolVars: boolean[];
+let sharedInputVars: HTMLInputElement[];
+let sharedButtonVars: HTMLButtonElement[];
+let sharedElementVars: HTMLElement[];
 
 const enum SharedBoolVarsIdx {
     currentMfaStatus,
@@ -73,11 +72,8 @@ export const SHARED_VAR_IDX_RECOVERY_CODE_INFO = SharedElementVarsIdx.recoveryCo
 export const SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO = SharedElementVarsIdx.loginNotificationInfo;
 export const SHARED_VAR_IDX_SESSIONS_CONTAINER = SharedElementVarsIdx.sessionsContainer;
 
-export function initializeSharedVars(userInfo: AccountInfo) {
-    sharedBoolVars = [
-        userInfo.mfa_status,
-        userInfo.login_notification,
-    ];
+export function initializeSharedVars() {
+    sharedBoolVars = [];
 
     sharedInputVars = [
         getById('new-username') as HTMLInputElement,

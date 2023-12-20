@@ -36,13 +36,17 @@ import {
     accountDeactivated,
     tooManyFailedLogin,
     loginFailed,
+    loginNotificationIsEnabled,
+    disableButtonText,
+    enableButtonText,
+    loginNotificationIsDisabled,
 } from '../module/message/template/inline';
 import * as TOTPInfo from '../module/type/TOTPInfo';
 import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
 import { toCanvas } from 'qrcode';
 import { addInterval, removeInterval } from '../module/timer';
 import { pgid } from '../module/global';
-import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_MFA_WARNING, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, getSharedBool, getSharedElement, setCurrentLoginNotificationStatus, setCurrentMfaStatus } from './shared_var';
+import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_MFA_WARNING, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, getSharedBool, getSharedButton, getSharedElement, setCurrentLoginNotificationStatus } from './shared_var';
 import { changeMfaStatus, disableAllInputs, handleFailedLogin, reauthenticationPrompt } from './helper';
 import { popupWindowImportPromise } from './import_promise';
 import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
@@ -60,11 +64,10 @@ export function enableMfa() {
         'generate_totp',
         (response: string) => {
             if (response == AUTH_FAILED_TOTP) {
+                changeMfaStatus(true);
                 changeColor(mfaWarning, 'green');
                 replaceText(mfaWarning, mfaAlreadySet);
                 showElement(mfaWarning);
-                setCurrentMfaStatus(true);
-                changeMfaStatus();
                 disableAllInputs(false);
                 return true;
             }
@@ -94,12 +97,10 @@ export function disableMfa() {
         'disable_totp',
         (response: string) => {
             if (response == 'DONE') {
+                changeMfaStatus(false);
                 changeColor(mfaWarning, 'green');
                 replaceText(mfaWarning, mfaDisabled);
                 showElement(mfaWarning);
-                setCurrentMfaStatus(false);
-                setCurrentLoginNotificationStatus(true);
-                changeMfaStatus();
             } else {
                 showMessage(invalidResponse());
                 return false;
@@ -122,6 +123,7 @@ export function generateRecoveryCode() {
         'generate_recovery_code',
         (response: string) => {
             if (response == 'TOTP NOT SET') {
+                changeMfaStatus(false);
                 replaceText(recoveryCodeWarning, mfaNotSet);
                 showElement(recoveryCodeWarning);
                 disableAllInputs(false);
@@ -167,18 +169,18 @@ export function changeLoginNotification() {
         (response: string) => {
             if (response == 'DONE') {
                 setCurrentLoginNotificationStatus(loginNotificationTargetStatus);
+                replaceText(getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO), loginNotificationTargetStatus ? loginNotificationIsEnabled : loginNotificationIsDisabled);
+                replaceText(getSharedButton(SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON), loginNotificationTargetStatus ? disableButtonText : enableButtonText);
                 replaceText(warningElem, loginNotificationTargetStatus ? loginNotificationEnabled : loginNotificationDisabled);
                 changeColor(warningElem, 'green');
             } else if (response == 'TOTP NOT SET') {
-                setCurrentLoginNotificationStatus(true);
-                setCurrentMfaStatus(false);
+                changeMfaStatus(false);
                 replaceText(warningElem, mfaNotSet);
             } else {
                 showMessage(invalidResponse());
                 return false;
             }
             showElement(warningElem);
-            changeMfaStatus();
             disableAllInputs(false);
             return true;
         },
@@ -380,11 +382,10 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                         disableAllPopUpWindowInputs(false);
                     } else if (response === 'ALREADY SET') {
                         popupWindow.hide();
+                        changeMfaStatus(true);
                         changeColor(mfaWarning, 'green');
                         replaceText(mfaWarning, mfaAlreadySet);
                         showElement(mfaWarning);
-                        setCurrentMfaStatus(true);
-                        changeMfaStatus();
                         disableAllInputs(false);
                     } else {
                         let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
@@ -396,11 +397,10 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                             return;
                         }
                         showRecoveryCode(parsedResponse, () => {
+                            changeMfaStatus(true);
                             changeColor(mfaWarning, 'green');
                             replaceText(mfaWarning, mfaEnabled);
                             showElement(mfaWarning);
-                            setCurrentMfaStatus(true);
-                            changeMfaStatus();
                             disableAllInputs(false);
                         });
                     }

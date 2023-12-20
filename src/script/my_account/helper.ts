@@ -2,22 +2,21 @@ import { changeColor, disableInput, handleFailedTotp, sendServerRequest } from '
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 import { addClass, hideElement, removeClass, replaceChildren, replaceText, showElement } from '../module/dom';
 import { pgid } from '../module/global';
-import { accountDeactivated, loginFailed, mfaNotSet, sessionEnded, tooManyFailedLogin } from '../module/message/template/inline';
+import { accountDeactivated, disableButtonText, enableButtonText, loginFailed, loginNotificationIsDisabled, loginNotificationIsEnabled, mfaNotSet, sessionEnded, tooManyFailedLogin } from '../module/message/template/inline';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { popupWindowImportPromise, promptForTotpImportPromise } from './import_promise';
 import { promptForLogin, type LoginPopupWindow } from './login_popup_window';
-import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, SHARED_VAR_IDX_INVITE_BUTTON, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_LOGOUT_BUTTON, SHARED_VAR_IDX_MFA_BUTTON, SHARED_VAR_IDX_MFA_INFO, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, getSharedBool, getSharedButton, getSharedElement, getSharedInput } from './shared_var';
+import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, SHARED_VAR_IDX_INVITE_BUTTON, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_LOGOUT_BUTTON, SHARED_VAR_IDX_MFA_BUTTON, SHARED_VAR_IDX_MFA_INFO, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, getSharedBool, getSharedButton, getSharedElement, getSharedInput, setCurrentLoginNotificationStatus, setCurrentMfaStatus } from './shared_var';
 
-export function changeMfaStatus() {
-    const disableButtonText = '無効にする';
-    const loginNotificationEnabledPrefix = 'ログイン通知が有効になっています。';
+export function changeMfaStatus(newStatus: boolean) {
+    setCurrentMfaStatus(newStatus);
     const mfaInfo = getSharedElement(SHARED_VAR_IDX_MFA_INFO);
     const mfaButton = getSharedButton(SHARED_VAR_IDX_MFA_BUTTON);
     const recoveryCodeInfo = getSharedElement(SHARED_VAR_IDX_RECOVERY_CODE_INFO);
     const recoveryCodeButton = getSharedButton(SHARED_VAR_IDX_RECOVERY_CODE_BUTTON);
     const loginNotificationInfo = getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO);
     const loginNotificationButton = getSharedButton(SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON);
-    if (getSharedBool(SHARED_VAR_IDX_CURRENT_MFA_STATUS)) {
+    if (newStatus) {
         replaceText(mfaInfo, '二要素認証が有効になっています。');
         replaceText(mfaButton, disableButtonText);
 
@@ -26,8 +25,8 @@ export function changeMfaStatus() {
         removeClass(recoveryCodeButton, 'not-allowed');
 
         const currentLoginNotificationStatus = getSharedBool(SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS);
-        replaceText(loginNotificationInfo, currentLoginNotificationStatus ? loginNotificationEnabledPrefix : 'ログイン通知が無効になっています。');
-        replaceText(loginNotificationButton, currentLoginNotificationStatus ? disableButtonText : '有効にする');
+        replaceText(loginNotificationInfo, currentLoginNotificationStatus ? loginNotificationIsEnabled : loginNotificationIsDisabled);
+        replaceText(loginNotificationButton, currentLoginNotificationStatus ? disableButtonText : enableButtonText);
         loginNotificationButton.disabled = false;
         removeClass(loginNotificationButton, 'not-allowed');
     } else {
@@ -41,7 +40,8 @@ export function changeMfaStatus() {
         recoveryCodeButton.disabled = true;
         addClass(recoveryCodeButton, 'not-allowed');
 
-        replaceText(loginNotificationInfo, loginNotificationEnabledPrefix + 'ログイン通知を無効にできるのは、二要素認証が有効になっている場合のみです。');
+        setCurrentLoginNotificationStatus(true);
+        replaceText(loginNotificationInfo, loginNotificationIsEnabled + 'ログイン通知を無効にできるのは、二要素認証が有効になっている場合のみです。');
         replaceText(loginNotificationButton, disableButtonText);
         hideElement(getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING));
         loginNotificationButton.disabled = true;

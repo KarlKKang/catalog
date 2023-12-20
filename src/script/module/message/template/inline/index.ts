@@ -45,6 +45,10 @@ export const mfaEnabled = '二要素認証が有効になりました。';
 
 export const loginNotificationEnabled = 'ログイン通知が有効になりました。';
 export const loginNotificationDisabled = 'ログイン通知が無効になりました。';
+export const loginNotificationIsEnabled = 'ログイン通知が有効になっています。';
+export const loginNotificationIsDisabled = 'ログイン通知が無効になっています。';
+export const enableButtonText = '有効にする';
+export const disableButtonText = '無効にする';
 
 export const sessionEnded = 'セッションは終了した。もう一度お試しください。';
 
