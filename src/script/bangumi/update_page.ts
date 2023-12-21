@@ -113,7 +113,7 @@ export default async function (
         appendChild(warningButtonGroup, warningButtonYes);
         appendChild(warningButtonGroup, warningButtonNo);
 
-        const warningElem = createMessageElem(warningTitle, 'ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？', 'red', warningButtonGroup);
+        const warningElem = createMessageElem(warningTitle, [createTextNode('ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？')], 'red', warningButtonGroup);
         warningElem.id = 'warning';
 
         addEventListener(warningButtonYes, 'click', () => {

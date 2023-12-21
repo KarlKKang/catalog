@@ -27,6 +27,8 @@ import {
     appendListItems,
     replaceText,
     removeClass,
+    replaceChildren,
+    createTextNode,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -43,27 +45,27 @@ export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
 function showNetworkError() {
-    showErrorMessage(defaultError, 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。');
+    showTextErrorMessage(defaultError, 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。');
 }
 
 function showUnknownPlaybackError() {
-    showErrorMessage(defaultError, '再生中に不明なエラーが発生しました。' + defaultErrorSuffix);
+    showTextErrorMessage(defaultError, '再生中に不明なエラーが発生しました。' + defaultErrorSuffix);
 }
 
 function showDecodeError() {
-    showErrorMessage(defaultError, 'お使いのブラウザは、このデータ形式をデコードすることができません。コーデックに対応していない、またはデコードのためのメモリが不足している可能性があります。' + incompatibleSuffix);
+    showTextErrorMessage(defaultError, 'お使いのブラウザは、このデータ形式をデコードすることができません。コーデックに対応していない、またはデコードのためのメモリが不足している可能性があります。' + incompatibleSuffix);
 }
 
 export function showHLSCompatibilityError() {
-    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + incompatibleSuffix);
+    showTextErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + incompatibleSuffix);
 }
 
 export function showCodecCompatibilityError() {
-    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix);
+    showTextErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix);
 }
 
 function showPlayPromiseError() {
-    showErrorMessage(incompatibleTitle, 'ブラウザによって再生が中断されました。ページを再読み込みしてみてください。このエラーが続く場合は、他のブラウザでお試しください。');
+    showTextErrorMessage(incompatibleTitle, 'ブラウザによって再生が中断されました。ページを再読み込みしてみてください。このエラーが続く場合は、他のブラウザでお試しください。');
 }
 
 export function showPlayerError(errorCode: number | null) {
@@ -80,7 +82,11 @@ export function showPlayerError(errorCode: number | null) {
     }
 }
 
-export function showErrorMessage(title: string, body: string) {
+export function showTextErrorMessage(title: string, body: string) {
+    showErrorMessage(title, [createTextNode(body)]);
+}
+
+export function showErrorMessage(title: string, body: Node[]) {
     const mediaHolder = getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER);
     let messageElem = getByIdNative('error');
     if (messageElem === null) {
@@ -90,13 +96,13 @@ export function showErrorMessage(title: string, body: string) {
     } else {
         const titleElem = getDescendantsByClassAt(messageElem, 'message-title', 0);
         const bodyElem = getDescendantsByClassAt(messageElem, 'message-body', 0);
-        titleElem.innerHTML = title;
-        bodyElem.innerHTML = body;
+        replaceText(titleElem, title);
+        replaceChildren(bodyElem, ...body);
     }
     hideElement(mediaHolder);
 }
 
-export function showMediaMessage(title: string, body: string, titleColor: string | null) {
+export function showMediaMessage(title: string, body: Node[], titleColor: string | null) {
     const messageElem = createMessageElem(title, body, titleColor);
     prependChild(getById('media-holder'), messageElem);
 }

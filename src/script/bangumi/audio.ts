@@ -33,7 +33,7 @@ import type { VideojsPlayer as VideojsPlayerType } from '../module/player/videoj
 
 import { parseCharacters } from './helper';
 import {
-    showErrorMessage, showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError
+    showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError, showTextErrorMessage
 } from './media_helper';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
@@ -155,7 +155,7 @@ async function addAudioNode(index: number) {
         audioInstance.load(url, {
             onerror: function (errorCode: number | null) {
                 if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
-                    showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
+                    showTextErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
                 } else {
                     showPlayerError(errorCode);
                 }

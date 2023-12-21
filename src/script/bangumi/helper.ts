@@ -12,6 +12,8 @@ import {
     changeURL,
     createDivElement,
     createParagraphElement,
+    appendText,
+    appendChildren,
 } from '../module/dom';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
@@ -88,7 +90,7 @@ export function getFormatIndex(): number {
     return formatIndex;
 }
 
-export function createMessageElem(title: string, body: string, titleColor: string | null, additionalContent: HTMLElement | null = null) {
+export function createMessageElem(title: string, body: Node[], titleColor: string | null, additionalContent: HTMLElement | null = null) {
     const outerContainer = createDivElement();
     const innerContainer = createDivElement();
     addClass(outerContainer, 'message');
@@ -98,8 +100,8 @@ export function createMessageElem(title: string, body: string, titleColor: strin
     const bodyElem = createDivElement();
     addClass(titleElem, 'message-title');
     addClass(bodyElem, 'message-body');
-    titleElem.innerHTML = title;
-    bodyElem.innerHTML = body;
+    appendText(titleElem, title);
+    appendChildren(bodyElem, ...body);
     titleColor !== null && changeColor(titleElem, titleColor);
     appendChild(innerContainer, titleElem);
     appendChild(innerContainer, bodyElem);

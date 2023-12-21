@@ -47,11 +47,11 @@ import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 
 import { updateURLParam, getFormatIndex } from './helper';
-import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion } from './media_helper';
+import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, showTextErrorMessage } from './media_helper';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { HLS_BUFFER_APPEND_ERROR } from '../module/player/media_error';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
-import { pgid } from '../module/global';
+import { pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 
@@ -210,7 +210,7 @@ async function addVideoNode(config?: {
     }
 
     let formatString = '';
-    const mediaMessageQueue: [string, string, string | null][] = [];
+    const mediaMessageQueue: [string, Node[], string | null][] = [];
 
     let USE_NATIVE_HLS = NATIVE_HLS;
     let USE_AVC = true;
@@ -227,12 +227,20 @@ async function addVideoNode(config?: {
     } else if (currentFormat.video === 'hdr10') {
         USE_NATIVE_HLS = USE_NATIVE_HLS && IS_IOS;
         if (!videoCanPlay('hvc1.2.4.H153.90', USE_NATIVE_HLS)) {
-            showErrorMessage(incompatibleTitle, `お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは<a class="link" href="${TOP_URL}/news/UFzUoubmOzd" target="_blank">こちら</a>をご覧ください。`);
+            showErrorMessage(incompatibleTitle, [
+                createTextNode('お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは'),
+                createLinkElem('こちら', TOP_URL + '/news/UFzUoubmOzd'),
+                createTextNode('をご覧ください。')
+            ]);
             return;
         }
         formatString = 'HEVC/Main 10/L5.1/High';
         USE_AVC = false;
-        mediaMessageQueue.push(['HDR10について', `詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`, null]);
+        mediaMessageQueue.push(['HDR10について', [
+            createTextNode('詳しくは'),
+            createLinkElem('こちら', TOP_URL + '/news/0p7hzGpxfMh'),
+            createTextNode('をご覧ください。')
+        ], null]);
     } else if (currentFormat.video === 'hevc41') {
         const CAN_PLAY_HEVC = await canPlayHEVC(USE_NATIVE_HLS, currentFormat.avc_fallback);
         if (currentPgid !== pgid) {
@@ -266,7 +274,11 @@ async function addVideoNode(config?: {
 
         if (currentFormat.audio !== undefined) {
             if (currentFormat.audio.startsWith('atmos')) {
-                mediaMessageQueue.push(['Dolby Atmos®について', `Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは<a class="link" href="${TOP_URL}/news/yMq2BLvq-8Yq" target="_blank">こちら</a>をご覧ください。`, null]);
+                mediaMessageQueue.push(['Dolby Atmos®について', [
+                    createTextNode('Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは'),
+                    createLinkElem('こちら', TOP_URL + '/news/yMq2BLvq-8Yq'),
+                    createTextNode('をご覧ください。')
+                ], null]);
             }
 
             if (currentFormat.audio.startsWith('atmos_ac3')) {
@@ -472,11 +484,15 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
 }
 
 function showDolbyVisionError() {
-    showErrorMessage('Dolby Vision®に対応していません', `Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは<a class="link" href="${TOP_URL}/news/0p7hzGpxfMh" target="_blank">こちら</a>をご覧ください。`);
+    showErrorMessage('Dolby Vision®に対応していません', [
+        createTextNode('Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは'),
+        createLinkElem('こちら', TOP_URL + '/news/0p7hzGpxfMh'),
+        createTextNode('をご覧ください。')
+    ]);
 }
 
 function show8chAudioError() {
-    showErrorMessage(incompatibleTitle, 'ChromiumベースのブラウザとFirefoxでは、7.1chオーディオを再生することはできません。' + incompatibleSuffix);
+    showTextErrorMessage(incompatibleTitle, 'ChromiumベースのブラウザとFirefoxでは、7.1chオーディオを再生することはできません。' + incompatibleSuffix);
 }
 
 async function canPlayHEVC(native: boolean, withFallback: boolean | undefined): Promise<boolean> {
@@ -508,6 +524,16 @@ async function canPlayHEVC(native: boolean, withFallback: boolean | undefined): 
     }
 
     return decodingInfo.supported && decodingInfo.powerEfficient;
+}
+
+function createLinkElem(text: string, link: string) {
+    const linkElem = createSpanElement();
+    addClass(linkElem, 'link');
+    appendText(linkElem, text);
+    addEventListener(linkElem, 'click', () => {
+        redirect(link);
+    });
+    return linkElem;
 }
 
 function disableDropdown(selectElement: HTMLSelectElement, disabled: boolean) {

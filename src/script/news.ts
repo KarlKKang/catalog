@@ -16,7 +16,6 @@ import {
     addClass,
     appendChild,
     getDescendantsByClass,
-    openWindow,
     changeURL,
     setTitle,
     getTitle,
@@ -33,6 +32,7 @@ import {
     clearSessionStorage,
     insertAfter,
     replaceText,
+    openWindow,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/message/template/param/server';
@@ -205,7 +205,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
             if (page === 'news') {
                 const newsID = getDataAttribute(elem, 'news-id');
                 if (newsID !== null) {
-                    openWindow(NEWS_TOP_URL + newsID);
+                    redirect(NEWS_TOP_URL + newsID);
                 }
                 return;
             }
@@ -218,7 +218,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
                     return;
                 }
 
-                let url = TOP_URL + '/bangumi/';
+                let url = TOP_URL + '/bangumi/' + seriesID;
 
                 const epIndex = getDataAttribute(elem, 'ep-index');
                 if (epIndex !== null) {
@@ -230,7 +230,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
                     url += separator + 'format=' + formatIndex;
                 }
 
-                openWindow(url);
+                redirect(url);
                 return;
             }
         });
