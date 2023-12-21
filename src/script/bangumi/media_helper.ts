@@ -1,5 +1,5 @@
 import {
-    CDN_URL,
+    CDN_URL, DOMAIN,
 } from '../module/env/constant';
 import {
     sendServerRequest,
@@ -45,7 +45,7 @@ export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
 function showNetworkError() {
-    showTextErrorMessage(defaultError, 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。');
+    showTextErrorMessage(defaultError, 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。または、' + DOMAIN + 'の他のタブでの操作が、現在のタブに干渉している可能性があります。この場合、ページを再読み込みしてみてください。');
 }
 
 function showUnknownPlaybackError() {
@@ -71,9 +71,9 @@ function showPlayPromiseError() {
 export function showPlayerError(errorCode: number | null) {
     if (errorCode === MEDIA_ERR_ABORTED) {
         showPlayPromiseError();
-    } else if (errorCode === MEDIA_ERR_NETWORK) {
+    } else if (errorCode === MEDIA_ERR_NETWORK || errorCode === MEDIA_ERR_DECODE) {
         showNetworkError();
-    } else if (errorCode === MEDIA_ERR_DECODE || errorCode === HLS_BUFFER_APPEND_ERROR) {
+    } else if (errorCode === HLS_BUFFER_APPEND_ERROR) {
         showDecodeError();
     } else if (errorCode === MEDIA_ERR_SRC_NOT_SUPPORTED) {
         showCodecCompatibilityError();
