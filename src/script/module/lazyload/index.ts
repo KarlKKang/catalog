@@ -20,7 +20,7 @@ export async function lazyloadImport() {
     try {
         [lazyload, imageLoader] = await Promise.all([
             import(
-                /* webpackExports: ["default", "unobserveAll"] */
+                /* webpackExports: ["default", "unobserveAll", "attachImageLoader"] */
                 './lazyload'
             ),
             import(
