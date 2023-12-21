@@ -33,14 +33,16 @@ export const registerComplete = {
     url: LOGIN_URL,
     buttonText: nextButtonText
 };
-export const emailSent = (showGoBackButton: boolean) => {
+export const emailSent = (goBackUrl?: string) => {
     const param: MessageParam = {
         title: title.emailSent,
         message: body.emailSent,
         color: 'green',
     };
-    if (!showGoBackButton) {
+    if (goBackUrl === undefined) {
         param.buttonText = null;
+    } else {
+        param.url = goBackUrl;
     }
     return param;
 };

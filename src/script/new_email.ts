@@ -94,7 +94,7 @@ function showPageCallback(param: string, signature: string) {
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response == 'DONE') {
-                    showMessage(emailSent(false));
+                    showMessage(emailSent());
                 } else {
                     showMessage();
                 }

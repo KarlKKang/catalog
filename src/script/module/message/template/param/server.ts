@@ -3,7 +3,7 @@ import * as title from '../title/server';
 import { LOGIN_URL, TOP_URL } from '../../../env/constant';
 import type { MaintenanceInfo } from '../../../type/MaintenanceInfo';
 import { getBaseURL } from '../../../dom';
-import type { MessageParam } from '../comm';
+import { reloadButtonText, type MessageParam } from '../comm';
 
 export const invalidResponse = () => {
     const param: MessageParam = {
@@ -38,11 +38,12 @@ export const status503 = (maintenanceInfo: MaintenanceInfo) => ({
     title: title.status503,
     message: body.status503(maintenanceInfo),
     color: 'orange',
-    buttonText: null
+    buttonText: reloadButtonText
 });
 export const status400And500 = (responseText: string) => {
     const param = {
-        message: body.status400And500(responseText)
+        message: body.status400And500(responseText),
+        buttonText: reloadButtonText
     };
     setRedirectUrl(param);
     return param;
@@ -59,7 +60,7 @@ function setRedirectUrl(param: MessageParam) {
         param.url = LOGIN_URL;
         param.logout = true;
     } else if (href === LOGIN_URL) {
-        param.buttonText = null;
+        param.url = LOGIN_URL; // This will strip away any query string that might cause the problem.
     } else {
         param.url = TOP_URL;
     }

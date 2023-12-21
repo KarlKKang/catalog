@@ -58,7 +58,7 @@ function showPageCallback() {
                 } else if (response == 'NORMAL') {
                     replaceText(warningElem, invitationOnly);
                 } else if (response == 'DONE') {
-                    showMessage(emailSent(false));
+                    showMessage(emailSent());
                     return;
                 } else {
                     showMessage();
