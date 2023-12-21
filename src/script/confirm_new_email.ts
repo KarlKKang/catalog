@@ -158,7 +158,7 @@ function showPageCallback(param: string, signature: string) {
                         showMessage();
                 }
             },
-            content: content
+            content: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
         });
     }
 
