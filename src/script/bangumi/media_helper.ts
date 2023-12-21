@@ -94,7 +94,7 @@ export function showErrorMessage(title: string, body: Node[]) {
     } else {
         const titleElem = getDescendantsByClassAt(messageElem, 'message-title', 0);
         const bodyElem = getDescendantsByClassAt(messageElem, 'message-body', 0);
-        replaceText(titleElem, title);
+        titleElem.innerHTML = title;
         replaceChildren(bodyElem, ...body);
     }
     hideElement(mediaHolder);

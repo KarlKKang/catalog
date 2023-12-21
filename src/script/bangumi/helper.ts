@@ -12,7 +12,6 @@ import {
     changeURL,
     createDivElement,
     createParagraphElement,
-    appendText,
     appendChildren,
 } from '../module/dom';
 
@@ -100,7 +99,7 @@ export function createMessageElem(title: string, body: Node[], titleColor: strin
     const bodyElem = createDivElement();
     addClass(titleElem, 'message-title');
     addClass(bodyElem, 'message-body');
-    appendText(titleElem, title);
+    titleElem.innerHTML = title;
     appendChildren(bodyElem, ...body);
     titleColor !== null && changeColor(titleElem, titleColor);
     appendChild(innerContainer, titleElem);
