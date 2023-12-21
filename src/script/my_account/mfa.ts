@@ -259,7 +259,7 @@ export function modifyMfaReauthenticationPrompt(
                     }
             }
         },
-        content: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (emailOtpPopupWindow === undefined || emailOtpPopupWindow[0] === undefined ? '' : '&totp=' + emailOtpPopupWindow[0]),
+        content: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (emailOtpPopupWindow === undefined || emailOtpPopupWindow[0] === undefined ? '' : '&otp=' + emailOtpPopupWindow[0]),
         showSessionEndedMessage: true,
     });
 }
