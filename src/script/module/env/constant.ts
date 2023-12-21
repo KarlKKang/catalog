@@ -6,6 +6,7 @@ if (DEVELOPMENT) {
 }
 
 export { TOP_DOMAIN };
+export { DOMAIN };
 
 export const SERVER_URL = 'https://server.' + DOMAIN;
 export const CDN_URL = 'https://cdn.' + DOMAIN;

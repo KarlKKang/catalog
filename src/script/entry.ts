@@ -1,6 +1,6 @@
 import 'core-js';
 import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, appendText, createButtonElement, createDivElement, appendChild } from './module/dom';
-import { TOP_DOMAIN, TOP_URL } from './module/env/constant';
+import { DOMAIN, TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout, removeAllTimers } from './module/timer';
@@ -323,7 +323,7 @@ async function registerServiceWorker() { // This function should be called after
                 appendText(titleText, 'アップデートが利用可能です');
 
                 const promptText = createParagraphElement();
-                appendText(promptText, '今すぐインストールすると、ページが再読み込みされます。featherine.comの複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、featherine.comのすべてのタブを閉じてから再読み込みしてください。');
+                appendText(promptText, '今すぐインストールすると、ページが再読み込みされます。' + DOMAIN + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + DOMAIN + 'のすべてのタブを閉じてから再読み込みしてください。');
 
                 const updateButton = createButtonElement();
                 addClass(updateButton, 'button');
