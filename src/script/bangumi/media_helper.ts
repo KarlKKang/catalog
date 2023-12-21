@@ -71,12 +71,10 @@ function showPlayPromiseError() {
 export function showPlayerError(errorCode: number | null) {
     if (errorCode === MEDIA_ERR_ABORTED) {
         showPlayPromiseError();
-    } else if (errorCode === MEDIA_ERR_NETWORK || errorCode === MEDIA_ERR_DECODE) {
+    } else if (errorCode === MEDIA_ERR_NETWORK || errorCode === MEDIA_ERR_SRC_NOT_SUPPORTED) {
         showNetworkError();
-    } else if (errorCode === HLS_BUFFER_APPEND_ERROR) {
+    } else if (errorCode === MEDIA_ERR_DECODE || errorCode === HLS_BUFFER_APPEND_ERROR) {
         showDecodeError();
-    } else if (errorCode === MEDIA_ERR_SRC_NOT_SUPPORTED) {
-        showCodecCompatibilityError();
     } else {
         showUnknownPlaybackError();
     }
