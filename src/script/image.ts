@@ -61,7 +61,7 @@ export default function (showPage: ShowPageFunc) {
                 connectionErrorRetry: 5,
                 showSessionEndedMessage: true,
             });
-        }, 30 * 1000);
+        }, 40 * 1000);
     }
 
     setTitle(title);
