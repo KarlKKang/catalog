@@ -13,7 +13,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
-import { invalidResponse } from './module/message/template/param/server';
+import { invalidResponse, notFound } from './module/message/template/param/server';
 import { encodeCFURIComponent } from './module/common/pure';
 import { addInterval } from './module/timer';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -81,7 +81,9 @@ export default function (showPage: ShowPageFunc) {
                         return;
                     }
                     imageLoader = imageLoaderModule;
-                    imageLoader.default(container, baseURL + encodeCFURIComponent(fileName), fileName, true);
+                    imageLoader.default(container, baseURL + encodeCFURIComponent(fileName), fileName, true, undefined, undefined, () => {
+                        showMessage(notFound);
+                    });
                 }).catch((e) => {
                     if (currentPgid !== pgid) {
                         showMessage(moduleImportError(e));

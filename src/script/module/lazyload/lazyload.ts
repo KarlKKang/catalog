@@ -71,7 +71,7 @@ export default function (
     });
 }
 
-function observerCallback(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
+function observerCallback(entries: IntersectionObserverEntry[]) {
     for (const entry of entries) {
         const target = entry.target;
         const targetData = targets.get(target);
@@ -83,55 +83,11 @@ function observerCallback(entries: IntersectionObserverEntry[], observer: Inters
             if (targetData.status === Status.LISTENING) {
                 targetData.status = Status.WAITING;
                 addTimeout(() => {
-                    if (targetData.status !== Status.WAITING) {
+                    if (!targets.has(target) || targetData.status !== Status.WAITING) {
                         return;
                     }
-
                     targetData.status = Status.LOADING;
-
-                    const onImageDraw = () => {
-                        observer.unobserve(target);
-                        targets.delete(target);
-                        addClass(target, 'complete');
-                    };
-                    const onError = () => {
-                        observer.unobserve(target);
-                        targets.delete(target);
-                    };
-
-                    if (targetData.xhrParam !== null) {
-                        const mediaSessionCredential = targetData.mediaSessionCredential;
-                        const isMediaSession = mediaSessionCredential !== null;
-                        const uri = isMediaSession ? 'get_image' : 'get_news_image';
-                        const content = (isMediaSession ? (mediaSessionCredential + '&') : '') + targetData.xhrParam;
-
-                        const credentialPromise = isMediaSession ? mediaSessionCredentialPromise : newsSessionCredentialPromise;
-                        if (credentialPromise === null) {
-                            setCredentialPromise(isMediaSession, new Promise((resolve) => {
-                                targetData.xhr = sendServerRequest(uri, {
-                                    callback: function (response: string) {
-                                        if (response !== 'APPROVED') {
-                                            showMessage(invalidResponse());
-                                            return;
-                                        }
-                                        addTimeout(() => {
-                                            setCredentialPromise(isMediaSession, null);
-                                        }, 15 * 1000);
-                                        resolve();
-                                        imageLoader(target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);
-                                    },
-                                    content: content,
-                                    showSessionEndedMessage: true,
-                                });
-                            }));
-                        } else {
-                            credentialPromise.then(() => {
-                                imageLoader(target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onError);
-                            });
-                        }
-                    } else {
-                        imageLoader(target, targetData.src, targetData.alt, false, onImageDraw, targetData.onDataLoad, onError);
-                    }
+                    loadImage(target, targetData);
                 }, targetData.delay);
             }
         } else {
@@ -157,6 +113,60 @@ function setCredentialPromise(isMediaSession: boolean, requestPromise: Promise<v
         mediaSessionCredentialPromise = requestPromise;
     } else {
         newsSessionCredentialPromise = requestPromise;
+    }
+}
+
+function loadImage(target: Element, targetData: TargetData) {
+    const onImageDraw = () => {
+        observer.unobserve(target);
+        targets.delete(target);
+        addClass(target, 'complete');
+    };
+    const onUnrecoverableError = () => {
+        observer.unobserve(target);
+        targets.delete(target);
+    };
+    const onNetworkError = () => {
+        addTimeout(() => {
+            if (targets.has(target) && targetData.status === Status.LOADING) {
+                loadImage(target, targetData);
+            }
+        }, 5000);
+    };
+
+    if (targetData.xhrParam !== null) {
+        const mediaSessionCredential = targetData.mediaSessionCredential;
+        const isMediaSession = mediaSessionCredential !== null;
+        const uri = isMediaSession ? 'get_image' : 'get_news_image';
+        const content = (isMediaSession ? (mediaSessionCredential + '&') : '') + targetData.xhrParam;
+
+        let credentialPromise = isMediaSession ? mediaSessionCredentialPromise : newsSessionCredentialPromise;
+        if (credentialPromise === null) {
+            credentialPromise = new Promise((resolve) => {
+                sendServerRequest(uri, {
+                    callback: function (response: string) {
+                        if (response !== 'APPROVED') {
+                            showMessage(invalidResponse());
+                            return;
+                        }
+                        addTimeout(() => {
+                            setCredentialPromise(isMediaSession, null);
+                        }, 15 * 1000);
+                        resolve();
+                    },
+                    content: content,
+                    showSessionEndedMessage: true,
+                });
+            });
+            setCredentialPromise(isMediaSession, credentialPromise);
+        }
+        credentialPromise.then(() => {
+            if (targets.has(target) && targetData.status === Status.LOADING) {
+                targetData.xhr = imageLoader(target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onNetworkError, onUnrecoverableError);
+            }
+        });
+    } else {
+        targetData.xhr = imageLoader(target, targetData.src, targetData.alt, false, onImageDraw, targetData.onDataLoad, onNetworkError, onUnrecoverableError);
     }
 }
 
