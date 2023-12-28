@@ -29,6 +29,7 @@ type TargetData = {
     mediaSessionCredential: string | null;
     delay: number;
     onDataLoad: ((data: Blob) => void) | undefined;
+    onImageDraw: (() => void) | undefined;
     status: Status;
     xhr: XMLHttpRequest | null;
 };
@@ -52,6 +53,7 @@ export default function (
         mediaSessionCredential?: string;
         delay?: number;
         onDataLoad?: (data: Blob) => void;
+        onImageDraw?: () => void;
     }
 ) {
     if (options === undefined) {
@@ -66,6 +68,7 @@ export default function (
         mediaSessionCredential: options.mediaSessionCredential || null,
         delay: options.delay || 0,
         onDataLoad: options.onDataLoad,
+        onImageDraw: options.onImageDraw,
         status: Status.LISTENING,
         xhr: null
     });
@@ -121,6 +124,7 @@ function loadImage(target: Element, targetData: TargetData) {
         observer.unobserve(target);
         targets.delete(target);
         addClass(target, 'complete');
+        targetData.onImageDraw && targetData.onImageDraw();
     };
     const onUnrecoverableError = () => {
         observer.unobserve(target);

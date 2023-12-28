@@ -112,7 +112,7 @@ export default async function (
             xhrParam: 'p=' + index,
             mediaSessionCredential: mediaSessionCredential.credential,
             delay: 250,
-            onDataLoad: function (data: Blob) {
+            onDataLoad: (data: Blob) => {
                 addEventListener(downloadButton, 'click', () => {
                     downloadButton.disabled = true;
                     downloadAnchor.href = URL.createObjectURL(data);
@@ -126,7 +126,10 @@ export default async function (
                     downloadAnchor.click();
                 });
                 downloadButton.disabled = false;
-            }
+            },
+            onImageDraw: () => {
+                imageNode.style.width = 'fit-content';
+            },
         });
     });
 }
