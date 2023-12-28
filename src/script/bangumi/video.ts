@@ -269,6 +269,7 @@ async function addVideoNode(config?: {
 
     let AAC_FALLBACK = false;
     let USE_AAC = false;
+    let audioOffset = 0;
     if (currentFormat.audio !== 'none') {
         USE_AAC = true;
 
@@ -300,6 +301,9 @@ async function addVideoNode(config?: {
             } else {
                 showCodecCompatibilityError();
                 return;
+            }
+            if (currentFormat.audio !== 'raw_aac_lc') {
+                audioOffset = 44;
             }
         }
     }
@@ -336,7 +340,7 @@ async function addVideoNode(config?: {
     const afterLoad = (mediaInstance: PlayerType) => {
         mediaInstance.media.title = getTitle();
         if (epInfo.chapters.length > 0) {
-            displayChapters(mediaInstance, USE_AAC ? 44 : 0, chaptersActive);
+            displayChapters(mediaInstance, audioOffset, chaptersActive);
         }
     };
 
