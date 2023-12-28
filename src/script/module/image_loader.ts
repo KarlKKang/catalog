@@ -132,12 +132,15 @@ export default function (container: Element, src: string, alt: string, withCrede
 }
 
 async function startWebpMachine() {
+    const currentPgid = pgid;
     if (webpMachine === null) {
-        const currentPgid = pgid;
         try {
             const { WebpMachine, detectWebpSupport } = await import(
                 'webp-hero/dist-cjs'
             );
+            if (currentPgid !== pgid) {
+                return;
+            }
             webpMachine = new WebpMachine();
             webpSupported = await detectWebpSupport();
         } catch (e: unknown) {
@@ -147,6 +150,9 @@ async function startWebpMachine() {
             throw e;
         }
     }
+    if (currentPgid !== pgid) {
+        return;
+    }
 
     let queueNext = webpMachineQueue.shift();
     while (queueNext !== undefined) {
@@ -154,6 +160,9 @@ async function startWebpMachine() {
             queueNext.onError();
         } else {
             await drawWebp(webpMachine, queueNext);
+            if (currentPgid !== pgid) {
+                return;
+            }
         }
         queueNext = webpMachineQueue.shift();
     }
@@ -161,18 +170,25 @@ async function startWebpMachine() {
 }
 
 async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueItem) {
+    const currentPgid = pgid;
     const canvas = createCanvasElement();
     try {
         await webpMachine.decodeToCanvas(canvas, queueItem.webpData);
     } catch (_) {
+        if (currentPgid !== pgid) {
+            return;
+        }
         if (DEVELOPMENT) {
             console.log('Failed to polyfill webp. Appended back to the queue to retry.');
         }
         webpMachineQueue.push(queueItem);
-        return;
-    } finally {
         webpMachine.clearCache();
+        return;
     }
+    if (currentPgid !== pgid) {
+        return;
+    }
+    webpMachine.clearCache();
     canvas.style.removeProperty('width'); // webp-hero will add incorrect width and height properties
     canvas.style.removeProperty('height');
     imageProtection(canvas);
@@ -191,6 +207,8 @@ function imageProtection(elem: HTMLElement) {
 
 export function clearAllImageEvents() {
     webpMachineQueue.length = 0;
+    webpMachineActive = false;
+    webpMachine?.clearCache();
     for (const eventTarget of eventTargetsTracker) {
         removeAllEventListeners(eventTarget);
     }
