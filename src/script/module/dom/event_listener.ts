@@ -1,4 +1,5 @@
-type ListenerMap = Map<EventListener, [EventListener | null, EventListener | null]>;
+type EventListenerAndOptions = [EventListener, boolean | AddEventListenerOptions | undefined];
+type ListenerMap = Map<EventListener, [EventListenerAndOptions | null, EventListenerAndOptions | null]>;
 type EventMap = Map<string, ListenerMap>;
 type ElementMap = Map<EventTarget, EventMap>;
 
@@ -7,7 +8,12 @@ let elementCount = 0;
 
 const LOG_ELEMENT_MAP = false;
 
-export function addEventListener(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
+export function addEventListener(elem: EventTarget, event: string, callback: EventListener, options?: boolean | AddEventListenerOptions) {
+    if (options !== undefined && typeof options !== 'boolean' && options.once === true) {
+        delete options.once;
+        addEventListenerOnce(elem, event, callback, options);
+        return;
+    }
     let eventMap = elementMap.get(elem);
     if (eventMap === undefined) {
         eventMap = new Map();
@@ -27,6 +33,7 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
         }
     }
     let listenerConfig = listenerMap.get(callback);
+    const useCapture = isUseCapture(options);
     const listenerConfigIdx = useCapture ? 1 : 0;
     if (listenerConfig === undefined) {
         listenerConfig = [null, null];
@@ -39,21 +46,23 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
     }
     const _listenerConfig = listenerConfig;
     const _callback = (...args: [evt: Event]) => {
-        if (_listenerConfig[listenerConfigIdx] === _callback) {
-            callback.apply(elem, args);
+        const eventListenerAndOptions = _listenerConfig[listenerConfigIdx];
+        if (eventListenerAndOptions === null || eventListenerAndOptions[0] !== _callback) {
+            return;
         }
+        callback.apply(elem, args);
     };
-    listenerConfig[listenerConfigIdx] = _callback;
-    elem.addEventListener(event, _callback, useCapture);
+    listenerConfig[listenerConfigIdx] = [_callback, options];
+    elem.addEventListener(event, _callback, options);
     if (DEVELOPMENT) {
         console.log('Event listener added. Total elements listening: ' + elementCount + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
         LOG_ELEMENT_MAP && console.log(elementMap);
     }
 }
 
-export function addEventsListener(elem: EventTarget, events: Array<string>, callback: EventListener, useCapture?: boolean) {
+export function addEventsListener(elem: EventTarget, events: Array<string>, callback: EventListener, options?: boolean | AddEventListenerOptions) {
     for (const event of events) {
-        addEventListener(elem, event, callback, useCapture);
+        addEventListener(elem, event, callback, options);
     }
 }
 
@@ -80,14 +89,14 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
         return;
     }
     const listenerConfigIdx = useCapture ? 1 : 0;
-    const _callback = listenerConfig[listenerConfigIdx];
-    if (_callback === null) {
+    const eventListenerAndOptions = listenerConfig[listenerConfigIdx];
+    if (eventListenerAndOptions === null) {
         if (DEVELOPMENT) {
             console.warn('Listener config not set.', elem, event, callback, useCapture);
         }
         return;
     }
-    elem.removeEventListener(event, _callback, useCapture);
+    elem.removeEventListener(event, eventListenerAndOptions[0], eventListenerAndOptions[1]);
     listenerConfig[listenerConfigIdx] = null;
 
     if (listenerConfig[0] === null && listenerConfig[1] === null) {
@@ -114,12 +123,19 @@ export function removeEventsListener(elem: EventTarget, events: Array<string>, c
     }
 }
 
-export function addEventListenerOnce(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
+export function addEventListenerOnce(elem: EventTarget, event: string, callback: EventListener, options?: boolean | AddEventListenerOptions) {
+    if (options !== undefined && typeof options !== 'boolean') {
+        if (options.once === true) {
+            delete options.once;
+        } else if (options.once === false) {
+            throw new Error('addEventListenerOnce does not support `once: false`.');
+        }
+    }
     const callbackOnce = (...args: [evt: Event]) => {
-        removeEventListener(elem, event, callbackOnce, useCapture);
+        removeEventListener(elem, event, callbackOnce, isUseCapture(options));
         callback.apply(elem, args);
     };
-    addEventListener(elem, event, callbackOnce, useCapture);
+    addEventListener(elem, event, callbackOnce, options);
 }
 
 export function removeAllEventListeners(elem: EventTarget) {
@@ -142,12 +158,14 @@ export function deregisterAllEventTargets() {
 function removeAllEventListenersHelper(elem: EventTarget, eventMap: EventMap) {
     for (const [event, listenerMap] of eventMap) {
         for (const [callback, listenerConfig] of listenerMap) {
-            if (listenerConfig[0] !== null) {
-                elem.removeEventListener(event, listenerConfig[0], false);
+            let eventListenerAndOptions = listenerConfig[0];
+            if (eventListenerAndOptions !== null) {
+                elem.removeEventListener(event, eventListenerAndOptions[0], eventListenerAndOptions[1]);
                 listenerConfig[0] = null;
             }
-            if (listenerConfig[1] !== null) {
-                elem.removeEventListener(event, listenerConfig[1], true);
+            eventListenerAndOptions = listenerConfig[1];
+            if (eventListenerAndOptions !== null) {
+                elem.removeEventListener(event, eventListenerAndOptions[0], eventListenerAndOptions[1]);
                 listenerConfig[1] = null;
             }
             listenerMap.delete(callback);
@@ -162,4 +180,14 @@ function removeAllEventListenersHelper(elem: EventTarget, eventMap: EventMap) {
         console.log('All event listeners removed. Total elements listening: ' + elementCount + '.');
         LOG_ELEMENT_MAP && console.log(elementMap);
     }
+}
+
+function isUseCapture(options?: boolean | AddEventListenerOptions) {
+    if (options === undefined) {
+        return false;
+    }
+    if (typeof options === 'boolean') {
+        return options;
+    }
+    return options.capture === true;
 }
