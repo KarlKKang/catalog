@@ -314,53 +314,47 @@ async function registerServiceWorker() { // This function should be called after
                 return;
             }
 
-            popupWindowInitialize().then((popupWindow) => {
-                if (pgid !== currentPgid) {
+            const titleText = createParagraphElement();
+            addClass(titleText, 'title');
+            appendText(titleText, 'アップデートが利用可能です');
+
+            const promptText = createParagraphElement();
+            appendText(promptText, '今すぐインストールすると、ページが再読み込みされます。' + DOMAIN + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + DOMAIN + 'のすべてのタブを閉じてから再読み込みしてください。');
+
+            const updateButton = createButtonElement();
+            addClass(updateButton, 'button');
+            appendText(updateButton, 'インストール');
+            const cancelButton = createButtonElement();
+            addClass(cancelButton, 'button');
+            appendText(cancelButton, '後で');
+            const buttonFlexbox = createDivElement();
+            addClass(buttonFlexbox, 'input-flexbox');
+            appendChild(buttonFlexbox, updateButton);
+            appendChild(buttonFlexbox, cancelButton);
+
+            const hidePopupWindow = popupWindowInitialize(titleText, promptText, buttonFlexbox);
+
+            const disableAllInputs = (disabled: boolean) => {
+                updateButton.disabled = disabled;
+                cancelButton.disabled = disabled;
+            };
+            addEventListener(updateButton, 'click', () => {
+                disableAllInputs(true);
+                if (serviceWorkerUpToDate) {
+                    if (DEVELOPMENT) {
+                        console.log('Service worker already up to date.');
+                    }
+                    w.location.reload();
                     return;
                 }
-                const titleText = createParagraphElement();
-                addClass(titleText, 'title');
-                appendText(titleText, 'アップデートが利用可能です');
-
-                const promptText = createParagraphElement();
-                appendText(promptText, '今すぐインストールすると、ページが再読み込みされます。' + DOMAIN + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + DOMAIN + 'のすべてのタブを閉じてから再読み込みしてください。');
-
-                const updateButton = createButtonElement();
-                addClass(updateButton, 'button');
-                appendText(updateButton, 'インストール');
-                const cancelButton = createButtonElement();
-                addClass(cancelButton, 'button');
-                appendText(cancelButton, '後で');
-                const buttonFlexbox = createDivElement();
-                addClass(buttonFlexbox, 'input-flexbox');
-                appendChild(buttonFlexbox, updateButton);
-                appendChild(buttonFlexbox, cancelButton);
-
-                const disableAllInputs = (disabled: boolean) => {
-                    updateButton.disabled = disabled;
-                    cancelButton.disabled = disabled;
-                };
-
-                addEventListener(updateButton, 'click', () => {
-                    disableAllInputs(true);
-                    if (serviceWorkerUpToDate) {
-                        if (DEVELOPMENT) {
-                            console.log('Service worker already up to date.');
-                        }
-                        w.location.reload();
-                        return;
-                    }
-                    addEventListener(wb as unknown as EventTarget, 'controlling', () => {
-                        w.location.reload();
-                    });
-                    wb.messageSkipWaiting();
+                addEventListener(wb as unknown as EventTarget, 'controlling', () => {
+                    w.location.reload();
                 });
-                addEventListener(cancelButton, 'click', () => {
-                    swUpdateLastPromptTime = new Date().getTime();
-                    popupWindow.hide();
-                });
-
-                popupWindow.show(titleText, promptText, buttonFlexbox);
+                wb.messageSkipWaiting();
+            });
+            addEventListener(cancelButton, 'click', () => {
+                swUpdateLastPromptTime = new Date().getTime();
+                hidePopupWindow();
             });
         };
 

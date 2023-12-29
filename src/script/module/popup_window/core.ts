@@ -2,71 +2,66 @@ import { addClass, appendChild, createDivElement, getBody, removeClass, replaceC
 import { addTimeout } from '../timer';
 import '../../../css/popup_window.scss';
 
-export type PopupWindow = {
-    show: (...contents: Node[]) => void;
-    hide: () => void;
-};
+let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
+let wid: any;
 
-let instance: Promise<PopupWindow> | null = null;
+export function initializePopupWindow(...contents: Node[]) {
+    const currentWid = {};
+    wid = currentWid;
 
-export function initializePopupWindow() {
-    if (instance !== null) {
-        return instance;
-    }
-
-    const container = createDivElement();
-    container.id = 'pop-up-window';
-    const popupWindow = createDivElement();
-    const popupWindowcontent = createDivElement();
-    appendChild(container, popupWindow);
-    appendChild(popupWindow, popupWindowcontent);
-
-    let currentTimeout: NodeJS.Timeout | null = null;
-
-    const newInstance = new Promise<PopupWindow>((resolve) => {
+    const showContents = (container: HTMLDivElement, contentContainer: HTMLDivElement) => {
         w.requestAnimationFrame(() => {
-            if (newInstance !== instance) {
+            if (currentWid !== wid) {
+                return;
+            }
+            replaceChildren(contentContainer, ...contents);
+            removeClass(container, 'invisible');
+            removeClass(container, 'transparent');
+        });
+    };
+
+    let container: HTMLDivElement;
+    let contentContainer: HTMLDivElement;
+    if (popupWindow === null) {
+        container = createDivElement();
+        container.id = 'pop-up-window';
+        const innerContainer = createDivElement();
+        contentContainer = createDivElement();
+        appendChild(container, innerContainer);
+        appendChild(innerContainer, contentContainer);
+        w.requestAnimationFrame(() => {
+            if (currentWid !== wid) {
                 return;
             }
             addClass(container, 'invisible');
             addClass(container, 'transparent');
             appendChild(getBody(), container);
-            w.requestAnimationFrame(() => {
-                if (newInstance !== instance) {
-                    return;
-                }
-                resolve({
-                    show: (...contents: Node[]) => {
-                        if (instance !== newInstance) {
-                            return;
-                        }
-                        currentTimeout = null;
-                        replaceChildren(popupWindowcontent, ...contents);
-                        removeClass(container, 'invisible');
-                        removeClass(container, 'transparent');
-                    },
-                    hide: () => {
-                        if (instance !== newInstance) {
-                            return;
-                        }
-                        addClass(container, 'transparent');
-                        const timeout = addTimeout(() => {
-                            if (instance === newInstance && currentTimeout === timeout) {
-                                addClass(container, 'invisible');
-                                replaceChildren(popupWindowcontent);
-                            }
-                        }, 300);
-                        currentTimeout = timeout;
-                    }
-                });
-            });
+            popupWindow = [container, contentContainer];
+            showContents(container, contentContainer);
         });
-    });
-    instance = newInstance;
+    } else {
+        [container, contentContainer] = popupWindow;
+        showContents(container, contentContainer);
+    }
 
-    return instance;
+    return () => {
+        if (currentWid !== wid) {
+            return;
+        }
+        const hideWid = {}; // Set a new ID to prevent the window from being shown by `requestAnimationFrame` in the event queue.
+        wid = hideWid;
+        addClass(container, 'transparent');
+        addTimeout(() => {
+            if (hideWid !== wid) {
+                return;
+            }
+            addClass(container, 'invisible');
+            replaceChildren(contentContainer);
+        }, 300);
+    };
 }
 
 export function destroy() {
-    instance = null;
+    wid = {};
+    popupWindow = null;
 }

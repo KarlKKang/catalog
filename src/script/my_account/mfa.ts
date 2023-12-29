@@ -303,126 +303,119 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
         return;
     }
 
-    popupWindowInitialize().then((popupWindow) => {
-        if (currentPgid !== pgid) {
+    const promptText = createParagraphElement();
+    appendText(promptText, '二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
+
+    const qrcode = createCanvasElement();
+    addClass(qrcode, 'totp-qrcode');
+    addClass(qrcode, 'hcenter');
+    toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H', margin: 0 }, () => {
+        qrcode.style.removeProperty('height');
+    });
+
+    const uriElem = createParagraphElement();
+    addClass(uriElem, 'totp-uri');
+    const uriLink = createAnchorElement();
+    addClass(uriLink, 'link');
+    appendText(uriLink, totpInfo.uri);
+    uriLink.href = totpInfo.uri;
+    appendChild(uriElem, uriLink);
+
+    const warningText = createParagraphElement();
+    appendText(warningText, failedTotp);
+    changeColor(warningText, 'red');
+    hideElement(warningText);
+
+    const totpInputContainer = createDivElement();
+    addClass(totpInputContainer, 'input-field');
+    addClass(totpInputContainer, 'hcenter');
+    const totpInput = createInputElement();
+    totpInput.type = 'text';
+    totpInput.autocomplete = 'one-time-code';
+    totpInput.placeholder = '認証コード';
+    totpInput.maxLength = 6;
+    appendChild(totpInputContainer, totpInput);
+
+    const submitButton = createButtonElement();
+    addClass(submitButton, 'button');
+    appendText(submitButton, '送信する');
+    const cancelButton = createButtonElement();
+    addClass(cancelButton, 'button');
+    appendText(cancelButton, 'キャンセル');
+    const buttonFlexbox = createDivElement();
+    addClass(buttonFlexbox, 'input-flexbox');
+    appendChild(buttonFlexbox, submitButton);
+    appendChild(buttonFlexbox, cancelButton);
+
+    const hidePopupWindow = popupWindowInitialize(promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox);
+
+    const disableAllPopUpWindowInputs = (disabled: boolean) => {
+        disableInput(totpInput, disabled);
+        submitButton.disabled = disabled;
+        cancelButton.disabled = disabled;
+    };
+    const submit = () => {
+        disableAllPopUpWindowInputs(true);
+        hideElement(warningText);
+
+        const totp = totpInput.value;
+        if (!/^\d{6}$/.test(totp)) {
+            showElement(warningText);
+            disableAllPopUpWindowInputs(false);
             return;
         }
 
-        const promptText = createParagraphElement();
-        appendText(promptText, '二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
-
-        const qrcode = createCanvasElement();
-        addClass(qrcode, 'totp-qrcode');
-        addClass(qrcode, 'hcenter');
-        toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H', margin: 0 }, () => {
-            qrcode.style.removeProperty('height');
-        });
-
-        const uriElem = createParagraphElement();
-        addClass(uriElem, 'totp-uri');
-        const uriLink = createAnchorElement();
-        addClass(uriLink, 'link');
-        appendText(uriLink, totpInfo.uri);
-        uriLink.href = totpInfo.uri;
-        appendChild(uriElem, uriLink);
-
-        const warningText = createParagraphElement();
-        appendText(warningText, failedTotp);
-        changeColor(warningText, 'red');
-        hideElement(warningText);
-
-        const totpInputContainer = createDivElement();
-        addClass(totpInputContainer, 'input-field');
-        addClass(totpInputContainer, 'hcenter');
-        const totpInput = createInputElement();
-        totpInput.type = 'text';
-        totpInput.autocomplete = 'one-time-code';
-        totpInput.placeholder = '認証コード';
-        totpInput.maxLength = 6;
-        appendChild(totpInputContainer, totpInput);
-
-        const submitButton = createButtonElement();
-        addClass(submitButton, 'button');
-        appendText(submitButton, '送信する');
-        const cancelButton = createButtonElement();
-        addClass(cancelButton, 'button');
-        appendText(cancelButton, 'キャンセル');
-        const buttonFlexbox = createDivElement();
-        addClass(buttonFlexbox, 'input-flexbox');
-        appendChild(buttonFlexbox, submitButton);
-        appendChild(buttonFlexbox, cancelButton);
-
-        const disableAllPopUpWindowInputs = (disabled: boolean) => {
-            disableInput(totpInput, disabled);
-            submitButton.disabled = disabled;
-            cancelButton.disabled = disabled;
-
-        };
-        const submit = () => {
-            disableAllPopUpWindowInputs(true);
-            hideElement(warningText);
-
-            const totp = totpInput.value;
-            if (!/^\d{6}$/.test(totp)) {
-                showElement(warningText);
-                disableAllPopUpWindowInputs(false);
-                return;
-            }
-
-            sendServerRequest('set_totp', {
-                callback: (response: string) => {
-                    const mfaWarning = getSharedElement(SHARED_VAR_IDX_MFA_WARNING);
-                    if (response === 'EXPIRED') {
-                        popupWindow.hide();
-                        replaceText(mfaWarning, sessionEnded);
-                        showElement(mfaWarning);
-                        disableAllInputs(false);
-                    } else if (response === 'FAILED TOTP') {
-                        showElement(warningText);
-                        disableAllPopUpWindowInputs(false);
-                    } else if (response === 'ALREADY SET') {
-                        popupWindow.hide();
+        sendServerRequest('set_totp', {
+            callback: (response: string) => {
+                const mfaWarning = getSharedElement(SHARED_VAR_IDX_MFA_WARNING);
+                if (response === 'EXPIRED') {
+                    hidePopupWindow();
+                    replaceText(mfaWarning, sessionEnded);
+                    showElement(mfaWarning);
+                    disableAllInputs(false);
+                } else if (response === 'FAILED TOTP') {
+                    showElement(warningText);
+                    disableAllPopUpWindowInputs(false);
+                } else if (response === 'ALREADY SET') {
+                    hidePopupWindow();
+                    changeMfaStatus(true);
+                    changeColor(mfaWarning, 'green');
+                    replaceText(mfaWarning, mfaAlreadySet);
+                    showElement(mfaWarning);
+                    disableAllInputs(false);
+                } else {
+                    let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
+                    try {
+                        parsedResponse = JSON.parse(response);
+                        RecoveryCodeInfo.check(parsedResponse);
+                    } catch (e) {
+                        showMessage(invalidResponse());
+                        return;
+                    }
+                    showRecoveryCode(parsedResponse, () => {
                         changeMfaStatus(true);
                         changeColor(mfaWarning, 'green');
-                        replaceText(mfaWarning, mfaAlreadySet);
+                        replaceText(mfaWarning, mfaEnabled);
                         showElement(mfaWarning);
                         disableAllInputs(false);
-                    } else {
-                        let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
-                        try {
-                            parsedResponse = JSON.parse(response);
-                            RecoveryCodeInfo.check(parsedResponse);
-                        } catch (e) {
-                            showMessage(invalidResponse());
-                            return;
-                        }
-                        showRecoveryCode(parsedResponse, () => {
-                            changeMfaStatus(true);
-                            changeColor(mfaWarning, 'green');
-                            replaceText(mfaWarning, mfaEnabled);
-                            showElement(mfaWarning);
-                            disableAllInputs(false);
-                        });
-                    }
-                },
-                content: 'p=' + totpInfo.p + '&signature=' + totpInfo.signature + '&totp=' + totp,
-                showSessionEndedMessage: true,
-            });
-        };
-        addEventListener(submitButton, 'click', submit);
-        addEventListener(totpInput, 'keydown', (event) => {
-            if ((event as KeyboardEvent).key === 'Enter') {
-                submit();
-            }
+                    });
+                }
+            },
+            content: 'p=' + totpInfo.p + '&signature=' + totpInfo.signature + '&totp=' + totp,
+            showSessionEndedMessage: true,
         });
-        addEventListener(cancelButton, 'click', () => {
-            disableAllInputs(false);
-            popupWindow.hide();
-        });
-
-        popupWindow.show(promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox);
-        totpInput.focus();
+    };
+    addEventListener(submitButton, 'click', submit);
+    addEventListener(totpInput, 'keydown', (event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            submit();
+        }
     });
+    addEventListener(cancelButton, 'click', () => {
+        disableAllInputs(false);
+        hidePopupWindow();
+    });
+    totpInput.focus();
 }
 
 async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo, completedCallback: () => void) {
@@ -432,48 +425,42 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo
         return;
     }
 
-    popupWindowInitialize().then((popupWindow) => {
-        if (currentPgid !== pgid) {
-            return;
+    const promptText = createParagraphElement();
+    appendText(promptText, 'リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
+
+    const recoveryCodeContainer = createDivElement();
+    addClass(recoveryCodeContainer, 'recovery-codes');
+    for (const recoveryCode of recoveryCodes) {
+        const recoveryCodeElem = createParagraphElement();
+        appendText(recoveryCodeElem, recoveryCode);
+        appendChild(recoveryCodeContainer, recoveryCodeElem);
+    }
+
+    const closeButton = createButtonElement();
+    addClass(closeButton, 'button');
+    addClass(closeButton, 'hcenter');
+
+    const closeButtonText = '閉じる';
+    closeButton.disabled = true;
+    addClass(closeButton, 'not-allowed');
+    appendText(closeButton, closeButtonText + '（15秒）');
+    let count = 15;
+    const interval = addInterval(() => {
+        count--;
+        if (count <= 0) {
+            closeButton.disabled = false;
+            removeClass(closeButton, 'not-allowed');
+            replaceText(closeButton, closeButtonText);
+            removeInterval(interval);
+        } else {
+            replaceText(closeButton, closeButtonText + '（' + count + '秒）');
         }
+    }, 1000);
 
-        const promptText = createParagraphElement();
-        appendText(promptText, 'リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
+    const hidePopupWindow = popupWindowInitialize(promptText, recoveryCodeContainer, closeButton);
 
-        const recoveryCodeContainer = createDivElement();
-        addClass(recoveryCodeContainer, 'recovery-codes');
-        for (const recoveryCode of recoveryCodes) {
-            const recoveryCodeElem = createParagraphElement();
-            appendText(recoveryCodeElem, recoveryCode);
-            appendChild(recoveryCodeContainer, recoveryCodeElem);
-        }
-
-        const closeButton = createButtonElement();
-        addClass(closeButton, 'button');
-        addClass(closeButton, 'hcenter');
-
-        const closeButtonText = '閉じる';
-        closeButton.disabled = true;
-        addClass(closeButton, 'not-allowed');
-        appendText(closeButton, closeButtonText + '（15秒）');
-        let count = 15;
-        const interval = addInterval(() => {
-            count--;
-            if (count <= 0) {
-                closeButton.disabled = false;
-                removeClass(closeButton, 'not-allowed');
-                replaceText(closeButton, closeButtonText);
-                removeInterval(interval);
-            } else {
-                replaceText(closeButton, closeButtonText + '（' + count + '秒）');
-            }
-        }, 1000);
-
-        addEventListener(closeButton, 'click', () => {
-            popupWindow.hide();
-            completedCallback();
-        });
-
-        popupWindow.show(promptText, recoveryCodeContainer, closeButton);
+    addEventListener(closeButton, 'click', () => {
+        hidePopupWindow();
+        completedCallback();
     });
 }
