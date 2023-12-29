@@ -57,11 +57,11 @@ function showPageCallback() {
 
         sendServerRequest('send_password_reset', {
             callback: function (response: string) {
-                if (response == 'INVALID FORMAT') {
+                if (response === 'INVALID FORMAT') {
                     replaceText(warningElem, invalidEmailFormat);
                     showElement(warningElem);
                     disableAllInputs(false);
-                } else if (response == 'DONE') {
+                } else if (response === 'DONE') {
                     showMessage(emailSent(LOGIN_URL));
                 } else {
                     showMessage();

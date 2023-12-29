@@ -105,10 +105,10 @@ async function addAudioNode(index: number) {
 
     appendChild(mediaHolder, getAudioSubtitleNode(file, FLAC_FALLBACK));
 
-    const IS_FLAC = (file.format.toLowerCase() == 'flac' || FLAC_FALLBACK);
+    const IS_FLAC = (file.format.toLowerCase() === 'flac' || FLAC_FALLBACK);
     const USE_VIDEOJS = !NATIVE_HLS && IS_FLAC;
 
-    const IS_MP3 = file.format.toLowerCase() == 'mp3';
+    const IS_MP3 = file.format.toLowerCase() === 'mp3';
     const CAN_PLAY_MP3 = audioCanPlay('mp3', NATIVE_HLS) || canPlay('audio', 'mpeg', '', NATIVE_HLS); // mp3: Firefox; mpeg: Safari and Chrome
     if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { // ALAC has already fallen back to FLAC if not supported.
         showCodecCompatibilityError();
@@ -165,7 +165,7 @@ async function addAudioNode(index: number) {
         mediaInstances[index] = audioInstance;
         setMediaTitle(audioInstance);
         audioReadyCounter++;
-        if (audioReadyCounter == audioEPInfo.files.length) {
+        if (audioReadyCounter === audioEPInfo.files.length) {
             audioReady();
         }
     } else {
@@ -197,7 +197,7 @@ async function addAudioNode(index: number) {
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
             audioReadyCounter++;
-            if (audioReadyCounter == audioEPInfo.files.length) {
+            if (audioReadyCounter === audioEPInfo.files.length) {
                 audioReady();
             }
         } else {
@@ -244,26 +244,26 @@ async function addAudioNode(index: number) {
             mediaInstances[index] = audioInstance;
             setMediaTitle(audioInstance);
             audioReadyCounter++;
-            if (audioReadyCounter == audioEPInfo.files.length) {
+            if (audioReadyCounter === audioEPInfo.files.length) {
                 audioReady();
             }
         }
     }
 
     function setMediaTitle(audioInstance: PlayerType) {
-        audioInstance.media.title = ((file.title == '') ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();
+        audioInstance.media.title = (file.title === '' ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();
     }
 }
 
 function addAlbumInfo() {
     const albumInfo = (epInfo as AudioEPInfo).album_info;
-    if (albumInfo.album_title != '') {
+    if (albumInfo.album_title !== '') {
         const albumTitleElem = createParagraphElement();
         addClass(albumTitleElem, 'sub-title');
         addClass(albumTitleElem, 'center-align');
         albumTitleElem.innerHTML = albumInfo.album_title; // Album title is in HTML syntax.
         const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
-        if (albumInfo.album_artist != '') {
+        if (albumInfo.album_artist !== '') {
             const albumArtist = createParagraphElement();
             addClass(albumArtist, 'artist');
             addClass(albumArtist, 'center-align');
@@ -271,7 +271,7 @@ function addAlbumInfo() {
             prependChild(contentContainer, albumArtist);
         }
         prependChild(contentContainer, albumTitleElem);
-    } else if (albumInfo.album_artist != '') {
+    } else if (albumInfo.album_artist !== '') {
         const titleElem = getById('title');
         const artistElem = createSpanElement();
         addClass(artistElem, 'artist');
@@ -286,9 +286,9 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
     addClass(subtitle, 'sub-title');
 
     //subtitle
-    if (file.title != '') {
+    if (file.title !== '') {
         appendText(subtitle, file.title);
-        if (file.artist != '') {
+        if (file.artist !== '') {
             const artist = createSpanElement();
             addClass(artist, 'artist');
             appendText(artist, '／' + file.artist);
@@ -297,8 +297,8 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
     }
 
     //format
-    if (file.format != '') {
-        if (file.title != '') {
+    if (file.format !== '') {
+        if (file.title !== '') {
             appendChild(subtitle, createBRElement());
         }
 
@@ -307,7 +307,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
         appendText(format, FLAC_FALLBACK ? 'FLAC' : file.format);
 
         const samplerate = file.samplerate;
-        if (samplerate != '') {
+        if (samplerate !== '') {
             let samplerateText = samplerate;
             switch (samplerate) {
                 case '44100':
@@ -329,7 +329,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
             appendText(format, ' ' + samplerateText);
 
             const bitdepth = file.bitdepth;
-            if (bitdepth != '') {
+            if (bitdepth !== '') {
                 let bitdepthText = bitdepth;
                 switch (bitdepth) {
                     case '16':
@@ -342,7 +342,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
                         bitdepthText = '32bit';
                         break;
                 }
-                if (bitdepthText == '32bit' && FLAC_FALLBACK) {
+                if (bitdepthText === '32bit' && FLAC_FALLBACK) {
                     bitdepthText = '24bit';
                 }
                 appendText(format, '/' + bitdepthText);

@@ -90,7 +90,7 @@ export default function (
     addClass(contentContainer, 'video');
 
     // Title
-    if (epInfo.title != '') {
+    if (epInfo.title !== '') {
         const title = createParagraphElement();
         addClass(title, 'sub-title');
         addClass(title, 'center-align');
@@ -121,7 +121,7 @@ export default function (
         option.value = format.value;
         appendText(option, (format.tag === undefined) ? format.value : format.tag);
 
-        if (index == formatIndex) {
+        if (index === formatIndex) {
             option.selected = true;
             currentFormat = format;
         }

@@ -46,7 +46,7 @@ let UNRECOMMENDED_BROWSER = false;
 const NATIVE_HLS = (function () {
     const audioElem = createAudioElement();
     const videoElem = createVideoElement();
-    return (videoElem.canPlayType('application/vnd.apple.mpegurl') != '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') != '') && IS_SAFARI;
+    return (videoElem.canPlayType('application/vnd.apple.mpegurl') !== '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') !== '') && IS_SAFARI;
 })();
 
 const MSE = isSupported();

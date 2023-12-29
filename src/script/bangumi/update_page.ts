@@ -96,9 +96,9 @@ export default async function (
 
     if (ageRestricted) {
         let warningTitle = '年齢認証';
-        if (ageRestricted.toLowerCase() == 'r15+') {
+        if (ageRestricted.toLowerCase() === 'r15+') {
             warningTitle = '「R15+指定」<br>年齢認証';
-        } else if (ageRestricted.toLowerCase() == 'r18+') {
+        } else if (ageRestricted.toLowerCase() === 'r18+') {
             warningTitle = '「R18+指定」<br>年齢認証';
         }
 
@@ -194,7 +194,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
         const epText = createParagraphElement();
         appendText(epText, value);
 
-        if (epIndex == index) {
+        if (epIndex === index) {
             addClass(epButton, 'current-ep');
         }
 
@@ -331,12 +331,12 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
     const seasonSelector = getById('season-selector');
     seasonButtonWrapper.id = 'season-button-wrapper';
 
-    if (seasons.length != 0) {
+    if (seasons.length !== 0) {
         for (const season of seasons) {
             const seasonButton = createDivElement();
             const seasonText = createParagraphElement();
 
-            if (season.id != seriesID) {
+            if (season.id !== seriesID) {
                 appendText(seasonText, season.season_name);
                 const targetSeries = season.id;
                 addEventListener(seasonButton, 'click', () => { goToEP(targetSeries, 1); });
@@ -353,8 +353,8 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
     }
 }
 
-function goToEP(dest_series: string, dest_ep: number) {
-    const url = TOP_URL + '/bangumi/' + dest_series + (dest_ep == 1 ? '' : ('?ep=' + dest_ep));
+function goToEP(destSeries: string, destEp: number) {
+    const url = TOP_URL + '/bangumi/' + destSeries + (destEp === 1 ? '' : ('?ep=' + destEp));
     redirect(url);
 }
 

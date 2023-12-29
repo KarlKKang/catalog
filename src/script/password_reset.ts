@@ -49,10 +49,10 @@ export default function (showPage: ShowPageFunc) {
 
     sendServerRequest('reset_password', {
         callback: function (response: string) {
-            if (response == 'EXPIRED') {
+            if (response === 'EXPIRED') {
                 showMessage(expired);
                 return;
-            } else if (response != 'APPROVED') {
+            } else if (response !== 'APPROVED') {
                 showMessage();
                 return;
             }
@@ -100,7 +100,7 @@ function showPageCallback(user: string, signature: string, expires: string) {
             showElement(warningElem);
             disableAllInputs(false);
             return;
-        } else if (newPassword != newPasswordConfirm) {
+        } else if (newPassword !== newPasswordConfirm) {
             replaceText(warningElem, passwordConfirmationMismatch);
             showElement(warningElem);
             disableAllInputs(false);
@@ -109,9 +109,9 @@ function showPageCallback(user: string, signature: string, expires: string) {
 
         sendServerRequest('reset_password', {
             callback: function (response: string) {
-                if (response == 'EXPIRED') {
+                if (response === 'EXPIRED') {
                     showMessage(expired);
-                } else if (response == 'SAME') {
+                } else if (response === 'SAME') {
                     replaceText(warningElem, passwordUnchanged);
                     showElement(warningElem);
                     disableAllInputs(false);
@@ -119,7 +119,7 @@ function showPageCallback(user: string, signature: string, expires: string) {
                     replaceText(warningElem, invalidPasswordFormat);
                     showElement(warningElem);
                     disableAllInputs(false);
-                } else if (response == 'DONE') {
+                } else if (response === 'DONE') {
                     showMessage(passwordChanged);
                 } else {
                     showMessage();

@@ -45,11 +45,11 @@ export default function (showPage: ShowPageFunc) {
 
     sendServerRequest('register', {
         callback: function (response: string) {
-            if (response == 'EXPIRED') {
+            if (response === 'EXPIRED') {
                 showMessage(expired);
-            } else if (response == 'ALREADY REGISTERED') {
+            } else if (response === 'ALREADY REGISTERED') {
                 showMessage(emailAlreadyRegistered);
-            } else if (response == 'APPROVED') {
+            } else if (response === 'APPROVED') {
                 showPage(() => { showPageCallback(param, signature); });
             } else {
                 showMessage();
@@ -99,7 +99,7 @@ function showPageCallback(param: string, signature: string) {
         const password = passwordInput.value;
         const passwordConfirm = passwordConfirmInput.value;
 
-        if (username == '') {
+        if (username === '') {
             replaceText(warningElem, usernameEmpty);
             showElement(warningElem);
             disableAllInputs(false);
@@ -111,7 +111,7 @@ function showPageCallback(param: string, signature: string) {
             showElement(warningElem);
             disableAllInputs(false);
             return;
-        } else if (password != passwordConfirm) {
+        } else if (password !== passwordConfirm) {
             replaceText(warningElem, passwordConfirmationMismatch);
             showElement(warningElem);
             disableAllInputs(false);
@@ -120,13 +120,13 @@ function showPageCallback(param: string, signature: string) {
 
         sendServerRequest('register', {
             callback: function (response: string) {
-                if (response == 'EXPIRED') {
+                if (response === 'EXPIRED') {
                     showMessage(expired);
-                } else if (response == 'USERNAME DUPLICATED') {
+                } else if (response === 'USERNAME DUPLICATED') {
                     replaceText(warningElem, usernameTaken);
                     showElement(warningElem);
                     disableAllInputs(false);
-                } else if (response == 'USERNAME EMPTY') {
+                } else if (response === 'USERNAME EMPTY') {
                     replaceText(warningElem, usernameEmpty);
                     showElement(warningElem);
                     disableAllInputs(false);
@@ -134,9 +134,9 @@ function showPageCallback(param: string, signature: string) {
                     replaceText(warningElem, invalidPasswordFormat);
                     showElement(warningElem);
                     disableAllInputs(false);
-                } else if (response == 'ALREADY REGISTERED') {
+                } else if (response === 'ALREADY REGISTERED') {
                     showMessage(emailAlreadyRegistered);
-                } else if (response == 'DONE') {
+                } else if (response === 'DONE') {
                     showMessage(registerComplete);
                 } else {
                     showMessage();

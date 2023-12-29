@@ -63,7 +63,7 @@ export function enableMfa() {
     modifyMfaReauthenticationPrompt(
         'generate_totp',
         (response: string) => {
-            if (response == AUTH_FAILED_TOTP) {
+            if (response === AUTH_FAILED_TOTP) {
                 changeMfaStatus(true);
                 changeColor(mfaWarning, 'green');
                 replaceText(mfaWarning, mfaAlreadySet);
@@ -96,7 +96,7 @@ export function disableMfa() {
     modifyMfaReauthenticationPrompt(
         'disable_totp',
         (response: string) => {
-            if (response == 'DONE') {
+            if (response === 'DONE') {
                 changeMfaStatus(false);
                 changeColor(mfaWarning, 'green');
                 replaceText(mfaWarning, mfaDisabled);
@@ -122,12 +122,12 @@ export function generateRecoveryCode() {
     reauthenticationPrompt(
         'generate_recovery_code',
         (response: string) => {
-            if (response == 'TOTP NOT SET') {
+            if (response === 'TOTP NOT SET') {
                 changeMfaStatus(false);
                 replaceText(recoveryCodeWarning, mfaNotSet);
                 showElement(recoveryCodeWarning);
                 disableAllInputs(false);
-            } else if (response == 'WAIT') {
+            } else if (response === 'WAIT') {
                 replaceText(recoveryCodeWarning, generateRecoveryCodeWait);
                 showElement(recoveryCodeWarning);
                 disableAllInputs(false);
@@ -167,13 +167,13 @@ export function changeLoginNotification() {
     reauthenticationPrompt(
         'change_login_notification',
         (response: string) => {
-            if (response == 'DONE') {
+            if (response === 'DONE') {
                 setCurrentLoginNotificationStatus(loginNotificationTargetStatus);
                 replaceText(getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO), loginNotificationTargetStatus ? loginNotificationIsEnabled : loginNotificationIsDisabled);
                 replaceText(getSharedButton(SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON), loginNotificationTargetStatus ? disableButtonText : enableButtonText);
                 replaceText(warningElem, loginNotificationTargetStatus ? loginNotificationEnabled : loginNotificationDisabled);
                 changeColor(warningElem, 'green');
-            } else if (response == 'TOTP NOT SET') {
+            } else if (response === 'TOTP NOT SET') {
                 changeMfaStatus(false);
                 replaceText(warningElem, mfaNotSet);
             } else {

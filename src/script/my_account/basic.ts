@@ -51,9 +51,9 @@ export function changeEmail() {
 
     sendServerRequest('send_email_change', {
         callback: function (response: string) {
-            if (response == 'WAIT') {
+            if (response === 'WAIT') {
                 replaceText(warningElem, emailChangeWait);
-            } else if (response == 'DONE') {
+            } else if (response === 'DONE') {
                 replaceText(warningElem, emailSent);
                 changeColor(warningElem, 'green');
             } else {
@@ -84,7 +84,7 @@ export function changePassword() {
         showElement(warningElem);
         disableAllInputs(false);
         return;
-    } else if (newPassword != newPasswordConfirm) {
+    } else if (newPassword !== newPasswordConfirm) {
         replaceText(warningElem, passwordConfirmationMismatch);
         showElement(warningElem);
         disableAllInputs(false);
@@ -94,7 +94,7 @@ export function changePassword() {
     reauthenticationPrompt(
         'change_password',
         (response: string) => {
-            if (response == 'DONE') {
+            if (response === 'DONE') {
                 replaceText(warningElem, passwordChanged);
                 changeColor(warningElem, 'green');
                 newPasswordInput.value = '';
@@ -123,12 +123,12 @@ export function changeUsername(userInfo: AccountInfo) {
     hideElement(warningElem);
     changeColor(warningElem, 'red');
 
-    if (newUsername == '') {
+    if (newUsername === '') {
         replaceText(warningElem, usernameEmpty);
         showElement(warningElem);
         disableAllInputs(false);
         return;
-    } else if (newUsername == userInfo.username) {
+    } else if (newUsername === userInfo.username) {
         replaceText(warningElem, usernameUnchanged);
         showElement(warningElem);
         disableAllInputs(false);
@@ -138,13 +138,13 @@ export function changeUsername(userInfo: AccountInfo) {
     reauthenticationPrompt(
         'change_username',
         (response: string) => {
-            if (response == 'DONE') {
+            if (response === 'DONE') {
                 replaceText(warningElem, usernameChanged);
                 changeColor(warningElem, 'green');
                 userInfo.username = newUsername;
-            } else if (response == 'DUPLICATED') {
+            } else if (response === 'DUPLICATED') {
                 replaceText(warningElem, usernameTaken);
-            } else if (response == 'EMPTY') {
+            } else if (response === 'EMPTY') {
                 replaceText(warningElem, usernameEmpty);
             } else {
                 showMessage();
@@ -180,14 +180,14 @@ export function invite() {
     reauthenticationPrompt(
         'send_invite',
         (response: string) => {
-            if (response == 'NOT QUALIFIED') {
+            if (response === 'NOT QUALIFIED') {
                 replaceText(inviteCount, '0');
                 replaceText(warningElem, invitationNotQualified);
-            } else if (response == 'INVALID FORMAT') {
+            } else if (response === 'INVALID FORMAT') {
                 replaceText(warningElem, invalidEmailFormat);
-            } else if (response == 'ALREADY REGISTERED') {
+            } else if (response === 'ALREADY REGISTERED') {
                 replaceText(warningElem, emailAlreadyRegistered);
-            } else if (response == 'CLOSED') {
+            } else if (response === 'CLOSED') {
                 replaceText(warningElem, invitationClosed);
             } else {
                 let parsedResponse: InviteResult.InviteResult;
@@ -275,7 +275,7 @@ export function showSessions(userInfo: AccountInfo) {
                 reauthenticationPrompt(
                     'logout_session',
                     (response: string) => {
-                        if (response == 'DONE') {
+                        if (response === 'DONE') {
                             remove(sessionLogoutButton);
                             changeColor(sessionWarningElem, 'green');
                             replaceText(sessionWarningElem, logoutDone);

@@ -39,7 +39,7 @@ export default async function (
     const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
     const mediaHolder = getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER);
 
-    if (epInfo.gallery_title != '') {
+    if (epInfo.gallery_title !== '') {
         const title = createParagraphElement();
         addClass(title, 'sub-title');
         addClass(title, 'center-align');
@@ -70,7 +70,7 @@ export default async function (
     }
 
     files.forEach((file, index) => {
-        if (file.tag != '') {
+        if (file.tag !== '') {
             const subtitle = createParagraphElement();
             addClass(subtitle, 'sub-title');
             appendText(subtitle, file.tag);

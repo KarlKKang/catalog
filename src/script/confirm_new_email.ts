@@ -31,7 +31,7 @@ export default function (showPage: ShowPageFunc) {
     const param = getURLParam('p');
     const signature = getURLParam('signature');
 
-    if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
+    if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
             showPage();
         } else {
@@ -39,16 +39,16 @@ export default function (showPage: ShowPageFunc) {
         }
         return;
     }
-    if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
+    if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
         redirect(LOGIN_URL, true);
         return;
     }
 
     sendServerRequest('change_email', {
         callback: function (response: string) {
-            if (response == 'EXPIRED') {
+            if (response === 'EXPIRED') {
                 showMessage(expired);
-            } else if (response == 'APPROVED') {
+            } else if (response === 'APPROVED') {
                 showPage(() => {
                     showPageCallback(param, signature);
                 });

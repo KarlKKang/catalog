@@ -196,7 +196,7 @@ function showPageCallback(
     function search() {
         const searchBarInputValue = searchBarInput.value.substring(0, 50);
 
-        if (searchBarInputValue == '') {
+        if (searchBarInputValue === '') {
             keywords = '';
             changeURL(TOP_URL);
         } else {
@@ -256,7 +256,7 @@ function goToSeries(id: string) {
 
 function getURLKeywords() {
     const urlParam = getURLParam('keywords');
-    if (urlParam == null) {
+    if (urlParam === null) {
         return '';
     } else {
         return decodeURIComponent(urlParam).substring(0, 50);

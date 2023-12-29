@@ -48,7 +48,7 @@ function modifySeries(button: Element) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != 'modify');
+    } while (confirm !== 'modify');
 
     sendServerRequest('console', {
         callback: seriesCompleteCallback,
@@ -64,7 +64,7 @@ function deleteSeries(id: string) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != 'delete');
+    } while (confirm !== 'delete');
 
     const param = {
         command: 'delete',
@@ -104,7 +104,7 @@ function addSeries(button: Element) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != 'insert');
+    } while (confirm !== 'insert');
 
     sendServerRequest('console', {
         callback: seriesCompleteCallback,
@@ -113,7 +113,7 @@ function addSeries(button: Element) {
 }
 
 function parseSeriesRecord(id: string, title: string, thumbnail: string, isPublic: boolean, series_id: string, season_name: string, season_order: string, keywords: string) {
-    if (id == '') {
+    if (id === '') {
         alert('ERROR: "id" is required');
         return false;
     }
@@ -123,18 +123,18 @@ function parseSeriesRecord(id: string, title: string, thumbnail: string, isPubli
         return false;
     }
 
-    if (title == '') {
+    if (title === '') {
         alert('ERROR: "title" is required');
         return false;
     }
 
-    if (thumbnail == '') {
+    if (thumbnail === '') {
         alert('ERROR: "thumbnail" is required');
         return false;
     }
 
     let series_id_parsed: string | null;
-    if (series_id == '') {
+    if (series_id === '') {
         series_id_parsed = null;
     } else if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
         alert('ERROR: Invalid value for "series_id"');
@@ -144,7 +144,7 @@ function parseSeriesRecord(id: string, title: string, thumbnail: string, isPubli
     }
 
     let season_name_parsed: string | null;
-    if (season_name == '') {
+    if (season_name === '') {
         if (series_id_parsed !== null) {
             alert('ERROR: "season_name" must be specified when "series_id" is specified');
             return false;
@@ -155,7 +155,7 @@ function parseSeriesRecord(id: string, title: string, thumbnail: string, isPubli
     }
 
     let season_order_parsed: number | null;
-    if (season_order == '') {
+    if (season_order === '') {
         if (series_id_parsed !== null) {
             alert('ERROR: "season_order" must be specified when "series_id" is specified');
             return false;
@@ -172,7 +172,7 @@ function parseSeriesRecord(id: string, title: string, thumbnail: string, isPubli
         }
     }
 
-    if (keywords == '') {
+    if (keywords === '') {
         alert('ERROR: "keywords" is required');
         return false;
     }

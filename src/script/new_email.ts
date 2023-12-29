@@ -26,7 +26,7 @@ export default function (showPage: ShowPageFunc) {
     const param = getURLParam('p');
     const signature = getURLParam('signature');
 
-    if (param == null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
+    if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
             showPage();
         } else {
@@ -34,16 +34,16 @@ export default function (showPage: ShowPageFunc) {
         }
         return;
     }
-    if (signature == null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
+    if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
         redirect(TOP_URL, true);
         return;
     }
 
     sendServerRequest('verify_email_change', {
         callback: function (response: string) {
-            if (response == 'EXPIRED') {
+            if (response === 'EXPIRED') {
                 showMessage(expired);
-            } else if (response == 'APPROVED') {
+            } else if (response === 'APPROVED') {
                 showPage(() => { showPageCallback(param, signature); });
             } else {
                 showMessage();
@@ -83,17 +83,17 @@ function showPageCallback(param: string, signature: string) {
 
         sendServerRequest('verify_email_change', {
             callback: function (response: string) {
-                if (response == 'EXPIRED') {
+                if (response === 'EXPIRED') {
                     showMessage(expired);
-                } else if (response == 'DUPLICATED') {
+                } else if (response === 'DUPLICATED') {
                     replaceText(warningElem, emailAlreadyRegistered);
                     showElement(warningElem);
                     disableAllInputs(false);
-                } else if (response == 'INVALID FORMAT') {
+                } else if (response === 'INVALID FORMAT') {
                     replaceText(warningElem, invalidEmailFormat);
                     showElement(warningElem);
                     disableAllInputs(false);
-                } else if (response == 'DONE') {
+                } else if (response === 'DONE') {
                     showMessage(emailSent());
                 } else {
                     showMessage();

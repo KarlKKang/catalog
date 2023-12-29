@@ -49,15 +49,15 @@ function showPageCallback() {
 
         sendServerRequest('send_invite', {
             callback: function (response: string) {
-                if (response == 'INVALID FORMAT') {
+                if (response === 'INVALID FORMAT') {
                     replaceText(warningElem, invalidEmailFormat);
-                } else if (response == 'ALREADY REGISTERED') {
+                } else if (response === 'ALREADY REGISTERED') {
                     replaceText(warningElem, emailAlreadyRegistered);
-                } else if (response == 'CLOSED') {
+                } else if (response === 'CLOSED') {
                     replaceText(warningElem, invitationClosed);
-                } else if (response == 'NORMAL') {
+                } else if (response === 'NORMAL') {
                     replaceText(warningElem, invitationOnly);
-                } else if (response == 'DONE') {
+                } else if (response === 'DONE') {
                     showMessage(emailSent());
                     return;
                 } else {

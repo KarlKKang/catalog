@@ -62,7 +62,7 @@ export abstract class NonNativePlayer extends Player {
         };
 
         const bufferedRange = this.getBufferedRange();
-        if (bufferedRange.length == 0 && this.media.currentTime >= this.media.duration - this.maxBufferHole) {
+        if (bufferedRange.length === 0 && this.media.currentTime >= this.media.duration - this.maxBufferHole) {
             endBuffer();
             this.ended = true;
         }

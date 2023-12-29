@@ -53,7 +53,7 @@ export default function (showPage: ShowPageFunc) {
         addInterval(() => {
             sendServerRequest('authenticate_media_session', {
                 callback: function (response: string) {
-                    if (response != 'APPROVED') {
+                    if (response !== 'APPROVED') {
                         showMessage(invalidResponse());
                     }
                 },

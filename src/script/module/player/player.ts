@@ -737,7 +737,7 @@ export class Player {
 
         if (this.inactiveTimeout > 0) {
             this.inactiveTimeout--;
-            if (this.inactiveTimeout == 0) {
+            if (this.inactiveTimeout === 0) {
                 this.active = false;
             }
         }
@@ -745,11 +745,11 @@ export class Player {
         if (DEVELOPMENT) {
             if (typeof (this.media as HTMLVideoElement).getVideoPlaybackQuality === 'function') {
                 const quality = (this.media as HTMLVideoElement).getVideoPlaybackQuality();
-                if (quality.droppedVideoFrames && quality.droppedVideoFrames != this.droppedFrames) {
+                if (quality.droppedVideoFrames && quality.droppedVideoFrames !== this.droppedFrames) {
                     this.log?.('Frame drop detected. Total dropped: ' + quality.droppedVideoFrames);
                     this.droppedFrames = quality.droppedVideoFrames;
                 }
-                if (quality.corruptedVideoFrames && quality.corruptedVideoFrames != this.corruptedFrames) {
+                if (quality.corruptedVideoFrames && quality.corruptedVideoFrames !== this.corruptedFrames) {
                     this.log?.('Frame corruption detected. Total corrupted: ' + quality.corruptedVideoFrames);
                     this.corruptedFrames = quality.corruptedVideoFrames;
                 }

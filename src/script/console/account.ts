@@ -70,7 +70,7 @@ function addAccount(button: Element) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != 'insert');
+    } while (confirm !== 'insert');
 
     sendServerRequest('console', {
         callback: accountCompleteCallback,
@@ -122,7 +122,7 @@ function modifyAccount(button: Element, id: string) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != 'modify');
+    } while (confirm !== 'modify');
 
     sendServerRequest('console', {
         callback: accountCompleteCallback,
@@ -131,18 +131,18 @@ function modifyAccount(button: Element, id: string) {
 }
 
 function parseAccountRecord(email: string, username: string, password: string, user_group: string, status: string, available_invite: string) {
-    if (email == '') {
+    if (email === '') {
         alert('ERROR: "email" is required');
         return false;
     }
 
-    if (username == '') {
+    if (username === '') {
         alert('ERROR: "username" is required');
         return false;
     }
 
     let password_parsed: string | null = password;
-    if (password_parsed == '') {
+    if (password_parsed === '') {
         password_parsed = null;
     } else if (!PASSWORD_REGEX.test(password_parsed)) {
         alert('ERROR: password requirements not met');
@@ -150,9 +150,9 @@ function parseAccountRecord(email: string, username: string, password: string, u
     }
 
     let user_group_parsed: number;
-    if (user_group == 'admin') {
+    if (user_group === 'admin') {
         user_group_parsed = 0;
-    } else if (user_group == 'user') {
+    } else if (user_group === 'user') {
         user_group_parsed = 1;
     } else {
         alert('ERROR: Invalid value for "user_group"');
@@ -160,18 +160,18 @@ function parseAccountRecord(email: string, username: string, password: string, u
     }
 
     let status_parsed: number;
-    if (status == 'active') {
+    if (status === 'active') {
         status_parsed = 0;
-    } else if (status == 'deactivated') {
+    } else if (status === 'deactivated') {
         status_parsed = 1;
-    } else if (status == 'banned') {
+    } else if (status === 'banned') {
         status_parsed = 2;
     } else {
         alert('ERROR: Invalid value for "status"');
         return false;
     }
 
-    if (available_invite == '') {
+    if (available_invite === '') {
         alert('ERROR: "available_invite" is required');
         return false;
     }
@@ -201,7 +201,7 @@ function deleteAccount(id: string) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != 'delete');
+    } while (confirm !== 'delete');
 
     const param = {
         command: 'delete',

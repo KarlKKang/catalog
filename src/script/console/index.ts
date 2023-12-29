@@ -18,7 +18,7 @@ export default function (showPage: ShowPageFunc) {
 
     sendServerRequest('console', {
         callback: function (response: string) {
-            if (response != 'APPROVED') {
+            if (response !== 'APPROVED') {
                 showMessage(invalidResponse());
                 return;
             }
@@ -161,7 +161,7 @@ export default function (showPage: ShowPageFunc) {
             if (confirm === null) {
                 return;
             }
-        } while (confirm != 'clear');
+        } while (confirm !== 'clear');
 
         const param = {
             command: 'clear',
@@ -184,7 +184,7 @@ export default function (showPage: ShowPageFunc) {
             if (confirm === null) {
                 return;
             }
-        } while (confirm != 'clear');
+        } while (confirm !== 'clear');
 
         const param = {
             command: 'clear',
@@ -206,7 +206,7 @@ export default function (showPage: ShowPageFunc) {
             if (confirm === null) {
                 return;
             }
-        } while (confirm != 'rebuild');
+        } while (confirm !== 'rebuild');
 
         const param = {
             command: 'rebuild',
@@ -234,7 +234,7 @@ export default function (showPage: ShowPageFunc) {
             if (confirm === null) {
                 return;
             }
-        } while (confirm != 'verify');
+        } while (confirm !== 'verify');
 
         const param = {
             command: 'verify',

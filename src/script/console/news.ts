@@ -39,7 +39,7 @@ function modifyNews(button: Element) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != 'modify');
+    } while (confirm !== 'modify');
 
     sendServerRequest('console', {
         callback: function (response: string) {
@@ -57,7 +57,7 @@ function deleteNews(id: string) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != 'delete');
+    } while (confirm !== 'delete');
 
     const param = {
         command: 'delete',
@@ -93,7 +93,7 @@ function addNews(button: Element) {
         if (confirm === null) {
             return;
         }
-    } while (confirm != 'insert');
+    } while (confirm !== 'insert');
 
     sendServerRequest('console', {
         callback: function (response: string) {
@@ -104,7 +104,7 @@ function addNews(button: Element) {
 }
 
 function parseNewsRecord(id: string, title: string, isPublic: boolean) {
-    if (id == '') {
+    if (id === '') {
         alert('ERROR: "id" is required');
         return false;
     }
@@ -114,7 +114,7 @@ function parseNewsRecord(id: string, title: string, isPublic: boolean) {
         return false;
     }
 
-    if (title == '') {
+    if (title === '') {
         alert('ERROR: "title" is required');
         return false;
     }

@@ -15,6 +15,7 @@ module.exports = {
   ],
   overrides: [],
   rules: {
+    'eqeqeq': 'error',
     'quotes': ['error', 'single'],
     'semi': 'off',
     'prefer-arrow-callback': 'error',
