@@ -309,7 +309,7 @@ async function registerServiceWorker() { // This function should be called after
     if ('serviceWorker' in navigator) {
         const currentPgid = pgid;
         const showSkipWaitingPrompt = async (wb: WorkboxType) => {
-            const popupWindowInitialize = await popupWindowImport();
+            const popupWindow = await popupWindowImport();
             if (pgid !== currentPgid) {
                 return;
             }
@@ -332,29 +332,30 @@ async function registerServiceWorker() { // This function should be called after
             appendChild(buttonFlexbox, updateButton);
             appendChild(buttonFlexbox, cancelButton);
 
-            const hidePopupWindow = popupWindowInitialize(titleText, promptText, buttonFlexbox);
-
-            const disableAllInputs = (disabled: boolean) => {
-                updateButton.disabled = disabled;
-                cancelButton.disabled = disabled;
-            };
-            addEventListener(updateButton, 'click', () => {
-                disableAllInputs(true);
-                if (serviceWorkerUpToDate) {
-                    if (DEVELOPMENT) {
-                        console.log('Service worker already up to date.');
+            popupWindow.onPopupWindowClosed(() => {
+                const hidePopupWindow = popupWindow.initializePopupWindow(titleText, promptText, buttonFlexbox);
+                const disableAllInputs = (disabled: boolean) => {
+                    updateButton.disabled = disabled;
+                    cancelButton.disabled = disabled;
+                };
+                addEventListener(updateButton, 'click', () => {
+                    disableAllInputs(true);
+                    if (serviceWorkerUpToDate) {
+                        if (DEVELOPMENT) {
+                            console.log('Service worker already up to date.');
+                        }
+                        w.location.reload();
+                        return;
                     }
-                    w.location.reload();
-                    return;
-                }
-                addEventListener(wb as unknown as EventTarget, 'controlling', () => {
-                    w.location.reload();
+                    addEventListener(wb as unknown as EventTarget, 'controlling', () => {
+                        w.location.reload();
+                    });
+                    wb.messageSkipWaiting();
                 });
-                wb.messageSkipWaiting();
-            });
-            addEventListener(cancelButton, 'click', () => {
-                swUpdateLastPromptTime = new Date().getTime();
-                hidePopupWindow();
+                addEventListener(cancelButton, 'click', () => {
+                    swUpdateLastPromptTime = new Date().getTime();
+                    hidePopupWindow();
+                });
             });
         };
 

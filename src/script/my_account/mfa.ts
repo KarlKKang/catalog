@@ -276,7 +276,7 @@ async function handleFailedEmailOtp(
         if (currentPgid !== pgid) {
             return;
         }
-        emailOtpPopupWindowPromise = promptForEmailOtp(popupWindow);
+        emailOtpPopupWindowPromise = promptForEmailOtp(popupWindow.initializePopupWindow);
     } else {
         emailOtpPopupWindowPromise = currentEmailOtpPopupWindow[1]();
     }
@@ -298,7 +298,7 @@ async function handleFailedEmailOtp(
 
 async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     const currentPgid = pgid;
-    const popupWindowInitialize = await popupWindowImportPromise;
+    const popupWindowInitialize = (await popupWindowImportPromise).initializePopupWindow;
     if (currentPgid !== pgid) {
         return;
     }
@@ -420,7 +420,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
 
 async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo, completedCallback: () => void) {
     const currentPgid = pgid;
-    const popupWindowInitialize = await popupWindowImportPromise;
+    const popupWindowInitialize = (await popupWindowImportPromise).initializePopupWindow;
     if (currentPgid !== pgid) {
         return;
     }

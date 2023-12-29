@@ -175,7 +175,7 @@ export async function handleFailedLogin(
         if (currentPgid !== pgid) {
             return;
         }
-        loginPopupWindowPromise = promptForLogin(popupWindow, message);
+        loginPopupWindowPromise = promptForLogin(popupWindow.initializePopupWindow, message);
     } else {
         if (message === undefined) {
             message = loginFailed;

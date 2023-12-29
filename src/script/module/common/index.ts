@@ -361,7 +361,7 @@ export async function handleFailedTotp(
         if (currentPgid !== pgid) {
             return;
         }
-        totpPopupWindowPromise = promptForTotp.promptForTotp(popupWindow);
+        totpPopupWindowPromise = promptForTotp.promptForTotp(popupWindow.initializePopupWindow);
     } else {
         totpPopupWindowPromise = currentTotpPopupWindow[1]();
     }
