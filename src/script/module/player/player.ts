@@ -547,6 +547,9 @@ export class Player {
         addEventListener(this.media, 'seeked', () => {
             DEVELOPMENT && this.log?.('Seeked: ' + this.media.currentTime);
         });
+        addEventListener(this.media, 'stalled', () => {
+            DEVELOPMENT && this.log?.('Playback stalled at ' + this.media.currentTime + '.');
+        });
     }
 
     private attachVideoEventListeners(this: Player) {
