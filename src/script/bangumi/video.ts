@@ -54,6 +54,7 @@ import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
+import { addInterval, removeInterval } from '../module/timer';
 
 let currentPgid: unknown;
 
@@ -67,6 +68,7 @@ let currentFormat: VideoFormatInfo;
 let currentMediaInstance: PlayerType | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
+const timersTracker = new Set<ReturnType<typeof setInterval>>();
 
 export default function (
     _seriesID: string,
@@ -484,7 +486,9 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
             }
         });
     }
-    addEventsListener(video, ['play', 'pause', 'seeking', 'seeked', 'timeupdate'], updateChapterDisplay);
+    addEventsListener(video, ['play', 'pause', 'seeking', 'seeked'], updateChapterDisplay);
+    const timer = addInterval(updateChapterDisplay, 500);
+    timersTracker.add(timer);
 }
 
 function showDolbyVisionError() {
@@ -554,10 +558,15 @@ function cleanupEvents() {
         removeAllEventListeners(eventTarget);
     }
     eventTargetsTracker.clear();
+    for (const timer of timersTracker) {
+        removeInterval(timer);
+    }
+    timersTracker.clear();
 }
 
 export function offload() {
     currentMediaInstance?.destroy();
     currentMediaInstance = null;
     eventTargetsTracker.clear();
+    timersTracker.clear();
 }
