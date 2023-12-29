@@ -6,7 +6,6 @@ import {
     addEventListener,
     addClass,
     removeClass,
-    addEventsListener,
     d,
     w,
     remove,
@@ -23,6 +22,7 @@ import {
     replaceText,
     removeAllEventListeners,
     removeEventListener,
+    addEventsListener,
     removeEventsListener,
 } from '../dom';
 import { IS_IOS } from '../browser';
@@ -526,6 +526,7 @@ export class Player {
             this.media.playbackRate = 0;
             this.ended = false;
             this.progressUpdate(event as MouseEvent | TouchEvent);
+            event.preventDefault(); // Prevent triggering `mousedown` after `touchstart` on mobile devices.
         });
 
         this.onMouseUp = this.onMouseUp.bind(this);
@@ -533,7 +534,7 @@ export class Player {
 
         addEventsListener(this.progressControl, ['mousemove', 'touchmove'], (event) => {
             this.progressUpdate(event as MouseEvent | TouchEvent);
-        });
+        }, { passive: true });
 
         //Activity on media
         addEventListener(this.media, 'play', () => { this.onplay(); });
@@ -582,7 +583,7 @@ export class Player {
             if (touchClick <= 0) {
                 this.active = true;
             }
-        });
+        }, { passive: true });
 
         //Big play button
         addEventListener(this.bigPlayButton, 'click', (event) => {
@@ -770,6 +771,7 @@ export class Player {
         this.active = true; // The timeout won't decrease when this.dragging == true.
 
         const currentTime = this.progressUpdate(event);
+        event.preventDefault(); // Prevent triggering mouse events after `touchend` on mobile devices.
         this.seek(currentTime);
 
         this.media.playbackRate = 1;
@@ -816,7 +818,6 @@ export class Player {
             replaceText(this.currentTimeDisplayText, currentTimestamp);
             this.progressBar.style.width = percentage * 100 + '%';
         }
-        event.preventDefault(); // If touch events are not stopped then subsequent mouse event will be fired.
         return currentTime;
     }
 
