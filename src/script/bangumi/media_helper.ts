@@ -180,7 +180,6 @@ export function buildDownloadAccordion(
     appendChild(accordionPanel, downloadOptionsContainer);
 
     const downloadButton = createButtonElement();
-    addClass(downloadButton, 'download-button');
     addClass(downloadButton, 'button');
     addClass(downloadButton, 'hcenter');
     appendText(downloadButton, 'ダウンロード');

@@ -14,6 +14,10 @@ import {
     createUListElement,
     createLIElement,
     appendText,
+    setSessionStorage,
+    clearSessionStorage,
+    openWindow,
+    getTitle,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
@@ -24,6 +28,7 @@ import { pgid } from '../module/global';
 import { lazyloadImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 import { unloadLazyload } from '../module/lazyload';
+import { TOP_URL } from '../module/env/constant';
 
 type ImageLoader = typeof import(
     /* webpackExports: ["clearAllImageEvents"] */
@@ -81,7 +86,9 @@ export default async function (
         const lazyloadNode = createDivElement();
         const overlay = createDivElement();
         const downloadPanel = createDivElement();
+        const showFullSizeButton = createButtonElement();
         const downloadButton = createButtonElement();
+        const buttonFlexbox = createDivElement();
         const downloadAnchor = createElement('a') as HTMLAnchorElement;
 
         addClass(imageNode, 'image');
@@ -90,12 +97,16 @@ export default async function (
         appendChild(lazyloadNode, overlay);
 
         addClass(downloadPanel, 'panel');
+        addClass(showFullSizeButton, 'button');
+        appendText(showFullSizeButton, 'フルサイズで表示');
+        showFullSizeButton.style.width = 'auto';
         addClass(downloadButton, 'button');
-        addClass(downloadButton, 'hcenter');
-        addClass(downloadButton, 'download-button');
         downloadButton.disabled = true;
         appendText(downloadButton, 'ダウンロード');
-        appendChild(downloadPanel, downloadButton);
+        addClass(buttonFlexbox, 'image-button-flexbox');
+        appendChild(buttonFlexbox, showFullSizeButton);
+        appendChild(buttonFlexbox, downloadButton);
+        appendChild(downloadPanel, buttonFlexbox);
 
         hideElement(downloadAnchor);
         downloadAnchor.download = file.file_name;
@@ -108,8 +119,18 @@ export default async function (
         appendChild(imageNode, downloadPanel);
         appendChild(mediaHolder, imageNode);
 
+        const xhrParam = 'p=' + index;
+        addEventListener(showFullSizeButton, 'click', () => {
+            setSessionStorage('base-url', baseURL);
+            setSessionStorage('file-name', file.file_name);
+            setSessionStorage('xhr-param', xhrParam);
+            setSessionStorage('title', getTitle());
+            setSessionStorage('media-session-credential', mediaSessionCredential.credential);
+            openWindow(TOP_URL + '/image');
+            clearSessionStorage();
+        });
         lazyloadModule.default(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
-            xhrParam: 'p=' + index,
+            xhrParam: xhrParam,
             mediaSessionCredential: mediaSessionCredential.credential,
             delay: 250,
             onDataLoad: (data: Blob) => {

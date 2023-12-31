@@ -458,6 +458,17 @@
         padding: 0px 0px 0px 2em;
     }
 
+    .image-button-flexbox {
+        margin: 0px -1em 1em -1em;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        >.button {
+            margin: 1em 1em 0px 1em;
+        }
+    }
+
     #ep-button-wrapper>div,
     .player,
     .image,
