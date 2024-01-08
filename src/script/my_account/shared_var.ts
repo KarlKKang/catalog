@@ -6,6 +6,7 @@ let sharedBoolVars: boolean[];
 let sharedInputVars: HTMLInputElement[];
 let sharedButtonVars: HTMLButtonElement[];
 let sharedElementVars: HTMLElement[];
+export const sessionLogoutButtons = new Set<HTMLButtonElement>();
 
 const enum SharedBoolVarsIdx {
     currentMfaStatus,
@@ -159,4 +160,5 @@ export function dereferenceSharedVars() {
     sharedInputVars = [];
     sharedButtonVars = [];
     sharedElementVars = [];
+    sessionLogoutButtons.clear();
 }

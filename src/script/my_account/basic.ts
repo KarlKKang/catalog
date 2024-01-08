@@ -33,7 +33,7 @@ import {
     invitationClosed,
     logoutDone,
 } from '../module/message/template/inline';
-import { SHARED_VAR_IDX_EMAIL_WARNING, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_INVITE_WARNING, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_WARNING, SHARED_VAR_IDX_SESSIONS_CONTAINER, SHARED_VAR_IDX_USERNAME_WARNING, getSharedElement, getSharedInput } from './shared_var';
+import { SHARED_VAR_IDX_EMAIL_WARNING, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_INVITE_WARNING, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_WARNING, SHARED_VAR_IDX_SESSIONS_CONTAINER, SHARED_VAR_IDX_USERNAME_WARNING, getSharedElement, getSharedInput, sessionLogoutButtons } from './shared_var';
 import { disableAllInputs, reauthenticationPrompt } from './helper';
 import { EMAIL_REGEX, PASSWORD_REGEX, getLocalTimeString } from '../module/common/pure';
 import type { AccountInfo } from '../module/type/AccountInfo';
@@ -268,8 +268,10 @@ export function showSessions(userInfo: AccountInfo) {
             addClass(sessionLogoutButton, 'button');
             appendText(sessionLogoutButton, 'ログアウト');
             appendChild(innerContainer, sessionLogoutButton);
+            sessionLogoutButtons.add(sessionLogoutButton);
 
             addEventListener(sessionLogoutButton, 'click', () => {
+                disableAllInputs(true);
                 hideElement(sessionWarningElem);
                 changeColor(sessionWarningElem, 'red');
                 reauthenticationPrompt(
@@ -277,6 +279,7 @@ export function showSessions(userInfo: AccountInfo) {
                     (response: string) => {
                         if (response === 'DONE') {
                             remove(sessionLogoutButton);
+                            sessionLogoutButtons.delete(sessionLogoutButton);
                             changeColor(sessionWarningElem, 'green');
                             replaceText(sessionWarningElem, logoutDone);
                         } else {
@@ -284,6 +287,7 @@ export function showSessions(userInfo: AccountInfo) {
                             return false;
                         }
                         showElement(sessionWarningElem);
+                        disableAllInputs(false);
                         return true;
                     },
                     sessionWarningElem,

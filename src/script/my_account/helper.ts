@@ -6,7 +6,7 @@ import { accountDeactivated, disableButtonText, enableButtonText, loginFailed, l
 import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { popupWindowImportPromise, promptForTotpImportPromise } from './import_promise';
 import { promptForLogin, type LoginPopupWindow } from './login_popup_window';
-import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, SHARED_VAR_IDX_INVITE_BUTTON, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_LOGOUT_BUTTON, SHARED_VAR_IDX_MFA_BUTTON, SHARED_VAR_IDX_MFA_INFO, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, getSharedBool, getSharedButton, getSharedElement, getSharedInput, setCurrentLoginNotificationStatus, setCurrentMfaStatus } from './shared_var';
+import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, SHARED_VAR_IDX_INVITE_BUTTON, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_LOGOUT_BUTTON, SHARED_VAR_IDX_MFA_BUTTON, SHARED_VAR_IDX_MFA_INFO, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setCurrentLoginNotificationStatus, setCurrentMfaStatus } from './shared_var';
 
 export function changeMfaStatus(newStatus: boolean) {
     setCurrentMfaStatus(newStatus);
@@ -65,6 +65,10 @@ export function disableAllInputs(disabled: boolean) {
     const currentMfaStatus = getSharedBool(SHARED_VAR_IDX_CURRENT_MFA_STATUS);
     getSharedButton(SHARED_VAR_IDX_RECOVERY_CODE_BUTTON).disabled = disabled || !currentMfaStatus;
     getSharedButton(SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON).disabled = disabled || !currentMfaStatus;
+
+    for (const sessionLogoutButton of sessionLogoutButtons) {
+        sessionLogoutButton.disabled = disabled;
+    }
 }
 
 export function reauthenticationPrompt(
