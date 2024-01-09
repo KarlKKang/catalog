@@ -29,6 +29,8 @@ import {
     removeAllEventListeners,
     clearSessionStorage,
     replaceText,
+    getBaseURL,
+    getFullURL,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -87,6 +89,7 @@ function showPageCallback(
     searchBarInput.value = urlKeywords;
     const containerElem = getById('container');
     const loadingTextContainer = getById('loading-text');
+    const currentBaseURL = getBaseURL();
 
     initializeInfiniteScrolling(() => { getSeries(showSeries, true); }, - 256 - 24);
     if (seriesInfo.maintenance !== undefined) {
@@ -138,6 +141,10 @@ function showPageCallback(
         }
     });
     addEventListener(w, 'popstate', () => {
+        if (currentBaseURL !== getBaseURL()) {
+            redirect(getFullURL());
+            return;
+        }
         const urlKeywords = getURLKeywords();
         searchBarInput.value = urlKeywords;
         if (urlKeywords === '') {
