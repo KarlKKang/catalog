@@ -301,7 +301,10 @@ function loadPagePrepare(url: string, withoutHistory: boolean) {
     removeAllTimers();
     destroyPopupWindow();
     replaceChildren(getBody());
-    changeURL(url, withoutHistory);
+    if (getFullURL() !== url) {
+        // Prevent pushing the state back for popstate events.
+        changeURL(url, withoutHistory);
+    }
     return;
 }
 
