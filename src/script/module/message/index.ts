@@ -8,7 +8,7 @@ import { unknownError } from './template/body';
 import type { MessageParam } from './template/comm';
 import { redirect } from '../global';
 
-export function show({ message, title, color, url, buttonText, logout, replaceBody }: MessageParam = {}) {
+export function show({ message, title, color, url, buttonText, logout, replaceBody }: MessageParam) {
     setSessionStorage('message', message ?? unknownError);
     setSessionStorage('title', title ?? defaultError);
     setSessionStorage('color', color ?? 'red');

@@ -20,6 +20,7 @@ import { expired, passwordChanged } from './module/message/template/param';
 import { PASSWORD_REGEX } from './module/common/pure';
 import { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
+import { invalidResponse } from './module/message/template/param/server';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -53,7 +54,7 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(expired);
                 return;
             } else if (response !== 'APPROVED') {
-                showMessage();
+                showMessage(invalidResponse());
                 return;
             }
 
@@ -122,7 +123,7 @@ function showPageCallback(user: string, signature: string, expires: string) {
                 } else if (response === 'DONE') {
                     showMessage(passwordChanged);
                 } else {
-                    showMessage();
+                    showMessage(invalidResponse());
                 }
             },
             content: 'user=' + user + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),

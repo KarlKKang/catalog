@@ -24,6 +24,7 @@ import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import type { TotpPopupWindow } from './module/popup_window/totp';
+import { invalidResponse } from './module/message/template/param/server';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -53,7 +54,7 @@ export default function (showPage: ShowPageFunc) {
                     showPageCallback(param, signature);
                 });
             } else {
-                showMessage();
+                showMessage(invalidResponse());
             }
         },
         content: 'p=' + param + '&signature=' + signature,
@@ -155,7 +156,7 @@ function showPageCallback(param: string, signature: string) {
                         showMessage(emailChanged);
                         break;
                     default:
-                        showMessage();
+                        showMessage(invalidResponse());
                 }
             },
             content: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),

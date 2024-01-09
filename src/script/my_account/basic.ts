@@ -57,7 +57,7 @@ export function changeEmail() {
                 replaceText(warningElem, emailSent);
                 changeColor(warningElem, 'green');
             } else {
-                showMessage();
+                showMessage(invalidResponse());
                 return;
             }
             showElement(warningElem);
@@ -102,7 +102,7 @@ export function changePassword() {
             } else if (response === 'PASSWORD INVALID') {
                 replaceText(warningElem, invalidPasswordFormat);
             } else {
-                showMessage();
+                showMessage(invalidResponse());
                 return false;
             }
             showElement(warningElem);
@@ -147,7 +147,7 @@ export function changeUsername(userInfo: AccountInfo) {
             } else if (response === 'EMPTY') {
                 replaceText(warningElem, usernameEmpty);
             } else {
-                showMessage();
+                showMessage(invalidResponse());
                 return false;
             }
             showElement(warningElem);

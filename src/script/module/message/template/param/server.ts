@@ -53,6 +53,11 @@ export const notFound = {
     message: body.notFound,
     url: TOP_URL
 };
+export const unknownServerError = () => {
+    const param: MessageParam = {};
+    setRedirectUrl(param);
+    return param;
+};
 
 function setRedirectUrl(param: MessageParam) {
     const href = getBaseURL();

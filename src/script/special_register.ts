@@ -14,6 +14,7 @@ import { emailSent } from './module/message/template/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitationOnly } from './module/message/template/inline';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import { invalidResponse } from './module/message/template/param/server';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -61,7 +62,7 @@ function showPageCallback() {
                     showMessage(emailSent());
                     return;
                 } else {
-                    showMessage();
+                    showMessage(invalidResponse());
                     return;
                 }
                 showElement(warningElem);

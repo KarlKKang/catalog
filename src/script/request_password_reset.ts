@@ -19,6 +19,7 @@ import { invalidEmailFormat } from './module/message/template/inline';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
+import { invalidResponse } from './module/message/template/param/server';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -64,7 +65,7 @@ function showPageCallback() {
                 } else if (response === 'DONE') {
                     showMessage(emailSent(LOGIN_URL));
                 } else {
-                    showMessage();
+                    showMessage(invalidResponse());
                 }
             },
             content: 'email=' + encodeURIComponent(email),

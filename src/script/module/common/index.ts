@@ -6,7 +6,7 @@ import {
 
 import { show as showMessage } from '../message';
 import { moduleImportError, insufficientPermissions } from '../message/template/param';
-import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded } from '../message/template/param/server';
+import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError } from '../message/template/param/server';
 
 import {
     w,
@@ -112,7 +112,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
         if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
             showMessage(status400And500(responseText));
         } else {
-            showMessage();
+            showMessage(unknownServerError());
         }
     } else if (status === 404 && response.responseText === 'REJECTED') {
         showMessage(notFound);
@@ -154,7 +154,7 @@ export function authenticate(callback: { successful?: () => void; failed?: () =>
             } else if (response === 'FAILED') {
                 callback.failed && callback.failed();
             } else {
-                showMessage();
+                showMessage(invalidResponse());
             }
         }
     });
@@ -169,7 +169,7 @@ export function logout(callback: () => void,) {
                 }
                 callback();
             } else {
-                showMessage();
+                showMessage(invalidResponse());
             }
         }
     });

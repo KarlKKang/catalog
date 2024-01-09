@@ -22,6 +22,7 @@ import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, use
 import { PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
+import { invalidResponse } from './module/message/template/param/server';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -52,7 +53,7 @@ export default function (showPage: ShowPageFunc) {
             } else if (response === 'APPROVED') {
                 showPage(() => { showPageCallback(param, signature); });
             } else {
-                showMessage();
+                showMessage(invalidResponse());
             }
         },
         content: 'p=' + param + '&signature=' + signature,
@@ -139,7 +140,7 @@ function showPageCallback(param: string, signature: string) {
                 } else if (response === 'DONE') {
                     showMessage(registerComplete);
                 } else {
-                    showMessage();
+                    showMessage(invalidResponse());
                 }
             },
             content: 'p=' + param + '&signature=' + signature + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
