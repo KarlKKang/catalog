@@ -101,7 +101,7 @@ function observerCallback(entries: IntersectionObserverEntry[]) {
                 targetData.status = Status.LISTENING;
             } else if (targetData.status === Status.LOADING) {
                 if (targetData.xhr !== null) {
-                    if (targetData.xhr.readyState === 4) { // onImageDraw for the imageLoader may be called after decoding webp.
+                    if (targetData.xhr.readyState === XMLHttpRequest.DONE) { // onImageDraw for the imageLoader may be called after decoding webp.
                         continue;
                     } else {
                         targetData.xhr.abort();
