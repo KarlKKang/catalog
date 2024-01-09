@@ -1,4 +1,6 @@
 import {
+    SESSION_TYPE_MEDIA,
+    openImageWindow,
     removeRightClick,
 } from '../module/common';
 import {
@@ -14,10 +16,6 @@ import {
     createUListElement,
     createLIElement,
     appendText,
-    setSessionStorage,
-    clearSessionStorage,
-    openWindow,
-    getTitle,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
@@ -28,7 +26,6 @@ import { pgid } from '../module/global';
 import { lazyloadImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 import { unloadLazyload } from '../module/lazyload';
-import { TOP_URL } from '../module/env/constant';
 
 type ImageLoader = typeof import(
     /* webpackExports: ["clearAllImageEvents"] */
@@ -73,8 +70,9 @@ export default async function (
     if (currentPgid !== pgid) {
         return;
     }
+    lazyloadModule.setCredential(mediaSessionCredential.credential, SESSION_TYPE_MEDIA);
 
-    files.forEach((file, index) => {
+    for (const file of files) {
         if (file.tag !== '') {
             const subtitle = createParagraphElement();
             addClass(subtitle, 'sub-title');
@@ -119,19 +117,10 @@ export default async function (
         appendChild(imageNode, downloadPanel);
         appendChild(mediaHolder, imageNode);
 
-        const xhrParam = 'p=' + index;
         addEventListener(showFullSizeButton, 'click', () => {
-            setSessionStorage('base-url', baseURL);
-            setSessionStorage('file-name', file.file_name);
-            setSessionStorage('xhr-param', xhrParam);
-            setSessionStorage('title', getTitle());
-            setSessionStorage('media-session-credential', mediaSessionCredential.credential);
-            openWindow(TOP_URL + '/image');
-            clearSessionStorage();
+            openImageWindow(baseURL, file.file_name, mediaSessionCredential.credential, SESSION_TYPE_MEDIA);
         });
         lazyloadModule.default(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
-            xhrParam: xhrParam,
-            mediaSessionCredential: mediaSessionCredential.credential,
             delay: 250,
             onDataLoad: (data: Blob) => {
                 addEventListener(downloadButton, 'click', () => {
@@ -152,7 +141,7 @@ export default async function (
                 imageNode.style.width = 'fit-content';
             },
         });
-    });
+    }
 }
 
 export function offload() {

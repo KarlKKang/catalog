@@ -1,6 +1,8 @@
 import 'intersection-observer';
 import {
+    type SessionTypes,
     sendServerRequest,
+    SESSION_TYPE_MEDIA,
 } from '../common';
 import {
     addClass,
@@ -25,8 +27,6 @@ const enum Status {
 type TargetData = {
     src: string;
     alt: string;
-    xhrParam: string | null;
-    mediaSessionCredential: string | null;
     delay: number;
     onDataLoad: ((data: Blob) => void) | undefined;
     onImageDraw: (() => void) | undefined;
@@ -35,8 +35,11 @@ type TargetData = {
 };
 
 const targets: Map<Element, TargetData> = new Map();
-let mediaSessionCredentialPromise: Promise<void> | null = null;
-let newsSessionCredentialPromise: Promise<void> | null = null;
+let sessionCredentialPromise: Promise<void> | null = null;
+let credential: [
+    string, // sessionCredential
+    SessionTypes // sessionType
+] | null = null;
 
 let imageLoader: typeof ImageLoader;
 
@@ -44,13 +47,15 @@ export function attachImageLoader(loader: typeof ImageLoader) {
     imageLoader = loader;
 }
 
+export function setCredential(sessionCredential: string, sessionType: SessionTypes) {
+    credential = [sessionCredential, sessionType];
+}
+
 export default function (
     target: Element,
     src: string,
     alt: string,
     options?: {
-        xhrParam?: string;
-        mediaSessionCredential?: string;
         delay?: number;
         onDataLoad?: (data: Blob) => void;
         onImageDraw?: () => void;
@@ -64,8 +69,6 @@ export default function (
     targets.set(target, {
         src: src,
         alt: alt,
-        xhrParam: options.xhrParam || null,
-        mediaSessionCredential: options.mediaSessionCredential || null,
         delay: options.delay || 0,
         onDataLoad: options.onDataLoad,
         onImageDraw: options.onImageDraw,
@@ -111,14 +114,6 @@ function observerCallback(entries: IntersectionObserverEntry[]) {
     }
 }
 
-function setCredentialPromise(isMediaSession: boolean, requestPromise: Promise<void> | null) {
-    if (isMediaSession) {
-        mediaSessionCredentialPromise = requestPromise;
-    } else {
-        newsSessionCredentialPromise = requestPromise;
-    }
-}
-
 function loadImage(target: Element, targetData: TargetData) {
     const onImageDraw = () => {
         observer.unobserve(target);
@@ -138,15 +133,12 @@ function loadImage(target: Element, targetData: TargetData) {
         }, 5000);
     };
 
-    if (targetData.xhrParam !== null) {
-        const mediaSessionCredential = targetData.mediaSessionCredential;
-        const isMediaSession = mediaSessionCredential !== null;
-        const uri = isMediaSession ? 'get_image' : 'get_news_image';
-        const content = (isMediaSession ? (mediaSessionCredential + '&') : '') + targetData.xhrParam;
+    if (credential !== null) {
+        const sessionCredential = credential[0];
+        const uri = credential[1] === SESSION_TYPE_MEDIA ? 'get_image' : 'get_news_image';
 
-        let credentialPromise = isMediaSession ? mediaSessionCredentialPromise : newsSessionCredentialPromise;
-        if (credentialPromise === null) {
-            credentialPromise = new Promise((resolve) => {
+        if (sessionCredentialPromise === null) {
+            sessionCredentialPromise = new Promise((resolve) => {
                 sendServerRequest(uri, {
                     callback: function (response: string) {
                         if (response !== 'APPROVED') {
@@ -154,17 +146,16 @@ function loadImage(target: Element, targetData: TargetData) {
                             return;
                         }
                         addTimeout(() => {
-                            setCredentialPromise(isMediaSession, null);
+                            sessionCredentialPromise = null;
                         }, 15 * 1000);
                         resolve();
                     },
-                    content: content,
+                    content: sessionCredential,
                     showSessionEndedMessage: true,
                 });
             });
-            setCredentialPromise(isMediaSession, credentialPromise);
         }
-        credentialPromise.then(() => {
+        sessionCredentialPromise.then(() => {
             if (targets.has(target) && targetData.status === Status.LOADING) {
                 targetData.xhr = imageLoader(target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onNetworkError, onUnrecoverableError);
             }
@@ -177,6 +168,6 @@ function loadImage(target: Element, targetData: TargetData) {
 export function unobserveAll() {
     observer.disconnect();
     targets.clear();
-    mediaSessionCredentialPromise = null;
-    newsSessionCredentialPromise = null;
+    sessionCredentialPromise = null;
+    credential = null;
 }

@@ -4,6 +4,8 @@ import {
 import {
     sendServerRequest,
     removeRightClick,
+    setUpSessionAuthentication,
+    SESSION_TYPE_MEDIA,
 } from './module/common';
 import {
     setTitle,
@@ -15,7 +17,6 @@ import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 import { invalidResponse, notFound } from './module/message/template/param/server';
 import { encodeCFURIComponent } from './module/common/pure';
-import { addInterval } from './module/timer';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { pgid, redirect } from './module/global';
 
@@ -28,13 +29,13 @@ let imageLoader: ImageLoader | null = null;
 export default function (showPage: ShowPageFunc) {
     const baseURL = getSessionStorage('base-url');
     const fileName = getSessionStorage('file-name');
-    const xhrParam = getSessionStorage('xhr-param');
     const title = getSessionStorage('title');
-    const mediaSessionCredential = getSessionStorage('media-session-credential');
+    const sessionCredential = getSessionStorage('session-credential');
+    const sessionType = getSessionStorage('session-type');
 
     clearSessionStorage();
 
-    if (baseURL === null || fileName === null || xhrParam === null || title === null) {
+    if (baseURL === null || fileName === null || title === null || sessionCredential === null || sessionType === null) {
         redirect(TOP_URL, true);
         return;
     }
@@ -44,25 +45,8 @@ export default function (showPage: ShowPageFunc) {
         './module/image_loader'
     );
 
-    let uri = 'get_image';
-    let content = xhrParam;
-    if (mediaSessionCredential === null) {
-        uri = 'get_news_image';
-    } else {
-        content = mediaSessionCredential + '&' + content;
-        addInterval(() => {
-            sendServerRequest('authenticate_media_session', {
-                callback: function (response: string) {
-                    if (response !== 'APPROVED') {
-                        showMessage(invalidResponse());
-                    }
-                },
-                content: mediaSessionCredential,
-                connectionErrorRetry: 5,
-                showSessionEndedMessage: true,
-            });
-        }, 40 * 1000);
-    }
+    const uri = sessionType === SESSION_TYPE_MEDIA ? 'get_image' : 'get_news_image';
+    setUpSessionAuthentication(sessionCredential);
 
     setTitle(title);
 
@@ -92,7 +76,7 @@ export default function (showPage: ShowPageFunc) {
                 });
             });
         },
-        content: content,
+        content: sessionCredential,
         showSessionEndedMessage: true,
     });
 }

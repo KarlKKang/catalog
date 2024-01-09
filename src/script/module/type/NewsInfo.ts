@@ -4,6 +4,7 @@ export type NewsInfo = {
     title: string;
     create_time: number;
     update_time: number | null;
+    credential: string;
 };
 
 export function check(newsInfo: any) {
@@ -16,6 +17,10 @@ export function check(newsInfo: any) {
     }
 
     if (!isNumber(newsInfo.update_time) && newsInfo.update_time !== null) {
+        throwError();
+    }
+
+    if (!isString(newsInfo.credential)) {
         throwError();
     }
 }

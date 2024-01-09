@@ -4,6 +4,7 @@ import {
 import {
     sendServerRequest,
     getURLParam,
+    setUpSessionAuthentication,
 } from '../module/common';
 import {
     clearSessionStorage,
@@ -16,7 +17,6 @@ import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam } from './helper';
 import { importAll, updatePageImportPromise } from './import_promise';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
-import { addInterval } from '../module/timer';
 import * as MediaSessionInfo from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 
@@ -62,19 +62,7 @@ export default function (showPage: ShowPageFunc) {
                     showMessage(invalidResponse());
                     return;
                 }
-                addInterval(() => {
-                    sendServerRequest('authenticate_media_session', {
-                        callback: function (response: string) {
-                            if (response !== 'APPROVED') {
-                                showMessage(invalidResponse());
-                            }
-                        },
-                        content: parsedResponse.credential,
-                        logoutParam: getLogoutParam(seriesID, epIndex),
-                        connectionErrorRetry: 5,
-                        showSessionEndedMessage: true,
-                    });
-                }, 40 * 1000); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
+                setUpSessionAuthentication(parsedResponse.credential, getLogoutParam(seriesID, epIndex));
                 resolve(parsedResponse);
             },
             content: 'series=' + seriesID + '&ep=' + epIndex,

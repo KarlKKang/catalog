@@ -23,10 +23,14 @@ import {
     getBody,
     appendText,
     removeAllEventListeners,
+    setSessionStorage,
+    getTitle,
+    openWindow,
+    clearSessionStorage,
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
-import { addTimeout } from '../timer';
+import { addInterval, addTimeout } from '../timer';
 import { pgid, redirect } from '../global';
 import type { TotpPopupWindow } from '../popup_window/totp';
 import type { popupWindowImport, promptForTotpImport } from '../popup_window';
@@ -43,7 +47,7 @@ interface SendServerRequestOption {
     content?: string;
     withCredentials?: boolean;
     method?: 'POST' | 'GET';
-    logoutParam?: string;
+    logoutParam?: string | undefined;
     connectionErrorRetry?: number | undefined;
     connectionErrorRetryTimeout?: number;
     showSessionEndedMessage?: boolean;
@@ -383,4 +387,39 @@ export async function handleFailedTotp(
         return;
     }
     retryCallback(currentTotpPopupWindow);
+}
+
+export function setUpSessionAuthentication(credential: string, logoutParam?: string) {
+    addInterval(() => {
+        sendServerRequest('authenticate_media_session', {
+            callback: function (response: string) {
+                if (response !== 'APPROVED') {
+                    showMessage(invalidResponse());
+                }
+            },
+            content: credential,
+            logoutParam: logoutParam,
+            connectionErrorRetry: 5,
+            showSessionEndedMessage: true,
+        });
+    }, 40 * 1000); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
+}
+
+const enum _SessionTypes {
+    MEDIA = 'media',
+    NEWS = 'news'
+}
+
+export const SESSION_TYPE_MEDIA = _SessionTypes.MEDIA;
+export const SESSION_TYPE_NEWS = _SessionTypes.NEWS;
+export type SessionTypes = _SessionTypes;
+
+export function openImageWindow(baseURL: string, fileName: string, credential: string, sessionType: SessionTypes) {
+    setSessionStorage('base-url', baseURL);
+    setSessionStorage('file-name', fileName);
+    setSessionStorage('title', getTitle());
+    setSessionStorage('session-credential', credential);
+    setSessionStorage('session-type', sessionType);
+    openWindow(TOP_URL + '/image');
+    clearSessionStorage();
 }

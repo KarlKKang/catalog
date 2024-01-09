@@ -8,6 +8,9 @@ import {
     addNavBar,
     removeRightClick,
     NAV_BAR_NEWS,
+    setUpSessionAuthentication,
+    SESSION_TYPE_NEWS,
+    openImageWindow,
 } from './module/common';
 import {
     addEventListener,
@@ -28,11 +31,9 @@ import {
     createBRElement,
     appendText,
     removeAllEventListeners,
-    setSessionStorage,
     clearSessionStorage,
     insertAfter,
     replaceText,
-    openWindow,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/message/template/param/server';
@@ -74,6 +75,7 @@ function getNewsID(): string | null {
 
 function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsID: string, showPage: ShowPageFunc): void {
     const hash = getHash();
+    const logoutParam = 'news=' + newsID + (hash === '' ? '' : ('&hash=' + hash));
     sendServerRequest('get_news', {
         callback: function (response: string) {
             let parsedResponse: NewsInfo.NewsInfo;
@@ -84,6 +86,7 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
                 showMessage(invalidResponse());
                 return;
             }
+            setUpSessionAuthentication(parsedResponse.credential, logoutParam);
 
             const contentContainer = createDivElement();
             contentContainer.id = 'content';
@@ -115,7 +118,7 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
                 if (xhr.status === 200) {
                     contentContainer.innerHTML = xhr.responseText;
                     bindEventListners(contentContainer);
-                    attachImage(lazyloadImportPromise, contentContainer, newsID);
+                    attachImage(lazyloadImportPromise, contentContainer, newsID, parsedResponse.credential);
                     scrollToHash();
                 } else {
                     showMessage(notFound);
@@ -125,7 +128,7 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
             xhr.send();
         },
         content: 'id=' + newsID,
-        logoutParam: 'news=' + newsID + ((hash === '') ? '' : ('&hash=' + hash))
+        logoutParam: logoutParam
     });
 }
 
@@ -165,12 +168,13 @@ function showNews(container: HTMLElement, contentContainer: HTMLElement, newsInf
     appendChild(container, contentOuterContainer);
 }
 
-async function attachImage(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, contentContainer: HTMLElement, newsID: string): Promise<void> {
+async function attachImage(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, contentContainer: HTMLElement, newsID: string, credential: string): Promise<void> {
     const currentPgid = pgid;
     const lazyload = await lazyloadImportPromise;
     if (currentPgid !== pgid) {
         return;
     }
+    lazyload.setCredential(credential, SESSION_TYPE_NEWS);
 
     const baseURL = CDN_URL + '/news/' + newsID + '/';
     const elems = getDescendantsByClass(contentContainer, 'image-internal');
@@ -180,16 +184,10 @@ async function attachImage(lazyloadImportPromise: ReturnType<typeof lazyloadImpo
         if (src === null) {
             continue;
         }
-        const xhrParam = 'news=' + newsID;
-        lazyload.default(elem, baseURL + encodeCFURIComponent(src), src, { xhrParam: xhrParam });
+        lazyload.default(elem, baseURL + encodeCFURIComponent(src), src, { delay: 250 });
         if (containsClass(elem, 'image-enlarge')) {
             addEventListener(elem, 'click', () => {
-                setSessionStorage('base-url', baseURL);
-                setSessionStorage('file-name', src);
-                setSessionStorage('xhr-param', xhrParam);
-                setSessionStorage('title', getTitle());
-                openWindow(TOP_URL + '/image');
-                clearSessionStorage();
+                openImageWindow(baseURL, src, credential, SESSION_TYPE_NEWS);
             });
         }
         removeRightClick(elem);
