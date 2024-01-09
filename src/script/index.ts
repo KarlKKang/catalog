@@ -39,11 +39,12 @@ import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout } from './module/timer';
 import { allResultsShown, loading, noResult } from './module/message/template/inline';
-import { pgid, redirect } from './module/global';
+import { redirect } from './module/global';
 import { lazyloadImport, unloadLazyload } from './module/lazyload';
 
 let pivot: SeriesInfo.Pivot;
 let keywords: string;
+let currentRequest: XMLHttpRequest | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
@@ -65,11 +66,10 @@ export default function (showPage: ShowPageFunc) {
         keywords = 'keywords=' + encodeURIComponent(urlKeywords) + '&';
     }
 
-    getSeries(async (seriesInfo: SeriesInfo.SeriesInfo) => {
+    getSeries((seriesInfo, xhr) => {
         showPage(async () => {
-            const currentPgid = pgid;
             const lazyload = await lazyloadImportPromise;
-            if (currentPgid !== pgid) {
+            if (currentRequest !== xhr) {
                 return;
             }
             showPageCallback(seriesInfo, urlKeywords, lazyload);
@@ -221,17 +221,16 @@ function showPageCallback(
                 }
                 eventTargetsTracker.clear();
                 lazyload.unobserveAll();
+                replaceChildren(containerElem);
                 resolve();
             }, 400);
         });
 
-        getSeries((seriesInfo: SeriesInfo.SeriesInfo) => {
-            const currentPgid = pgid;
+        getSeries((seriesInfo, xhr) => {
             animationTimeout.then(() => {
-                if (currentPgid !== pgid) {
+                if (currentRequest !== xhr) {
                     return;
                 }
-                replaceChildren(containerElem);
                 showSeries(seriesInfo);
                 removeClass(containerElem, 'transparent');
                 removeClass(loadingTextContainer, 'transparent');
@@ -263,13 +262,18 @@ function getURLKeywords() {
     }
 }
 
-function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void, showSessionEndedMessage: boolean) {
+function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo, xhr?: XMLHttpRequest) => void, showSessionEndedMessage: boolean) {
     if (pivot === 'EOF') {
         return;
     }
-
-    sendServerRequest('get_series?' + keywords + 'pivot=' + pivot, {
+    if (currentRequest !== null && currentRequest.readyState !== XMLHttpRequest.DONE) {
+        currentRequest.abort();
+    }
+    const request = sendServerRequest('get_series?' + keywords + 'pivot=' + pivot, {
         callback: function (response: string) {
+            if (currentRequest !== request) {
+                return;
+            }
             let parsedResponse: SeriesInfo.SeriesInfo;
             try {
                 parsedResponse = JSON.parse(response);
@@ -278,16 +282,18 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo) => void, showSe
                 showMessage(invalidResponse());
                 return;
             }
-            callback(parsedResponse);
+            callback(parsedResponse, request);
         },
         logoutParam: keywords.slice(0, -1),
         showSessionEndedMessage: showSessionEndedMessage,
         method: 'GET',
     });
+    currentRequest = request;
 }
 
 export function offload() {
     unloadLazyload();
     destroyInfiniteScrolling();
     eventTargetsTracker.clear();
+    currentRequest = null;
 }
