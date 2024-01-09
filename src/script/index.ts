@@ -36,7 +36,7 @@ import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
 import * as SeriesInfo from './module/type/SeriesInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
-import isbot from 'isbot';
+import { isbot } from 'isbot';
 import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout } from './module/timer';
