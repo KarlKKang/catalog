@@ -20,8 +20,8 @@ import type { AudioEPInfo, AudioFile } from '../module/type/BangumiInfo';
 
 import {
     IS_FIREFOX,
-    MSE,
-    NATIVE_HLS,
+    MSE_SUPPORTED,
+    NATIVE_HLS_SUPPORTED,
     CAN_PLAY_ALAC,
     CAN_PLAY_FLAC,
     audioCanPlay,
@@ -80,7 +80,7 @@ export default function (
         appendChild(getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, null)[0]);
     });
 
-    if (!MSE && !NATIVE_HLS) {
+    if (!MSE_SUPPORTED && !NATIVE_HLS_SUPPORTED) {
         showHLSCompatibilityError();
         return;
     }
@@ -107,7 +107,7 @@ async function addAudioNode(index: number) {
     const IS_FLAC = (file.format.toLowerCase() === 'flac' || FLAC_FALLBACK);
 
     const IS_MP3 = file.format.toLowerCase() === 'mp3';
-    const CAN_PLAY_MP3 = audioCanPlay('mp3', NATIVE_HLS) || canPlay('audio', 'mpeg', '', NATIVE_HLS); // mp3: Firefox; mpeg: Safari and Chrome
+    const CAN_PLAY_MP3 = audioCanPlay('mp3') || canPlay('audio', 'mpeg', ''); // mp3: Firefox; mpeg: Safari and Chrome
     if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { // ALAC has already fallen back to FLAC if not supported.
         showCodecCompatibilityError();
         error = true;
@@ -118,7 +118,7 @@ async function addAudioNode(index: number) {
     appendChild(mediaHolder, playerContainer);
     const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
-    if (NATIVE_HLS) {
+    if (!MSE_SUPPORTED) {
         let Player: typeof PlayerType;
         try {
             await createMediaSessionPromise;

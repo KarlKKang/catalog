@@ -43,19 +43,18 @@ let UNRECOMMENDED_BROWSER = false;
 
 
 
-const NATIVE_HLS = (function () {
+const NATIVE_HLS_SUPPORTED = (function () {
     const audioElem = createAudioElement();
     const videoElem = createVideoElement();
     return (videoElem.canPlayType('application/vnd.apple.mpegurl') !== '') && (audioElem.canPlayType('application/vnd.apple.mpegurl') !== '') && IS_SAFARI;
 })();
+const MSE_SUPPORTED = isSupported();
 
-const MSE = isSupported();
+const CAN_PLAY_ALAC = audioCanPlay('alac');
+const CAN_PLAY_FLAC = audioCanPlay('flac') || audioCanPlay('fLaC');
 
-const CAN_PLAY_ALAC = audioCanPlay('alac', NATIVE_HLS);
-const CAN_PLAY_FLAC = audioCanPlay('flac', NATIVE_HLS) || audioCanPlay('fLaC', NATIVE_HLS);
-
-const CAN_PLAY_AVC = videoCanPlay('avc1.640032', NATIVE_HLS);
-const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2', NATIVE_HLS);
+const CAN_PLAY_AVC = videoCanPlay('avc1.640032');
+const CAN_PLAY_AAC = audioCanPlay('mp4a.40.2');
 
 UNRECOMMENDED_BROWSER = UNRECOMMENDED_BROWSER || !(CAN_PLAY_AVC && CAN_PLAY_AAC) || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
 
@@ -67,28 +66,29 @@ export { IS_WINDOWS };
 export { IS_MACOS };
 export { UNRECOMMENDED_BROWSER };
 
-export { NATIVE_HLS };
-export { MSE };
+export { NATIVE_HLS_SUPPORTED };
+export { MSE_SUPPORTED };
 export { CAN_PLAY_ALAC };
 export { CAN_PLAY_FLAC };
 export { CAN_PLAY_AVC };
+export { CAN_PLAY_AAC };
 
-export function videoCanPlay(codecs: string, native: boolean): boolean {
-    return canPlay('video', 'mp4', codecs, native);
+export function videoCanPlay(codecs: string): boolean {
+    return canPlay('video', 'mp4', codecs);
 }
 
-export function audioCanPlay(codecs: string, native: boolean): boolean {
-    return canPlay('audio', 'mp4', codecs, native);
+export function audioCanPlay(codecs: string): boolean {
+    return canPlay('audio', 'mp4', codecs);
 }
 
-export function canPlay(type: 'video' | 'audio', container: string, codecs: string, native: boolean): boolean {
+export function canPlay(type: 'video' | 'audio', container: string, codecs: string): boolean {
     if (codecs !== '') {
         codecs = `; codecs="${codecs}"`;
     }
-    if (native) {
-        if (!NATIVE_HLS) {
-            return false;
-        }
+    const mediaSource = getMediaSource();
+    if (MSE_SUPPORTED && mediaSource !== undefined) {
+        return mediaSource.isTypeSupported(`${type}/${container}${codecs}`);
+    } else if (NATIVE_HLS_SUPPORTED) {
         let mediaElement: HTMLMediaElement;
         if (type === 'video') {
             mediaElement = createVideoElement();
@@ -96,11 +96,6 @@ export function canPlay(type: 'video' | 'audio', container: string, codecs: stri
             mediaElement = createAudioElement();
         }
         return mediaElement.canPlayType(`${type}/${container}${codecs}`) !== '';
-    } else {
-        const mediaSource = getMediaSource();
-        if (!MSE || mediaSource === undefined) {
-            return false;
-        }
-        return mediaSource.isTypeSupported(`${type}/${container}${codecs}`);
     }
+    return false;
 }
