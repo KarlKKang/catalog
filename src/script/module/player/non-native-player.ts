@@ -33,7 +33,9 @@ export abstract class NonNativePlayer extends Player {
             onerror?: (errorCode: number | null) => void;
         }
     ): void;
-    protected abstract override disattach(this: NonNativePlayer): void;
+    protected override disattach(this: NonNativePlayer) {
+        this.buffering = false;
+    }
 
     public override play(this: NonNativePlayer) {
         if (this.IS_VIDEO) {

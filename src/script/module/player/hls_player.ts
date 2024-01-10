@@ -113,13 +113,14 @@ export class HlsPlayer extends NonNativePlayer {
         DEVELOPMENT && this.log?.('HLS source loaded.');
     }
 
-    protected disattach(this: HlsPlayer) {
+    protected override disattach(this: HlsPlayer) {
         this.destroyed = true;
         this.onHlsError && this.hlsInstance.off(Hls.Events.ERROR, this.onHlsError);
         this.onHlsManifestParsed && this.hlsInstance.off(Hls.Events.MANIFEST_PARSED, this.onHlsManifestParsed);
         this.onHlsFragChange && this.hlsInstance.off(Hls.Events.FRAG_CHANGED, this.onHlsFragChange);
         this.onHlsBufferFlushed && this.hlsInstance.off(Hls.Events.BUFFER_FLUSHED, this.onHlsBufferFlushed);
         this.hlsInstance.destroy();
+        super.disattach();
     }
 
     public override seek(this: HlsPlayer, timestamp: number) {
