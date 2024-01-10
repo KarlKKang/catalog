@@ -42,6 +42,7 @@ import {
     IS_EDGE,
     IS_WINDOWS,
     CAN_PLAY_AAC,
+    MSE_BUFFER_SIZE,
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
@@ -398,7 +399,7 @@ async function addVideoNode(config?: {
             enableWorker: false,
             maxFragLookUpTolerance: 0.0,
             backBufferLength: 0,
-            maxBufferLength: 16, // (100 * 8 * 1000 - 168750) / 20000 - 15
+            maxBufferLength: Math.floor((MSE_BUFFER_SIZE * 8 * 1000 - 168750) / 20000 - 15),
             maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
             maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Default: 0.1.
             debug: DEVELOPMENT,

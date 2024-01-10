@@ -17,6 +17,7 @@ let IS_EDGE = false;
 let IS_WINDOWS = false;
 let IS_MACOS = false;
 let UNRECOMMENDED_BROWSER = false;
+let MSE_BUFFER_SIZE = 100;
 
 (function () {
     if (typeof navigator === 'undefined') {
@@ -36,6 +37,12 @@ let UNRECOMMENDED_BROWSER = false;
     IS_EDGE = browserName === 'edge';
     IS_WINDOWS = osName === 'windows';
     IS_MACOS = osName === 'mac os';
+
+    if (IS_SAFARI) {
+        MSE_BUFFER_SIZE = 290;
+    } else if (IS_CHROMIUM) {
+        MSE_BUFFER_SIZE = 150;
+    }
 
     const SUPPORTED_BLINK = engineName === 'blink' && engineVersion >= 62;
     UNRECOMMENDED_BROWSER = (!SUPPORTED_BLINK && !IS_SAFARI) || browserName.includes('wechat') || browserName === 'ucbrowser';
@@ -65,6 +72,7 @@ export { IS_EDGE };
 export { IS_WINDOWS };
 export { IS_MACOS };
 export { UNRECOMMENDED_BROWSER };
+export { MSE_BUFFER_SIZE };
 
 export { NATIVE_HLS_SUPPORTED };
 export { MSE_SUPPORTED };
