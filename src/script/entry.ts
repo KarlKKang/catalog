@@ -417,6 +417,9 @@ async function registerServiceWorker() { // This function should be called after
 
 async function loadPage(url: string, withoutHistory: boolean, pageName: string, page: Page) {
     if (body === null) {
+        if (history.scrollRestoration !== undefined) {
+            history.scrollRestoration = 'manual';
+        }
         addEventListenerOnce(w, 'load', () => {
             body = d.body;
             loadPage(url, withoutHistory, pageName, page);

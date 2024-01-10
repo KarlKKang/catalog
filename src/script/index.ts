@@ -218,6 +218,7 @@ function showPageCallback(
         pivot = 0;
         disableSearchBarInput(true);
         getInfiniteScrolling().setEnabled(false);
+        scrollToTop();
 
         addClass(containerElem, 'transparent');
         addClass(loadingTextContainer, 'transparent');
