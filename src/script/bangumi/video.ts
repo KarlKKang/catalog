@@ -408,8 +408,19 @@ async function addVideoNode(config?: {
         };
 
         const mediaInstance = new HlsPlayer(playerContainer, hlsConfig);
+        let bufferStalledMessageShown = false;
         beforeLoad();
         currentMediaInstance = mediaInstance;
+        mediaInstance.onbufferstalled = () => {
+            if (!bufferStalledMessageShown) {
+                bufferStalledMessageShown = true;
+                showMediaMessage(
+                    '再生中に問題が発生した可能性があります',
+                    [createTextNode('バッファリングに通常より時間がかかっています。遅いネットワークが原因かもしれません。または、デバイスのメモリが不足しています。このような場合、動画がスムーズに再生されるかどうかは保証できません。')],
+                    'orange'
+                );
+            }
+        };
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {
                 if (errorCode === HLS_BUFFER_APPEND_ERROR) {

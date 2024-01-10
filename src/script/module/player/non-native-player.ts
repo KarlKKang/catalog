@@ -8,6 +8,8 @@ import { addTimeout } from '../timer';
 
 export abstract class NonNativePlayer extends Player {
     private buffering = false;
+    private lastBufferUpdateTime = new Date().getTime();
+    public onbufferstalled: (() => void) | undefined = undefined;
 
     constructor(
         container: HTMLDivElement,
@@ -50,7 +52,7 @@ export abstract class NonNativePlayer extends Player {
         super.play();
     }
 
-    private checkBuffer(this: NonNativePlayer) {
+    private checkBuffer(this: NonNativePlayer, event?: Event) {
         if (!this.buffering) {
             return;
         }
@@ -65,6 +67,7 @@ export abstract class NonNativePlayer extends Player {
         if (bufferedRange.length === 0 && this.media.currentTime >= this.media.duration - this.maxBufferHole) {
             endBuffer();
             this.ended = true;
+            return;
         }
         for (const buffer of bufferedRange) {
             if (this.media.currentTime < buffer.end) {
@@ -81,6 +84,13 @@ export abstract class NonNativePlayer extends Player {
             }
         }
 
+        if (event !== undefined) {
+            this.lastBufferUpdateTime = new Date().getTime();
+        } else if (this.lastBufferUpdateTime + 16000 <= new Date().getTime()) {
+            DEVELOPMENT && this.log?.('Buffer stalled.');
+            this.onbufferstalled?.();
+        }
+
         addTimeout(this.checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
         addPlayerClass(this.controls, 'seeking');
         this.media.playbackRate = 0;
@@ -93,6 +103,7 @@ export abstract class NonNativePlayer extends Player {
         }
 
         this.buffering = true;
+        this.lastBufferUpdateTime = new Date().getTime();
         addEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
         this.checkBuffer();
     }
