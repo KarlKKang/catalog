@@ -29,7 +29,6 @@ import {
 } from '../module/browser';
 import type { Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
-import type { VideojsPlayer as VideojsPlayerType } from '../module/player/videojs_player';
 
 import { parseCharacters } from './helper';
 import {
@@ -37,7 +36,7 @@ import {
 } from './media_helper';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
-import { hlsPlayerImportPromise, nativePlayerImportPromise, videojsPlayerImportPromise } from './import_promise';
+import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 
 let currentPgid: unknown;
@@ -106,7 +105,6 @@ async function addAudioNode(index: number) {
     appendChild(mediaHolder, getAudioSubtitleNode(file, FLAC_FALLBACK));
 
     const IS_FLAC = (file.format.toLowerCase() === 'flac' || FLAC_FALLBACK);
-    const USE_VIDEOJS = !NATIVE_HLS && IS_FLAC;
 
     const IS_MP3 = file.format.toLowerCase() === 'mp3';
     const CAN_PLAY_MP3 = audioCanPlay('mp3', NATIVE_HLS) || canPlay('audio', 'mpeg', '', NATIVE_HLS); // mp3: Firefox; mpeg: Safari and Chrome
@@ -120,11 +118,11 @@ async function addAudioNode(index: number) {
     appendChild(mediaHolder, playerContainer);
     const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
-    if (USE_VIDEOJS) {
-        let VideojsPlayer: typeof VideojsPlayerType;
+    if (NATIVE_HLS) {
+        let Player: typeof PlayerType;
         try {
             await createMediaSessionPromise;
-            VideojsPlayer = (await videojsPlayerImportPromise).VideojsPlayer;
+            Player = (await nativePlayerImportPromise).Player;
         } catch (e) {
             if (currentPgid === pgid) {
                 showMessage(moduleImportError(e));
@@ -136,20 +134,54 @@ async function addAudioNode(index: number) {
             return;
         }
 
-        const configVideoJSMedia = {
-            controls: false,
-            autoplay: false,
-            html5: {
-                vhs: {
-                    overrideNative: true,
-                    withCredentials: true
-                },
-                nativeAudioTracks: false,
-                //nativeVideoTracks: false
+        const audioInstance = new Player(playerContainer, {
+            audio: true,
+        });
+        audioInstance.load(url, {
+            onerror: function (errorCode: number | null) {
+                showPlayerError(errorCode);
+                destroyAll();
             },
-        } as const;
+        });
+        mediaInstances[index] = audioInstance;
+        setMediaTitle(audioInstance);
+        audioReadyCounter++;
+        if (audioReadyCounter === audioEPInfo.files.length) {
+            audioReady();
+        }
+    } else {
+        let HlsPlayer: typeof HlsPlayerType;
+        try {
+            await createMediaSessionPromise;
+            HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
+        } catch (e) {
+            if (currentPgid === pgid) {
+                showMessage(moduleImportError(e));
+            }
+            throw e;
+        }
 
-        const audioInstance = new VideojsPlayer(playerContainer, configVideoJSMedia, {
+        if (currentPgid !== pgid) {
+            return;
+        }
+
+        const configHls = {
+            enableWebVTT: false,
+            enableIMSC1: false,
+            enableCEA708Captions: false,
+            lowLatencyMode: false,
+            enableWorker: false,
+            maxFragLookUpTolerance: 0.0,
+            backBufferLength: 0,
+            maxBufferLength: 15,
+            maxBufferSize: 0,
+            maxBufferHole: 0.5,
+            debug: DEVELOPMENT,
+            xhrSetup: function (xhr: XMLHttpRequest) {
+                xhr.withCredentials = true;
+            }
+        };
+        const audioInstance = new HlsPlayer(playerContainer, configHls, {
             audio: true,
         });
         audioInstance.load(url, {
@@ -167,86 +199,6 @@ async function addAudioNode(index: number) {
         audioReadyCounter++;
         if (audioReadyCounter === audioEPInfo.files.length) {
             audioReady();
-        }
-    } else {
-        if (NATIVE_HLS) {
-            let Player: typeof PlayerType;
-            try {
-                await createMediaSessionPromise;
-                Player = (await nativePlayerImportPromise).Player;
-            } catch (e) {
-                if (currentPgid === pgid) {
-                    showMessage(moduleImportError(e));
-                }
-                throw e;
-            }
-
-            if (currentPgid !== pgid) {
-                return;
-            }
-
-            const audioInstance = new Player(playerContainer, {
-                audio: true,
-            });
-            audioInstance.load(url, {
-                onerror: function (errorCode: number | null) {
-                    showPlayerError(errorCode);
-                    destroyAll();
-                },
-            });
-            mediaInstances[index] = audioInstance;
-            setMediaTitle(audioInstance);
-            audioReadyCounter++;
-            if (audioReadyCounter === audioEPInfo.files.length) {
-                audioReady();
-            }
-        } else {
-            let HlsPlayer: typeof HlsPlayerType;
-            try {
-                await createMediaSessionPromise;
-                HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
-            } catch (e) {
-                if (currentPgid === pgid) {
-                    showMessage(moduleImportError(e));
-                }
-                throw e;
-            }
-
-            if (currentPgid !== pgid) {
-                return;
-            }
-
-            const configHls = {
-                enableWebVTT: false,
-                enableIMSC1: false,
-                enableCEA708Captions: false,
-                lowLatencyMode: false,
-                enableWorker: false,
-                maxFragLookUpTolerance: 0.0,
-                backBufferLength: 0,
-                maxBufferLength: 15,
-                maxBufferSize: 0,
-                maxBufferHole: 0.5,
-                debug: DEVELOPMENT,
-                xhrSetup: function (xhr: XMLHttpRequest) {
-                    xhr.withCredentials = true;
-                }
-            };
-            const audioInstance = new HlsPlayer(playerContainer, configHls, {
-                audio: true,
-            });
-            audioInstance.load(url, {
-                onerror: function (errorCode: number | null) {
-                    showPlayerError(errorCode);
-                    destroyAll();
-                },
-            });
-            mediaInstances[index] = audioInstance;
-            setMediaTitle(audioInstance);
-            audioReadyCounter++;
-            if (audioReadyCounter === audioEPInfo.files.length) {
-                audioReady();
-            }
         }
     }
 

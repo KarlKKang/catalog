@@ -25,10 +25,6 @@ export let hlsPlayerImportPromise: Promise<typeof import(
     /* webpackExports: ["HlsPlayer"] */
     '../module/player/hls_player'
 )>;
-export let videojsPlayerImportPromise: Promise<typeof import(
-    /* webpackExports: ["VideojsPlayer"] */
-    '../module/player/videojs_player'
-)>;
 
 export function importAll() {
     updatePageImportPromise = import(
@@ -55,9 +51,5 @@ export function importAll() {
     hlsPlayerImportPromise = import(
         /* webpackExports: ["HlsPlayer"] */
         '../module/player/hls_player'
-    );
-    videojsPlayerImportPromise = import(
-        /* webpackExports: ["VideojsPlayer"] */
-        '../module/player/videojs_player'
     );
 }
