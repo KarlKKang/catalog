@@ -396,11 +396,11 @@ async function addVideoNode(config?: {
             enableIMSC1: false,
             enableCEA708Captions: false,
             lowLatencyMode: false,
-            preferManagedMediaSource: false,
             enableWorker: false,
             maxFragLookUpTolerance: 0.0,
             backBufferLength: 0,
             maxBufferLength: Math.floor((MSE_BUFFER_SIZE * 8 * 1000 - 168750) / 20000 - 15),
+            mmsMinBufferLength: 16,
             maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
             maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Default: 0.1.
             debug: DEVELOPMENT,

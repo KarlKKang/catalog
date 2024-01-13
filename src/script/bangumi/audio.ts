@@ -170,7 +170,6 @@ async function addAudioNode(index: number) {
             enableIMSC1: false,
             enableCEA708Captions: false,
             lowLatencyMode: false,
-            preferManagedMediaSource: false,
             enableWorker: false,
             maxFragLookUpTolerance: 0.0,
             backBufferLength: 0,

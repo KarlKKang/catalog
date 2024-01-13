@@ -16,7 +16,7 @@ const config = {
             filename: 'style/[id].css',
         }),
         new CircularDependencyPlugin({
-            exclude: /node_modules/,
+            exclude: /node_modules|hls\.js/,
             failOnError: true,
             allowAsyncCycles: false,
             cwd: process.cwd(),
@@ -91,6 +91,7 @@ const config = {
                     or: [
                         // Exclude libraries in node_modules ...
                         /node_modules/,
+                        /hls\.js/,
                     ],
                     not: [
                         // Except for a few of them that needs to be transpiled because they use modern syntax
