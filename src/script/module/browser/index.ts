@@ -1,4 +1,4 @@
-import { getMediaSource, isSupported } from './hls_helper';
+import { getManagedMediaSource, getMediaSource, isSupported } from './hls_helper';
 import { UAParser } from 'ua-parser-js';
 
 import { createAudioElement, createVideoElement, w } from '../dom';
@@ -39,7 +39,13 @@ let MSE_BUFFER_SIZE = 100;
     IS_MACOS = osName === 'mac os';
 
     if (IS_SAFARI) {
-        MSE_BUFFER_SIZE = 290;
+        if (getManagedMediaSource() === undefined) {
+            MSE_BUFFER_SIZE = 300;
+        } else { // Safari 17 and up
+            if (!IS_IOS) {
+                MSE_BUFFER_SIZE = 275;
+            }
+        }
     } else if (IS_CHROMIUM) {
         MSE_BUFFER_SIZE = 150;
     }
