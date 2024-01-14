@@ -1,19 +1,32 @@
+import { w } from '../dom';
+
+declare global {
+    interface Window {
+        ManagedMediaSource: typeof MediaSource | undefined;
+        WebKitMediaSource: typeof MediaSource | undefined;
+        WebKitSourceBuffer: typeof SourceBuffer | undefined;
+    }
+}
+
+export function getManagedMediaSource(): typeof MediaSource | undefined {
+    return w.ManagedMediaSource;
+}
+
 export function getMediaSource(
     preferManagedMediaSource = true,
 ): typeof MediaSource | undefined {
-    if (typeof self === 'undefined') return undefined;
     const mms =
-        (preferManagedMediaSource || !self.MediaSource) &&
-        ((self as any).ManagedMediaSource as undefined | typeof MediaSource);
+        (preferManagedMediaSource || !w.MediaSource) &&
+        getManagedMediaSource();
     return (
         mms ||
-        self.MediaSource ||
-        ((self as any).WebKitMediaSource as typeof MediaSource)
+        w.MediaSource ||
+        w.WebKitMediaSource
     );
 }
 
-function getSourceBuffer(): typeof self.SourceBuffer {
-    return self.SourceBuffer || (self as any).WebKitSourceBuffer;
+function getSourceBuffer(): typeof SourceBuffer {
+    return w.SourceBuffer || w.WebKitSourceBuffer;
 }
 
 function isMSESupported(): boolean {
