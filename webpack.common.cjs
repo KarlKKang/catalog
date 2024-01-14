@@ -23,7 +23,7 @@ const config = {
         }),
         new BundleAnalyzerPlugin({
             analyzerMode: 'static',
-            reportFilename: '../../webpack-bundle-analyzer-report.html'
+            reportFilename: '../webpack-bundle-analyzer-report.html'
         }),
         new FaviconsWebpackPlugin({
             logo: './src/icon/icon.png',
