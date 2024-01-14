@@ -54,8 +54,10 @@ export class HlsPlayer extends NonNativePlayer {
                     }
                 }
                 onerror && onerror(errorCode);
+                console.error(data);
+            } else {
+                DEVELOPMENT && console.warn(data);
             }
-            console.error(data);
         };
         this.hlsInstance.on(Hls.Events.ERROR, this.onHlsError);
 
