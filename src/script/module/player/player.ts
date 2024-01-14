@@ -397,7 +397,7 @@ export class Player {
 
     public destroy(this: Player) {
         this.timer && removeInterval(this.timer);
-        this.disattach();
+        this.detach();
         removeAllEventListeners(this.media);
         removeAllEventListeners(this.controls);
         removeAllEventListeners(this.playButton);
@@ -414,7 +414,7 @@ export class Player {
         remove(this.controls);
     }
 
-    protected disattach(this: Player) {
+    protected detach(this: Player) {
         this.pause();
         this.media.removeAttribute('src');
         this.media.load();
