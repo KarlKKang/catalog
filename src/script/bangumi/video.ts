@@ -391,6 +391,7 @@ async function addVideoNode(config?: {
             return;
         }
 
+        const maxBufferLength = Math.floor((MSE_BUFFER_SIZE * 8 * 1000 - 168750) / 20000 - 15);
         const hlsConfig = {
             enableWebVTT: false,
             enableIMSC1: false,
@@ -399,9 +400,11 @@ async function addVideoNode(config?: {
             enableWorker: false,
             maxFragLookUpTolerance: 0.0,
             backBufferLength: 0,
-            maxBufferLength: Math.floor((MSE_BUFFER_SIZE * 8 * 1000 - 168750) / 20000 - 15),
+            maxBufferLength: maxBufferLength,
+            maxMaxBufferLength: maxBufferLength,
             mmsMinBufferLength: 16,
-            maxBufferSize: 0, // (100 - (20 * 15 + 168.75) / 8) * 1000 * 1000 (This buffer size will be exceeded sometimes)
+            minMaxBufferLength: 16,
+            maxBufferSize: 0, // This size is estimated by stream bitrate, thus not accurate and not in use.
             maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Default: 0.1.
             debug: DEVELOPMENT,
             xhrSetup: function (xhr: XMLHttpRequest) {
