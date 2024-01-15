@@ -11,14 +11,8 @@ export abstract class NonNativePlayer extends Player {
     private lastBufferUpdateTime = new Date().getTime();
     public onbufferstalled: (() => void) | undefined = undefined;
 
-    constructor(
-        container: HTMLDivElement,
-        config?: {
-            audio?: boolean;
-            debug?: boolean;
-        }
-    ) {
-        super(container, config);
+    constructor(container: HTMLDivElement, isVideo: boolean) {
+        super(container, isVideo);
         this.checkBuffer = this.checkBuffer.bind(this);
     }
 
@@ -125,9 +119,6 @@ export abstract class NonNativePlayer extends Player {
     }
 
     protected override oncanplaythrough(this: NonNativePlayer): void {
-        if (this.IS_VIDEO) {
-            this.startBuffer();
-        }
         if (!this.buffering) {
             super.oncanplaythrough();
         }

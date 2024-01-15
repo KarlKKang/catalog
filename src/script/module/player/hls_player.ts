@@ -1,6 +1,6 @@
 import { NonNativePlayer } from './non-native-player';
 import Hls from '../../../../hls.js';
-import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig } from '../../../../hls.js';
+import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from '../../../../hls.js';
 import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
 
 export class HlsPlayer extends NonNativePlayer {
@@ -16,14 +16,39 @@ export class HlsPlayer extends NonNativePlayer {
 
     constructor(
         container: HTMLDivElement,
-        hlsConfig: Partial<HlsConfig>,
-        config?: {
-            audio?: boolean;
-            debug?: boolean;
-        }
+        hlsConfig: Partial<{
+            maxBufferLength: number;
+            maxMaxBufferLength: number;
+            mmsMinBufferLength: number;
+            minMaxBufferLength: number;
+        }>,
+        isVideo: boolean,
     ) {
-        super(container, config);
-        this.hlsInstance = new Hls(hlsConfig);
+        super(container, isVideo);
+        const userHlsConfig: Partial<HlsConfig> = {
+            ...hlsConfig,
+            enableWorker: false,
+            maxFragLookUpTolerance: 0.0,
+            backBufferLength: 0,
+            maxBufferSize: 0, // This size is estimated by stream bitrate, thus not accurate and not in use.
+            maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Default: 0.1.
+            xhrSetup: function (xhr: XMLHttpRequest) {
+                xhr.withCredentials = true;
+            },
+            debug: DEVELOPMENT,
+        };
+        const defaultHlsConfig = Hls.DefaultConfig;
+        for (const type of ['manifest', 'playlist', 'key', 'cert', 'steeringManifest'] as const) {
+            const loadPolicyKey = `${type}LoadPolicy` as const;
+            const loadPolicy = deepCopyLoadPolicy(defaultHlsConfig[loadPolicyKey]);
+            loadPolicy.default.maxTimeToFirstByteMs = Infinity;
+            userHlsConfig[loadPolicyKey] = loadPolicy;
+        }
+        const fragLoadPolicy = deepCopyLoadPolicy(defaultHlsConfig.fragLoadPolicy);
+        fragLoadPolicy.default.maxTimeToFirstByteMs = 30000;
+        userHlsConfig.fragLoadPolicy = fragLoadPolicy;
+        this.hlsInstance = new Hls(userHlsConfig);
+        DEVELOPMENT && console.log(this.hlsInstance.config);
     }
 
     protected attach(this: HlsPlayer, onload: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
@@ -149,4 +174,8 @@ export class HlsPlayer extends NonNativePlayer {
             super.seek(timestamp);
         }
     }
+}
+
+function deepCopyLoadPolicy(obj: LoadPolicy): LoadPolicy {
+    return JSON.parse(JSON.stringify(obj));
 }

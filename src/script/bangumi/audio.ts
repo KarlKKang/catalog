@@ -134,9 +134,7 @@ async function addAudioNode(index: number) {
             return;
         }
 
-        const audioInstance = new Player(playerContainer, {
-            audio: true,
-        });
+        const audioInstance = new Player(playerContainer, false);
         audioInstance.load(url, {
             onerror: function (errorCode: number | null) {
                 showPlayerError(errorCode);
@@ -165,25 +163,8 @@ async function addAudioNode(index: number) {
             return;
         }
 
-        const configHls = {
-            enableWebVTT: false,
-            enableIMSC1: false,
-            enableCEA708Captions: false,
-            lowLatencyMode: false,
-            enableWorker: false,
-            maxFragLookUpTolerance: 0.0,
-            backBufferLength: 0,
-            maxBufferLength: 15,
-            maxBufferSize: 0,
-            maxBufferHole: 0.5,
-            debug: DEVELOPMENT,
-            xhrSetup: function (xhr: XMLHttpRequest) {
-                xhr.withCredentials = true;
-            }
-        };
-        const audioInstance = new HlsPlayer(playerContainer, configHls, {
-            audio: true,
-        });
+        const configHls = { maxBufferLength: 15 };
+        const audioInstance = new HlsPlayer(playerContainer, configHls, false);
         audioInstance.load(url, {
             onerror: function (errorCode: number | null) {
                 if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio

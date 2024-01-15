@@ -148,14 +148,8 @@ export class Player {
         }
     }
 
-    constructor(
-        container: HTMLDivElement,
-        config?: {
-            audio?: boolean;
-        }
-    ) {
-        config = config ?? {};
-        this.IS_VIDEO = !(config.audio === true);
+    constructor(container: HTMLDivElement, isVideo: boolean) {
+        this.IS_VIDEO = isVideo;
 
         if (DEVELOPMENT) {
             this.log = (message: string) => {

@@ -361,7 +361,7 @@ async function addVideoNode(config?: {
             return;
         }
 
-        const mediaInstance = new Player(playerContainer);
+        const mediaInstance = new Player(playerContainer, true);
         beforeLoad();
         currentMediaInstance = mediaInstance;
         mediaInstance.load(url, {
@@ -393,26 +393,13 @@ async function addVideoNode(config?: {
 
         const maxBufferLength = Math.floor((MSE_BUFFER_SIZE * 8 * 1000 - 168750) / 20000 - 15);
         const hlsConfig = {
-            enableWebVTT: false,
-            enableIMSC1: false,
-            enableCEA708Captions: false,
-            lowLatencyMode: false,
-            enableWorker: false,
-            maxFragLookUpTolerance: 0.0,
-            backBufferLength: 0,
             maxBufferLength: maxBufferLength,
             maxMaxBufferLength: maxBufferLength,
             mmsMinBufferLength: 16,
             minMaxBufferLength: 16,
-            maxBufferSize: 0, // This size is estimated by stream bitrate, thus not accurate and not in use.
-            maxBufferHole: 0.5, // In Safari 12, without this option video will stall at the start. Default: 0.1.
-            debug: DEVELOPMENT,
-            xhrSetup: function (xhr: XMLHttpRequest) {
-                xhr.withCredentials = true;
-            }
         };
 
-        const mediaInstance = new HlsPlayer(playerContainer, hlsConfig);
+        const mediaInstance = new HlsPlayer(playerContainer, hlsConfig, true);
         let bufferStalledMessageShown = false;
         beforeLoad();
         currentMediaInstance = mediaInstance;
