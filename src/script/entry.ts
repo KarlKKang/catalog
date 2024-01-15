@@ -45,7 +45,7 @@ type PageMap = {
     [key: string]: Page;
 };
 
-let body: HTMLElement | null = null;
+let body: HTMLElement;
 let currentPage: {
     script: PageScript;
     html_entry: HTMLEntry;
@@ -264,9 +264,6 @@ const directories: PageMap = {
     },
 };
 
-setRedirect(load);
-load(getFullURL());
-
 function load(url: string, withoutHistory: boolean = false) {
     let baseURL = getBaseURL(url);
 
@@ -416,17 +413,6 @@ async function registerServiceWorker() { // This function should be called after
 }
 
 async function loadPage(url: string, withoutHistory: boolean, pageName: string, page: Page) {
-    if (body === null) {
-        if (history.scrollRestoration !== undefined) {
-            history.scrollRestoration = 'manual';
-        }
-        addEventListenerOnce(w, 'load', () => {
-            body = d.body;
-            loadPage(url, withoutHistory, pageName, page);
-        });
-        return;
-    }
-
     loadPagePrepare(url, withoutHistory); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     d.documentElement.style.minHeight = '0'; // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
 
@@ -546,3 +532,12 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
         loadingBarWidth = 67;
     }
 }
+
+if (history.scrollRestoration !== undefined) {
+    history.scrollRestoration = 'manual';
+}
+addEventListenerOnce(w, 'load', () => {
+    body = d.body;
+    setRedirect(load);
+    load(getFullURL());
+});
