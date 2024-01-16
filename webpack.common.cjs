@@ -7,6 +7,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { cssMinifyOptions } = require('./build_config.cjs');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const { DOMAIN, DESCRIPTION } = require('./env/index.cjs');
+const { getCoreJSVersion } = require('./webpack_helper.cjs');
 
 const config = {
     target: 'browserslist',
@@ -107,7 +108,7 @@ const config = {
                                 "@babel/preset-env",
                                 {
                                     "useBuiltIns": "entry",
-                                    "corejs": "3.35",
+                                    "corejs": getCoreJSVersion(),
                                 }
                             ],
                             [

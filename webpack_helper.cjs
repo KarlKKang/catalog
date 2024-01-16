@@ -163,3 +163,8 @@ module.exports.addPlugins = function (config, dev) {
     addFontLoader(config, dev);
     addWorkboxPlugin(config, dev);
 }
+
+module.exports.getCoreJSVersion = function () {
+    const pkg = require('core-js/package.json');
+    return pkg.version;
+}
