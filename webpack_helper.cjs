@@ -66,6 +66,7 @@ function addWorkboxPlugin(config, dev) {
     const domainEscaped = domain.replace(/\./g, '\\.');
     config.plugins.push(
         new GenerateSW({
+            inlineWorkboxRuntime: true,
             include: [/\.js$/i, /\.css$/i, /index\.html$/i],
             ignoreURLParametersMatching: [/.*/],
             cleanupOutdatedCaches: true,
