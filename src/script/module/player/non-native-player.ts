@@ -3,7 +3,7 @@ import {
     addEventsListener,
     removeEventsListener,
 } from '../dom';
-import { addPlayerClass, containsPlayerClass, removePlayerClass } from './helper';
+import { addPlayerClass, removePlayerClass } from './helper';
 import { addTimeout } from '../timer';
 
 export abstract class NonNativePlayer extends Player {
@@ -32,19 +32,7 @@ export abstract class NonNativePlayer extends Player {
     }
 
     public override play(this: NonNativePlayer) {
-        if (this.IS_VIDEO) {
-            if (!containsPlayerClass(this.controls, 'has-started')) {
-                DEVELOPMENT && this.log?.('Initial play triggered.');
-                const currentTime = this.media.currentTime;
-                const playPromise = this.media.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => { DEVELOPMENT && this.log?.('Initial play promise rejected. (This is harmless)'); }); // Some browsers will reject the initial play request if it is not from a user action.
-                }
-                this.media.pause();
-                this.seek(currentTime);
-            }
-            this.startBuffer();
-        }
+        this.startBuffer();
         super.play();
     }
 
