@@ -93,8 +93,7 @@ export abstract class NonNativePlayer extends Player {
     }
 
     private startBuffer(this: NonNativePlayer) {
-        if (this.buffering) {
-            this.checkBuffer();
+        if (!this.IS_VIDEO || this.buffering) {
             return;
         }
 
@@ -106,16 +105,12 @@ export abstract class NonNativePlayer extends Player {
 
     protected override onloadedmetadata(this: NonNativePlayer): void {
         super.onloadedmetadata();
-        if (this.IS_VIDEO) {
-            this.startBuffer();
-        }
+        this.startBuffer();
     }
 
     protected override onplay(this: NonNativePlayer): void {
         super.onplay();
-        if (this.IS_VIDEO) {
-            this.startBuffer();
-        }
+        this.startBuffer();
     }
 
     protected override oncanplaythrough(this: NonNativePlayer): void {
@@ -126,8 +121,11 @@ export abstract class NonNativePlayer extends Player {
 
     protected override onwaiting(this: NonNativePlayer): void {
         super.onwaiting();
-        if (this.IS_VIDEO) {
-            this.startBuffer();
-        }
+        this.startBuffer();
+    }
+
+    protected override onseeking(this: NonNativePlayer): void {
+        super.onseeking();
+        this.startBuffer();
     }
 }

@@ -536,9 +536,7 @@ export class Player {
         addEventListener(this.media, 'ended', () => { this.onended(); });
 
         //Redundent
-        addEventListener(this.media, 'seeking', () => {
-            DEVELOPMENT && this.log?.('Seeking: ' + this.media.currentTime);
-        });
+        addEventListener(this.media, 'seeking', () => { this.onseeking(); });
         addEventListener(this.media, 'seeked', () => {
             DEVELOPMENT && this.log?.('Seeked: ' + this.media.currentTime);
         });
@@ -841,6 +839,10 @@ export class Player {
     protected oncanplaythrough(this: Player): void {
         DEVELOPMENT && this.log?.('Playback can play through at ' + this.media.currentTime + '.');
         removePlayerClass(this.controls, 'seeking');
+    }
+
+    protected onseeking(this: Player): void {
+        DEVELOPMENT && this.log?.('Seeking: ' + this.media.currentTime + '.');
     }
 
     protected getBufferedRange(this: Player): { start: number; end: number }[] {
