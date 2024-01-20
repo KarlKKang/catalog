@@ -222,7 +222,7 @@ export class Player {
 
         const currentTimeDisplayText = createSpanElement();
         this.currentTimeDisplayText = currentTimeDisplayText;
-        appendText(currentTimeDisplayText, '0:00');
+        appendText(currentTimeDisplayText, '--:--');
         addPlayerClass(currentTimeDisplayText, 'current-time-display');
         appendChild(currentTimeDisplay, currentTimeDisplayText);
 
@@ -244,7 +244,7 @@ export class Player {
 
         const durationDisplayText = createDivElement();
         this.durationDisplayText = durationDisplayText;
-        appendText(durationDisplayText, '0:00');
+        appendText(durationDisplayText, '--:--');
         addPlayerClass(durationDisplayText, 'duration-display');
         appendChild(durationDisplay, durationDisplayText);
 
@@ -282,7 +282,7 @@ export class Player {
         // Time tooltip
         const timeTooltip = createDivElement();
         this.timeTooltip = timeTooltip;
-        appendText(timeTooltip, '0:00');
+        appendText(timeTooltip, '--:--');
         addPlayerClass(timeTooltip, 'time-tooltip');
         appendChild(mouseDisplay, timeTooltip);
 
@@ -499,9 +499,8 @@ export class Player {
         addEventListener(this.media, 'loadedmetadata', () => { this.onloadedmetadata(); });
 
         addEventListener(this.media, 'durationchange', () => {
-            const duration = this.media.duration;
-            replaceText(this.durationDisplayText, secToTimestamp(duration));
-            replaceText(this.currentTimeDisplayText, secToTimestamp(this.media.currentTime, duration));
+            DEVELOPMENT && this.log?.('Duration changed: ' + this.media.duration);
+            replaceText(this.durationDisplayText, secToTimestamp(this.media.duration));
         });
 
         //Play button
@@ -754,6 +753,7 @@ export class Player {
     }
 
     protected onloadedmetadata(this: Player): void {
+        DEVELOPMENT && this.log?.('Loaded metadata.');
         replaceText(this.durationDisplayText, secToTimestamp(this.media.duration));
         this.ended = false;
     }

@@ -71,11 +71,11 @@ export const AUTH_DEACTIVATED = 'DEACTIVATED';
 export const AUTH_TOO_MANY_REQUESTS = 'TOO MANY REQUESTS';
 
 export function secToTimestamp(sec: number, templateSec?: number) {
-    if (isNaN(sec)) {
-        return '0:00';
+    if (isNaN(sec) || !isFinite(sec)) {
+        return '--:--';
     }
 
-    if (templateSec === undefined || isNaN(templateSec) || templateSec < sec) {
+    if (templateSec === undefined || isNaN(templateSec) || !isFinite(templateSec) || templateSec < sec) {
         templateSec = sec;
     }
 
