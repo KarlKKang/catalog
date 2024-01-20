@@ -1,14 +1,13 @@
 import {
     TOP_URL,
-} from './module/env/constant';
+} from '../module/env/constant';
 import {
     sendServerRequest,
     passwordStyling,
     authenticate,
     disableInput,
-    getURLParam,
     handleFailedTotp,
-} from './module/common';
+} from '../module/common';
 import {
     addEventListener,
     getById,
@@ -17,17 +16,20 @@ import {
     replaceChildren,
     replaceText,
     clearSessionStorage,
-} from './module/dom';
-import { show as showMessage } from './module/message';
-import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/message/template/inline';
-import { unrecommendedBrowser } from './module/message/template/param';
-import { UNRECOMMENDED_BROWSER } from './module/browser';
-import { popupWindowImport, promptForTotpImport } from './module/popup_window';
-import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
-import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import { redirect } from './module/global';
-import type { TotpPopupWindow } from './module/popup_window/totp';
-import { invalidResponse } from './module/message/template/param/server';
+} from '../module/dom';
+import { show as showMessage } from '../module/message';
+import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/message/template/inline';
+import { moduleImportError } from '../module/message/template/param';
+import { popupWindowImport, promptForTotpImport } from '../module/popup_window';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
+import type { ShowPageFunc } from '../module/type/ShowPageFunc';
+import { pgid, redirect } from '../module/global';
+import type { TotpPopupWindow } from '../module/popup_window/totp';
+import { invalidResponse } from '../module/message/template/param/server';
+
+let onDemandImportPromise: Promise<typeof import(
+    './on_demand'
+)>;
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -42,6 +44,7 @@ export default function (showPage: ShowPageFunc) {
                 showPage(() => { showPageCallback(); });
             }
     });
+    onDemandImportPromise = import('./on_demand');
 }
 
 function showPageCallback() {
@@ -94,7 +97,7 @@ function showPageCallback() {
 
     function sendLoginRequest(content: string, totpPopupWindow?: TotpPopupWindow) {
         sendServerRequest('login', {
-            callback: function (response: string) {
+            callback: async function (response: string) {
                 switch (response) {
                     case AUTH_FAILED:
                         totpPopupWindow?.[2];
@@ -134,13 +137,22 @@ function showPageCallback() {
                         showElement(warningElem);
                         disableAllInputs(false);
                         break;
-                    case 'APPROVED':
-                        if (UNRECOMMENDED_BROWSER) {
-                            showMessage(unrecommendedBrowser(getForwardURL()));
-                        } else {
-                            redirect(getForwardURL(), true);
+                    case 'APPROVED': {
+                        const currentPgid = pgid;
+                        let onDemandImport: Awaited<typeof onDemandImportPromise>;
+                        try {
+                            onDemandImport = await onDemandImportPromise;
+                        } catch (e) {
+                            if (currentPgid === pgid) {
+                                showMessage(moduleImportError(e));
+                            }
+                            throw e;
+                        }
+                        if (currentPgid === pgid) {
+                            onDemandImport.approvedCallback();
                         }
                         break;
+                    }
                     default:
                         showMessage(invalidResponse());
                 }
@@ -154,40 +166,5 @@ function showPageCallback() {
         disableInput(passwordInput, disabled);
         disableInput(usernameInput, disabled);
         disableInput(rememberMeInput, disabled);
-    }
-
-    function getForwardURL() {
-        const series = getURLParam('series');
-        if (series !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
-            let url: string;
-            let separator: '?' | '&' = '?';
-            url = TOP_URL + '/bangumi/' + series;
-
-            const ep = getURLParam('ep');
-            if (ep !== null && ep !== '1') {
-                url += separator + 'ep=' + ep;
-                separator = '&';
-            }
-
-            const format = getURLParam('format');
-            if (format !== null && format !== '1') {
-                url += separator + 'format=' + format;
-            }
-            return url;
-        }
-
-        const news = getURLParam('news');
-        if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
-            const hash = getURLParam('hash');
-            const hashString = (hash === null) ? '' : ('#' + hash);
-            return TOP_URL + '/news/' + news + hashString;
-        }
-
-        const keywords = getURLParam('keywords');
-        if (keywords !== null) {
-            return TOP_URL + '?keywords=' + keywords;
-        }
-
-        return TOP_URL;
     }
 }
