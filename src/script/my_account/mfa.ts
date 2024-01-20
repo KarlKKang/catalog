@@ -31,23 +31,18 @@ import {
     sessionEnded,
     mfaDisabled,
     mfaEnabled,
-    loginNotificationEnabled,
-    loginNotificationDisabled,
     accountDeactivated,
     tooManyFailedLogin,
     loginFailed,
-    loginNotificationIsEnabled,
-    disableButtonText,
-    enableButtonText,
-    loginNotificationIsDisabled,
 } from '../module/message/template/inline';
 import * as TOTPInfo from '../module/type/TOTPInfo';
 import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
 import { toCanvas } from 'qrcode';
 import { addInterval, removeInterval } from '../module/timer';
 import { pgid } from '../module/global';
-import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_MFA_WARNING, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, getSharedBool, getSharedButton, getSharedElement, setCurrentLoginNotificationStatus } from './shared_var';
-import { changeMfaStatus, disableAllInputs, handleFailedLogin, reauthenticationPrompt } from './helper';
+import { SHARED_VAR_IDX_MFA_WARNING, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, getSharedElement } from './shared_var';
+import { changeMfaStatus, disableAllInputs } from './helper';
+import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { popupWindowImportPromise } from './import_promise';
 import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
 import type { LoginPopupWindow } from './login_popup_window';
@@ -150,42 +145,6 @@ export function generateRecoveryCode() {
         },
         recoveryCodeWarning,
         undefined,
-        true,
-    );
-}
-
-export function changeLoginNotification() {
-    disableAllInputs(true);
-
-    const warningElem = getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING);
-
-    hideElement(warningElem);
-    changeColor(warningElem, 'red');
-
-    const loginNotificationTargetStatus = !getSharedBool(SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS);
-
-    reauthenticationPrompt(
-        'change_login_notification',
-        (response: string) => {
-            if (response === 'DONE') {
-                setCurrentLoginNotificationStatus(loginNotificationTargetStatus);
-                replaceText(getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO), loginNotificationTargetStatus ? loginNotificationIsEnabled : loginNotificationIsDisabled);
-                replaceText(getSharedButton(SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON), loginNotificationTargetStatus ? disableButtonText : enableButtonText);
-                replaceText(warningElem, loginNotificationTargetStatus ? loginNotificationEnabled : loginNotificationDisabled);
-                changeColor(warningElem, 'green');
-            } else if (response === 'TOTP NOT SET') {
-                changeMfaStatus(false);
-                replaceText(warningElem, mfaNotSet);
-            } else {
-                showMessage(invalidResponse());
-                return false;
-            }
-            showElement(warningElem);
-            disableAllInputs(false);
-            return true;
-        },
-        warningElem,
-        'p=' + (loginNotificationTargetStatus ? '1' : '0'),
         true,
     );
 }

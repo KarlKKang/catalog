@@ -3,18 +3,10 @@ import {
     changeColor,
 } from '../module/common';
 import {
-    addEventListener,
     showElement,
     hideElement,
     replaceText,
-    appendChild,
-    createParagraphElement,
-    appendText,
     remove,
-    createButtonElement,
-    addClass,
-    prependChild,
-    createDivElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import {
@@ -32,14 +24,21 @@ import {
     emailAlreadyRegistered,
     invitationClosed,
     logoutDone,
+    loginNotificationIsEnabled,
+    loginNotificationIsDisabled,
+    disableButtonText,
+    enableButtonText,
+    loginNotificationDisabled,
+    loginNotificationEnabled,
+    mfaNotSet,
 } from '../module/message/template/inline';
-import { SHARED_VAR_IDX_EMAIL_WARNING, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_INVITE_WARNING, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_WARNING, SHARED_VAR_IDX_SESSIONS_CONTAINER, SHARED_VAR_IDX_USERNAME_WARNING, getSharedElement, getSharedInput, sessionLogoutButtons } from './shared_var';
-import { disableAllInputs, reauthenticationPrompt } from './helper';
-import { EMAIL_REGEX, PASSWORD_REGEX, getLocalTimeString } from '../module/common/pure';
+import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_EMAIL_WARNING, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_INVITE_WARNING, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_WARNING, SHARED_VAR_IDX_USERNAME_WARNING, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setCurrentLoginNotificationStatus } from './shared_var';
+import { changeMfaStatus, disableAllInputs } from './helper';
+import { reauthenticationPrompt } from './auth_helper';
+import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import type { AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/message/template/param/server';
 import * as InviteResult from '../module/type/InviteResult';
-import { UAParser } from 'ua-parser-js';
 
 export function changeEmail() {
     disableAllInputs(true);
@@ -215,92 +214,63 @@ export function invite() {
     );
 }
 
-export function showSessions(userInfo: AccountInfo) {
-    for (const session of userInfo.sessions) {
-        const outerContainer = createDivElement();
-        const innerContainer = createDivElement();
-        appendChild(outerContainer, innerContainer);
-
-        appendParagraph('場所：' + session.country, innerContainer);
-        appendParagraph('IPアドレス：' + session.ip, innerContainer);
-
-        const ua = UAParser(session.ua);
-        const UNKNOWN = '不明';
-        let browser = ua.browser.name;
-        if (browser === undefined) {
-            browser = UNKNOWN;
-        } else {
-            const browserVer = ua.browser.version;
-            if (browserVer !== undefined) {
-                browser += ' ' + browserVer;
+export function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement, sessionWarningElem: HTMLDivElement) {
+    disableAllInputs(true);
+    hideElement(sessionWarningElem);
+    changeColor(sessionWarningElem, 'red');
+    reauthenticationPrompt(
+        'logout_session',
+        (response: string) => {
+            if (response === 'DONE') {
+                remove(sessionLogoutButton);
+                sessionLogoutButtons.delete(sessionLogoutButton);
+                changeColor(sessionWarningElem, 'green');
+                replaceText(sessionWarningElem, logoutDone);
+            } else {
+                showMessage(invalidResponse());
+                return false;
             }
-        }
-        let os = ua.os.name;
-        if (os === undefined) {
-            os = UNKNOWN;
-        } else {
-            const osVer = ua.os.version;
-            if (osVer !== undefined) {
-                os += ' ' + osVer;
-            }
-        }
-        appendParagraph('ブラウザ：' + browser, innerContainer);
-        appendParagraph('OS：' + os, innerContainer);
-
-        appendParagraph('最初のログイン：' + getLocalTimeString(session.login_time, true, true), innerContainer);
-        appendParagraph('最近のアクティビティ：' + getLocalTimeString(session.last_active_time, true, true), innerContainer);
-
-        const sessionID = session.id;
-        const sessionsContainer = getSharedElement(SHARED_VAR_IDX_SESSIONS_CONTAINER);
-        if (sessionID === undefined) {
-            const thisDevicePrompt = createParagraphElement();
-            addClass(thisDevicePrompt, 'warning');
-            appendText(thisDevicePrompt, '※このデバイスです。');
-            appendChild(innerContainer, thisDevicePrompt);
-            prependChild(sessionsContainer, outerContainer);
-        } else {
-            const sessionWarningElem = createParagraphElement();
-            addClass(sessionWarningElem, 'warning');
-            hideElement(sessionWarningElem);
-            appendChild(innerContainer, sessionWarningElem);
-
-            const sessionLogoutButton = createButtonElement();
-            addClass(sessionLogoutButton, 'button');
-            appendText(sessionLogoutButton, 'ログアウト');
-            appendChild(innerContainer, sessionLogoutButton);
-            sessionLogoutButtons.add(sessionLogoutButton);
-
-            addEventListener(sessionLogoutButton, 'click', () => {
-                disableAllInputs(true);
-                hideElement(sessionWarningElem);
-                changeColor(sessionWarningElem, 'red');
-                reauthenticationPrompt(
-                    'logout_session',
-                    (response: string) => {
-                        if (response === 'DONE') {
-                            remove(sessionLogoutButton);
-                            sessionLogoutButtons.delete(sessionLogoutButton);
-                            changeColor(sessionWarningElem, 'green');
-                            replaceText(sessionWarningElem, logoutDone);
-                        } else {
-                            showMessage(invalidResponse());
-                            return false;
-                        }
-                        showElement(sessionWarningElem);
-                        disableAllInputs(false);
-                        return true;
-                    },
-                    sessionWarningElem,
-                    'id=' + sessionID,
-                );
-            });
-            appendChild(sessionsContainer, outerContainer);
-        }
-    }
+            showElement(sessionWarningElem);
+            disableAllInputs(false);
+            return true;
+        },
+        sessionWarningElem,
+        'id=' + sessionID,
+    );
 }
 
-function appendParagraph(text: string, container: HTMLElement) {
-    const elem = createParagraphElement();
-    appendText(elem, text);
-    appendChild(container, elem);
+export function changeLoginNotification() {
+    disableAllInputs(true);
+
+    const warningElem = getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING);
+
+    hideElement(warningElem);
+    changeColor(warningElem, 'red');
+
+    const loginNotificationTargetStatus = !getSharedBool(SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS);
+
+    reauthenticationPrompt(
+        'change_login_notification',
+        (response: string) => {
+            if (response === 'DONE') {
+                setCurrentLoginNotificationStatus(loginNotificationTargetStatus);
+                replaceText(getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO), loginNotificationTargetStatus ? loginNotificationIsEnabled : loginNotificationIsDisabled);
+                replaceText(getSharedButton(SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON), loginNotificationTargetStatus ? disableButtonText : enableButtonText);
+                replaceText(warningElem, loginNotificationTargetStatus ? loginNotificationEnabled : loginNotificationDisabled);
+                changeColor(warningElem, 'green');
+            } else if (response === 'TOTP NOT SET') {
+                changeMfaStatus(false);
+                replaceText(warningElem, mfaNotSet);
+            } else {
+                showMessage(invalidResponse());
+                return false;
+            }
+            showElement(warningElem);
+            disableAllInputs(false);
+            return true;
+        },
+        warningElem,
+        'p=' + (loginNotificationTargetStatus ? '1' : '0'),
+        true,
+    );
 }
