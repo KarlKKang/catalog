@@ -21,6 +21,7 @@ import {
     prependChild,
     hideElement,
     createButtonElement,
+    replaceText,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -29,10 +30,10 @@ import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';
 import { SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, SHARED_VAR_IDX_INVITE_BUTTON, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGOUT_BUTTON, SHARED_VAR_IDX_MFA_BUTTON, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_SESSIONS_CONTAINER, SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, sessionLogoutButtons, setCurrentLoginNotificationStatus } from './shared_var';
 import { changeMfaStatus, disableAllInputs } from './helper';
-import { UAParser } from 'ua-parser-js';
 import { getLocalTimeString } from '../module/common/pure';
-import { basicImportPromise, importAll, mfaImportPromise } from './import_promise';
+import { basicImportPromise, importAll, mfaImportPromise, parseBrowserImportPromise } from './import_promise';
 import { moduleImportError } from '../module/message/template/param';
+import { loading } from '../module/message/template/inline';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -155,28 +156,13 @@ function showSessions(userInfo: AccountInfo.AccountInfo) {
         appendParagraph('場所：' + session.country, innerContainer);
         appendParagraph('IPアドレス：' + session.ip, innerContainer);
 
-        const ua = UAParser(session.ua);
-        const UNKNOWN = '不明';
-        let browser = ua.browser.name;
-        if (browser === undefined) {
-            browser = UNKNOWN;
-        } else {
-            const browserVer = ua.browser.version;
-            if (browserVer !== undefined) {
-                browser += ' ' + browserVer;
-            }
-        }
-        let os = ua.os.name;
-        if (os === undefined) {
-            os = UNKNOWN;
-        } else {
-            const osVer = ua.os.version;
-            if (osVer !== undefined) {
-                os += ' ' + osVer;
-            }
-        }
-        appendParagraph('ブラウザ：' + browser, innerContainer);
-        appendParagraph('OS：' + os, innerContainer);
+        const browserTextElem = appendParagraph('ブラウザ：' + loading, innerContainer);
+        const osTextElem = appendParagraph('OS：' + loading, innerContainer);
+        getImport(parseBrowserImportPromise).then(({ default: parseBrowser }) => {
+            const [browser, os] = parseBrowser(session.ua);
+            replaceText(browserTextElem, 'ブラウザ：' + browser);
+            replaceText(osTextElem, 'OS：' + os);
+        });
 
         appendParagraph('最初のログイン：' + getLocalTimeString(session.login_time, true, true), innerContainer);
         appendParagraph('最近のアクティビティ：' + getLocalTimeString(session.last_active_time, true, true), innerContainer);
@@ -218,6 +204,7 @@ function appendParagraph(text: string, container: HTMLElement) {
     const elem = createParagraphElement();
     appendText(elem, text);
     appendChild(container, elem);
+    return elem;
 }
 
 async function getImport<T>(importPromise: Promise<T>) {
