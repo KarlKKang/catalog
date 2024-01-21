@@ -7,49 +7,52 @@ function unsupportRedirect() {
 }
 
 (function () {
-    if (!('onerror' in window)) {
-        unsupportRedirect();
+    const w = window;
+    const _unsupportRedirect = unsupportRedirect;
+
+    if (!('onerror' in w)) {
+        _unsupportRedirect();
         return;
     }
 
-    if (!window.addEventListener) {
-        unsupportRedirect();
+    if (!w.addEventListener) {
+        _unsupportRedirect();
         return;
     }
 
-    if (!window.SyntaxError) {
-        unsupportRedirect();
+    if (!w.SyntaxError) {
+        _unsupportRedirect();
         return;
     }
 
-    window.addEventListener('error', (e) => {
+    w.addEventListener('error', (e) => {
         if (e.error instanceof SyntaxError) {
-            unsupportRedirect();
+            _unsupportRedirect();
         }
     }, true);
 
-    if (!window.Function || !Function.prototype.bind) {
-        unsupportRedirect();
+    if (!w.Function || !Function.prototype.bind) {
+        _unsupportRedirect();
         return;
     }
 
-    if (!window.XMLHttpRequest || !('withCredentials' in new XMLHttpRequest())) {
-        unsupportRedirect();
+    if (!w.XMLHttpRequest || !('withCredentials' in new XMLHttpRequest())) {
+        _unsupportRedirect();
         return;
     }
 
-    if (!window.HTMLScriptElement) {
-        unsupportRedirect();
+    if (!w.HTMLScriptElement) {
+        _unsupportRedirect();
         return;
     }
 
     if (!('noModule' in HTMLScriptElement.prototype)) {
-        unsupportRedirect();
+        _unsupportRedirect();
         return;
     }
 
-    if (!window.CSS || !window.CSS.supports || !window.CSS.supports('(--a: 0)')) { // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
-        unsupportRedirect();
+    if (!w.CSS || !w.CSS.supports || !w.CSS.supports('(--a: 0)')) { // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
+        _unsupportRedirect();
         return;
     }
 
@@ -72,35 +75,35 @@ function unsupportRedirect() {
         const x = '__cookie_test__';
         document.cookie = x + '=' + x + ';max-age=10;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
         if (getCookie(x) !== x) {
-            unsupportRedirect();
+            _unsupportRedirect();
             return;
         }
         document.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
     } catch (e) {
-        unsupportRedirect();
+        _unsupportRedirect();
         return;
     }
 
     try {
-        const storage = window.sessionStorage;
+        const storage = w.sessionStorage;
         if (!storage) {
-            unsupportRedirect();
+            _unsupportRedirect();
             return;
         }
         const x = '__storage_test__';
         storage.setItem(x, x);
         if (storage.getItem(x) !== x) {
-            unsupportRedirect();
+            _unsupportRedirect();
             return;
         }
         storage.removeItem(x);
     } catch (e) {
         // QuotaExceededError will be treated as unsupported browser. The storage should never reach the quota of a properly configured browser in normal operation.
-        unsupportRedirect();
+        _unsupportRedirect();
         return;
     }
 
-    window.addEventListener('load', () => {
+    w.addEventListener('load', () => {
         const dynamicImportScript = document.createElement('script');
         dynamicImportScript.textContent = 'dynamicImportTest=import("data:text/javascript;base64,Cg==")';
         document.body.appendChild(dynamicImportScript);
