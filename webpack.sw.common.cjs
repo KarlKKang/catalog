@@ -2,7 +2,6 @@ const { getCoreJSVersion } = require('./webpack_helper.cjs');
 
 const config = {
     target: 'webworker',
-    entry: './temp/sw.js',
     output: {
         filename: 'sw.js',
         publicPath: '/',

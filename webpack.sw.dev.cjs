@@ -1,6 +1,7 @@
 const config = require('./webpack.sw.common.cjs');
 const path = require('path');
 
+config.entry = './temp/sw_alpha.js';
 config.mode = 'development';
 config.output.path = path.resolve(__dirname, 'dev');
 config.devtool = 'source-map';

@@ -72,7 +72,7 @@ function addWorkboxPlugin(config, dev) {
             cleanupOutdatedCaches: true,
             clientsClaim: true,
             directoryIndex: null,
-            swDest: '../temp/sw.js',
+            swDest: '../temp/' + (dev ? 'sw_alpha.js' : 'sw.js'),
             navigateFallback: '/',
             navigateFallbackDenylist: [/^\/unsupported_browser$/],
             babelPresetEnvTargets: ['last 1 Chrome versions'], // Will be transpiled separately
