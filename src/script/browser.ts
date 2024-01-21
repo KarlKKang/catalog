@@ -8,6 +8,7 @@ function unsupportRedirect() {
 
 (function () {
     const w = window;
+    const d = document;
     const _unsupportRedirect = unsupportRedirect;
 
     if (!('onerror' in w)) {
@@ -58,7 +59,7 @@ function unsupportRedirect() {
 
     const getCookie = (name: string) => {
         name = name + '=';
-        const cookies = document.cookie.split(';');
+        const cookies = d.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i] as string;
             while (cookie.charAt(0) === ' ') {
@@ -73,12 +74,12 @@ function unsupportRedirect() {
 
     try {
         const x = '__cookie_test__';
-        document.cookie = x + '=' + x + ';max-age=10;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
+        d.cookie = x + '=' + x + ';max-age=10;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
         if (getCookie(x) !== x) {
             _unsupportRedirect();
             return;
         }
-        document.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
+        d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
     } catch (e) {
         _unsupportRedirect();
         return;
@@ -104,12 +105,14 @@ function unsupportRedirect() {
     }
 
     w.addEventListener('load', () => {
-        const dynamicImportScript = document.createElement('script');
-        dynamicImportScript.textContent = 'dynamicImportTest=import("data:text/javascript;base64,Cg==")';
-        document.body.appendChild(dynamicImportScript);
+        const body = d.body;
 
-        const checkScript = document.createElement('script');
+        const dynamicImportScript = d.createElement('script');
+        dynamicImportScript.textContent = 'dynamicImportTest=import("data:text/javascript;base64,Cg==")';
+        body.appendChild(dynamicImportScript);
+
+        const checkScript = d.createElement('script');
         checkScript.textContent = 'dynamicImportTest instanceof Promise?dynamicImportTest.catch(function(){unsupportRedirect()}):unsupportRedirect()';
-        document.body.appendChild(checkScript);
+        body.appendChild(checkScript);
     });
 })();
