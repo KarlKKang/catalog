@@ -43,6 +43,7 @@ import {
     IS_WINDOWS,
     CAN_PLAY_AAC,
     MSE_BUFFER_SIZE,
+    MIN_MSE_BUFFER_SIZE,
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
@@ -391,12 +392,13 @@ async function addVideoNode(config?: {
             return;
         }
 
-        const maxBufferLength = Math.floor((MSE_BUFFER_SIZE * 8 * 1000 - 168750) / 20000 - 15);
+        const maxBufferLength = (MSE_BUFFER_SIZE * 8 * 1024 - 168750) / 20000 - 15;
+        const minBufferLength = (MIN_MSE_BUFFER_SIZE * 8 * 1024 - 168750) / 20000 - 15;
         const hlsConfig = {
             maxBufferLength: maxBufferLength,
             maxMaxBufferLength: maxBufferLength,
-            mmsMinBufferLength: 16,
-            minMaxBufferLength: 16,
+            mmsMinBufferLength: minBufferLength,
+            minMaxBufferLength: minBufferLength,
         };
 
         const mediaInstance = new HlsPlayer(playerContainer, hlsConfig, true);

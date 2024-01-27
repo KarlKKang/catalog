@@ -17,7 +17,8 @@ let IS_EDGE = false;
 let IS_WINDOWS = false;
 let IS_MACOS = false;
 let UNRECOMMENDED_BROWSER = false;
-let MSE_BUFFER_SIZE = 100;
+const MIN_MSE_BUFFER_SIZE = 95; // The minimum buffer size for MSE in order for the videos to play properly. Browsers with smaller buffer size will be considered as unsupported.
+let MSE_BUFFER_SIZE = MIN_MSE_BUFFER_SIZE;
 
 (function () {
     if (typeof navigator === 'undefined') {
@@ -78,6 +79,7 @@ export { IS_EDGE };
 export { IS_WINDOWS };
 export { IS_MACOS };
 export { UNRECOMMENDED_BROWSER };
+export { MIN_MSE_BUFFER_SIZE };
 export { MSE_BUFFER_SIZE };
 
 export { NATIVE_HLS_SUPPORTED };
