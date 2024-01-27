@@ -143,9 +143,9 @@
 
     .announcement {
         margin: 3vh auto 0px auto;
-        width: 75%;
+        padding: 0px;
+        width: 90%;
         max-width: 1000px;
-        padding: 2em;
         background-color: var(--foreground-color);
         box-shadow: var(--shadow);
         transition: box-shadow .4s ease-out;
@@ -154,20 +154,31 @@
         &:hover {
             box-shadow: var(--shadow-hover);
         }
-    }
 
-    .announcement-title {
-        text-align: center;
-        margin: 0px 0px 1em 0px;
-        padding: 0px;
-        font-size: x-large;
-        font-weight: 500;
-    }
+        >div {
+            display: inline-block;
+            margin: 2em;
+            width: calc(100% - 4em);
 
-    .announcement-body {
-        margin: 1em 0px 0px 0px;
-        padding: 0px;
-        text-align: center;
+            @supports (margin: min(2em, 5%)) and (width: calc(100% - min(4em, 10%))) {
+                margin: min(2em, 5%);
+                width: calc(100% - min(4em, 10%));
+            }
+
+            .announcement-title {
+                text-align: center;
+                margin: 0px 0px 1em 0px;
+                padding: 0px;
+                font-size: x-large;
+                font-weight: 500;
+            }
+
+            .announcement-body {
+                margin: 1em 0px 0px 0px;
+                padding: 0px;
+                text-align: center;
+            }
+        }
     }
 
     #loading-text {

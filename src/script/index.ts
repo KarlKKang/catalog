@@ -93,17 +93,20 @@ function showPageCallback(
 
     initializeInfiniteScrolling(() => { getSeries(showSeries, true); }, - 256 - 24);
     if (seriesInfo.maintenance !== undefined) {
-        const annoucementContainer = createDivElement();
-        addClass(annoucementContainer, 'announcement');
+        const annoucementOuterContainer = createDivElement();
+        const announcementInnerContainer = createDivElement();
+        addClass(annoucementOuterContainer, 'announcement');
+        appendChild(annoucementOuterContainer, announcementInnerContainer);
+        insertBefore(annoucementOuterContainer, containerElem);
+
         const announcementTitle = createParagraphElement();
         addClass(announcementTitle, 'announcement-title');
         changeColor(announcementTitle, 'orange');
+        appendText(announcementTitle, 'メンテナンスのお知らせ');
         const announcementBody = createParagraphElement();
         addClass(announcementBody, 'announcement-body');
-        appendChild(annoucementContainer, announcementTitle);
-        appendChild(annoucementContainer, announcementBody);
-        insertBefore(annoucementContainer, containerElem);
-        appendText(announcementTitle, 'メンテナンスのお知らせ');
+        appendChild(announcementInnerContainer, announcementTitle);
+        appendChild(announcementInnerContainer, announcementBody);
 
         const maintenanceInfo = seriesInfo.maintenance;
         let message = '';
