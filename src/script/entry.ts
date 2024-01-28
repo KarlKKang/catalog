@@ -1,5 +1,5 @@
 import 'core-js';
-import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, appendText, createButtonElement, createDivElement, appendChild } from './module/dom';
+import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, appendText, createButtonElement, createDivElement, appendChild, createElement, html } from './module/dom';
 import { DOMAIN, TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -39,6 +39,7 @@ type Page = {
     title?: string;
     id?: string;
     customPopState?: boolean;
+    nativeViewport?: boolean;
 };
 
 type PageMap = {
@@ -125,6 +126,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/image.html'),
         htmlEntry: HTMLEntry.NO_THEME,
+        nativeViewport: true,
     },
     'info': {
         script: () => import('./info'),
@@ -305,7 +307,7 @@ function loadPagePrepare(url: string, withoutHistory: boolean) {
     return;
 }
 
-async function registerServiceWorker() { // This function should be called after setting the `currentScriptImportPromise`.
+async function registerServiceWorker(showPrompt: boolean) { // This function should be called after setting the `pgid`.
     if ('serviceWorker' in navigator) {
         const currentPgid = pgid;
         const showSkipWaitingPrompt = async (wb: WorkboxType) => {
@@ -361,7 +363,7 @@ async function registerServiceWorker() { // This function should be called after
 
         const addWaitingListener = (wb: WorkboxType) => {
             addEventListener(serviceWorker as unknown as EventTarget, 'waiting', () => {
-                showSkipWaitingPrompt(wb);
+                showPrompt && showSkipWaitingPrompt(wb);
             });
         };
 
@@ -405,7 +407,7 @@ async function registerServiceWorker() { // This function should be called after
                     addWaitingListener(serviceWorker);
                     serviceWorker.update();
                 } else {
-                    showSkipWaitingPrompt(serviceWorker);
+                    showPrompt && showSkipWaitingPrompt(serviceWorker);
                 }
             }
         }
@@ -414,12 +416,13 @@ async function registerServiceWorker() { // This function should be called after
 
 async function loadPage(url: string, withoutHistory: boolean, pageName: string, page: Page) {
     loadPagePrepare(url, withoutHistory); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
-    d.documentElement.style.minHeight = '0'; // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
+    html.style.minHeight = '0'; // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
 
     body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
     setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
-    const noThemeClassName = 'no-theme';
-    page.htmlEntry === HTMLEntry.NO_THEME ? addClass(body, noThemeClassName) : removeClass(body, noThemeClassName);
+    const NO_THEME_CLASS = 'no-theme';
+    removeClass(body, NO_THEME_CLASS);
+    setViewport(false);
 
     const scriptImportPromise = page.script();
     const styleImportPromises = page.style();
@@ -496,9 +499,9 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
     };
     script.default(
         async (callback?: () => void) => {
-            let html: Awaited<typeof htmlImportPromise>;
+            let htmlContent: Awaited<typeof htmlImportPromise>;
             try {
-                [html] = await Promise.all([htmlImportPromise, ...styleImportPromises]);
+                [htmlContent] = await Promise.all([htmlImportPromise, ...styleImportPromises]);
             } catch (e) {
                 if (pgid === newPgid) {
                     showMessage(moduleImportError(e));
@@ -510,19 +513,27 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
                 return;
             }
 
-            d.documentElement.style.removeProperty('min-height');
-            getBody().innerHTML = html.default;
-            registerServiceWorker();
+            const isStandardStyle = page.htmlEntry !== HTMLEntry.NO_THEME && page.nativeViewport !== true;
+            html.style.removeProperty('min-height');
+            page.htmlEntry === HTMLEntry.NO_THEME && addClass(body, NO_THEME_CLASS);
+            page.nativeViewport === true && setViewport(true);
+            registerServiceWorker(isStandardStyle);
+            getBody().innerHTML = htmlContent.default;
             callback?.();
 
             loadingBarWidth = 100;
             if (loadingBarShown) {
-                loadingBar.style.width = '100%';
-                addTimeout(() => {
+                const hideLoadingBar = () => {
                     loadingBarShown = false;
                     loadingBar.style.visibility = 'hidden';
                     loadingBar.style.opacity = '0';
-                }, 300);
+                };
+                if (isStandardStyle) {
+                    loadingBar.style.width = '100%';
+                    addTimeout(hideLoadingBar, 300);
+                } else {
+                    hideLoadingBar(); // Directly hide the loading bar for pages with non-standard style.
+                }
             }
         }
     );
@@ -531,6 +542,24 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
     } else {
         loadingBarWidth = 67;
     }
+}
+
+function setViewport(native: boolean) {
+    let viewportTag = d.querySelector('meta[name=viewport]') as HTMLMetaElement;
+    if (!viewportTag) {
+        viewportTag = createElement('meta') as HTMLMetaElement;
+        viewportTag.name = 'viewport';
+        appendChild(d.head, viewportTag);
+    }
+    let viewpartTagContent = '';
+    const NATIVE_VIEWPORT_CLASS = 'native-viewport';
+    if (native) {
+        addClass(html, NATIVE_VIEWPORT_CLASS);
+    } else {
+        viewpartTagContent = 'width=device-width, initial-scale=1, viewport-fit=cover';
+        removeClass(html, NATIVE_VIEWPORT_CLASS);
+    }
+    viewportTag.content = viewpartTagContent;
 }
 
 if (history.scrollRestoration !== undefined) {

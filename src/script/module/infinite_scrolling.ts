@@ -3,6 +3,7 @@ import {
     addEventListener,
     getById,
     d,
+    html,
 } from './dom';
 
 let instance: {
@@ -24,7 +25,7 @@ export function initializeInfiniteScrolling(listener: () => void, offset?: numbe
         }
 
         const boundingRect = positionDetector.getBoundingClientRect();
-        const viewportHeight = Math.max(d.documentElement.clientHeight || 0, w.innerHeight || 0);
+        const viewportHeight = Math.max(html.clientHeight || 0, w.innerHeight || 0);
 
         if (boundingRect.top + (offset ?? 0) <= viewportHeight * 1.5) {
             isEnabled = false;

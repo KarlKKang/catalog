@@ -98,11 +98,14 @@ html {
     display: none;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
     min-height: 100%;
 
     @media screen {
         display: block;
+    }
+
+    &:not(.native-viewport) {
+        padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
     }
 }
 

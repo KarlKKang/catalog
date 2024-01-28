@@ -5,6 +5,7 @@ import {
 
 export const d = document;
 export const w = window;
+export const html = d.documentElement;
 const windowLocation = w.location;
 
 export function getFullURL() {
