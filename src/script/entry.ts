@@ -551,12 +551,12 @@ function setViewport(native: boolean) {
         viewportTag.name = 'viewport';
         appendChild(d.head, viewportTag);
     }
-    let viewpartTagContent = '';
+    let viewpartTagContent = 'width=device-width, initial-scale=1';
     const NATIVE_VIEWPORT_CLASS = 'native-viewport';
     if (native) {
         addClass(html, NATIVE_VIEWPORT_CLASS);
     } else {
-        viewpartTagContent = 'width=device-width, initial-scale=1, viewport-fit=cover';
+        viewpartTagContent += ', viewport-fit=cover';
         removeClass(html, NATIVE_VIEWPORT_CLASS);
     }
     viewportTag.content = viewpartTagContent;

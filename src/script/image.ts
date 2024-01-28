@@ -12,6 +12,7 @@ import {
     getById,
     getSessionStorage,
     clearSessionStorage,
+    w,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
@@ -65,7 +66,12 @@ export default function (showPage: ShowPageFunc) {
                         return;
                     }
                     imageLoader = imageLoaderModule;
-                    imageLoader.default(container, baseURL + encodeCFURIComponent(fileName), fileName, true, undefined, undefined, () => {
+                    imageLoader.default(container, baseURL + encodeCFURIComponent(fileName), fileName, true, (canvas) => {
+                        const ratio = w.devicePixelRatio;
+                        canvas.style.width = canvas.width / ratio + 'px';
+                        // We won't listen to DPI change since we want to allow the user to zoom in and out.
+                        // This has the side effect of not updating the image size when the screen DPI actually changes.
+                    }, undefined, () => {
                         showMessage(notFound);
                     });
                 }).catch((e) => {

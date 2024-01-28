@@ -15,13 +15,13 @@ import { pgid } from './global';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
-type webpMachineQueueItem = { container: Element; image: HTMLImageElement; webpData: Uint8Array; onLoad: (() => void) | undefined; onError: () => void };
+type webpMachineQueueItem = { container: Element; image: HTMLImageElement; webpData: Uint8Array; onLoad: ((canvas: HTMLCanvasElement) => void) | undefined; onError: () => void };
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
-export default function (container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: () => void, onDataLoad?: (data: Blob) => void, onNetworkError?: () => void, onUnrecoverableError?: () => void): XMLHttpRequest {
+export default function (container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: (canvas: HTMLCanvasElement) => void, onDataLoad?: (data: Blob) => void, onNetworkError?: () => void, onUnrecoverableError?: () => void): XMLHttpRequest {
     let imageData: Blob;
     let isWebp: boolean;
 
@@ -95,7 +95,7 @@ export default function (container: Element, src: string, alt: string, withCrede
 
         imageProtection(canvas);
         appendChild(container, canvas);
-        onImageDraw && onImageDraw();
+        onImageDraw && onImageDraw(canvas);
     }
 
     addEventListener(image, 'error', onImageError);
@@ -194,7 +194,7 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
     imageProtection(canvas);
     appendChild(queueItem.container, canvas);
     const onLoad = queueItem.onLoad;
-    onLoad && onLoad();
+    onLoad && onLoad(canvas);
 }
 
 function imageProtection(elem: HTMLElement) {
