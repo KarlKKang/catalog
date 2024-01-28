@@ -35,7 +35,7 @@ type Page = {
     html: () => Promise<{
         default: string;
     }>;
-    html_entry: HTMLEntry;
+    htmlEntry: HTMLEntry;
     title?: string;
     id?: string;
     customPopState?: boolean;
@@ -48,7 +48,7 @@ type PageMap = {
 let body: HTMLElement;
 let currentPage: {
     script: PageScript;
-    html_entry: HTMLEntry;
+    htmlEntry: HTMLEntry;
 } | null = null;
 
 let swUpdateLastPromptTime: number = 0;
@@ -78,7 +78,7 @@ const page404: Page = {
     script: () => import('./404'),
     style: () => [],
     html: () => Promise.resolve({ default: messagePageHTML }),
-    html_entry: HTMLEntry.DEFAULT,
+    htmlEntry: HTMLEntry.DEFAULT,
     title: '404',
     id: 'message',
 };
@@ -94,7 +94,7 @@ const pages: PageMap = {
             import('../css/index.scss'),
         ],
         html: () => import('../html/index.html'),
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
         id: 'top',
         customPopState: true,
     },
@@ -105,7 +105,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/confirm_new_email.html'),
         title: 'メールアドレス変更',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
     'console': {
         script: () => import('./console'),
@@ -116,7 +116,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/console.html'),
         title: 'console',
-        html_entry: HTMLEntry.NO_THEME,
+        htmlEntry: HTMLEntry.NO_THEME,
     },
     'image': {
         script: () => import('./image'),
@@ -124,7 +124,7 @@ const pages: PageMap = {
             import('../css/image.scss'),
         ],
         html: () => import('../html/image.html'),
-        html_entry: HTMLEntry.NO_THEME,
+        htmlEntry: HTMLEntry.NO_THEME,
     },
     'info': {
         script: () => import('./info'),
@@ -144,14 +144,14 @@ const pages: PageMap = {
         ],
         html: () => import('../html/info.html'),
         title: 'ご利用ガイド',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
         id: 'news',
     },
     'message': {
         script: () => Promise.resolve(messagePageScript),
         style: () => [],
         html: () => Promise.resolve({ default: messagePageHTML }),
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
     'my_account': {
         script: () => import('./my_account'),
@@ -165,7 +165,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/my_account.html'),
         title: 'マイページ',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
     'new_email': {
         script: () => import('./new_email'),
@@ -174,7 +174,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/new_email.html'),
         title: 'メールアドレス変更',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
     'register': {
         script: () => import('./register'),
@@ -187,7 +187,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/register.html'),
         title: '新規登録',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
     'special_register': {
         script: () => import('./special_register'),
@@ -197,7 +197,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/special_register.html'),
         title: '新規登録',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
     'login': {
         script: () => import('./login'),
@@ -207,7 +207,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/login.html'),
         title: 'ログイン',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
         id: 'login',
     },
     'request_password_reset': {
@@ -217,7 +217,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/request_password_reset.html'),
         title: 'パスワード再発行',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
     'password_reset': {
         script: () => import('./password_reset'),
@@ -226,7 +226,7 @@ const pages: PageMap = {
         ],
         html: () => import('../html/password_reset.html'),
         title: 'パスワード再発行',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
 };
 const directories: PageMap = {
@@ -240,7 +240,7 @@ const directories: PageMap = {
             import('../css/player.scss'),
         ],
         html: () => import('../html/bangumi.html'),
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
     'news': {
         script: () => import('./news'),
@@ -260,7 +260,7 @@ const directories: PageMap = {
         ],
         html: () => import('../html/news.html'),
         title: 'お知らせ',
-        html_entry: HTMLEntry.DEFAULT,
+        htmlEntry: HTMLEntry.DEFAULT,
     },
 };
 
@@ -419,7 +419,7 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
     body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
     setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
     const noThemeClassName = 'no-theme';
-    page.html_entry === HTMLEntry.NO_THEME ? addClass(body, noThemeClassName) : removeClass(body, noThemeClassName);
+    page.htmlEntry === HTMLEntry.NO_THEME ? addClass(body, noThemeClassName) : removeClass(body, noThemeClassName);
 
     const scriptImportPromise = page.script();
     const styleImportPromises = page.style();
@@ -492,7 +492,7 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
 
     currentPage = {
         script: script,
-        html_entry: page.html_entry,
+        htmlEntry: page.htmlEntry,
     };
     script.default(
         async (callback?: () => void) => {
