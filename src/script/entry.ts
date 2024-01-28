@@ -264,7 +264,7 @@ const directories: PageMap = {
     },
 };
 
-function load(url: string, withoutHistory: boolean = false) {
+function load(url: string, withoutHistory: boolean | null = false) {
     let baseURL = getBaseURL(url);
 
     if (baseURL === TOP_URL) {
@@ -289,7 +289,7 @@ function load(url: string, withoutHistory: boolean = false) {
     loadPage(url, withoutHistory, '404', page404);
 }
 
-function offloadCurrentPage(url: string, withoutHistory: boolean) {
+function offloadCurrentPage() {
     if (currentPage === null) {
         return;
     }
@@ -299,11 +299,6 @@ function offloadCurrentPage(url: string, withoutHistory: boolean) {
     destroyPopupWindow();
     replaceChildren(getBody());
     setCustomPopStateHandler(null);
-    if (getFullURL() !== url) {
-        // Prevent pushing the state back for popstate events.
-        changeURL(url, withoutHistory);
-    }
-    return;
 }
 
 async function registerServiceWorker(showPrompt: boolean) { // This function should be called after setting the `pgid`.
@@ -413,10 +408,13 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
     }
 }
 
-async function loadPage(url: string, withoutHistory: boolean, pageName: string, page: Page) {
-    offloadCurrentPage(url, withoutHistory); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
+async function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page) {
+    offloadCurrentPage(); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     html.style.minHeight = '0'; // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
 
+    if (withoutHistory !== null) {
+        changeURL(url, withoutHistory);
+    }
     body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
     setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
     const NO_THEME_CLASS = 'no-theme';
@@ -556,11 +554,11 @@ if (history.scrollRestoration !== undefined) {
 addEventListenerOnce(w, 'load', () => {
     body = d.body;
     setRedirect(load);
-    load(fullURL);
+    load(fullURL, null);
     w.addEventListener('popstate', (state) => {
         if (state.state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
             if (customPopStateHandler === null) {
-                load(getFullURL());
+                load(getFullURL(), null);
                 if (DEVELOPMENT) {
                     console.log('popstate handled by the loader.');
                 }
