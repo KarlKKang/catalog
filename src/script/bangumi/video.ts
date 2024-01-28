@@ -26,6 +26,7 @@ import {
     getParentElement,
     removeClass,
     containsClass,
+    changeURL,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
@@ -48,7 +49,7 @@ import {
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 
-import { updateURLParam, getFormatIndex } from './helper';
+import { getFormatIndex, createQuery } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, showTextErrorMessage } from './media_helper';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { HLS_BUFFER_APPEND_ERROR } from '../module/player/media_error';
@@ -117,7 +118,6 @@ export default function (
     if (formatIndex >= formats.length) {
         formatIndex = 0;
     }
-    updateURLParam(seriesID, epIndex, formatIndex);
 
     formats.forEach((format, index) => {
         const option = createOptionElement();
@@ -553,6 +553,17 @@ function disableDropdown(selectElement: HTMLSelectElement, disabled: boolean) {
     } else {
         removeClass(getParentElement(selectElement), 'disabled');
     }
+}
+
+function updateURLParam(seriesID: string, epIndex: number, formatIndex: number): void {
+    let url = TOP_URL + '/bangumi/' + seriesID;
+
+    const query = createQuery(epIndex, formatIndex);
+    if (query !== '') {
+        url += '?' + query;
+    }
+
+    changeURL(url, true);
 }
 
 function cleanupEvents() {

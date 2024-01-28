@@ -1,7 +1,4 @@
 import {
-    TOP_URL,
-} from '../module/env/constant';
-import {
     changeColor,
     getURLParam,
 } from '../module/common';
@@ -9,7 +6,6 @@ import {
     w,
     addClass,
     appendChild,
-    changeURL,
     createDivElement,
     createParagraphElement,
     appendChildren,
@@ -30,17 +26,6 @@ export function getContentBoxHeight(elem: HTMLElement): number {
     return height;
 }
 
-export function updateURLParam(seriesID: string, epIndex: number, formatIndex: number): void {
-    let url = TOP_URL + '/bangumi/' + seriesID;
-
-    const query = createQuery(epIndex, formatIndex);
-    if (query !== '') {
-        url += '?' + query;
-    }
-
-    changeURL(url, true);
-}
-
 export function getLogoutParam(seriesID: string, epIndex: number): string {
     const query = 'series=' + seriesID;
     const additionalQuery = createQuery(epIndex, getFormatIndex());
@@ -50,7 +35,7 @@ export function getLogoutParam(seriesID: string, epIndex: number): string {
     return query + '&' + additionalQuery;
 }
 
-function createQuery(epIndex: number, formatIndex: number): string {
+export function createQuery(epIndex: number, formatIndex: number): string {
     let query = '';
     let separator: '' | '&' = '';
 

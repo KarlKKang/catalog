@@ -31,7 +31,7 @@ import {
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
-import { updateURLParam, parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
+import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
@@ -178,7 +178,6 @@ export default async function (
             }
             currentPage.default(epInfo as BangumiInfo.ImageEPInfo, baseURL, createMediaSessionPromise);
         }
-        updateURLParam(seriesID, epIndex, 0);
     }
 }
 

@@ -145,7 +145,7 @@ function showPageCallback(
     });
     setCustomPopStateHandler(() => {
         if (currentBaseURL !== getBaseURL()) {
-            redirect(getFullURL());
+            redirect(getFullURL(), null);
             return;
         }
         const urlKeywords = getURLKeywords();

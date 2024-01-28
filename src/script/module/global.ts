@@ -4,7 +4,7 @@ export function setPgid(value: unknown) {
     pgid = value;
 }
 
-let redirect = (url: string, withoutHistory: boolean = false): void => {
+let redirect = (url: string, withoutHistory: boolean | null = false): void => {
     if (DEVELOPMENT) { // Will be stripped out by Terser in production build.
         url;
         withoutHistory;
