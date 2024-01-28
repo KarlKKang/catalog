@@ -10,7 +10,7 @@ import * as messagePageScript from './message';
 import { default as messagePageHTML } from '../html/message.html';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
-import { pgid, setPgid, setRedirect } from './module/global';
+import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect } from './module/global';
 
 import '../font/dist/NotoSansJP/NotoSansJP-Light.css';
 import '../font/dist/NotoSansJP/NotoSansJP-Medium.css';
@@ -38,7 +38,6 @@ type Page = {
     htmlEntry: HTMLEntry;
     title?: string;
     id?: string;
-    customPopState?: boolean;
     nativeViewport?: boolean;
 };
 
@@ -97,7 +96,6 @@ const pages: PageMap = {
         html: () => import('../html/index.html'),
         htmlEntry: HTMLEntry.DEFAULT,
         id: 'top',
-        customPopState: true,
     },
     'confirm_new_email': {
         script: () => import('./confirm_new_email'),
@@ -291,7 +289,7 @@ function load(url: string, withoutHistory: boolean = false) {
     loadPage(url, withoutHistory, '404', page404);
 }
 
-function loadPagePrepare(url: string, withoutHistory: boolean) {
+function offloadCurrentPage(url: string, withoutHistory: boolean) {
     if (currentPage === null) {
         return;
     }
@@ -300,6 +298,7 @@ function loadPagePrepare(url: string, withoutHistory: boolean) {
     removeAllTimers();
     destroyPopupWindow();
     replaceChildren(getBody());
+    setCustomPopStateHandler(null);
     if (getFullURL() !== url) {
         // Prevent pushing the state back for popstate events.
         changeURL(url, withoutHistory);
@@ -415,7 +414,7 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
 }
 
 async function loadPage(url: string, withoutHistory: boolean, pageName: string, page: Page) {
-    loadPagePrepare(url, withoutHistory); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
+    offloadCurrentPage(url, withoutHistory); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     html.style.minHeight = '0'; // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
 
     body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
@@ -430,19 +429,6 @@ async function loadPage(url: string, withoutHistory: boolean, pageName: string, 
 
     const newPgid = {};
     setPgid(newPgid);
-
-    addEventListener(w, 'popstate', () => {
-        if (page.customPopState) {
-            if (DEVELOPMENT) {
-                console.log('popstate handled by the page.');
-            }
-            return;
-        }
-        load(getFullURL());
-        if (DEVELOPMENT) {
-            console.log('popstate handled by the loader.');
-        }
-    });
 
     let loadingBarWidth: number = 33;
     const loadingBar = getById('loading-bar');
@@ -562,11 +548,32 @@ function setViewport(native: boolean) {
     viewportTag.content = viewpartTagContent;
 }
 
+const fullURL = getFullURL();
+changeURL(fullURL, true);
 if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
 addEventListenerOnce(w, 'load', () => {
     body = d.body;
     setRedirect(load);
-    load(getFullURL());
+    load(fullURL);
+    w.addEventListener('popstate', (state) => {
+        if (state.state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
+            if (customPopStateHandler === null) {
+                load(getFullURL());
+                if (DEVELOPMENT) {
+                    console.log('popstate handled by the loader.');
+                }
+            } else {
+                customPopStateHandler();
+                if (DEVELOPMENT) {
+                    console.log('popstate handled by the page.');
+                }
+            }
+        } else {
+            if (DEVELOPMENT) {
+                console.log('popstate untracked.');
+            }
+        }
+    });
 });

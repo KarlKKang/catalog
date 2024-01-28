@@ -2,6 +2,7 @@
 import {
     TOP_URL
 } from '../env/constant';
+import { STATE_TRACKER } from '../global';
 
 export const d = document;
 export const w = window;
@@ -53,9 +54,9 @@ export function getHash() {
 
 export function changeURL(url: string, withoutHistory?: boolean) {
     if (withoutHistory === true) {
-        history.replaceState(null, '', url);
+        history.replaceState(STATE_TRACKER, '', url);
     } else {
-        history.pushState(null, '', url);
+        history.pushState(STATE_TRACKER, '', url);
     }
 }
 

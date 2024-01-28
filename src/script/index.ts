@@ -41,7 +41,7 @@ import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout } from './module/timer';
 import { allResultsShown, loading, noResult } from './module/message/template/inline';
-import { redirect } from './module/global';
+import { redirect, setCustomPopStateHandler } from './module/global';
 import { lazyloadImport, unloadLazyload } from './module/lazyload';
 
 let pivot: SeriesInfo.Pivot;
@@ -143,7 +143,7 @@ function showPageCallback(
             search();
         }
     });
-    addEventListener(w, 'popstate', () => {
+    setCustomPopStateHandler(() => {
         if (currentBaseURL !== getBaseURL()) {
             redirect(getFullURL());
             return;
