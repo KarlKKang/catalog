@@ -67,8 +67,7 @@ export default function (showPage: ShowPageFunc) {
                     }
                     imageLoader = imageLoaderModule;
                     imageLoader.default(container, baseURL + encodeCFURIComponent(fileName), fileName, true, (canvas) => {
-                        const ratio = w.devicePixelRatio;
-                        canvas.style.width = canvas.width / ratio + 'px';
+                        canvas.style.width = canvas.width / w.devicePixelRatio + 'px';
                         // We won't listen to DPI change since we want to allow the user to zoom in and out.
                         // This has the side effect of not updating the image size when the screen DPI actually changes.
                     }, undefined, () => {
