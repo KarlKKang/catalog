@@ -16,6 +16,8 @@ import {
     createUListElement,
     createLIElement,
     appendText,
+    createSpanElement,
+    insertBefore,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
@@ -73,13 +75,6 @@ export default async function (
     lazyloadModule.setCredential(mediaSessionCredential.credential, SESSION_TYPE_MEDIA);
 
     for (const file of files) {
-        if (file.tag !== '') {
-            const subtitle = createParagraphElement();
-            addClass(subtitle, 'sub-title');
-            appendText(subtitle, file.tag);
-            appendChild(mediaHolder, subtitle);
-        }
-
         const imageNode = createDivElement();
         const lazyloadNode = createDivElement();
         const overlay = createDivElement();
@@ -137,8 +132,18 @@ export default async function (
                 });
                 downloadButton.disabled = false;
             },
-            onImageDraw: () => {
-                imageNode.style.width = 'fit-content';
+            onImageDraw: (canvas) => {
+                const subtitle = createParagraphElement();
+                addClass(subtitle, 'sub-title');
+                const subtitleStyle = subtitle.style;
+                subtitleStyle.fontSize = 'small';
+                subtitleStyle.marginTop = '0px';
+                subtitleStyle.marginBottom = '0.5em';
+                const formatText = createSpanElement();
+                addClass(formatText, 'format');
+                appendText(formatText, canvas.width + '×' + canvas.height);
+                appendChild(subtitle, formatText);
+                insertBefore(subtitle, imageNode);
             },
         });
     }

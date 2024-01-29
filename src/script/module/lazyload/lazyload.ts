@@ -29,7 +29,7 @@ type TargetData = {
     alt: string;
     delay: number;
     onDataLoad: ((data: Blob) => void) | undefined;
-    onImageDraw: (() => void) | undefined;
+    onImageDraw: ((canvas: HTMLCanvasElement) => void) | undefined;
     status: Status;
     xhr: XMLHttpRequest | null;
 };
@@ -58,7 +58,7 @@ export default function (
     options?: {
         delay?: number;
         onDataLoad?: (data: Blob) => void;
-        onImageDraw?: () => void;
+        onImageDraw?: (canvas: HTMLCanvasElement) => void;
     }
 ) {
     if (options === undefined) {
@@ -115,11 +115,11 @@ function observerCallback(entries: IntersectionObserverEntry[]) {
 }
 
 function loadImage(target: Element, targetData: TargetData) {
-    const onImageDraw = () => {
+    const onImageDraw = (canvas: HTMLCanvasElement) => {
         observer.unobserve(target);
         targets.delete(target);
         addClass(target, 'complete');
-        targetData.onImageDraw && targetData.onImageDraw();
+        targetData.onImageDraw && targetData.onImageDraw(canvas);
     };
     const onUnrecoverableError = () => {
         observer.unobserve(target);

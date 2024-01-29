@@ -11,7 +11,6 @@ export type AudioFile = {
 };
 
 type ImageFile = {
-    tag: string;
     file_name: string;
 };
 
@@ -199,10 +198,6 @@ function checkAudioEPInfo(epInfo: any) {
 
 function checkImageFile(imageFile: any) {
     if (!isObject(imageFile)) {
-        throwError();
-    }
-
-    if (!isString(imageFile.tag)) {
         throwError();
     }
 
