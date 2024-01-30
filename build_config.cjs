@@ -53,4 +53,5 @@ module.exports.terserDevOptions = {
         comments: 'all',
     },
     safari10: true,
+    sourceMap: true,
 };
