@@ -33,19 +33,24 @@ module.exports.cssMinifyOptions = {
 
 module.exports.terserOptions = {
     ecma: 2015,
-    parse: {},
     compress: {
         passes: 5
     },
-    mangle: true, // Note `mangle.properties` is `false` by default.
     module: true,
-    // Deprecated
-    output: null,
-    format: null,
-    //toplevel: false,
-    nameCache: null,
-    ie8: false,
-    keep_classnames: undefined,
-    keep_fnames: false,
+    safari10: true,
+};
+
+module.exports.terserDevOptions = {
+    ecma: 2015,
+    compress: {
+        defaults: false,
+        dead_code: true,
+        unused: true,
+    },
+    mangle: false,
+    module: true,
+    format: {
+        comments: 'all',
+    },
     safari10: true,
 };

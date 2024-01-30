@@ -31,20 +31,10 @@ fs.read(srcFile, function (code) {
             }
             terser(result.code, {
                 ecma: 5,
-                parse: {},
                 compress: {
                     passes: 5
                 },
-                mangle: true, // Note `mangle.properties` is `false` by default.
-                module: false,
-                // Deprecated
-                output: null,
-                format: null,
-                //toplevel: false,
-                nameCache: null,
                 ie8: true,
-                keep_classnames: undefined,
-                keep_fnames: false,
                 safari10: true,
             }).then((minified) => {
                 fs.write(destFile, minified.code);

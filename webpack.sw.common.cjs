@@ -15,6 +15,7 @@ const config = {
         concatenateModules: true,
         flagIncludedChunks: true,
         removeAvailableModules: true,
+        minimize: true,
     },
     node: { global: false },
     resolve: {
