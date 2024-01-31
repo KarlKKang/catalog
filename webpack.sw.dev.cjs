@@ -16,6 +16,7 @@ config.module.rules.push(
 );
 config.optimization.minimizer = [
     new TerserPlugin({
+        extractComments: false,
         terserOptions: terserDevOptions,
     })
 ];

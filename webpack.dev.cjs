@@ -9,6 +9,7 @@ config.output.path = path.resolve(__dirname, 'dev');
 config.devtool = 'source-map';
 config.optimization.minimizer.push(
     new TerserPlugin({
+        extractComments: false,
         terserOptions: terserDevOptions,
     })
 );
