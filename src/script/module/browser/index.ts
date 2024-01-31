@@ -13,7 +13,6 @@ let IS_IOS = false;
 let IS_SAFARI = false;
 const IS_CHROMIUM = !!w.chrome;
 let IS_FIREFOX = false;
-let IS_EDGE = false;
 let IS_WINDOWS = false;
 let IS_MACOS = false;
 let UNRECOMMENDED_BROWSER = false;
@@ -35,7 +34,6 @@ let MSE_BUFFER_SIZE = MIN_MSE_BUFFER_SIZE;
     IS_IOS = browserName === 'mobile safari' || osName === 'ios' || (browserName === 'safari' && 'ontouchend' in document);
     IS_SAFARI = IS_IOS || browserName === 'safari';
     IS_FIREFOX = browserName.includes('firefox') && !IS_IOS;
-    IS_EDGE = browserName === 'edge';
     IS_WINDOWS = osName === 'windows';
     IS_MACOS = osName === 'mac os';
 
@@ -75,7 +73,6 @@ UNRECOMMENDED_BROWSER = UNRECOMMENDED_BROWSER || !(CAN_PLAY_AVC && CAN_PLAY_AAC)
 export { IS_CHROMIUM };
 export { IS_IOS };
 export { IS_FIREFOX };
-export { IS_EDGE };
 export { IS_WINDOWS };
 export { IS_MACOS };
 export { UNRECOMMENDED_BROWSER };

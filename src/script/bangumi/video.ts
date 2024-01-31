@@ -40,8 +40,6 @@ import {
     audioCanPlay,
     IS_CHROMIUM,
     IS_FIREFOX,
-    IS_EDGE,
-    IS_WINDOWS,
     CAN_PLAY_AAC,
     MSE_BUFFER_SIZE,
     MIN_MSE_BUFFER_SIZE,
@@ -507,7 +505,7 @@ function show8chAudioError() {
 
 async function canPlayHEVC(withFallback: boolean | undefined): Promise<boolean> {
     const HEVC41_CODEC = 'hvc1.2.4.H123.90';
-    if ((IS_WINDOWS && IS_EDGE) || !videoCanPlay(HEVC41_CODEC)) {
+    if (!videoCanPlay(HEVC41_CODEC)) {
         return false;
     }
     if (!withFallback) {
