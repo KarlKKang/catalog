@@ -99,6 +99,7 @@ const config = {
                         // Except for a few of them that needs to be transpiled because they use modern syntax
                         /node_modules[\\\/]screenfull/,
                         /node_modules[\\\/]isbot/,
+                        /node_modules[\\\/]webp-hero[\\\/]dist[\\\/]/,
                     ]
                 },
                 use: {

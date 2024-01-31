@@ -1,4 +1,4 @@
-import type { WebpMachine } from 'webp-hero/dist-cjs';
+import type { WebpMachine } from 'webp-hero';
 import {
     removeRightClick,
 } from './common';
@@ -136,7 +136,7 @@ async function startWebpMachine() {
     if (webpMachine === null) {
         try {
             const { WebpMachine, detectWebpSupport } = await import(
-                'webp-hero/dist-cjs'
+                'webp-hero'
             );
             if (currentPgid !== pgid) {
                 return;
