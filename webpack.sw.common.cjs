@@ -41,9 +41,6 @@ const config = {
                                     "corejs": getCoreJSVersion(),
                                 }
                             ]
-                        ],
-                        plugins: [
-                            "@babel/plugin-transform-runtime"
                         ]
                     }
                 }
