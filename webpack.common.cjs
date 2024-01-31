@@ -8,6 +8,7 @@ const { cssMinifyOptions } = require('./build_config.cjs');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const { DOMAIN, DESCRIPTION } = require('./env/index.cjs');
 const { getCoreJSVersion } = require('./webpack_helper.cjs');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 const config = {
     target: 'browserslist',
@@ -82,7 +83,8 @@ const config = {
     },
     node: { global: false },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.json']
+        extensions: ['.ts', '.tsx', '.js', '.json'],
+        plugins: [new TsconfigPathsPlugin()]
     },
     module: {
         rules: [

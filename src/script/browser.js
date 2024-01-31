@@ -1,4 +1,4 @@
-let dynamicImportTest: Promise<any> | null = null; // eslint-disable-line @typescript-eslint/no-unused-vars, prefer-const
+let dynamicImportTest = null; // eslint-disable-line @typescript-eslint/no-unused-vars, prefer-const
 
 function unsupportRedirect() {
     const URL = 'https://<%=data.domain%>/unsupported_browser';
@@ -57,11 +57,11 @@ function unsupportRedirect() {
         return;
     }
 
-    const getCookie = (name: string) => {
+    const getCookie = (name) => {
         name = name + '=';
         const cookies = d.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i] as string;
+            let cookie = cookies[i];
             while (cookie.charAt(0) === ' ') {
                 cookie = cookie.substring(1);
             }

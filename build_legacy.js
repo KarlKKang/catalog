@@ -13,13 +13,13 @@ if (dev) {
     destDirPrefix = './dev/';
 }
 
-const srcFile = './src/script/browser.ts';
+const srcFile = './src/script/browser.js';
 const destFile = destDirPrefix + 'script/browser.js';
 fs.read(srcFile, function (code) {
     code = lodashTemplate(code)({ data: { domain: (dev ? 'alpha.' : '') + DOMAIN } });
     babel.transform(
         code,
-        { filename: srcFile, presets: ["@babel/preset-env", "@babel/preset-typescript"] },
+        { filename: srcFile, presets: ["@babel/preset-env"] },
         function (err, result) {
             if (err) {
                 console.error(err);
