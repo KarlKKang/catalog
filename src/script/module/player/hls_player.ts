@@ -1,6 +1,6 @@
 import { NonNativePlayer } from './non-native-player';
-import Hls from 'hls.js';
-import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from 'hls.js';
+import Hls from '../../../../hls.js';
+import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from '../../../../hls.js';
 import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
 
 export class HlsPlayer extends NonNativePlayer {
