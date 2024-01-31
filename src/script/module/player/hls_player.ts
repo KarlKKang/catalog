@@ -1,5 +1,5 @@
 import { NonNativePlayer } from './non-native-player';
-import HlsLight from '../../../../hls.js/dist/hls.light.js';
+import HlsLight from '../../../../hls.js/dist/hls.light.mjs';
 import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from '../../../../hls.js';
 import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
 
