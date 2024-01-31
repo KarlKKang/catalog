@@ -55,3 +55,10 @@ module.exports.terserDevOptions = {
     safari10: true,
     sourceMap: true,
 };
+
+module.exports.webpackOptimization = {
+    concatenateModules: true,
+    flagIncludedChunks: true,
+    removeAvailableModules: true,
+    usedExports: true,
+};

@@ -1,4 +1,5 @@
 const { getCoreJSVersion } = require('./webpack_helper.cjs');
+const { webpackOptimization } = require('./build_config.cjs');
 
 const config = {
     target: 'webworker',
@@ -12,9 +13,7 @@ const config = {
         },
     },
     optimization: {
-        concatenateModules: true,
-        flagIncludedChunks: true,
-        removeAvailableModules: true,
+        ...webpackOptimization,
         minimize: true,
     },
     node: { global: false },

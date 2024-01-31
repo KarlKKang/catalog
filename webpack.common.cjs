@@ -2,7 +2,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
-const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
+const { htmlMinifyOptions, webpackOptimization } = require('./build_config.cjs');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { cssMinifyOptions } = require('./build_config.cjs');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
@@ -65,15 +65,12 @@ const config = {
         chunkLoadingGlobal: 'loader'
     },
     optimization: {
-        concatenateModules: true,
-        flagIncludedChunks: true,
-        removeAvailableModules: true,
+        ...webpackOptimization,
         runtimeChunk: 'single',
         splitChunks: {
             maxSize: 1000 * 1000,
             chunks: 'all'
         },
-        usedExports: true,
         minimize: true,
         minimizer: [
             new CssMinimizerPlugin({
