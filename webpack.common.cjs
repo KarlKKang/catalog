@@ -110,12 +110,6 @@ const config = {
                                     "useBuiltIns": "entry",
                                     "corejs": getCoreJSVersion(),
                                 }
-                            ],
-                            [
-                                "@babel/preset-typescript",
-                                {
-                                    optimizeConstEnums: true,
-                                }
                             ]
                         ],
                         plugins: [
@@ -123,6 +117,14 @@ const config = {
                         ]
                     }
                 }
+            },
+            {
+                test: /\.tsx?$/i,
+                use: [
+                    {
+                        loader: 'ts-loader',
+                    }
+                ]
             },
             {
                 test: /\.ejs$/i,
