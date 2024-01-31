@@ -73,6 +73,7 @@ const config = {
             maxSize: 1000 * 1000,
             chunks: 'all'
         },
+        usedExports: true,
         minimize: true,
         minimizer: [
             new CssMinimizerPlugin({
