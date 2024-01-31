@@ -1,11 +1,13 @@
 import { NonNativePlayer } from './non-native-player';
-import Hls from '../../../../hls.js';
-import type { Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from '../../../../hls.js';
+import HlsLight from '../../../../hls.js/dist/hls.light.js';
+import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from '../../../../hls.js';
 import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
+
+const Hls = HlsLight as unknown as typeof HlsFull;
 
 export class HlsPlayer extends NonNativePlayer {
     protected override readonly maxBufferHole = 0.5;
-    private readonly hlsInstance: Hls;
+    private readonly hlsInstance: HlsFull;
     private fragStart = 0;
 
     private onHlsError: undefined | ((_: Events.ERROR, data: ErrorData) => void) = undefined;
