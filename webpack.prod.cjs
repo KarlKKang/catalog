@@ -1,16 +1,26 @@
-const config = require('./webpack.common.cjs');
+const configs = require('./webpack.common.cjs');
 const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
 const { addPlugins } = require('./webpack_helper.cjs');
-const { terserOptions } = require('./build_config.cjs');
 
-config.mode = 'production';
-config.output.path = path.resolve(__dirname, 'dist');
-config.optimization.minimizer.push(
-    new TerserPlugin({
-        terserOptions: terserOptions,
-    })
-);
-addPlugins(config, false);
+for (const config of configs) {
+    config.mode = 'production';
+    config.output.path = path.resolve(__dirname, 'dist');
+    config.optimization.minimizer.push(
+        new TerserPlugin({
+            terserOptions: {
+                ecma: 2015,
+                compress: {
+                    passes: 5
+                },
+                module: true,
+                safari10: true,
+            },
+        })
+    );
+}
 
-module.exports = config;
+addPlugins(configs[0], false);
+configs[1].entry = './temp/sw.js';
+
+module.exports = configs;
