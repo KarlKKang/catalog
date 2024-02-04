@@ -7,7 +7,7 @@ let wid: any;
 let windowOpen = false;
 const waitingQueue: (() => void)[] = [];
 
-export function initializePopupWindow(...contents: Node[]) {
+export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void) {
     const currentWid = {};
     wid = currentWid;
     windowOpen = true;
@@ -20,6 +20,7 @@ export function initializePopupWindow(...contents: Node[]) {
             replaceChildren(contentContainer, ...contents);
             removeClass(container, 'invisible');
             removeClass(container, 'transparent');
+            onDOMLoaded?.();
         });
     };
 

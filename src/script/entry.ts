@@ -329,7 +329,7 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
             appendChild(buttonFlexbox, cancelButton);
 
             popupWindow.onPopupWindowClosed(() => {
-                const hidePopupWindow = popupWindow.initializePopupWindow(titleText, promptText, buttonFlexbox);
+                const hidePopupWindow = popupWindow.initializePopupWindow([titleText, promptText, buttonFlexbox]);
                 const disableAllInputs = (disabled: boolean) => {
                     updateButton.disabled = disabled;
                     cancelButton.disabled = disabled;

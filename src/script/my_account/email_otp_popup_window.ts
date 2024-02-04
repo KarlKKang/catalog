@@ -86,7 +86,10 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 
-    const hidePopupWindow = initializePopupWindow(promptText, warningText, inputFlexbox, buttonFlexbox);
+    const hidePopupWindow = initializePopupWindow(
+        [promptText, warningText, inputFlexbox, buttonFlexbox],
+        () => { otpInput.focus(); },
+    );
 
     addEventListener(resendButton, 'click', () => {
         resendButton.disabled = true;
@@ -146,7 +149,6 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
         currentResendInterval !== null && removeInterval(currentResendInterval);
         hidePopupWindow();
     });
-    otpInput.focus();
 
     return returnPromise;
 }

@@ -77,7 +77,10 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
         openWindow(TOP_URL + '/request_password_reset');
     });
 
-    const hidePopupWindow = initializePopupWindow(promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox, forgetPasswordParagraph);
+    const hidePopupWindow = initializePopupWindow(
+        [promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox, forgetPasswordParagraph],
+        () => { emailInput.focus(); },
+    );
 
     const disableAllInputs = (disabled: boolean) => {
         disableInput(emailInput, disabled);
@@ -125,7 +128,6 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
         returnPromiseReject(RejectReason.CLOSE);
         hidePopupWindow();
     });
-    emailInput.focus();
 
     return returnPromise;
 }

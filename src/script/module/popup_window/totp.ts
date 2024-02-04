@@ -55,7 +55,10 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 
-    const hidePopupWindow = initializePopupWindow(promptText, warningText, totpInputContainer, buttonFlexbox);
+    const hidePopupWindow = initializePopupWindow(
+        [promptText, warningText, totpInputContainer, buttonFlexbox],
+        () => { totpInput.focus(); },
+    );
 
     const startTime = Date.now();
     let timerBlocked = false;
@@ -113,7 +116,6 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
         removeInterval(timer);
         hidePopupWindow();
     });
-    totpInput.focus();
 
     return returnPromise;
 }
