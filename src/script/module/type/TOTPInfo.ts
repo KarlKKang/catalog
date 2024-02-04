@@ -3,7 +3,6 @@ import { isObject, throwError, isString } from './helper';
 export type TOTPInfo = {
     uri: string;
     p: string;
-    signature: string;
 };
 
 export function check(totpInfo: any) {
@@ -11,7 +10,7 @@ export function check(totpInfo: any) {
         throwError();
     }
 
-    if (!isString(totpInfo.uri) || !isString(totpInfo.p) || !isString(totpInfo.signature)) {
+    if (!isString(totpInfo.uri) || !isString(totpInfo.p)) {
         throwError();
     }
 }

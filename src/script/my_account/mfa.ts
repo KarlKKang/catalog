@@ -360,7 +360,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                     });
                 }
             },
-            content: 'p=' + totpInfo.p + '&signature=' + totpInfo.signature + '&totp=' + totp,
+            content: 'p=' + totpInfo.p + '&totp=' + totp,
             showSessionEndedMessage: true,
         });
     };

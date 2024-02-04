@@ -30,18 +30,12 @@ export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     const param = getURLParam('p');
-    const signature = getURLParam('signature');
-
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
             showPage();
         } else {
             redirect(LOGIN_URL, true);
         }
-        return;
-    }
-    if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-        redirect(LOGIN_URL, true);
         return;
     }
 
@@ -51,18 +45,18 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(expired);
             } else if (response === 'APPROVED') {
                 showPage(() => {
-                    showPageCallback(param, signature);
+                    showPageCallback(param);
                 });
             } else {
                 showMessage(invalidResponse());
             }
         },
-        content: 'p=' + param + '&signature=' + signature,
+        content: 'p=' + param,
         withCredentials: false
     });
 }
 
-function showPageCallback(param: string, signature: string) {
+function showPageCallback(param: string) {
     const emailInput = getById('email') as HTMLInputElement;
     const passwordInput = getById('password') as HTMLInputElement;
     const submitButton = getById('submit-button') as HTMLButtonElement;
@@ -104,7 +98,7 @@ function showPageCallback(param: string, signature: string) {
             return;
         }
 
-        sendChangeEmailRequest('p=' + param + '&signature=' + signature + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password));
+        sendChangeEmailRequest('p=' + param + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password));
     }
 
     function sendChangeEmailRequest(content: string, totpPopupWindow?: TotpPopupWindow) {

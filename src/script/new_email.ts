@@ -25,8 +25,6 @@ export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     const param = getURLParam('p');
-    const signature = getURLParam('signature');
-
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
             showPage();
@@ -35,27 +33,23 @@ export default function (showPage: ShowPageFunc) {
         }
         return;
     }
-    if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-        redirect(TOP_URL, true);
-        return;
-    }
 
     sendServerRequest('verify_email_change', {
         callback: function (response: string) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
             } else if (response === 'APPROVED') {
-                showPage(() => { showPageCallback(param, signature); });
+                showPage(() => { showPageCallback(param); });
             } else {
                 showMessage(invalidResponse());
             }
         },
-        content: 'p=' + param + '&signature=' + signature,
+        content: 'p=' + param,
         withCredentials: false
     });
 }
 
-function showPageCallback(param: string, signature: string) {
+function showPageCallback(param: string) {
     const newEmailInput = getById('new-email') as HTMLInputElement;
     const submitButton = getById('submit-button') as HTMLButtonElement;
     const warningElem = getById('warning');
@@ -100,7 +94,7 @@ function showPageCallback(param: string, signature: string) {
                     showMessage(invalidResponse());
                 }
             },
-            content: 'p=' + param + '&signature=' + signature + '&new=' + newEmail,
+            content: 'p=' + param + '&new=' + newEmail,
             withCredentials: false
         });
     }

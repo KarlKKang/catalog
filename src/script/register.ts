@@ -28,19 +28,12 @@ export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     const param = getURLParam('p');
-    const signature = getURLParam('signature');
-
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
             showPage(addInfoRedirects);
         } else {
             redirect(LOGIN_URL, true);
         }
-        return;
-    }
-
-    if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-        redirect(LOGIN_URL, true);
         return;
     }
 
@@ -51,17 +44,17 @@ export default function (showPage: ShowPageFunc) {
             } else if (response === 'ALREADY REGISTERED') {
                 showMessage(emailAlreadyRegistered);
             } else if (response === 'APPROVED') {
-                showPage(() => { showPageCallback(param, signature); });
+                showPage(() => { showPageCallback(param); });
             } else {
                 showMessage(invalidResponse());
             }
         },
-        content: 'p=' + param + '&signature=' + signature,
+        content: 'p=' + param,
         withCredentials: false
     });
 }
 
-function showPageCallback(param: string, signature: string) {
+function showPageCallback(param: string) {
     const submitButton = getById('submit-button') as HTMLButtonElement;
     const usernameInput = getById('username') as HTMLInputElement;
     const passwordInput = getById('password') as HTMLInputElement;
@@ -143,7 +136,7 @@ function showPageCallback(param: string, signature: string) {
                     showMessage(invalidResponse());
                 }
             },
-            content: 'p=' + param + '&signature=' + signature + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
+            content: 'p=' + param + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
             withCredentials: false
         });
     }
