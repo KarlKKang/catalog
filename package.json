@@ -9,7 +9,7 @@
     "build:font": "python3 build_font.py",
     "build": "npm run lint && node build_legacy.js && webpack --progress --config webpack.prod.cjs --config-name main && webpack --progress --config webpack.prod.cjs --config-name sw",
     "build-dev": "npm run lint && node build_legacy.js dev && webpack --progress --config webpack.dev.cjs --config-name main && webpack --progress --config webpack.dev.cjs --config-name sw",
-    "build:hls.js": "cd hls.js && M2TS_ADVANCED_CODECS=1 ALT_AUDIO=1 npm run build",
+    "build:hls.js": "cd hls.js && ALT_AUDIO=1 npm run build",
     "lint": "npx eslint src/script/ --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "publish": "sh publish.sh featherine-website ./dist/",
