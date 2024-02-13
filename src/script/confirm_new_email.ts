@@ -52,7 +52,6 @@ export default function (showPage: ShowPageFunc) {
             }
         },
         content: 'p=' + param,
-        withCredentials: false
     });
 }
 

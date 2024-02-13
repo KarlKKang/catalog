@@ -45,7 +45,6 @@ export function getURLParam(name: string): string | null {
 interface SendServerRequestOption {
     callback?: (response: string) => void | Promise<void>;
     content?: string;
-    withCredentials?: boolean;
     method?: 'POST' | 'GET';
     logoutParam?: string | undefined;
     connectionErrorRetry?: number | undefined;
@@ -126,7 +125,7 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.open(options.method ?? 'POST', SERVER_URL + '/' + uri, true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xmlhttp.withCredentials = options.withCredentials ?? true;
+    xmlhttp.withCredentials = true;
 
     addEventListener(xmlhttp, 'error', () => {
         removeAllEventListeners(xmlhttp);

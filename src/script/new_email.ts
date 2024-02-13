@@ -45,7 +45,6 @@ export default function (showPage: ShowPageFunc) {
             }
         },
         content: 'p=' + param,
-        withCredentials: false
     });
 }
 
@@ -95,7 +94,6 @@ function showPageCallback(param: string) {
                 }
             },
             content: 'p=' + param + '&new=' + newEmail,
-            withCredentials: false
         });
     }
 

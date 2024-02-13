@@ -61,7 +61,6 @@ export default function (showPage: ShowPageFunc) {
             showPage(() => { showPageCallback(user, signature, expires); });
         },
         content: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
-        withCredentials: false
     });
 }
 
@@ -127,7 +126,6 @@ function showPageCallback(user: string, signature: string, expires: string) {
                 }
             },
             content: 'user=' + user + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),
-            withCredentials: false
         });
     }
 

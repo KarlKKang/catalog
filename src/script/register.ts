@@ -50,7 +50,6 @@ export default function (showPage: ShowPageFunc) {
             }
         },
         content: 'p=' + param,
-        withCredentials: false
     });
 }
 
@@ -137,7 +136,6 @@ function showPageCallback(param: string) {
                 }
             },
             content: 'p=' + param + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
-            withCredentials: false
         });
     }
 

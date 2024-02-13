@@ -69,7 +69,6 @@ function showPageCallback() {
                 disableAllInputs(false);
             },
             content: 'special=1&receiver=' + encodeURIComponent(email),
-            withCredentials: false
         });
     }
 
