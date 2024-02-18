@@ -57,6 +57,11 @@ function unsupportRedirect() {
         return;
     }
 
+    if (!('IntersectionObserver' in w && 'IntersectionObserverEntry' in w && 'isIntersecting' in w.IntersectionObserverEntry.prototype)) {
+        _unsupportRedirect();
+        return;
+    }
+
     const getCookie = (name) => {
         name = name + '=';
         const cookies = d.cookie.split(';');

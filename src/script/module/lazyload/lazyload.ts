@@ -1,4 +1,3 @@
-import 'intersection-observer';
 import {
     type SessionTypes,
     sendServerRequest,

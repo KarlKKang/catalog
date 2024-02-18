@@ -14,7 +14,6 @@ for (const config of configs) {
                     passes: 5
                 },
                 module: true,
-                safari10: true,
             },
         })
     );

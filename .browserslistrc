@@ -1,4 +1,5 @@
-supports es6-module-dynamic-import or Firefox 66
+supports es6-module-dynamic-import and supports intersectionobserver
+Firefox 66
 
 [legacy]
 since 2000

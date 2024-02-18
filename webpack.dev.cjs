@@ -22,7 +22,6 @@ for (const config of configs) {
                 format: {
                     comments: 'all',
                 },
-                safari10: true,
                 sourceMap: true,
             },
         })
