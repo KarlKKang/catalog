@@ -83,46 +83,45 @@ def font_splitter(
     else:
         unicode_blocks = custom_unicode_blocks
 
-    # prepare files
     output_sub_dir = dest_dir
     output_root_dir = os.path.join(src_root_dir, "dist", src_dir)
     output_dir = os.path.join(output_root_dir, output_sub_dir)
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    css = open(os.path.join(output_root_dir, file_name + ".css"), "w")
-    css.write('@charset "UTF-8";\n/* CSS Document */\n\n')
 
-    # compress
-    for glyph in unicode_blocks:
-        end_index = len(unicode_blocks[glyph])
-        hyphen_index = unicode_blocks[glyph].find("-")
-        comma_index = unicode_blocks[glyph].find(",")
-        if hyphen_index != -1:
-            end_index = hyphen_index
-        if comma_index != -1 and comma_index < end_index:
-            end_index = comma_index
-        dest_file_name = unicode_blocks[glyph][2:end_index]
-        output_file_woff2 = os.path.join(output_dir, dest_file_name + ".woff2")
-        sys.argv = [
-            None,
-            os.path.join(src_root_dir, src_dir, file_name + "." + file_extension),
-            f"--unicodes={unicode_blocks[glyph]}",
-        ]
-        sys.argv.extend(options)
-        sys.argv.append("--flavor=woff2")
-        sys.argv.append(f"--output-file={output_file_woff2}")
-        pyftsubset()
-        font_weight_declaration = (
-            (f"font-weight: {str(font_weight)};\n") if font_weight is not None else ""
-        )
-        css.write(
-            f"/*{glyph}*/\n"
-            + "@font-face {\n"
-            + f'font-family: "{font_family}";\n'
-            + "src: "
-            + f'url("{output_sub_dir}/{dest_file_name}.woff2") format("woff2");\n'
-            + font_weight_declaration
-            + f"font-display: {font_display};\n"
-            + f"unicode-range: {unicode_blocks[glyph]};\n"
-            + "}\n\n"
-        )
-    css.close()
+    with open(os.path.join(output_root_dir, file_name + ".css"), "w") as css:
+        css.write('@charset "UTF-8";\n/* CSS Document */\n\n')
+        for glyph in unicode_blocks:
+            end_index = len(unicode_blocks[glyph])
+            hyphen_index = unicode_blocks[glyph].find("-")
+            comma_index = unicode_blocks[glyph].find(",")
+            if hyphen_index != -1:
+                end_index = hyphen_index
+            if comma_index != -1 and comma_index < end_index:
+                end_index = comma_index
+            dest_file_name = unicode_blocks[glyph][2:end_index]
+            output_file_woff2 = os.path.join(output_dir, dest_file_name + ".woff2")
+            sys.argv = [
+                None,
+                os.path.join(src_root_dir, src_dir, file_name + "." + file_extension),
+                f"--unicodes={unicode_blocks[glyph]}",
+            ]
+            sys.argv.extend(options)
+            sys.argv.append("--flavor=woff2")
+            sys.argv.append(f"--output-file={output_file_woff2}")
+            pyftsubset()
+            font_weight_declaration = (
+                (f"font-weight: {str(font_weight)};\n")
+                if font_weight is not None
+                else ""
+            )
+            css.write(
+                f"/*{glyph}*/\n"
+                + "@font-face {\n"
+                + f'font-family: "{font_family}";\n'
+                + "src: "
+                + f'url("{output_sub_dir}/{dest_file_name}.woff2") format("woff2");\n'
+                + font_weight_declaration
+                + f"font-display: {font_display};\n"
+                + f"unicode-range: {unicode_blocks[glyph]};\n"
+                + "}\n\n"
+            )
