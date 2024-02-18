@@ -102,7 +102,6 @@ def font_splitter(
             end_index = comma_index
         dest_file_name = unicode_blocks[glyph][2:end_index]
         output_file_woff2 = os.path.join(output_dir, dest_file_name + ".woff2")
-        output_file_woff = os.path.join(output_dir, dest_file_name + ".woff")
         sys.argv = [
             None,
             os.path.join(src_root_dir, src_dir, file_name + "." + file_extension),
@@ -112,9 +111,6 @@ def font_splitter(
         sys.argv.append("--flavor=woff2")
         sys.argv.append(f"--output-file={output_file_woff2}")
         pyftsubset()
-        sys.argv[len(sys.argv) - 2] = "--flavor=woff"
-        sys.argv[len(sys.argv) - 1] = f"--output-file={output_file_woff}"
-        pyftsubset()
         font_weight_declaration = (
             (f"font-weight: {str(font_weight)};\n") if font_weight is not None else ""
         )
@@ -123,8 +119,7 @@ def font_splitter(
             + "@font-face {\n"
             + f'font-family: "{font_family}";\n'
             + "src: "
-            + f'url("{output_sub_dir}/{dest_file_name}.woff2") format("woff2"),\n'
-            + f'url("{output_sub_dir}/{dest_file_name}.woff") format("woff");\n'
+            + f'url("{output_sub_dir}/{dest_file_name}.woff2") format("woff2");\n'
             + font_weight_declaration
             + f"font-display: {font_display};\n"
             + f"unicode-range: {unicode_blocks[glyph]};\n"

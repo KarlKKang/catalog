@@ -1,6 +1,6 @@
 from font_splitter import font_splitter
 
-dir_surfix = "5"
+dir_surfix = "6"
 
 font_families = [
     {
