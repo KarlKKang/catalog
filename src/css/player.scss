@@ -285,8 +285,8 @@
                     }
 
                     .player-time-tooltip {
-                        color: #fff;
-                        background-color: rgba(0, 0, 0, 0.8);
+                        color: var(--foreground-color);
+                        background-color: var(--text-color);
                         border-radius: 0.3em;
                         float: right;
                         font-size: 0.8em;
@@ -297,10 +297,6 @@
                         visibility: hidden;
                         z-index: 1;
                         white-space: nowrap;
-
-                        @media only screen and (prefers-color-scheme: dark) {
-                            color: var(--text-color);
-                        }
                     }
                 }
             }
