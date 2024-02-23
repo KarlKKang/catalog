@@ -296,6 +296,7 @@
                         top: -2.8em;
                         visibility: hidden;
                         z-index: 1;
+                        white-space: nowrap;
 
                         @media only screen and (prefers-color-scheme: dark) {
                             color: var(--text-color);
