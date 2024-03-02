@@ -30,7 +30,7 @@ import {
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
-import { addInterval, addTimeout } from '../timer';
+import { addTimeout } from '../timer';
 import { pgid, redirect } from '../global';
 import type { TotpPopupWindow } from '../popup_window/totp';
 import type { popupWindowImport, promptForTotpImport } from '../popup_window';
@@ -389,12 +389,14 @@ export async function handleFailedTotp(
 }
 
 export function setUpSessionAuthentication(credential: string, logoutParam?: string) {
-    addInterval(() => {
+    addTimeout(() => {
         sendServerRequest('authenticate_media_session', {
             callback: function (response: string) {
-                if (response !== 'APPROVED') {
-                    showMessage(invalidResponse());
+                if (response === 'APPROVED') {
+                    setUpSessionAuthentication(credential, logoutParam);
+                    return;
                 }
+                showMessage(invalidResponse());
             },
             content: credential,
             logoutParam: logoutParam,
