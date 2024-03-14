@@ -18,7 +18,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
-import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameTaken } from './module/message/template/inline';
+import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from './module/message/template/inline';
 import { PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
@@ -113,20 +113,21 @@ function showPageCallback(param: string) {
 
         sendServerRequest('register', {
             callback: function (response: string) {
+                const showInlineMessage = (message: string) => {
+                    replaceText(warningElem, message);
+                    showElement(warningElem);
+                    disableAllInputs(false);
+                };
                 if (response === 'EXPIRED') {
                     showMessage(expired);
                 } else if (response === 'USERNAME DUPLICATED') {
-                    replaceText(warningElem, usernameTaken);
-                    showElement(warningElem);
-                    disableAllInputs(false);
+                    showInlineMessage(usernameTaken);
                 } else if (response === 'USERNAME EMPTY') {
-                    replaceText(warningElem, usernameEmpty);
-                    showElement(warningElem);
-                    disableAllInputs(false);
+                    showInlineMessage(usernameEmpty);
+                } else if (response === 'USERNAME INVALID') {
+                    showInlineMessage(usernameInvalid);
                 } else if (response === 'PASSWORD INVALID') {
-                    replaceText(warningElem, invalidPasswordFormat);
-                    showElement(warningElem);
-                    disableAllInputs(false);
+                    showInlineMessage(invalidPasswordFormat);
                 } else if (response === 'ALREADY REGISTERED') {
                     showMessage(emailAlreadyRegistered);
                 } else if (response === 'DONE') {

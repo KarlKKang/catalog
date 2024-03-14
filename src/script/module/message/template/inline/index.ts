@@ -15,6 +15,7 @@ export const passwordConfirmationMismatch = 'パスワードの確認再入力�
 export const passwordUnchanged = '入力されたパスワードは、元のパスワードと同じです。';
 
 export const usernameEmpty = 'ユーザー名を空欄にすることはできません。';
+export const usernameInvalid = 'ユーザー名に無効な文字が含まれています。';
 export const usernameUnchanged = '新しいユーザー名は元のユーザー名と同じです。';
 export const usernameChanged = 'ユーザー名を変更しました。';
 export const usernameTaken = 'このユーザーネームはすでに使われています。別のユーザー名を入力してください。';
