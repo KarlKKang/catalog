@@ -16,6 +16,16 @@ const optimization = {
     usedExports: true,
 };
 
+const cssLoader = {
+    loader: 'css-loader',
+    options: {
+        modules: {
+            namedExport: true,
+            auto: true,
+        }
+    }
+};
+
 const configs = [
     {
         name: 'main',
@@ -143,7 +153,7 @@ const configs = [
                     test: /\.css$/i,
                     use: [
                         MiniCssExtractPlugin.loader,
-                        'css-loader'
+                        cssLoader
                     ],
                     sideEffects: true,
                 },
@@ -151,7 +161,7 @@ const configs = [
                     test: /\.scss$/i,
                     use: [
                         MiniCssExtractPlugin.loader,
-                        'css-loader',
+                        cssLoader,
                         'sass-loader',
                     ],
                     sideEffects: true,

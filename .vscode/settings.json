@@ -5,5 +5,7 @@
     },
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
-    "html.format.templating": true
+    "html.format.templating": true,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true
 }

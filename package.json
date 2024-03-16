@@ -60,6 +60,7 @@
     "terser-webpack-plugin": "5.3.10",
     "ts-loader": "9.5.1",
     "typescript": "5.3.3",
+    "typescript-plugin-css-modules": "5.1.0",
     "ua-parser-js": "1.0.37",
     "webp-hero": "0.0.2",
     "webpack": "5.90.2",
