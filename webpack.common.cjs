@@ -66,7 +66,6 @@ const configs = [
                         /^sw\.js(\.map)?$/.test(filename) ||
                         /^workbox-.*\.js(\.map)?$/.test(filename) ||
                         filename === 'icon' ||
-                        filename === 'google688e01234602d07d.html' ||
                         filename === 'IndexNowb922f0d0-3cbe-42b9-b913-accbbf92100f.txt' ||
                         filename === 'robots.txt' ||
                         filename === 'sitemap.xml';
