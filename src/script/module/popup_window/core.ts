@@ -28,7 +28,7 @@ export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void
     let contentContainer: HTMLDivElement;
     if (popupWindow === null) {
         container = createDivElement();
-        container.id = 'pop-up-window';
+        container.id = 'popup-window';
         const innerContainer = createDivElement();
         contentContainer = createDivElement();
         appendChild(container, innerContainer);

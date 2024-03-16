@@ -1,14 +1,12 @@
-:root {
-    --pop-up-window-background-color: rgba(255, 255, 255, 0.9);
-    --pop-up-window-blurred-background-color: rgba(255, 255, 255, 0.55);
+#popup-window {
+    --popup-window-background-color: rgba(255, 255, 255, 0.9);
+    --popup-window-blurred-background-color: rgba(255, 255, 255, 0.55);
 
     @media only screen and (prefers-color-scheme: dark) {
-        --pop-up-window-background-color: rgba(0, 0, 0, 0.3);
-        --pop-up-window-blurred-background-color: rgba(0, 0, 0, 0.1);
+        --popup-window-background-color: rgba(0, 0, 0, 0.3);
+        --popup-window-blurred-background-color: rgba(0, 0, 0, 0.1);
     }
-}
 
-#pop-up-window {
     position: fixed;
     top: 0;
     right: 0;
@@ -17,14 +15,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--pop-up-window-background-color);
+    background-color: var(--popup-window-background-color);
     transition: opacity .3s ease-out;
     z-index: 100;
     box-sizing: border-box;
     padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
 
     @supports (backdrop-filter: blur(10px)) {
-        background-color: var(--pop-up-window-blurred-background-color);
+        background-color: var(--popup-window-blurred-background-color);
         backdrop-filter: blur(10px);
     }
 
