@@ -39,6 +39,8 @@ import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, dereferenceSharedVars, getSharedElement, initializeSharedVars } from './shared_var';
+import { setMaxHeight, setMinHeight, setPaddingBottom } from '../module/style';
+import { CSS_UNIT_PX, CSS_UNIT_VH } from '../module/style/value';
 
 let seriesID: string;
 let epIndex: number;
@@ -230,13 +232,13 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             currentToggleTimeout = null;
             let animationFrame = w.requestAnimationFrame(() => {
                 if (currentToggleAnimationFrame === animationFrame) {
-                    epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
+                    setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT_PX);
                     animationFrame = w.requestAnimationFrame(() => {
                         if (currentToggleAnimationFrame === animationFrame) {
                             isExpanded = false;
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
-                            epButtonWrapper.style.maxHeight = '30vh';
-                            epButtonWrapper.style.removeProperty('padding-bottom');
+                            setMaxHeight(epButtonWrapper, 30, CSS_UNIT_VH);
+                            setPaddingBottom(epButtonWrapper, null);
                         }
                     });
                     currentToggleAnimationFrame = animationFrame;
@@ -247,11 +249,11 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             currentToggleAnimationFrame = null;
             isExpanded = true;
             replaceChildren(showMoreButton, ...showMoreButtonExpandedText);
-            epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px';
-            epButtonWrapper.style.paddingBottom = showMoreButton.scrollHeight + 'px';
+            setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT_PX);
+            setPaddingBottom(epButtonWrapper, showMoreButton.scrollHeight, CSS_UNIT_PX);
             const timeout = addTimeout(() => {
                 if (currentToggleTimeout === timeout) {
-                    epButtonWrapper.style.removeProperty('max-height');
+                    setMaxHeight(epButtonWrapper, null);
                 }
             }, 400);
             currentToggleTimeout = timeout;
@@ -263,19 +265,17 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     let currentStylingAnimationFrame: number | null = null;
     let isOversized = false;
     const styleEPSelector = () => {
-        epButtonWrapper.style.removeProperty('min-height'); // Need to remove min-height first to calculate the height accurately.
+        setMinHeight(epButtonWrapper, null); // Need to remove min-height first to calculate the height accurately.
         const height = getContentBoxHeight(epButtonWrapper);
         const reachedThreshold = height > minHeight * 1.8;
         if (reachedThreshold) {
-            epButtonWrapper.style.minHeight = minHeight * 1.8 + 'px';
-        } else {
-            epButtonWrapper.style.removeProperty('min-height');
+            setMinHeight(epButtonWrapper, minHeight * 1.8, CSS_UNIT_PX);
         }
 
         if (height / w.innerHeight > 0.40 && reachedThreshold) {
             if (isOversized) {
                 if (isExpanded) {
-                    epButtonWrapper.style.paddingBottom = showMoreButton.scrollHeight + 'px';
+                    setPaddingBottom(epButtonWrapper, showMoreButton.scrollHeight, CSS_UNIT_PX);
                 }
                 return;
             }
@@ -286,12 +286,12 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             isExpanded = false;
             let animationFrame = w.requestAnimationFrame(() => {
                 if (currentStylingAnimationFrame === animationFrame) {
-                    epButtonWrapper.style.maxHeight = getContentBoxHeight(epButtonWrapper) + 'px'; // Use `getContentBoxHeight` to get the most recent height.
+                    setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT_PX); // Use `getContentBoxHeight` to get the most recent height.
                     animationFrame = w.requestAnimationFrame(() => {
                         if (currentStylingAnimationFrame === animationFrame) {
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
-                            epButtonWrapper.style.maxHeight = '30vh';
-                            epButtonWrapper.style.removeProperty('padding-bottom');
+                            setMaxHeight(epButtonWrapper, 30, CSS_UNIT_VH);
+                            setPaddingBottom(epButtonWrapper, null);
                             removeClass(showMoreButton, 'invisible');
                             removeClass(showMoreButton, 'transparent');
                         }
@@ -308,12 +308,12 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
             currentToggleAnimationFrame = null;
             currentToggleTimeout = null;
             isOversized = false;
-            epButtonWrapper.style.maxHeight = height + 'px';
+            setMaxHeight(epButtonWrapper, height, CSS_UNIT_PX);
             addClass(showMoreButton, 'transparent');
-            epButtonWrapper.style.removeProperty('padding-bottom');
+            setPaddingBottom(epButtonWrapper, null);
             const timeout = addTimeout(() => {
                 if (currentStylingTimeout === timeout) {
-                    epButtonWrapper.style.removeProperty('max-height');
+                    setMaxHeight(epButtonWrapper, null);
                     addClass(showMoreButton, 'invisible');
                 }
             }, 400);

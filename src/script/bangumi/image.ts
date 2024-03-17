@@ -28,6 +28,8 @@ import { pgid } from '../module/global';
 import { lazyloadImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 import { unloadLazyload } from '../module/lazyload';
+import { setWidth } from '../module/style';
+import { CSS_AUTO } from '../module/style/value';
 
 type ImageLoader = typeof import(
     /* webpackExports: ["clearAllImageEvents"] */
@@ -92,7 +94,7 @@ export default async function (
         addClass(downloadPanel, 'panel');
         addClass(showFullSizeButton, 'button');
         appendText(showFullSizeButton, 'フルサイズで表示');
-        showFullSizeButton.style.width = 'auto';
+        setWidth(showFullSizeButton, CSS_AUTO);
         addClass(downloadButton, 'button');
         downloadButton.disabled = true;
         appendText(downloadButton, 'ダウンロード');

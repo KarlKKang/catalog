@@ -12,6 +12,7 @@ import {
 import { show as showMessage } from './message';
 import { moduleImportError } from './message/template/param';
 import { pgid } from './global';
+import { setHeight, setWidth } from './style';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
@@ -189,8 +190,8 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
         return;
     }
     webpMachine.clearCache();
-    canvas.style.removeProperty('width'); // webp-hero will add incorrect width and height properties
-    canvas.style.removeProperty('height');
+    setWidth(canvas, null); // webp-hero will add incorrect width and height properties
+    setHeight(canvas, null);
     imageProtection(canvas);
     appendChild(queueItem.container, canvas);
     const onLoad = queueItem.onLoad;

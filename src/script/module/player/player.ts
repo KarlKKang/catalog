@@ -33,6 +33,8 @@ import { getLocalTime, secToTimestamp } from '../common/pure';
 import { addInterval, addTimeout, removeInterval } from '../timer';
 import { mediaErrorCodeLookup } from './media_error';
 import * as styles from '../../../css/player.module.scss';
+import { setLeft, setPaddingTop, setRight, setWidth } from '../style';
+import { CSS_UNIT_PERCENT, CSS_UNIT_PX } from '../style/value';
 
 declare global {
     interface HTMLVideoElement {
@@ -262,7 +264,7 @@ export class Player {
         const loadProgress = createDivElement();
         this.loadProgress = loadProgress;
         addClass(loadProgress, styles.playerLoadProgress);
-        loadProgress.style.width = '0%';
+        setWidth(loadProgress, 0, CSS_UNIT_PERCENT);
         this.IS_VIDEO && appendChild(progressHolder, loadProgress);
 
         // Mouse display
@@ -282,7 +284,7 @@ export class Player {
         const playProgress = createDivElement();
         this.progressBar = playProgress;
         addClass(playProgress, styles.playerPlayProgress);
-        playProgress.style.width = '0%';
+        setWidth(playProgress, 0, CSS_UNIT_PERCENT);
         const playProgressIconPlaceholder = addPlayerPlaceholder(playProgress);
         appendChild(progressHolder, playProgress);
 
@@ -586,7 +588,7 @@ export class Player {
                 }
                 bufferEnd = buffer.end;
             }
-            this.loadProgress.style.width = Math.min(Math.round(bufferEnd / this.media.duration * 100), 100) + '%';
+            setWidth(this.loadProgress, Math.min(Math.round(bufferEnd / this.media.duration * 100), 100), CSS_UNIT_PERCENT);
         };
         addEventListener(this.media, 'progress', () => {
             updateLoadProgress();
@@ -606,7 +608,7 @@ export class Player {
         addEventListener(this.media, 'canplaythrough', () => { this.oncanplaythrough(); });
         addEventListenerOnce(this.media, 'canplay', () => {
             const videoMedia = this.media as HTMLVideoElement;
-            this.controls.style.paddingTop = (videoMedia.videoHeight / videoMedia.videoWidth * 100) + '%';
+            setPaddingTop(this.controls, videoMedia.videoHeight / videoMedia.videoWidth * 100, CSS_UNIT_PERCENT);
             DEVELOPMENT && this.log?.('Video size: ' + videoMedia.videoWidth + 'x' + videoMedia.videoHeight);
         });
 
@@ -716,7 +718,7 @@ export class Player {
         if (this.currentTimeDisplayText.textContent !== currentTimestamp) {
             replaceText(this.currentTimeDisplayText, currentTimestamp);
         }
-        this.progressBar.style.width = Math.min(this.media.currentTime / duration * 100, 100) + '%';
+        setWidth(this.progressBar, Math.min(this.media.currentTime / duration * 100, 100), CSS_UNIT_PERCENT);
 
         if (!this.IS_VIDEO) {
             return;
@@ -783,9 +785,9 @@ export class Player {
         const currentTimestamp = secToTimestamp(currentTime, duration);
 
         if (!w.matchMedia('not screen and (hover: hover) and (pointer: fine)').matches) {
-            this.progressMouseDisplay.style.left = leftPadding + 'px';
+            setLeft(this.progressMouseDisplay, leftPadding, CSS_UNIT_PX);
             replaceText(this.timeTooltip, currentTimestamp);
-            this.timeTooltip.style.right = -this.timeTooltip.offsetWidth / 2 + 'px';
+            setRight(this.timeTooltip, -this.timeTooltip.offsetWidth / 2, CSS_UNIT_PX);
             if (currentTime > this.media.currentTime) {
                 removeClass(this.progressMouseDisplay, styles.playerMouseDisplayBackward);
                 addClass(this.progressMouseDisplay, styles.playerMouseDisplayForward);
@@ -800,7 +802,7 @@ export class Player {
                 this.draggingPreviewTimeout = 4;
             }
             replaceText(this.currentTimeDisplayText, currentTimestamp);
-            this.progressBar.style.width = percentage * 100 + '%';
+            setWidth(this.progressBar, percentage * 100, CSS_UNIT_PERCENT);
         }
         return currentTime;
     }

@@ -40,6 +40,8 @@ import { VideoFormatInfo } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
 import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from '../module/player/media_error';
 import { SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
+import { setMaxHeight } from '../module/style';
+import { CSS_UNIT_PX } from '../module/style/value';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -249,7 +251,7 @@ export function buildAccordion(title: string, active: boolean): [HTMLDivElement,
 
 export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HTMLElement | null, active: boolean): void {
     const hidePanel = () => {
-        panel.style.maxHeight = '0px';
+        setMaxHeight(panel, 0, CSS_UNIT_PX);
     };
 
     const changeIcon = () => {
@@ -273,10 +275,10 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HT
         if (active) {
             addClass(acc, 'active');
             currentAnimationFrame = null;
-            panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
+            setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT_PX);
             const timeout = addTimeout(() => {
                 if (currentTimeout === timeout) {
-                    panel.style.removeProperty('max-height');
+                    setMaxHeight(panel, null);
                 }
             }, 200);
             currentTimeout = timeout;
@@ -285,7 +287,7 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HT
             currentTimeout = null;
             let animationFrame = w.requestAnimationFrame(() => {
                 if (currentAnimationFrame === animationFrame) {
-                    panel.style.maxHeight = getContentBoxHeight(panel) + 'px';
+                    setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT_PX);
                     animationFrame = w.requestAnimationFrame(() => {
                         if (currentAnimationFrame === animationFrame) {
                             hidePanel();

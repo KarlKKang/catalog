@@ -2,6 +2,8 @@ import { changeColor, disableInput } from '../module/common';
 import { addClass, appendChild, addEventListener, appendText, createButtonElement, createDivElement, createInputElement, createParagraphElement, hideElement, replaceText, showElement } from '../module/dom';
 import { failedTotp } from '../module/message/template/inline';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
+import { setCursor, setWidth } from '../module/style';
+import { CSS_AUTO, CSS_CURSOR_NOT_ALLOWED } from '../module/style/value';
 import { addInterval, removeInterval } from '../module/timer';
 
 export type EmailOtpPopupWindow = [
@@ -49,16 +51,16 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     const resendButtonText = '再送信する';
     let currentResendInterval: ReturnType<typeof setInterval> | null = null;
     const resetResendTimer = () => {
-        resendButton.style.cursor = 'not-allowed';
-        resendButton.style.width = 'auto';
+        setCursor(resendButton, CSS_CURSOR_NOT_ALLOWED);
+        setWidth(resendButton, CSS_AUTO);
         resendButton.innerText = resendButtonText + '（60秒）';
         let count = 60;
         const interval = addInterval(() => {
             count--;
             if (count <= 0) {
                 resendButton.disabled = false;
-                resendButton.style.removeProperty('cursor');
-                resendButton.style.removeProperty('width');
+                setCursor(resendButton, null);
+                setWidth(resendButton, null);
                 replaceText(resendButton, resendButtonText);
                 currentResendInterval = null;
                 removeInterval(interval);

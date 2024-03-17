@@ -56,6 +56,8 @@ import { pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 import { addInterval, removeInterval } from '../module/timer';
+import { setPaddingTop } from '../module/style';
+import { CSS_UNIT_PERCENT } from '../module/style/value';
 
 let currentPgid: unknown;
 
@@ -315,7 +317,7 @@ async function addVideoNode(config?: {
 
     const playerContainer = createDivElement();
     addClass(playerContainer, 'player');
-    playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
+    setPaddingTop(playerContainer, 9 / 16 * 100, CSS_UNIT_PERCENT);
 
     let chaptersActive = true;
     const beforeLoad = () => {

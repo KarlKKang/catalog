@@ -20,6 +20,8 @@ import { invalidResponse, notFound } from './module/message/template/param/serve
 import { encodeCFURIComponent } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { pgid, redirect } from './module/global';
+import { setWidth } from './module/style';
+import { CSS_UNIT_PX } from './module/style/value';
 
 type ImageLoader = typeof import(
     /* webpackExports: ["clearAllImageEvents"] */
@@ -67,7 +69,7 @@ export default function (showPage: ShowPageFunc) {
                     }
                     imageLoader = imageLoaderModule;
                     imageLoader.default(container, baseURL + encodeCFURIComponent(fileName), fileName, true, (canvas) => {
-                        canvas.style.width = canvas.width / w.devicePixelRatio + 'px';
+                        setWidth(canvas, canvas.width / w.devicePixelRatio, CSS_UNIT_PX);
                         // We won't listen to DPI change since we want to allow the user to zoom in and out.
                         // This has the side effect of not updating the image size when the screen DPI actually changes.
                     }, undefined, () => {

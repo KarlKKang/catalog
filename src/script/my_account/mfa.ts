@@ -47,6 +47,7 @@ import { popupWindowImportPromise } from './import_promise';
 import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
 import type { LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
+import { setHeight } from '../module/style';
 
 export function enableMfa() {
     disableAllInputs(true);
@@ -269,7 +270,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     addClass(qrcode, 'totp-qrcode');
     addClass(qrcode, 'hcenter');
     toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H', margin: 0 }, () => {
-        qrcode.style.removeProperty('height');
+        setHeight(qrcode, null);
     });
 
     const uriElem = createParagraphElement();

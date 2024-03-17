@@ -12,6 +12,8 @@ import { notFound as notFoundBody } from './module/message/template/body/server'
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { changeColor } from './module/common';
 import { redirect } from './module/global';
+import { setWidth } from './module/style';
+import { CSS_AUTO } from './module/style/value';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -22,7 +24,7 @@ export default function (showPage: ShowPageFunc) {
         appendText(getById('message'), notFoundBody);
         const button = getById('button');
         appendText(button, 'トップページへ戻る');
-        button.style.width = 'auto';
+        setWidth(button, CSS_AUTO);
         addEventListener(button, 'click', () => {
             redirect(TOP_URL);
         });
