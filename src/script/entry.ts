@@ -237,7 +237,6 @@ const directories: PageMap = {
             courierNewRegularCss(),
             navBarCss(),
             import('../css/bangumi.scss'),
-            import('../css/player.scss'),
         ],
         html: () => import('../html/bangumi.html'),
         htmlEntry: HTMLEntry.DEFAULT,

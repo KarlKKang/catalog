@@ -314,6 +314,7 @@ async function addVideoNode(config?: {
     const _config = config ?? {};
 
     const playerContainer = createDivElement();
+    addClass(playerContainer, 'player');
     playerContainer.style.paddingTop = 9 / 16 * 100 + '%';
 
     let chaptersActive = true;

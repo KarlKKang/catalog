@@ -115,6 +115,7 @@ async function addAudioNode(index: number) {
     }
 
     const playerContainer = createDivElement();
+    addClass(playerContainer, 'player');
     appendChild(mediaHolder, playerContainer);
     const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 

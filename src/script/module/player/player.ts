@@ -24,14 +24,15 @@ import {
     removeEventListener,
     addEventsListener,
     removeEventsListener,
+    containsClass,
 } from '../dom';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
-import { addPlayerClass, addPlayerClasses, containsPlayerClass, removePlayerClass } from './helper';
 import * as icons from './icons';
 import { getLocalTime, secToTimestamp } from '../common/pure';
 import { addInterval, addTimeout, removeInterval } from '../timer';
 import { mediaErrorCodeLookup } from './media_error';
+import * as styles from '../../../css/player.module.scss';
 
 declare global {
     interface HTMLVideoElement {
@@ -94,57 +95,51 @@ export class Player {
     private playPromise: Promise<void> | undefined;
 
     public get playing(): boolean {
-        return containsPlayerClass(this.controls, 'playing');
+        return containsClass(this.controls, styles.playerPlaying);
     }
 
     protected set playing(isPlaying: boolean) {
         if (isPlaying) {
-            addPlayerClass(this.controls, 'has-started');
-            addPlayerClass(this.playButton, 'playing');
-            removePlayerClass(this.playButton, 'paused');
-            addPlayerClass(this.controls, 'playing');
-            removePlayerClass(this.controls, 'paused');
+            addClass(this.controls, styles.playerHasStarted);
+            addClass(this.playButton, styles.playerPlaying);
+            addClass(this.controls, styles.playerPlaying);
             if (this.ended) {
                 this.seek(0);
             }
             this.ended = false;
         } else {
-            removePlayerClass(this.playButton, 'playing');
-            addPlayerClass(this.playButton, 'paused');
-            removePlayerClass(this.controls, 'playing');
-            addPlayerClass(this.controls, 'paused');
+            removeClass(this.playButton, styles.playerPlaying);
+            removeClass(this.controls, styles.playerPlaying);
         }
     }
 
     protected get ended(): boolean {
-        return containsPlayerClass(this.controls, 'ended');
+        return containsClass(this.controls, styles.playerEnded);
     }
 
     protected set ended(isEnded: boolean) {
         if (isEnded) {
-            removePlayerClass(this.controls, 'seeking');
-            addPlayerClass(this.controls, 'ended');
-            addPlayerClass(this.playButton, 'ended');
+            removeClass(this.controls, styles.playerSeeking);
+            addClass(this.controls, styles.playerEnded);
+            addClass(this.playButton, styles.playerEnded);
             this.pause();
         } else {
-            removePlayerClass(this.controls, 'ended');
-            removePlayerClass(this.playButton, 'ended');
+            removeClass(this.controls, styles.playerEnded);
+            removeClass(this.playButton, styles.playerEnded);
         }
     }
 
     private get active(): boolean {
-        return containsPlayerClass(this.controls, 'user-active');
+        return !containsClass(this.controls, styles.playerUserInactive);
     }
 
     private set active(isActive: boolean) {
         if (isActive) {
             this.inactiveTimeout = 12;
-            removePlayerClass(this.controls, 'user-inactive');
-            addPlayerClass(this.controls, 'user-active');
+            removeClass(this.controls, styles.playerUserInactive);
         } else {
             this.inactiveTimeout = 0;
-            addPlayerClass(this.controls, 'user-inactive');
-            removePlayerClass(this.controls, 'user-active');
+            addClass(this.controls, styles.playerUserInactive);
         }
     }
 
@@ -166,24 +161,23 @@ export class Player {
         // Container
         const controls = container;
         this.controls = controls;
-        addClass(controls, 'player');
+        addClass(controls, styles.player);
         controls.lang = 'en';
         controls.tabIndex = -1;
         controls.translate = false;
-        addPlayerClasses(controls, ['paused', 'user-active']);
-        this.IS_VIDEO || addPlayerClass(controls, 'audio');
+        this.IS_VIDEO || addClass(controls, styles.playerAudio);
         removeRightClick(controls);
 
         // Media
         const media = this.IS_VIDEO ? createVideoElement() : createAudioElement();
         this._media = media;
         media.tabIndex = -1;
-        addPlayerClass(media, 'tech');
+        addClass(media, styles.playerTech);
         appendChild(controls, media);
 
         // Loading spinner
         const loadingSpinner = createDivElement();
-        addPlayerClass(loadingSpinner, 'loading-spinner');
+        addClass(loadingSpinner, styles.playerLoadingSpinner);
         loadingSpinner.dir = 'ltr';
         this.IS_VIDEO && appendChild(controls, loadingSpinner);
 
@@ -194,7 +188,7 @@ export class Player {
         this.bigPlayButton = bigPlayButton;
         bigPlayButton.type = 'button';
         bigPlayButton.title = 'Play Video';
-        addPlayerClass(bigPlayButtonContainer, 'big-play-button');
+        addClass(bigPlayButtonContainer, styles.playerBigPlayButton);
         const bigPlayButtonPlaceholder = addPlayerPlaceholder(bigPlayButton);
         this.IS_VIDEO && appendChild(controls, bigPlayButtonContainer);
 
@@ -202,7 +196,7 @@ export class Player {
         const controlBar = createDivElement();
         this.controlBar = controlBar;
         controlBar.dir = 'ltr';
-        addPlayerClass(controlBar, 'control-bar');
+        addClass(controlBar, styles.playerControlBar);
         appendChild(controls, controlBar);
 
         // Play button
@@ -210,26 +204,25 @@ export class Player {
         this.playButton = playButton;
         playButton.type = 'button';
         playButton.title = 'Play';
-        addPlayerClasses(playButton, ['play-control', 'control', 'button', 'paused']);
+        addClass(playButton, styles.playerPlayControl, styles.playerControl, styles.playerButton);
         const playButtonIconPlaceholder = addPlayerPlaceholder(playButton);
         appendChild(controlBar, playButton);
 
         // Current time display
         const currentTimeDisplay = createDivElement();
         this.currentTimeDisplay = currentTimeDisplay;
-        addPlayerClasses(currentTimeDisplay, ['current-time', 'time-control', 'control']);
+        addClass(currentTimeDisplay, styles.playerTimeControl, styles.playerControl);
         appendChild(controlBar, currentTimeDisplay);
 
         const currentTimeDisplayText = createSpanElement();
         this.currentTimeDisplayText = currentTimeDisplayText;
         appendText(currentTimeDisplayText, '--:--');
-        addPlayerClass(currentTimeDisplayText, 'current-time-display');
         appendChild(currentTimeDisplay, currentTimeDisplayText);
 
         // Time divider
         const timeDivier = createDivElement();
         this.timeDivider = timeDivier;
-        addPlayerClasses(timeDivier, ['time-control', 'time-divider']);
+        addClass(timeDivier, styles.playerTimeControl, styles.playerTimeDivider);
         appendChild(controlBar, timeDivier);
 
         const timeDividerText = createSpanElement();
@@ -239,13 +232,12 @@ export class Player {
         // Duration display
         const durationDisplay = createDivElement();
         this.durationDisplay = durationDisplay;
-        addPlayerClasses(durationDisplay, ['duration', 'time-control', 'control']);
+        addClass(durationDisplay, styles.playerTimeControl, styles.playerControl);
         appendChild(controlBar, durationDisplay);
 
         const durationDisplayText = createDivElement();
         this.durationDisplayText = durationDisplayText;
         appendText(durationDisplayText, '--:--');
-        addPlayerClass(durationDisplayText, 'duration-display');
         appendChild(durationDisplay, durationDisplayText);
 
         if (w.innerWidth < 320) {
@@ -257,39 +249,39 @@ export class Player {
         // Progress control
         const progressControl = createDivElement();
         this.progressControl = progressControl;
-        addPlayerClasses(progressControl, ['progress-control', 'control']);
+        addClass(progressControl, styles.playerProgressControl, styles.playerControl);
         appendChild(controlBar, progressControl);
 
         const progressHolder = createDivElement();
         this.progressHolder = progressHolder;
         progressHolder.tabIndex = 0;
-        addPlayerClass(progressHolder, 'progress-holder');
+        addClass(progressHolder, styles.playerProgressHolder);
         appendChild(progressControl, progressHolder);
 
         // Load progress
         const loadProgress = createDivElement();
         this.loadProgress = loadProgress;
-        addPlayerClass(loadProgress, 'load-progress');
+        addClass(loadProgress, styles.playerLoadProgress);
         loadProgress.style.width = '0%';
         this.IS_VIDEO && appendChild(progressHolder, loadProgress);
 
         // Mouse display
         const mouseDisplay = createDivElement();
         this.progressMouseDisplay = mouseDisplay;
-        addPlayerClass(mouseDisplay, 'mouse-display');
+        addClass(mouseDisplay, styles.playerMouseDisplay);
         appendChild(progressHolder, mouseDisplay);
 
         // Time tooltip
         const timeTooltip = createDivElement();
         this.timeTooltip = timeTooltip;
         appendText(timeTooltip, '--:--');
-        addPlayerClass(timeTooltip, 'time-tooltip');
+        addClass(timeTooltip, styles.playerTimeTooltip);
         appendChild(mouseDisplay, timeTooltip);
 
         // Play progress
         const playProgress = createDivElement();
         this.progressBar = playProgress;
-        addPlayerClass(playProgress, 'play-progress');
+        addClass(playProgress, styles.playerPlayProgress);
         playProgress.style.width = '0%';
         const playProgressIconPlaceholder = addPlayerPlaceholder(playProgress);
         appendChild(progressHolder, playProgress);
@@ -301,7 +293,7 @@ export class Player {
             this.PIPButton = PIPButton;
             PIPButton.type = 'button';
             PIPButton.title = 'Picture-in-Picture';
-            addPlayerClasses(PIPButton, ['picture-in-picture-control', 'control', 'button']);
+            addClass(PIPButton, styles.playerPictureInPictureControl, styles.playerControl, styles.playerButton);
             PIPButtonPlaceholder = addPlayerPlaceholder(PIPButton);
             this.IS_VIDEO && appendChild(controlBar, PIPButton);
         }
@@ -311,7 +303,7 @@ export class Player {
         this.fullscreenButton = fullscreenButton;
         fullscreenButton.type = 'button';
         fullscreenButton.title = 'Fullscreen';
-        addPlayerClasses(fullscreenButton, ['fullscreen-control', 'control', 'button']);
+        addClass(fullscreenButton, styles.playerFullscreenControl, styles.playerControl, styles.playerButton);
         const fullscreenButtonPlaceholder = addPlayerPlaceholder(fullscreenButton);
         this.IS_VIDEO && appendChild(controlBar, fullscreenButton);
 
@@ -623,7 +615,7 @@ export class Player {
         const IOS_FULLSCREEN = IS_IOS && webkitEnterFullscreen !== undefined;
 
         const toggleFullscreen = () => {
-            if (containsPlayerClass(this.controls, 'fullscreen')) {
+            if (containsClass(this.controls, styles.playerDisabled)) {
                 screenfull.exit();
                 this.focus();
             } else {
@@ -637,7 +629,7 @@ export class Player {
         };
 
         if (screenfull.isEnabled || IOS_FULLSCREEN) {
-            removePlayerClass(this.fullscreenButton, 'disabled');
+            removeClass(this.fullscreenButton, styles.playerDisabled);
 
             addEventListener(this.fullscreenButton, 'click', toggleFullscreen);
 
@@ -645,17 +637,17 @@ export class Player {
                 this.onFullscreenChange = () => {
                     const elemInFS = screenfull.element;
                     if (elemInFS === undefined) {
-                        removePlayerClass(this.controls, 'fullscreen');
+                        removeClass(this.controls, styles.playerFullscreen);
                         this.fullscreenButton.title = 'Fullscreen';
                     } else if (elemInFS.isSameNode(this.controls) || elemInFS.isSameNode(this.media)) {
-                        addPlayerClass(this.controls, 'fullscreen');
+                        addClass(this.controls, styles.playerFullscreen);
                         this.fullscreenButton.title = 'Exit Fullscreen';
                     }
                 };
                 screenfull.on('change', this.onFullscreenChange);
             }
         } else {
-            addPlayerClass(this.fullscreenButton, 'disabled');
+            addClass(this.fullscreenButton, styles.playerDisabled);
             this.fullscreenButton.title = 'Fullscreen Unavailable';
         }
 
@@ -663,7 +655,7 @@ export class Player {
         const PIPButton = this.PIPButton;
         if (PIPButton !== undefined) {
             addEventListener(PIPButton, 'click', () => {
-                if (containsPlayerClass(this.controls, 'picture-in-picture')) {
+                if (containsClass(this.controls, styles.playerPictureInPicture)) {
                     d.exitPictureInPicture();
                 } else {
                     (this.media as HTMLVideoElement).requestPictureInPicture();
@@ -672,12 +664,12 @@ export class Player {
             });
 
             addEventListener(this.media, 'enterpictureinpicture', () => {
-                addPlayerClass(this.controls, 'picture-in-picture');
+                addClass(this.controls, styles.playerPictureInPicture);
                 PIPButton.title = 'Exit Picture-in-Picture';
             });
 
             addEventListener(this.media, 'leavepictureinpicture', () => {
-                removePlayerClass(this.controls, 'picture-in-picture');
+                removeClass(this.controls, styles.playerPictureInPicture);
                 PIPButton.title = 'Picture-in-Picture';
                 this.focus();
             });
@@ -795,11 +787,11 @@ export class Player {
             replaceText(this.timeTooltip, currentTimestamp);
             this.timeTooltip.style.right = -this.timeTooltip.offsetWidth / 2 + 'px';
             if (currentTime > this.media.currentTime) {
-                removeClass(this.progressMouseDisplay, 'backward');
-                addClass(this.progressMouseDisplay, 'forward');
+                removeClass(this.progressMouseDisplay, styles.playerMouseDisplayBackward);
+                addClass(this.progressMouseDisplay, styles.playerMouseDisplayForward);
             } else {
-                removeClass(this.progressMouseDisplay, 'forward');
-                addClass(this.progressMouseDisplay, 'backward');
+                removeClass(this.progressMouseDisplay, styles.playerMouseDisplayForward);
+                addClass(this.progressMouseDisplay, styles.playerMouseDisplayBackward);
             }
         }
         if (this.dragging) {
@@ -833,12 +825,12 @@ export class Player {
 
     protected onwaiting(this: Player): void {
         DEVELOPMENT && this.log?.('Playback entered waiting state at ' + this.media.currentTime + '.');
-        addPlayerClass(this.controls, 'seeking');
+        addClass(this.controls, styles.playerSeeking);
     }
 
     protected oncanplaythrough(this: Player): void {
         DEVELOPMENT && this.log?.('Playback can play through at ' + this.media.currentTime + '.');
-        removePlayerClass(this.controls, 'seeking');
+        removeClass(this.controls, styles.playerSeeking);
     }
 
     protected onseeking(this: Player): void {
@@ -890,7 +882,7 @@ export class Player {
 function addPlayerPlaceholder(elem: HTMLElement) {
     const placeholder = createSpanElement();
     // placeholder.ariaHidden = 'true';
-    addPlayerClass(placeholder, 'icon-placeholder');
+    addClass(placeholder, styles.playerIconPlaceholder);
     appendChild(elem, placeholder);
     return placeholder;
 }

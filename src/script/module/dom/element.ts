@@ -68,8 +68,11 @@ export function getByTagAt(tagName: string, index: number) {
     return elem;
 }
 
-export function addClass(elem: Element, className: string) {
+export function addClass(elem: Element, className: string, ...classNames: string[]) {
     elem.classList.add(className);
+    for (const className of classNames) {
+        elem.classList.add(className);
+    }
 }
 
 export function removeClass(elem: Element, className: string) {

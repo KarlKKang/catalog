@@ -12,8 +12,6 @@
     font-weight: 400;
     font-style: normal;
     word-break: initial;
-    width: 100%;
-    max-width: 100%;
 
     &:-moz-full-screen {
         position: absolute;
@@ -278,11 +276,11 @@
                     height: 100%;
                     z-index: 1;
 
-                    &.backward {
+                    &.player-mouse-display-backward {
                         background-color: var(properties.get(foreground-color));
                     }
 
-                    &.forward {
+                    &.player-mouse-display-forward {
                         background-color: var(properties.get(text-color));
                     }
 

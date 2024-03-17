@@ -1,10 +1,12 @@
 import { Player } from './player';
 import {
+    addClass,
     addEventsListener,
+    removeClass,
     removeEventsListener,
 } from '../dom';
-import { addPlayerClass, removePlayerClass } from './helper';
 import { addTimeout } from '../timer';
+import { playerSeeking } from '../../../css/player.module.scss';
 
 export abstract class NonNativePlayer extends Player {
     private buffering = false;
@@ -43,7 +45,7 @@ export abstract class NonNativePlayer extends Player {
 
         const endBuffer = () => {
             removeEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
-            removePlayerClass(this.controls, 'seeking');
+            removeClass(this.controls, playerSeeking);
             this.buffering = false;
         };
 
@@ -76,7 +78,7 @@ export abstract class NonNativePlayer extends Player {
         }
 
         addTimeout(this.checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
-        addPlayerClass(this.controls, 'seeking');
+        addClass(this.controls, playerSeeking);
         this.media.playbackRate = 0;
     }
 
