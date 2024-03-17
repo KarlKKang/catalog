@@ -5,6 +5,7 @@ const { DefinePlugin } = require('webpack');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const fs = require('fs');
 const crypto = require('crypto');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 function addHTMLConfig(config, dev) {
     const pageTitle = DOMAIN + (dev ? ' (alpha)' : '');
@@ -158,11 +159,47 @@ function addWorkboxPlugin(config, dev) {
     );
 }
 
+function addCssLoader(config, dev) {
+    config.module.rules.push(
+        {
+            test: /\.s?css$/i,
+            use: [
+                MiniCssExtractPlugin.loader,
+                {
+                    loader: 'css-loader',
+                    options: {
+                        modules: {
+                            namedExport: true,
+                            exportGlobals: true,
+                            localIdentName: dev ? '[path][name]__[local]' : '[hash:base64]',
+                            mode: (resourcePath) => {
+                                if (/\.module\.s?css$/i.test(resourcePath)) {
+                                    return 'local';
+                                }
+                                return 'global';
+                            }
+                        }
+                    }
+                }
+            ],
+            sideEffects: true,
+        },
+        {
+            test: /\.scss$/i,
+            use: [
+                'sass-loader',
+            ],
+            sideEffects: true,
+        }
+    );
+}
+
 module.exports.addPlugins = function (config, dev) {
     addDefinePlugin(config, dev);
     addHTMLConfig(config, dev);
     addFontLoader(config, dev);
     addWorkboxPlugin(config, dev);
+    addCssLoader(config, dev);
 }
 
 module.exports.getCoreJSVersion = function () {

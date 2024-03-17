@@ -16,22 +16,6 @@ const optimization = {
     usedExports: true,
 };
 
-const cssLoader = {
-    loader: 'css-loader',
-    options: {
-        modules: {
-            namedExport: true,
-            exportGlobals: true,
-            mode: (resourcePath) => {
-                if (/\.module\.s?css$/i.test(resourcePath)) {
-                    return 'local';
-                }
-                return 'global';
-            }
-        }
-    }
-};
-
 const configs = [
     {
         name: 'main',
@@ -154,21 +138,6 @@ const configs = [
                     options: {
                         minimize: htmlMinifyOptions,
                     },
-                },
-                {
-                    test: /\.s?css$/i,
-                    use: [
-                        MiniCssExtractPlugin.loader,
-                        cssLoader
-                    ],
-                    sideEffects: true,
-                },
-                {
-                    test: /\.scss$/i,
-                    use: [
-                        'sass-loader',
-                    ],
-                    sideEffects: true,
                 },
             ]
         }
