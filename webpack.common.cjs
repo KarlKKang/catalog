@@ -21,7 +21,13 @@ const cssLoader = {
     options: {
         modules: {
             namedExport: true,
-            auto: true,
+            exportGlobals: true,
+            mode: (resourcePath) => {
+                if (/\.module\.s?css$/i.test(resourcePath)) {
+                    return 'local';
+                }
+                return 'global';
+            }
         }
     }
 };
@@ -150,7 +156,7 @@ const configs = [
                     },
                 },
                 {
-                    test: /\.css$/i,
+                    test: /\.s?css$/i,
                     use: [
                         MiniCssExtractPlugin.loader,
                         cssLoader
@@ -160,8 +166,6 @@ const configs = [
                 {
                     test: /\.scss$/i,
                     use: [
-                        MiniCssExtractPlugin.loader,
-                        cssLoader,
                         'sass-loader',
                     ],
                     sideEffects: true,
