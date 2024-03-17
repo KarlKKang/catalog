@@ -1,0 +1,72 @@
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:math';
+
+$_global-properties: (
+    background-color,
+    foreground-color,
+    background-color-transparent,
+    grey-background-color,
+
+    text-color,
+    text-color-transparent,
+    alt-text-color,
+    link-text-color,
+
+    horizontal-line-background-color,
+    horizontal-line-foreground-color,
+
+    red-color,
+    green-color,
+    orange-color,
+
+    shadow-color,
+    shadow-color-hover,
+    shadow-size,
+    shadow-size-hover,
+    shadow,
+    shadow-hover,
+
+    safe-area-inset-top,
+    safe-area-inset-right,
+    safe-area-inset-bottom,
+    safe-area-inset-left
+);
+
+$_letters: (
+    a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+);
+
+$_properties: (
+);
+
+@function add($property-name) {
+    @if map.has-key($_properties, $property-name) {
+        @error "Property #{$property-name} already exists";
+    }
+
+    $index: list.length($_properties);
+    $mangled-name: --;
+
+    @while math.floor(math.div($index, 52))>0 {
+        $mangled-name: $mangled-name + list.nth($_letters, $index % 52 + 1);
+        $index: $index - 52;
+    }
+
+    $mangled-name: $mangled-name + list.nth($_letters, $index + 1);
+    $_properties: map.set($_properties, $property-name, $mangled-name) !global;
+
+    @return null;
+}
+
+@function get($property-name) {
+    @if not map.has-key($_properties, $property-name) {
+        @error "Property #{$property-name} does not exist";
+    }
+
+    @return map.get($_properties, $property-name);
+}
+
+@each $property in $_global-properties {
+    $_: add($property);
+}

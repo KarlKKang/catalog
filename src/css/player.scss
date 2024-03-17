@@ -1,7 +1,9 @@
+@use 'module/properties';
+
 .player {
     display: block;
     box-sizing: border-box;
-    color: var(--text-color);
+    color: var(properties.get(text-color));
     background-color: #000;
     position: relative;
     padding: 0;
@@ -66,7 +68,7 @@
             cursor: default !important;
 
             svg {
-                fill: var(--alt-text-color) !important;
+                fill: var(properties.get(alt-text-color)) !important;
             }
         }
     }
@@ -81,7 +83,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         height: 2.2em;
-        fill: var(--text-color);
+        fill: var(properties.get(text-color));
         transition: fill 0.4s;
     }
 
@@ -101,7 +103,7 @@
         margin: -25px 0 0 -25px;
         opacity: 1;
         text-align: left;
-        border: 3px solid var(--text-color);
+        border: 3px solid var(properties.get(text-color));
         box-sizing: border-box;
         background-clip: padding-box;
         width: 50px;
@@ -121,15 +123,15 @@
             opacity: 1;
             border: inherit;
             border-color: transparent;
-            border-top-color: var(--background-color);
+            border-top-color: var(properties.get(background-color));
         }
 
         @media only screen and (prefers-color-scheme: dark) {
-            border: 3px solid var(--background-color);
+            border: 3px solid var(properties.get(background-color));
 
             &:before,
             &:after {
-                border-top-color: var(--text-color);
+                border-top-color: var(properties.get(text-color));
             }
         }
     }
@@ -150,9 +152,9 @@
             padding: 0px 0px 100% 0px;
             cursor: pointer;
             border: 0px;
-            background-color: var(--foreground-color);
+            background-color: var(properties.get(foreground-color));
             border-radius: 50%;
-            color: var(--text-color);
+            color: var(properties.get(text-color));
         }
 
         .player-icon-placeholder>svg {
@@ -172,7 +174,7 @@
         left: 0;
         right: 0;
         height: 3em;
-        background-color: var(--foreground-color);
+        background-color: var(properties.get(foreground-color));
 
         .player-control {
             position: relative;
@@ -255,7 +257,7 @@
                 }
 
                 .player-play-progress {
-                    background-color: var(--text-color);
+                    background-color: var(properties.get(text-color));
 
                     .player-icon-placeholder>svg {
                         height: 1.4em;
@@ -265,7 +267,7 @@
                 }
 
                 .player-load-progress {
-                    background: var(--alt-text-color);
+                    background: var(properties.get(alt-text-color));
                     opacity: 0.5;
                 }
 
@@ -277,16 +279,16 @@
                     z-index: 1;
 
                     &.backward {
-                        background-color: var(--foreground-color);
+                        background-color: var(properties.get(foreground-color));
                     }
 
                     &.forward {
-                        background-color: var(--text-color);
+                        background-color: var(properties.get(text-color));
                     }
 
                     .player-time-tooltip {
-                        color: var(--foreground-color);
-                        background-color: var(--text-color);
+                        color: var(properties.get(foreground-color));
+                        background-color: var(properties.get(text-color));
                         border-radius: 0.3em;
                         float: right;
                         font-size: 0.8em;
@@ -473,7 +475,7 @@
             border-radius: 10px;
             padding: 0px 0.5em 0px 0.5em;
             height: 4em;
-            box-shadow: var(--shadow);
+            box-shadow: var(properties.get(shadow));
 
             .player-time-control {
                 font-size: 1.4em;
@@ -521,7 +523,7 @@
                 }
 
                 >svg {
-                    fill: var(--link-text-color);
+                    fill: var(properties.get(link-text-color));
                 }
             }
         }

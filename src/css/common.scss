@@ -1,92 +1,91 @@
-@charset "utf-8";
-/* CSS Document */
+@use 'module/properties';
 
 :root {
-    --background-color: rgba(252, 252, 252, 1);
-    --foreground-color: rgba(255, 255, 255, 1);
-    --background-color-transparent: rgba(251, 251, 251, 0);
-    --grey-background-color: rgba(235, 235, 235, 1);
+    #{properties.get(background-color)}: rgba(252, 252, 252, 1);
+    #{properties.get(foreground-color)}: rgba(255, 255, 255, 1);
+    #{properties.get(background-color-transparent)}: rgba(251, 251, 251, 0);
+    #{properties.get(grey-background-color)}: rgba(235, 235, 235, 1);
 
-    --text-color: rgba(0, 0, 0, 1);
-    --text-color-transparent: rgba(0, 0, 0, 0);
-    --alt-text-color: rgba(173, 173, 181, 1);
-    --link-text-color: rgba(16, 105, 201, 1);
+    #{properties.get(text-color)}: rgba(0, 0, 0, 1);
+    #{properties.get(text-color-transparent)}: rgba(0, 0, 0, 0);
+    #{properties.get(alt-text-color)}: rgba(173, 173, 181, 1);
+    #{properties.get(link-text-color)}: rgba(16, 105, 201, 1);
 
-    --horizontal-line-background-color: rgba(220, 222, 226, 1);
-    --horizontal-line-foreground-color: rgba(225, 227, 231, 1);
+    #{properties.get(horizontal-line-background-color)}: rgba(220, 222, 226, 1);
+    #{properties.get(horizontal-line-foreground-color)}: rgba(225, 227, 231, 1);
 
-    --red-color: rgba(255, 0, 0, 1);
-    --green-color: rgba(0, 255, 0, 1);
-    --orange-color: rgba(255, 170, 16, 1);
+    #{properties.get(red-color)}: rgba(255, 0, 0, 1);
+    #{properties.get(green-color)}: rgba(0, 255, 0, 1);
+    #{properties.get(orange-color)}: rgba(255, 170, 16, 1);
 
-    --shadow-color: rgba(32, 52, 76, .15);
-    --shadow-color-hover: rgba(32, 52, 76, .25);
-    --shadow-size: 0 0 17px 0;
-    --shadow-size-hover: 0 2px 30px 2px;
-    --shadow: var(--shadow-size) var(--shadow-color);
-    --shadow-hover: var(--shadow-size-hover) var(--shadow-color-hover);
+    #{properties.get(shadow-color)}: rgba(32, 52, 76, .15);
+    #{properties.get(shadow-color-hover)}: rgba(32, 52, 76, .25);
+    #{properties.get(shadow-size)}: 0 0 17px 0;
+    #{properties.get(shadow-size-hover)}: 0 2px 30px 2px;
+    #{properties.get(shadow)}: var(properties.get(shadow-size)) var(properties.get(shadow-color));
+    #{properties.get(shadow-hover)}: var(properties.get(shadow-size-hover)) var(properties.get(shadow-color-hover));
 
-    --safe-area-inset-top: 0;
-    --safe-area-inset-right: 0;
-    --safe-area-inset-bottom: 0;
-    --safe-area-inset-left: 0;
+    #{properties.get(safe-area-inset-top)}: 0;
+    #{properties.get(safe-area-inset-right)}: 0;
+    #{properties.get(safe-area-inset-bottom)}: 0;
+    #{properties.get(safe-area-inset-left)}: 0;
 
     @media only screen and (prefers-color-scheme: dark) {
-        --background-color: rgba(40, 41, 49, 1);
-        --foreground-color: rgba(43, 44, 52, 1);
-        --background-color-transparent: rgba(40, 41, 49, 0);
-        --grey-background-color: rgba(65, 68, 80, 1);
+        #{properties.get(background-color)}: rgba(40, 41, 49, 1);
+        #{properties.get(foreground-color)}: rgba(43, 44, 52, 1);
+        #{properties.get(background-color-transparent)}: rgba(40, 41, 49, 0);
+        #{properties.get(grey-background-color)}: rgba(65, 68, 80, 1);
 
-        --text-color: rgba(210, 213, 220, 1);
-        --text-color-transparent: rgba(210, 213, 220, 0);
-        --alt-text-color: rgba(95, 97, 106, 1);
-        --link-text-color: rgba(28, 98, 221, 1);
+        #{properties.get(text-color)}: rgba(210, 213, 220, 1);
+        #{properties.get(text-color-transparent)}: rgba(210, 213, 220, 0);
+        #{properties.get(alt-text-color)}: rgba(95, 97, 106, 1);
+        #{properties.get(link-text-color)}: rgba(28, 98, 221, 1);
 
-        --horizontal-line-background-color: rgba(48, 52, 62, 1);
-        --horizontal-line-foreground-color: rgba(54, 58, 69, 1);
+        #{properties.get(horizontal-line-background-color)}: rgba(48, 52, 62, 1);
+        #{properties.get(horizontal-line-foreground-color)}: rgba(54, 58, 69, 1);
 
-        --red-color: rgba(205, 3, 70, 1);
-        --green-color: rgba(15, 214, 72, 1);
-        --orange-color: rgba(234, 129, 4, 1);
+        #{properties.get(red-color)}: rgba(205, 3, 70, 1);
+        #{properties.get(green-color)}: rgba(15, 214, 72, 1);
+        #{properties.get(orange-color)}: rgba(234, 129, 4, 1);
 
-        --shadow-color: rgba(15, 16, 24, .55);
-        --shadow-color-hover: rgba(15, 16, 24, .60);
+        #{properties.get(shadow-color)}: rgba(15, 16, 24, .55);
+        #{properties.get(shadow-color-hover)}: rgba(15, 16, 24, .60);
     }
 
     @media not screen and (hover: hover) and (pointer: fine) {
-        --shadow-hover: var(--shadow);
+        #{properties.get(shadow-hover)}: var(properties.get(shadow));
     }
 
-    @supports (--safe-area-inset-top: constant(safe-area-inset-top, 0px)) {
-        --safe-area-inset-top: constant(safe-area-inset-top, 0px);
+    @supports (--a: constant(safe-area-inset-top, 0px)) {
+        #{properties.get(safe-area-inset-top)}: constant(safe-area-inset-top, 0px);
     }
 
-    @supports (--safe-area-inset-right: constant(safe-area-inset-right, 0px)) {
-        --safe-area-inset-right: constant(safe-area-inset-right, 0px);
+    @supports (--a: constant(safe-area-inset-right, 0px)) {
+        #{properties.get(safe-area-inset-right)}: constant(safe-area-inset-right, 0px);
     }
 
-    @supports (--safe-area-inset-bottom: constant(safe-area-inset-bottom, 0px)) {
-        --safe-area-inset-bottom: constant(safe-area-inset-bottom, 0px);
+    @supports (--a: constant(safe-area-inset-bottom, 0px)) {
+        #{properties.get(safe-area-inset-bottom)}: constant(safe-area-inset-bottom, 0px);
     }
 
-    @supports (--safe-area-inset-left: constant(safe-area-inset-left, 0px)) {
-        --safe-area-inset-left: constant(safe-area-inset-left, 0px);
+    @supports (--a: constant(safe-area-inset-left, 0px)) {
+        #{properties.get(safe-area-inset-left)}: constant(safe-area-inset-left, 0px);
     }
 
-    @supports (--safe-area-inset-top: env(safe-area-inset-top, 0px)) {
-        --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    @supports (--a: env(safe-area-inset-top, 0px)) {
+        #{properties.get(safe-area-inset-top)}: env(safe-area-inset-top, 0px);
     }
 
-    @supports (--safe-area-inset-right: env(safe-area-inset-right, 0px)) {
-        --safe-area-inset-right: env(safe-area-inset-right, 0px);
+    @supports (--a: env(safe-area-inset-right, 0px)) {
+        #{properties.get(safe-area-inset-right)}: env(safe-area-inset-right, 0px);
     }
 
-    @supports (--safe-area-inset-bottom: env(safe-area-inset-bottom, 0px)) {
-        --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    @supports (--a: env(safe-area-inset-bottom, 0px)) {
+        #{properties.get(safe-area-inset-bottom)}: env(safe-area-inset-bottom, 0px);
     }
 
-    @supports (--safe-area-inset-left: env(safe-area-inset-left, 0px)) {
-        --safe-area-inset-left: env(safe-area-inset-left, 0px);
+    @supports (--a: env(safe-area-inset-left, 0px)) {
+        #{properties.get(safe-area-inset-left)}: env(safe-area-inset-left, 0px);
     }
 }
 
@@ -105,7 +104,7 @@ html {
     }
 
     &:not(.native-viewport) {
-        padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
+        padding: var(properties.get(safe-area-inset-top)) var(properties.get(safe-area-inset-right)) var(properties.get(safe-area-inset-bottom)) var(properties.get(safe-area-inset-left));
     }
 }
 
@@ -118,15 +117,15 @@ body {
     padding: 0px;
 
     &:not(.no-theme) {
-        background: var(--background-color);
+        background: var(properties.get(background-color));
     }
 }
 
 #loading-bar {
-    background-color: var(--text-color);
+    background-color: var(properties.get(text-color));
     height: 1.5px;
     position: fixed;
-    top: var(--safe-area-inset-top);
+    top: var(properties.get(safe-area-inset-top));
     left: 0;
     width: 0;
     z-index: 999;
@@ -142,7 +141,7 @@ button,
 input {
     font-family: 'Noto Sans JP', 'メイリオ', Meiryo, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
-    color: var(--text-color);
+    color: var(properties.get(text-color));
 }
 
 .multi-language {
@@ -157,16 +156,16 @@ input {
 
 .button,
 .input-field {
-    box-shadow: var(--shadow);
+    box-shadow: var(properties.get(shadow));
     transition: box-shadow .4s ease-out;
-    background: var(--foreground-color);
+    background: var(properties.get(foreground-color));
     max-width: 100%;
     margin: 1em 0px;
 }
 
 .input-field:not(.disabled):hover,
 .button:enabled:hover {
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(properties.get(shadow-hover));
 }
 
 .button,
@@ -177,9 +176,9 @@ input {
     padding: 0.5em 1em;
 
     &:disabled {
-        color: var(--alt-text-color);
+        color: var(properties.get(alt-text-color));
         /* required on iOS */
-        -webkit-text-fill-color: var(--alt-text-color);
+        -webkit-text-fill-color: var(properties.get(alt-text-color));
         opacity: 1;
         cursor: wait;
     }
@@ -189,7 +188,7 @@ input {
     width: 150px;
     min-height: 2.5em;
     /* Set color on 'input' elements will override placeholder color in some older browsers */
-    color: var(--text-color);
+    color: var(properties.get(text-color));
     cursor: pointer;
     text-align: center;
     display: block;
@@ -211,7 +210,7 @@ input {
 }
 
 .button:disabled {
-    background-color: var(--foreground-color);
+    background-color: var(properties.get(foreground-color));
 }
 
 .input-field>input:disabled {
@@ -224,7 +223,7 @@ input {
 .link:hover,
 .link:active {
     cursor: pointer;
-    color: var(--link-text-color);
+    color: var(properties.get(link-text-color));
     text-decoration: none;
 }
 
@@ -241,19 +240,19 @@ input {
 }
 
 .color-green {
-    color: var(--green-color);
+    color: var(properties.get(green-color));
 }
 
 .color-red {
-    color: var(--red-color);
+    color: var(properties.get(red-color));
 }
 
 .color-orange {
-    color: var(--orange-color);
+    color: var(properties.get(orange-color));
 }
 
 ::placeholder {
     /* Most modern browsers support this now. */
-    color: var(--alt-text-color);
+    color: var(properties.get(alt-text-color));
     opacity: 1;
 }

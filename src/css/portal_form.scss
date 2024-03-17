@@ -1,3 +1,4 @@
+@use 'module/properties';
 @use 'module/common';
 
 #portal-form {
@@ -22,7 +23,7 @@
     #warning {
         padding: 0px;
         margin: 1em 0px;
-        color: var(--red-color);
+        color: var(properties.get(red-color));
     }
 
     .button {
@@ -38,7 +39,7 @@
             padding: 0px 0px 0px 2em;
 
             >li {
-                color: var(--alt-text-color);
+                color: var(properties.get(alt-text-color));
             }
         }
     }

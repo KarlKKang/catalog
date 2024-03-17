@@ -1,6 +1,8 @@
+@use 'properties';
+
 @mixin lazyload {
     .lazyload {
-        background: var(--foreground-color);
+        background: var(properties.get(foreground-color));
 
         &.complete {
             padding-bottom: 0px !important;

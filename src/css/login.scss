@@ -1,13 +1,4 @@
-:root {
-    --checkbox-shadow-size: 0 0 10px 1.3px;
-    --checkbox-shadow-size-hover: 0 2px 17px 4px;
-    --checkbox-shadow: var(--checkbox-shadow-size) var(--shadow-color);
-    --checkbox-shadow-hover: var(--checkbox-shadow-size-hover) var(--shadow-color-hover);
-
-    @media not screen and (hover: hover) and (pointer: fine) {
-        --checkbox-shadow-hover: var(--checkbox-shadow);
-    }
-}
+@use 'module/properties';
 
 #page-login {
     #remember-me {
@@ -22,6 +13,20 @@
 
     /* The container */
     .checkbox-container {
+        $_: properties.add(checkbox-shadow-size);
+        $_: properties.add(checkbox-shadow-size-hover);
+        $_: properties.add(checkbox-shadow);
+        $_: properties.add(checkbox-shadow-hover);
+
+        #{properties.get(checkbox-shadow-size)}: 0 0 10px 1.3px;
+        #{properties.get(checkbox-shadow-size-hover)}: 0 2px 17px 4px;
+        #{properties.get(checkbox-shadow)}: var(properties.get(checkbox-shadow-size)) var(properties.get(shadow-color));
+        #{properties.get(checkbox-shadow-hover)}: var(properties.get(checkbox-shadow-size-hover)) var(properties.get(shadow-color-hover));
+
+        @media not screen and (hover: hover) and (pointer: fine) {
+            #{properties.get(checkbox-shadow-hover)}: var(properties.get(checkbox-shadow));
+        }
+
         /* display: block; */
         position: relative;
         padding-left: 2em;
@@ -55,8 +60,8 @@
             left: 0;
             height: 1.2em;
             width: 1.2em;
-            background-color: var(--foreground-color);
-            box-shadow: var(--checkbox-shadow);
+            background-color: var(properties.get(foreground-color));
+            box-shadow: var(properties.get(checkbox-shadow));
             transition: box-shadow .4s ease-out;
 
             /* Create the checkmark/indicator (hidden when not checked) */
@@ -68,7 +73,7 @@
                 top: 0.1em;
                 width: 0.3em;
                 height: 0.6em;
-                border: solid var(--text-color);
+                border: solid var(properties.get(text-color));
                 border-width: 0 3px 3px 0;
                 transform: rotate(45deg);
             }
@@ -76,7 +81,7 @@
 
         /* On mouse-over, add box shadow */
         &:not(.disabled):hover input~.checkmark {
-            box-shadow: var(--checkbox-shadow-hover);
+            box-shadow: var(properties.get(checkbox-shadow-hover));
         }
 
         /* Show the checkmark when checked */
@@ -85,7 +90,7 @@
         }
 
         input:disabled~.checkmark:after {
-            border-color: var(--alt-text-color);
+            border-color: var(properties.get(alt-text-color));
         }
     }
 }

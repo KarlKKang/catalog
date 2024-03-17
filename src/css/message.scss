@@ -1,3 +1,5 @@
+@use 'module/properties';
+
 #page-message {
     #container {
         width: 1000px;
@@ -7,14 +9,14 @@
         position: relative;
         left: 50%;
         transform: translate(-50%, 0%);
-        background-color: var(--foreground-color);
-        box-shadow: var(--shadow);
+        background-color: var(properties.get(foreground-color));
+        box-shadow: var(properties.get(shadow));
         transition: box-shadow .4s ease-out;
         box-sizing: border-box;
         text-align: center;
 
         &:hover {
-            box-shadow: var(--shadow-hover);
+            box-shadow: var(properties.get(shadow-hover));
         }
     }
 
