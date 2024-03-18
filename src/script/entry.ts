@@ -191,7 +191,6 @@ const pages: PageMap = {
             portalFormCss(),
             registerCss(),
         ],
-        html: () => import('../html/special_register.html'),
         title: '新規登録',
         htmlEntry: HTMLEntry.DEFAULT,
     },

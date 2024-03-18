@@ -1,10 +1,16 @@
 import { sendServerRequest } from './module/server_request';
 import {
     addEventListener,
-    getById,
     replaceText,
     clearSessionStorage,
     disableInput,
+    createDivElement,
+    appendChild,
+    body,
+    createParagraphElement,
+    addClass,
+    createEmailInput,
+    createButtonElement,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
@@ -12,7 +18,7 @@ import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitatio
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { invalidResponse } from './module/message/template/param/server';
-import { showElement } from './module/style';
+import { hideElement, showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -20,9 +26,26 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function showPageCallback() {
-    const emailInput = getById('email') as HTMLInputElement;
-    const submitButton = getById('submit-button') as HTMLButtonElement;
-    const warningElem = getById('warning');
+    const container = createDivElement();
+    container.id = 'portal-form';
+    appendChild(body, container);
+
+    const title = createParagraphElement('新規登録');
+    title.id = 'title';
+    appendChild(container, title);
+
+    const warningElem = createParagraphElement();
+    warningElem.id = 'warning';
+    hideElement(warningElem);
+    appendChild(container, warningElem);
+
+    const [emailContainer, emailInput] = createEmailInput();
+    addClass(emailContainer, 'hcenter');
+    appendChild(container, emailContainer);
+
+    const submitButton = createButtonElement('送信する');
+    addClass(submitButton, 'hcenter');
+    appendChild(container, submitButton);
 
     addEventListener(emailInput, 'keydown', (event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
