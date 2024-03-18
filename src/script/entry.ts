@@ -123,7 +123,6 @@ const pages: PageMap = {
         style: () => [
             import('../css/image.scss'),
         ],
-        html: () => import('../html/image.html'),
         htmlEntry: HTMLEntry.NO_THEME,
         nativeViewport: true,
     },

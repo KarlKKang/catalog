@@ -9,10 +9,13 @@ import {
 } from './module/common';
 import {
     setTitle,
-    getById,
     getSessionStorage,
     clearSessionStorage,
     w,
+    createDivElement,
+    addClass,
+    appendChild,
+    getBody,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
@@ -60,7 +63,16 @@ export default function (showPage: ShowPageFunc) {
                 return;
             }
             showPage(() => {
-                const container = getById('image-container');
+                const flexContainer = createDivElement();
+                flexContainer.id = 'flex-container';
+                const container = createDivElement();
+                container.id = 'image-container';
+                const overlay = createDivElement();
+                addClass(overlay, 'overlay');
+                appendChild(container, overlay);
+                appendChild(flexContainer, container);
+                appendChild(getBody(), flexContainer);
+
                 removeRightClick(container);
                 const currentPgid = pgid;
                 imageLoaderImportPromise.then((imageLoaderModule) => {
