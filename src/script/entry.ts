@@ -95,7 +95,6 @@ const pages: PageMap = {
             navBarCss(),
             import('../css/index.scss'),
         ],
-        html: () => import('../html/index.html'),
         htmlEntry: HTMLEntry.DEFAULT,
         id: 'top',
     },

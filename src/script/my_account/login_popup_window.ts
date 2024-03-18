@@ -39,8 +39,7 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     const emailInputContainer = createDivElement();
     addClass(emailInputContainer, 'input-field');
     addClass(emailInputContainer, 'hcenter');
-    const emailInput = createInputElement();
-    emailInput.type = 'email';
+    const emailInput = createInputElement('email');
     emailInput.autocomplete = 'email';
     emailInput.placeholder = 'メールアドレス';
     emailInput.autocapitalize = 'off';
@@ -50,8 +49,7 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     const passwordInputContainer = createDivElement();
     addClass(passwordInputContainer, 'input-field');
     addClass(passwordInputContainer, 'hcenter');
-    const passwordInput = createInputElement();
-    passwordInput.type = 'password';
+    const passwordInput = createInputElement('password');
     passwordInput.autocomplete = 'current-password';
     passwordInput.placeholder = 'パスワード';
     passwordStyling(passwordInput);

@@ -212,8 +212,10 @@ export function createAnchorElement() {
     return createElement('a') as HTMLAnchorElement;
 }
 
-export function createInputElement() {
-    return createElement('input') as HTMLInputElement;
+export function createInputElement(type: string) {
+    const elem = createElement('input') as HTMLInputElement;
+    elem.type = type;
+    return elem;
 }
 
 export function createSVGElement(viewBox: string, path: string) {

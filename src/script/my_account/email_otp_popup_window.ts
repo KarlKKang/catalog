@@ -38,8 +38,7 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
 
     const otpInputContainer = createDivElement();
     addClass(otpInputContainer, 'input-field');
-    const otpInput = createInputElement();
-    otpInput.type = 'text';
+    const otpInput = createInputElement('text');
     otpInput.autocomplete = 'one-time-code';
     otpInput.placeholder = '認証コード';
     otpInput.maxLength = 6;

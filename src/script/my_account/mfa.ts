@@ -289,8 +289,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     const totpInputContainer = createDivElement();
     addClass(totpInputContainer, 'input-field');
     addClass(totpInputContainer, 'hcenter');
-    const totpInput = createInputElement();
-    totpInput.type = 'text';
+    const totpInput = createInputElement('text');
     totpInput.autocomplete = 'one-time-code';
     totpInput.placeholder = '認証コード';
     totpInput.maxLength = 6;

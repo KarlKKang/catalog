@@ -14,8 +14,6 @@ import {
 import {
     w,
     addEventListener,
-    getById,
-    getDescendantsByTagAt,
     getDescendantsByClassAt,
     removeClass,
     addClass,
@@ -31,6 +29,10 @@ import {
     replaceText,
     getBaseURL,
     getFullURL,
+    createSVGElement,
+    createInputElement,
+    appendChildren,
+    getBody,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -84,11 +86,34 @@ function showPageCallback(
     urlKeywords: string,
     lazyload: Awaited<ReturnType<typeof lazyloadImport>>,
 ) {
-    const searchBar = getById('search-bar');
-    const searchBarInput = getDescendantsByTagAt(searchBar, 'input', 0) as HTMLInputElement;
+    const searchBar = createDivElement();
+    searchBar.id = 'search-bar';
+
+    const searchBarIcon = createDivElement();
+    addClass(searchBarIcon, 'icon');
+    appendChild(searchBarIcon, createSVGElement('0 0 24 24', 'M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'));
+
+    const searchBarInput = createInputElement('text');
+    addClass(searchBarInput, 'multi-language');
+    searchBarInput.maxLength = 50;
+    searchBarInput.autocapitalize = 'off';
+    searchBarInput.autocomplete = 'off';
+    searchBarInput.spellcheck = false;
     searchBarInput.value = urlKeywords;
-    const containerElem = getById('container');
-    const loadingTextContainer = getById('loading-text');
+
+    appendChild(searchBar, searchBarIcon);
+    appendChild(searchBar, searchBarInput);
+
+    const containerElem = createDivElement();
+    containerElem.id = 'container';
+    const loadingTextContainer = createDivElement();
+    loadingTextContainer.id = 'loading-text';
+
+    const positionDetector = createDivElement();
+    positionDetector.id = 'position-detector';
+
+    appendChildren(getBody(), searchBar, containerElem, loadingTextContainer, positionDetector);
+
     const currentBaseURL = getBaseURL();
 
     initializeInfiniteScrolling(() => { getSeries(showSeries, true); }, - 256 - 24);
