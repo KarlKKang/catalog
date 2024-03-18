@@ -36,10 +36,7 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     const inputFlexbox = createDivElement();
     addClass(inputFlexbox, 'input-flexbox');
 
-    const otpInputContainer = createDivElement();
-    addClass(otpInputContainer, 'input-field');
-    const otpInput = createTotpInput(false);
-    appendChild(otpInputContainer, otpInput);
+    const [otpInputContainer, otpInput] = createTotpInput(false);
     appendChild(inputFlexbox, otpInputContainer);
 
     const resendButton = createButtonElement();

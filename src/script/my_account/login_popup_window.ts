@@ -36,18 +36,12 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
         hideElement(warningText);
     }
 
-    const emailInputContainer = createDivElement();
-    addClass(emailInputContainer, 'input-field');
+    const [emailInputContainer, emailInput] = createEmailInput();
     addClass(emailInputContainer, 'hcenter');
-    const emailInput = createEmailInput();
-    appendChild(emailInputContainer, emailInput);
 
-    const passwordInputContainer = createDivElement();
-    addClass(passwordInputContainer, 'input-field');
+    const [passwordInputContainer, passwordInput] = createPasswordInput();
     addClass(passwordInputContainer, 'hcenter');
-    const passwordInput = createPasswordInput();
     passwordStyling(passwordInput);
-    appendChild(passwordInputContainer, passwordInput);
 
     const submitButton = createButtonElement();
     addClass(submitButton, 'button');

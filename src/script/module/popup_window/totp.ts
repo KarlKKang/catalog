@@ -34,11 +34,8 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
     changeColor(warningText, 'red');
     hideElement(warningText);
 
-    const totpInputContainer = createDivElement();
-    addClass(totpInputContainer, 'input-field');
+    const [totpInputContainer, totpInput] = createTotpInput(true);
     addClass(totpInputContainer, 'hcenter');
-    const totpInput = createTotpInput(true);
-    appendChild(totpInputContainer, totpInput);
 
     const submitButton = createButtonElement();
     addClass(submitButton, 'button');

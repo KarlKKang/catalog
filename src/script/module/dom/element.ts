@@ -274,25 +274,34 @@ export function appendListItems(list: HTMLUListElement | HTMLOListElement, ...co
 }
 
 export function createEmailInput(placeholder = 'メールアドレス') {
+    const container = createDivElement();
+    addClass(container, 'input-field');
     const input = createInputElement('email');
     input.autocomplete = 'email';
     input.placeholder = placeholder;
     input.autocapitalize = 'off';
     input.maxLength = 254;
-    return input;
+    appendChild(container, input);
+    return [container, input] as const;
 }
 
 export function createPasswordInput(newPassword = false, placeholder = 'パスワード') {
+    const container = createDivElement();
+    addClass(container, 'input-field');
     const input = createInputElement('password');
     input.autocomplete = newPassword ? 'new-password' : 'current-password';
     input.placeholder = placeholder;
-    return input;
+    appendChild(container, input);
+    return [container, input] as const;
 }
 
 export function createTotpInput(allowRecoveryCode: boolean) {
+    const container = createDivElement();
+    addClass(container, 'input-field');
     const input = createInputElement('text');
     input.autocomplete = 'one-time-code';
     input.placeholder = '認証コード';
     input.maxLength = allowRecoveryCode ? 32 : 6;
-    return input;
+    appendChild(container, input);
+    return [container, input] as const;
 }

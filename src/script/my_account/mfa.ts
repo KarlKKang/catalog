@@ -286,11 +286,8 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     changeColor(warningText, 'red');
     hideElement(warningText);
 
-    const totpInputContainer = createDivElement();
-    addClass(totpInputContainer, 'input-field');
+    const [totpInputContainer, totpInput] = createTotpInput(false);
     addClass(totpInputContainer, 'hcenter');
-    const totpInput = createTotpInput(false);
-    appendChild(totpInputContainer, totpInput);
 
     const submitButton = createButtonElement();
     addClass(submitButton, 'button');
