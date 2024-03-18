@@ -29,6 +29,8 @@ import {
     accountDeactivated,
     tooManyFailedLogin,
     loginFailed,
+    submitButtonText,
+    cancelButtonText,
 } from '../module/message/template/inline';
 import * as TOTPInfo from '../module/type/TOTPInfo';
 import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
@@ -282,8 +284,8 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     const [totpInputContainer, totpInput] = createTotpInput(false);
     horizontalCenter(totpInputContainer);
 
-    const submitButton = createButtonElement('送信する');
-    const cancelButton = createButtonElement('キャンセル');
+    const submitButton = createButtonElement(submitButtonText);
+    const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, 'input-flexbox');
     appendChild(buttonFlexbox, submitButton);

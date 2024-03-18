@@ -1,5 +1,5 @@
 import { addEventListener, addClass, appendChild, createButtonElement, createDivElement, createParagraphElement, createTotpInput, disableInput } from '../dom';
-import { failedTotp } from '../message/template/inline';
+import { cancelButtonText, failedTotp, submitButtonText } from '../message/template/inline';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../style';
 import { addInterval, removeInterval } from '../timer';
 import type { initializePopupWindow as InitializePopupWindow } from './core';
@@ -35,8 +35,8 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
     const [totpInputContainer, totpInput] = createTotpInput(true);
     horizontalCenter(totpInputContainer);
 
-    const submitButton = createButtonElement('送信する');
-    const cancelButton = createButtonElement('キャンセル');
+    const submitButton = createButtonElement(submitButtonText);
+    const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, 'input-flexbox');
     appendChild(buttonFlexbox, submitButton);

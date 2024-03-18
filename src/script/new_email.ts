@@ -18,7 +18,7 @@ import {
     disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
+import { invalidEmailFormat, emailAlreadyRegistered, submitButtonText } from './module/message/template/inline';
 import { expired, emailSent } from './module/message/template/param';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -71,7 +71,7 @@ function showPageCallback(param: string) {
     horizontalCenter(newEmailContainer);
     appendChild(container, newEmailContainer);
 
-    const submitButton = createButtonElement('送信する');
+    const submitButton = createButtonElement(submitButtonText);
     horizontalCenter(submitButton);
     appendChild(container, submitButton);
 

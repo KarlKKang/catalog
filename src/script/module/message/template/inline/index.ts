@@ -50,6 +50,8 @@ export const loginNotificationIsEnabled = 'ログイン通知が有効になっ�
 export const loginNotificationIsDisabled = 'ログイン通知が無効になっています。';
 export const enableButtonText = '有効にする';
 export const disableButtonText = '無効にする';
+export const submitButtonText = '送信する';
+export const cancelButtonText = 'キャンセル';
 
 export const sessionEnded = 'セッションは終了した。もう一度お試しください。';
 

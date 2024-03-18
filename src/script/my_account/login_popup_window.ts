@@ -1,6 +1,6 @@
 import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, replaceText, createSpanElement, openWindow, createEmailInput, createPasswordInput, disableInput } from '../module/dom';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
-import { loginFailed } from '../module/message/template/inline';
+import { cancelButtonText, loginFailed, submitButtonText } from '../module/message/template/inline';
 import { TOP_URL } from '../module/env/constant';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../module/style';
@@ -41,8 +41,8 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     const [passwordInputContainer, passwordInput] = createPasswordInput(false);
     horizontalCenter(passwordInputContainer);
 
-    const submitButton = createButtonElement('送信する');
-    const cancelButton = createButtonElement('キャンセル');
+    const submitButton = createButtonElement(submitButtonText);
+    const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, 'input-flexbox');
     appendChild(buttonFlexbox, submitButton);

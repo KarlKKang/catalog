@@ -1,5 +1,5 @@
 import { addClass, appendChild, addEventListener, createButtonElement, createDivElement, createParagraphElement, replaceText, createTotpInput, disableInput } from '../module/dom';
-import { failedTotp } from '../module/message/template/inline';
+import { cancelButtonText, failedTotp, submitButtonText } from '../module/message/template/inline';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';
 import { CSS_AUTO, CSS_CURSOR_NOT_ALLOWED } from '../module/style/value';
@@ -66,8 +66,8 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     resetResendTimer();
     appendChild(inputFlexbox, resendButton);
 
-    const submitButton = createButtonElement('送信する');
-    const cancelButton = createButtonElement('キャンセル');
+    const submitButton = createButtonElement(submitButtonText);
+    const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, 'input-flexbox');
     appendChild(buttonFlexbox, submitButton);

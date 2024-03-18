@@ -22,7 +22,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged } from './module/message/template/param';
-import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/message/template/inline';
+import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded, submitButtonText } from './module/message/template/inline';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -88,7 +88,7 @@ function showPageCallback(param: string) {
     horizontalCenter(passwordContainer);
     appendChild(container, passwordContainer);
 
-    const submitButton = createButtonElement('送信する');
+    const submitButton = createButtonElement(submitButtonText);
     horizontalCenter(submitButton);
     appendChild(container, submitButton);
 
