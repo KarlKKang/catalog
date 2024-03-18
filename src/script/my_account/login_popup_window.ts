@@ -1,4 +1,4 @@
-import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, createInputElement, hideElement, showElement, replaceText, createSpanElement, openWindow } from '../module/dom';
+import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, hideElement, showElement, replaceText, createSpanElement, openWindow, createEmailInput, createPasswordInput } from '../module/dom';
 import { changeColor, disableInput, passwordStyling } from '../module/common';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { loginFailed } from '../module/message/template/inline';
@@ -39,19 +39,13 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     const emailInputContainer = createDivElement();
     addClass(emailInputContainer, 'input-field');
     addClass(emailInputContainer, 'hcenter');
-    const emailInput = createInputElement('email');
-    emailInput.autocomplete = 'email';
-    emailInput.placeholder = 'メールアドレス';
-    emailInput.autocapitalize = 'off';
-    emailInput.maxLength = 254;
+    const emailInput = createEmailInput();
     appendChild(emailInputContainer, emailInput);
 
     const passwordInputContainer = createDivElement();
     addClass(passwordInputContainer, 'input-field');
     addClass(passwordInputContainer, 'hcenter');
-    const passwordInput = createInputElement('password');
-    passwordInput.autocomplete = 'current-password';
-    passwordInput.placeholder = 'パスワード';
+    const passwordInput = createPasswordInput();
     passwordStyling(passwordInput);
     appendChild(passwordInputContainer, passwordInput);
 

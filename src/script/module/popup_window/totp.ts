@@ -1,4 +1,4 @@
-import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, createInputElement, hideElement, showElement } from '../dom';
+import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, hideElement, showElement, createTotpInput } from '../dom';
 import { changeColor, disableInput } from '../common';
 import { failedTotp } from '../message/template/inline';
 import { addInterval, removeInterval } from '../timer';
@@ -37,10 +37,7 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
     const totpInputContainer = createDivElement();
     addClass(totpInputContainer, 'input-field');
     addClass(totpInputContainer, 'hcenter');
-    const totpInput = createInputElement('text');
-    totpInput.autocomplete = 'one-time-code';
-    totpInput.placeholder = '認証コード';
-    totpInput.maxLength = 32;
+    const totpInput = createTotpInput(true);
     appendChild(totpInputContainer, totpInput);
 
     const submitButton = createButtonElement();

@@ -14,12 +14,12 @@ import {
     createParagraphElement,
     createDivElement,
     addClass,
-    createInputElement,
     appendChild,
     createButtonElement,
     createAnchorElement,
     removeClass,
     replaceChildren,
+    createTotpInput,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -289,10 +289,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     const totpInputContainer = createDivElement();
     addClass(totpInputContainer, 'input-field');
     addClass(totpInputContainer, 'hcenter');
-    const totpInput = createInputElement('text');
-    totpInput.autocomplete = 'one-time-code';
-    totpInput.placeholder = '認証コード';
-    totpInput.maxLength = 6;
+    const totpInput = createTotpInput(false);
     appendChild(totpInputContainer, totpInput);
 
     const submitButton = createButtonElement();

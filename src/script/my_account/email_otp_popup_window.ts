@@ -1,5 +1,5 @@
 import { changeColor, disableInput } from '../module/common';
-import { addClass, appendChild, addEventListener, appendText, createButtonElement, createDivElement, createInputElement, createParagraphElement, hideElement, replaceText, showElement } from '../module/dom';
+import { addClass, appendChild, addEventListener, appendText, createButtonElement, createDivElement, createParagraphElement, hideElement, replaceText, showElement, createTotpInput } from '../module/dom';
 import { failedTotp } from '../module/message/template/inline';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { setCursor, setWidth } from '../module/style';
@@ -38,10 +38,7 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
 
     const otpInputContainer = createDivElement();
     addClass(otpInputContainer, 'input-field');
-    const otpInput = createInputElement('text');
-    otpInput.autocomplete = 'one-time-code';
-    otpInput.placeholder = '認証コード';
-    otpInput.maxLength = 6;
+    const otpInput = createTotpInput(false);
     appendChild(otpInputContainer, otpInput);
     appendChild(inputFlexbox, otpInputContainer);
 

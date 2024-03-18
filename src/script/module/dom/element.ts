@@ -272,3 +272,27 @@ export function appendListItems(list: HTMLUListElement | HTMLOListElement, ...co
         appendChild(list, item);
     }
 }
+
+export function createEmailInput(placeholder = 'メールアドレス') {
+    const input = createInputElement('email');
+    input.autocomplete = 'email';
+    input.placeholder = placeholder;
+    input.autocapitalize = 'off';
+    input.maxLength = 254;
+    return input;
+}
+
+export function createPasswordInput(newPassword = false, placeholder = 'パスワード') {
+    const input = createInputElement('password');
+    input.autocomplete = newPassword ? 'new-password' : 'current-password';
+    input.placeholder = placeholder;
+    return input;
+}
+
+export function createTotpInput(allowRecoveryCode: boolean) {
+    const input = createInputElement('text');
+    input.autocomplete = 'one-time-code';
+    input.placeholder = '認証コード';
+    input.maxLength = allowRecoveryCode ? 32 : 6;
+    return input;
+}
