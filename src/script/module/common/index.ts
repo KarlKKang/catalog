@@ -20,12 +20,12 @@ import {
     createParagraphElement,
     createDivElement,
     prependChild,
-    getBody,
     removeAllEventListeners,
     setSessionStorage,
     getTitle,
     openWindow,
     clearSessionStorage,
+    body,
 } from '../dom';
 
 import * as MaintenanceInfo from '../type/MaintenanceInfo';
@@ -205,7 +205,7 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
 
     const navBar = createDivElement();
     navBar.id = 'nav-bar';
-    prependChild(getBody(), navBar);
+    prependChild(body, navBar);
     appendChild(navBar, navButton1[0]);
     appendChild(navBar, navButton2[0]);
     appendChild(navBar, navButton3[0]);
@@ -261,7 +261,7 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
 
     const navBarPadding = createDivElement();
     navBarPadding.id = 'nav-bar-padding';
-    appendChild(getBody(), navBarPadding);
+    appendChild(body, navBarPadding);
 
     let icons: typeof import(
         './icons'

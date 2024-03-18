@@ -1,5 +1,5 @@
 import 'core-js';
-import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, createButtonElement, createDivElement, appendChild, createElement, html } from './module/dom';
+import { body as innerBody, getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, createButtonElement, createDivElement, appendChild, createElement, html } from './module/dom';
 import { DOMAIN, TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -46,6 +46,8 @@ type PageMap = {
 };
 
 let body: HTMLElement;
+const loadingBar = createDivElement();
+loadingBar.id = 'loading-bar';
 let currentPage: {
     script: PageScript;
     htmlEntry: HTMLEntry;
@@ -289,7 +291,7 @@ function offloadCurrentPage() {
     deregisterAllEventTargets();
     removeAllTimers();
     destroyPopupWindow();
-    replaceChildren(getBody());
+    replaceChildren(innerBody);
     setCustomPopStateHandler(null);
 }
 
@@ -489,7 +491,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
             page.nativeViewport === true && setViewport(true);
             registerServiceWorker(isStandardStyle);
             if (htmlContent !== undefined) {
-                getBody().innerHTML = htmlContent.default;
+                innerBody.innerHTML = htmlContent.default;
             }
             callback?.();
 
@@ -541,6 +543,8 @@ if (history.scrollRestoration !== undefined) {
 }
 addEventListenerOnce(w, 'load', () => {
     body = d.body;
+    appendChild(body, loadingBar);
+    appendChild(body, innerBody);
     setRedirect(load);
     load(fullURL, null);
     w.addEventListener('popstate', (state) => {

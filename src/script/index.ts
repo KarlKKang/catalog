@@ -31,7 +31,7 @@ import {
     createSVGElement,
     createInputElement,
     appendChildren,
-    getBody,
+    body,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -111,7 +111,7 @@ function showPageCallback(
     const positionDetector = createDivElement();
     positionDetector.id = 'position-detector';
 
-    appendChildren(getBody(), searchBar, containerElem, loadingTextContainer, positionDetector);
+    appendChildren(body, searchBar, containerElem, loadingTextContainer, positionDetector);
 
     const currentBaseURL = getBaseURL();
 

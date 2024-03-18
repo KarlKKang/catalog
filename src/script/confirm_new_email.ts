@@ -15,13 +15,13 @@ import {
     clearSessionStorage,
     createDivElement,
     appendChild,
-    getBody,
     createParagraphElement,
     hideElement,
     createEmailInput,
     addClass,
     createPasswordInput,
     createButtonElement,
+    body,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged } from './module/message/template/param';
@@ -67,7 +67,7 @@ export default function (showPage: ShowPageFunc) {
 function showPageCallback(param: string) {
     const container = createDivElement();
     container.id = 'portal-form';
-    appendChild(getBody(), container);
+    appendChild(body, container);
 
     const title = createParagraphElement('メールアドレス変更');
     title.id = 'title';

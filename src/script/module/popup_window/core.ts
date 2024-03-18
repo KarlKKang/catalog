@@ -1,4 +1,4 @@
-import { addClass, appendChild, createDivElement, getBody, removeClass, replaceChildren, w } from '../dom';
+import { addClass, appendChild, body, createDivElement, removeClass, replaceChildren, w } from '../dom';
 import { addTimeout } from '../timer';
 import '../../../css/popup_window.scss';
 
@@ -39,7 +39,7 @@ export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void
             }
             addClass(container, 'invisible');
             addClass(container, 'transparent');
-            appendChild(getBody(), container);
+            appendChild(body, container);
             popupWindow = [container, contentContainer];
             showContents(container, contentContainer);
         });

@@ -8,8 +8,8 @@ import {
     createParagraphElement,
     createButtonElement,
     appendChild,
-    getBody,
     addClass,
+    body,
 } from './module/dom';
 import { notFound as notFoundTitle } from './module/message/template/title/server';
 import { notFound as notFoundBody } from './module/message/template/body/server';
@@ -43,6 +43,6 @@ export default function (showPage: ShowPageFunc) {
         });
         appendChild(container, button);
 
-        appendChild(getBody(), container);
+        appendChild(body, container);
     });
 }

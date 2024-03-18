@@ -32,7 +32,7 @@ import {
     removeAllEventListeners,
     clearSessionStorage,
     replaceText,
-    getBody,
+    body,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/message/template/param/server';
@@ -96,7 +96,7 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
             showPage(() => {
                 const container = createDivElement();
                 container.id = 'container';
-                appendChild(getBody(), container);
+                appendChild(body, container);
                 showNews(container, contentContainer, parsedResponse);
                 addNavBar(NAV_BAR_NEWS, () => {
                     redirect(NEWS_TOP_URL);
@@ -255,11 +255,11 @@ function getAllNews(containerOrShowPage: unknown, loadingTextContainer: HTMLElem
                 (containerOrShowPage as ShowPageFunc)(() => {
                     const container = createDivElement();
                     container.id = 'container';
-                    appendChild(getBody(), container);
-                    appendChild(getBody(), loadingTextContainer);
+                    appendChild(body, container);
+                    appendChild(body, loadingTextContainer);
                     const positionDetector = createDivElement();
                     positionDetector.id = 'position-detector';
-                    appendChild(getBody(), positionDetector);
+                    appendChild(body, positionDetector);
                     addNavBar(NAV_BAR_NEWS);
 
                     initializeInfiniteScrolling(() => { getAllNews(container, loadingTextContainer); });

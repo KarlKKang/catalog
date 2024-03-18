@@ -15,7 +15,7 @@ import {
     createDivElement,
     addClass,
     appendChild,
-    getBody,
+    body,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
@@ -71,7 +71,7 @@ export default function (showPage: ShowPageFunc) {
                 addClass(overlay, 'overlay');
                 appendChild(container, overlay);
                 appendChild(flexContainer, container);
-                appendChild(getBody(), flexContainer);
+                appendChild(body, flexContainer);
 
                 removeRightClick(container);
                 const currentPgid = pgid;

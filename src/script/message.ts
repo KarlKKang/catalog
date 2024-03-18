@@ -17,7 +17,7 @@ import {
     createButtonElement,
     appendChild,
     addClass,
-    getBody,
+    body,
 } from './module/dom';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
@@ -91,6 +91,6 @@ function createElements(paragraphMessage: boolean) {
     const messageElem = paragraphMessage ? createParagraphElement() : createDivElement();
     addClass(messageElem, styles.body);
     appendChildren(container, titleElem, messageElem);
-    appendChild(getBody(), container);
+    appendChild(body, container);
     return [container, titleElem, messageElem] as const;
 }
