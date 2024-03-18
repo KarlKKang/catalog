@@ -34,7 +34,7 @@ type PageScriptImport = Promise<PageScript>;
 type Page = {
     script: () => PageScriptImport;
     style: () => Promise<any>[];
-    html: () => Promise<{
+    html?: () => Promise<{
         default: string;
     }>;
     htmlEntry: HTMLEntry;
@@ -259,7 +259,6 @@ const directories: PageMap = {
             navBarCss(),
             newsCss(),
         ],
-        html: () => import('../html/news.html'),
         title: 'お知らせ',
         htmlEntry: HTMLEntry.DEFAULT,
     },
@@ -424,7 +423,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
 
     const scriptImportPromise = page.script();
     const styleImportPromises = page.style();
-    const htmlImportPromise = page.html();
+    const htmlImportPromise = page.html?.();
 
     const newPgid = {};
     setPgid(newPgid);
@@ -503,7 +502,9 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
             page.htmlEntry === HTMLEntry.NO_THEME && addClass(body, NO_THEME_CLASS);
             page.nativeViewport === true && setViewport(true);
             registerServiceWorker(isStandardStyle);
-            getBody().innerHTML = htmlContent.default;
+            if (htmlContent !== undefined) {
+                getBody().innerHTML = htmlContent.default;
+            }
             callback?.();
 
             loadingBarWidth = 100;

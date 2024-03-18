@@ -15,7 +15,6 @@ import {
 import {
     addEventListener,
     getBaseURL,
-    getById,
     addClass,
     appendChild,
     getDescendantsByClass,
@@ -32,8 +31,8 @@ import {
     appendText,
     removeAllEventListeners,
     clearSessionStorage,
-    insertAfter,
     replaceText,
+    getBody,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/message/template/param/server';
@@ -96,7 +95,10 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
             appendChild(contentContainer, loadingText);
 
             showPage(() => {
-                showNews(getById('container'), contentContainer, parsedResponse);
+                const container = createDivElement();
+                container.id = 'container';
+                appendChild(getBody(), container);
+                showNews(container, contentContainer, parsedResponse);
                 addNavBar(NAV_BAR_NEWS, () => {
                     redirect(NEWS_TOP_URL);
                 });
@@ -257,9 +259,15 @@ function getAllNews(containerOrShowPage: unknown, loadingTextContainer: HTMLElem
                 showAllNews(containerOrShowPage, parsedResponse, loadingTextContainer);
             } else {
                 (containerOrShowPage as ShowPageFunc)(() => {
+                    const container = createDivElement();
+                    container.id = 'container';
+                    appendChild(getBody(), container);
+                    appendChild(getBody(), loadingTextContainer);
+                    const positionDetector = createDivElement();
+                    positionDetector.id = 'position-detector';
+                    appendChild(getBody(), positionDetector);
                     addNavBar(NAV_BAR_NEWS);
-                    const container = getById('container');
-                    insertAfter(loadingTextContainer, container);
+
                     initializeInfiniteScrolling(() => { getAllNews(container, loadingTextContainer); });
                     showAllNews(container, parsedResponse, loadingTextContainer);
                 });
