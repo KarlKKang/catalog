@@ -1,4 +1,3 @@
-// Low level DOM functions, required in ./message
 import {
     TOP_URL
 } from '../env/constant';
