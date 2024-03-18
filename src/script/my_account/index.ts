@@ -181,9 +181,7 @@ function showSessions(userInfo: AccountInfo.AccountInfo) {
             hideElement(sessionWarningElem);
             appendChild(innerContainer, sessionWarningElem);
 
-            const sessionLogoutButton = createButtonElement();
-            addClass(sessionLogoutButton, 'button');
-            appendText(sessionLogoutButton, 'ログアウト');
+            const sessionLogoutButton = createButtonElement('ログアウト');
             appendChild(innerContainer, sessionLogoutButton);
             sessionLogoutButtons.add(sessionLogoutButton);
 

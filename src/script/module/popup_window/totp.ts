@@ -37,12 +37,8 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
     const [totpInputContainer, totpInput] = createTotpInput(true);
     addClass(totpInputContainer, 'hcenter');
 
-    const submitButton = createButtonElement();
-    addClass(submitButton, 'button');
-    appendText(submitButton, '送信する');
-    const cancelButton = createButtonElement();
-    addClass(cancelButton, 'button');
-    appendText(cancelButton, 'キャンセル');
+    const submitButton = createButtonElement('送信する');
+    const cancelButton = createButtonElement('キャンセル');
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, 'input-flexbox');
     appendChild(buttonFlexbox, submitButton);

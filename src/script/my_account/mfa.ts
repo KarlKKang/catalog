@@ -289,12 +289,8 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     const [totpInputContainer, totpInput] = createTotpInput(false);
     addClass(totpInputContainer, 'hcenter');
 
-    const submitButton = createButtonElement();
-    addClass(submitButton, 'button');
-    appendText(submitButton, '送信する');
-    const cancelButton = createButtonElement();
-    addClass(cancelButton, 'button');
-    appendText(cancelButton, 'キャンセル');
+    const submitButton = createButtonElement('送信する');
+    const cancelButton = createButtonElement('キャンセル');
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, 'input-flexbox');
     appendChild(buttonFlexbox, submitButton);
@@ -391,14 +387,11 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo
         appendChild(recoveryCodeContainer, recoveryCodeElem);
     }
 
-    const closeButton = createButtonElement();
-    addClass(closeButton, 'button');
-    addClass(closeButton, 'hcenter');
-
     const closeButtonText = '閉じる';
+    const closeButton = createButtonElement(closeButtonText + '（15秒）');
+    addClass(closeButton, 'hcenter');
     closeButton.disabled = true;
     addClass(closeButton, 'not-allowed');
-    appendText(closeButton, closeButtonText + '（15秒）');
     let count = 15;
     const interval = addInterval(() => {
         count--;

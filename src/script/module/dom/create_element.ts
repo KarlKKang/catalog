@@ -11,8 +11,11 @@ export function createDivElement() {
     return createElement('div') as HTMLDivElement;
 }
 
-export function createButtonElement() {
-    return createElement('button') as HTMLButtonElement;
+export function createButtonElement(text?: string) {
+    const elem = createElement('button') as HTMLButtonElement;
+    addClass(elem, 'button');
+    text === undefined || appendText(elem, text);
+    return elem;
 }
 
 export function createSpanElement() {

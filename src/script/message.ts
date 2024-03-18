@@ -7,15 +7,17 @@ import {
 } from './module/common';
 import {
     addEventListener,
-    getById,
     setTitle,
-    hideElement,
     appendText,
     getSessionStorage,
     clearSessionStorage,
-    insertBefore,
-    remove,
     createDivElement,
+    createParagraphElement,
+    appendChildren,
+    createButtonElement,
+    appendChild,
+    addClass,
+    getBody,
 } from './module/dom';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
@@ -35,11 +37,14 @@ export default function (showPage: ShowPageFunc) {
     if (message === null || title === null || color === null || documentTitle === null) {
         if (DEVELOPMENT) {
             showPage(() => {
-                const titleElem = getById('title');
-                const messageElem = getById('message');
+                const [container, titleElem, messageElem] = createElements(true);
                 changeColor(titleElem, 'orange');
                 appendText(titleElem, 'タイトルTitle');
                 appendText(messageElem, 'メッセージMessage'.repeat(10));
+                const button = createButtonElement('ボタンButton');
+                button.id = 'button';
+                addClass(button, 'hcenter');
+                appendChild(container, button);
             });
         } else {
             redirect(TOP_URL, true);
@@ -49,32 +54,21 @@ export default function (showPage: ShowPageFunc) {
 
     const callback = () => {
         showPage(() => {
-            const titleElem = getById('title');
-            const messageElem = getById('message');
-
+            const [container, titleElem, messageElem] = createElements(!replaceBody);
             setTitle(documentTitle);
             titleElem.innerHTML = title;
             changeColor(titleElem, color);
-            if (replaceBody) {
-                const container = createDivElement();
-                messageElem.id = '';
-                container.id = 'message';
-                container.innerHTML = message;
-                insertBefore(container, messageElem);
-                remove(messageElem);
-            } else {
-                messageElem.innerHTML = message;
-            }
+            messageElem.innerHTML = message;
 
-            const button = getById('button');
-            if (buttonText === null) {
-                hideElement(button);
-            } else {
+            if (buttonText !== null) {
                 if (url === null) {
                     redirect(TOP_URL, true);
                     return;
                 }
-                appendText(button, buttonText);
+                const button = createButtonElement(buttonText);
+                button.id = 'button';
+                addClass(button, 'hcenter');
+                appendChild(container, button);
                 addEventListener(button, 'click', () => {
                     redirect(url, true);
                 });
@@ -88,4 +82,16 @@ export default function (showPage: ShowPageFunc) {
     }
 
     callback();
+}
+
+function createElements(paragraphMessage: boolean) {
+    const container = createDivElement();
+    container.id = 'container';
+    const titleElem = createParagraphElement();
+    titleElem.id = 'title';
+    const messageElem = paragraphMessage ? createParagraphElement() : createDivElement();
+    messageElem.id = 'message';
+    appendChildren(container, titleElem, messageElem);
+    appendChild(getBody(), container);
+    return [container, titleElem, messageElem] as const;
 }

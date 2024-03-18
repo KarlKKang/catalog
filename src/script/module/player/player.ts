@@ -14,7 +14,6 @@ import {
     hideElement,
     showElement,
     createDivElement,
-    createButtonElement,
     createSpanElement,
     createVideoElement,
     createAudioElement,
@@ -25,6 +24,7 @@ import {
     addEventsListener,
     removeEventsListener,
     containsClass,
+    createElement,
 } from '../dom';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
@@ -185,11 +185,9 @@ export class Player {
 
         // Big play button
         const bigPlayButtonContainer = createDivElement();
-        const bigPlayButton = createButtonElement();
+        const bigPlayButton = createPlayerButton('Play Video');
         appendChild(bigPlayButtonContainer, bigPlayButton);
         this.bigPlayButton = bigPlayButton;
-        bigPlayButton.type = 'button';
-        bigPlayButton.title = 'Play Video';
         addClass(bigPlayButtonContainer, styles.playerBigPlayButton);
         const bigPlayButtonPlaceholder = addPlayerPlaceholder(bigPlayButton);
         this.IS_VIDEO && appendChild(controls, bigPlayButtonContainer);
@@ -202,10 +200,8 @@ export class Player {
         appendChild(controls, controlBar);
 
         // Play button
-        const playButton = createButtonElement();
+        const playButton = createPlayerButton('Play');
         this.playButton = playButton;
-        playButton.type = 'button';
-        playButton.title = 'Play';
         addClass(playButton, styles.playerPlayControl, styles.playerControl, styles.playerButton);
         const playButtonIconPlaceholder = addPlayerPlaceholder(playButton);
         appendChild(controlBar, playButton);
@@ -291,20 +287,16 @@ export class Player {
         // PIP
         let PIPButtonPlaceholder: undefined | HTMLElement = undefined;
         if (d.pictureInPictureEnabled) {
-            const PIPButton = createButtonElement();
+            const PIPButton = createPlayerButton('Picture-in-Picture');
             this.PIPButton = PIPButton;
-            PIPButton.type = 'button';
-            PIPButton.title = 'Picture-in-Picture';
             addClass(PIPButton, styles.playerPictureInPictureControl, styles.playerControl, styles.playerButton);
             PIPButtonPlaceholder = addPlayerPlaceholder(PIPButton);
             this.IS_VIDEO && appendChild(controlBar, PIPButton);
         }
 
         // Fullscreen
-        const fullscreenButton = createButtonElement();
+        const fullscreenButton = createPlayerButton('Fullscreen');
         this.fullscreenButton = fullscreenButton;
-        fullscreenButton.type = 'button';
-        fullscreenButton.title = 'Fullscreen';
         addClass(fullscreenButton, styles.playerFullscreenControl, styles.playerControl, styles.playerButton);
         const fullscreenButtonPlaceholder = addPlayerPlaceholder(fullscreenButton);
         this.IS_VIDEO && appendChild(controlBar, fullscreenButton);
@@ -887,4 +879,11 @@ function addPlayerPlaceholder(elem: HTMLElement) {
     addClass(placeholder, styles.playerIconPlaceholder);
     appendChild(elem, placeholder);
     return placeholder;
+}
+
+function createPlayerButton(title: string) {
+    const elem = createElement('button') as HTMLButtonElement;
+    elem.type = 'button';
+    elem.title = title;
+    return elem;
 }

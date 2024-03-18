@@ -42,12 +42,8 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     const [passwordInputContainer, passwordInput] = createPasswordInput();
     addClass(passwordInputContainer, 'hcenter');
 
-    const submitButton = createButtonElement();
-    addClass(submitButton, 'button');
-    appendText(submitButton, '送信する');
-    const cancelButton = createButtonElement();
-    addClass(cancelButton, 'button');
-    appendText(cancelButton, 'キャンセル');
+    const submitButton = createButtonElement('送信する');
+    const cancelButton = createButtonElement('キャンセル');
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, 'input-flexbox');
     appendChild(buttonFlexbox, submitButton);

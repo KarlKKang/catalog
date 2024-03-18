@@ -106,12 +106,8 @@ export default async function (
 
         const warningButtonGroup = createDivElement();
         warningButtonGroup.id = 'warning-button-group';
-        const warningButtonYes = createButtonElement();
-        const warningButtonNo = createButtonElement();
-        appendText(warningButtonYes, 'はい');
-        appendText(warningButtonNo, 'いいえ');
-        addClass(warningButtonYes, 'button');
-        addClass(warningButtonNo, 'button');
+        const warningButtonYes = createButtonElement('はい');
+        const warningButtonNo = createButtonElement('いいえ');
         appendChild(warningButtonGroup, warningButtonYes);
         appendChild(warningButtonGroup, warningButtonNo);
 

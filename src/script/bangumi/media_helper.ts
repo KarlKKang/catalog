@@ -181,10 +181,8 @@ export function buildDownloadAccordion(
 
     appendChild(accordionPanel, downloadOptionsContainer);
 
-    const downloadButton = createButtonElement();
-    addClass(downloadButton, 'button');
+    const downloadButton = createButtonElement('ダウンロード');
     addClass(downloadButton, 'hcenter');
-    appendText(downloadButton, 'ダウンロード');
 
     const iframe = createElement('iframe') as HTMLIFrameElement;
     hideElement(iframe);

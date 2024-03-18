@@ -81,8 +81,8 @@ export default async function (
         const lazyloadNode = createDivElement();
         const overlay = createDivElement();
         const downloadPanel = createDivElement();
-        const showFullSizeButton = createButtonElement();
-        const downloadButton = createButtonElement();
+        const showFullSizeButton = createButtonElement('フルサイズで表示');
+        const downloadButton = createButtonElement('ダウンロード');
         const buttonFlexbox = createDivElement();
         const downloadAnchor = createElement('a') as HTMLAnchorElement;
 
@@ -92,12 +92,8 @@ export default async function (
         appendChild(lazyloadNode, overlay);
 
         addClass(downloadPanel, 'panel');
-        addClass(showFullSizeButton, 'button');
-        appendText(showFullSizeButton, 'フルサイズで表示');
         setWidth(showFullSizeButton, CSS_AUTO);
-        addClass(downloadButton, 'button');
         downloadButton.disabled = true;
-        appendText(downloadButton, 'ダウンロード');
         addClass(buttonFlexbox, 'image-button-flexbox');
         appendChild(buttonFlexbox, showFullSizeButton);
         appendChild(buttonFlexbox, downloadButton);

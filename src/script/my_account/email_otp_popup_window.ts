@@ -40,7 +40,6 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     appendChild(inputFlexbox, otpInputContainer);
 
     const resendButton = createButtonElement();
-    addClass(resendButton, 'button');
     const resendButtonText = '再送信する';
     let currentResendInterval: ReturnType<typeof setInterval> | null = null;
     const resetResendTimer = () => {
@@ -70,12 +69,8 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     resetResendTimer();
     appendChild(inputFlexbox, resendButton);
 
-    const submitButton = createButtonElement();
-    addClass(submitButton, 'button');
-    appendText(submitButton, '送信する');
-    const cancelButton = createButtonElement();
-    addClass(cancelButton, 'button');
-    appendText(cancelButton, 'キャンセル');
+    const submitButton = createButtonElement('送信する');
+    const cancelButton = createButtonElement('キャンセル');
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, 'input-flexbox');
     appendChild(buttonFlexbox, submitButton);

@@ -7,7 +7,6 @@ import { addTimeout, removeAllTimers } from './module/timer';
 import { popupWindowImport, destroy as destroyPopupWindow } from './module/popup_window';
 import type { Workbox as WorkboxType } from 'workbox-window';
 import * as messagePageScript from './message';
-import { default as messagePageHTML } from '../html/message.html';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
 import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect } from './module/global';
@@ -79,7 +78,6 @@ const registerCss = () => import('../css/register.scss');
 const page404: Page = {
     script: () => import('./404'),
     style: () => [],
-    html: () => Promise.resolve({ default: messagePageHTML }),
     htmlEntry: HTMLEntry.DEFAULT,
     title: '404',
     id: 'message',
@@ -150,7 +148,6 @@ const pages: PageMap = {
     'message': {
         script: () => Promise.resolve(messagePageScript),
         style: () => [],
-        html: () => Promise.resolve({ default: messagePageHTML }),
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'my_account': {
@@ -315,12 +312,8 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
             const promptText = createParagraphElement();
             appendText(promptText, '今すぐインストールすると、ページが再読み込みされます。' + DOMAIN + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + DOMAIN + 'のすべてのタブを閉じてから再読み込みしてください。');
 
-            const updateButton = createButtonElement();
-            addClass(updateButton, 'button');
-            appendText(updateButton, 'インストール');
-            const cancelButton = createButtonElement();
-            addClass(cancelButton, 'button');
-            appendText(cancelButton, '後で');
+            const updateButton = createButtonElement('インストール');
+            const cancelButton = createButtonElement('後で');
             const buttonFlexbox = createDivElement();
             addClass(buttonFlexbox, 'input-flexbox');
             appendChild(buttonFlexbox, updateButton);
