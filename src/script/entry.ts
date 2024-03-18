@@ -1,5 +1,5 @@
 import 'core-js';
-import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, appendText, createButtonElement, createDivElement, appendChild, createElement, html } from './module/dom';
+import { getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, getBody, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, createButtonElement, createDivElement, appendChild, createElement, html } from './module/dom';
 import { DOMAIN, TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -100,7 +100,6 @@ const pages: PageMap = {
         style: () => [
             portalFormCss(),
         ],
-        html: () => import('../html/confirm_new_email.html'),
         title: 'メールアドレス変更',
         htmlEntry: HTMLEntry.DEFAULT,
     },
@@ -304,12 +303,10 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
                 return;
             }
 
-            const titleText = createParagraphElement();
+            const titleText = createParagraphElement('アップデートが利用可能です');
             addClass(titleText, 'title');
-            appendText(titleText, 'アップデートが利用可能です');
 
-            const promptText = createParagraphElement();
-            appendText(promptText, '今すぐインストールすると、ページが再読み込みされます。' + DOMAIN + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + DOMAIN + 'のすべてのタブを閉じてから再読み込みしてください。');
+            const promptText = createParagraphElement('今すぐインストールすると、ページが再読み込みされます。' + DOMAIN + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + DOMAIN + 'のすべてのタブを閉じてから再読み込みしてください。');
 
             const updateButton = createButtonElement('インストール');
             const cancelButton = createButtonElement('後で');

@@ -1,4 +1,4 @@
-import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, hideElement, showElement, createTotpInput } from '../dom';
+import { addEventListener, addClass, appendChild, createButtonElement, createDivElement, createParagraphElement, hideElement, showElement, createTotpInput } from '../dom';
 import { changeColor, disableInput } from '../common';
 import { failedTotp } from '../message/template/inline';
 import { addInterval, removeInterval } from '../timer';
@@ -26,11 +26,9 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
         returnPromiseReject = reject;
     });
 
-    const promptText = createParagraphElement();
-    appendText(promptText, '二要素認証コードまたはリカバリーコードを入力してください。');
+    const promptText = createParagraphElement('二要素認証コードまたはリカバリーコードを入力してください。');
 
-    const warningText = createParagraphElement();
-    appendText(warningText, failedTotp);
+    const warningText = createParagraphElement(failedTotp);
     changeColor(warningText, 'red');
     hideElement(warningText);
 

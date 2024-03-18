@@ -1,5 +1,5 @@
 import { changeColor, disableInput } from '../module/common';
-import { addClass, appendChild, addEventListener, appendText, createButtonElement, createDivElement, createParagraphElement, hideElement, replaceText, showElement, createTotpInput } from '../module/dom';
+import { addClass, appendChild, addEventListener, createButtonElement, createDivElement, createParagraphElement, hideElement, replaceText, showElement, createTotpInput } from '../module/dom';
 import { failedTotp } from '../module/message/template/inline';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { setCursor, setWidth } from '../module/style';
@@ -25,11 +25,9 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
         returnPromiseReject = reject;
     });
 
-    const promptText = createParagraphElement();
-    appendText(promptText, 'メールに送信された認証コードを入力してください。');
+    const promptText = createParagraphElement('メールに送信された認証コードを入力してください。');
 
-    const warningText = createParagraphElement();
-    appendText(warningText, failedTotp);
+    const warningText = createParagraphElement(failedTotp);
     changeColor(warningText, 'red');
     hideElement(warningText);
 

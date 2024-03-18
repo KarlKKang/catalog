@@ -188,8 +188,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
 
     seriesEP.forEach((value, index) => {
         const epButton = createDivElement();
-        const epText = createParagraphElement();
-        appendText(epText, value);
+        const epText = createParagraphElement(value);
 
         if (epIndex === index) {
             addClass(epButton, 'current-ep');
@@ -329,14 +328,12 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
     if (seasons.length !== 0) {
         for (const season of seasons) {
             const seasonButton = createDivElement();
-            const seasonText = createParagraphElement();
+            const seasonText = createParagraphElement(season.season_name);
 
             if (season.id !== seriesID) {
-                appendText(seasonText, season.season_name);
                 const targetSeries = season.id;
                 addEventListener(seasonButton, 'click', () => { goToEP(targetSeries, 1); });
             } else {
-                appendText(seasonText, season.season_name);
                 addClass(seasonButton, 'current-season');
             }
             appendChild(seasonButton, seasonText);

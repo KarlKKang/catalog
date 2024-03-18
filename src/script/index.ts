@@ -22,7 +22,6 @@ import {
     insertBefore,
     createDivElement,
     createParagraphElement,
-    appendText,
     replaceChildren,
     removeAllEventListeners,
     clearSessionStorage,
@@ -124,14 +123,10 @@ function showPageCallback(
         appendChild(annoucementOuterContainer, announcementInnerContainer);
         insertBefore(annoucementOuterContainer, containerElem);
 
-        const announcementTitle = createParagraphElement();
+        const announcementTitle = createParagraphElement('メンテナンスのお知らせ');
         addClass(announcementTitle, 'announcement-title');
         changeColor(announcementTitle, 'orange');
-        appendText(announcementTitle, 'メンテナンスのお知らせ');
-        const announcementBody = createParagraphElement();
-        addClass(announcementBody, 'announcement-body');
         appendChild(announcementInnerContainer, announcementTitle);
-        appendChild(announcementInnerContainer, announcementBody);
 
         const maintenanceInfo = seriesInfo.maintenance;
         let message = '';
@@ -143,7 +138,9 @@ function showPageCallback(
             message = `メンテナンス開始は${startTime}を予定しております。`;
         }
         message += 'ご不便をおかけして申し訳ありません。';
-        appendText(announcementBody, message);
+        const announcementBody = createParagraphElement(message);
+        addClass(announcementBody, 'announcement-body');
+        appendChild(announcementInnerContainer, announcementBody);
     }
     showSeries(seriesInfo);
     addNavBar(NAV_BAR_HOME, () => {
@@ -204,7 +201,7 @@ function showPageCallback(
             const seriesNode = createDivElement();
             const thumbnailNode = createDivElement();
             const overlay = createDivElement();
-            const titleNode = createParagraphElement();
+            const titleNode = createParagraphElement(seriesEntry.title);
 
             appendChild(seriesNode, thumbnailNode);
             appendChild(seriesNode, titleNode);
@@ -212,7 +209,6 @@ function showPageCallback(
             addClass(overlay, 'overlay');
             appendChild(thumbnailNode, overlay);
             addClass(thumbnailNode, 'lazyload');
-            appendText(titleNode, seriesEntry.title);
             addClass(titleNode, 'ellipsis-clipping-2');
 
             addEventListener(seriesNode, 'click', () => { goToSeries(seriesEntry.id); });

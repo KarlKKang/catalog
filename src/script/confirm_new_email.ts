@@ -10,11 +10,18 @@ import {
 import {
     addEventListener,
     showElement,
-    getById,
     replaceChildren,
     replaceText,
     clearSessionStorage,
-    passwordStyling,
+    createDivElement,
+    appendChild,
+    getBody,
+    createParagraphElement,
+    hideElement,
+    createEmailInput,
+    addClass,
+    createPasswordInput,
+    createButtonElement,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged } from './module/message/template/param';
@@ -32,7 +39,9 @@ export default function (showPage: ShowPageFunc) {
     const param = getURLParam('p');
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showPage();
+            showPage(() => {
+                showPageCallback('test');
+            });
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -56,10 +65,34 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function showPageCallback(param: string) {
-    const emailInput = getById('email') as HTMLInputElement;
-    const passwordInput = getById('password') as HTMLInputElement;
-    const submitButton = getById('submit-button') as HTMLButtonElement;
-    const warningElem = getById('warning');
+    const container = createDivElement();
+    container.id = 'portal-form';
+    appendChild(getBody(), container);
+
+    const title = createParagraphElement('メールアドレス変更');
+    title.id = 'title';
+    appendChild(container, title);
+
+    const note = createParagraphElement('変更を確認するため、変更前のメールアドレスとパスワードを再入力してください。');
+    note.id = 'note';
+    appendChild(container, note);
+
+    const warningElem = createParagraphElement();
+    warningElem.id = 'warning';
+    hideElement(warningElem);
+    appendChild(container, warningElem);
+
+    const [emailContainer, emailInput] = createEmailInput();
+    addClass(emailContainer, 'hcenter');
+    appendChild(container, emailContainer);
+
+    const [passwordContainer, passwordInput] = createPasswordInput(false);
+    addClass(passwordContainer, 'hcenter');
+    appendChild(container, passwordContainer);
+
+    const submitButton = createButtonElement('送信する');
+    addClass(submitButton, 'hcenter');
+    appendChild(container, submitButton);
 
     const popupWindowImportPromise = popupWindowImport();
     const promptForTotpImportPromise = promptForTotpImport();
@@ -74,8 +107,6 @@ function showPageCallback(param: string) {
     addEventListener(submitButton, 'click', () => {
         changeEmail();
     });
-
-    passwordStyling(passwordInput);
 
     function changeEmail() {
         disableAllInputs(true);

@@ -170,9 +170,8 @@ function showSessions(userInfo: AccountInfo.AccountInfo) {
         const sessionID = session.id;
         const sessionsContainer = getSharedElement(SHARED_VAR_IDX_SESSIONS_CONTAINER);
         if (sessionID === undefined) {
-            const thisDevicePrompt = createParagraphElement();
+            const thisDevicePrompt = createParagraphElement('※このデバイスです。');
             addClass(thisDevicePrompt, 'warning');
-            appendText(thisDevicePrompt, '※このデバイスです。');
             appendChild(innerContainer, thisDevicePrompt);
             prependChild(sessionsContainer, outerContainer);
         } else {
@@ -199,8 +198,7 @@ function showSessions(userInfo: AccountInfo.AccountInfo) {
 }
 
 function appendParagraph(text: string, container: HTMLElement) {
-    const elem = createParagraphElement();
-    appendText(elem, text);
+    const elem = createParagraphElement(text);
     appendChild(container, elem);
     return elem;
 }

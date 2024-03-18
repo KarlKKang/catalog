@@ -21,7 +21,6 @@ import {
     createDivElement,
     prependChild,
     getBody,
-    appendText,
     removeAllEventListeners,
     setSessionStorage,
     getTitle,
@@ -192,8 +191,7 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
         const containerInner = createDivElement();
         const iconContainer = createDivElement();
         addClass(iconContainer, 'icon');
-        const nameContainer = createParagraphElement();
-        appendText(nameContainer, name);
+        const nameContainer = createParagraphElement(name);
         appendChild(containerInner, iconContainer);
         appendChild(containerInner, nameContainer);
         appendChild(container, containerInner);

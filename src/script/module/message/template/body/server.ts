@@ -9,8 +9,7 @@ export const sessionEnded = 'もう一度ログインしてください。';
 export const mediaSessionEnded = 'セッションがタイムアウトした、または別のソースからのアクティビティによって新しいセッションが開始された。';
 export const connectionError = function () {
     const container = createDivElement();
-    const text = createParagraphElement();
-    appendText(text, 'これは次のような理由が考えられます：');
+    const text = createParagraphElement('これは次のような理由が考えられます：');
     const list = createUListElement();
     appendListItems(
         list,

@@ -263,8 +263,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
         return;
     }
 
-    const promptText = createParagraphElement();
-    appendText(promptText, '二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
+    const promptText = createParagraphElement('二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
     const qrcode = createCanvasElement();
     addClass(qrcode, 'totp-qrcode');
@@ -281,8 +280,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     uriLink.href = totpInfo.uri;
     appendChild(uriElem, uriLink);
 
-    const warningText = createParagraphElement();
-    appendText(warningText, failedTotp);
+    const warningText = createParagraphElement(failedTotp);
     changeColor(warningText, 'red');
     hideElement(warningText);
 
@@ -376,14 +374,12 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo
         return;
     }
 
-    const promptText = createParagraphElement();
-    appendText(promptText, 'リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
+    const promptText = createParagraphElement('リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
 
     const recoveryCodeContainer = createDivElement();
     addClass(recoveryCodeContainer, 'recovery-codes');
     for (const recoveryCode of recoveryCodes) {
-        const recoveryCodeElem = createParagraphElement();
-        appendText(recoveryCodeElem, recoveryCode);
+        const recoveryCodeElem = createParagraphElement(recoveryCode);
         appendChild(recoveryCodeContainer, recoveryCodeElem);
     }
 

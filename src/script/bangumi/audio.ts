@@ -198,10 +198,9 @@ function addAlbumInfo() {
         albumTitleElem.innerHTML = albumInfo.album_title; // Album title is in HTML syntax.
         const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
         if (albumInfo.album_artist !== '') {
-            const albumArtist = createParagraphElement();
+            const albumArtist = createParagraphElement(albumInfo.album_artist);
             addClass(albumArtist, 'artist');
             addClass(albumArtist, 'center-align');
-            appendText(albumArtist, albumInfo.album_artist);
             prependChild(contentContainer, albumArtist);
         }
         prependChild(contentContainer, albumTitleElem);

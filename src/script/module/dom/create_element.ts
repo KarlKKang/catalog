@@ -22,8 +22,10 @@ export function createSpanElement() {
     return createElement('span') as HTMLSpanElement;
 }
 
-export function createParagraphElement() {
-    return createElement('p') as HTMLParagraphElement;
+export function createParagraphElement(text?: string) {
+    const elem = createElement('p') as HTMLParagraphElement;
+    text === undefined || appendText(elem, text);
+    return elem;
 }
 
 export function createCanvasElement() {
@@ -117,7 +119,7 @@ export function createEmailInput(placeholder = 'メールアドレス') {
     return [container, input] as const;
 }
 
-export function createPasswordInput(newPassword = false, placeholder = 'パスワード') {
+export function createPasswordInput(newPassword: boolean, placeholder = 'パスワード') {
     const container = createDivElement();
     addClass(container, 'input-field');
     const input = createInputElement('password');

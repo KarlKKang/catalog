@@ -3,7 +3,6 @@ import {
 } from './module/env/constant';
 import {
     addEventListener,
-    appendText,
     clearSessionStorage,
     createDivElement,
     createParagraphElement,
@@ -27,15 +26,13 @@ export default function (showPage: ShowPageFunc) {
         const container = createDivElement();
         addClass(container, styles.container);
 
-        const title = createParagraphElement();
+        const title = createParagraphElement(notFoundTitle);
         addClass(title, styles.title);
         changeColor(title, 'red');
-        appendText(title, notFoundTitle);
         appendChild(container, title);
 
-        const messageBody = createParagraphElement();
+        const messageBody = createParagraphElement(notFoundBody);
         addClass(messageBody, styles.body);
-        appendText(messageBody, notFoundBody);
         appendChild(container, messageBody);
 
         const button = createButtonElement('トップページへ戻る');

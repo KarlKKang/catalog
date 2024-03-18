@@ -25,8 +25,7 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
         returnPromiseReject = reject;
     });
 
-    const promptText = createParagraphElement();
-    appendText(promptText, 'メールアドレスとパスワードを入力してください。');
+    const promptText = createParagraphElement('メールアドレスとパスワードを入力してください。');
 
     const warningText = createParagraphElement();
     changeColor(warningText, 'red');
@@ -39,7 +38,7 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     const [emailInputContainer, emailInput] = createEmailInput();
     addClass(emailInputContainer, 'hcenter');
 
-    const [passwordInputContainer, passwordInput] = createPasswordInput();
+    const [passwordInputContainer, passwordInput] = createPasswordInput(false);
     addClass(passwordInputContainer, 'hcenter');
 
     const submitButton = createButtonElement('送信する');

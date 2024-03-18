@@ -89,9 +89,8 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
 
             const contentContainer = createDivElement();
             contentContainer.id = 'content';
-            const loadingText = createParagraphElement();
+            const loadingText = createParagraphElement(loading);
             loadingText.id = 'loading-text';
-            appendText(loadingText, loading);
             appendChild(contentContainer, loadingText);
 
             showPage(() => {
@@ -140,26 +139,21 @@ function showNews(container: HTMLElement, contentContainer: HTMLElement, newsInf
     const contentInnerContainer = createDivElement();
     contentInnerContainer.id = 'content-container';
 
-    const titleContainer = createParagraphElement();
+    const titleContainer = createParagraphElement(newsInfo.title);
     titleContainer.id = 'title';
 
-    appendText(titleContainer, newsInfo.title);
     setTitle(newsInfo.title + ' | ' + getTitle());
     appendChild(contentInnerContainer, titleContainer);
 
-    const createTimeContainer = createParagraphElement();
-    addClass(createTimeContainer, 'date');
-
     const createTime = getLocalTimeString(newsInfo.create_time, true, false);
-    appendText(createTimeContainer, '初回掲載日：' + createTime);
+    const createTimeContainer = createParagraphElement('初回掲載日：' + createTime);
+    addClass(createTimeContainer, 'date');
     appendChild(contentInnerContainer, createTimeContainer);
 
     if (newsInfo.update_time !== null) {
-        const updateTimeContainer = createParagraphElement();
-        addClass(updateTimeContainer, 'date');
-
         const updateTime = getLocalTimeString(newsInfo.update_time, true, false);
-        appendText(updateTimeContainer, '最終更新日：' + updateTime);
+        const updateTimeContainer = createParagraphElement('最終更新日：' + updateTime);
+        addClass(updateTimeContainer, 'date');
         appendChild(contentInnerContainer, updateTimeContainer);
     }
 
