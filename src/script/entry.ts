@@ -14,7 +14,6 @@ import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, s
 import '../font/dist/NotoSansJP/NotoSansJP-Light.css';
 import '../font/dist/NotoSansJP/NotoSansJP-Medium.css';
 import '../css/common.scss';
-import '../css/message.scss';
 import { enableTransition, setMinHeight, setOpacity, setVisibility, setWidth } from './module/style';
 import { CSS_UNIT_PERCENT, CSS_UNIT_PX } from './module/style/value';
 

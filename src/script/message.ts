@@ -21,6 +21,7 @@ import {
 } from './module/dom';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
+import * as styles from '../css/message.module.scss';
 
 export default function (showPage: ShowPageFunc) {
     const message = getSessionStorage('message');
@@ -42,8 +43,7 @@ export default function (showPage: ShowPageFunc) {
                 appendText(titleElem, 'タイトルTitle');
                 appendText(messageElem, 'メッセージMessage'.repeat(10));
                 const button = createButtonElement('ボタンButton');
-                button.id = 'button';
-                addClass(button, 'hcenter');
+                addClass(button, 'hcenter', styles.button);
                 appendChild(container, button);
             });
         } else {
@@ -66,8 +66,7 @@ export default function (showPage: ShowPageFunc) {
                     return;
                 }
                 const button = createButtonElement(buttonText);
-                button.id = 'button';
-                addClass(button, 'hcenter');
+                addClass(button, 'hcenter', styles.button);
                 appendChild(container, button);
                 addEventListener(button, 'click', () => {
                     redirect(url, true);
@@ -86,11 +85,11 @@ export default function (showPage: ShowPageFunc) {
 
 function createElements(paragraphMessage: boolean) {
     const container = createDivElement();
-    container.id = 'container';
+    addClass(container, styles.container);
     const titleElem = createParagraphElement();
-    titleElem.id = 'title';
+    addClass(titleElem, styles.title);
     const messageElem = paragraphMessage ? createParagraphElement() : createDivElement();
-    messageElem.id = 'message';
+    addClass(messageElem, styles.body);
     appendChildren(container, titleElem, messageElem);
     appendChild(getBody(), container);
     return [container, titleElem, messageElem] as const;

@@ -19,26 +19,27 @@ import { changeColor } from './module/common';
 import { redirect } from './module/global';
 import { setWidth } from './module/style';
 import { CSS_AUTO } from './module/style/value';
+import * as styles from '../css/message.module.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
     showPage(() => {
         const container = createDivElement();
-        container.id = 'container';
+        addClass(container, styles.container);
 
         const title = createParagraphElement();
-        title.id = 'title';
+        addClass(title, styles.title);
         changeColor(title, 'red');
         appendText(title, notFoundTitle);
         appendChild(container, title);
 
         const messageBody = createParagraphElement();
-        messageBody.id = 'message';
+        addClass(messageBody, styles.body);
         appendText(messageBody, notFoundBody);
         appendChild(container, messageBody);
 
         const button = createButtonElement('トップページへ戻る');
-        addClass(button, 'hcenter');
+        addClass(button, 'hcenter', styles.button);
         setWidth(button, CSS_AUTO);
         addEventListener(button, 'click', () => {
             redirect(TOP_URL);
