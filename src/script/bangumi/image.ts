@@ -136,9 +136,8 @@ export default async function (
                 subtitleStyle.fontSize = 'small';
                 subtitleStyle.marginTop = '0px';
                 subtitleStyle.marginBottom = '0.5em';
-                const formatText = createSpanElement();
+                const formatText = createSpanElement(canvas.width + '×' + canvas.height);
                 addClass(formatText, 'format');
-                appendText(formatText, canvas.width + '×' + canvas.height);
                 appendChild(subtitle, formatText);
                 insertBefore(subtitle, imageNode);
             },

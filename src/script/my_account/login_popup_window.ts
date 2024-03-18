@@ -49,9 +49,8 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     appendChild(buttonFlexbox, cancelButton);
 
     const forgetPasswordParagraph = createParagraphElement();
-    const forgetPasswordLink = createSpanElement();
+    const forgetPasswordLink = createSpanElement('パスワードを忘れた方はこちら');
     addClass(forgetPasswordLink, 'link');
-    appendText(forgetPasswordLink, 'パスワードを忘れた方はこちら');
     appendChild(forgetPasswordParagraph, forgetPasswordLink);
     addEventListener(forgetPasswordLink, 'click', () => {
         openWindow(TOP_URL + '/request_password_reset');

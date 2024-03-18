@@ -208,12 +208,10 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     addClass(showMoreButton, 'transparent');
     appendChild(epButtonWrapper, showMoreButton);
 
-    const showMoreButtonFoldedText = [createTextNode('すべてを見る '), createSpanElement()] as const;
-    appendText(showMoreButtonFoldedText[1], '');
+    const showMoreButtonFoldedText = [createTextNode('すべてを見る '), createSpanElement('')] as const;
     addClass(showMoreButtonFoldedText[1], 'symbol');
 
-    const showMoreButtonExpandedText = [createTextNode('非表示にする '), createSpanElement()] as const;
-    appendText(showMoreButtonExpandedText[1], '');
+    const showMoreButtonExpandedText = [createTextNode('非表示にする '), createSpanElement('')] as const;
     addClass(showMoreButtonExpandedText[1], 'symbol');
 
     let currentToggleTimeout: NodeJS.Timeout | null = null;

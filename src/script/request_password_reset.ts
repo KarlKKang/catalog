@@ -4,11 +4,17 @@ import {
 import { sendServerRequest } from './module/server_request';
 import {
     addEventListener,
-    getById,
-    getDescendantsByTagAt,
     replaceText,
     clearSessionStorage,
     disableInput,
+    createDivElement,
+    appendChild,
+    body,
+    createParagraphElement,
+    createEmailInput,
+    createButtonElement,
+    createSpanElement,
+    addClass,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
@@ -17,7 +23,7 @@ import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/message/template/param/server';
-import { showElement } from './module/style';
+import { hideElement, horizontalCenter, showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -25,9 +31,36 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function showPageCallback() {
-    const emailInput = getById('email') as HTMLInputElement;
-    const submitButton = getById('submit-button') as HTMLButtonElement;
-    const warningElem = getById('warning');
+    const container = createDivElement();
+    container.id = 'portal-form';
+    appendChild(body, container);
+
+    const title = createParagraphElement('パスワード再発行');
+    title.id = 'title';
+    appendChild(container, title);
+
+    const note = createParagraphElement('登録されているメールアドレスを入力してください。');
+    note.id = 'note';
+    appendChild(container, note);
+
+    const warningElem = createParagraphElement();
+    warningElem.id = 'warning';
+    hideElement(warningElem);
+    appendChild(container, warningElem);
+
+    const [emailContainer, emailInput] = createEmailInput();
+    horizontalCenter(emailContainer);
+    appendChild(container, emailContainer);
+
+    const submitButton = createButtonElement('送信する');
+    horizontalCenter(submitButton);
+    appendChild(container, submitButton);
+
+    const goBack = createParagraphElement();
+    const goBackText = createSpanElement('❮ 戻る');
+    addClass(goBack, 'link');
+    appendChild(goBack, goBackText);
+    appendChild(container, goBack);
 
     addEventListener(emailInput, 'keydown', (event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
@@ -39,7 +72,7 @@ function showPageCallback() {
         submitRequest();
     });
 
-    addEventListener(getDescendantsByTagAt(getById('go-back'), 'span', 0), 'click', () => {
+    addEventListener(goBackText, 'click', () => {
         redirect(LOGIN_URL, true);
     });
 

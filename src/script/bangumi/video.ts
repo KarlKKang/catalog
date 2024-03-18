@@ -446,10 +446,9 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     const chapterElements: HTMLParagraphElement[] = [];
     for (const chapter of epInfo.chapters) {
         const chapterNode = createParagraphElement();
-        const timestamp = createSpanElement();
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
         const startTime = (chapter[1] + offset) / 1000;
-        appendText(timestamp, secToTimestamp(startTime));
+        const timestamp = createSpanElement(secToTimestamp(startTime));
         addEventListener(timestamp, 'click', () => {
             mediaInstance.seek(startTime);
             mediaInstance.focus();
@@ -536,9 +535,8 @@ async function canPlayHEVC(withFallback: boolean | undefined): Promise<boolean> 
 }
 
 function createLinkElem(text: string, link: string) {
-    const linkElem = createSpanElement();
+    const linkElem = createSpanElement(text);
     addClass(linkElem, 'link');
-    appendText(linkElem, text);
     addEventListener(linkElem, 'click', () => {
         redirect(link);
     });

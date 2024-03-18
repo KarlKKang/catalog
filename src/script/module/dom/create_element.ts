@@ -18,8 +18,10 @@ export function createButtonElement(text?: string) {
     return elem;
 }
 
-export function createSpanElement() {
-    return createElement('span') as HTMLSpanElement;
+export function createSpanElement(text?: string) {
+    const elem = createElement('span') as HTMLSpanElement;
+    text === undefined || appendText(elem, text);
+    return elem;
 }
 
 export function createParagraphElement(text?: string) {

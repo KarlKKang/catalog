@@ -210,9 +210,8 @@ export class Player {
         addClass(currentTimeDisplay, styles.playerTimeControl, styles.playerControl);
         appendChild(controlBar, currentTimeDisplay);
 
-        const currentTimeDisplayText = createSpanElement();
+        const currentTimeDisplayText = createSpanElement('--:--');
         this.currentTimeDisplayText = currentTimeDisplayText;
-        appendText(currentTimeDisplayText, '--:--');
         appendChild(currentTimeDisplay, currentTimeDisplayText);
 
         // Time divider
@@ -221,8 +220,7 @@ export class Player {
         addClass(timeDivier, styles.playerTimeControl, styles.playerTimeDivider);
         appendChild(controlBar, timeDivier);
 
-        const timeDividerText = createSpanElement();
-        appendText(timeDividerText, '/');
+        const timeDividerText = createSpanElement('/');
         appendChild(timeDivier, timeDividerText);
 
         // Duration display

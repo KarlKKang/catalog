@@ -222,9 +222,8 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
     if (file.title !== '') {
         appendText(subtitle, file.title);
         if (file.artist !== '') {
-            const artist = createSpanElement();
+            const artist = createSpanElement('／' + file.artist);
             addClass(artist, 'artist');
-            appendText(artist, '／' + file.artist);
             appendChild(subtitle, artist);
         }
     }
@@ -235,9 +234,8 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
             appendChild(subtitle, createBRElement());
         }
 
-        const format = createSpanElement();
+        const format = createSpanElement(FLAC_FALLBACK ? 'FLAC' : file.format);
         addClass(format, 'format');
-        appendText(format, FLAC_FALLBACK ? 'FLAC' : file.format);
 
         const samplerate = file.samplerate;
         if (samplerate !== '') {

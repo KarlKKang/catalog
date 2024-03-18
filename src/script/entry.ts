@@ -210,7 +210,6 @@ const pages: PageMap = {
         style: () => [
             portalFormCss(),
         ],
-        html: () => import('../html/request_password_reset.html'),
         title: 'パスワード再発行',
         htmlEntry: HTMLEntry.DEFAULT,
     },
