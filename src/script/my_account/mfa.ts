@@ -1,13 +1,9 @@
 
 import {
     sendServerRequest,
-    changeColor,
-    disableInput,
 } from '../module/common';
 import {
     addEventListener,
-    showElement,
-    hideElement,
     appendText,
     replaceText,
     createCanvasElement,
@@ -20,6 +16,7 @@ import {
     removeClass,
     replaceChildren,
     createTotpInput,
+    disableInput,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';
@@ -47,7 +44,7 @@ import { popupWindowImportPromise } from './import_promise';
 import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
 import type { LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
-import { setHeight } from '../module/style';
+import { changeColor, hideElement, setHeight, showElement } from '../module/style';
 
 export function enableMfa() {
     disableAllInputs(true);

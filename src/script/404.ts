@@ -14,9 +14,8 @@ import {
 import { notFound as notFoundTitle } from './module/message/template/title/server';
 import { notFound as notFoundBody } from './module/message/template/body/server';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import { changeColor } from './module/common';
 import { redirect } from './module/global';
-import { setWidth } from './module/style';
+import { changeColor, setWidth } from './module/style';
 import { CSS_AUTO } from './module/style/value';
 import * as styles from '../css/message.module.scss';
 

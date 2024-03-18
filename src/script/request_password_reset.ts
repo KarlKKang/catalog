@@ -3,15 +3,14 @@ import {
 } from './module/env/constant';
 import {
     sendServerRequest,
-    disableInput,
 } from './module/common';
 import {
     addEventListener,
     getById,
     getDescendantsByTagAt,
-    showElement,
     replaceText,
     clearSessionStorage,
+    disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
@@ -20,6 +19,7 @@ import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/message/template/param/server';
+import { showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

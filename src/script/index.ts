@@ -6,8 +6,6 @@ import {
     addNavBar,
     sendServerRequest,
     getURLParam,
-    disableInput,
-    changeColor,
     scrollToTop,
     NAV_BAR_HOME,
 } from './module/common';
@@ -32,6 +30,7 @@ import {
     createInputElement,
     appendChildren,
     body,
+    disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse } from './module/message/template/param/server';
@@ -44,6 +43,7 @@ import { addTimeout } from './module/timer';
 import { allResultsShown, loading, noResult } from './module/message/template/inline';
 import { redirect, setCustomPopStateHandler } from './module/global';
 import { lazyloadImport, unloadLazyload } from './module/lazyload';
+import { changeColor } from './module/style';
 
 let pivot: SeriesInfo.Pivot;
 let keywords: string;

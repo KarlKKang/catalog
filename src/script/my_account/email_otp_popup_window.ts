@@ -1,8 +1,7 @@
-import { changeColor, disableInput } from '../module/common';
-import { addClass, appendChild, addEventListener, createButtonElement, createDivElement, createParagraphElement, hideElement, replaceText, showElement, createTotpInput } from '../module/dom';
+import { addClass, appendChild, addEventListener, createButtonElement, createDivElement, createParagraphElement, replaceText, createTotpInput, disableInput } from '../module/dom';
 import { failedTotp } from '../module/message/template/inline';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
-import { setCursor, setWidth } from '../module/style';
+import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';
 import { CSS_AUTO, CSS_CURSOR_NOT_ALLOWED } from '../module/style/value';
 import { addInterval, removeInterval } from '../module/timer';
 

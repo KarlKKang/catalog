@@ -1,10 +1,7 @@
 import {
     sendServerRequest,
-    changeColor,
 } from '../module/common';
 import {
-    showElement,
-    hideElement,
     replaceText,
     remove,
 } from '../module/dom';
@@ -40,6 +37,7 @@ import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import type { AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/message/template/param/server';
 import * as InviteResult from '../module/type/InviteResult';
+import { changeColor, hideElement, showElement } from '../module/style';
 
 export function changeEmail() {
     disableAllInputs(true);

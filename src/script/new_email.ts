@@ -4,21 +4,19 @@ import {
 import {
     sendServerRequest,
     getURLParam,
-    disableInput,
 } from './module/common';
 import {
     addEventListener,
-    showElement,
     replaceText,
     clearSessionStorage,
     createDivElement,
     appendChild,
     createParagraphElement,
-    hideElement,
     addClass,
     createEmailInput,
     createButtonElement,
     body,
+    disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
@@ -27,6 +25,7 @@ import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/message/template/param/server';
+import { hideElement, showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

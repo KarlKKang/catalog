@@ -1,9 +1,10 @@
 import { handleFailedTotp, sendServerRequest } from '../module/common';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
-import { replaceChildren, replaceText, showElement } from '../module/dom';
+import { replaceChildren, replaceText } from '../module/dom';
 import { pgid } from '../module/global';
 import { accountDeactivated, loginFailed, sessionEnded, tooManyFailedLogin } from '../module/message/template/inline';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
+import { showElement } from '../module/style';
 import { disableAllInputs } from './helper';
 import { popupWindowImportPromise, promptForTotpImportPromise } from './import_promise';
 import { promptForLogin, type LoginPopupWindow } from './login_popup_window';

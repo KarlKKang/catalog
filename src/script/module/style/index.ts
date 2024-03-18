@@ -1,3 +1,4 @@
+import { addClass, containsClass, removeClass } from '../dom';
 import type { CSS_AUTO, CSS_UNIT, CSS_CURSOR } from './value';
 
 const enum CSS_PROPERTY {
@@ -97,4 +98,23 @@ function setStyle(element: HTMLElement, property: CSS_PROPERTY, value: number | 
         }
         element.style[property] = valueStr;
     }
+}
+
+export function hideElement(elem: HTMLElement) {
+    addClass(elem, 'hidden');
+}
+
+export function showElement(elem: HTMLElement) {
+    removeClass(elem, 'hidden');
+}
+
+export function isHidden(elem: HTMLElement) {
+    return containsClass(elem, 'hidden');
+}
+
+export function changeColor(elem: HTMLElement, color: string | null) {
+    removeClass(elem, 'color-red');
+    removeClass(elem, 'color-green');
+    removeClass(elem, 'color-orange');
+    color && addClass(elem, 'color-' + color);
 }

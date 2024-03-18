@@ -13,8 +13,6 @@ import {
     getHash,
     getByIdNative,
     addClass,
-    removeClass,
-    getParentElement,
     addEventListener,
     appendChild,
     createParagraphElement,
@@ -285,22 +283,6 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
 
 export function scrollToTop() {
     w.scrollBy(0, -1 * w.scrollY);
-}
-
-export function changeColor(elem: HTMLElement, color: string | null) {
-    removeClass(elem, 'color-red');
-    removeClass(elem, 'color-green');
-    removeClass(elem, 'color-orange');
-    color && addClass(elem, 'color-' + color);
-}
-
-export function disableInput(inputElement: HTMLInputElement, disabled: boolean) {
-    inputElement.disabled = disabled;
-    if (disabled) {
-        addClass(getParentElement(inputElement), 'disabled');
-    } else {
-        removeClass(getParentElement(inputElement), 'disabled');
-    }
 }
 
 export function removeRightClick(elem: Element) {

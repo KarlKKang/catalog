@@ -4,13 +4,11 @@ import {
 import {
     addNavBar,
     sendServerRequest,
-    changeColor,
     logout,
     NAV_BAR_MY_ACCOUNT,
 } from '../module/common';
 import {
     addEventListener,
-    showElement,
     appendText,
     clearSessionStorage,
     createDivElement,
@@ -18,7 +16,6 @@ import {
     addClass,
     createParagraphElement,
     prependChild,
-    hideElement,
     createButtonElement,
     replaceText,
     passwordStyling,
@@ -34,6 +31,7 @@ import { getLocalTimeString } from '../module/common/pure';
 import { basicImportPromise, importAll, mfaImportPromise, parseBrowserImportPromise } from './import_promise';
 import { moduleImportError } from '../module/message/template/param';
 import { loading } from '../module/message/template/inline';
+import { changeColor, hideElement, showElement } from '../module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

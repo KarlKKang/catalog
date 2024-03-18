@@ -4,17 +4,16 @@ import {
 import {
     getURLParam,
     sendServerRequest,
-    disableInput,
 } from './module/common';
 import {
     addEventListener,
     getById,
     getByClassAt,
     openWindow,
-    showElement,
     replaceText,
     clearSessionStorage,
     passwordStyling,
+    disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
@@ -23,6 +22,7 @@ import { PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/message/template/param/server';
+import { showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

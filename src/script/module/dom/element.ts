@@ -157,14 +157,11 @@ export function appendChildren(parent: Node, ...children: Node[]) {
     }
 }
 
-export function hideElement(elem: HTMLElement) {
-    addClass(elem, 'hidden');
-}
-
-export function showElement(elem: HTMLElement) {
-    removeClass(elem, 'hidden');
-}
-
-export function isHidden(elem: HTMLElement) {
-    return containsClass(elem, 'hidden');
+export function disableInput(inputElement: HTMLInputElement, disabled: boolean) {
+    inputElement.disabled = disabled;
+    if (disabled) {
+        addClass(getParentElement(inputElement), 'disabled');
+    } else {
+        removeClass(getParentElement(inputElement), 'disabled');
+    }
 }

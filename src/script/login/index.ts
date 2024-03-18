@@ -4,18 +4,17 @@ import {
 import {
     sendServerRequest,
     authenticate,
-    disableInput,
     handleFailedTotp,
 } from '../module/common';
 import {
     addEventListener,
     getById,
     getDescendantsByTagAt,
-    showElement,
     replaceChildren,
     replaceText,
     clearSessionStorage,
     passwordStyling,
+    disableInput,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/message/template/inline';
@@ -26,6 +25,7 @@ import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/message/template/param/server';
+import { showElement } from '../module/style';
 
 let onDemandImportPromise: Promise<typeof import(
     './on_demand'

@@ -4,24 +4,22 @@ import {
 import {
     sendServerRequest,
     getURLParam,
-    disableInput,
     handleFailedTotp,
 } from './module/common';
 import {
     addEventListener,
-    showElement,
     replaceChildren,
     replaceText,
     clearSessionStorage,
     createDivElement,
     appendChild,
     createParagraphElement,
-    hideElement,
     createEmailInput,
     addClass,
     createPasswordInput,
     createButtonElement,
     body,
+    disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged } from './module/message/template/param';
@@ -32,6 +30,7 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import type { TotpPopupWindow } from './module/popup_window/totp';
 import { invalidResponse } from './module/message/template/param/server';
+import { hideElement, showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

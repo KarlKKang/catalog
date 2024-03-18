@@ -1,5 +1,4 @@
 import {
-    changeColor,
     getURLParam,
 } from '../module/common';
 import {
@@ -10,6 +9,7 @@ import {
     createParagraphElement,
     appendChildren,
 } from '../module/dom';
+import { changeColor } from '../module/style';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
     let height = elem.scrollHeight;

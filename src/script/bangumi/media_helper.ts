@@ -15,7 +15,6 @@ import {
     prependChild,
     getByIdNative,
     getDescendantsByClassAt,
-    hideElement,
     getBaseURL,
     createButtonElement,
     createDivElement,
@@ -40,7 +39,7 @@ import { VideoFormatInfo } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
 import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from '../module/player/media_error';
 import { SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
-import { setMaxHeight } from '../module/style';
+import { hideElement, setMaxHeight } from '../module/style';
 import { CSS_UNIT_PX } from '../module/style/value';
 
 export const incompatibleTitle = '再生できません';

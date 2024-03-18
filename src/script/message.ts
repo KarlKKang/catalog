@@ -3,7 +3,6 @@ import {
 } from './module/env/constant';
 import {
     logout,
-    changeColor,
 } from './module/common';
 import {
     addEventListener,
@@ -22,6 +21,7 @@ import {
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import * as styles from '../css/message.module.scss';
+import { changeColor } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     const message = getSessionStorage('message');

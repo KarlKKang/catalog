@@ -9,7 +9,6 @@ import {
     appendChild,
     prependChild,
     addEventListener,
-    hideElement,
     createParagraphElement,
     createDivElement,
     createButtonElement,
@@ -28,7 +27,7 @@ import { pgid } from '../module/global';
 import { lazyloadImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 import { unloadLazyload } from '../module/lazyload';
-import { setWidth } from '../module/style';
+import { hideElement, setWidth } from '../module/style';
 import { CSS_AUTO } from '../module/style/value';
 
 type ImageLoader = typeof import(

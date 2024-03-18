@@ -11,8 +11,6 @@ import {
     remove,
     addEventListenerOnce,
     appendChild,
-    hideElement,
-    showElement,
     createDivElement,
     createSpanElement,
     createVideoElement,
@@ -33,7 +31,7 @@ import { getLocalTime, secToTimestamp } from '../common/pure';
 import { addInterval, addTimeout, removeInterval } from '../timer';
 import { mediaErrorCodeLookup } from './media_error';
 import * as styles from '../../../css/player.module.scss';
-import { setLeft, setPaddingTop, setRight, setWidth } from '../style';
+import { hideElement, setLeft, setPaddingTop, setRight, setWidth, showElement } from '../style';
 import { CSS_UNIT_PERCENT, CSS_UNIT_PX } from '../style/value';
 
 declare global {

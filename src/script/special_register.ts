@@ -1,13 +1,12 @@
 import {
     sendServerRequest,
-    disableInput,
 } from './module/common';
 import {
     addEventListener,
     getById,
-    showElement,
     replaceText,
     clearSessionStorage,
+    disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/template/param';
@@ -15,6 +14,7 @@ import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitatio
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { invalidResponse } from './module/message/template/param/server';
+import { showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

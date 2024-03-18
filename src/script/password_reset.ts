@@ -4,15 +4,14 @@ import {
 import {
     sendServerRequest,
     getURLParam,
-    disableInput,
 } from './module/common';
 import {
     addEventListener,
     getById,
-    showElement,
     replaceText,
     clearSessionStorage,
     passwordStyling,
+    disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
@@ -21,6 +20,7 @@ import { PASSWORD_REGEX } from './module/common/pure';
 import { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/message/template/param/server';
+import { showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

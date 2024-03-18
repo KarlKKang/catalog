@@ -17,8 +17,6 @@ import {
     remove,
     appendChild,
     insertBefore,
-    showElement,
-    hideElement,
     getTitle,
     createDivElement,
     createButtonElement,
@@ -39,7 +37,7 @@ import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
 import { SHARED_VAR_IDX_CONTENT_CONTAINER, dereferenceSharedVars, getSharedElement, initializeSharedVars } from './shared_var';
-import { setMaxHeight, setMinHeight, setPaddingBottom } from '../module/style';
+import { hideElement, setMaxHeight, setMinHeight, setPaddingBottom, showElement } from '../module/style';
 import { CSS_UNIT_PX, CSS_UNIT_VH } from '../module/style/value';
 
 let seriesID: string;

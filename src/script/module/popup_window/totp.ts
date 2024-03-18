@@ -1,6 +1,6 @@
-import { addEventListener, addClass, appendChild, createButtonElement, createDivElement, createParagraphElement, hideElement, showElement, createTotpInput } from '../dom';
-import { changeColor, disableInput } from '../common';
+import { addEventListener, addClass, appendChild, createButtonElement, createDivElement, createParagraphElement, createTotpInput, disableInput } from '../dom';
 import { failedTotp } from '../message/template/inline';
+import { changeColor, hideElement, showElement } from '../style';
 import { addInterval, removeInterval } from '../timer';
 import type { initializePopupWindow as InitializePopupWindow } from './core';
 
