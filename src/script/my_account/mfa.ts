@@ -42,7 +42,7 @@ import { popupWindowImportPromise } from './import_promise';
 import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
 import type { LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
-import { changeColor, hideElement, setHeight, showElement } from '../module/style';
+import { changeColor, hideElement, horizontalCenter, setHeight, showElement } from '../module/style';
 
 export function enableMfa() {
     disableAllInputs(true);
@@ -262,7 +262,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
 
     const qrcode = createCanvasElement();
     addClass(qrcode, 'totp-qrcode');
-    addClass(qrcode, 'hcenter');
+    horizontalCenter(qrcode);
     toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H', margin: 0 }, () => {
         setHeight(qrcode, null);
     });
@@ -280,7 +280,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     hideElement(warningText);
 
     const [totpInputContainer, totpInput] = createTotpInput(false);
-    addClass(totpInputContainer, 'hcenter');
+    horizontalCenter(totpInputContainer);
 
     const submitButton = createButtonElement('送信する');
     const cancelButton = createButtonElement('キャンセル');
@@ -380,7 +380,7 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo
 
     const closeButtonText = '閉じる';
     const closeButton = createButtonElement(closeButtonText + '（15秒）');
-    addClass(closeButton, 'hcenter');
+    horizontalCenter(closeButton);
     closeButton.disabled = true;
     addClass(closeButton, 'not-allowed');
     let count = 15;

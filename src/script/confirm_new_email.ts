@@ -15,7 +15,6 @@ import {
     appendChild,
     createParagraphElement,
     createEmailInput,
-    addClass,
     createPasswordInput,
     createButtonElement,
     body,
@@ -30,7 +29,7 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import type { TotpPopupWindow } from './module/popup_window/totp';
 import { invalidResponse } from './module/message/template/param/server';
-import { hideElement, showElement } from './module/style';
+import { hideElement, horizontalCenter, showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -82,15 +81,15 @@ function showPageCallback(param: string) {
     appendChild(container, warningElem);
 
     const [emailContainer, emailInput] = createEmailInput();
-    addClass(emailContainer, 'hcenter');
+    horizontalCenter(emailContainer);
     appendChild(container, emailContainer);
 
     const [passwordContainer, passwordInput] = createPasswordInput(false);
-    addClass(passwordContainer, 'hcenter');
+    horizontalCenter(passwordContainer);
     appendChild(container, passwordContainer);
 
     const submitButton = createButtonElement('送信する');
-    addClass(submitButton, 'hcenter');
+    horizontalCenter(submitButton);
     appendChild(container, submitButton);
 
     const popupWindowImportPromise = popupWindowImport();

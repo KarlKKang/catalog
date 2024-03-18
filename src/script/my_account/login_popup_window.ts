@@ -3,7 +3,7 @@ import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { loginFailed } from '../module/message/template/inline';
 import { TOP_URL } from '../module/env/constant';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
-import { changeColor, hideElement, showElement } from '../module/style';
+import { changeColor, hideElement, horizontalCenter, showElement } from '../module/style';
 
 export type LoginPopupWindow = [
     string, // email
@@ -36,10 +36,10 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     }
 
     const [emailInputContainer, emailInput] = createEmailInput();
-    addClass(emailInputContainer, 'hcenter');
+    horizontalCenter(emailInputContainer);
 
     const [passwordInputContainer, passwordInput] = createPasswordInput(false);
-    addClass(passwordInputContainer, 'hcenter');
+    horizontalCenter(passwordInputContainer);
 
     const submitButton = createButtonElement('送信する');
     const cancelButton = createButtonElement('キャンセル');

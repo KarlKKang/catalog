@@ -118,3 +118,7 @@ export function changeColor(elem: HTMLElement, color: string | null) {
     removeClass(elem, 'color-orange');
     color && addClass(elem, 'color-' + color);
 }
+
+export function horizontalCenter(elem: HTMLElement) {
+    addClass(elem, 'hcenter');
+}

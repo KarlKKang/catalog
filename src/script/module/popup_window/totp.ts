@@ -1,6 +1,6 @@
 import { addEventListener, addClass, appendChild, createButtonElement, createDivElement, createParagraphElement, createTotpInput, disableInput } from '../dom';
 import { failedTotp } from '../message/template/inline';
-import { changeColor, hideElement, showElement } from '../style';
+import { changeColor, hideElement, horizontalCenter, showElement } from '../style';
 import { addInterval, removeInterval } from '../timer';
 import type { initializePopupWindow as InitializePopupWindow } from './core';
 
@@ -33,7 +33,7 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
     hideElement(warningText);
 
     const [totpInputContainer, totpInput] = createTotpInput(true);
-    addClass(totpInputContainer, 'hcenter');
+    horizontalCenter(totpInputContainer);
 
     const submitButton = createButtonElement('送信する');
     const cancelButton = createButtonElement('キャンセル');

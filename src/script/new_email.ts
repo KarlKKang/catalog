@@ -12,7 +12,6 @@ import {
     createDivElement,
     appendChild,
     createParagraphElement,
-    addClass,
     createEmailInput,
     createButtonElement,
     body,
@@ -25,7 +24,7 @@ import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/message/template/param/server';
-import { hideElement, showElement } from './module/style';
+import { hideElement, horizontalCenter, showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -69,11 +68,11 @@ function showPageCallback(param: string) {
     appendChild(container, warningElem);
 
     const [newEmailContainer, newEmailInput] = createEmailInput('新しいメールアドレス');
-    addClass(newEmailContainer, 'hcenter');
+    horizontalCenter(newEmailContainer);
     appendChild(container, newEmailContainer);
 
     const submitButton = createButtonElement('送信する');
-    addClass(submitButton, 'hcenter');
+    horizontalCenter(submitButton);
     appendChild(container, submitButton);
 
     addEventListener(newEmailInput, 'keydown', (event) => {

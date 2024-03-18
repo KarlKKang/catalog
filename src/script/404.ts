@@ -15,7 +15,7 @@ import { notFound as notFoundTitle } from './module/message/template/title/serve
 import { notFound as notFoundBody } from './module/message/template/body/server';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
-import { changeColor, setWidth } from './module/style';
+import { changeColor, horizontalCenter, setWidth } from './module/style';
 import { CSS_AUTO } from './module/style/value';
 import * as styles from '../css/message.module.scss';
 
@@ -35,7 +35,8 @@ export default function (showPage: ShowPageFunc) {
         appendChild(container, messageBody);
 
         const button = createButtonElement('トップページへ戻る');
-        addClass(button, 'hcenter', styles.button);
+        addClass(button, styles.button);
+        horizontalCenter(button);
         setWidth(button, CSS_AUTO);
         addEventListener(button, 'click', () => {
             redirect(TOP_URL);
