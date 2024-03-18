@@ -8,10 +8,17 @@ import {
 } from './module/common';
 import {
     addEventListener,
-    getById,
     showElement,
     replaceText,
     clearSessionStorage,
+    createDivElement,
+    appendChild,
+    getBody,
+    createParagraphElement,
+    hideElement,
+    addClass,
+    createEmailInput,
+    createButtonElement,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from './module/message/template/inline';
@@ -27,7 +34,7 @@ export default function (showPage: ShowPageFunc) {
     const param = getURLParam('p');
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showPage();
+            showPage(() => { showPageCallback('test'); });
         } else {
             redirect(TOP_URL, true);
         }
@@ -49,9 +56,26 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function showPageCallback(param: string) {
-    const newEmailInput = getById('new-email') as HTMLInputElement;
-    const submitButton = getById('submit-button') as HTMLButtonElement;
-    const warningElem = getById('warning');
+    const container = createDivElement();
+    container.id = 'portal-form';
+    appendChild(getBody(), container);
+
+    const title = createParagraphElement('メールアドレス変更');
+    title.id = 'title';
+    appendChild(container, title);
+
+    const warningElem = createParagraphElement();
+    warningElem.id = 'warning';
+    hideElement(warningElem);
+    appendChild(container, warningElem);
+
+    const [newEmailContainer, newEmailInput] = createEmailInput('新しいメールアドレス');
+    addClass(newEmailContainer, 'hcenter');
+    appendChild(container, newEmailContainer);
+
+    const submitButton = createButtonElement('送信する');
+    addClass(submitButton, 'hcenter');
+    appendChild(container, submitButton);
 
     addEventListener(newEmailInput, 'keydown', (event) => {
         if ((event as KeyboardEvent).key === 'Enter') {

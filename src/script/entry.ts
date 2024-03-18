@@ -167,7 +167,6 @@ const pages: PageMap = {
         style: () => [
             portalFormCss(),
         ],
-        html: () => import('../html/new_email.html'),
         title: 'メールアドレス変更',
         htmlEntry: HTMLEntry.DEFAULT,
     },
