@@ -2,9 +2,9 @@ import {
     LOGIN_URL,
 } from './module/env/constant';
 import {
-    sendServerRequest,
     getURLParam,
 } from './module/common';
+import { sendServerRequest } from './module/server_request';
 import {
     addEventListener,
     getById,

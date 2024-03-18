@@ -1,9 +1,7 @@
 import {
     CDN_URL, DOMAIN,
 } from '../module/env/constant';
-import {
-    sendServerRequest,
-} from '../module/common';
+import { sendServerRequest } from '../module/server_request';
 import {
     w,
     addEventListener,

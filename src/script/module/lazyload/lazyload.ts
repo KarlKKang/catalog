@@ -1,8 +1,8 @@
 import {
     type SessionTypes,
-    sendServerRequest,
     SESSION_TYPE_MEDIA,
 } from '../common';
+import { sendServerRequest } from '../server_request';
 import {
     addClass,
 } from '../dom';

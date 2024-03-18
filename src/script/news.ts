@@ -3,15 +3,14 @@ import {
     TOP_URL,
 } from './module/env/constant';
 import {
-    sendServerRequest,
     scrollToHash,
     addNavBar,
     removeRightClick,
     NAV_BAR_NEWS,
-    setUpSessionAuthentication,
     SESSION_TYPE_NEWS,
     openImageWindow,
 } from './module/common';
+import { sendServerRequest, setUpSessionAuthentication } from './module/server_request';
 import {
     addEventListener,
     getBaseURL,

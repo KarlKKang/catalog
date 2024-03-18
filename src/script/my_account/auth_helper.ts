@@ -1,4 +1,5 @@
-import { handleFailedTotp, sendServerRequest } from '../module/common';
+import { handleFailedTotp } from '../module/common';
+import { sendServerRequest } from '../module/server_request';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 import { replaceChildren, replaceText } from '../module/dom';
 import { pgid } from '../module/global';

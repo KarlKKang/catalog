@@ -2,10 +2,9 @@ import {
     TOP_URL,
 } from '../module/env/constant';
 import {
-    sendServerRequest,
     getURLParam,
-    setUpSessionAuthentication,
 } from '../module/common';
+import { sendServerRequest, setUpSessionAuthentication } from '../module/server_request';
 import {
     clearSessionStorage,
     getBaseURL,

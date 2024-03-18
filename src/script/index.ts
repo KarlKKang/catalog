@@ -4,11 +4,11 @@ import {
 } from './module/env/constant';
 import {
     addNavBar,
-    sendServerRequest,
     getURLParam,
     scrollToTop,
     NAV_BAR_HOME,
 } from './module/common';
+import { sendServerRequest } from './module/server_request';
 import {
     w,
     addEventListener,

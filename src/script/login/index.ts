@@ -2,10 +2,12 @@ import {
     TOP_URL,
 } from '../module/env/constant';
 import {
-    sendServerRequest,
-    authenticate,
     handleFailedTotp,
 } from '../module/common';
+import {
+    sendServerRequest,
+    authenticate
+} from '../module/server_request';
 import {
     addEventListener,
     getById,

@@ -2,11 +2,10 @@ import {
     TOP_URL,
 } from './module/env/constant';
 import {
-    sendServerRequest,
     removeRightClick,
-    setUpSessionAuthentication,
     SESSION_TYPE_MEDIA,
 } from './module/common';
+import { sendServerRequest, setUpSessionAuthentication } from './module/server_request';
 import {
     setTitle,
     getSessionStorage,

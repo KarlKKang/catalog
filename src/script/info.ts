@@ -1,9 +1,9 @@
 import {
-    authenticate,
     addNavBar,
     scrollToHash,
     NAV_BAR_INFO,
 } from './module/common';
+import { authenticate } from './module/server_request';
 import {
     clearSessionStorage,
 } from './module/dom';

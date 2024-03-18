@@ -3,10 +3,12 @@ import {
 } from '../module/env/constant';
 import {
     addNavBar,
-    sendServerRequest,
-    logout,
     NAV_BAR_MY_ACCOUNT,
 } from '../module/common';
+import {
+    sendServerRequest,
+    logout
+} from '../module/server_request';
 import {
     addEventListener,
     appendText,

@@ -3,8 +3,8 @@ import {
 } from './module/env/constant';
 import {
     getURLParam,
-    sendServerRequest,
 } from './module/common';
+import { sendServerRequest } from './module/server_request';
 import {
     addEventListener,
     getById,

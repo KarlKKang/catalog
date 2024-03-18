@@ -2,10 +2,10 @@ import {
     LOGIN_URL,
 } from './module/env/constant';
 import {
-    sendServerRequest,
     getURLParam,
     handleFailedTotp,
 } from './module/common';
+import { sendServerRequest } from './module/server_request';
 import {
     addEventListener,
     replaceChildren,
