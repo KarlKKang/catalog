@@ -174,32 +174,6 @@ export function logout(callback: () => void,) {
     });
 }
 
-export function passwordStyling(element: HTMLInputElement) {
-    function inputChangeHandler() {
-        if (element.value === '') {
-            removeClass(element, 'password-font');
-        } else {
-            addClass(element, 'password-font');
-        }
-    }
-
-    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value'); //The object returned is mutable but mutating it has no effect on the original property's configuration.
-    if (descriptor !== undefined && descriptor.configurable) { // 'undefined' in Chrome prior to Chrome 43 (https://developer.chrome.com/blog/DOM-attributes-now-on-the-prototype-chain/), not configurable in Safari 9.
-        const originalSet = descriptor.set;
-        if (originalSet !== undefined) {
-            // define our own setter
-            descriptor.set = function (...args) {
-                originalSet.apply(this, args);
-                inputChangeHandler();
-            };
-            Object.defineProperty(element, 'value', descriptor);
-        }
-    }
-
-    addEventListener(element, 'input', inputChangeHandler);
-    addEventListener(element, 'change', inputChangeHandler);
-}
-
 const enum NavBarPage {
     HOME,
     NEWS,

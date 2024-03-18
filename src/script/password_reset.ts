@@ -4,7 +4,6 @@ import {
 import {
     sendServerRequest,
     getURLParam,
-    passwordStyling,
     disableInput,
 } from './module/common';
 import {
@@ -13,6 +12,7 @@ import {
     showElement,
     replaceText,
     clearSessionStorage,
+    passwordStyling,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';

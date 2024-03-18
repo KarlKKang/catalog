@@ -3,7 +3,6 @@ import {
 } from '../module/env/constant';
 import {
     sendServerRequest,
-    passwordStyling,
     authenticate,
     disableInput,
     handleFailedTotp,
@@ -16,6 +15,7 @@ import {
     replaceChildren,
     replaceText,
     clearSessionStorage,
+    passwordStyling,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/message/template/inline';

@@ -1,5 +1,5 @@
 import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, hideElement, showElement, replaceText, createSpanElement, openWindow, createEmailInput, createPasswordInput } from '../module/dom';
-import { changeColor, disableInput, passwordStyling } from '../module/common';
+import { changeColor, disableInput } from '../module/common';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { loginFailed } from '../module/message/template/inline';
 import { TOP_URL } from '../module/env/constant';
@@ -41,7 +41,6 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
 
     const [passwordInputContainer, passwordInput] = createPasswordInput();
     addClass(passwordInputContainer, 'hcenter');
-    passwordStyling(passwordInput);
 
     const submitButton = createButtonElement();
     addClass(submitButton, 'button');

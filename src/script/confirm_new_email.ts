@@ -4,7 +4,6 @@ import {
 import {
     sendServerRequest,
     getURLParam,
-    passwordStyling,
     disableInput,
     handleFailedTotp,
 } from './module/common';
@@ -15,6 +14,7 @@ import {
     replaceChildren,
     replaceText,
     clearSessionStorage,
+    passwordStyling,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged } from './module/message/template/param';

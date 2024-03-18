@@ -3,7 +3,6 @@ import {
 } from '../module/env/constant';
 import {
     addNavBar,
-    passwordStyling,
     sendServerRequest,
     changeColor,
     logout,
@@ -22,6 +21,7 @@ import {
     hideElement,
     createButtonElement,
     replaceText,
+    passwordStyling,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/template/param/server';

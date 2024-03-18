@@ -4,7 +4,6 @@ import {
 import {
     getURLParam,
     sendServerRequest,
-    passwordStyling,
     disableInput,
 } from './module/common';
 import {
@@ -15,6 +14,7 @@ import {
     showElement,
     replaceText,
     clearSessionStorage,
+    passwordStyling,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/template/param';
