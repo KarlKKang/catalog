@@ -4,7 +4,6 @@ import {
 } from '../module/env/constant';
 import {
     addNavBar,
-    getURLParam,
 } from '../module/common';
 import {
     w,
@@ -67,15 +66,6 @@ export default async function (
 
     const titleElem = getSharedElement(SHARED_VAR_IDX_TITLE);
     const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
-    const startTimeText = getURLParam('timestamp');
-    let startTime: number | null = null;
-    if (startTimeText !== null) {
-        startTime = parseFloat(startTimeText);
-        if (isNaN(startTime)) {
-            startTime = null;
-        }
-    }
-    const play = getURLParam('play') === '1';
 
     const epInfo = response.ep_info;
 
@@ -153,7 +143,7 @@ export default async function (
         if (currentPgid !== pgid) {
             return;
         }
-        currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, createMediaSessionPromise, startTime, play);
+        currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, createMediaSessionPromise);
     } else {
         if (type === 'audio') {
             try {

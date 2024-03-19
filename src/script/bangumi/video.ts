@@ -1,7 +1,6 @@
 import { TOP_URL } from '../module/env/constant';
 import {
     addEventListener,
-    getById,
     addClass,
     getTitle,
     setClass,
@@ -56,6 +55,7 @@ import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getShare
 import { addInterval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
 import { CSS_UNIT_PERCENT } from '../module/style/value';
+import { getURLParam } from '../module/common';
 
 let currentPgid: unknown;
 
@@ -77,8 +77,6 @@ export default function (
     _epInfo: VideoEPInfo,
     _baseURL: string,
     _createMediaSessionPromise: Promise<MediaSessionInfo>,
-    startTime: number | null,
-    play: boolean
 ) {
     currentPgid = pgid;
 
@@ -89,8 +87,17 @@ export default function (
     createMediaSessionPromise = _createMediaSessionPromise;
 
     const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
-
     addClass(contentContainer, 'video');
+
+    const startTimeText = getURLParam('timestamp');
+    let startTime: number | undefined = undefined;
+    if (startTimeText !== null) {
+        startTime = parseFloat(startTimeText);
+        if (isNaN(startTime)) {
+            startTime = undefined;
+        }
+    }
+    const play = getURLParam('play') === '1';
 
     // Title
     if (epInfo.title !== '') {
@@ -148,18 +155,15 @@ export default function (
         }
         const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
         appendChild(contentContainer, downloadAccordion);
-        addEventListener(selectMenu, 'change', () => { formatSwitch(selectMenu, containerSelector); });
+        addEventListener(selectMenu, 'change', () => { formatSwitch(selectMenu, formatDisplay, containerSelector); });
     });
 
-    addVideoNode({
-        startTime: startTime === null ? undefined : startTime,
-        play: play
-    }).then(() => {
+    addVideoNode(formatDisplay, play, startTime).then(() => {
         disableDropdown(selectMenu, false);
     });
 }
 
-function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HTMLElement) {
+function formatSwitch(formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDivElement, containerSelector: HTMLElement) {
     disableDropdown(formatSelectMenu, true);
     const formatIndex = formatSelectMenu.selectedIndex;
 
@@ -176,36 +180,28 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, containerSelector: HT
         showElement(containerSelector);
     }
 
-    let config: {
-        play?: boolean | undefined;
-        startTime?: number | undefined;
-    } | undefined;
-
+    let startTime: number | undefined = undefined;
+    let play: boolean | undefined = undefined;
     const mediaInstance = currentMediaInstance;
     if (mediaInstance !== null) {
-        config = {
-            play: mediaInstance.playing,
-            startTime: mediaInstance.media.currentTime
-        };
+        play = mediaInstance.playing;
+        startTime = mediaInstance.media.currentTime;
     }
 
-    addVideoNode(config).then(() => {
+    addVideoNode(formatDisplay, play, startTime).then(() => {
         if (mediaInstance === currentMediaInstance && mediaInstance !== null) {
             mediaInstance.destroy();
             currentMediaInstance = null;
             cleanupEvents();
         }
         if (currentMediaInstance === null) {
-            hideElement(getById('format-display'));
+            hideElement(formatDisplay);
         }
         disableDropdown(formatSelectMenu, false);
     });
 }
 
-async function addVideoNode(config?: {
-    play?: boolean | undefined;
-    startTime?: number | undefined;
-}) {
+async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undefined, startTime: number | undefined) {
     if (!MSE_SUPPORTED && !NATIVE_HLS_SUPPORTED) {
         showHLSCompatibilityError();
         return;
@@ -307,11 +303,8 @@ async function addVideoNode(config?: {
         }
     }
 
-    const formatDisplay = getById('format-display');
     replaceText(formatDisplay, formatString);
     showElement(formatDisplay);
-
-    const _config = config ?? {};
 
     const playerContainer = createDivElement();
     addClass(playerContainer, 'player');
@@ -371,8 +364,8 @@ async function addVideoNode(config?: {
                 mediaInstance.destroy();
                 cleanupEvents();
             },
-            play: _config.play,
-            startTime: _config.startTime
+            play: play,
+            startTime: startTime
         });
         afterLoad(mediaInstance);
     } else {
@@ -431,8 +424,8 @@ async function addVideoNode(config?: {
                 mediaInstance.destroy();
                 cleanupEvents();
             },
-            play: _config.play,
-            startTime: _config.startTime
+            play: play,
+            startTime: startTime
         });
         afterLoad(mediaInstance);
     }
