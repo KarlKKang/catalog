@@ -8,7 +8,7 @@ import {
 import {
     sendServerRequest,
     logout
-} from '../module/server_request';
+} from '../module/server';
 import {
     addEventListener,
     appendText,
@@ -23,7 +23,7 @@ import {
     passwordStyling,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
-import { invalidResponse } from '../module/message/template/param/server';
+import { invalidResponse } from '../module/server/message';
 import * as AccountInfo from '../module/type/AccountInfo';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';

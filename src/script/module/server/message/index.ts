@@ -1,9 +1,11 @@
-import * as body from '../body/server';
-import * as title from '../title/server';
-import { LOGIN_URL, TOP_URL } from '../../../env/constant';
-import type { MaintenanceInfo } from '../../../type/MaintenanceInfo';
-import { getBaseURL } from '../../../dom';
-import { reloadButtonText, type MessageParam } from '../comm';
+import * as body from './body';
+import * as title from './title';
+import { LOGIN_URL, TOP_URL } from '../../env/constant';
+import type { MaintenanceInfo } from '../../type/MaintenanceInfo';
+import { getBaseURL } from '../../dom';
+import { type MessageParam } from '../../message/template/comm';
+
+const reloadButtonText = '再読み込み';
 
 export const invalidResponse = () => {
     const param: MessageParam = {
@@ -57,6 +59,12 @@ export const unknownServerError = () => {
     const param: MessageParam = {};
     setRedirectUrl(param);
     return param;
+};
+export const insufficientPermissions = {
+    title: title.insufficientPermissions,
+    message: body.insufficientPermissions,
+    color: 'red',
+    url: TOP_URL
 };
 
 function setRedirectUrl(param: MessageParam) {

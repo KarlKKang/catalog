@@ -5,7 +5,7 @@ import {
     getURLParam,
     handleFailedTotp,
 } from './module/common';
-import { sendServerRequest } from './module/server_request';
+import { sendServerRequest } from './module/server';
 import {
     addEventListener,
     replaceChildren,
@@ -28,7 +28,7 @@ import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import type { TotpPopupWindow } from './module/popup_window/totp';
-import { invalidResponse } from './module/message/template/param/server';
+import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {

@@ -1,11 +1,10 @@
-import { SERVER_URL, LOGIN_URL } from './env/constant';
-import { show as showMessage } from './message';
-import { insufficientPermissions } from './message/template/param';
-import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError } from './message/template/param/server';
-import { addEventListener, removeAllEventListeners } from './dom';
-import * as MaintenanceInfo from './type/MaintenanceInfo';
-import { addTimeout } from './timer';
-import { redirect } from './global';
+import { SERVER_URL, LOGIN_URL } from '../env/constant';
+import { show as showMessage } from '../message';
+import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
+import { addEventListener, removeAllEventListeners } from '../dom';
+import * as MaintenanceInfo from '../type/MaintenanceInfo';
+import { addTimeout } from '../timer';
+import { redirect } from '../global';
 
 interface SendServerRequestOption {
     callback?: (response: string) => void | Promise<void>;

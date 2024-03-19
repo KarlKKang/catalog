@@ -2,12 +2,12 @@ import {
     type SessionTypes,
     SESSION_TYPE_MEDIA,
 } from '../common';
-import { sendServerRequest } from '../server_request';
+import { sendServerRequest } from '../server';
 import {
     addClass,
 } from '../dom';
 import { show as showMessage } from '../message';
-import { invalidResponse } from '../message/template/param/server';
+import { invalidResponse } from '../server/message';
 import { addTimeout } from '../timer';
 import type { default as ImageLoader } from '../image_loader';
 

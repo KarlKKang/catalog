@@ -7,7 +7,6 @@ export const passwordChanged = 'パスワードを変更しました。';
 export const emailAlreadyRegistered = 'このメールアドレスはすでに登録済みです。';
 
 export const nextButtonText = '次に進む';
-export const reloadButtonText = '再読み込み';
 
 export interface MessageParam {
     message?: string;

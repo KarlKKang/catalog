@@ -1,8 +1,8 @@
-import { addClass, appendChild, appendChildren, appendListItems, appendText, createAnchorElement, createDivElement, createLIElement, createParagraphElement, createUListElement } from '../../../dom';
-import { TOP_DOMAIN } from '../../../env/constant';
-import { getLocalTimeString } from '../../../common/pure';
-import { MaintenanceInfo } from '../../../type/MaintenanceInfo';
-import { defaultErrorSuffix } from '../comm';
+import { addClass, appendChild, appendChildren, appendListItems, appendText, createAnchorElement, createDivElement, createLIElement, createParagraphElement, createUListElement } from '../../dom';
+import { TOP_DOMAIN } from '../../env/constant';
+import { getLocalTimeString } from '../../common/pure';
+import { MaintenanceInfo } from '../../type/MaintenanceInfo';
+import { defaultErrorSuffix } from '../../message/template/comm';
 
 export const invalidResponse = `サーバーが無効な応答を返しました。${defaultErrorSuffix}`;
 export const sessionEnded = 'もう一度ログインしてください。';
@@ -46,3 +46,4 @@ export const status503 = (maintenanceInfo: MaintenanceInfo) => {
 };
 export const status400And500 = (responseText: string) => 'サーバーからの応答：' + responseText + `<br>${defaultErrorSuffix}`;
 export const notFound = 'URLが間違っているか、ページが存在しません。ご確認の上、再度お試しください。';
+export const insufficientPermissions = 'このページを閲覧する権限がありません。';

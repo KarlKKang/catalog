@@ -4,14 +4,14 @@ import {
 import {
     getURLParam,
 } from '../module/common';
-import { sendServerRequest, setUpSessionAuthentication } from '../module/server_request';
+import { sendServerRequest, setUpSessionAuthentication } from '../module/server';
 import {
     clearSessionStorage,
     getBaseURL,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
-import { invalidResponse, notFound } from '../module/message/template/param/server';
+import { invalidResponse, notFound } from '../module/server/message';
 import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam } from './helper';
 import { importAll, updatePageImportPromise } from './import_promise';

@@ -1,7 +1,7 @@
 import {
     CDN_URL, DOMAIN,
 } from '../module/env/constant';
-import { sendServerRequest } from '../module/server_request';
+import { sendServerRequest } from '../module/server';
 import {
     w,
     addEventListener,
@@ -28,7 +28,7 @@ import {
     createTextNode,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
-import { invalidResponse } from '../module/message/template/param/server';
+import { invalidResponse } from '../module/server/message';
 import { defaultError } from '../module/message/template/title';
 import { defaultErrorSuffix } from '../module/message/template/body';
 import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper';

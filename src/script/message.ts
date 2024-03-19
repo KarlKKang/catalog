@@ -1,7 +1,7 @@
 import {
     TOP_URL,
 } from './module/env/constant';
-import { logout } from './module/server_request';
+import { logout } from './module/server';
 import {
     addEventListener,
     setTitle,

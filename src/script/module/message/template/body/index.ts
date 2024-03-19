@@ -18,4 +18,3 @@ export const moduleImportError = (e: unknown) => {
     }
     return message;
 };
-export const insufficientPermissions = 'このページを閲覧する権限がありません。';

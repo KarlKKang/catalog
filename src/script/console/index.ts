@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server_request';
+import { sendServerRequest } from '../module/server';
 import {
     addEventListener,
     getById,
@@ -6,7 +6,7 @@ import {
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/template/param';
-import { invalidResponse } from '../module/message/template/param/server';
+import { invalidResponse } from '../module/server/message';
 import { getTable, setOutput } from './helper';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid } from '../module/global';

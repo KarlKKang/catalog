@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server_request';
+import { sendServerRequest } from '../module/server';
 import {
     addEventListener,
     getParentElement,

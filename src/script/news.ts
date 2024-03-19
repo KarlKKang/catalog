@@ -10,7 +10,7 @@ import {
     SESSION_TYPE_NEWS,
     openImageWindow,
 } from './module/common';
-import { sendServerRequest, setUpSessionAuthentication } from './module/server_request';
+import { sendServerRequest, setUpSessionAuthentication } from './module/server';
 import {
     addEventListener,
     getBaseURL,
@@ -34,7 +34,7 @@ import {
     body,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { invalidResponse, notFound } from './module/message/template/param/server';
+import { invalidResponse, notFound } from './module/server/message';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';

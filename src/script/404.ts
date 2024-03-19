@@ -11,8 +11,8 @@ import {
     addClass,
     body,
 } from './module/dom';
-import { notFound as notFoundTitle } from './module/message/template/title/server';
-import { notFound as notFoundBody } from './module/message/template/body/server';
+import { notFound as notFoundTitle } from './module/server/message/title';
+import { notFound as notFoundBody } from './module/server/message/body';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { changeColor, horizontalCenter, setWidth } from './module/style';

@@ -4,7 +4,7 @@ import {
 import {
     getURLParam,
 } from './module/common';
-import { sendServerRequest } from './module/server_request';
+import { sendServerRequest } from './module/server';
 import {
     addEventListener,
     replaceText,
@@ -23,7 +23,7 @@ import { expired, emailSent } from './module/message/template/param';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
-import { invalidResponse } from './module/message/template/param/server';
+import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 
 export default function (showPage: ShowPageFunc) {

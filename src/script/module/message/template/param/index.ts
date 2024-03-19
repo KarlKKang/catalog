@@ -60,9 +60,3 @@ export const unrecommendedBrowser = (redirectURL: string) => ({
     url: redirectURL,
     buttonText: nextButtonText
 } as const);
-export const insufficientPermissions = {
-    title: title.insufficientPermissions,
-    message: body.insufficientPermissions,
-    color: 'red',
-    url: TOP_URL
-};

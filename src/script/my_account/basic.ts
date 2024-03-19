@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server_request';
+import { sendServerRequest } from '../module/server';
 import {
     replaceText,
     remove,
@@ -33,7 +33,7 @@ import { changeMfaStatus, disableAllInputs } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import type { AccountInfo } from '../module/type/AccountInfo';
-import { invalidResponse } from '../module/message/template/param/server';
+import { invalidResponse } from '../module/server/message';
 import * as InviteResult from '../module/type/InviteResult';
 import { changeColor, hideElement, showElement } from '../module/style';
 

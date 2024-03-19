@@ -7,7 +7,7 @@ import {
 import {
     sendServerRequest,
     authenticate
-} from '../module/server_request';
+} from '../module/server';
 import {
     addEventListener,
     getById,
@@ -26,7 +26,7 @@ import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
-import { invalidResponse } from '../module/message/template/param/server';
+import { invalidResponse } from '../module/server/message';
 import { showElement } from '../module/style';
 
 let onDemandImportPromise: Promise<typeof import(

@@ -8,7 +8,7 @@ import {
     scrollToTop,
     NAV_BAR_HOME,
 } from './module/common';
-import { sendServerRequest } from './module/server_request';
+import { sendServerRequest } from './module/server';
 import {
     w,
     addEventListener,
@@ -33,7 +33,7 @@ import {
     disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { invalidResponse } from './module/message/template/param/server';
+import { invalidResponse } from './module/server/message';
 import * as SeriesInfo from './module/type/SeriesInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
 import { isbot } from 'isbot';

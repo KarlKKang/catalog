@@ -5,7 +5,7 @@ import {
     removeRightClick,
     SESSION_TYPE_MEDIA,
 } from './module/common';
-import { sendServerRequest, setUpSessionAuthentication } from './module/server_request';
+import { sendServerRequest, setUpSessionAuthentication } from './module/server';
 import {
     setTitle,
     getSessionStorage,
@@ -18,7 +18,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/template/param';
-import { invalidResponse, notFound } from './module/message/template/param/server';
+import { invalidResponse, notFound } from './module/server/message';
 import { encodeCFURIComponent } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { pgid, redirect } from './module/global';
