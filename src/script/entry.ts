@@ -219,7 +219,6 @@ const pages: PageMap = {
         style: () => [
             portalFormCss(),
         ],
-        html: () => import('../html/password_reset.html'),
         title: passwordResetPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },

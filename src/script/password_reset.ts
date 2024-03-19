@@ -7,11 +7,18 @@ import {
 import { sendServerRequest } from './module/server';
 import {
     addEventListener,
-    getById,
     replaceText,
     clearSessionStorage,
     passwordStyling,
     disableInput,
+    createDivElement,
+    appendChild,
+    body,
+    createParagraphElement,
+    createPasswordInput,
+    createButtonElement,
+    createUListElement,
+    appendListItems,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/text/body';
@@ -20,7 +27,9 @@ import { PASSWORD_REGEX } from './module/common/pure';
 import { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/server/message';
-import { showElement } from './module/style';
+import { hideElement, horizontalCenter, showElement } from './module/style';
+import { passwordResetPageTitle } from './module/text/page_title';
+import { passwordRules, submitButtonText } from './module/text/ui';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -31,7 +40,7 @@ export default function (showPage: ShowPageFunc) {
 
     if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
         if (DEVELOPMENT) {
-            showPage();
+            showPage(() => { showPageCallback('test', 'test', 'test'); });
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -65,10 +74,37 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function showPageCallback(user: string, signature: string, expires: string) {
-    const newPasswordInput = getById('new-password') as HTMLInputElement;
-    const newPasswordConfirmInput = getById('new-password-confirm') as HTMLInputElement;
-    const submitButton = getById('submit-button') as HTMLButtonElement;
-    const warningElem = getById('warning');
+    const container = createDivElement();
+    container.id = 'portal-form';
+    appendChild(body, container);
+
+    const title = createParagraphElement(passwordResetPageTitle);
+    title.id = 'title';
+    appendChild(container, title);
+
+    const warningElem = createParagraphElement();
+    warningElem.id = 'warning';
+    hideElement(warningElem);
+    appendChild(container, warningElem);
+
+    const [newPasswordContainer, newPasswordInput] = createPasswordInput(true, '新しいパスワード');
+    horizontalCenter(newPasswordContainer);
+    appendChild(container, newPasswordContainer);
+
+    const [newPasswordConfirmContainer, newPasswordConfirmInput] = createPasswordInput(true, '確認再入力');
+    horizontalCenter(newPasswordConfirmContainer);
+    appendChild(container, newPasswordConfirmContainer);
+
+    const submitButton = createButtonElement(submitButtonText);
+    horizontalCenter(submitButton);
+    appendChild(container, submitButton);
+
+    const note = createDivElement();
+    note.id = 'note';
+    const noteList = createUListElement();
+    appendListItems(noteList, ...passwordRules);
+    appendChild(note, noteList);
+    appendChild(container, note);
 
     addEventListener(newPasswordInput, 'keydown', (event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
