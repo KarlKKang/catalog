@@ -19,6 +19,7 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';
+import { registerPageTitle } from './module/text/page_title';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -30,7 +31,7 @@ function showPageCallback() {
     container.id = 'portal-form';
     appendChild(body, container);
 
-    const title = createParagraphElement('新規登録');
+    const title = createParagraphElement(registerPageTitle);
     title.id = 'title';
     appendChild(container, title);
 

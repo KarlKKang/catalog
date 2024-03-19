@@ -25,6 +25,7 @@ import { redirect } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';
+import { passwordResetPageTitle } from './module/text/page_title';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -36,7 +37,7 @@ function showPageCallback() {
     container.id = 'portal-form';
     appendChild(body, container);
 
-    const title = createParagraphElement('パスワード再発行');
+    const title = createParagraphElement(passwordResetPageTitle);
     title.id = 'title';
     appendChild(container, title);
 

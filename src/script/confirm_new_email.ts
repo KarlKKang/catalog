@@ -31,6 +31,7 @@ import type { TotpPopupWindow } from './module/popup_window/totp';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';
+import { emailChangePageTitle } from './module/text/page_title';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -68,7 +69,7 @@ function showPageCallback(param: string) {
     container.id = 'portal-form';
     appendChild(body, container);
 
-    const title = createParagraphElement('メールアドレス変更');
+    const title = createParagraphElement(emailChangePageTitle);
     title.id = 'title';
     appendChild(container, title);
 

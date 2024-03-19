@@ -16,6 +16,7 @@ import '../font/dist/NotoSansJP/NotoSansJP-Medium.css';
 import '../css/common.scss';
 import { enableTransition, setMinHeight, setOpacity, setVisibility, setWidth } from './module/style';
 import { CSS_UNIT_PERCENT, CSS_UNIT_PX } from './module/style/value';
+import { consolePageTitle, emailChangePageTitle, infoPageTitle, loginPageTitle, myAccountPageTitle, newsPageTitle, notFoundPageTitle, passwordResetPageTitle, registerPageTitle } from './module/text/page_title';
 
 const enum HTMLEntry {
     DEFAULT,
@@ -80,7 +81,7 @@ const page404: Page = {
     script: () => import('./404'),
     style: () => [],
     htmlEntry: HTMLEntry.DEFAULT,
-    title: '404',
+    title: notFoundPageTitle,
     id: 'message',
 };
 
@@ -102,7 +103,7 @@ const pages: PageMap = {
         style: () => [
             portalFormCss(),
         ],
-        title: 'メールアドレス変更',
+        title: emailChangePageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'console': {
@@ -113,7 +114,7 @@ const pages: PageMap = {
             import('../css/console.scss'),
         ],
         html: () => import('../html/console.html'),
-        title: 'console',
+        title: consolePageTitle,
         htmlEntry: HTMLEntry.NO_THEME,
     },
     'image': {
@@ -141,7 +142,7 @@ const pages: PageMap = {
             newsCss(),
         ],
         html: () => import('../html/info.html'),
-        title: 'ご利用ガイド',
+        title: infoPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
         id: 'news',
     },
@@ -161,7 +162,7 @@ const pages: PageMap = {
             import('../css/my_account.scss'),
         ],
         html: () => import('../html/my_account.html'),
-        title: 'マイページ',
+        title: myAccountPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'new_email': {
@@ -169,7 +170,7 @@ const pages: PageMap = {
         style: () => [
             portalFormCss(),
         ],
-        title: 'メールアドレス変更',
+        title: emailChangePageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'register': {
@@ -182,7 +183,7 @@ const pages: PageMap = {
             registerCss(),
         ],
         html: () => import('../html/register.html'),
-        title: '新規登録',
+        title: registerPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'special_register': {
@@ -191,7 +192,7 @@ const pages: PageMap = {
             portalFormCss(),
             registerCss(),
         ],
-        title: '新規登録',
+        title: registerPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'login': {
@@ -201,7 +202,7 @@ const pages: PageMap = {
             import('../css/login.scss'),
         ],
         html: () => import('../html/login.html'),
-        title: 'ログイン',
+        title: loginPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
         id: 'login',
     },
@@ -210,7 +211,7 @@ const pages: PageMap = {
         style: () => [
             portalFormCss(),
         ],
-        title: 'パスワード再発行',
+        title: passwordResetPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'password_reset': {
@@ -219,7 +220,7 @@ const pages: PageMap = {
             portalFormCss(),
         ],
         html: () => import('../html/password_reset.html'),
-        title: 'パスワード再発行',
+        title: passwordResetPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
 };
@@ -251,7 +252,7 @@ const directories: PageMap = {
             navBarCss(),
             newsCss(),
         ],
-        title: 'お知らせ',
+        title: newsPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
 };
