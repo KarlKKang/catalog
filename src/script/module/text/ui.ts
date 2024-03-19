@@ -1,3 +1,5 @@
+export const welcomeText = 'ようこそ';
+
 export const nextButtonText = '次に進む';
 export const enableButtonText = '有効にする';
 export const disableButtonText = '無効にする';
@@ -5,6 +7,8 @@ export const submitButtonText = '送信する';
 export const cancelButtonText = 'キャンセル';
 export const reloadButtonText = '再読み込み';
 export const changeButtonText = '変更する';
+export const loginButtonText = 'ログイン';
+export const keepLoggedInText = 'ログインしたままにする';
 
 export const loading = '読み込み中…';
 export const allResultsShown = 'すべての結果が表示されました。';
@@ -15,3 +19,4 @@ export const passwordRules = [
     'パスワードは8～64文字で入力して下さい。',
     'パスワードは大文字、小文字、数字を含める必要があります。'
 ];
+export const forgetPasswordText = 'パスワードを忘れた方はこちら';

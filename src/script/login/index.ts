@@ -37,6 +37,7 @@ import { pgid, redirect } from '../module/global';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
+import { forgetPasswordText, keepLoggedInText, loginButtonText, welcomeText } from '../module/text/ui';
 
 let onDemandImportPromise: Promise<typeof import(
     './on_demand'
@@ -63,7 +64,7 @@ function showPageCallback() {
     container.id = 'portal-form';
     appendChild(body, container);
 
-    const title = createParagraphElement('ようこそ');
+    const title = createParagraphElement(welcomeText);
     title.id = 'title';
     appendChild(container, title);
 
@@ -83,12 +84,12 @@ function showPageCallback() {
     const [rememberMeContainer, rememberMeInput] = getRememberMeCheckbox();
     appendChild(container, rememberMeContainer);
 
-    const submitButton = createButtonElement('ログイン');
+    const submitButton = createButtonElement(loginButtonText);
     horizontalCenter(submitButton);
     appendChild(container, submitButton);
 
     const forgetPassword = createParagraphElement();
-    const forgetPasswordLink = createSpanElement('パスワードを忘れた方はこちら');
+    const forgetPasswordLink = createSpanElement(forgetPasswordText);
     addClass(forgetPasswordLink, 'link');
     appendChild(forgetPassword, forgetPasswordLink);
     appendChild(container, forgetPassword);
@@ -215,7 +216,7 @@ function getRememberMeCheckbox() {
     const label = createElement('label') as HTMLLabelElement;
     addClass(label, 'checkbox-container');
 
-    appendChild(label, createParagraphElement('ログインしたままにする'));
+    appendChild(label, createParagraphElement(keepLoggedInText));
 
     const input = createInputElement('checkbox');
     input.id = 'remember-me-checkbox';

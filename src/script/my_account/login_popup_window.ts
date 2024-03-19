@@ -4,7 +4,7 @@ import { loginFailed } from '../module/text/message/body';
 import { TOP_URL } from '../module/env/constant';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../module/style';
-import { cancelButtonText, submitButtonText } from '../module/text/ui';
+import { cancelButtonText, forgetPasswordText, submitButtonText } from '../module/text/ui';
 
 export type LoginPopupWindow = [
     string, // email
@@ -50,7 +50,7 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     appendChild(buttonFlexbox, cancelButton);
 
     const forgetPasswordParagraph = createParagraphElement();
-    const forgetPasswordLink = createSpanElement('パスワードを忘れた方はこちら');
+    const forgetPasswordLink = createSpanElement(forgetPasswordText);
     addClass(forgetPasswordLink, 'link');
     appendChild(forgetPasswordParagraph, forgetPasswordLink);
     addEventListener(forgetPasswordLink, 'click', () => {
