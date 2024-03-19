@@ -1,5 +1,5 @@
 import 'core-js';
-import { body as innerBody, getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, getById, d, addClass, removeClass, createParagraphElement, createButtonElement, createDivElement, appendChild, createElement, html } from './module/dom';
+import { body as innerBody, getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, d, addClass, removeClass, createParagraphElement, createButtonElement, createDivElement, appendChild, createElement, html } from './module/dom';
 import { DOMAIN, TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -416,7 +416,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     setPgid(newPgid);
 
     let loadingBarWidth: number = 33;
-    const loadingBar = getById('loading-bar');
     if (loadingBarShown) {
         setWidth(loadingBar, loadingBarWidth, CSS_UNIT_PERCENT);
     } else {
