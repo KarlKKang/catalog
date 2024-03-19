@@ -1,8 +1,8 @@
 import {
     LOGIN_URL, TOP_URL
 } from '../env/constant';
-import * as title from '../text/title';
-import * as body from '../text/body';
+import * as title from '../text/message/title';
+import * as body from '../text/message/body';
 import { nextButtonText } from '../text/ui';
 import { MessageParam } from './type';
 

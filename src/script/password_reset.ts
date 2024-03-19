@@ -21,7 +21,7 @@ import {
     appendListItems,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/text/body';
+import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/text/message/body';
 import { expired, passwordChanged } from './module/message/param';
 import { PASSWORD_REGEX } from './module/common/pure';
 import { ShowPageFunc } from './module/type/ShowPageFunc';

@@ -1,5 +1,5 @@
 import { addClass, appendChild, addEventListener, createButtonElement, createDivElement, createParagraphElement, replaceText, createTotpInput, disableInput } from '../module/dom';
-import { failedTotp } from '../module/text/body';
+import { failedTotp } from '../module/text/message/body';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';
 import { CSS_AUTO, CSS_CURSOR_NOT_ALLOWED } from '../module/style/value';

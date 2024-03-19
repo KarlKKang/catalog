@@ -37,8 +37,8 @@ import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR
 import { SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
 import { CSS_UNIT_PX } from '../module/style/value';
-import { defaultError } from '../module/text/title';
-import { defaultErrorSuffix } from '../module/text/body';
+import { defaultError } from '../module/text/message/title';
+import { defaultErrorSuffix } from '../module/text/message/body';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';

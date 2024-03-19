@@ -2,7 +2,7 @@ import { addClass, appendChild, appendChildren, appendListItems, appendText, cre
 import { TOP_DOMAIN } from '../../env/constant';
 import { getLocalTimeString } from '../../common/pure';
 import { MaintenanceInfo } from '../../type/MaintenanceInfo';
-import { defaultErrorSuffix } from '../../text/body';
+import { defaultErrorSuffix } from '../../text/message/body';
 
 export const invalidResponse = `サーバーが無効な応答を返しました。${defaultErrorSuffix}`;
 export const sessionEnded = 'もう一度ログインしてください。';

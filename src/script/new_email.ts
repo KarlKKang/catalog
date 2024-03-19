@@ -18,7 +18,7 @@ import {
     disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { invalidEmailFormat, emailAlreadyRegistered } from './module/text/body';
+import { invalidEmailFormat, emailAlreadyRegistered } from './module/text/message/body';
 import { expired, emailSent } from './module/message/param';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';

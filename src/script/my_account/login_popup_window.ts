@@ -1,6 +1,6 @@
 import { addEventListener, addClass, appendChild, appendText, createButtonElement, createDivElement, createParagraphElement, replaceText, createSpanElement, openWindow, createEmailInput, createPasswordInput, disableInput } from '../module/dom';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
-import { loginFailed } from '../module/text/body';
+import { loginFailed } from '../module/text/message/body';
 import { TOP_URL } from '../module/env/constant';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../module/style';

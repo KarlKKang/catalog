@@ -1,6 +1,6 @@
-import { addClass, appendText, createAnchorElement, createTextNode } from '../dom';
-import { TOP_DOMAIN } from '../env/constant';
-import { isString } from '../type/helper';
+import { addClass, appendText, createAnchorElement, createTextNode } from '../../dom';
+import { TOP_DOMAIN } from '../../env/constant';
+import { isString } from '../../type/helper';
 
 export const defaultErrorSuffix = 'このエラーが続く場合は、管理者にお問い合わせください。';
 export const unknownError = `不明なエラーが発生しました。${defaultErrorSuffix}`;

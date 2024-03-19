@@ -1,5 +1,5 @@
 import { addEventListener, addClass, appendChild, createButtonElement, createDivElement, createParagraphElement, createTotpInput, disableInput } from '../dom';
-import { failedTotp } from '../text/body';
+import { failedTotp } from '../text/message/body';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../style';
 import { addInterval, removeInterval } from '../timer';
 import type { initializePopupWindow as InitializePopupWindow } from './core';

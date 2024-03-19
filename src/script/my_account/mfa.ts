@@ -29,7 +29,7 @@ import {
     accountDeactivated,
     tooManyFailedLogin,
     loginFailed,
-} from '../module/text/body';
+} from '../module/text/message/body';
 import * as TOTPInfo from '../module/type/TOTPInfo';
 import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
 import { toCanvas } from 'qrcode';

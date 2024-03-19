@@ -22,7 +22,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, emailChanged } from './module/message/param';
-import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/text/body';
+import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/text/message/body';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';

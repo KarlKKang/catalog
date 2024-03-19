@@ -18,7 +18,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/param';
-import { invalidEmailFormat } from './module/text/body';
+import { invalidEmailFormat } from './module/text/message/body';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
