@@ -232,7 +232,6 @@ const directories: PageMap = {
             navBarCss(),
             import('../css/bangumi.scss'),
         ],
-        html: () => import('../html/bangumi.html'),
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'news': {

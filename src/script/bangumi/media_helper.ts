@@ -5,7 +5,6 @@ import { sendServerRequest } from '../module/server';
 import {
     w,
     addEventListener,
-    getById,
     createElement,
     addClass,
     appendChild,
@@ -101,7 +100,7 @@ export function showErrorMessage(title: string, body: Node[]) {
 
 export function showMediaMessage(title: string, body: Node[], titleColor: string | null) {
     const messageElem = createMessageElem(title, body, titleColor);
-    prependChild(getById('media-holder'), messageElem);
+    prependChild(getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER), messageElem);
 }
 
 export function buildDownloadAccordion(

@@ -3,7 +3,6 @@ import {
 } from '../module/common/pure';
 import {
     addEventListener,
-    getById,
     addClass,
     getTitle,
     appendChild,
@@ -37,7 +36,7 @@ import {
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
-import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
+import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, SHARED_VAR_IDX_TITLE, getSharedElement } from './shared_var';
 
 let currentPgid: unknown;
 
@@ -205,7 +204,7 @@ function addAlbumInfo() {
         }
         prependChild(contentContainer, albumTitleElem);
     } else if (albumInfo.album_artist !== '') {
-        const titleElem = getById('title');
+        const titleElem = getSharedElement(SHARED_VAR_IDX_TITLE);
         const artistElem = createSpanElement();
         addClass(artistElem, 'artist');
         appendChild(artistElem, createBRElement());

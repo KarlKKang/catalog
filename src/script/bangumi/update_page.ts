@@ -9,7 +9,6 @@ import {
 import {
     w,
     addEventListener,
-    getById,
     removeClass,
     setTitle,
     createElement,
@@ -26,6 +25,7 @@ import {
     createTextNode,
     createSpanElement,
     replaceChildren,
+    body,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
@@ -36,7 +36,7 @@ import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
-import { SHARED_VAR_IDX_CONTENT_CONTAINER, dereferenceSharedVars, getSharedElement, initializeSharedVars } from './shared_var';
+import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_TITLE, dereferenceSharedVars, getSharedElement, initializeSharedVars } from './shared_var';
 import { hideElement, setMaxHeight, setMinHeight, setPaddingBottom, showElement } from '../module/style';
 import { CSS_UNIT_PX, CSS_UNIT_VH } from '../module/style/value';
 
@@ -54,9 +54,18 @@ export default async function (
     seriesID = _seriesID;
     epIndex = _epIndex;
 
-    addNavBar();
+    const seasonSelector = createDivElement();
+    seasonSelector.id = 'season-selector';
+    appendChild(body, seasonSelector);
+
+    const epSelector = createDivElement();
+    epSelector.id = 'ep-selector';
+    appendChild(body, epSelector);
 
     initializeSharedVars();
+    addNavBar();
+
+    const titleElem = getSharedElement(SHARED_VAR_IDX_TITLE);
     const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
     const startTimeText = getURLParam('timestamp');
     let startTime: number | null = null;
@@ -70,7 +79,6 @@ export default async function (
 
     const epInfo = response.ep_info;
 
-    const titleElem = getById('title');
     const title = response.title;
     const titleOverride = response.title_override;
     if (titleOverride !== undefined) {
@@ -89,8 +97,8 @@ export default async function (
         insertAfter(onScreenConsole, contentContainer);
     }
 
-    updateEPSelector(response.series_ep);
-    updateSeasonSelector(response.seasons);
+    updateEPSelector(response.series_ep, epSelector);
+    updateSeasonSelector(response.seasons, seasonSelector);
 
     const ageRestricted = epInfo.age_restricted;
 
@@ -177,10 +185,9 @@ export default async function (
     }
 }
 
-function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
+function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElement) {
     const epButtonWrapper = createDivElement();
     epButtonWrapper.id = 'ep-button-wrapper';
-    const epSelector = getById('ep-selector');
     appendChild(epSelector, epButtonWrapper);
     let minHeight = Number.POSITIVE_INFINITY;
 
@@ -316,9 +323,8 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP) {
     addEventListener(w, 'resize', styleEPSelector);
 }
 
-function updateSeasonSelector(seasons: BangumiInfo.Seasons) {
+function updateSeasonSelector(seasons: BangumiInfo.Seasons, seasonSelector: HTMLElement) {
     const seasonButtonWrapper = createDivElement();
-    const seasonSelector = getById('season-selector');
     seasonButtonWrapper.id = 'season-button-wrapper';
 
     if (seasons.length !== 0) {
