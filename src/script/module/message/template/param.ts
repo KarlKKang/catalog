@@ -1,11 +1,11 @@
 import {
     LOGIN_URL, TOP_URL
-} from '../../../env/constant';
+} from '../../env/constant';
 
-import * as body from '../body';
-import { nextButtonText } from '../comm';
-import { MessageParam } from "../../type";
-import * as title from '../title';
+import * as body from './body';
+import { nextButtonText } from './comm';
+import { MessageParam } from '../type';
+import * as title from './title';
 
 export const moduleImportError = (e: unknown) => ({
     message: body.moduleImportError(e)

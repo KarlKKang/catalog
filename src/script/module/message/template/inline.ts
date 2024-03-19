@@ -1,7 +1,7 @@
-import { addClass, appendText, createAnchorElement, createTextNode } from '../../../dom';
-import { TOP_DOMAIN } from '../../../env/constant';
+import { addClass, appendText, createAnchorElement, createTextNode } from '../../dom';
+import { TOP_DOMAIN } from '../../env/constant';
 
-export { passwordChanged, emailAlreadyRegistered } from '../comm';
+export { passwordChanged, emailAlreadyRegistered } from './comm';
 
 export const invalidEmailFormat = '有効なメールアドレスを入力してください。';
 

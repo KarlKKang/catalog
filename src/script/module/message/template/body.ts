@@ -1,6 +1,6 @@
-import { isString } from '../../../type/helper';
-import { defaultErrorSuffix, browserCompatibilitySuffix } from '../comm';
-export { passwordChanged, emailAlreadyRegistered } from '../comm';
+import { isString } from '../../type/helper';
+import { defaultErrorSuffix, browserCompatibilitySuffix } from './comm';
+export { passwordChanged, emailAlreadyRegistered } from './comm';
 export { defaultErrorSuffix, browserCompatibilitySuffix };
 
 export const unknownError = `不明なエラーが発生しました。${defaultErrorSuffix}`;
