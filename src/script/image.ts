@@ -17,7 +17,7 @@ import {
     body,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { moduleImportError } from './module/message/template/param';
+import { moduleImportError } from './module/message/param';
 import { invalidResponse, notFound } from './module/server/message';
 import { encodeCFURIComponent } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';

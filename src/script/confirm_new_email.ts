@@ -21,8 +21,8 @@ import {
     disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { expired, emailChanged } from './module/message/template/param';
-import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded, submitButtonText } from './module/message/template/inline';
+import { expired, emailChanged } from './module/message/param';
+import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/text/body';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -30,6 +30,7 @@ import { redirect } from './module/global';
 import type { TotpPopupWindow } from './module/popup_window/totp';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
+import { submitButtonText } from './module/text/ui';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

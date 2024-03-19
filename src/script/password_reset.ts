@@ -14,8 +14,8 @@ import {
     disableInput,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/message/template/inline';
-import { expired, passwordChanged } from './module/message/template/param';
+import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/text/body';
+import { expired, passwordChanged } from './module/message/param';
 import { PASSWORD_REGEX } from './module/common/pure';
 import { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';

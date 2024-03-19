@@ -3,7 +3,7 @@ import { sendServerRequest } from '../module/server';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 import { replaceChildren, replaceText } from '../module/dom';
 import { pgid } from '../module/global';
-import { accountDeactivated, loginFailed, sessionEnded, tooManyFailedLogin } from '../module/message/template/inline';
+import { accountDeactivated, loginFailed, sessionEnded, tooManyFailedLogin } from '../module/text/body';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { showElement } from '../module/style';
 import { disableAllInputs } from './helper';

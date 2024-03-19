@@ -1,9 +1,10 @@
 import { addClass, appendChild, addEventListener, createButtonElement, createDivElement, createParagraphElement, replaceText, createTotpInput, disableInput } from '../module/dom';
-import { cancelButtonText, failedTotp, submitButtonText } from '../module/message/template/inline';
+import { failedTotp } from '../module/text/body';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';
 import { CSS_AUTO, CSS_CURSOR_NOT_ALLOWED } from '../module/style/value';
 import { addInterval, removeInterval } from '../module/timer';
+import { cancelButtonText, submitButtonText } from '../module/text/ui';
 
 export type EmailOtpPopupWindow = [
     string | undefined, // otp

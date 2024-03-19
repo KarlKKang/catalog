@@ -21,13 +21,11 @@ import {
     logoutDone,
     loginNotificationIsEnabled,
     loginNotificationIsDisabled,
-    disableButtonText,
-    enableButtonText,
     loginNotificationDisabled,
     loginNotificationEnabled,
     mfaNotSet,
     usernameInvalid,
-} from '../module/message/template/inline';
+} from '../module/text/body';
 import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_EMAIL_WARNING, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_INVITE_WARNING, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_WARNING, SHARED_VAR_IDX_USERNAME_WARNING, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setCurrentLoginNotificationStatus } from './shared_var';
 import { changeMfaStatus, disableAllInputs } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
@@ -36,6 +34,7 @@ import type { AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/server/message';
 import * as InviteResult from '../module/type/InviteResult';
 import { changeColor, hideElement, showElement } from '../module/style';
+import { disableButtonText, enableButtonText } from '../module/text/ui';
 
 export function changeEmail() {
     disableAllInputs(true);

@@ -3,7 +3,7 @@ import {
 } from '../env/constant';
 
 import { show as showMessage } from '../message';
-import { moduleImportError } from '../message/template/param';
+import { moduleImportError } from '../message/param';
 
 import {
     w,

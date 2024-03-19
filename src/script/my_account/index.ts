@@ -31,9 +31,9 @@ import { SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, 
 import { changeMfaStatus, disableAllInputs } from './helper';
 import { getLocalTimeString } from '../module/common/pure';
 import { basicImportPromise, importAll, mfaImportPromise, parseBrowserImportPromise } from './import_promise';
-import { moduleImportError } from '../module/message/template/param';
-import { loading } from '../module/message/template/inline';
+import { moduleImportError } from '../module/message/param';
 import { changeColor, hideElement, showElement } from '../module/style';
+import { loading } from '../module/text/ui';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

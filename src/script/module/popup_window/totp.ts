@@ -1,8 +1,9 @@
 import { addEventListener, addClass, appendChild, createButtonElement, createDivElement, createParagraphElement, createTotpInput, disableInput } from '../dom';
-import { cancelButtonText, failedTotp, submitButtonText } from '../message/template/inline';
+import { failedTotp } from '../text/body';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../style';
 import { addInterval, removeInterval } from '../timer';
 import type { initializePopupWindow as InitializePopupWindow } from './core';
+import { cancelButtonText, submitButtonText } from '../text/ui';
 
 export type TotpPopupWindow = [
     string, // totp

@@ -17,13 +17,14 @@ import {
     addClass,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { emailSent } from './module/message/template/param';
-import { invalidEmailFormat, submitButtonText } from './module/message/template/inline';
+import { emailSent } from './module/message/param';
+import { invalidEmailFormat } from './module/text/body';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
+import { submitButtonText } from './module/text/ui';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

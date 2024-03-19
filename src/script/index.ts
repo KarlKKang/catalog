@@ -40,10 +40,10 @@ import { isbot } from 'isbot';
 import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout } from './module/timer';
-import { allResultsShown, loading, noResult } from './module/message/template/inline';
 import { redirect, setCustomPopStateHandler } from './module/global';
 import { lazyloadImport, unloadLazyload } from './module/lazyload';
 import { changeColor } from './module/style';
+import { allResultsShown, loading, noResult } from './module/text/ui';
 
 let pivot: SeriesInfo.Pivot;
 let keywords: string;

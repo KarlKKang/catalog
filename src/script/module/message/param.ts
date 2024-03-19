@@ -1,18 +1,17 @@
 import {
     LOGIN_URL, TOP_URL
-} from '../../env/constant';
-
-import * as body from './body';
-import { nextButtonText } from './comm';
-import { MessageParam } from '../type';
-import * as title from './title';
+} from '../env/constant';
+import * as title from '../text/title';
+import * as body from '../text/body';
+import { nextButtonText } from '../text/ui';
+import { MessageParam } from './type';
 
 export const moduleImportError = (e: unknown) => ({
     message: body.moduleImportError(e)
 });
 export const expired = {
     title: title.expired,
-    message: body.expired,
+    message: body.retry,
     buttonText: null
 };
 export const emailAlreadyRegistered = {

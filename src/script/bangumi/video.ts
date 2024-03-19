@@ -27,7 +27,7 @@ import {
     changeURL,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
-import { moduleImportError } from '../module/message/template/param';
+import { moduleImportError } from '../module/message/param';
 import type { VideoEPInfo, VideoFormatInfo } from '../module/type/BangumiInfo';
 
 import {

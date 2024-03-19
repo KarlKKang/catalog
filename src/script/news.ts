@@ -40,9 +40,9 @@ import * as NewsInfo from './module/type/NewsInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
 import { encodeCFURIComponent, getLocalTime, getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import { allResultsShown, loading, noResult } from './module/message/template/inline';
 import { pgid, redirect } from './module/global';
 import { lazyloadImport, unloadLazyload } from './module/lazyload';
+import { allResultsShown, loading, noResult } from './module/text/ui';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo;

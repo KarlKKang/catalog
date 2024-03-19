@@ -10,7 +10,7 @@ import {
     removeAllEventListeners,
 } from './dom';
 import { show as showMessage } from './message';
-import { moduleImportError } from './message/template/param';
+import { moduleImportError } from './message/param';
 import { pgid } from './global';
 import { setHeight, setWidth } from './style';
 

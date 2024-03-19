@@ -29,9 +29,7 @@ import {
     accountDeactivated,
     tooManyFailedLogin,
     loginFailed,
-    submitButtonText,
-    cancelButtonText,
-} from '../module/message/template/inline';
+} from '../module/text/body';
 import * as TOTPInfo from '../module/type/TOTPInfo';
 import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
 import { toCanvas } from 'qrcode';
@@ -45,6 +43,7 @@ import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_w
 import type { LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 import { changeColor, hideElement, horizontalCenter, setHeight, showElement } from '../module/style';
+import { cancelButtonText, submitButtonText } from '../module/text/ui';
 
 export function enableMfa() {
     disableAllInputs(true);

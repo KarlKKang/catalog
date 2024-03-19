@@ -5,7 +5,7 @@ import {
     getURLParam,
 } from '../module/common';
 import { show as showMessage } from '../module/message';
-import { unrecommendedBrowser } from '../module/message/template/param';
+import { unrecommendedBrowser } from '../module/message/param';
 import { UNRECOMMENDED_BROWSER } from '../module/browser';
 import { redirect } from '../module/global';
 

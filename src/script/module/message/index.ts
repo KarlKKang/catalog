@@ -2,9 +2,8 @@ import {
     TOP_URL,
 } from '../env/constant';
 import { getTitle, setSessionStorage, getFullURL } from '../dom/document';
-
-import { defaultError } from './template/title';
-import { unknownError } from './template/body';
+import { defaultError } from '../text/title';
+import { unknownError } from '../text/body';
 import type { MessageParam } from './type';
 import { redirect } from '../global';
 

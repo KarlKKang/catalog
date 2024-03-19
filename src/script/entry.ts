@@ -8,7 +8,7 @@ import { popupWindowImport, destroy as destroyPopupWindow } from './module/popup
 import type { Workbox as WorkboxType } from 'workbox-window';
 import * as messagePageScript from './message';
 import { show as showMessage } from './module/message';
-import { moduleImportError } from './module/message/template/param';
+import { moduleImportError } from './module/message/param';
 import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect } from './module/global';
 
 import '../font/dist/NotoSansJP/NotoSansJP-Light.css';

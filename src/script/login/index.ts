@@ -19,8 +19,8 @@ import {
     disableInput,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
-import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/message/template/inline';
-import { moduleImportError } from '../module/message/template/param';
+import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/body';
+import { moduleImportError } from '../module/message/param';
 import { popupWindowImport, promptForTotpImport } from '../module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
