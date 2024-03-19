@@ -29,7 +29,7 @@ import { redirect } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { passwordResetPageTitle } from './module/text/page_title';
-import { passwordRules, submitButtonText } from './module/text/ui';
+import { changeButtonText, passwordRules } from './module/text/ui';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -95,7 +95,7 @@ function showPageCallback(user: string, signature: string, expires: string) {
     horizontalCenter(newPasswordConfirmContainer);
     appendChild(container, newPasswordConfirmContainer);
 
-    const submitButton = createButtonElement(submitButtonText);
+    const submitButton = createButtonElement(changeButtonText);
     horizontalCenter(submitButton);
     appendChild(container, submitButton);
 
