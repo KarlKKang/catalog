@@ -10,13 +10,22 @@ import {
 } from '../module/server';
 import {
     addEventListener,
-    getById,
-    getDescendantsByTagAt,
     replaceChildren,
     replaceText,
     clearSessionStorage,
     passwordStyling,
     disableInput,
+    createDivElement,
+    createElement,
+    addClass,
+    appendChild,
+    createParagraphElement,
+    createInputElement,
+    body,
+    createButtonElement,
+    createEmailInput,
+    createPasswordInput,
+    createSpanElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';
@@ -27,7 +36,7 @@ import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/server/message';
-import { showElement } from '../module/style';
+import { hideElement, horizontalCenter, showElement } from '../module/style';
 
 let onDemandImportPromise: Promise<typeof import(
     './on_demand'
@@ -50,11 +59,39 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function showPageCallback() {
-    const submitButton = getById('submit-button') as HTMLButtonElement;
-    const passwordInput = getById('current-password') as HTMLInputElement;
-    const usernameInput = getById('username') as HTMLInputElement;
-    const rememberMeInput = getById('remember-me-checkbox') as HTMLInputElement;
-    const warningElem = getById('warning');
+    const container = createDivElement();
+    container.id = 'portal-form';
+    appendChild(body, container);
+
+    const title = createParagraphElement('ようこそ');
+    title.id = 'title';
+    appendChild(container, title);
+
+    const warningElem = createParagraphElement();
+    warningElem.id = 'warning';
+    hideElement(warningElem);
+    appendChild(container, warningElem);
+
+    const [emailContainer, emailInput] = createEmailInput();
+    horizontalCenter(emailContainer);
+    appendChild(container, emailContainer);
+
+    const [passwordContainer, passwordInput] = createPasswordInput(false);
+    horizontalCenter(passwordContainer);
+    appendChild(container, passwordContainer);
+
+    const [rememberMeContainer, rememberMeInput] = getRememberMeCheckbox();
+    appendChild(container, rememberMeContainer);
+
+    const submitButton = createButtonElement('ログイン');
+    horizontalCenter(submitButton);
+    appendChild(container, submitButton);
+
+    const forgetPassword = createParagraphElement();
+    const forgetPasswordLink = createSpanElement('パスワードを忘れた方はこちら');
+    addClass(forgetPasswordLink, 'link');
+    appendChild(forgetPassword, forgetPasswordLink);
+    appendChild(container, forgetPassword);
 
     const popupWindowImportPromise = popupWindowImport();
     const promptForTotpImportPromise = promptForTotpImport();
@@ -65,11 +102,11 @@ function showPageCallback() {
         }
     };
 
-    addEventListener(usernameInput, 'keydown', loginOnKeyDown);
+    addEventListener(emailInput, 'keydown', loginOnKeyDown);
     addEventListener(passwordInput, 'keydown', loginOnKeyDown);
 
     addEventListener(submitButton, 'click', login);
-    addEventListener(getDescendantsByTagAt(getById('forgot-password'), 'span', 0), 'click', () => {
+    addEventListener(forgetPasswordLink, 'click', () => {
         redirect(TOP_URL + '/request_password_reset', true);
     });
     passwordStyling(passwordInput);
@@ -77,7 +114,7 @@ function showPageCallback() {
     function login() {
         disableAllInputs(true);
 
-        const email = usernameInput.value;
+        const email = emailInput.value;
         const password = passwordInput.value;
 
         if (!EMAIL_REGEX.test(email)) {
@@ -117,7 +154,7 @@ function showPageCallback() {
                             },
                             () => {
                                 disableAllInputs(false);
-                                usernameInput.value = '';
+                                emailInput.value = '';
                                 passwordInput.value = '';
                                 replaceText(warningElem, sessionEnded);
                                 showElement(warningElem);
@@ -166,7 +203,28 @@ function showPageCallback() {
     function disableAllInputs(disabled: boolean) {
         submitButton.disabled = disabled;
         disableInput(passwordInput, disabled);
-        disableInput(usernameInput, disabled);
+        disableInput(emailInput, disabled);
         disableInput(rememberMeInput, disabled);
     }
+}
+
+function getRememberMeCheckbox() {
+    const container = createDivElement();
+    container.id = 'remember-me';
+
+    const label = createElement('label') as HTMLLabelElement;
+    addClass(label, 'checkbox-container');
+
+    appendChild(label, createParagraphElement('ログインしたままにする'));
+
+    const input = createInputElement('checkbox');
+    input.id = 'remember-me-checkbox';
+    appendChild(label, input);
+
+    const checkmark = createDivElement();
+    addClass(checkmark, 'checkmark');
+    appendChild(label, checkmark);
+
+    appendChild(container, label);
+    return [container, input] as const;
 }

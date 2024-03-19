@@ -201,7 +201,6 @@ const pages: PageMap = {
             portalFormCss(),
             import('../css/login.scss'),
         ],
-        html: () => import('../html/login.html'),
         title: loginPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
         id: 'login',
