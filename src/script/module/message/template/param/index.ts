@@ -3,7 +3,8 @@ import {
 } from '../../../env/constant';
 
 import * as body from '../body';
-import { MessageParam, nextButtonText } from '../comm';
+import { nextButtonText } from '../comm';
+import { MessageParam } from "../../type";
 import * as title from '../title';
 
 export const moduleImportError = (e: unknown) => ({

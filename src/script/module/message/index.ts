@@ -5,7 +5,7 @@ import { getTitle, setSessionStorage, getFullURL } from '../dom/document';
 
 import { defaultError } from './template/title';
 import { unknownError } from './template/body';
-import type { MessageParam } from './template/comm';
+import type { MessageParam } from "./type";
 import { redirect } from '../global';
 
 export function show({ message, title, color, url, buttonText, logout, replaceBody }: MessageParam) {
