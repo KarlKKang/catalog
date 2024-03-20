@@ -1,8 +1,7 @@
 import {
-    addNavBar,
     scrollToHash,
-    NAV_BAR_INFO,
 } from './module/common';
+import { addNavBar, NAV_BAR_INFO } from './module/nav_bar';
 import { authenticate } from './module/server';
 import {
     addClass,
@@ -23,7 +22,6 @@ import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Regular.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Medium.css';
 import { container as allLanguageContainerClass } from '../css/all_languages.module.scss';
-import '../css/nav_bar.scss';
 import '../css/news.scss';
 
 export default function (showPage: ShowPageFunc) {

@@ -2,9 +2,7 @@ import {
     TOP_URL,
     CDN_URL,
 } from '../module/env/constant';
-import {
-    addNavBar,
-} from '../module/common';
+import { addNavBar } from '../module/nav_bar';
 import {
     w,
     addEventListener,

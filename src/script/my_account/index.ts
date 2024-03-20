@@ -3,8 +3,8 @@ import {
 } from '../module/env/constant';
 import {
     addNavBar,
-    NAV_BAR_MY_ACCOUNT,
-} from '../module/common';
+    NAV_BAR_MY_ACCOUNT
+} from '../module/nav_bar';
 import {
     sendServerRequest,
     logout
@@ -39,7 +39,6 @@ import '../../font/dist/NotoSansTC/NotoSansTC-Light.css';
 import '../../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import '../../font/dist/NotoSans/NotoSans-Light.css';
 import '../../font/dist/CourierNew/CourierNew-Regular.css';
-import '../../css/nav_bar.scss';
 import '../../css/my_account.scss';
 
 export default function (showPage: ShowPageFunc) {

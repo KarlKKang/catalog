@@ -4,12 +4,11 @@ import {
 } from './module/env/constant';
 import {
     scrollToHash,
-    addNavBar,
     removeRightClick,
-    NAV_BAR_NEWS,
     SESSION_TYPE_NEWS,
     openImageWindow,
 } from './module/common';
+import { addNavBar, NAV_BAR_NEWS } from './module/nav_bar';
 import { sendServerRequest, setUpSessionAuthentication } from './module/server';
 import {
     addEventListener,
@@ -55,7 +54,6 @@ import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Regular.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Medium.css';
 import { container as allLanguageContainerClass } from '../css/all_languages.module.scss';
-import '../css/nav_bar.scss';
 import '../css/news.scss';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';

@@ -21,7 +21,6 @@ import { pgid, redirect } from '../module/global';
 
 import '../../font/dist/Segoe/SegMDL2.css';
 import '../../font/dist/CourierNew/CourierNew-Regular.css';
-import '../../css/nav_bar.scss';
 import '../../css/bangumi.scss';
 
 let updatePageModule: Awaited<typeof updatePageImportPromise> | null = null;
