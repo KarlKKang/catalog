@@ -10,7 +10,6 @@ import {
     addEventListener,
     removeClass,
     setTitle,
-    createElement,
     addClass,
     remove,
     appendChild,
@@ -25,6 +24,7 @@ import {
     createSpanElement,
     replaceChildren,
     body,
+    createTextAreaElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
@@ -80,10 +80,9 @@ export default async function (
     }
 
     if (DEVELOPMENT) {
-        const onScreenConsole = createElement('textarea') as HTMLTextAreaElement;
+        const onScreenConsole = createTextAreaElement(20);
         onScreenConsole.id = 'on-screen-console';
         onScreenConsole.readOnly = true;
-        onScreenConsole.rows = 20;
         insertAfter(onScreenConsole, contentContainer);
     }
 

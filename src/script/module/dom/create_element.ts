@@ -181,3 +181,14 @@ export function createUsernameInput() {
     appendChild(container, input);
     return [container, input] as const;
 }
+
+export function createTextAreaElement(row?: number, column?: number) {
+    const elem = createElement('textarea') as HTMLTextAreaElement;
+    if (row !== undefined) {
+        elem.rows = row;
+    }
+    if (column !== undefined) {
+        elem.cols = column;
+    }
+    return elem;
+}

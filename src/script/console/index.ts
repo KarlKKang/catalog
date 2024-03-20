@@ -1,13 +1,21 @@
 import { sendServerRequest } from '../module/server';
 import {
     addEventListener,
-    getById,
+    appendChild,
+    appendChildren,
+    appendText,
+    body,
     clearSessionStorage,
+    createBRElement,
+    createDivElement,
+    createElement,
+    createParagraphElement,
+    createTextAreaElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 import { invalidResponse } from '../module/server/message';
-import { getTable, setOutput } from './helper';
+import { getTable, setOutput, setOutputElement } from './helper';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid } from '../module/global';
 
@@ -36,78 +44,89 @@ export default function (showPage: ShowPageFunc) {
                 ),
             ]).then(([{ getSeriesTable }, { getAccountTable }, { getNewsTable }]) => {
                 showPage(() => {
-                    addEventListener(getById('get-series-table'), 'click', () => {
-                        getSeriesTable();
-                    });
-                    addEventListener(getById('get-account-table'), 'click', () => {
-                        getAccountTable();
-                    });
-                    addEventListener(getById('get-invite-table'), 'click', () => {
+                    const output = createDivElement();
+                    setOutputElement(output);
+
+                    appendButton('Get Series Table', getSeriesTable);
+                    appendButton('Get Account Table', getAccountTable);
+                    appendButton('Get Invite Table', () => {
                         getTable('invite');
                     });
-                    addEventListener(getById('get-email-change-table'), 'click', () => {
+                    appendButton('Get Email Change Table', () => {
                         getTable('email_change');
                     });
-                    addEventListener(getById('get-news-table'), 'click', () => {
-                        getNewsTable();
-                    });
-                    addEventListener(getById('get-log-table'), 'click', () => {
+                    appendButton('Get News Table', getNewsTable);
+                    appendButton('Get Log Table', () => {
                         getTable('log');
                     });
-                    addEventListener(getById('generate-id'), 'click', () => {
-                        generate('id');
+                    appendChildren(body, createBRElement(), createBRElement());
+
+                    const idOutput = createParagraphElement();
+                    appendButton('Generate ID', () => {
+                        generate('id', idOutput);
                     });
-                    addEventListener(getById('generate-series-id'), 'click', () => {
-                        generate('series_id');
+                    appendButton('Generate Series ID', () => {
+                        generate('series_id', idOutput);
                     });
-                    addEventListener(getById('generate-news-id'), 'click', () => {
-                        generate('news_id');
+                    appendButton('Generate News ID', () => {
+                        generate('news_id', idOutput);
                     });
-                    addEventListener(getById('clear-cdn-cache'), 'click', () => {
-                        clearCDNCache();
+                    appendChildren(body, idOutput, createBRElement(), createBRElement());
+
+                    const clearCacheDir = createTextAreaElement(1, 30);
+                    appendChild(body, clearCacheDir);
+                    appendButton('Clear CDN Cache', () => {
+                        clearCDNCache(clearCacheDir.value);
                     });
-                    addEventListener(getById('clear-key-cache'), 'click', () => {
-                        clearKeyCache();
-                    });
-                    addEventListener(getById('rebuild-series-search'), 'click', () => {
+                    appendButton('Clear Key Cache', clearKeyCache);
+                    appendButton('Rebuild Series Search Index', () => {
                         rebuild('series_search');
                     });
-                    addEventListener(getById('verify'), 'click', () => {
-                        verify();
+                    appendChildren(body, createBRElement(), createBRElement());
+
+                    const verifyId = createTextAreaElement(1, 30);
+                    appendChild(body, verifyId);
+                    appendButton('Verify', () => {
+                        verify(verifyId.value);
                     });
-                    addEventListener(getById('show-all-column'), 'click', () => {
+                    appendChildren(body, createBRElement(), createBRElement());
+
+                    appendButton('Show Database Column', () => {
                         getTable('all_column');
                     });
-                    addEventListener(getById('show-all-index'), 'click', () => {
+                    appendButton('Show Database Index', () => {
                         getTable('all_index');
                     });
-                    addEventListener(getById('show-create-table'), 'click', () => {
+                    appendButton('Show Create Table', () => {
                         getTable('create_table');
                     });
-                    addEventListener(getById('run-debug'), 'click', () => {
+                    appendButton('Run Debug', () => {
                         misc('run', 'debug');
                     });
-                    addEventListener(getById('run-benchmark-hash'), 'click', () => {
+                    appendButton('Run Benchmark Hash', () => {
                         misc('benchmark', 'hash');
                     });
-                    addEventListener(getById('run-benchmark-hmac'), 'click', () => {
+                    appendButton('Run Benchmark HMAC', () => {
                         misc('benchmark', 'hmac');
                     });
-                    addEventListener(getById('run-benchmark-signature'), 'click', () => {
+                    appendButton('Run Benchmark Signature', () => {
                         misc('benchmark', 'signature');
                     });
-                    addEventListener(getById('run-benchmark-key-pair'), 'click', () => {
+                    appendButton('Run Benchmark Key Pair', () => {
                         misc('benchmark', 'key_pair');
                     });
-                    addEventListener(getById('run-benchmark-match-str'), 'click', () => {
+                    appendButton('Run Benchmark Match Str', () => {
                         misc('benchmark', 'match_str');
                     });
-                    addEventListener(getById('run-benchmark-random'), 'click', () => {
+                    appendButton('Run Benchmark Generate Random', () => {
                         misc('benchmark', 'random');
                     });
-                    addEventListener(getById('run-benchmark-password-hash'), 'click', () => {
+                    appendButton('Run Benchmark Password Hash', () => {
                         misc('benchmark', 'password_hash');
                     });
+                    appendChildren(body, createBRElement(), createBRElement());
+
+                    appendChild(body, output);
                 });
             }).catch((e) => {
                 if (currentPgid === pgid) {
@@ -118,7 +137,7 @@ export default function (showPage: ShowPageFunc) {
         content: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
     });
 
-    function generate(type: string) {
+    function generate(type: string, idOutput: HTMLParagraphElement) {
         const param = {
             command: 'generate',
             type: type
@@ -126,7 +145,7 @@ export default function (showPage: ShowPageFunc) {
 
         sendServerRequest('console', {
             callback: function (response: string) {
-                setOutput(response, undefined, 'id-output');
+                setOutput(response, undefined, idOutput);
             },
             content: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
@@ -146,8 +165,7 @@ export default function (showPage: ShowPageFunc) {
         });
     }
 
-    function clearCDNCache() {
-        const dir = (getById('clear-cache-dir') as HTMLTextAreaElement).value;
+    function clearCDNCache(dir: string) {
         if (!dir.startsWith('/') || dir.includes('..')) {
             alert('ERROR: Invalid format for dir');
             return;
@@ -219,8 +237,7 @@ export default function (showPage: ShowPageFunc) {
         });
     }
 
-    function verify() {
-        const id = (getById('verify-id') as HTMLTextAreaElement).value;
+    function verify(id: string) {
         if (!/^[a-zA-Z0-9~_-]+$/.test(id)) {
             alert('ERROR: Invalid value for "id"');
             return;
@@ -246,4 +263,15 @@ export default function (showPage: ShowPageFunc) {
             content: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
+}
+
+function appendButton(text: string, onclick: () => void) {
+    const button = createElement('button') as HTMLButtonElement;
+    appendText(button, text);
+    appendChild(body, button);
+    addEventListener(button, 'click', onclick);
+}
+
+export function offload() {
+    setOutputElement(null);
 }

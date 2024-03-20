@@ -1,12 +1,17 @@
 import { sendServerRequest } from '../module/server';
 import {
     addEventListener,
-    getById,
     getParentElement,
     addClass,
     getByClass,
     containsClass
 } from '../module/dom';
+
+let outputElement: HTMLDivElement | null = null;
+
+export function setOutputElement(elem: HTMLDivElement | null) {
+    outputElement = elem;
+}
 
 export function getTable(type: string, callback?: () => void) {
     const param = {
@@ -29,15 +34,16 @@ export function completeCallback(response: string, callback: () => void) {
     }
 }
 
-export function setOutput(response: string, callback?: () => void, outputElementID?: string) {
-    if (outputElementID === undefined) {
-        outputElementID = 'output';
-    }
+export function setOutput(response: string, callback?: () => void, outputElementOverride?: HTMLElement) {
     const error = response.startsWith('ERROR:');
     if (error) {
         alert(response);
     } else {
-        getById(outputElementID).innerHTML = response;
+        const outputTarget = outputElementOverride || outputElement;
+        if (outputTarget === null) {
+            throw new Error('Output element not set');
+        }
+        outputTarget.innerHTML = response;
         if (callback !== undefined) {
             callback();
         }

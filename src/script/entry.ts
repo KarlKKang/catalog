@@ -113,7 +113,6 @@ const pages: PageMap = {
             notoSansSCLightCss(),
             import('../css/console.scss'),
         ],
-        html: () => import('../html/console.html'),
         title: consolePageTitle,
         htmlEntry: HTMLEntry.NO_THEME,
     },
