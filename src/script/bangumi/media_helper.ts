@@ -32,7 +32,7 @@ import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import { VideoFormatInfo } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
-import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_ABORTED, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from '../module/player/media_error';
+import { CustomMediaError } from '../module/player/media_error';
 import { SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
 import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
 import { CSS_UNIT_PX } from '../module/style/value';
@@ -67,11 +67,11 @@ function showPlayPromiseError() {
 }
 
 export function showPlayerError(errorCode: number | null) {
-    if (errorCode === MEDIA_ERR_ABORTED) {
+    if (errorCode === CustomMediaError.MEDIA_ERR_ABORTED) {
         showPlayPromiseError();
-    } else if (errorCode === MEDIA_ERR_NETWORK || errorCode === MEDIA_ERR_SRC_NOT_SUPPORTED) {
+    } else if (errorCode === CustomMediaError.MEDIA_ERR_NETWORK || errorCode === CustomMediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
         showNetworkError();
-    } else if (errorCode === MEDIA_ERR_DECODE || errorCode === HLS_BUFFER_APPEND_ERROR) {
+    } else if (errorCode === CustomMediaError.MEDIA_ERR_DECODE || errorCode === CustomMediaError.HLS_BUFFER_APPEND_ERROR) {
         showDecodeError();
     } else {
         showUnknownPlaybackError();

@@ -47,7 +47,7 @@ import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 import { getFormatIndex, createQuery } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, showTextErrorMessage } from './media_helper';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
-import { HLS_BUFFER_APPEND_ERROR } from '../module/player/media_error';
+import { CustomMediaError } from '../module/player/media_error';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
@@ -409,7 +409,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         };
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {
-                if (errorCode === HLS_BUFFER_APPEND_ERROR) {
+                if (errorCode === CustomMediaError.HLS_BUFFER_APPEND_ERROR) {
                     if (currentFormat.video === 'dv5') {
                         showDolbyVisionError();
                     } else if (currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {

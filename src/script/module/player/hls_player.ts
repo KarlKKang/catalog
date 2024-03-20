@@ -1,7 +1,7 @@
 import { NonNativePlayer } from './non-native-player';
 import HlsLight from '../../../../hls.js/dist/hls.light.mjs';
 import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from '../../../../hls.js';
-import { HLS_BUFFER_APPEND_ERROR, MEDIA_ERR_DECODE, MEDIA_ERR_NETWORK, MEDIA_ERR_SRC_NOT_SUPPORTED } from './media_error';
+import { CustomMediaError } from './media_error';
 
 const Hls = HlsLight as unknown as typeof HlsFull;
 
@@ -63,20 +63,20 @@ export class HlsPlayer extends NonNativePlayer {
                 const errorType = data.type;
                 let errorCode = null;
                 if (errorType === Hls.ErrorTypes.NETWORK_ERROR) {
-                    errorCode = MEDIA_ERR_NETWORK;
+                    errorCode = CustomMediaError.MEDIA_ERR_NETWORK;
                 } else if (errorType === Hls.ErrorTypes.MUX_ERROR) {
-                    errorCode = MEDIA_ERR_DECODE;
+                    errorCode = CustomMediaError.MEDIA_ERR_DECODE;
                 } else if (errorType === Hls.ErrorTypes.MEDIA_ERROR) {
                     if ([
                         Hls.ErrorDetails.MANIFEST_INCOMPATIBLE_CODECS_ERROR,
                         Hls.ErrorDetails.BUFFER_ADD_CODEC_ERROR,
                         Hls.ErrorDetails.BUFFER_INCOMPATIBLE_CODECS_ERROR,
                     ].includes(data.details)) {
-                        errorCode = MEDIA_ERR_SRC_NOT_SUPPORTED;
+                        errorCode = CustomMediaError.MEDIA_ERR_SRC_NOT_SUPPORTED;
                     } else if (data.details === Hls.ErrorDetails.BUFFER_APPEND_ERROR) {
-                        errorCode = HLS_BUFFER_APPEND_ERROR;
+                        errorCode = CustomMediaError.HLS_BUFFER_APPEND_ERROR;
                     } else {
-                        errorCode = MEDIA_ERR_DECODE;
+                        errorCode = CustomMediaError.MEDIA_ERR_DECODE;
                     }
                 }
                 onerror && onerror(errorCode);
