@@ -4,7 +4,7 @@ import {
 import {
     addNavBar
 } from '../module/nav_bar';
-import { NAV_BAR_MY_ACCOUNT } from '../module/nav_bar/enum';
+import { NavBarPage } from '../module/nav_bar/enum';
 import {
     sendServerRequest,
     logout
@@ -150,7 +150,7 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     appendText(getSharedElement(SHARED_VAR_IDX_INVITE_COUNT), userInfo.invite_quota.toString());
     getSharedInput(SHARED_VAR_IDX_NEW_USERNAME_INPUT).value = userInfo.username;
     showSessions(userInfo);
-    addNavBar(NAV_BAR_MY_ACCOUNT);
+    addNavBar(NavBarPage.MY_ACCOUNT);
 }
 
 function showSessions(userInfo: AccountInfo.AccountInfo) {

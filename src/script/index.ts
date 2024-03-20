@@ -7,7 +7,7 @@ import {
     scrollToTop,
 } from './module/common';
 import { addNavBar } from './module/nav_bar';
-import { NAV_BAR_HOME } from './module/nav_bar/enum';
+import { NavBarPage } from './module/nav_bar/enum';
 import { sendServerRequest } from './module/server';
 import {
     w,
@@ -147,7 +147,7 @@ function showPageCallback(
         appendChild(announcementInnerContainer, announcementBody);
     }
     showSeries(seriesInfo);
-    addNavBar(NAV_BAR_HOME, () => {
+    addNavBar(NavBarPage.HOME, () => {
         if (w.scrollY !== 0) {
             scrollToTop();
             return;

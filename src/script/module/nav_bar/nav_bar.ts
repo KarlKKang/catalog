@@ -9,7 +9,7 @@ import {
 } from '../dom';
 import { redirect } from '../global';
 import { scrollToTop } from '../common';
-import { type NavBarPage, NAV_BAR_HOME, NAV_BAR_INFO, NAV_BAR_MY_ACCOUNT, NAV_BAR_NEWS } from './enum';
+import { NavBarPage } from './enum';
 import * as icons from './icons';
 
 import * as styles from '../../../css/nav_bar.module.scss';
@@ -53,7 +53,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
     };
 
     addEventListener(navButton1[0], 'click', () => {
-        if (page === NAV_BAR_HOME) {
+        if (page === NavBarPage.HOME) {
             if (callback()) {
                 return;
             }
@@ -62,7 +62,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
     });
 
     addEventListener(navButton2[0], 'click', () => {
-        if (page === NAV_BAR_NEWS) {
+        if (page === NavBarPage.NEWS) {
             if (callback()) {
                 return;
             }
@@ -71,7 +71,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
     });
 
     addEventListener(navButton3[0], 'click', () => {
-        if (page === NAV_BAR_MY_ACCOUNT) {
+        if (page === NavBarPage.MY_ACCOUNT) {
             if (callback()) {
                 return;
             }
@@ -80,7 +80,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
     });
 
     addEventListener(navButton4[0], 'click', () => {
-        if (page === NAV_BAR_INFO) {
+        if (page === NavBarPage.INFO) {
             if (callback()) {
                 return;
             }
@@ -92,8 +92,8 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
     addClass(navBarPadding, styles.navBarPadding);
     appendChild(body, navBarPadding);
 
-    appendChild(navButton1[1], page === NAV_BAR_HOME ? icons.getHomeFillIcon() : icons.getHomeIcon());
-    appendChild(navButton2[1], page === NAV_BAR_NEWS ? icons.getNewsFillIcon() : icons.getNewsIcon());
-    appendChild(navButton3[1], page === NAV_BAR_MY_ACCOUNT ? icons.getMyAccountFillIcon() : icons.getMyAccountIcon());
-    appendChild(navButton4[1], page === NAV_BAR_INFO ? icons.getInfoFillIcon() : icons.getInfoIcon());
+    appendChild(navButton1[1], page === NavBarPage.HOME ? icons.getHomeFillIcon() : icons.getHomeIcon());
+    appendChild(navButton2[1], page === NavBarPage.NEWS ? icons.getNewsFillIcon() : icons.getNewsIcon());
+    appendChild(navButton3[1], page === NavBarPage.MY_ACCOUNT ? icons.getMyAccountFillIcon() : icons.getMyAccountIcon());
+    appendChild(navButton4[1], page === NavBarPage.INFO ? icons.getInfoFillIcon() : icons.getInfoIcon());
 }

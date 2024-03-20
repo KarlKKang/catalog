@@ -2,7 +2,7 @@ import {
     scrollToHash,
 } from './module/common';
 import { addNavBar } from './module/nav_bar';
-import { NAV_BAR_INFO } from './module/nav_bar/enum';
+import { NavBarPage } from './module/nav_bar/enum';
 import { authenticate } from './module/server';
 import {
     addClass,
@@ -32,7 +32,7 @@ export default function (showPage: ShowPageFunc) {
         showPage();
         body.innerHTML = html;
         addClass(body, allLanguageContainerClass);
-        navBar && addNavBar(NAV_BAR_INFO);
+        navBar && addNavBar(NavBarPage.INFO);
         scrollToHash();
     };
 

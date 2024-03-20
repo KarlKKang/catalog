@@ -9,7 +9,7 @@ import {
     openImageWindow,
 } from './module/common';
 import { addNavBar } from './module/nav_bar';
-import { NAV_BAR_NEWS } from './module/nav_bar/enum';
+import { NavBarPage } from './module/nav_bar/enum';
 import { sendServerRequest, setUpSessionAuthentication } from './module/server';
 import {
     addEventListener,
@@ -110,7 +110,7 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
             container.id = 'container';
             appendChild(body, container);
             showNews(container, contentContainer, parsedResponse);
-            addNavBar(NAV_BAR_NEWS, () => {
+            addNavBar(NavBarPage.NEWS, () => {
                 redirect(NEWS_TOP_URL);
             });
 
@@ -270,7 +270,7 @@ function getAllNews(containerOrShowPage: ShowPageFunc | HTMLElement, loadingText
                 const positionDetector = createDivElement();
                 positionDetector.id = 'position-detector';
                 appendChild(body, positionDetector);
-                addNavBar(NAV_BAR_NEWS);
+                addNavBar(NavBarPage.NEWS);
                 initializeInfiniteScrolling(() => { getAllNews(container, loadingTextContainer); });
                 containerOrShowPage = container;
             }
