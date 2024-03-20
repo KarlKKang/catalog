@@ -347,6 +347,12 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
         return;
     }
 
+    if (loadingBarShown) {
+        setWidth(loadingBar, 67, CSS_UNIT_PERCENT);
+    } else {
+        loadingBarWidth = 67;
+    }
+
     currentPage = {
         script: script,
         htmlEntry: page.htmlEntry,
@@ -379,11 +385,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
             }
         }
     );
-    if (loadingBarShown) {
-        setWidth(loadingBar, 67, CSS_UNIT_PERCENT);
-    } else {
-        loadingBarWidth = 67;
-    }
 }
 
 function setViewport(native: boolean) {
