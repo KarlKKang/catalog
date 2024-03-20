@@ -39,6 +39,9 @@ import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
 import { forgetPasswordText, keepLoggedInText, loginButtonText, welcomeText } from '../module/text/ui';
 
+import '../../css/portal_form.scss';
+import '../../css/login.scss';
+
 let onDemandImportPromise: Promise<typeof import(
     './on_demand'
 )>;

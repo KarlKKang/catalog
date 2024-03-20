@@ -28,6 +28,8 @@ import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';
 import { emailChangePageTitle } from './module/text/page_title';
 
+import '../css/portal_form.scss';
+
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 

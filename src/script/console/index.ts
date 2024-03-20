@@ -19,6 +19,10 @@ import { getTable, setOutput, setOutputElement } from './helper';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid } from '../module/global';
 
+import '../../font/dist/NotoSansTC/NotoSansTC-Light.css';
+import '../../font/dist/NotoSansSC/NotoSansSC-Light.css';
+import '../../css/console.scss';
+
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 

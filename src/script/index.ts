@@ -45,6 +45,12 @@ import { lazyloadImport, unloadLazyload } from './module/lazyload';
 import { changeColor } from './module/style';
 import { allResultsShown, loading, noResult } from './module/text/ui';
 
+import '../font/dist/NotoSansTC/NotoSansTC-Light.css';
+import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
+import '../font/dist/NotoSans/NotoSans-Light.css';
+import '../css/nav_bar.scss';
+import '../css/index.scss';
+
 let pivot: SeriesInfo.Pivot;
 let keywords: string;
 let currentRequest: XMLHttpRequest | null = null;

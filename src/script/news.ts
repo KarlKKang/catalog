@@ -44,6 +44,19 @@ import { pgid, redirect } from './module/global';
 import { lazyloadImport, unloadLazyload } from './module/lazyload';
 import { allResultsShown, loading, noResult } from './module/text/ui';
 
+import '../font/dist/NotoSans/NotoSans-Light.css';
+import '../font/dist/NotoSans/NotoSans-Regular.css';
+import '../font/dist/NotoSans/NotoSans-Medium.css';
+import '../font/dist/NotoSansJP/NotoSansJP-Regular.css';
+import '../font/dist/NotoSansTC/NotoSansTC-Light.css';
+import '../font/dist/NotoSansTC/NotoSansTC-Regular.css';
+import '../font/dist/NotoSansTC/NotoSansTC-Medium.css';
+import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
+import '../font/dist/NotoSansSC/NotoSansSC-Regular.css';
+import '../font/dist/NotoSansSC/NotoSansSC-Medium.css';
+import '../css/nav_bar.scss';
+import '../css/news.scss';
+
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo;
 

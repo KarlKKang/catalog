@@ -25,6 +25,8 @@ import { pgid, redirect } from './module/global';
 import { setWidth } from './module/style';
 import { CSS_UNIT_PX } from './module/style/value';
 
+import '../css/image.scss';
+
 type ImageLoader = typeof import(
     /* webpackExports: ["clearAllImageEvents"] */
     './module/image_loader'

@@ -32,7 +32,6 @@ type PageScriptImport = Promise<PageScript>;
 
 type Page = {
     script: () => PageScriptImport;
-    style: () => Promise<any>[];
     htmlEntry: HTMLEntry;
     title?: string;
     id?: string;
@@ -57,26 +56,8 @@ let serviceWorkerUpToDate: boolean = true;
 
 let loadingBarShown: boolean = false;
 
-const notoSansLightCss = () => import('../font/dist/NotoSans/NotoSans-Light.css');
-const notoSansRegularCss = () => import('../font/dist/NotoSans/NotoSans-Regular.css');
-const notoSansMediumCss = () => import('../font/dist/NotoSans/NotoSans-Medium.css');
-const notoSansJPRegularCss = () => import('../font/dist/NotoSansJP/NotoSansJP-Regular.css');
-const notoSansTCLightCss = () => import('../font/dist/NotoSansTC/NotoSansTC-Light.css');
-const notoSansTCRegularCss = () => import('../font/dist/NotoSansTC/NotoSansTC-Regular.css');
-const notoSansTCMediumCss = () => import('../font/dist/NotoSansTC/NotoSansTC-Medium.css');
-const notoSansSCLightCss = () => import('../font/dist/NotoSansSC/NotoSansSC-Light.css');
-const notoSansSCRegularCss = () => import('../font/dist/NotoSansSC/NotoSansSC-Regular.css');
-const notoSansSCMediumCss = () => import('../font/dist/NotoSansSC/NotoSansSC-Medium.css');
-const courierNewRegularCss = () => import('../font/dist/CourierNew/CourierNew-Regular.css');
-const segMDL2Css = () => import('../font/dist/Segoe/SegMDL2.css');
-const navBarCss = () => import('../css/nav_bar.scss');
-const portalFormCss = () => import('../css/portal_form.scss');
-const newsCss = () => import('../css/news.scss');
-const registerCss = () => import('../css/register.scss');
-
 const page404: Page = {
     script: () => import('./404'),
-    style: () => [],
     htmlEntry: HTMLEntry.DEFAULT,
     title: notFoundPageTitle,
     id: 'message',
@@ -85,132 +66,67 @@ const page404: Page = {
 const pages: PageMap = {
     '': {
         script: () => import('./index'),
-        style: () => [
-            notoSansTCLightCss(),
-            notoSansSCLightCss(),
-            notoSansLightCss(),
-            navBarCss(),
-            import('../css/index.scss'),
-        ],
         htmlEntry: HTMLEntry.DEFAULT,
         id: 'top',
     },
     'confirm_new_email': {
         script: () => import('./confirm_new_email'),
-        style: () => [
-            portalFormCss(),
-        ],
         title: emailChangePageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'console': {
         script: () => import('./console'),
-        style: () => [
-            notoSansTCLightCss(),
-            notoSansSCLightCss(),
-            import('../css/console.scss'),
-        ],
         title: consolePageTitle,
         htmlEntry: HTMLEntry.NO_THEME,
     },
     'image': {
         script: () => import('./image'),
-        style: () => [
-            import('../css/image.scss'),
-        ],
         htmlEntry: HTMLEntry.NO_THEME,
         nativeViewport: true,
     },
     'info': {
         script: () => import('./info'),
-        style: () => [
-            notoSansLightCss(),
-            notoSansRegularCss(),
-            notoSansMediumCss(),
-            notoSansJPRegularCss(),
-            notoSansTCLightCss(),
-            notoSansTCRegularCss(),
-            notoSansTCMediumCss(),
-            notoSansSCLightCss(),
-            notoSansSCRegularCss(),
-            notoSansSCMediumCss(),
-            navBarCss(),
-            newsCss(),
-        ],
         title: infoPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
         id: 'news',
     },
     'message': {
         script: () => Promise.resolve(messagePageScript),
-        style: () => [],
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'my_account': {
         script: () => import('./my_account'),
-        style: () => [
-            notoSansTCLightCss(),
-            notoSansSCLightCss(),
-            notoSansLightCss(),
-            courierNewRegularCss(),
-            navBarCss(),
-            import('../css/my_account.scss'),
-        ],
         title: myAccountPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'new_email': {
         script: () => import('./new_email'),
-        style: () => [
-            portalFormCss(),
-        ],
         title: emailChangePageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'register': {
         script: () => import('./register'),
-        style: () => [
-            notoSansLightCss(),
-            notoSansTCLightCss(),
-            notoSansSCLightCss(),
-            portalFormCss(),
-            registerCss(),
-        ],
         title: registerPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'special_register': {
         script: () => import('./special_register'),
-        style: () => [
-            portalFormCss(),
-            registerCss(),
-        ],
         title: registerPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'login': {
         script: () => import('./login'),
-        style: () => [
-            portalFormCss(),
-            import('../css/login.scss'),
-        ],
         title: loginPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
         id: 'login',
     },
     'request_password_reset': {
         script: () => import('./request_password_reset'),
-        style: () => [
-            portalFormCss(),
-        ],
         title: passwordResetPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'password_reset': {
         script: () => import('./password_reset'),
-        style: () => [
-            portalFormCss(),
-        ],
         title: passwordResetPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
@@ -218,30 +134,10 @@ const pages: PageMap = {
 const directories: PageMap = {
     'bangumi': {
         script: () => import('./bangumi'),
-        style: () => [
-            segMDL2Css(),
-            courierNewRegularCss(),
-            navBarCss(),
-            import('../css/bangumi.scss'),
-        ],
         htmlEntry: HTMLEntry.DEFAULT,
     },
     'news': {
         script: () => import('./news'),
-        style: () => [
-            notoSansLightCss(),
-            notoSansRegularCss(),
-            notoSansMediumCss(),
-            notoSansJPRegularCss(),
-            notoSansTCLightCss(),
-            notoSansTCRegularCss(),
-            notoSansTCMediumCss(),
-            notoSansSCLightCss(),
-            notoSansSCRegularCss(),
-            notoSansSCMediumCss(),
-            navBarCss(),
-            newsCss(),
-        ],
         title: newsPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
@@ -399,7 +295,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     setViewport(false);
 
     const scriptImportPromise = page.script();
-    const styleImportPromises = page.style();
 
     const newPgid = {};
     setPgid(newPgid);
@@ -458,15 +353,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     };
     script.default(
         async (callback?: () => void) => {
-            try {
-                await Promise.all(styleImportPromises);
-            } catch (e) {
-                if (pgid === newPgid) {
-                    showMessage(moduleImportError(e));
-                }
-                throw e;
-            }
-
             if (pgid !== newPgid) {
                 return;
             }

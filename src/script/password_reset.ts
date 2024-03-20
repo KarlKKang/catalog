@@ -31,6 +31,8 @@ import { hideElement, horizontalCenter, showElement } from './module/style';
 import { passwordResetPageTitle } from './module/text/page_title';
 import { changeButtonText, passwordRules } from './module/text/ui';
 
+import '../css/portal_form.scss';
+
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 

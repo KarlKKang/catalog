@@ -34,6 +34,12 @@ import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { passwordRules, usernameRule } from './module/text/ui';
 
+import '../font/dist/NotoSansTC/NotoSansTC-Light.css';
+import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
+import '../font/dist/NotoSans/NotoSans-Light.css';
+import '../css/portal_form.scss';
+import '../css/register.scss';
+
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 

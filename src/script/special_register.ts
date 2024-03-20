@@ -21,6 +21,9 @@ import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';
 import { registerPageTitle } from './module/text/page_title';
 
+import '../css/portal_form.scss';
+import '../css/register.scss';
+
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
     showPage(() => { showPageCallback(); });
