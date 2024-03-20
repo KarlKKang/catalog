@@ -23,7 +23,6 @@ import { submitButtonText } from './module/text/ui';
 import { registerPageTitle } from './module/text/page_title';
 
 import * as styles from '../css/portal_form.module.scss';
-import '../css/register.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
