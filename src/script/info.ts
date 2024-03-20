@@ -1,7 +1,8 @@
 import {
     scrollToHash,
 } from './module/common';
-import { addNavBar, NAV_BAR_INFO } from './module/nav_bar';
+import { addNavBar } from './module/nav_bar';
+import { NAV_BAR_INFO } from './module/nav_bar/enum';
 import { authenticate } from './module/server';
 import {
     addClass,

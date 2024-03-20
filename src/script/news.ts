@@ -8,7 +8,8 @@ import {
     SESSION_TYPE_NEWS,
     openImageWindow,
 } from './module/common';
-import { addNavBar, NAV_BAR_NEWS } from './module/nav_bar';
+import { addNavBar } from './module/nav_bar';
+import { NAV_BAR_NEWS } from './module/nav_bar/enum';
 import { sendServerRequest, setUpSessionAuthentication } from './module/server';
 import {
     addEventListener,

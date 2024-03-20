@@ -6,7 +6,8 @@ import {
     getURLParam,
     scrollToTop,
 } from './module/common';
-import { addNavBar, NAV_BAR_HOME } from './module/nav_bar';
+import { addNavBar } from './module/nav_bar';
+import { NAV_BAR_HOME } from './module/nav_bar/enum';
 import { sendServerRequest } from './module/server';
 import {
     w,

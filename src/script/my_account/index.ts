@@ -2,9 +2,9 @@ import {
     LOGIN_URL,
 } from '../module/env/constant';
 import {
-    addNavBar,
-    NAV_BAR_MY_ACCOUNT
+    addNavBar
 } from '../module/nav_bar';
+import { NAV_BAR_MY_ACCOUNT } from '../module/nav_bar/enum';
 import {
     sendServerRequest,
     logout
