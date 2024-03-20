@@ -5,6 +5,7 @@ import {
 } from './module/common';
 import { authenticate } from './module/server';
 import {
+    addClass,
     body,
     clearSessionStorage,
 } from './module/dom';
@@ -21,25 +22,29 @@ import '../font/dist/NotoSansTC/NotoSansTC-Medium.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Regular.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Medium.css';
+import { container as allLanguageContainerClass } from '../css/all_languages.module.scss';
 import '../css/nav_bar.scss';
 import '../css/news.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
+    const showPageCallback = (navBar: boolean) => {
+        showPage();
+        body.innerHTML = html;
+        addClass(body, allLanguageContainerClass);
+        navBar && addNavBar(NAV_BAR_INFO);
+        scrollToHash();
+    };
+
     authenticate({
         successful:
             function () {
-                showPage();
-                body.innerHTML = html;
-                addNavBar(NAV_BAR_INFO);
-                scrollToHash();
+                showPageCallback(true);
             },
         failed:
             function () {
-                showPage();
-                body.innerHTML = html;
-                scrollToHash();
+                showPageCallback(false);
             },
     });
 }

@@ -54,6 +54,7 @@ import '../font/dist/NotoSansTC/NotoSansTC-Medium.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Regular.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Medium.css';
+import { container as allLanguageContainerClass } from '../css/all_languages.module.scss';
 import '../css/nav_bar.scss';
 import '../css/news.scss';
 
@@ -129,6 +130,7 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
                 removeAllEventListeners(xhr);
                 if (xhr.status === 200) {
                     contentContainer.innerHTML = xhr.responseText;
+                    addClass(contentContainer, allLanguageContainerClass);
                     bindEventListners(contentContainer);
                     attachImage(lazyloadImportPromise, contentContainer, newsID, parsedResponse.credential);
                     scrollToHash();

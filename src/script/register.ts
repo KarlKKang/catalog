@@ -37,8 +37,8 @@ import { passwordRules, usernameRule } from './module/text/ui';
 import '../font/dist/NotoSansTC/NotoSansTC-Light.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import '../font/dist/NotoSans/NotoSans-Light.css';
+import { container as allLanguageContainerClass } from '../css/all_languages.module.scss';
 import * as styles from '../css/portal_form.module.scss';
-import '../css/register.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -202,6 +202,7 @@ function getInfoNote() {
 
     const container = createDivElement();
     addClass(container, styles.note);
+    addClass(container, allLanguageContainerClass);
     for (const [lang, ...text] of texts) {
         const paragraph = createParagraphElement(text[0]);
         if (lang !== null) {

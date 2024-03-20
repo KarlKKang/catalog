@@ -1,9 +1,7 @@
 @use 'module/properties';
-@use 'module/all_languages';
 @use 'module/common';
 
 #page-news {
-    @include all_languages.default;
     @include common.lazyload;
     @include common.ellipsis-clipping-2;
     @include common.position-detector;
