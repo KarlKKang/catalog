@@ -70,7 +70,7 @@ export async function handleFailedTotp(
         if (currentPgid !== pgid) {
             return;
         }
-        if (e === promptForTotp.TOTP_POPUP_WINDOW_TIMEOUT) {
+        if (e === promptForTotp.RejectReason.TIMEOUT) {
             timeoutCallback();
         } else {
             closeCallback();

@@ -11,12 +11,10 @@ export type TotpPopupWindow = [
     () => void, // close
 ];
 
-const enum RejectReason {
+export const enum RejectReason {
     TIMEOUT,
     CLOSE,
 }
-
-export const TOTP_POPUP_WINDOW_TIMEOUT = RejectReason.TIMEOUT;
 
 export function promptForTotp(initializePopupWindow: typeof InitializePopupWindow) {
     let returnPromiseResolve: (value: TotpPopupWindow) => void;
