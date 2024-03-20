@@ -1,6 +1,22 @@
 import {
-    getById,
+    addClass,
+    appendChild,
+    appendChildren,
+    appendListItems,
+    body,
+    createButtonElement,
+    createDivElement,
+    createEmailInput,
+    createHRElement,
+    createParagraphElement,
+    createPasswordInput,
+    createSpanElement,
+    createUListElement,
+    createUsernameInput,
 } from '../module/dom';
+import { hideElement } from '../module/style';
+import { myAccountPageTitle } from '../module/text/page_title';
+import { changeButtonText, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
 
 let sharedBoolVars: boolean[];
 let sharedInputVars: HTMLInputElement[];
@@ -75,40 +91,57 @@ export const SHARED_VAR_IDX_SESSIONS_CONTAINER = SharedElementVarsIdx.sessionsCo
 
 export function initializeSharedVars() {
     sharedBoolVars = [];
+    sharedInputVars = [];
+    sharedButtonVars = [];
+    sharedElementVars = [];
 
-    sharedInputVars = [
-        getById('new-username') as HTMLInputElement,
-        getById('new-password') as HTMLInputElement,
-        getById('new-password-confirm') as HTMLInputElement,
-        getById('receiver-email') as HTMLInputElement,
-    ];
+    const container = createDivElement();
+    container.id = 'container';
+    appendChild(body, container);
+    const titleElem = createParagraphElement(myAccountPageTitle);
+    titleElem.id = 'title';
+    appendChild(container, titleElem);
+    appendSubsection(container, 'メールアドレス', [], SHARED_VAR_IDX_EMAIL_WARNING, [], SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, changeButtonText, []);
 
-    sharedButtonVars = [
-        getById('email-change-button') as HTMLButtonElement,
-        getById('username-change-button') as HTMLButtonElement,
-        getById('password-change-button') as HTMLButtonElement,
-        getById('invite-button') as HTMLButtonElement,
-        getById('logout-button') as HTMLButtonElement,
-        getById('mfa-button') as HTMLButtonElement,
-        getById('recovery-code-button') as HTMLButtonElement,
-        getById('login-notification-button') as HTMLButtonElement,
-    ];
+    const [usernameContainer, usernameInput] = createUsernameInput();
+    sharedInputVars[SHARED_VAR_IDX_NEW_USERNAME_INPUT] = usernameInput;
+    appendSubsection(container, 'ユーザー名', [], SHARED_VAR_IDX_USERNAME_WARNING, [usernameContainer], SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, changeButtonText, [usernameRule]);
 
-    sharedElementVars = [
-        getById('email-warning'),
-        getById('username-warning'),
-        getById('password-warning'),
-        getById('invite-warning'),
-        getById('mfa-warning'),
-        getById('recovery-code-warning'),
-        getById('login-notification-warning'),
+    const [passwordContainer, passwordInput] = createPasswordInput(true, '新しいパスワード');
+    const [passwordConfirmContainer, passwordConfirmInput] = createPasswordInput(true, '確認再入力');
+    sharedInputVars[SHARED_VAR_IDX_NEW_PASSWORD_INPUT] = passwordInput;
+    sharedInputVars[SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT] = passwordConfirmInput;
+    appendSubsection(container, 'パスワード', [], SHARED_VAR_IDX_PASSWORD_WARNING, [passwordContainer, passwordConfirmContainer], SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, changeButtonText, passwordRules);
 
-        getById('invite-count'),
-        getById('mfa-info'),
-        getById('recovery-code-info'),
-        getById('login-notification-info'),
-        getById('sessions'),
-    ];
+    const mfaInfo = createParagraphElement();
+    sharedElementVars[SHARED_VAR_IDX_MFA_INFO] = mfaInfo;
+    appendSubsection(container, '二要素認証', [mfaInfo], SHARED_VAR_IDX_MFA_WARNING, [], SHARED_VAR_IDX_MFA_BUTTON, undefined, []);
+
+    const recoveryCodeInfo = createParagraphElement();
+    sharedElementVars[SHARED_VAR_IDX_RECOVERY_CODE_INFO] = recoveryCodeInfo;
+    appendSubsection(container, 'リカバリーコード', [recoveryCodeInfo], SHARED_VAR_IDX_RECOVERY_CODE_WARNING, [], SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, '生成する', ['新しいコードを生成すると、既存のコードは無効になります。']);
+
+    const loginNotificationInfo = createParagraphElement();
+    sharedElementVars[SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO] = loginNotificationInfo;
+    appendSubsection(container, 'ログイン通知メール', [loginNotificationInfo], SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, [], SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, undefined, []);
+
+    const sessionsContainer = createDivElement();
+    sessionsContainer.id = 'sessions';
+    sharedElementVars[SHARED_VAR_IDX_SESSIONS_CONTAINER] = sessionsContainer;
+    appendSubsection(container, 'お使いのデバイス', [sessionsContainer], null, [], null, undefined, []);
+
+    const inviteCountInfo = createParagraphElement('保有している招待券の枚数：');
+    const inviteCount = createSpanElement();
+    sharedElementVars[SHARED_VAR_IDX_INVITE_COUNT] = inviteCount;
+    appendChild(inviteCountInfo, inviteCount);
+    const [inviteReceiverEmailContainer, inviteReceiverEmailInput] = createEmailInput();
+    inviteReceiverEmailInput.autocomplete = 'off';
+    sharedInputVars[SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT] = inviteReceiverEmailInput;
+    appendSubsection(container, 'ご招待', [inviteCountInfo], SHARED_VAR_IDX_INVITE_WARNING, [inviteReceiverEmailContainer], SHARED_VAR_IDX_INVITE_BUTTON, submitButtonText, []);
+
+    const logoutButton = createButtonElement('ログアウ');
+    sharedButtonVars[SHARED_VAR_IDX_LOGOUT_BUTTON] = logoutButton;
+    appendChild(container, logoutButton);
 }
 
 export function setCurrentMfaStatus(status: boolean) {
@@ -161,4 +194,47 @@ export function dereferenceSharedVars() {
     sharedButtonVars = [];
     sharedElementVars = [];
     sessionLogoutButtons.clear();
+}
+
+function appendSubsection(
+    container: HTMLDivElement,
+    title: string,
+    infoElements: HTMLElement[],
+    warningIndex: SharedElementVarsIdx | null,
+    inputContainers: HTMLElement[],
+    buttonIndex: SharedButtonVarsIdx | null,
+    buttonText: string | undefined,
+    notes: string[],
+) {
+    const titleElem = createParagraphElement(title);
+    addClass(titleElem, 'sub-title');
+    appendChild(container, titleElem);
+
+    appendChildren(container, ...infoElements);
+
+    if (warningIndex !== null) {
+        const warningElem = createParagraphElement();
+        addClass(warningElem, 'warning');
+        hideElement(warningElem);
+        appendChild(container, warningElem);
+        sharedElementVars[warningIndex] = warningElem;
+    }
+
+    appendChildren(container, ...inputContainers);
+
+    if (buttonIndex !== null) {
+        const button = createButtonElement(buttonText);
+        appendChild(container, button);
+        sharedButtonVars[buttonIndex] = button;
+    }
+
+    if (notes.length !== 0) {
+        const noteElem = createUListElement();
+        addClass(noteElem, 'note');
+        appendListItems(noteElem, ...notes);
+        appendChild(container, noteElem);
+    }
+
+    const hr = createHRElement();
+    appendChild(container, hr);
 }

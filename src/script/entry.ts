@@ -161,7 +161,6 @@ const pages: PageMap = {
             navBarCss(),
             import('../css/my_account.scss'),
         ],
-        html: () => import('../html/my_account.html'),
         title: myAccountPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },
