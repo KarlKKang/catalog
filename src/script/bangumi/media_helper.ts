@@ -35,7 +35,7 @@ import { addTimeout } from '../module/timer';
 import { CustomMediaError } from '../module/player/media_error';
 import { SharedElementVarsIdx, getSharedElement } from './shared_var';
 import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
-import { CSS_UNIT_PX } from '../module/style/value';
+import { CSS_UNIT } from '../module/style/value';
 import { defaultError } from '../module/text/message/title';
 import { defaultErrorSuffix } from '../module/text/message/body';
 
@@ -245,7 +245,7 @@ export function buildAccordion(title: string, active: boolean): [HTMLDivElement,
 
 export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HTMLElement | null, active: boolean): void {
     const hidePanel = () => {
-        setMaxHeight(panel, 0, CSS_UNIT_PX);
+        setMaxHeight(panel, 0, CSS_UNIT.PX);
     };
 
     const changeIcon = () => {
@@ -269,7 +269,7 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HT
         if (active) {
             addClass(acc, 'active');
             currentAnimationFrame = null;
-            setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT_PX);
+            setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
             const timeout = addTimeout(() => {
                 if (currentTimeout === timeout) {
                     setMaxHeight(panel, null);
@@ -281,7 +281,7 @@ export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HT
             currentTimeout = null;
             let animationFrame = w.requestAnimationFrame(() => {
                 if (currentAnimationFrame === animationFrame) {
-                    setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT_PX);
+                    setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
                     animationFrame = w.requestAnimationFrame(() => {
                         if (currentAnimationFrame === animationFrame) {
                             hidePanel();

@@ -35,7 +35,7 @@ import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
 import { SharedElementVarsIdx, dereferenceSharedVars, getSharedElement, initializeSharedVars } from './shared_var';
 import { hideElement, setMaxHeight, setMinHeight, setPaddingBottom, showElement } from '../module/style';
-import { CSS_UNIT_PX, CSS_UNIT_VH } from '../module/style/value';
+import { CSS_UNIT } from '../module/style/value';
 
 let seriesID: string;
 let epIndex: number;
@@ -217,12 +217,12 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
             currentToggleTimeout = null;
             let animationFrame = w.requestAnimationFrame(() => {
                 if (currentToggleAnimationFrame === animationFrame) {
-                    setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT_PX);
+                    setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX);
                     animationFrame = w.requestAnimationFrame(() => {
                         if (currentToggleAnimationFrame === animationFrame) {
                             isExpanded = false;
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
-                            setMaxHeight(epButtonWrapper, 30, CSS_UNIT_VH);
+                            setMaxHeight(epButtonWrapper, 30, CSS_UNIT.VH);
                             setPaddingBottom(epButtonWrapper, null);
                         }
                     });
@@ -234,8 +234,8 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
             currentToggleAnimationFrame = null;
             isExpanded = true;
             replaceChildren(showMoreButton, ...showMoreButtonExpandedText);
-            setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT_PX);
-            setPaddingBottom(epButtonWrapper, showMoreButton.scrollHeight, CSS_UNIT_PX);
+            setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX);
+            setPaddingBottom(epButtonWrapper, showMoreButton.scrollHeight, CSS_UNIT.PX);
             const timeout = addTimeout(() => {
                 if (currentToggleTimeout === timeout) {
                     setMaxHeight(epButtonWrapper, null);
@@ -254,13 +254,13 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
         const height = getContentBoxHeight(epButtonWrapper);
         const reachedThreshold = height > minHeight * 1.8;
         if (reachedThreshold) {
-            setMinHeight(epButtonWrapper, minHeight * 1.8, CSS_UNIT_PX);
+            setMinHeight(epButtonWrapper, minHeight * 1.8, CSS_UNIT.PX);
         }
 
         if (height / w.innerHeight > 0.40 && reachedThreshold) {
             if (isOversized) {
                 if (isExpanded) {
-                    setPaddingBottom(epButtonWrapper, showMoreButton.scrollHeight, CSS_UNIT_PX);
+                    setPaddingBottom(epButtonWrapper, showMoreButton.scrollHeight, CSS_UNIT.PX);
                 }
                 return;
             }
@@ -271,11 +271,11 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
             isExpanded = false;
             let animationFrame = w.requestAnimationFrame(() => {
                 if (currentStylingAnimationFrame === animationFrame) {
-                    setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT_PX); // Use `getContentBoxHeight` to get the most recent height.
+                    setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX); // Use `getContentBoxHeight` to get the most recent height.
                     animationFrame = w.requestAnimationFrame(() => {
                         if (currentStylingAnimationFrame === animationFrame) {
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
-                            setMaxHeight(epButtonWrapper, 30, CSS_UNIT_VH);
+                            setMaxHeight(epButtonWrapper, 30, CSS_UNIT.VH);
                             setPaddingBottom(epButtonWrapper, null);
                             removeClass(showMoreButton, 'invisible');
                             removeClass(showMoreButton, 'transparent');
@@ -293,7 +293,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
             currentToggleAnimationFrame = null;
             currentToggleTimeout = null;
             isOversized = false;
-            setMaxHeight(epButtonWrapper, height, CSS_UNIT_PX);
+            setMaxHeight(epButtonWrapper, height, CSS_UNIT.PX);
             addClass(showMoreButton, 'transparent');
             setPaddingBottom(epButtonWrapper, null);
             const timeout = addTimeout(() => {

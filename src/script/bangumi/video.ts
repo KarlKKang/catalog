@@ -54,7 +54,7 @@ import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_prom
 import { SharedElementVarsIdx, getSharedElement } from './shared_var';
 import { addInterval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
-import { CSS_UNIT_PERCENT } from '../module/style/value';
+import { CSS_UNIT } from '../module/style/value';
 import { getURLParam } from '../module/common';
 
 let currentPgid: unknown;
@@ -308,7 +308,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
 
     const playerContainer = createDivElement();
     addClass(playerContainer, 'player');
-    setPaddingTop(playerContainer, 9 / 16 * 100, CSS_UNIT_PERCENT);
+    setPaddingTop(playerContainer, 9 / 16 * 100, CSS_UNIT.PERCENT);
 
     let chaptersActive = true;
     const beforeLoad = () => {

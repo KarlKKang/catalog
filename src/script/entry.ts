@@ -15,7 +15,7 @@ import '../font/dist/NotoSansJP/NotoSansJP-Light.css';
 import '../font/dist/NotoSansJP/NotoSansJP-Medium.css';
 import '../css/common.scss';
 import { enableTransition, setMinHeight, setOpacity, setVisibility, setWidth } from './module/style';
-import { CSS_UNIT_PERCENT, CSS_UNIT_PX } from './module/style/value';
+import { CSS_UNIT } from './module/style/value';
 import { consolePageTitle, emailChangePageTitle, infoPageTitle, loginPageTitle, myAccountPageTitle, newsPageTitle, notFoundPageTitle, passwordResetPageTitle, registerPageTitle } from './module/text/page_title';
 
 const enum HTMLEntry {
@@ -283,7 +283,7 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
 
 async function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page) {
     offloadCurrentPage(); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
-    setMinHeight(html, 0, CSS_UNIT_PX); // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
+    setMinHeight(html, 0, CSS_UNIT.PX); // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
 
     if (withoutHistory !== null) {
         changeURL(url, withoutHistory);
@@ -301,7 +301,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
 
     let loadingBarWidth: number = 33;
     if (loadingBarShown) {
-        setWidth(loadingBar, loadingBarWidth, CSS_UNIT_PERCENT);
+        setWidth(loadingBar, loadingBarWidth, CSS_UNIT.PERCENT);
     } else {
         addTimeout(() => {
             if (loadingBarWidth === 100) { // This check isn't necessarily needed since `requestLoadingBarAnimationFrame` will check it anyway. It's here just to avoid unnecessary `requestAnimationFrame` calls.
@@ -320,11 +320,11 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
                 requestLoadingBarAnimationFrame(() => {
                     setVisibility(loadingBar, true);
                     setOpacity(loadingBar, 1);
-                    setWidth(loadingBar, 0, CSS_UNIT_PERCENT);
+                    setWidth(loadingBar, 0, CSS_UNIT.PERCENT);
                     requestLoadingBarAnimationFrame(() => {
                         enableTransition(loadingBar, true);
                         requestLoadingBarAnimationFrame(() => {
-                            setWidth(loadingBar, loadingBarWidth, CSS_UNIT_PERCENT);
+                            setWidth(loadingBar, loadingBarWidth, CSS_UNIT.PERCENT);
                             loadingBarShown = true;
                         });
                     });
@@ -348,7 +348,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     }
 
     if (loadingBarShown) {
-        setWidth(loadingBar, 67, CSS_UNIT_PERCENT);
+        setWidth(loadingBar, 67, CSS_UNIT.PERCENT);
     } else {
         loadingBarWidth = 67;
     }
@@ -377,7 +377,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
                     setOpacity(loadingBar, 0);
                 };
                 if (isStandardStyle) {
-                    setWidth(loadingBar, 100, CSS_UNIT_PERCENT);
+                    setWidth(loadingBar, 100, CSS_UNIT.PERCENT);
                     addTimeout(hideLoadingBar, 300);
                 } else {
                     hideLoadingBar(); // Directly hide the loading bar for pages with non-standard style.
