@@ -7,7 +7,10 @@ import {
     containsClass
 } from '../module/dom';
 
+import { changed as changedClass } from '../../css/console.module.scss';
+
 let outputElement: HTMLDivElement | null = null;
+export const initializedClass = 'initialized';
 
 export function setOutputElement(elem: HTMLDivElement | null) {
     outputElement = elem;
@@ -50,8 +53,8 @@ export function setOutput(response: string, callback?: () => void, outputElement
 
         let elems = getByClass('onchange');
         for (const elem of elems) {
-            if (!containsClass(elem, 'initialized')) {
-                addClass(elem, 'initialized');
+            if (!containsClass(elem, initializedClass)) {
+                addClass(elem, initializedClass);
                 addEventListener(elem, 'change', () => {
                     changed(elem);
                 });
@@ -60,8 +63,8 @@ export function setOutput(response: string, callback?: () => void, outputElement
 
         elems = getByClass('oninput');
         for (const elem of elems) {
-            if (!containsClass(elem, 'initialized')) {
-                addClass(elem, 'initialized');
+            if (!containsClass(elem, initializedClass)) {
+                addClass(elem, initializedClass);
                 addEventListener(elem, 'input', () => {
                     changed(elem);
                 });
@@ -72,5 +75,5 @@ export function setOutput(response: string, callback?: () => void, outputElement
 }
 
 function changed(elem: Element) {
-    addClass(getParentElement(elem), 'changed');
+    addClass(getParentElement(elem), changedClass);
 }

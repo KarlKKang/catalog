@@ -8,7 +8,7 @@ import {
     containsClass,
     getDataAttribute
 } from '../module/dom';
-import { completeCallback, getTable } from './helper';
+import { completeCallback, getTable, initializedClass } from './helper';
 
 export function getNewsTable() {
     getTable('news', updateEventHandlers);
@@ -140,8 +140,8 @@ function updateNewsTime(id: string) {
 function updateEventHandlers() {
     let buttons = getByClass('add-news');
     for (const button of buttons) {
-        if (!containsClass(button, 'initialized')) {
-            addClass(button, 'initialized');
+        if (!containsClass(button, initializedClass)) {
+            addClass(button, initializedClass);
             addEventListener(button, 'click', () => {
                 addNews(button);
             });
@@ -150,8 +150,8 @@ function updateEventHandlers() {
 
     buttons = getByClass('modify-news');
     for (const button of buttons) {
-        if (!containsClass(button, 'initialized')) {
-            addClass(button, 'initialized');
+        if (!containsClass(button, initializedClass)) {
+            addClass(button, initializedClass);
             addEventListener(button, 'click', () => {
                 modifyNews(button);
             });
@@ -160,8 +160,8 @@ function updateEventHandlers() {
 
     buttons = getByClass('update-news-time');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        if (!containsClass(button, 'initialized')) {
-            addClass(button, 'initialized');
+        if (!containsClass(button, initializedClass)) {
+            addClass(button, initializedClass);
             addEventListener(button, 'click', () => {
                 const id = getDataAttribute(button, 'id');
                 if (id === null) {
@@ -175,8 +175,8 @@ function updateEventHandlers() {
 
     buttons = getByClass('delete-news');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        if (!containsClass(button, 'initialized')) {
-            addClass(button, 'initialized');
+        if (!containsClass(button, initializedClass)) {
+            addClass(button, initializedClass);
             addEventListener(button, 'click', () => {
                 const id = getDataAttribute(button, 'id');
                 if (id === null) {

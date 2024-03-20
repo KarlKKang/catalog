@@ -1,5 +1,6 @@
 import { sendServerRequest } from '../module/server';
 import {
+    addClass,
     addEventListener,
     appendChild,
     appendChildren,
@@ -21,7 +22,7 @@ import { pgid } from '../module/global';
 
 import '../../font/dist/NotoSansTC/NotoSansTC-Light.css';
 import '../../font/dist/NotoSansSC/NotoSansSC-Light.css';
-import '../../css/console.scss';
+import * as styles from '../../css/console.module.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -49,89 +50,93 @@ export default function (showPage: ShowPageFunc) {
             ]).then(([{ getSeriesTable }, { getAccountTable }, { getNewsTable }]) => {
                 showPage();
 
+                const container = createDivElement();
+                appendChild(body, container);
+                addClass(container, styles.container);
+
                 const output = createDivElement();
                 setOutputElement(output);
 
-                appendButton('Get Series Table', getSeriesTable);
-                appendButton('Get Account Table', getAccountTable);
-                appendButton('Get Invite Table', () => {
+                appendButton(container, 'Get Series Table', getSeriesTable);
+                appendButton(container, 'Get Account Table', getAccountTable);
+                appendButton(container, 'Get Invite Table', () => {
                     getTable('invite');
                 });
-                appendButton('Get Email Change Table', () => {
+                appendButton(container, 'Get Email Change Table', () => {
                     getTable('email_change');
                 });
-                appendButton('Get News Table', getNewsTable);
-                appendButton('Get Log Table', () => {
+                appendButton(container, 'Get News Table', getNewsTable);
+                appendButton(container, 'Get Log Table', () => {
                     getTable('log');
                 });
-                appendChildren(body, createBRElement(), createBRElement());
+                appendChildren(container, createBRElement(), createBRElement());
 
                 const idOutput = createParagraphElement();
-                appendButton('Generate ID', () => {
+                appendButton(container, 'Generate ID', () => {
                     generate('id', idOutput);
                 });
-                appendButton('Generate Series ID', () => {
+                appendButton(container, 'Generate Series ID', () => {
                     generate('series_id', idOutput);
                 });
-                appendButton('Generate News ID', () => {
+                appendButton(container, 'Generate News ID', () => {
                     generate('news_id', idOutput);
                 });
-                appendChildren(body, idOutput, createBRElement(), createBRElement());
+                appendChildren(container, idOutput, createBRElement(), createBRElement());
 
                 const clearCacheDir = createTextAreaElement(1, 30);
-                appendChild(body, clearCacheDir);
-                appendButton('Clear CDN Cache', () => {
+                appendChild(container, clearCacheDir);
+                appendButton(container, 'Clear CDN Cache', () => {
                     clearCDNCache(clearCacheDir.value);
                 });
-                appendButton('Clear Key Cache', clearKeyCache);
-                appendButton('Rebuild Series Search Index', () => {
+                appendButton(container, 'Clear Key Cache', clearKeyCache);
+                appendButton(container, 'Rebuild Series Search Index', () => {
                     rebuild('series_search');
                 });
-                appendChildren(body, createBRElement(), createBRElement());
+                appendChildren(container, createBRElement(), createBRElement());
 
                 const verifyId = createTextAreaElement(1, 30);
-                appendChild(body, verifyId);
-                appendButton('Verify', () => {
+                appendChild(container, verifyId);
+                appendButton(container, 'Verify', () => {
                     verify(verifyId.value);
                 });
-                appendChildren(body, createBRElement(), createBRElement());
+                appendChildren(container, createBRElement(), createBRElement());
 
-                appendButton('Show Database Column', () => {
+                appendButton(container, 'Show Database Column', () => {
                     getTable('all_column');
                 });
-                appendButton('Show Database Index', () => {
+                appendButton(container, 'Show Database Index', () => {
                     getTable('all_index');
                 });
-                appendButton('Show Create Table', () => {
+                appendButton(container, 'Show Create Table', () => {
                     getTable('create_table');
                 });
-                appendButton('Run Debug', () => {
+                appendButton(container, 'Run Debug', () => {
                     misc('run', 'debug');
                 });
-                appendButton('Run Benchmark Hash', () => {
+                appendButton(container, 'Run Benchmark Hash', () => {
                     misc('benchmark', 'hash');
                 });
-                appendButton('Run Benchmark HMAC', () => {
+                appendButton(container, 'Run Benchmark HMAC', () => {
                     misc('benchmark', 'hmac');
                 });
-                appendButton('Run Benchmark Signature', () => {
+                appendButton(container, 'Run Benchmark Signature', () => {
                     misc('benchmark', 'signature');
                 });
-                appendButton('Run Benchmark Key Pair', () => {
+                appendButton(container, 'Run Benchmark Key Pair', () => {
                     misc('benchmark', 'key_pair');
                 });
-                appendButton('Run Benchmark Match Str', () => {
+                appendButton(container, 'Run Benchmark Match Str', () => {
                     misc('benchmark', 'match_str');
                 });
-                appendButton('Run Benchmark Generate Random', () => {
+                appendButton(container, 'Run Benchmark Generate Random', () => {
                     misc('benchmark', 'random');
                 });
-                appendButton('Run Benchmark Password Hash', () => {
+                appendButton(container, 'Run Benchmark Password Hash', () => {
                     misc('benchmark', 'password_hash');
                 });
-                appendChildren(body, createBRElement(), createBRElement());
+                appendChildren(container, createBRElement(), createBRElement());
 
-                appendChild(body, output);
+                appendChild(container, output);
             }).catch((e) => {
                 if (currentPgid === pgid) {
                     showMessage(moduleImportError(e));
@@ -269,10 +274,10 @@ export default function (showPage: ShowPageFunc) {
     }
 }
 
-function appendButton(text: string, onclick: () => void) {
+function appendButton(container: HTMLDivElement, text: string, onclick: () => void) {
     const button = createElement('button') as HTMLButtonElement;
     appendText(button, text);
-    appendChild(body, button);
+    appendChild(container, button);
     addEventListener(button, 'click', onclick);
 }
 

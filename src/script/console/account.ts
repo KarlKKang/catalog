@@ -9,7 +9,7 @@ import {
     addClass,
     getDataAttribute
 } from '../module/dom';
-import { completeCallback, getTable } from './helper';
+import { completeCallback, getTable, initializedClass } from './helper';
 import { PASSWORD_REGEX } from '../module/common/pure';
 
 function accountCompleteCallback(response: string) {
@@ -216,8 +216,8 @@ function deleteAccount(id: string) {
 function updateEventHandlers() {
     let buttons = getByClass('add-account');
     for (const button of buttons) {
-        if (!containsClass(button, 'initialized')) {
-            addClass(button, 'initialized');
+        if (!containsClass(button, initializedClass)) {
+            addClass(button, initializedClass);
             addEventListener(button, 'click', () => {
                 addAccount(button);
             });
@@ -226,8 +226,8 @@ function updateEventHandlers() {
 
     buttons = getByClass('modify-account');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        if (!containsClass(button, 'initialized')) {
-            addClass(button, 'initialized');
+        if (!containsClass(button, initializedClass)) {
+            addClass(button, initializedClass);
             addEventListener(button, 'click', () => {
                 const id = getDataAttribute(button, 'user');
                 if (id === null) {
@@ -241,8 +241,8 @@ function updateEventHandlers() {
 
     buttons = getByClass('delete-account');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
-        if (!containsClass(button, 'initialized')) {
-            addClass(button, 'initialized');
+        if (!containsClass(button, initializedClass)) {
+            addClass(button, initializedClass);
             addEventListener(button, 'click', () => {
                 const id = getDataAttribute(button, 'user');
                 if (id === null) {
