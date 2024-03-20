@@ -35,7 +35,7 @@ import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
 import { toCanvas } from 'qrcode';
 import { addInterval, removeInterval } from '../module/timer';
 import { pgid } from '../module/global';
-import { SHARED_VAR_IDX_MFA_WARNING, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, getSharedElement } from './shared_var';
+import { SharedElementVarsIdx, getSharedElement } from './shared_var';
 import { changeMfaStatus, disableAllInputs } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { popupWindowImportPromise } from './import_promise';
@@ -47,7 +47,7 @@ import { cancelButtonText, submitButtonText } from '../module/text/ui';
 
 export function enableMfa() {
     disableAllInputs(true);
-    const mfaWarning = getSharedElement(SHARED_VAR_IDX_MFA_WARNING);
+    const mfaWarning = getSharedElement(SharedElementVarsIdx.mfaWarning);
 
     hideElement(mfaWarning);
     changeColor(mfaWarning, 'red');
@@ -80,7 +80,7 @@ export function enableMfa() {
 
 export function disableMfa() {
     disableAllInputs(true);
-    const mfaWarning = getSharedElement(SHARED_VAR_IDX_MFA_WARNING);
+    const mfaWarning = getSharedElement(SharedElementVarsIdx.mfaWarning);
 
     hideElement(mfaWarning);
     changeColor(mfaWarning, 'red');
@@ -106,7 +106,7 @@ export function disableMfa() {
 
 export function generateRecoveryCode() {
     disableAllInputs(true);
-    const recoveryCodeWarning = getSharedElement(SHARED_VAR_IDX_RECOVERY_CODE_WARNING);
+    const recoveryCodeWarning = getSharedElement(SharedElementVarsIdx.recoveryCodeWarning);
 
     hideElement(recoveryCodeWarning);
     changeColor(recoveryCodeWarning, 'red');
@@ -133,7 +133,7 @@ export function generateRecoveryCode() {
                     return false;
                 }
                 showRecoveryCode(parsedResponse, () => {
-                    hideElement(getSharedElement(SHARED_VAR_IDX_RECOVERY_CODE_INFO));
+                    hideElement(getSharedElement(SharedElementVarsIdx.recoveryCodeInfo));
                     disableAllInputs(false);
                 });
                 return false;
@@ -313,7 +313,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
 
         sendServerRequest('set_totp', {
             callback: (response: string) => {
-                const mfaWarning = getSharedElement(SHARED_VAR_IDX_MFA_WARNING);
+                const mfaWarning = getSharedElement(SharedElementVarsIdx.mfaWarning);
                 if (response === 'EXPIRED') {
                     hidePopupWindow();
                     replaceText(mfaWarning, sessionEnded);

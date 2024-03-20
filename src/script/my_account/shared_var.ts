@@ -24,19 +24,19 @@ let sharedButtonVars: HTMLButtonElement[];
 let sharedElementVars: HTMLElement[];
 export const sessionLogoutButtons = new Set<HTMLButtonElement>();
 
-const enum SharedBoolVarsIdx {
+export const enum SharedBoolVarsIdx {
     currentMfaStatus,
     currentLoginNotificationStatus,
 }
 
-const enum SharedInputVarsIdx {
+export const enum SharedInputVarsIdx {
     newUsernameInput,
     newPasswordInput,
     newPasswordComfirmInput,
     inviteReceiverEmailInput,
 }
 
-const enum SharedButtonVarsIdx {
+export const enum SharedButtonVarsIdx {
     emailChangeButton,
     usernameChangeButton,
     passwordChangeButton,
@@ -47,7 +47,7 @@ const enum SharedButtonVarsIdx {
     loginNotificationButton,
 }
 
-const enum SharedElementVarsIdx {
+export const enum SharedElementVarsIdx {
     emailWarning,
     usernameWarning,
     passwordWarning,
@@ -62,33 +62,6 @@ const enum SharedElementVarsIdx {
     sessionsContainer,
 }
 
-export const SHARED_VAR_IDX_CURRENT_MFA_STATUS = SharedBoolVarsIdx.currentMfaStatus;
-export const SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS = SharedBoolVarsIdx.currentLoginNotificationStatus;
-export const SHARED_VAR_IDX_NEW_USERNAME_INPUT = SharedInputVarsIdx.newUsernameInput;
-export const SHARED_VAR_IDX_NEW_PASSWORD_INPUT = SharedInputVarsIdx.newPasswordInput;
-export const SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT = SharedInputVarsIdx.newPasswordComfirmInput;
-export const SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT = SharedInputVarsIdx.inviteReceiverEmailInput;
-export const SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON = SharedButtonVarsIdx.emailChangeButton;
-export const SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON = SharedButtonVarsIdx.usernameChangeButton;
-export const SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON = SharedButtonVarsIdx.passwordChangeButton;
-export const SHARED_VAR_IDX_INVITE_BUTTON = SharedButtonVarsIdx.inviteButton;
-export const SHARED_VAR_IDX_LOGOUT_BUTTON = SharedButtonVarsIdx.logoutButton;
-export const SHARED_VAR_IDX_MFA_BUTTON = SharedButtonVarsIdx.mfaButton;
-export const SHARED_VAR_IDX_RECOVERY_CODE_BUTTON = SharedButtonVarsIdx.recoveryCodeButton;
-export const SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON = SharedButtonVarsIdx.loginNotificationButton;
-export const SHARED_VAR_IDX_EMAIL_WARNING = SharedElementVarsIdx.emailWarning;
-export const SHARED_VAR_IDX_USERNAME_WARNING = SharedElementVarsIdx.usernameWarning;
-export const SHARED_VAR_IDX_PASSWORD_WARNING = SharedElementVarsIdx.passwordWarning;
-export const SHARED_VAR_IDX_INVITE_WARNING = SharedElementVarsIdx.inviteWarning;
-export const SHARED_VAR_IDX_MFA_WARNING = SharedElementVarsIdx.mfaWarning;
-export const SHARED_VAR_IDX_RECOVERY_CODE_WARNING = SharedElementVarsIdx.recoveryCodeWarning;
-export const SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING = SharedElementVarsIdx.loginNotificationWarning;
-export const SHARED_VAR_IDX_INVITE_COUNT = SharedElementVarsIdx.inviteCount;
-export const SHARED_VAR_IDX_MFA_INFO = SharedElementVarsIdx.mfaInfo;
-export const SHARED_VAR_IDX_RECOVERY_CODE_INFO = SharedElementVarsIdx.recoveryCodeInfo;
-export const SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO = SharedElementVarsIdx.loginNotificationInfo;
-export const SHARED_VAR_IDX_SESSIONS_CONTAINER = SharedElementVarsIdx.sessionsContainer;
-
 export function initializeSharedVars() {
     sharedBoolVars = [];
     sharedInputVars = [];
@@ -101,55 +74,55 @@ export function initializeSharedVars() {
     const titleElem = createParagraphElement(myAccountPageTitle);
     titleElem.id = 'title';
     appendChild(container, titleElem);
-    appendSubsection(container, 'メールアドレス', [], SHARED_VAR_IDX_EMAIL_WARNING, [], SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, changeButtonText, []);
+    appendSubsection(container, 'メールアドレス', [], SharedElementVarsIdx.emailWarning, [], SharedButtonVarsIdx.emailChangeButton, changeButtonText, []);
 
     const [usernameContainer, usernameInput] = createUsernameInput();
-    sharedInputVars[SHARED_VAR_IDX_NEW_USERNAME_INPUT] = usernameInput;
-    appendSubsection(container, 'ユーザー名', [], SHARED_VAR_IDX_USERNAME_WARNING, [usernameContainer], SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, changeButtonText, [usernameRule]);
+    sharedInputVars[SharedInputVarsIdx.newUsernameInput] = usernameInput;
+    appendSubsection(container, 'ユーザー名', [], SharedElementVarsIdx.usernameWarning, [usernameContainer], SharedButtonVarsIdx.usernameChangeButton, changeButtonText, [usernameRule]);
 
     const [passwordContainer, passwordInput] = createPasswordInput(true, '新しいパスワード');
     const [passwordConfirmContainer, passwordConfirmInput] = createPasswordInput(true, '確認再入力');
-    sharedInputVars[SHARED_VAR_IDX_NEW_PASSWORD_INPUT] = passwordInput;
-    sharedInputVars[SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT] = passwordConfirmInput;
-    appendSubsection(container, 'パスワード', [], SHARED_VAR_IDX_PASSWORD_WARNING, [passwordContainer, passwordConfirmContainer], SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, changeButtonText, passwordRules);
+    sharedInputVars[SharedInputVarsIdx.newPasswordInput] = passwordInput;
+    sharedInputVars[SharedInputVarsIdx.newPasswordComfirmInput] = passwordConfirmInput;
+    appendSubsection(container, 'パスワード', [], SharedElementVarsIdx.passwordWarning, [passwordContainer, passwordConfirmContainer], SharedButtonVarsIdx.passwordChangeButton, changeButtonText, passwordRules);
 
     const mfaInfo = createParagraphElement();
-    sharedElementVars[SHARED_VAR_IDX_MFA_INFO] = mfaInfo;
-    appendSubsection(container, '二要素認証', [mfaInfo], SHARED_VAR_IDX_MFA_WARNING, [], SHARED_VAR_IDX_MFA_BUTTON, undefined, []);
+    sharedElementVars[SharedElementVarsIdx.mfaInfo] = mfaInfo;
+    appendSubsection(container, '二要素認証', [mfaInfo], SharedElementVarsIdx.mfaWarning, [], SharedButtonVarsIdx.mfaButton, undefined, []);
 
     const recoveryCodeInfo = createParagraphElement();
-    sharedElementVars[SHARED_VAR_IDX_RECOVERY_CODE_INFO] = recoveryCodeInfo;
-    appendSubsection(container, 'リカバリーコード', [recoveryCodeInfo], SHARED_VAR_IDX_RECOVERY_CODE_WARNING, [], SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, '生成する', ['新しいコードを生成すると、既存のコードは無効になります。']);
+    sharedElementVars[SharedElementVarsIdx.recoveryCodeInfo] = recoveryCodeInfo;
+    appendSubsection(container, 'リカバリーコード', [recoveryCodeInfo], SharedElementVarsIdx.recoveryCodeWarning, [], SharedButtonVarsIdx.recoveryCodeButton, '生成する', ['新しいコードを生成すると、既存のコードは無効になります。']);
 
     const loginNotificationInfo = createParagraphElement();
-    sharedElementVars[SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO] = loginNotificationInfo;
-    appendSubsection(container, 'ログイン通知メール', [loginNotificationInfo], SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, [], SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, undefined, []);
+    sharedElementVars[SharedElementVarsIdx.loginNotificationInfo] = loginNotificationInfo;
+    appendSubsection(container, 'ログイン通知メール', [loginNotificationInfo], SharedElementVarsIdx.loginNotificationWarning, [], SharedButtonVarsIdx.loginNotificationButton, undefined, []);
 
     const sessionsContainer = createDivElement();
     sessionsContainer.id = 'sessions';
-    sharedElementVars[SHARED_VAR_IDX_SESSIONS_CONTAINER] = sessionsContainer;
+    sharedElementVars[SharedElementVarsIdx.sessionsContainer] = sessionsContainer;
     appendSubsection(container, 'お使いのデバイス', [sessionsContainer], null, [], null, undefined, []);
 
     const inviteCountInfo = createParagraphElement('保有している招待券の枚数：');
     const inviteCount = createSpanElement();
-    sharedElementVars[SHARED_VAR_IDX_INVITE_COUNT] = inviteCount;
+    sharedElementVars[SharedElementVarsIdx.inviteCount] = inviteCount;
     appendChild(inviteCountInfo, inviteCount);
     const [inviteReceiverEmailContainer, inviteReceiverEmailInput] = createEmailInput();
     inviteReceiverEmailInput.autocomplete = 'off';
-    sharedInputVars[SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT] = inviteReceiverEmailInput;
-    appendSubsection(container, 'ご招待', [inviteCountInfo], SHARED_VAR_IDX_INVITE_WARNING, [inviteReceiverEmailContainer], SHARED_VAR_IDX_INVITE_BUTTON, submitButtonText, []);
+    sharedInputVars[SharedInputVarsIdx.inviteReceiverEmailInput] = inviteReceiverEmailInput;
+    appendSubsection(container, 'ご招待', [inviteCountInfo], SharedElementVarsIdx.inviteWarning, [inviteReceiverEmailContainer], SharedButtonVarsIdx.inviteButton, submitButtonText, []);
 
     const logoutButton = createButtonElement('ログアウ');
-    sharedButtonVars[SHARED_VAR_IDX_LOGOUT_BUTTON] = logoutButton;
+    sharedButtonVars[SharedButtonVarsIdx.logoutButton] = logoutButton;
     appendChild(container, logoutButton);
 }
 
 export function setCurrentMfaStatus(status: boolean) {
-    sharedBoolVars[SHARED_VAR_IDX_CURRENT_MFA_STATUS] = status;
+    sharedBoolVars[SharedBoolVarsIdx.currentMfaStatus] = status;
 }
 
 export function setCurrentLoginNotificationStatus(status: boolean) {
-    sharedBoolVars[SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS] = status;
+    sharedBoolVars[SharedBoolVarsIdx.currentLoginNotificationStatus] = status;
 }
 
 function triggerSharedVarAccessError(): never {

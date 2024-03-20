@@ -27,7 +27,7 @@ import { invalidResponse } from '../module/server/message';
 import * as AccountInfo from '../module/type/AccountInfo';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';
-import { SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, SHARED_VAR_IDX_INVITE_BUTTON, SHARED_VAR_IDX_INVITE_COUNT, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGOUT_BUTTON, SHARED_VAR_IDX_MFA_BUTTON, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_SESSIONS_CONTAINER, SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, sessionLogoutButtons, setCurrentLoginNotificationStatus } from './shared_var';
+import { SharedBoolVarsIdx, SharedButtonVarsIdx, SharedElementVarsIdx, SharedInputVarsIdx, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, sessionLogoutButtons, setCurrentLoginNotificationStatus } from './shared_var';
 import { changeMfaStatus, disableAllInputs } from './helper';
 import { getLocalTimeString } from '../module/common/pure';
 import { basicImportPromise, importAll, mfaImportPromise, parseBrowserImportPromise } from './import_promise';
@@ -67,29 +67,29 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     setCurrentLoginNotificationStatus(userInfo.login_notification);
     changeMfaStatus(userInfo.mfa_status);
 
-    addEventListener(getSharedButton(SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON), 'click', () => {
+    addEventListener(getSharedButton(SharedButtonVarsIdx.emailChangeButton), 'click', () => {
         getImport(basicImportPromise).then(({ changeEmail }) => {
             if (currentPgid === pgid) {
                 changeEmail();
             }
         });
     });
-    addEventListener(getSharedButton(SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON), 'click', () => {
+    addEventListener(getSharedButton(SharedButtonVarsIdx.usernameChangeButton), 'click', () => {
         getImport(basicImportPromise).then(({ changeUsername }) => {
             if (currentPgid === pgid) {
                 changeUsername(userInfo);
             }
         });
     });
-    addEventListener(getSharedButton(SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON), 'click', () => {
+    addEventListener(getSharedButton(SharedButtonVarsIdx.passwordChangeButton), 'click', () => {
         getImport(basicImportPromise).then(({ changePassword }) => {
             if (currentPgid === pgid) {
                 changePassword();
             }
         });
     });
-    addEventListener(getSharedButton(SHARED_VAR_IDX_MFA_BUTTON), 'click', () => {
-        if (getSharedBool(SHARED_VAR_IDX_CURRENT_MFA_STATUS)) {
+    addEventListener(getSharedButton(SharedButtonVarsIdx.mfaButton), 'click', () => {
+        if (getSharedBool(SharedBoolVarsIdx.currentMfaStatus)) {
             getImport(mfaImportPromise).then(({ disableMfa }) => {
                 if (currentPgid === pgid) {
                     disableMfa();
@@ -103,27 +103,27 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
             });
         }
     });
-    addEventListener(getSharedButton(SHARED_VAR_IDX_RECOVERY_CODE_BUTTON), 'click', () => {
+    addEventListener(getSharedButton(SharedButtonVarsIdx.recoveryCodeButton), 'click', () => {
         getImport(mfaImportPromise).then(({ generateRecoveryCode }) => {
             if (currentPgid === pgid) {
                 generateRecoveryCode();
             }
         });
     });
-    addEventListener(getSharedButton(SHARED_VAR_IDX_INVITE_BUTTON), 'click', () => {
+    addEventListener(getSharedButton(SharedButtonVarsIdx.inviteButton), 'click', () => {
         getImport(basicImportPromise).then(({ invite }) => {
             if (currentPgid === pgid) {
                 invite();
             }
         });
     });
-    addEventListener(getSharedButton(SHARED_VAR_IDX_LOGOUT_BUTTON), 'click', () => {
+    addEventListener(getSharedButton(SharedButtonVarsIdx.logoutButton), 'click', () => {
         disableAllInputs(true);
         logout(() => {
             redirect(LOGIN_URL);
         });
     });
-    addEventListener(getSharedButton(SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON), 'click', () => {
+    addEventListener(getSharedButton(SharedButtonVarsIdx.loginNotificationButton), 'click', () => {
         getImport(basicImportPromise).then(({ changeLoginNotification }) => {
             if (currentPgid === pgid) {
                 changeLoginNotification();
@@ -131,11 +131,11 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
         });
     });
 
-    passwordStyling(getSharedInput(SHARED_VAR_IDX_NEW_PASSWORD_INPUT));
-    passwordStyling(getSharedInput(SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT));
+    passwordStyling(getSharedInput(SharedInputVarsIdx.newPasswordInput));
+    passwordStyling(getSharedInput(SharedInputVarsIdx.newPasswordComfirmInput));
 
     if (userInfo.mfa_status) {
-        const recoveryCodeInfo = getSharedElement(SHARED_VAR_IDX_RECOVERY_CODE_INFO);
+        const recoveryCodeInfo = getSharedElement(SharedElementVarsIdx.recoveryCodeInfo);
         if (userInfo.recovery_code_status === 0) {
             changeColor(recoveryCodeInfo, 'red');
             appendText(recoveryCodeInfo, 'リカバリーコードが残っていません。新しいリカバリーコードを生成してください。');
@@ -147,8 +147,8 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
         }
     }
 
-    appendText(getSharedElement(SHARED_VAR_IDX_INVITE_COUNT), userInfo.invite_quota.toString());
-    getSharedInput(SHARED_VAR_IDX_NEW_USERNAME_INPUT).value = userInfo.username;
+    appendText(getSharedElement(SharedElementVarsIdx.inviteCount), userInfo.invite_quota.toString());
+    getSharedInput(SharedInputVarsIdx.newUsernameInput).value = userInfo.username;
     showSessions(userInfo);
     addNavBar(NavBarPage.MY_ACCOUNT);
 }
@@ -174,7 +174,7 @@ function showSessions(userInfo: AccountInfo.AccountInfo) {
         appendParagraph('最近のアクティビティ：' + getLocalTimeString(session.last_active_time, true, true), innerContainer);
 
         const sessionID = session.id;
-        const sessionsContainer = getSharedElement(SHARED_VAR_IDX_SESSIONS_CONTAINER);
+        const sessionsContainer = getSharedElement(SharedElementVarsIdx.sessionsContainer);
         if (sessionID === undefined) {
             const thisDevicePrompt = createParagraphElement('※このデバイスです。');
             addClass(thisDevicePrompt, 'warning');

@@ -1,17 +1,17 @@
 import { addClass, disableInput, removeClass, replaceText } from '../module/dom';
 import { loginNotificationIsDisabled, loginNotificationIsEnabled, mfaNotSet } from '../module/text/message/body';
 import { changeColor, hideElement, showElement } from '../module/style';
-import { SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS, SHARED_VAR_IDX_CURRENT_MFA_STATUS, SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON, SHARED_VAR_IDX_INVITE_BUTTON, SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT, SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON, SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO, SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING, SHARED_VAR_IDX_LOGOUT_BUTTON, SHARED_VAR_IDX_MFA_BUTTON, SHARED_VAR_IDX_MFA_INFO, SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT, SHARED_VAR_IDX_NEW_PASSWORD_INPUT, SHARED_VAR_IDX_NEW_USERNAME_INPUT, SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_BUTTON, SHARED_VAR_IDX_RECOVERY_CODE_INFO, SHARED_VAR_IDX_RECOVERY_CODE_WARNING, SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setCurrentLoginNotificationStatus, setCurrentMfaStatus } from './shared_var';
+import { SharedBoolVarsIdx, SharedButtonVarsIdx, SharedInputVarsIdx, SharedElementVarsIdx, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setCurrentLoginNotificationStatus, setCurrentMfaStatus } from './shared_var';
 import { disableButtonText, enableButtonText } from '../module/text/ui';
 
 export function changeMfaStatus(newStatus: boolean) {
     setCurrentMfaStatus(newStatus);
-    const mfaInfo = getSharedElement(SHARED_VAR_IDX_MFA_INFO);
-    const mfaButton = getSharedButton(SHARED_VAR_IDX_MFA_BUTTON);
-    const recoveryCodeInfo = getSharedElement(SHARED_VAR_IDX_RECOVERY_CODE_INFO);
-    const recoveryCodeButton = getSharedButton(SHARED_VAR_IDX_RECOVERY_CODE_BUTTON);
-    const loginNotificationInfo = getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_INFO);
-    const loginNotificationButton = getSharedButton(SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON);
+    const mfaInfo = getSharedElement(SharedElementVarsIdx.mfaInfo);
+    const mfaButton = getSharedButton(SharedButtonVarsIdx.mfaButton);
+    const recoveryCodeInfo = getSharedElement(SharedElementVarsIdx.recoveryCodeInfo);
+    const recoveryCodeButton = getSharedButton(SharedButtonVarsIdx.recoveryCodeButton);
+    const loginNotificationInfo = getSharedElement(SharedElementVarsIdx.loginNotificationInfo);
+    const loginNotificationButton = getSharedButton(SharedButtonVarsIdx.loginNotificationButton);
     if (newStatus) {
         replaceText(mfaInfo, '二要素認証が有効になっています。');
         replaceText(mfaButton, disableButtonText);
@@ -20,7 +20,7 @@ export function changeMfaStatus(newStatus: boolean) {
         recoveryCodeButton.disabled = false;
         removeClass(recoveryCodeButton, 'not-allowed');
 
-        const currentLoginNotificationStatus = getSharedBool(SHARED_VAR_IDX_CURRENT_LOGIN_NOTIFICATION_STATUS);
+        const currentLoginNotificationStatus = getSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus);
         replaceText(loginNotificationInfo, currentLoginNotificationStatus ? loginNotificationIsEnabled : loginNotificationIsDisabled);
         replaceText(loginNotificationButton, currentLoginNotificationStatus ? disableButtonText : enableButtonText);
         loginNotificationButton.disabled = false;
@@ -32,35 +32,35 @@ export function changeMfaStatus(newStatus: boolean) {
         replaceText(recoveryCodeInfo, 'リカバリーコードは、二要素認証が有効な場合にのみ生成できます。');
         changeColor(recoveryCodeInfo, null);
         showElement(recoveryCodeInfo);
-        hideElement(getSharedElement(SHARED_VAR_IDX_RECOVERY_CODE_WARNING));
+        hideElement(getSharedElement(SharedElementVarsIdx.recoveryCodeWarning));
         recoveryCodeButton.disabled = true;
         addClass(recoveryCodeButton, 'not-allowed');
 
         setCurrentLoginNotificationStatus(true);
         replaceText(loginNotificationInfo, loginNotificationIsEnabled + 'ログイン通知を無効にできるのは、二要素認証が有効になっている場合のみです。');
         replaceText(loginNotificationButton, disableButtonText);
-        hideElement(getSharedElement(SHARED_VAR_IDX_LOGIN_NOTIFICATION_WARNING));
+        hideElement(getSharedElement(SharedElementVarsIdx.loginNotificationWarning));
         loginNotificationButton.disabled = true;
         addClass(loginNotificationButton, 'not-allowed');
     }
 }
 
 export function disableAllInputs(disabled: boolean) {
-    disableInput(getSharedInput(SHARED_VAR_IDX_NEW_USERNAME_INPUT), disabled);
-    disableInput(getSharedInput(SHARED_VAR_IDX_NEW_PASSWORD_INPUT), disabled);
-    disableInput(getSharedInput(SHARED_VAR_IDX_NEW_PASSWORD_CONFIRM_INPUT), disabled);
-    disableInput(getSharedInput(SHARED_VAR_IDX_INVITE_RECEIVER_EMAIL_INPUT), disabled);
+    disableInput(getSharedInput(SharedInputVarsIdx.newUsernameInput), disabled);
+    disableInput(getSharedInput(SharedInputVarsIdx.newPasswordInput), disabled);
+    disableInput(getSharedInput(SharedInputVarsIdx.newPasswordComfirmInput), disabled);
+    disableInput(getSharedInput(SharedInputVarsIdx.inviteReceiverEmailInput), disabled);
 
-    getSharedButton(SHARED_VAR_IDX_EMAIL_CHANGE_BUTTON).disabled = disabled;
-    getSharedButton(SHARED_VAR_IDX_USERNAME_CHANGE_BUTTON).disabled = disabled;
-    getSharedButton(SHARED_VAR_IDX_PASSWORD_CHANGE_BUTTON).disabled = disabled;
-    getSharedButton(SHARED_VAR_IDX_MFA_BUTTON).disabled = disabled;
-    getSharedButton(SHARED_VAR_IDX_INVITE_BUTTON).disabled = disabled;
-    getSharedButton(SHARED_VAR_IDX_LOGOUT_BUTTON).disabled = disabled;
+    getSharedButton(SharedButtonVarsIdx.emailChangeButton).disabled = disabled;
+    getSharedButton(SharedButtonVarsIdx.usernameChangeButton).disabled = disabled;
+    getSharedButton(SharedButtonVarsIdx.passwordChangeButton).disabled = disabled;
+    getSharedButton(SharedButtonVarsIdx.mfaButton).disabled = disabled;
+    getSharedButton(SharedButtonVarsIdx.inviteButton).disabled = disabled;
+    getSharedButton(SharedButtonVarsIdx.logoutButton).disabled = disabled;
 
-    const currentMfaStatus = getSharedBool(SHARED_VAR_IDX_CURRENT_MFA_STATUS);
-    getSharedButton(SHARED_VAR_IDX_RECOVERY_CODE_BUTTON).disabled = disabled || !currentMfaStatus;
-    getSharedButton(SHARED_VAR_IDX_LOGIN_NOTIFICATION_BUTTON).disabled = disabled || !currentMfaStatus;
+    const currentMfaStatus = getSharedBool(SharedBoolVarsIdx.currentMfaStatus);
+    getSharedButton(SharedButtonVarsIdx.recoveryCodeButton).disabled = disabled || !currentMfaStatus;
+    getSharedButton(SharedButtonVarsIdx.loginNotificationButton).disabled = disabled || !currentMfaStatus;
 
     for (const sessionLogoutButton of sessionLogoutButtons) {
         sessionLogoutButton.disabled = disabled;
