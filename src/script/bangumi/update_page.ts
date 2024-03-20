@@ -33,7 +33,7 @@ import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
-import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_TITLE, dereferenceSharedVars, getSharedElement, initializeSharedVars } from './shared_var';
+import { SharedElementVarsIdx, dereferenceSharedVars, getSharedElement, initializeSharedVars } from './shared_var';
 import { hideElement, setMaxHeight, setMinHeight, setPaddingBottom, showElement } from '../module/style';
 import { CSS_UNIT_PX, CSS_UNIT_VH } from '../module/style/value';
 
@@ -62,8 +62,8 @@ export default async function (
     initializeSharedVars();
     addNavBar();
 
-    const titleElem = getSharedElement(SHARED_VAR_IDX_TITLE);
-    const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
+    const titleElem = getSharedElement(SharedElementVarsIdx.TITLE);
+    const contentContainer = getSharedElement(SharedElementVarsIdx.CONTENT_CONTAINER);
 
     const epInfo = response.ep_info;
 

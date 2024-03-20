@@ -51,7 +51,7 @@ import { CustomMediaError } from '../module/player/media_error';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
-import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
+import { SharedElementVarsIdx, getSharedElement } from './shared_var';
 import { addInterval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
 import { CSS_UNIT_PERCENT } from '../module/style/value';
@@ -86,7 +86,7 @@ export default function (
     baseURL = _baseURL;
     createMediaSessionPromise = _createMediaSessionPromise;
 
-    const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
+    const contentContainer = getSharedElement(SharedElementVarsIdx.CONTENT_CONTAINER);
     addClass(contentContainer, 'video');
 
     const startTimeText = getURLParam('timestamp');
@@ -147,7 +147,7 @@ export default function (
     hideElement(formatDisplay);
     appendChild(formatContainer, formatDisplay);
 
-    insertBefore(formatContainer, getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER));
+    insertBefore(formatContainer, getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER));
 
     createMediaSessionPromise.then((mediaSessionInfo) => {
         if (currentPgid !== pgid) {
@@ -321,7 +321,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             currentMediaInstance = null;
             cleanupEvents();
         }
-        const mediaHolder = getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER);
+        const mediaHolder = getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER);
         replaceChildren(mediaHolder, playerContainer);
         for (const mediaMessage of mediaMessageQueue) {
             showMediaMessage(...mediaMessage);
@@ -458,7 +458,7 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     addClass(chaptersNode, 'chapters');
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);
-    appendChild(getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER), chaptersNode);
+    appendChild(getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER), chaptersNode);
 
     const video = mediaInstance.media;
     function updateChapterDisplay() {

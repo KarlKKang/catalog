@@ -33,7 +33,7 @@ import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import { VideoFormatInfo } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
 import { CustomMediaError } from '../module/player/media_error';
-import { SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
+import { SharedElementVarsIdx, getSharedElement } from './shared_var';
 import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
 import { CSS_UNIT_PX } from '../module/style/value';
 import { defaultError } from '../module/text/message/title';
@@ -83,7 +83,7 @@ export function showTextErrorMessage(title: string, body: string) {
 }
 
 export function showErrorMessage(title: string, body: Node[]) {
-    const mediaHolder = getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER);
+    const mediaHolder = getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER);
     let messageElem = getByIdNative('error');
     if (messageElem === null) {
         messageElem = createMessageElem(title, body, 'red');
@@ -100,7 +100,7 @@ export function showErrorMessage(title: string, body: Node[]) {
 
 export function showMediaMessage(title: string, body: Node[], titleColor: string | null) {
     const messageElem = createMessageElem(title, body, titleColor);
-    prependChild(getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER), messageElem);
+    prependChild(getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER), messageElem);
 }
 
 export function buildDownloadAccordion(

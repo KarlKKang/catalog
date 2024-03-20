@@ -25,7 +25,7 @@ import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 import { lazyloadImportPromise } from './import_promise';
-import { SHARED_VAR_IDX_CONTENT_CONTAINER, SHARED_VAR_IDX_MEDIA_HOLDER, getSharedElement } from './shared_var';
+import { SharedElementVarsIdx, getSharedElement } from './shared_var';
 import { unloadLazyload } from '../module/lazyload';
 import { hideElement, setWidth } from '../module/style';
 import { CSS_AUTO } from '../module/style/value';
@@ -41,8 +41,8 @@ export default async function (
     baseURL: string,
     createMediaSessionPromise: Promise<MediaSessionInfo>
 ) {
-    const contentContainer = getSharedElement(SHARED_VAR_IDX_CONTENT_CONTAINER);
-    const mediaHolder = getSharedElement(SHARED_VAR_IDX_MEDIA_HOLDER);
+    const contentContainer = getSharedElement(SharedElementVarsIdx.CONTENT_CONTAINER);
+    const mediaHolder = getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER);
 
     if (epInfo.gallery_title !== '') {
         const title = createParagraphElement();

@@ -2,15 +2,11 @@ import { appendChild, body, createDivElement, createParagraphElement, prependChi
 
 let sharedElementVars: HTMLElement[] = [];
 
-const enum SharedElementVarsIdx {
-    title,
-    contentContainer,
-    mediaHolder,
+export const enum SharedElementVarsIdx {
+    TITLE,
+    CONTENT_CONTAINER,
+    MEDIA_HOLDER,
 }
-
-export const SHARED_VAR_IDX_TITLE = SharedElementVarsIdx.title;
-export const SHARED_VAR_IDX_CONTENT_CONTAINER = SharedElementVarsIdx.contentContainer;
-export const SHARED_VAR_IDX_MEDIA_HOLDER = SharedElementVarsIdx.mediaHolder;
 
 export function initializeSharedVars() {
     const titleElem = createParagraphElement();
