@@ -33,9 +33,6 @@ type PageScriptImport = Promise<PageScript>;
 type Page = {
     script: () => PageScriptImport;
     style: () => Promise<any>[];
-    html?: () => Promise<{
-        default: string;
-    }>;
     htmlEntry: HTMLEntry;
     title?: string;
     id?: string;
@@ -140,7 +137,6 @@ const pages: PageMap = {
             navBarCss(),
             newsCss(),
         ],
-        html: () => import('../html/info.html'),
         title: infoPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
         id: 'news',
@@ -404,7 +400,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
 
     const scriptImportPromise = page.script();
     const styleImportPromises = page.style();
-    const htmlImportPromise = page.html?.();
 
     const newPgid = {};
     setPgid(newPgid);
@@ -463,9 +458,8 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     };
     script.default(
         async (callback?: () => void) => {
-            let htmlContent: Awaited<typeof htmlImportPromise>;
             try {
-                [htmlContent] = await Promise.all([htmlImportPromise, ...styleImportPromises]);
+                await Promise.all(styleImportPromises);
             } catch (e) {
                 if (pgid === newPgid) {
                     showMessage(moduleImportError(e));
@@ -482,9 +476,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
             page.htmlEntry === HTMLEntry.NO_THEME && addClass(body, NO_THEME_CLASS);
             page.nativeViewport === true && setViewport(true);
             registerServiceWorker(isStandardStyle);
-            if (htmlContent !== undefined) {
-                innerBody.innerHTML = htmlContent.default;
-            }
             callback?.();
 
             loadingBarWidth = 100;

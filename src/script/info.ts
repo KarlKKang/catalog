@@ -5,9 +5,11 @@ import {
 } from './module/common';
 import { authenticate } from './module/server';
 import {
+    body,
     clearSessionStorage,
 } from './module/dom';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import html from '../html/info.html';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -16,6 +18,7 @@ export default function (showPage: ShowPageFunc) {
         successful:
             function () {
                 showPage(() => {
+                    body.innerHTML = html;
                     addNavBar(NAV_BAR_INFO);
                     scrollToHash();
                 });
@@ -23,6 +26,7 @@ export default function (showPage: ShowPageFunc) {
         failed:
             function () {
                 showPage(() => {
+                    body.innerHTML = html;
                     scrollToHash();
                 });
             },
