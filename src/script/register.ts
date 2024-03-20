@@ -7,13 +7,22 @@ import {
 import { sendServerRequest } from './module/server';
 import {
     addEventListener,
-    getById,
-    getByClassAt,
     openWindow,
     replaceText,
     clearSessionStorage,
-    passwordStyling,
     disableInput,
+    createDivElement,
+    createParagraphElement,
+    createSpanElement,
+    addClass,
+    appendChild,
+    appendText,
+    body,
+    createUsernameInput,
+    createPasswordInput,
+    createButtonElement,
+    createUListElement,
+    appendListItems,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { expired, registerComplete, emailAlreadyRegistered } from './module/message/param';
@@ -22,7 +31,8 @@ import { PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/server/message';
-import { showElement } from './module/style';
+import { hideElement, horizontalCenter, showElement } from './module/style';
+import { passwordRules, usernameRule } from './module/text/ui';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -30,7 +40,7 @@ export default function (showPage: ShowPageFunc) {
     const param = getURLParam('p');
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showPage(addInfoRedirects);
+            showPage(() => { showPageCallback('test'); });
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -54,11 +64,43 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function showPageCallback(param: string) {
-    const submitButton = getById('submit-button') as HTMLButtonElement;
-    const usernameInput = getById('username') as HTMLInputElement;
-    const passwordInput = getById('password') as HTMLInputElement;
-    const passwordConfirmInput = getById('password-confirm') as HTMLInputElement;
-    const warningElem = getById('warning');
+    const container = createDivElement();
+    container.id = 'portal-form';
+    appendChild(body, container);
+
+    const title = createParagraphElement('会員情報登録');
+    title.id = 'title';
+    appendChild(container, title);
+
+    appendChild(container, getInfoNote());
+
+    const warningElem = createParagraphElement();
+    warningElem.id = 'warning';
+    hideElement(warningElem);
+    appendChild(container, warningElem);
+
+    const [usernameContainer, usernameInput] = createUsernameInput();
+    horizontalCenter(usernameContainer);
+    appendChild(container, usernameContainer);
+
+    const [passwordContainer, passwordInput] = createPasswordInput(true);
+    horizontalCenter(passwordContainer);
+    appendChild(container, passwordContainer);
+
+    const [passwordConfirmContainer, passwordConfirmInput] = createPasswordInput(true, 'パスワード（確認）');
+    horizontalCenter(passwordConfirmContainer);
+    appendChild(container, passwordConfirmContainer);
+
+    const submitButton = createButtonElement('登録する');
+    horizontalCenter(submitButton);
+    appendChild(container, submitButton);
+
+    const note = createDivElement();
+    note.id = 'note';
+    const noteList = createUListElement();
+    appendListItems(noteList, usernameRule, ...passwordRules);
+    appendChild(note, noteList);
+    appendChild(container, note);
 
     addEventListener(usernameInput, 'keydown', (event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
@@ -75,15 +117,9 @@ function showPageCallback(param: string) {
             register();
         }
     });
-
-    addInfoRedirects();
-
     addEventListener(submitButton, 'click', () => {
         register();
     });
-
-    passwordStyling(passwordInput);
-    passwordStyling(passwordConfirmInput);
 
     function register() {
         disableAllInputs(true);
@@ -148,17 +184,30 @@ function showPageCallback(param: string) {
     }
 }
 
-function addInfoRedirects() {
-    addEventListener(getByClassAt('link', 0), 'click', () => {
-        openWindow('info');
-    });
-    addEventListener(getByClassAt('link', 1), 'click', () => {
-        openWindow('info#en');
-    });
-    addEventListener(getByClassAt('link', 2), 'click', () => {
-        openWindow('info#zh-Hant');
-    });
-    addEventListener(getByClassAt('link', 3), 'click', () => {
-        openWindow('info#zh-Hans');
-    });
+function getInfoNote() {
+    const texts = [
+        [null, '登録する前に、', 'ご利用ガイド', 'をお読みください。'],
+        ['en', 'Before you register, please read the ', 'User Guide', '.'],
+        ['zh-Hant', '請在註冊前閱讀', '規範與指南', '。'],
+        ['zh-Hans', '请在注册前阅读', '规则与指南', '。'],
+    ] as const;
+
+    const container = createDivElement();
+    container.id = 'note';
+    for (const [lang, ...text] of texts) {
+        const paragraph = createParagraphElement(text[0]);
+        if (lang !== null) {
+            paragraph.lang = lang;
+        }
+        const link = createSpanElement(text[1]);
+        addClass(link, 'link');
+        appendChild(paragraph, link);
+        appendText(paragraph, text[2]);
+        appendChild(container, paragraph);
+        addEventListener(link, 'click', () => {
+            const uri = 'info' + (lang === null ? '' : '#' + lang);
+            openWindow(uri);
+        });
+    }
+    return container;
 }

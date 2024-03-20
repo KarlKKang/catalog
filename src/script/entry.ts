@@ -182,7 +182,6 @@ const pages: PageMap = {
             portalFormCss(),
             registerCss(),
         ],
-        html: () => import('../html/register.html'),
         title: registerPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
     },

@@ -168,3 +168,16 @@ export function createTotpInput(allowRecoveryCode: boolean) {
     appendChild(container, input);
     return [container, input] as const;
 }
+
+export function createUsernameInput() {
+    const container = createDivElement();
+    addClass(container, 'input-field');
+    addClass(container, 'multi-language');
+    const input = createInputElement('text');
+    input.autocomplete = 'username';
+    input.placeholder = 'ユーザー名';
+    input.autocapitalize = 'off';
+    input.maxLength = 16;
+    appendChild(container, input);
+    return [container, input] as const;
+}
