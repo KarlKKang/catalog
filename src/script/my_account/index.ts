@@ -55,8 +55,8 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
                 return;
             }
-
-            showPage(() => { showPageCallback(parsedResponse); });
+            showPage();
+            showPageCallback(parsedResponse);
         }
     });
     importAll();

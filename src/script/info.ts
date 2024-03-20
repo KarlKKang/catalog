@@ -30,18 +30,16 @@ export default function (showPage: ShowPageFunc) {
     authenticate({
         successful:
             function () {
-                showPage(() => {
-                    body.innerHTML = html;
-                    addNavBar(NAV_BAR_INFO);
-                    scrollToHash();
-                });
+                showPage();
+                body.innerHTML = html;
+                addNavBar(NAV_BAR_INFO);
+                scrollToHash();
             },
         failed:
             function () {
-                showPage(() => {
-                    body.innerHTML = html;
-                    scrollToHash();
-                });
+                showPage();
+                body.innerHTML = html;
+                scrollToHash();
             },
     });
 }

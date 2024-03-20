@@ -63,37 +63,37 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
                 return;
             }
-            showPage(() => {
-                const flexContainer = createDivElement();
-                flexContainer.id = 'flex-container';
-                const container = createDivElement();
-                container.id = 'image-container';
-                const overlay = createDivElement();
-                addClass(overlay, 'overlay');
-                appendChild(container, overlay);
-                appendChild(flexContainer, container);
-                appendChild(body, flexContainer);
+            showPage();
 
-                removeRightClick(container);
-                const currentPgid = pgid;
-                imageLoaderImportPromise.then((imageLoaderModule) => {
-                    if (currentPgid !== pgid) {
-                        return;
-                    }
-                    imageLoader = imageLoaderModule;
-                    imageLoader.default(container, baseURL + encodeCFURIComponent(fileName), fileName, true, (canvas) => {
-                        setWidth(canvas, canvas.width / w.devicePixelRatio, CSS_UNIT_PX);
-                        // We won't listen to DPI change since we want to allow the user to zoom in and out.
-                        // This has the side effect of not updating the image size when the screen DPI actually changes.
-                    }, undefined, () => {
-                        showMessage(notFound);
-                    });
-                }).catch((e) => {
-                    if (currentPgid !== pgid) {
-                        showMessage(moduleImportError(e));
-                    }
-                    throw e;
+            const flexContainer = createDivElement();
+            flexContainer.id = 'flex-container';
+            const container = createDivElement();
+            container.id = 'image-container';
+            const overlay = createDivElement();
+            addClass(overlay, 'overlay');
+            appendChild(container, overlay);
+            appendChild(flexContainer, container);
+            appendChild(body, flexContainer);
+
+            removeRightClick(container);
+            const currentPgid = pgid;
+            imageLoaderImportPromise.then((imageLoaderModule) => {
+                if (currentPgid !== pgid) {
+                    return;
+                }
+                imageLoader = imageLoaderModule;
+                imageLoader.default(container, baseURL + encodeCFURIComponent(fileName), fileName, true, (canvas) => {
+                    setWidth(canvas, canvas.width / w.devicePixelRatio, CSS_UNIT_PX);
+                    // We won't listen to DPI change since we want to allow the user to zoom in and out.
+                    // This has the side effect of not updating the image size when the screen DPI actually changes.
+                }, undefined, () => {
+                    showMessage(notFound);
                 });
+            }).catch((e) => {
+                if (currentPgid !== pgid) {
+                    showMessage(moduleImportError(e));
+                }
+                throw e;
             });
         },
         content: sessionCredential,

@@ -98,6 +98,7 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
                 return;
             }
             setUpSessionAuthentication(parsedResponse.credential, logoutParam);
+            showPage();
 
             const contentContainer = createDivElement();
             contentContainer.id = 'content';
@@ -105,14 +106,12 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
             loadingText.id = 'loading-text';
             appendChild(contentContainer, loadingText);
 
-            showPage(() => {
-                const container = createDivElement();
-                container.id = 'container';
-                appendChild(body, container);
-                showNews(container, contentContainer, parsedResponse);
-                addNavBar(NAV_BAR_NEWS, () => {
-                    redirect(NEWS_TOP_URL);
-                });
+            const container = createDivElement();
+            container.id = 'container';
+            appendChild(body, container);
+            showNews(container, contentContainer, parsedResponse);
+            addNavBar(NAV_BAR_NEWS, () => {
+                redirect(NEWS_TOP_URL);
             });
 
             const xhr = new XMLHttpRequest();
@@ -245,7 +244,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
 
 function getAllNews(showPage: ShowPageFunc, loadingTextContainer: HTMLElement): void;
 function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement): void;
-function getAllNews(containerOrShowPage: unknown, loadingTextContainer: HTMLElement): void {
+function getAllNews(containerOrShowPage: ShowPageFunc | HTMLElement, loadingTextContainer: HTMLElement): void {
     if (pivot === 'EOF') {
         return;
     }
@@ -261,23 +260,20 @@ function getAllNews(containerOrShowPage: unknown, loadingTextContainer: HTMLElem
                 return;
             }
 
-            if (containerOrShowPage instanceof HTMLElement) {
-                showAllNews(containerOrShowPage, parsedResponse, loadingTextContainer);
-            } else {
-                (containerOrShowPage as ShowPageFunc)(() => {
-                    const container = createDivElement();
-                    container.id = 'container';
-                    appendChild(body, container);
-                    appendChild(body, loadingTextContainer);
-                    const positionDetector = createDivElement();
-                    positionDetector.id = 'position-detector';
-                    appendChild(body, positionDetector);
-                    addNavBar(NAV_BAR_NEWS);
-
-                    initializeInfiniteScrolling(() => { getAllNews(container, loadingTextContainer); });
-                    showAllNews(container, parsedResponse, loadingTextContainer);
-                });
+            if (!(containerOrShowPage instanceof HTMLElement)) {
+                (containerOrShowPage as ShowPageFunc)();
+                const container = createDivElement();
+                container.id = 'container';
+                appendChild(body, container);
+                appendChild(body, loadingTextContainer);
+                const positionDetector = createDivElement();
+                positionDetector.id = 'position-detector';
+                appendChild(body, positionDetector);
+                addNavBar(NAV_BAR_NEWS);
+                initializeInfiniteScrolling(() => { getAllNews(container, loadingTextContainer); });
+                containerOrShowPage = container;
             }
+            showAllNews(containerOrShowPage, parsedResponse, loadingTextContainer);
         },
         method: 'GET',
     });

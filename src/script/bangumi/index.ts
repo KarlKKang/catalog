@@ -106,14 +106,13 @@ export default function (showPage: ShowPageFunc) {
                 throw e;
             }
 
-            showPage(() => {
-                updatePage.default(
-                    parsedResponse,
-                    seriesID,
-                    epIndex,
-                    createMediaSessionPromise,
-                );
-            });
+            showPage();
+            updatePage.default(
+                parsedResponse,
+                seriesID,
+                epIndex,
+                createMediaSessionPromise,
+            );
         },
         logoutParam: getLogoutParam(seriesID, epIndex),
         method: 'GET',

@@ -42,7 +42,8 @@ export default function (showPage: ShowPageFunc) {
 
     if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
         if (DEVELOPMENT) {
-            showPage(() => { showPageCallback('test', 'test', 'test'); });
+            showPage();
+            showPageCallback('test', 'test', 'test');
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -68,8 +69,8 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
                 return;
             }
-
-            showPage(() => { showPageCallback(user, signature, expires); });
+            showPage();
+            showPageCallback(user, signature, expires);
         },
         content: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
     });

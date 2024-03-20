@@ -352,7 +352,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
         htmlEntry: page.htmlEntry,
     };
     script.default(
-        async (callback?: () => void) => {
+        () => {
             if (pgid !== newPgid) {
                 return;
             }
@@ -362,7 +362,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
             page.htmlEntry === HTMLEntry.NO_THEME && addClass(body, NO_THEME_CLASS);
             page.nativeViewport === true && setViewport(true);
             registerServiceWorker(isStandardStyle);
-            callback?.();
 
             loadingBarWidth = 100;
             if (loadingBarShown) {

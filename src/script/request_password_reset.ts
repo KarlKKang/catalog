@@ -31,7 +31,8 @@ import '../css/portal_form.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
-    showPage(() => { showPageCallback(); });
+    showPage();
+    showPageCallback();
 }
 
 function showPageCallback() {

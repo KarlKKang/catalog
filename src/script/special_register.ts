@@ -26,7 +26,8 @@ import '../css/register.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
-    showPage(() => { showPageCallback(); });
+    showPage();
+    showPageCallback();
 }
 
 function showPageCallback() {

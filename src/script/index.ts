@@ -75,14 +75,13 @@ export default function (showPage: ShowPageFunc) {
         keywords = 'keywords=' + encodeURIComponent(urlKeywords) + '&';
     }
 
-    getSeries((seriesInfo, xhr) => {
-        showPage(async () => {
-            const lazyload = await lazyloadImportPromise;
-            if (currentRequest !== xhr) {
-                return;
-            }
-            showPageCallback(seriesInfo, urlKeywords, lazyload);
-        });
+    getSeries(async (seriesInfo, xhr) => {
+        const lazyload = await lazyloadImportPromise;
+        if (currentRequest !== xhr) {
+            return;
+        }
+        showPage();
+        showPageCallback(seriesInfo, urlKeywords, lazyload);
     }, false);
 }
 

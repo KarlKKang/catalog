@@ -56,7 +56,8 @@ export default function (showPage: ShowPageFunc) {
             },
         failed:
             function () {
-                showPage(() => { showPageCallback(); });
+                showPage();
+                showPageCallback();
             }
     });
     onDemandImportPromise = import('./on_demand');

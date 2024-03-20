@@ -41,9 +41,8 @@ export default function (showPage: ShowPageFunc) {
     const param = getURLParam('p');
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
-            showPage(() => {
-                showPageCallback('test');
-            });
+            showPage();
+            showPageCallback('test');
         } else {
             redirect(LOGIN_URL, true);
         }
@@ -55,9 +54,8 @@ export default function (showPage: ShowPageFunc) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
             } else if (response === 'APPROVED') {
-                showPage(() => {
-                    showPageCallback(param);
-                });
+                showPage();
+                showPageCallback(param);
             } else {
                 showMessage(invalidResponse());
             }

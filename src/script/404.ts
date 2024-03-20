@@ -21,28 +21,28 @@ import * as styles from '../css/message.module.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
-    showPage(() => {
-        const container = createDivElement();
-        addClass(container, styles.container);
+    showPage();
 
-        const title = createParagraphElement(notFoundTitle);
-        addClass(title, styles.title);
-        changeColor(title, 'red');
-        appendChild(container, title);
+    const container = createDivElement();
+    addClass(container, styles.container);
 
-        const messageBody = createParagraphElement(notFoundBody);
-        addClass(messageBody, styles.body);
-        appendChild(container, messageBody);
+    const title = createParagraphElement(notFoundTitle);
+    addClass(title, styles.title);
+    changeColor(title, 'red');
+    appendChild(container, title);
 
-        const button = createButtonElement('トップページへ戻る');
-        addClass(button, styles.button);
-        horizontalCenter(button);
-        setWidth(button, CSS_AUTO);
-        addEventListener(button, 'click', () => {
-            redirect(TOP_URL);
-        });
-        appendChild(container, button);
+    const messageBody = createParagraphElement(notFoundBody);
+    addClass(messageBody, styles.body);
+    appendChild(container, messageBody);
 
-        appendChild(body, container);
+    const button = createButtonElement('トップページへ戻る');
+    addClass(button, styles.button);
+    horizontalCenter(button);
+    setWidth(button, CSS_AUTO);
+    addEventListener(button, 'click', () => {
+        redirect(TOP_URL);
     });
+    appendChild(container, button);
+
+    appendChild(body, container);
 }

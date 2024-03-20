@@ -35,16 +35,15 @@ export default function (showPage: ShowPageFunc) {
 
     if (message === null || title === null || color === null || documentTitle === null) {
         if (DEVELOPMENT) {
-            showPage(() => {
-                const [container, titleElem, messageElem] = createElements(true);
-                changeColor(titleElem, 'orange');
-                appendText(titleElem, 'タイトルTitle');
-                appendText(messageElem, 'メッセージMessage'.repeat(10));
-                const button = createButtonElement('ボタンButton');
-                addClass(button, styles.button);
-                horizontalCenter(button);
-                appendChild(container, button);
-            });
+            showPage();
+            const [container, titleElem, messageElem] = createElements(true);
+            changeColor(titleElem, 'orange');
+            appendText(titleElem, 'タイトルTitle');
+            appendText(messageElem, 'メッセージMessage'.repeat(10));
+            const button = createButtonElement('ボタンButton');
+            addClass(button, styles.button);
+            horizontalCenter(button);
+            appendChild(container, button);
         } else {
             redirect(TOP_URL, true);
         }
@@ -52,27 +51,27 @@ export default function (showPage: ShowPageFunc) {
     }
 
     const callback = () => {
-        showPage(() => {
-            const [container, titleElem, messageElem] = createElements(!replaceBody);
-            setTitle(documentTitle);
-            titleElem.innerHTML = title;
-            changeColor(titleElem, color);
-            messageElem.innerHTML = message;
+        showPage();
 
-            if (buttonText !== null) {
-                if (url === null) {
-                    redirect(TOP_URL, true);
-                    return;
-                }
-                const button = createButtonElement(buttonText);
-                addClass(button, styles.button);
-                horizontalCenter(button);
-                appendChild(container, button);
-                addEventListener(button, 'click', () => {
-                    redirect(url, true);
-                });
+        const [container, titleElem, messageElem] = createElements(!replaceBody);
+        setTitle(documentTitle);
+        titleElem.innerHTML = title;
+        changeColor(titleElem, color);
+        messageElem.innerHTML = message;
+
+        if (buttonText !== null) {
+            if (url === null) {
+                redirect(TOP_URL, true);
+                return;
             }
-        });
+            const button = createButtonElement(buttonText);
+            addClass(button, styles.button);
+            horizontalCenter(button);
+            appendChild(container, button);
+            addEventListener(button, 'click', () => {
+                redirect(url, true);
+            });
+        }
     };
 
     if (logoutParam) {
