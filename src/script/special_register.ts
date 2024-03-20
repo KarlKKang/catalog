@@ -10,6 +10,7 @@ import {
     createParagraphElement,
     createEmailInput,
     createButtonElement,
+    addClass,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/param';
@@ -21,7 +22,7 @@ import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';
 import { registerPageTitle } from './module/text/page_title';
 
-import '../css/portal_form.scss';
+import * as styles from '../css/portal_form.module.scss';
 import '../css/register.scss';
 
 export default function (showPage: ShowPageFunc) {
@@ -32,15 +33,15 @@ export default function (showPage: ShowPageFunc) {
 
 function showPageCallback() {
     const container = createDivElement();
-    container.id = 'portal-form';
+    addClass(container, styles.container);
     appendChild(body, container);
 
     const title = createParagraphElement(registerPageTitle);
-    title.id = 'title';
+    addClass(title, styles.title);
     appendChild(container, title);
 
     const warningElem = createParagraphElement();
-    warningElem.id = 'warning';
+    addClass(warningElem, styles.warning);
     hideElement(warningElem);
     appendChild(container, warningElem);
 

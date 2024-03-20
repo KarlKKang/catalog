@@ -39,7 +39,7 @@ import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
 import { forgetPasswordText, keepLoggedInText, loginButtonText, welcomeText } from '../module/text/ui';
 
-import '../../css/portal_form.scss';
+import * as formStyles from '../../css/portal_form.module.scss';
 import '../../css/login.scss';
 
 let onDemandImportPromise: Promise<typeof import(
@@ -65,15 +65,15 @@ export default function (showPage: ShowPageFunc) {
 
 function showPageCallback() {
     const container = createDivElement();
-    container.id = 'portal-form';
+    addClass(container, formStyles.container);
     appendChild(body, container);
 
     const title = createParagraphElement(welcomeText);
-    title.id = 'title';
+    addClass(title, formStyles.title);
     appendChild(container, title);
 
     const warningElem = createParagraphElement();
-    warningElem.id = 'warning';
+    addClass(warningElem, formStyles.warning);
     hideElement(warningElem);
     appendChild(container, warningElem);
 

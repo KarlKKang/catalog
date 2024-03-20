@@ -19,6 +19,7 @@ import {
     createButtonElement,
     createUListElement,
     appendListItems,
+    addClass,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/text/message/body';
@@ -31,7 +32,7 @@ import { hideElement, horizontalCenter, showElement } from './module/style';
 import { passwordResetPageTitle } from './module/text/page_title';
 import { changeButtonText, passwordRules } from './module/text/ui';
 
-import '../css/portal_form.scss';
+import * as styles from '../css/portal_form.module.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -78,15 +79,15 @@ export default function (showPage: ShowPageFunc) {
 
 function showPageCallback(user: string, signature: string, expires: string) {
     const container = createDivElement();
-    container.id = 'portal-form';
+    addClass(container, styles.container);
     appendChild(body, container);
 
     const title = createParagraphElement(passwordResetPageTitle);
-    title.id = 'title';
+    addClass(title, styles.title);
     appendChild(container, title);
 
     const warningElem = createParagraphElement();
-    warningElem.id = 'warning';
+    addClass(warningElem, styles.warning);
     hideElement(warningElem);
     appendChild(container, warningElem);
 
@@ -103,7 +104,7 @@ function showPageCallback(user: string, signature: string, expires: string) {
     appendChild(container, submitButton);
 
     const note = createDivElement();
-    note.id = 'note';
+    addClass(note, styles.note);
     const noteList = createUListElement();
     appendListItems(noteList, ...passwordRules);
     appendChild(note, noteList);

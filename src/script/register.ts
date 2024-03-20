@@ -37,7 +37,7 @@ import { passwordRules, usernameRule } from './module/text/ui';
 import '../font/dist/NotoSansTC/NotoSansTC-Light.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import '../font/dist/NotoSans/NotoSans-Light.css';
-import '../css/portal_form.scss';
+import * as styles from '../css/portal_form.module.scss';
 import '../css/register.scss';
 
 export default function (showPage: ShowPageFunc) {
@@ -73,17 +73,17 @@ export default function (showPage: ShowPageFunc) {
 
 function showPageCallback(param: string) {
     const container = createDivElement();
-    container.id = 'portal-form';
+    addClass(container, styles.container);
     appendChild(body, container);
 
     const title = createParagraphElement('会員情報登録');
-    title.id = 'title';
+    addClass(title, styles.title);
     appendChild(container, title);
 
     appendChild(container, getInfoNote());
 
     const warningElem = createParagraphElement();
-    warningElem.id = 'warning';
+    addClass(warningElem, styles.warning);
     hideElement(warningElem);
     appendChild(container, warningElem);
 
@@ -104,7 +104,7 @@ function showPageCallback(param: string) {
     appendChild(container, submitButton);
 
     const note = createDivElement();
-    note.id = 'note';
+    addClass(note, styles.note);
     const noteList = createUListElement();
     appendListItems(noteList, usernameRule, ...passwordRules);
     appendChild(note, noteList);
@@ -201,7 +201,7 @@ function getInfoNote() {
     ] as const;
 
     const container = createDivElement();
-    container.id = 'note';
+    addClass(container, styles.note);
     for (const [lang, ...text] of texts) {
         const paragraph = createParagraphElement(text[0]);
         if (lang !== null) {
