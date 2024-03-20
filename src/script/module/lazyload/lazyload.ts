@@ -1,6 +1,5 @@
 import {
-    type SessionTypes,
-    SESSION_TYPE_MEDIA,
+    SessionTypes,
 } from '../common';
 import { sendServerRequest } from '../server';
 import {
@@ -134,7 +133,7 @@ function loadImage(target: Element, targetData: TargetData) {
 
     if (credential !== null) {
         const sessionCredential = credential[0];
-        const uri = credential[1] === SESSION_TYPE_MEDIA ? 'get_image' : 'get_news_image';
+        const uri = credential[1] === SessionTypes.MEDIA ? 'get_image' : 'get_news_image';
 
         if (sessionCredentialPromise === null) {
             sessionCredentialPromise = new Promise((resolve) => {

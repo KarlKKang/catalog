@@ -1,5 +1,5 @@
 import {
-    SESSION_TYPE_MEDIA,
+    SessionTypes,
     openImageWindow,
     removeRightClick,
 } from '../module/common';
@@ -73,7 +73,7 @@ export default async function (
     if (currentPgid !== pgid) {
         return;
     }
-    lazyloadModule.setCredential(mediaSessionCredential.credential, SESSION_TYPE_MEDIA);
+    lazyloadModule.setCredential(mediaSessionCredential.credential, SessionTypes.MEDIA);
 
     for (const file of files) {
         const imageNode = createDivElement();
@@ -110,7 +110,7 @@ export default async function (
         appendChild(mediaHolder, imageNode);
 
         addEventListener(showFullSizeButton, 'click', () => {
-            openImageWindow(baseURL, file.file_name, mediaSessionCredential.credential, SESSION_TYPE_MEDIA);
+            openImageWindow(baseURL, file.file_name, mediaSessionCredential.credential, SessionTypes.MEDIA);
         });
         lazyloadModule.default(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
             delay: 250,

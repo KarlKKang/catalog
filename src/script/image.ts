@@ -2,8 +2,8 @@ import {
     TOP_URL,
 } from './module/env/constant';
 import {
+    SessionTypes,
     removeRightClick,
-    SESSION_TYPE_MEDIA,
 } from './module/common';
 import { sendServerRequest, setUpSessionAuthentication } from './module/server';
 import {
@@ -52,7 +52,7 @@ export default function (showPage: ShowPageFunc) {
         './module/image_loader'
     );
 
-    const uri = sessionType === SESSION_TYPE_MEDIA ? 'get_image' : 'get_news_image';
+    const uri = sessionType === SessionTypes.MEDIA ? 'get_image' : 'get_news_image';
     setUpSessionAuthentication(sessionCredential);
 
     setTitle(title);

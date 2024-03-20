@@ -83,14 +83,10 @@ export async function handleFailedTotp(
     retryCallback(currentTotpPopupWindow);
 }
 
-const enum _SessionTypes {
+export const enum SessionTypes {
     MEDIA = 'media',
     NEWS = 'news'
 }
-
-export const SESSION_TYPE_MEDIA = _SessionTypes.MEDIA;
-export const SESSION_TYPE_NEWS = _SessionTypes.NEWS;
-export type SessionTypes = _SessionTypes;
 
 export function openImageWindow(baseURL: string, fileName: string, credential: string, sessionType: SessionTypes) {
     setSessionStorage('base-url', baseURL);

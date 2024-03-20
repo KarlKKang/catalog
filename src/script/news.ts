@@ -5,8 +5,8 @@ import {
 import {
     scrollToHash,
     removeRightClick,
-    SESSION_TYPE_NEWS,
     openImageWindow,
+    SessionTypes,
 } from './module/common';
 import { addNavBar } from './module/nav_bar';
 import { NavBarPage } from './module/nav_bar/enum';
@@ -182,7 +182,7 @@ async function attachImage(lazyloadImportPromise: ReturnType<typeof lazyloadImpo
     if (currentPgid !== pgid) {
         return;
     }
-    lazyload.setCredential(credential, SESSION_TYPE_NEWS);
+    lazyload.setCredential(credential, SessionTypes.NEWS);
 
     const baseURL = CDN_URL + '/news/' + newsID + '/';
     const elems = getDescendantsByClass(contentContainer, 'image-internal');
@@ -195,7 +195,7 @@ async function attachImage(lazyloadImportPromise: ReturnType<typeof lazyloadImpo
         lazyload.default(elem, baseURL + encodeCFURIComponent(src), src, { delay: 250 });
         if (containsClass(elem, 'image-enlarge')) {
             addEventListener(elem, 'click', () => {
-                openImageWindow(baseURL, src, credential, SESSION_TYPE_NEWS);
+                openImageWindow(baseURL, src, credential, SessionTypes.NEWS);
             });
         }
         removeRightClick(elem);
