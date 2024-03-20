@@ -77,7 +77,6 @@ const configs = [
             ...optimization,
             runtimeChunk: 'single',
             splitChunks: {
-                maxSize: 1000 * 1000,
                 chunks: 'all'
             },
             minimize: true,
