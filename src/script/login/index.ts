@@ -26,6 +26,8 @@ import {
     createEmailInput,
     createPasswordInput,
     createSpanElement,
+    getParentElement,
+    removeClass,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';
@@ -40,7 +42,7 @@ import { hideElement, horizontalCenter, showElement } from '../module/style';
 import { forgetPasswordText, keepLoggedInText, loginButtonText, welcomeText } from '../module/text/ui';
 
 import * as formStyles from '../../css/portal_form.module.scss';
-import '../../css/login.scss';
+import * as styles from '../../css/login.module.scss';
 
 let onDemandImportPromise: Promise<typeof import(
     './on_demand'
@@ -209,27 +211,35 @@ function showPageCallback() {
         submitButton.disabled = disabled;
         disableInput(passwordInput, disabled);
         disableInput(emailInput, disabled);
-        disableInput(rememberMeInput, disabled);
+        disableCheckbox(rememberMeInput, disabled);
     }
 }
 
 function getRememberMeCheckbox() {
     const container = createDivElement();
-    container.id = 'remember-me';
+    addClass(container, styles.rememberMe);
 
     const label = createElement('label') as HTMLLabelElement;
-    addClass(label, 'checkbox-container');
+    addClass(label, styles.checkboxContainer);
 
     appendChild(label, createParagraphElement(keepLoggedInText));
 
     const input = createInputElement('checkbox');
-    input.id = 'remember-me-checkbox';
     appendChild(label, input);
 
     const checkmark = createDivElement();
-    addClass(checkmark, 'checkmark');
+    addClass(checkmark, styles.checkmark);
     appendChild(label, checkmark);
 
     appendChild(container, label);
     return [container, input] as const;
+}
+
+function disableCheckbox(checkbox: HTMLInputElement, disabled: boolean) {
+    checkbox.disabled = disabled;
+    if (disabled) {
+        addClass(getParentElement(checkbox), styles.disabled);
+    } else {
+        removeClass(getParentElement(checkbox), styles.disabled);
+    }
 }
