@@ -1,5 +1,6 @@
-import { addClass, disableInput, removeClass, replaceText } from '../module/dom';
-import { changeColor, hideElement, showElement } from '../module/style';
+import { disableInput, replaceText } from '../module/dom';
+import { changeColor, hideElement, setCursor, showElement } from '../module/style';
+import { CSS_CURSOR } from '../module/style/value';
 import { SharedBoolVarsIdx, SharedButtonVarsIdx, SharedInputVarsIdx, SharedElementVarsIdx, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setSharedBool } from './shared_var';
 
 export const mfaNotSet = '二要素認証が設定されていません。';
@@ -20,13 +21,13 @@ export function updateMfaUI(newStatus: boolean) {
 
         hideElement(recoveryCodeInfo);
         recoveryCodeButton.disabled = false;
-        removeClass(recoveryCodeButton, 'not-allowed');
+        setCursor(recoveryCodeButton, null);
 
         const currentLoginNotificationStatus = getSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus);
         replaceText(loginNotificationInfo, currentLoginNotificationStatus ? loginNotificationIsEnabled : 'ログイン通知が無効になっています。');
         replaceText(loginNotificationButton, currentLoginNotificationStatus ? disableButtonText : '有効にする');
         loginNotificationButton.disabled = false;
-        removeClass(loginNotificationButton, 'not-allowed');
+        setCursor(loginNotificationButton, null);
     } else {
         replaceText(mfaInfo, mfaNotSet);
         replaceText(mfaButton, '設定する');
@@ -36,14 +37,14 @@ export function updateMfaUI(newStatus: boolean) {
         showElement(recoveryCodeInfo);
         hideElement(getSharedElement(SharedElementVarsIdx.recoveryCodeWarning));
         recoveryCodeButton.disabled = true;
-        addClass(recoveryCodeButton, 'not-allowed');
+        setCursor(recoveryCodeButton, CSS_CURSOR.NOT_ALLOWED);
 
         setSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus, true);
         replaceText(loginNotificationInfo, loginNotificationIsEnabled + 'ログイン通知を無効にできるのは、二要素認証が有効になっている場合のみです。');
         replaceText(loginNotificationButton, disableButtonText);
         hideElement(getSharedElement(SharedElementVarsIdx.loginNotificationWarning));
         loginNotificationButton.disabled = true;
-        addClass(loginNotificationButton, 'not-allowed');
+        setCursor(loginNotificationButton, CSS_CURSOR.NOT_ALLOWED);
     }
 }
 

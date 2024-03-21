@@ -11,7 +11,6 @@ import {
     appendChild,
     createButtonElement,
     createAnchorElement,
-    removeClass,
     replaceChildren,
     createTotpInput,
     disableInput,
@@ -37,8 +36,11 @@ import { popupWindowImportPromise } from './import_promise';
 import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
 import type { LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
-import { changeColor, hideElement, horizontalCenter, setHeight, showElement } from '../module/style';
+import { changeColor, hideElement, horizontalCenter, setCursor, setHeight, showElement } from '../module/style';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
+
+import * as styles from '../../css/my_account.module.scss';
+import { CSS_CURSOR } from '../module/style/value';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
@@ -259,14 +261,14 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     const promptText = createParagraphElement('二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
     const qrcode = createCanvasElement();
-    addClass(qrcode, 'totp-qrcode');
+    addClass(qrcode, styles.totpQrcode);
     horizontalCenter(qrcode);
     toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H', margin: 0 }, () => {
         setHeight(qrcode, null);
     });
 
     const uriElem = createParagraphElement();
-    addClass(uriElem, 'totp-uri');
+    addClass(uriElem, styles.totpUri);
     const uriLink = createAnchorElement();
     addClass(uriLink, 'link');
     appendText(uriLink, totpInfo.uri);
@@ -370,7 +372,7 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo
     const promptText = createParagraphElement('リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
 
     const recoveryCodeContainer = createDivElement();
-    addClass(recoveryCodeContainer, 'recovery-codes');
+    addClass(recoveryCodeContainer, styles.recoveryCodes);
     for (const recoveryCode of recoveryCodes) {
         const recoveryCodeElem = createParagraphElement(recoveryCode);
         appendChild(recoveryCodeContainer, recoveryCodeElem);
@@ -380,13 +382,13 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo
     const closeButton = createButtonElement(closeButtonText + '（15秒）');
     horizontalCenter(closeButton);
     closeButton.disabled = true;
-    addClass(closeButton, 'not-allowed');
+    setCursor(closeButton, CSS_CURSOR.NOT_ALLOWED);
     let count = 15;
     const interval = addInterval(() => {
         count--;
         if (count <= 0) {
             closeButton.disabled = false;
-            removeClass(closeButton, 'not-allowed');
+            setCursor(closeButton, null);
             replaceText(closeButton, closeButtonText);
             removeInterval(interval);
         } else {

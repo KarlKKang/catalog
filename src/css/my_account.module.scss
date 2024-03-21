@@ -1,17 +1,15 @@
 @use 'module/properties';
 
-#page-my-account {
-    #container {
-        width: 1000px;
-        max-width: 90%;
-        margin: 0px;
-        padding: 1em 0px 1em 0px;
-        position: relative;
-        left: 50%;
-        transform: translate(-50%, 0%);
-    }
+.container {
+    width: 1000px;
+    max-width: 90%;
+    margin: 0px;
+    padding: 1em 0px 1em 0px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0%);
 
-    #title {
+    .title {
         text-align: center;
         font-size: x-large;
     }
@@ -20,7 +18,7 @@
         font-size: large;
     }
 
-    #title,
+    .title,
     .sub-title {
         margin: 1em 0px;
         padding: 0px;
@@ -36,12 +34,6 @@
 
     .warning {
         margin: 1em 0px;
-    }
-
-    .button {
-        &.not-allowed {
-            cursor: not-allowed;
-        }
     }
 
     .note {
@@ -71,7 +63,7 @@
         font-family: 'Courier New', Courier, monospace;
     }
 
-    #sessions {
+    .sessions {
         >div {
             margin: 2em 0px;
             width: 100%;
@@ -103,7 +95,7 @@
                     margin: 0px;
                 }
 
-                >.button {
+                >button {
                     margin: 0px;
                 }
             }

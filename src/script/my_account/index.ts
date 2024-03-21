@@ -39,7 +39,7 @@ import '../../font/dist/NotoSansTC/NotoSansTC-Light.css';
 import '../../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import '../../font/dist/NotoSans/NotoSans-Light.css';
 import '../../font/dist/CourierNew/CourierNew-Regular.css';
-import '../../css/my_account.scss';
+import * as styles from '../../css/my_account.module.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -177,12 +177,12 @@ function showSessions(userInfo: AccountInfo.AccountInfo) {
         const sessionsContainer = getSharedElement(SharedElementVarsIdx.sessionsContainer);
         if (sessionID === undefined) {
             const thisDevicePrompt = createParagraphElement('※このデバイスです。');
-            addClass(thisDevicePrompt, 'warning');
+            addClass(thisDevicePrompt, styles.warning);
             appendChild(innerContainer, thisDevicePrompt);
             prependChild(sessionsContainer, outerContainer);
         } else {
             const sessionWarningElem = createParagraphElement();
-            addClass(sessionWarningElem, 'warning');
+            addClass(sessionWarningElem, styles.warning);
             hideElement(sessionWarningElem);
             appendChild(innerContainer, sessionWarningElem);
 

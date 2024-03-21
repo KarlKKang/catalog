@@ -18,6 +18,8 @@ import { hideElement } from '../module/style';
 import { myAccountPageTitle } from '../module/text/page_title';
 import { changeButtonText, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
 
+import * as styles from '../../css/my_account.module.scss';
+
 let sharedBoolVars: boolean[];
 let sharedInputVars: HTMLInputElement[];
 let sharedButtonVars: HTMLButtonElement[];
@@ -69,10 +71,10 @@ export function initializeSharedVars() {
     sharedElementVars = [];
 
     const container = createDivElement();
-    container.id = 'container';
+    addClass(container, styles.container);
     appendChild(body, container);
     const titleElem = createParagraphElement(myAccountPageTitle);
-    titleElem.id = 'title';
+    addClass(titleElem, styles.title);
     appendChild(container, titleElem);
     appendSubsection(container, 'メールアドレス', [], SharedElementVarsIdx.emailWarning, [], SharedButtonVarsIdx.emailChangeButton, changeButtonText, []);
 
@@ -99,7 +101,7 @@ export function initializeSharedVars() {
     appendSubsection(container, 'ログイン通知メール', [loginNotificationInfo], SharedElementVarsIdx.loginNotificationWarning, [], SharedButtonVarsIdx.loginNotificationButton, undefined, []);
 
     const sessionsContainer = createDivElement();
-    sessionsContainer.id = 'sessions';
+    addClass(sessionsContainer, styles.sessions);
     sharedElementVars[SharedElementVarsIdx.sessionsContainer] = sessionsContainer;
     appendSubsection(container, 'お使いのデバイス', [sessionsContainer], null, [], null, undefined, []);
 
@@ -176,14 +178,14 @@ function appendSubsection(
     notes: string[],
 ) {
     const titleElem = createParagraphElement(title);
-    addClass(titleElem, 'sub-title');
+    addClass(titleElem, styles.subTitle);
     appendChild(container, titleElem);
 
     appendChildren(container, ...infoElements);
 
     if (warningIndex !== null) {
         const warningElem = createParagraphElement();
-        addClass(warningElem, 'warning');
+        addClass(warningElem, styles.warning);
         hideElement(warningElem);
         appendChild(container, warningElem);
         sharedElementVars[warningIndex] = warningElem;
@@ -199,7 +201,7 @@ function appendSubsection(
 
     if (notes.length !== 0) {
         const noteElem = createUListElement();
-        addClass(noteElem, 'note');
+        addClass(noteElem, styles.note);
         appendListItems(noteElem, ...notes);
         appendChild(container, noteElem);
     }
