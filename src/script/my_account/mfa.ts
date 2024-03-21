@@ -38,7 +38,7 @@ import type { LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 import { changeColor, hideElement, horizontalCenter, setCursor, setHeight, showElement } from '../module/style';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
-
+import '../../font/dist/CourierNew/CourierNew-Regular.css';
 import * as styles from '../../css/my_account.module.scss';
 import { CSS_CURSOR } from '../module/style/value';
 

@@ -20,9 +20,8 @@ import { getTable, setOutput, setOutputElement } from './helper';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid } from '../module/global';
 
-import '../../font/dist/NotoSansTC/NotoSansTC-Light.css';
-import '../../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import * as styles from '../../css/console.module.scss';
+import { addAutoMultiLanguageClass } from '../module/dom/create_element/multi_language';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -53,6 +52,7 @@ export default function (showPage: ShowPageFunc) {
                 const container = createDivElement();
                 appendChild(body, container);
                 addClass(container, styles.container);
+                addAutoMultiLanguageClass(container);
 
                 const output = createDivElement();
                 setOutputElement(output);

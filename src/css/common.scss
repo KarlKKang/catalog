@@ -139,13 +139,10 @@ select,
 option,
 button,
 input {
+    /* not using lang pseudo class here to ensure the font-weight and color will fall back to the default even in different language */
     font-family: 'Noto Sans JP', 'メイリオ', Meiryo, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
     color: var(properties.get(text-color));
-}
-
-.multi-language {
-    font-family: 'Noto Sans JP', 'Noto Sans TC', 'Noto Sans SC', 'Noto Sans', 'メイリオ', Meiryo, 'PingFang TC', 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 
 .hcenter {
@@ -187,8 +184,6 @@ input {
 .button {
     width: 150px;
     min-height: 2.5em;
-    /* Set color on 'input' elements will override placeholder color in some older browsers */
-    color: var(properties.get(text-color));
     cursor: pointer;
     text-align: center;
     display: block;

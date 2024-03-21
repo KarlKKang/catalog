@@ -18,7 +18,6 @@ import {
     appendChild,
     appendText,
     body,
-    createUsernameInput,
     createPasswordInput,
     createButtonElement,
     createUListElement,
@@ -33,13 +32,9 @@ import { redirect } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { nextButtonText, passwordRules, usernameRule } from './module/text/ui';
-
-import '../font/dist/NotoSansTC/NotoSansTC-Light.css';
-import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
-import '../font/dist/NotoSans/NotoSans-Light.css';
-import { container as allLanguageContainerClass } from '../css/all_languages.module.scss';
 import * as styles from '../css/portal_form.module.scss';
 import { completed } from './module/text/message/title';
+import { addManualMultiLanguageClass, createUsernameInput } from './module/dom/create_element/multi_language';
 
 const emailAlreadyRegistered = {
     title: '失敗しました',
@@ -215,7 +210,7 @@ function getInfoNote() {
 
     const container = createDivElement();
     addClass(container, styles.note);
-    addClass(container, allLanguageContainerClass);
+    addManualMultiLanguageClass(container);
     for (const [lang, ...text] of texts) {
         const paragraph = createParagraphElement(text[0]);
         if (lang !== null) {

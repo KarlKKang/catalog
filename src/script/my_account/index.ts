@@ -35,10 +35,6 @@ import { moduleImportError } from '../module/message/param';
 import { changeColor, hideElement, showElement } from '../module/style';
 import { loading } from '../module/text/ui';
 
-import '../../font/dist/NotoSansTC/NotoSansTC-Light.css';
-import '../../font/dist/NotoSansSC/NotoSansSC-Light.css';
-import '../../font/dist/NotoSans/NotoSans-Light.css';
-import '../../font/dist/CourierNew/CourierNew-Regular.css';
 import * as styles from '../../css/my_account.module.scss';
 
 export default function (showPage: ShowPageFunc) {

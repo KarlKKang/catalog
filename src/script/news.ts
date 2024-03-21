@@ -43,19 +43,8 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { pgid, redirect } from './module/global';
 import { lazyloadImport, unloadLazyload } from './module/lazyload';
 import { allResultsShown, loading, noResult } from './module/text/ui';
-
-import '../font/dist/NotoSans/NotoSans-Light.css';
-import '../font/dist/NotoSans/NotoSans-Regular.css';
-import '../font/dist/NotoSans/NotoSans-Medium.css';
-import '../font/dist/NotoSansJP/NotoSansJP-Regular.css';
-import '../font/dist/NotoSansTC/NotoSansTC-Light.css';
-import '../font/dist/NotoSansTC/NotoSansTC-Regular.css';
-import '../font/dist/NotoSansTC/NotoSansTC-Medium.css';
-import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
-import '../font/dist/NotoSansSC/NotoSansSC-Regular.css';
-import '../font/dist/NotoSansSC/NotoSansSC-Medium.css';
-import { container as allLanguageContainerClass } from '../css/all_languages.module.scss';
 import '../css/news.scss';
+import { addManualAllLanguageClass } from './module/dom/create_element/all_language';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo;
@@ -129,7 +118,7 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
                 removeAllEventListeners(xhr);
                 if (xhr.status === 200) {
                     contentContainer.innerHTML = xhr.responseText;
-                    addClass(contentContainer, allLanguageContainerClass);
+                    addManualAllLanguageClass(contentContainer);
                     bindEventListners(contentContainer);
                     attachImage(lazyloadImportPromise, contentContainer, newsID, parsedResponse.credential);
                     scrollToHash();

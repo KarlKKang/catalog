@@ -12,11 +12,11 @@ import {
     createPasswordInput,
     createSpanElement,
     createUListElement,
-    createUsernameInput,
 } from '../module/dom';
 import { hideElement } from '../module/style';
 import { myAccountPageTitle } from '../module/text/page_title';
 import { changeButtonText, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
+import { createUsernameInput } from '../module/dom/create_element/multi_language';
 
 import * as styles from '../../css/my_account.module.scss';
 
