@@ -28,12 +28,6 @@
     }
 }
 
-@mixin password-font {
-    .password-font {
-        font-family: 'Helvetica', 'Arial';
-    }
-}
-
 @mixin ellipsis-clipping-2 {
     .ellipsis-clipping-2 {
         white-space: nowrap;

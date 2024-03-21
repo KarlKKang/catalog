@@ -1,9 +1,6 @@
 @use 'module/properties';
-@use 'module/common';
 
 #page-my-account {
-    @include common.password-font;
-
     #container {
         width: 1000px;
         max-width: 90%;

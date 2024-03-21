@@ -1,5 +1,5 @@
 import { d } from './document';
-import { addClass, appendChild, removeClass, replaceChildren } from './element';
+import { addClass, appendChild, replaceChildren } from './element';
 import { addEventListener } from './event_listener';
 
 export function createElement(tag: string) {
@@ -134,10 +134,11 @@ export function createPasswordInput(newPassword: boolean, placeholder = 'パス�
 
 export function passwordStyling(element: HTMLInputElement) {
     function inputChangeHandler() {
+        const style = element.style;
         if (element.value === '') {
-            removeClass(element, 'password-font');
+            style.fontFamily = '';
         } else {
-            addClass(element, 'password-font');
+            style.fontFamily = 'Helvetica, Arial';
         }
     }
 
