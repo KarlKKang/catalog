@@ -25,7 +25,7 @@ import { pgid, redirect } from './module/global';
 import { setWidth } from './module/style';
 import { CSS_UNIT } from './module/style/value';
 
-import '../css/image.scss';
+import * as styles from '../css/image.module.scss';
 
 type ImageLoader = typeof import(
     /* webpackExports: ["clearAllImageEvents"] */
@@ -66,11 +66,11 @@ export default function (showPage: ShowPageFunc) {
             showPage();
 
             const flexContainer = createDivElement();
-            flexContainer.id = 'flex-container';
+            addClass(flexContainer, styles.flexContainer);
             const container = createDivElement();
-            container.id = 'image-container';
+            addClass(container, styles.imageContainer);
             const overlay = createDivElement();
-            addClass(overlay, 'overlay');
+            addClass(overlay, styles.overlay);
             appendChild(container, overlay);
             appendChild(flexContainer, container);
             appendChild(body, flexContainer);

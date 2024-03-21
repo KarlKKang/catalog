@@ -1,14 +1,14 @@
-#flex-container,
-#image-container {
+.flex-container,
+.image-container {
     padding: 0px;
     margin: 0px;
 }
 
-#flex-container {
+.flex-container {
     display: flex;
 }
 
-#image-container {
+.image-container {
     position: relative;
     display: block;
 
