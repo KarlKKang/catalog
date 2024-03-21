@@ -1,42 +1,26 @@
-import {
-    LOGIN_URL, TOP_URL
-} from '../env/constant';
-import * as title from '../text/message/title';
-import * as body from '../text/message/body';
-import { nextButtonText } from '../text/ui';
+import { defaultErrorSuffix, emailSentSuffix } from '../text/message/body';
+import { emailSent as emailSentTitle } from '../text/message/title';
 import { MessageParam } from './type';
+import { isString } from '../type/helper';
 
-export const moduleImportError = (e: unknown) => ({
-    message: body.moduleImportError(e)
-});
+export const moduleImportError = (e: unknown) => {
+    let message = 'モジュールの読み込みに失敗しました。' + defaultErrorSuffix;
+    if (isString(e)) {
+        message += `<br>${e}`;
+    } else if (e instanceof Error) {
+        message += `<br>${e.message}`;
+    }
+    return { message: message };
+};
 export const expired = {
-    title: title.expired,
-    message: body.retry,
+    title: '期限が切れています',
+    message: 'もう一度最初からやり直してください。',
     buttonText: null
-};
-export const emailAlreadyRegistered = {
-    title: title.failed,
-    message: body.emailAlreadyRegistered,
-    buttonText: null
-};
-export const emailChanged = {
-    title: title.completed,
-    message: body.emailChanged,
-    color: 'green',
-    url: TOP_URL,
-    buttonText: 'トップページへ'
-};
-export const registerComplete = {
-    title: title.completed,
-    message: body.registerComplete,
-    color: 'green',
-    url: LOGIN_URL,
-    buttonText: nextButtonText
 };
 export const emailSent = (goBackUrl?: string) => {
     const param: MessageParam = {
-        title: title.emailSent,
-        message: body.emailSent,
+        title: emailSentTitle,
+        message: emailSentSuffix,
         color: 'green',
     };
     if (goBackUrl === undefined) {
@@ -46,17 +30,3 @@ export const emailSent = (goBackUrl?: string) => {
     }
     return param;
 };
-export const passwordChanged = {
-    title: title.completed,
-    message: body.passwordChanged,
-    color: 'green',
-    url: LOGIN_URL,
-    buttonText: nextButtonText
-};
-export const unrecommendedBrowser = (redirectURL: string) => ({
-    title: title.unrecommendedBrowser,
-    message: body.unrecommendedBrowser,
-    color: 'orange',
-    url: redirectURL,
-    buttonText: nextButtonText
-} as const);

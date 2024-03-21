@@ -3,12 +3,12 @@ import {
 } from '../env/constant';
 import { getTitle, setSessionStorage, getFullURL } from '../dom/document';
 import { defaultError } from '../text/message/title';
-import { unknownError } from '../text/message/body';
 import type { MessageParam } from './type';
 import { redirect } from '../global';
+import { defaultErrorSuffix } from '../text/message/body';
 
 export function show({ message, title, color, url, buttonText, logout, replaceBody }: MessageParam) {
-    setSessionStorage('message', message ?? unknownError);
+    setSessionStorage('message', message ?? ('不明なエラーが発生しました。' + defaultErrorSuffix));
     setSessionStorage('title', title ?? defaultError);
     setSessionStorage('color', color ?? 'red');
     setSessionStorage('document-title', getTitle());

@@ -39,7 +39,7 @@ import { pgid, redirect } from '../module/global';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
-import { forgetPasswordText, keepLoggedInText, loginButtonText, welcomeText } from '../module/text/ui';
+import { forgetPasswordText } from '../module/text/ui';
 
 import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
@@ -70,7 +70,7 @@ function showPageCallback() {
     addClass(container, formStyles.container);
     appendChild(body, container);
 
-    const title = createParagraphElement(welcomeText);
+    const title = createParagraphElement('ようこそ');
     addClass(title, formStyles.title);
     appendChild(container, title);
 
@@ -90,7 +90,7 @@ function showPageCallback() {
     const [rememberMeContainer, rememberMeInput] = getRememberMeCheckbox();
     appendChild(container, rememberMeContainer);
 
-    const submitButton = createButtonElement(loginButtonText);
+    const submitButton = createButtonElement('ログイン');
     horizontalCenter(submitButton);
     appendChild(container, submitButton);
 
@@ -222,7 +222,7 @@ function getRememberMeCheckbox() {
     const label = createElement('label') as HTMLLabelElement;
     addClass(label, styles.checkboxContainer);
 
-    appendChild(label, createParagraphElement(keepLoggedInText));
+    appendChild(label, createParagraphElement('ログインしたままにする'));
 
     const input = createInputElement('checkbox');
     appendChild(label, input);

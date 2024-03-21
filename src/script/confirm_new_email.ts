@@ -1,5 +1,5 @@
 import {
-    LOGIN_URL,
+    LOGIN_URL, TOP_URL,
 } from './module/env/constant';
 import {
     getURLParam,
@@ -22,7 +22,7 @@ import {
     addClass,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { expired, emailChanged } from './module/message/param';
+import { expired } from './module/message/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/text/message/body';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
@@ -35,6 +35,7 @@ import { submitButtonText } from './module/text/ui';
 import { emailChangePageTitle } from './module/text/page_title';
 
 import * as styles from '../css/portal_form.module.scss';
+import { completed } from './module/text/message/title';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -178,7 +179,13 @@ function showPageCallback(param: string) {
                         showMessage(expired);
                         break;
                     case 'DONE':
-                        showMessage(emailChanged);
+                        showMessage({
+                            title: completed,
+                            message: 'メールアドレスが変更されました。',
+                            color: 'green',
+                            url: TOP_URL,
+                            buttonText: 'トップページへ'
+                        });
                         break;
                     default:
                         showMessage(invalidResponse());

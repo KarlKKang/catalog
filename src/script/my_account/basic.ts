@@ -5,36 +5,29 @@ import {
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import {
-    emailSent,
-    emailChangeWait,
     invalidPasswordFormat,
     passwordConfirmationMismatch,
     passwordChanged,
     usernameChanged,
     usernameTaken,
     usernameEmpty,
-    usernameUnchanged,
-    invitationNotQualified,
     invalidEmailFormat,
     emailAlreadyRegistered,
     invitationClosed,
-    logoutDone,
-    loginNotificationIsEnabled,
-    loginNotificationIsDisabled,
-    loginNotificationDisabled,
-    loginNotificationEnabled,
-    mfaNotSet,
     usernameInvalid,
+    emailSentSuffix,
 } from '../module/text/message/body';
-import { SharedBoolVarsIdx, SharedElementVarsIdx, SharedInputVarsIdx, SharedButtonVarsIdx, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setCurrentLoginNotificationStatus } from './shared_var';
-import { changeMfaStatus, disableAllInputs } from './helper';
+import { emailSent as emailSendPrefix } from '../module/text/message/title';
+import { SharedBoolVarsIdx, SharedElementVarsIdx, SharedInputVarsIdx, getSharedBool, getSharedElement, getSharedInput, sessionLogoutButtons, setSharedBool } from './shared_var';
+import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import type { AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/server/message';
 import * as InviteResult from '../module/type/InviteResult';
 import { changeColor, hideElement, showElement } from '../module/style';
-import { disableButtonText, enableButtonText } from '../module/text/ui';
+
+const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 
 export function changeEmail() {
     disableAllInputs(true);
@@ -47,7 +40,7 @@ export function changeEmail() {
     sendServerRequest('send_email_change', {
         callback: function (response: string) {
             if (response === 'WAIT') {
-                replaceText(warningElem, emailChangeWait);
+                replaceText(warningElem, '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。');
             } else if (response === 'DONE') {
                 replaceText(warningElem, emailSent);
                 changeColor(warningElem, 'green');
@@ -124,7 +117,7 @@ export function changeUsername(userInfo: AccountInfo) {
         disableAllInputs(false);
         return;
     } else if (newUsername === userInfo.username) {
-        replaceText(warningElem, usernameUnchanged);
+        replaceText(warningElem, '新しいユーザー名は元のユーザー名と同じです。');
         showElement(warningElem);
         disableAllInputs(false);
         return;
@@ -179,7 +172,7 @@ export function invite() {
         (response: string) => {
             if (response === 'NOT QUALIFIED') {
                 replaceText(inviteCount, '0');
-                replaceText(warningElem, invitationNotQualified);
+                replaceText(warningElem, '使える招待券が残っていません。');
             } else if (response === 'INVALID FORMAT') {
                 replaceText(warningElem, invalidEmailFormat);
             } else if (response === 'ALREADY REGISTERED') {
@@ -223,7 +216,7 @@ export function logoutSession(sessionID: string, sessionLogoutButton: HTMLButton
                 remove(sessionLogoutButton);
                 sessionLogoutButtons.delete(sessionLogoutButton);
                 changeColor(sessionWarningElem, 'green');
-                replaceText(sessionWarningElem, logoutDone);
+                replaceText(sessionWarningElem, 'ログアウトしました。');
             } else {
                 showMessage(invalidResponse());
                 return false;
@@ -251,13 +244,12 @@ export function changeLoginNotification() {
         'change_login_notification',
         (response: string) => {
             if (response === 'DONE') {
-                setCurrentLoginNotificationStatus(loginNotificationTargetStatus);
-                replaceText(getSharedElement(SharedElementVarsIdx.loginNotificationInfo), loginNotificationTargetStatus ? loginNotificationIsEnabled : loginNotificationIsDisabled);
-                replaceText(getSharedButton(SharedButtonVarsIdx.loginNotificationButton), loginNotificationTargetStatus ? disableButtonText : enableButtonText);
-                replaceText(warningElem, loginNotificationTargetStatus ? loginNotificationEnabled : loginNotificationDisabled);
+                setSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus, loginNotificationTargetStatus);
+                updateMfaUI(true);
+                replaceText(warningElem, loginNotificationTargetStatus ? 'ログイン通知が有効になりました。' : 'ログイン通知が無効になりました。');
                 changeColor(warningElem, 'green');
             } else if (response === 'TOTP NOT SET') {
-                changeMfaStatus(false);
+                updateMfaUI(false);
                 replaceText(warningElem, mfaNotSet);
             } else {
                 showMessage(invalidResponse());

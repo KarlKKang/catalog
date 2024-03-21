@@ -27,8 +27,8 @@ import { invalidResponse } from '../module/server/message';
 import * as AccountInfo from '../module/type/AccountInfo';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';
-import { SharedBoolVarsIdx, SharedButtonVarsIdx, SharedElementVarsIdx, SharedInputVarsIdx, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, sessionLogoutButtons, setCurrentLoginNotificationStatus } from './shared_var';
-import { changeMfaStatus, disableAllInputs } from './helper';
+import { SharedBoolVarsIdx, SharedButtonVarsIdx, SharedElementVarsIdx, SharedInputVarsIdx, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, sessionLogoutButtons, setSharedBool } from './shared_var';
+import { updateMfaUI, disableAllInputs } from './helper';
 import { getLocalTimeString } from '../module/common/pure';
 import { basicImportPromise, importAll, mfaImportPromise, parseBrowserImportPromise } from './import_promise';
 import { moduleImportError } from '../module/message/param';
@@ -64,8 +64,8 @@ export default function (showPage: ShowPageFunc) {
 function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     const currentPgid = pgid;
     initializeSharedVars();
-    setCurrentLoginNotificationStatus(userInfo.login_notification);
-    changeMfaStatus(userInfo.mfa_status);
+    setSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus, userInfo.login_notification);
+    updateMfaUI(userInfo.mfa_status);
 
     addEventListener(getSharedButton(SharedButtonVarsIdx.emailChangeButton), 'click', () => {
         getImport(basicImportPromise).then(({ changeEmail }) => {

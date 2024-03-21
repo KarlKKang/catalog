@@ -20,12 +20,7 @@ import { show as showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import {
     failedTotp,
-    generateRecoveryCodeWait,
-    mfaNotSet,
-    mfaAlreadySet,
     sessionEnded,
-    mfaDisabled,
-    mfaEnabled,
     accountDeactivated,
     tooManyFailedLogin,
     loginFailed,
@@ -36,7 +31,7 @@ import { toCanvas } from 'qrcode';
 import { addInterval, removeInterval } from '../module/timer';
 import { pgid } from '../module/global';
 import { SharedElementVarsIdx, getSharedElement } from './shared_var';
-import { changeMfaStatus, disableAllInputs } from './helper';
+import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { popupWindowImportPromise } from './import_promise';
 import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
@@ -44,6 +39,8 @@ import type { LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 import { changeColor, hideElement, horizontalCenter, setHeight, showElement } from '../module/style';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
+
+const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
 export function enableMfa() {
     disableAllInputs(true);
@@ -56,7 +53,7 @@ export function enableMfa() {
         'generate_totp',
         (response: string) => {
             if (response === AUTH_FAILED_TOTP) {
-                changeMfaStatus(true);
+                updateMfaUI(true);
                 changeColor(mfaWarning, 'green');
                 replaceText(mfaWarning, mfaAlreadySet);
                 showElement(mfaWarning);
@@ -89,9 +86,9 @@ export function disableMfa() {
         'disable_totp',
         (response: string) => {
             if (response === 'DONE') {
-                changeMfaStatus(false);
+                updateMfaUI(false);
                 changeColor(mfaWarning, 'green');
-                replaceText(mfaWarning, mfaDisabled);
+                replaceText(mfaWarning, '二要素認証が無効になりました。');
                 showElement(mfaWarning);
             } else {
                 showMessage(invalidResponse());
@@ -115,12 +112,12 @@ export function generateRecoveryCode() {
         'generate_recovery_code',
         (response: string) => {
             if (response === 'TOTP NOT SET') {
-                changeMfaStatus(false);
+                updateMfaUI(false);
                 replaceText(recoveryCodeWarning, mfaNotSet);
                 showElement(recoveryCodeWarning);
                 disableAllInputs(false);
             } else if (response === 'WAIT') {
-                replaceText(recoveryCodeWarning, generateRecoveryCodeWait);
+                replaceText(recoveryCodeWarning, '直前にリカバリーコードを生成したため、1時間ほど待ってから再度生成を試みてください。');
                 showElement(recoveryCodeWarning);
                 disableAllInputs(false);
             } else {
@@ -324,7 +321,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                     disableAllPopUpWindowInputs(false);
                 } else if (response === 'ALREADY SET') {
                     hidePopupWindow();
-                    changeMfaStatus(true);
+                    updateMfaUI(true);
                     changeColor(mfaWarning, 'green');
                     replaceText(mfaWarning, mfaAlreadySet);
                     showElement(mfaWarning);
@@ -339,9 +336,9 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                         return;
                     }
                     showRecoveryCode(parsedResponse, () => {
-                        changeMfaStatus(true);
+                        updateMfaUI(true);
                         changeColor(mfaWarning, 'green');
-                        replaceText(mfaWarning, mfaEnabled);
+                        replaceText(mfaWarning, '二要素認証が有効になりました。');
                         showElement(mfaWarning);
                         disableAllInputs(false);
                     });

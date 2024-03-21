@@ -1,17 +1,19 @@
 import { addClass, disableInput, removeClass, replaceText } from '../module/dom';
-import { loginNotificationIsDisabled, loginNotificationIsEnabled, mfaNotSet } from '../module/text/message/body';
 import { changeColor, hideElement, showElement } from '../module/style';
-import { SharedBoolVarsIdx, SharedButtonVarsIdx, SharedInputVarsIdx, SharedElementVarsIdx, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setCurrentLoginNotificationStatus, setCurrentMfaStatus } from './shared_var';
-import { disableButtonText, enableButtonText } from '../module/text/ui';
+import { SharedBoolVarsIdx, SharedButtonVarsIdx, SharedInputVarsIdx, SharedElementVarsIdx, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setSharedBool } from './shared_var';
 
-export function changeMfaStatus(newStatus: boolean) {
-    setCurrentMfaStatus(newStatus);
+export const mfaNotSet = '二要素認証が設定されていません。';
+
+export function updateMfaUI(newStatus: boolean) {
+    setSharedBool(SharedBoolVarsIdx.currentMfaStatus, newStatus);
     const mfaInfo = getSharedElement(SharedElementVarsIdx.mfaInfo);
     const mfaButton = getSharedButton(SharedButtonVarsIdx.mfaButton);
     const recoveryCodeInfo = getSharedElement(SharedElementVarsIdx.recoveryCodeInfo);
     const recoveryCodeButton = getSharedButton(SharedButtonVarsIdx.recoveryCodeButton);
     const loginNotificationInfo = getSharedElement(SharedElementVarsIdx.loginNotificationInfo);
     const loginNotificationButton = getSharedButton(SharedButtonVarsIdx.loginNotificationButton);
+    const disableButtonText = '無効にする';
+    const loginNotificationIsEnabled = 'ログイン通知が有効になっています。';
     if (newStatus) {
         replaceText(mfaInfo, '二要素認証が有効になっています。');
         replaceText(mfaButton, disableButtonText);
@@ -21,8 +23,8 @@ export function changeMfaStatus(newStatus: boolean) {
         removeClass(recoveryCodeButton, 'not-allowed');
 
         const currentLoginNotificationStatus = getSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus);
-        replaceText(loginNotificationInfo, currentLoginNotificationStatus ? loginNotificationIsEnabled : loginNotificationIsDisabled);
-        replaceText(loginNotificationButton, currentLoginNotificationStatus ? disableButtonText : enableButtonText);
+        replaceText(loginNotificationInfo, currentLoginNotificationStatus ? loginNotificationIsEnabled : 'ログイン通知が無効になっています。');
+        replaceText(loginNotificationButton, currentLoginNotificationStatus ? disableButtonText : '有効にする');
         loginNotificationButton.disabled = false;
         removeClass(loginNotificationButton, 'not-allowed');
     } else {
@@ -36,7 +38,7 @@ export function changeMfaStatus(newStatus: boolean) {
         recoveryCodeButton.disabled = true;
         addClass(recoveryCodeButton, 'not-allowed');
 
-        setCurrentLoginNotificationStatus(true);
+        setSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus, true);
         replaceText(loginNotificationInfo, loginNotificationIsEnabled + 'ログイン通知を無効にできるのは、二要素認証が有効になっている場合のみです。');
         replaceText(loginNotificationButton, disableButtonText);
         hideElement(getSharedElement(SharedElementVarsIdx.loginNotificationWarning));

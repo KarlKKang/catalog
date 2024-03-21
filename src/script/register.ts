@@ -25,20 +25,27 @@ import {
     appendListItems,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { expired, registerComplete, emailAlreadyRegistered } from './module/message/param';
-import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from './module/text/message/body';
+import { expired } from './module/message/param';
+import { emailAlreadyRegistered as emailAlreadyRegisteredBody, invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from './module/text/message/body';
 import { PASSWORD_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
-import { passwordRules, usernameRule } from './module/text/ui';
+import { nextButtonText, passwordRules, usernameRule } from './module/text/ui';
 
 import '../font/dist/NotoSansTC/NotoSansTC-Light.css';
 import '../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import '../font/dist/NotoSans/NotoSans-Light.css';
 import { container as allLanguageContainerClass } from '../css/all_languages.module.scss';
 import * as styles from '../css/portal_form.module.scss';
+import { completed } from './module/text/message/title';
+
+const emailAlreadyRegistered = {
+    title: '失敗しました',
+    message: emailAlreadyRegisteredBody,
+    buttonText: null
+};
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -175,7 +182,13 @@ function showPageCallback(param: string) {
                 } else if (response === 'ALREADY REGISTERED') {
                     showMessage(emailAlreadyRegistered);
                 } else if (response === 'DONE') {
-                    showMessage(registerComplete);
+                    showMessage({
+                        title: completed,
+                        message: 'アカウントが登録されました。',
+                        color: 'green',
+                        url: LOGIN_URL,
+                        buttonText: nextButtonText
+                    });
                 } else {
                     showMessage(invalidResponse());
                 }

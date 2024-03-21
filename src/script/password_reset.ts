@@ -22,17 +22,18 @@ import {
     addClass,
 } from './module/dom';
 import { show as showMessage } from './module/message';
-import { invalidPasswordFormat, passwordConfirmationMismatch, passwordUnchanged } from './module/text/message/body';
-import { expired, passwordChanged } from './module/message/param';
+import { invalidPasswordFormat, passwordChanged, passwordConfirmationMismatch } from './module/text/message/body';
+import { expired } from './module/message/param';
 import { PASSWORD_REGEX } from './module/common/pure';
 import { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { passwordResetPageTitle } from './module/text/page_title';
-import { changeButtonText, passwordRules } from './module/text/ui';
+import { changeButtonText, nextButtonText, passwordRules } from './module/text/ui';
 
 import * as styles from '../css/portal_form.module.scss';
+import { completed } from './module/text/message/title';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -152,7 +153,7 @@ function showPageCallback(user: string, signature: string, expires: string) {
                 if (response === 'EXPIRED') {
                     showMessage(expired);
                 } else if (response === 'SAME') {
-                    replaceText(warningElem, passwordUnchanged);
+                    replaceText(warningElem, '入力されたパスワードは、元のパスワードと同じです。');
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response === 'PASSWORD INVALID') {
@@ -160,7 +161,13 @@ function showPageCallback(user: string, signature: string, expires: string) {
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response === 'DONE') {
-                    showMessage(passwordChanged);
+                    showMessage({
+                        title: completed,
+                        message: passwordChanged,
+                        color: 'green',
+                        url: LOGIN_URL,
+                        buttonText: nextButtonText
+                    });
                 } else {
                     showMessage(invalidResponse());
                 }

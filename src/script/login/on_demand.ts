@@ -5,13 +5,19 @@ import {
     getURLParam,
 } from '../module/common';
 import { show as showMessage } from '../module/message';
-import { unrecommendedBrowser } from '../module/message/param';
 import { UNRECOMMENDED_BROWSER } from '../module/browser';
 import { redirect } from '../module/global';
+import { nextButtonText } from '../module/text/ui';
 
 export function approvedCallback() {
     if (UNRECOMMENDED_BROWSER) {
-        showMessage(unrecommendedBrowser(getForwardURL()));
+        showMessage({
+            title: 'お使いのブラウザは推奨環境ではありません',
+            message: '一部のコンテンツが正常に再生されない場合は、Safari 11またはChrome 63以降のブラウザをお使いください。',
+            color: 'orange',
+            url: getForwardURL(),
+            buttonText: nextButtonText
+        });
     } else {
         redirect(getForwardURL(), true);
     }

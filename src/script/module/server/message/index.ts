@@ -4,8 +4,8 @@ import { LOGIN_URL, TOP_URL } from '../../env/constant';
 import type { MaintenanceInfo } from '../../type/MaintenanceInfo';
 import { getBaseURL } from '../../dom';
 import { type MessageParam } from '../../message/type';
-import { reloadButtonText } from '../../text/ui';
 
+const reloadButtonText = '再読み込み';
 export const invalidResponse = () => {
     const param: MessageParam = {
         message: body.invalidResponse,

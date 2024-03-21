@@ -117,12 +117,8 @@ export function initializeSharedVars() {
     appendChild(container, logoutButton);
 }
 
-export function setCurrentMfaStatus(status: boolean) {
-    sharedBoolVars[SharedBoolVarsIdx.currentMfaStatus] = status;
-}
-
-export function setCurrentLoginNotificationStatus(status: boolean) {
-    sharedBoolVars[SharedBoolVarsIdx.currentLoginNotificationStatus] = status;
+export function setSharedBool(idx: SharedBoolVarsIdx, value: boolean) {
+    sharedBoolVars[idx] = value;
 }
 
 function triggerSharedVarAccessError(): never {

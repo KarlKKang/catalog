@@ -14,7 +14,7 @@ import {
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { emailSent } from './module/message/param';
-import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed, invitationOnly } from './module/text/message/body';
+import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed } from './module/text/message/body';
 import { EMAIL_REGEX } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { invalidResponse } from './module/server/message';
@@ -83,7 +83,7 @@ function showPageCallback() {
                 } else if (response === 'CLOSED') {
                     replaceText(warningElem, invitationClosed);
                 } else if (response === 'NORMAL') {
-                    replaceText(warningElem, invitationOnly);
+                    replaceText(warningElem, '現在、登録は招待制となっています。');
                 } else if (response === 'DONE') {
                     showMessage(emailSent());
                     return;
