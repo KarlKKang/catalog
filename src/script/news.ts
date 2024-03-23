@@ -18,36 +18,39 @@ import {
     appendChild,
     getDescendantsByClass,
     changeURL,
-    setTitle,
-    getTitle,
     getHash,
     getDataAttribute,
     containsClass,
     createDivElement,
     createParagraphElement,
-    createHRElement,
     createBRElement,
     appendText,
     removeAllEventListeners,
     clearSessionStorage,
     replaceText,
     body,
+    removeClass,
+    setTitle,
+    getTitle,
 } from './module/dom';
 import { show as showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/server/message';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
-import { encodeCFURIComponent, getLocalTime, getLocalTimeString } from './module/common/pure';
+import { encodeCFURIComponent, getLocalTime } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { pgid, redirect } from './module/global';
 import { lazyloadImport, unloadLazyload } from './module/lazyload';
 import { allResultsShown, loading, noResult } from './module/text/ui';
-import '../css/news.scss';
+import * as styles from '../css/news.module.scss';
 import { addManualAllLanguageClass } from './module/dom/create_element/all_language';
 import { lineClamp as lineClampClass } from '../css/line_clamp.module.scss';
+import { createNewsTemplate, parseNewsStyle } from './module/news';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
+const INTERNAL_IMAGE_CLASS = 'image-internal';
+const IMAGE_ENLARGE_CLASS = 'image-enlarge';
 let pivot: AllNewsInfo.PivotInfo;
 
 export default function (showPage: ShowPageFunc) {
@@ -61,7 +64,7 @@ export default function (showPage: ShowPageFunc) {
             changeURL(NEWS_TOP_URL, true);
         }
         const loadingTextContainer = createParagraphElement();
-        loadingTextContainer.id = 'loading-text';
+        addClass(loadingTextContainer, styles.loadingText);
         getAllNews(showPage, loadingTextContainer);
     } else {
         const lazyloadImportPromise = lazyloadImport();
@@ -87,19 +90,24 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
                 showMessage(invalidResponse());
                 return;
             }
-            setUpSessionAuthentication(parsedResponse.credential, logoutParam);
             showPage();
+            setTitle(parsedResponse.title + ' | ' + getTitle());
+            setUpSessionAuthentication(parsedResponse.credential, logoutParam);
 
             const contentContainer = createDivElement();
-            contentContainer.id = 'content';
+            addClass(contentContainer, styles.content);
             const loadingText = createParagraphElement(loading);
-            loadingText.id = 'loading-text';
+            addClass(loadingText, styles.loadingText);
             appendChild(contentContainer, loadingText);
 
             const container = createDivElement();
-            container.id = 'container';
+            addClass(container, styles.container);
             appendChild(body, container);
-            showNews(container, contentContainer, parsedResponse);
+
+            const [contentOuterContainer, contentInnerContainer] = createNewsTemplate(parsedResponse.title, parsedResponse.create_time, parsedResponse.update_time);
+            appendChild(contentInnerContainer, contentContainer);
+            appendChild(container, contentOuterContainer);
+
             addNavBar(NavBarPage.NEWS, () => {
                 redirect(NEWS_TOP_URL);
             });
@@ -122,6 +130,7 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
                     addManualAllLanguageClass(contentContainer);
                     bindEventListners(contentContainer);
                     attachImage(lazyloadImportPromise, contentContainer, newsID, parsedResponse.credential);
+                    parseNewsStyle(contentContainer);
                     scrollToHash();
                 } else {
                     showMessage(notFound);
@@ -135,37 +144,6 @@ function getNews(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsI
     });
 }
 
-function showNews(container: HTMLElement, contentContainer: HTMLElement, newsInfo: NewsInfo.NewsInfo) {
-    const contentOuterContainer = createDivElement();
-    contentOuterContainer.id = 'content-outer-container';
-    const contentInnerContainer = createDivElement();
-    contentInnerContainer.id = 'content-container';
-
-    const titleContainer = createParagraphElement(newsInfo.title);
-    titleContainer.id = 'title';
-
-    setTitle(newsInfo.title + ' | ' + getTitle());
-    appendChild(contentInnerContainer, titleContainer);
-
-    const createTime = getLocalTimeString(newsInfo.create_time, true, false);
-    const createTimeContainer = createParagraphElement('初回掲載日：' + createTime);
-    addClass(createTimeContainer, 'date');
-    appendChild(contentInnerContainer, createTimeContainer);
-
-    if (newsInfo.update_time !== null) {
-        const updateTime = getLocalTimeString(newsInfo.update_time, true, false);
-        const updateTimeContainer = createParagraphElement('最終更新日：' + updateTime);
-        addClass(updateTimeContainer, 'date');
-        appendChild(contentInnerContainer, updateTimeContainer);
-    }
-
-    appendChild(contentInnerContainer, createHRElement());
-    appendChild(contentInnerContainer, contentContainer);
-
-    appendChild(contentOuterContainer, contentInnerContainer);
-    appendChild(container, contentOuterContainer);
-}
-
 async function attachImage(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, contentContainer: HTMLElement, newsID: string, credential: string): Promise<void> {
     const currentPgid = pgid;
     const lazyload = await lazyloadImportPromise;
@@ -175,26 +153,32 @@ async function attachImage(lazyloadImportPromise: ReturnType<typeof lazyloadImpo
     lazyload.setCredential(credential, SessionTypes.NEWS);
 
     const baseURL = CDN_URL + '/news/' + newsID + '/';
-    const elems = getDescendantsByClass(contentContainer, 'image-internal');
-    for (const elem of elems) {
-        addClass(elem, 'lazyload');
+    const elems = getDescendantsByClass(contentContainer, INTERNAL_IMAGE_CLASS);
+    let elem = elems[0];
+    while (elem !== undefined) {
+        removeClass(elem, INTERNAL_IMAGE_CLASS);
+        addClass(elem, styles.imageInternal);
         const src = getDataAttribute(elem, 'src');
         if (src === null) {
             continue;
         }
         lazyload.default(elem, baseURL + encodeCFURIComponent(src), src, { delay: 250 });
-        if (containsClass(elem, 'image-enlarge')) {
+        if (containsClass(elem, IMAGE_ENLARGE_CLASS)) {
+            removeClass(elem, IMAGE_ENLARGE_CLASS);
+            addClass(elem, styles.imageEnlarge);
             addEventListener(elem, 'click', () => {
                 openImageWindow(baseURL, src, credential, SessionTypes.NEWS);
             });
         }
         removeRightClick(elem);
+        elem = elems[0];
     }
 }
 
 function bindEventListners(contentContainer: HTMLElement): void {
     const elems = getDescendantsByClass(contentContainer, 'open-window');
     for (const elem of (elems as HTMLCollectionOf<HTMLElement>)) {
+        removeClass(elem, 'open-window');
         addEventListener(elem, 'click', () => {
             const page = getDataAttribute(elem, 'page');
 
@@ -254,7 +238,7 @@ function getAllNews(containerOrShowPage: ShowPageFunc | HTMLElement, loadingText
             if (!(containerOrShowPage instanceof HTMLElement)) {
                 (containerOrShowPage as ShowPageFunc)();
                 const container = createDivElement();
-                container.id = 'container';
+                addClass(container, styles.container);
                 appendChild(body, container);
                 appendChild(body, loadingTextContainer);
                 const positionDetector = createDivElement();
@@ -286,10 +270,10 @@ function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInf
     pivot = newPivot;
     for (const entry of allNewsInfoEntries) {
         const overviewContainer = createDivElement();
-        addClass(overviewContainer, 'overview-container');
+        addClass(overviewContainer, styles.overviewContainer);
 
         const dateContainer = createDivElement();
-        addClass(dateContainer, 'date');
+        addClass(dateContainer, styles.date);
         const updateTime = getLocalTime(entry.update_time);
         appendText(dateContainer, updateTime.year + '年');
         appendChild(dateContainer, createBRElement());
@@ -297,7 +281,7 @@ function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInf
 
         const titleContainer = createDivElement();
         appendText(titleContainer, entry.title);
-        addClass(titleContainer, 'overview-title');
+        addClass(titleContainer, styles.overviewTitle);
         addClass(titleContainer, lineClampClass);
 
         appendChild(overviewContainer, dateContainer);

@@ -21,7 +21,7 @@ export function getLocalTime(unixTimestamp?: number) {
     };
 }
 
-export function getLocalTimeString(unixTimestamp?: number, showSeconds?: boolean, showTimezone?: boolean) {
+export function getLocalTimeString(unixTimestamp: number, showSeconds?: boolean, showTimezone?: boolean) {
     const localTime = getLocalTime(unixTimestamp);
     let result = localTime.year + '年' + localTime.month + '月' + localTime.date + '日（' + localTime.dayOfWeek + '）' + localTime.hour.toString().padStart(2, '0') + '時' + localTime.minute.toString().padStart(2, '0') + '分';
     if (showSeconds) {
