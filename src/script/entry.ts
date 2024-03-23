@@ -190,14 +190,14 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
             }
 
             const titleText = createParagraphElement('アップデートが利用可能です');
-            addClass(titleText, 'title');
+            addClass(titleText, popupWindow.styles.title);
 
             const promptText = createParagraphElement('今すぐインストールすると、ページが再読み込みされます。' + DOMAIN + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + DOMAIN + 'のすべてのタブを閉じてから再読み込みしてください。');
 
             const updateButton = createButtonElement('インストール');
             const cancelButton = createButtonElement('後で');
             const buttonFlexbox = createDivElement();
-            addClass(buttonFlexbox, 'input-flexbox');
+            addClass(buttonFlexbox, popupWindow.styles.inputFlexbox);
             appendChild(buttonFlexbox, updateButton);
             appendChild(buttonFlexbox, cancelButton);
 

@@ -16,7 +16,7 @@ const enum RejectReason {
     CLOSE,
 }
 
-export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupWindow) {
+export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupWindow, inputFlexboxClass: string) {
     let returnPromiseResolve: (value: EmailOtpPopupWindow) => void;
     let returnPromiseReject: (reason: unknown) => void;
 
@@ -32,7 +32,7 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     hideElement(warningText);
 
     const inputFlexbox = createDivElement();
-    addClass(inputFlexbox, 'input-flexbox');
+    addClass(inputFlexbox, inputFlexboxClass);
 
     const [otpInputContainer, otpInput] = createTotpInput(false);
     appendChild(inputFlexbox, otpInputContainer);
@@ -70,7 +70,7 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     const submitButton = createButtonElement(submitButtonText);
     const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
-    addClass(buttonFlexbox, 'input-flexbox');
+    addClass(buttonFlexbox, inputFlexboxClass);
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 

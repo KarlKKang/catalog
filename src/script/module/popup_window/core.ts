@@ -1,11 +1,13 @@
 import { addClass, appendChild, body, createDivElement, removeClass, replaceChildren, w } from '../dom';
 import { addTimeout } from '../timer';
-import '../../../css/popup_window.scss';
+import * as styles from '../../../css/popup_window.module.scss';
 
 let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
 let wid: any;
 let windowOpen = false;
 const waitingQueue: (() => void)[] = [];
+
+export { styles };
 
 export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void) {
     const currentWid = {};
@@ -28,7 +30,7 @@ export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void
     let contentContainer: HTMLDivElement;
     if (popupWindow === null) {
         container = createDivElement();
-        container.id = 'popup-window';
+        addClass(container, styles.container);
         const innerContainer = createDivElement();
         contentContainer = createDivElement();
         appendChild(container, innerContainer);

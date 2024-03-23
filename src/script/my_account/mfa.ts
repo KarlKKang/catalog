@@ -231,7 +231,7 @@ async function handleFailedEmailOtp(
         if (currentPgid !== pgid) {
             return;
         }
-        emailOtpPopupWindowPromise = promptForEmailOtp(popupWindow.initializePopupWindow);
+        emailOtpPopupWindowPromise = promptForEmailOtp(popupWindow.initializePopupWindow, popupWindow.styles.inputFlexbox);
     } else {
         emailOtpPopupWindowPromise = currentEmailOtpPopupWindow[1]();
     }
@@ -253,7 +253,7 @@ async function handleFailedEmailOtp(
 
 async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     const currentPgid = pgid;
-    const popupWindowInitialize = (await popupWindowImportPromise).initializePopupWindow;
+    const popupWindow = await popupWindowImportPromise;
     if (currentPgid !== pgid) {
         return;
     }
@@ -285,11 +285,11 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     const submitButton = createButtonElement(submitButtonText);
     const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
-    addClass(buttonFlexbox, 'input-flexbox');
+    addClass(buttonFlexbox, popupWindow.styles.inputFlexbox);
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 
-    const hidePopupWindow = popupWindowInitialize(
+    const hidePopupWindow = popupWindow.initializePopupWindow(
         [promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox],
         () => { totpInput.focus(); },
     );

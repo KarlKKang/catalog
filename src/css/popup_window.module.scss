@@ -1,6 +1,6 @@
 @use 'module/properties';
 
-#popup-window {
+.container {
     $_: properties.add(popup-window-background-color);
     $_: properties.add(popup-window-blurred-background-color);
 
@@ -68,8 +68,7 @@
         padding: 0px;
         margin: -1em -1em 1em -1em;
 
-        >.input-field,
-        >.button {
+        >* {
             margin: 1em 1em 0px 1em;
         }
     }

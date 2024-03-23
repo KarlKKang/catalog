@@ -16,7 +16,7 @@ export const enum RejectReason {
     CLOSE,
 }
 
-export function promptForTotp(initializePopupWindow: typeof InitializePopupWindow) {
+export function promptForTotp(initializePopupWindow: typeof InitializePopupWindow, inputFlexboxClass: string) {
     let returnPromiseResolve: (value: TotpPopupWindow) => void;
     let returnPromiseReject: (reason: unknown) => void;
 
@@ -37,7 +37,7 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
     const submitButton = createButtonElement(submitButtonText);
     const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
-    addClass(buttonFlexbox, 'input-flexbox');
+    addClass(buttonFlexbox, inputFlexboxClass);
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 

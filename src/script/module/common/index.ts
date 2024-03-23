@@ -59,7 +59,7 @@ export async function handleFailedTotp(
         if (currentPgid !== pgid) {
             return;
         }
-        totpPopupWindowPromise = promptForTotp.promptForTotp(popupWindow.initializePopupWindow);
+        totpPopupWindowPromise = promptForTotp.promptForTotp(popupWindow.initializePopupWindow, popupWindow.styles.inputFlexbox);
     } else {
         totpPopupWindowPromise = currentTotpPopupWindow[1]();
     }

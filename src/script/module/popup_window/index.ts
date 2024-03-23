@@ -1,14 +1,14 @@
 import { pgid } from '../global';
 import { show as showMessage } from '../message';
 import { moduleImportError } from '../message/param';
-import { initializePopupWindow as InitializePopupWindow, onPopupWindowClosed as OnPopupWindowClosed } from './core';
+import { initializePopupWindow as InitializePopupWindow, onPopupWindowClosed as OnPopupWindowClosed, type styles as Styles } from './core';
 
 let popupWindow: Awaited<typeof import(
-    /* webpackExports: ["initializePopupWindow", "destroy"] */
     './core'
 )> | null = null;
 
 export async function popupWindowImport(): Promise<{
+    styles: typeof Styles;
     initializePopupWindow: typeof InitializePopupWindow;
     onPopupWindowClosed: typeof OnPopupWindowClosed;
 }> {
@@ -18,7 +18,6 @@ export async function popupWindowImport(): Promise<{
     const currentPgid = pgid;
     try {
         popupWindow = await import(
-            /* webpackExports: ["initializePopupWindow", "destroy", "onPopupWindowClosed"] */
             './core'
         );
     } catch (e) {
