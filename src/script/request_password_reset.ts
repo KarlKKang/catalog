@@ -26,7 +26,7 @@ import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';
 import { passwordResetPageTitle } from './module/text/page_title';
-
+import * as commonStyles from '../css/common.module.scss';
 import * as styles from '../css/portal_form.module.scss';
 
 export default function (showPage: ShowPageFunc) {
@@ -63,7 +63,7 @@ function showPageCallback() {
 
     const goBack = createParagraphElement();
     const goBackText = createSpanElement('❮ 戻る');
-    addClass(goBack, 'link');
+    addClass(goBack, commonStyles.link);
     appendChild(goBack, goBackText);
     appendChild(container, goBack);
 

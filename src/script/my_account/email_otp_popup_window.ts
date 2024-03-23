@@ -2,7 +2,7 @@ import { addClass, appendChild, addEventListener, createButtonElement, createDiv
 import { failedTotp } from '../module/text/message/body';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';
-import { CSS_AUTO, CSS_CURSOR } from '../module/style/value';
+import { CSS_AUTO, CSS_COLOR, CSS_CURSOR } from '../module/style/value';
 import { addInterval, removeInterval } from '../module/timer';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
 
@@ -28,7 +28,7 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     const promptText = createParagraphElement('メールに送信された認証コードを入力してください。');
 
     const warningText = createParagraphElement(failedTotp);
-    changeColor(warningText, 'red');
+    changeColor(warningText, CSS_COLOR.RED);
     hideElement(warningText);
 
     const inputFlexbox = createDivElement();

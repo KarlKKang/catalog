@@ -10,3 +10,9 @@ export const enum CSS_UNIT {
 export const enum CSS_CURSOR {
     NOT_ALLOWED = 'not-allowed',
 }
+
+export const enum CSS_COLOR {
+    RED,
+    GREEN,
+    ORANGE,
+}

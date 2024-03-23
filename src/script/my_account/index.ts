@@ -34,7 +34,7 @@ import { basicImportPromise, importAll, mfaImportPromise, parseBrowserImportProm
 import { moduleImportError } from '../module/message/param';
 import { changeColor, hideElement, showElement } from '../module/style';
 import { loading } from '../module/text/ui';
-
+import { CSS_COLOR } from '../module/style/value';
 import * as styles from '../../css/my_account.module.scss';
 
 export default function (showPage: ShowPageFunc) {
@@ -133,11 +133,11 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     if (userInfo.mfa_status) {
         const recoveryCodeInfo = getSharedElement(SharedElementVarsIdx.recoveryCodeInfo);
         if (userInfo.recovery_code_status === 0) {
-            changeColor(recoveryCodeInfo, 'red');
+            changeColor(recoveryCodeInfo, CSS_COLOR.RED);
             appendText(recoveryCodeInfo, 'リカバリーコードが残っていません。新しいリカバリーコードを生成してください。');
             showElement(recoveryCodeInfo);
         } else if (userInfo.recovery_code_status === 1) {
-            changeColor(recoveryCodeInfo, 'orange');
+            changeColor(recoveryCodeInfo, CSS_COLOR.ORANGE);
             appendText(recoveryCodeInfo, 'リカバリーコードが残りわずかです。新しいリカバリーコードを生成することをお勧めします。');
             showElement(recoveryCodeInfo);
         }

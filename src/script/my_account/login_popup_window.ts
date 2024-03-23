@@ -5,6 +5,8 @@ import { TOP_URL } from '../module/env/constant';
 import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../module/style';
 import { cancelButtonText, forgetPasswordText, submitButtonText } from '../module/text/ui';
+import * as commonStyles from '../../css/common.module.scss';
+import { CSS_COLOR } from '../module/style/value';
 
 export type LoginPopupWindow = [
     string, // email
@@ -29,7 +31,7 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     const promptText = createParagraphElement('メールアドレスとパスワードを入力してください。');
 
     const warningText = createParagraphElement();
-    changeColor(warningText, 'red');
+    changeColor(warningText, CSS_COLOR.RED);
     if (message !== undefined) {
         appendText(warningText, message);
     } else {
@@ -51,7 +53,7 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
 
     const forgetPasswordParagraph = createParagraphElement();
     const forgetPasswordLink = createSpanElement(forgetPasswordText);
-    addClass(forgetPasswordLink, 'link');
+    addClass(forgetPasswordLink, commonStyles.link);
     appendChild(forgetPasswordParagraph, forgetPasswordLink);
     addEventListener(forgetPasswordLink, 'click', () => {
         openWindow(TOP_URL + '/request_password_reset');

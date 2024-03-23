@@ -36,6 +36,7 @@ import { emailChangePageTitle } from './module/text/page_title';
 
 import * as styles from '../css/portal_form.module.scss';
 import { completed } from './module/text/message/title';
+import { CSS_COLOR } from './module/style/value';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -182,7 +183,7 @@ function showPageCallback(param: string) {
                         showMessage({
                             title: completed,
                             message: 'メールアドレスが変更されました。',
-                            color: 'green',
+                            color: CSS_COLOR.GREEN,
                             url: TOP_URL,
                             buttonText: 'トップページへ'
                         });

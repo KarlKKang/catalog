@@ -1,3 +1,4 @@
+import * as commonStyles from '../../../css/common.module.scss';
 import * as styles from '../../../css/news.module.scss';
 import { getLocalTimeString } from '../common/pure';
 import { addClass, appendChild, createDivElement, createHRElement, createParagraphElement, getDescendantsByClass, removeClass } from '../dom';
@@ -7,6 +8,10 @@ const classMap = {
     'bolder': styles.bolder,
     'line-break': styles.lineBreak,
     'code-inline': styles.codeInline,
+    'color-red': commonStyles.colorRed,
+    'color-green': commonStyles.colorGreen,
+    'color-orange': commonStyles.colorOrange,
+    'link': commonStyles.link,
 };
 
 export function parseNewsStyle(container: HTMLElement) {

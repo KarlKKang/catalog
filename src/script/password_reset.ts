@@ -34,6 +34,7 @@ import { changeButtonText, nextButtonText, passwordRules } from './module/text/u
 
 import * as styles from '../css/portal_form.module.scss';
 import { completed } from './module/text/message/title';
+import { CSS_COLOR } from './module/style/value';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -164,7 +165,7 @@ function showPageCallback(user: string, signature: string, expires: string) {
                     showMessage({
                         title: completed,
                         message: passwordChanged,
-                        color: 'green',
+                        color: CSS_COLOR.GREEN,
                         url: LOGIN_URL,
                         buttonText: nextButtonText
                     });

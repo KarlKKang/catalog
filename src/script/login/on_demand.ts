@@ -8,13 +8,14 @@ import { show as showMessage } from '../module/message';
 import { UNRECOMMENDED_BROWSER } from '../module/browser';
 import { redirect } from '../module/global';
 import { nextButtonText } from '../module/text/ui';
+import { CSS_COLOR } from '../module/style/value';
 
 export function approvedCallback() {
     if (UNRECOMMENDED_BROWSER) {
         showMessage({
             title: 'お使いのブラウザは推奨環境ではありません',
             message: '一部のコンテンツが正常に再生されない場合は、Safari 11またはChrome 63以降のブラウザをお使いください。',
-            color: 'orange',
+            color: CSS_COLOR.ORANGE,
             url: getForwardURL(),
             buttonText: nextButtonText
         });

@@ -20,11 +20,13 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import * as styles from '../css/message.module.scss';
 import { changeColor, horizontalCenter } from './module/style';
+import { CSS_COLOR } from './module/style/value';
+import { MessageTitleColor } from './module/message/type';
 
 export default function (showPage: ShowPageFunc) {
     const message = getSessionStorage('message');
     const title = getSessionStorage('title');
-    const color = getSessionStorage('color');
+    const colorStr = getSessionStorage('color');
     const documentTitle = getSessionStorage('document-title');
     const buttonText = getSessionStorage('button-text');
     const url = getSessionStorage('url');
@@ -33,11 +35,11 @@ export default function (showPage: ShowPageFunc) {
 
     clearSessionStorage();
 
-    if (message === null || title === null || color === null || documentTitle === null) {
+    if (message === null || title === null || colorStr === null || documentTitle === null) {
         if (DEVELOPMENT) {
             showPage();
             const [container, titleElem, messageElem] = createElements(true);
-            changeColor(titleElem, 'orange');
+            changeColor(titleElem, CSS_COLOR.ORANGE);
             appendText(titleElem, 'タイトルTitle');
             appendText(messageElem, 'メッセージMessage'.repeat(10));
             const button = createButtonElement('ボタンButton');
@@ -47,6 +49,14 @@ export default function (showPage: ShowPageFunc) {
             redirect(TOP_URL, true);
         }
         return;
+    }
+
+    let color: CSS_COLOR;
+    for (const messageTitleColor of MessageTitleColor) {
+        if (messageTitleColor.toString() === colorStr) {
+            color = messageTitleColor;
+            break;
+        }
     }
 
     const callback = () => {

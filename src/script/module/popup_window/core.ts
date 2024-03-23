@@ -1,6 +1,7 @@
-import { addClass, appendChild, body, createDivElement, removeClass, replaceChildren, w } from '../dom';
+import { addClass, appendChild, body, createDivElement, replaceChildren, w } from '../dom';
 import { addTimeout } from '../timer';
 import * as styles from '../../../css/popup_window.module.scss';
+import { setOpacity, setVisibility } from '../style';
 
 let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
 let wid: any;
@@ -20,8 +21,8 @@ export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void
                 return;
             }
             replaceChildren(contentContainer, ...contents);
-            removeClass(container, 'invisible');
-            removeClass(container, 'transparent');
+            setVisibility(container, true);
+            setOpacity(container, 1);
             onDOMLoaded?.();
         });
     };
@@ -39,8 +40,8 @@ export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void
             if (currentWid !== wid) {
                 return;
             }
-            addClass(container, 'invisible');
-            addClass(container, 'transparent');
+            setVisibility(container, false);
+            setOpacity(container, 0);
             appendChild(body, container);
             popupWindow = [container, contentContainer];
             showContents(container, contentContainer);
@@ -67,12 +68,12 @@ export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void
 
         const hideWid = {}; // Set a new ID to prevent the window from being shown by `requestAnimationFrame` in the event queue.
         wid = hideWid;
-        addClass(container, 'transparent');
+        setOpacity(container, 0);
         addTimeout(() => {
             if (hideWid !== wid) {
                 return;
             }
-            addClass(container, 'invisible');
+            setVisibility(container, false);
             replaceChildren(contentContainer);
         }, 300);
     };

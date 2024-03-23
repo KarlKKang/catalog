@@ -1,5 +1,6 @@
-import { addClass, containsClass, removeClass } from '../dom';
-import type { CSS_AUTO, CSS_UNIT, CSS_CURSOR } from './value';
+import { addClass, removeClass } from '../dom';
+import { type CSS_AUTO, type CSS_UNIT, type CSS_CURSOR, CSS_COLOR } from './value';
+import * as styles from '../../../css/common.module.scss';
 
 const enum CSS_PROPERTY {
     WIDTH = 'width',
@@ -14,6 +15,7 @@ const enum CSS_PROPERTY {
     VISIBILITY = 'visibility',
     TRANSITION = 'transition',
     CURSOR = 'cursor',
+    DISPLAY = 'display',
 }
 
 export function setWidth(element: HTMLElement, value: number, unit: CSS_UNIT): void;
@@ -101,24 +103,28 @@ function setStyle(element: HTMLElement, property: CSS_PROPERTY, value: number | 
 }
 
 export function hideElement(elem: HTMLElement) {
-    addClass(elem, 'hidden');
+    setStyle(elem, CSS_PROPERTY.DISPLAY, 'none');
 }
 
 export function showElement(elem: HTMLElement) {
-    removeClass(elem, 'hidden');
+    removeClass(elem, CSS_PROPERTY.DISPLAY);
 }
 
-export function isHidden(elem: HTMLElement) {
-    return containsClass(elem, 'hidden');
-}
+const colorMap: { [key in CSS_COLOR]: string } = {
+    [CSS_COLOR.RED]: styles.colorRed,
+    [CSS_COLOR.GREEN]: styles.colorGreen,
+    [CSS_COLOR.ORANGE]: styles.colorOrange,
+};
 
-export function changeColor(elem: HTMLElement, color: string | null) {
-    removeClass(elem, 'color-red');
-    removeClass(elem, 'color-green');
-    removeClass(elem, 'color-orange');
-    color && addClass(elem, 'color-' + color);
+export function changeColor(elem: HTMLElement, color: CSS_COLOR | null) {
+    for (const colorClass of Object.values(colorMap)) {
+        removeClass(elem, colorClass);
+    }
+    if (color !== null) {
+        addClass(elem, colorMap[color]);
+    }
 }
 
 export function horizontalCenter(elem: HTMLElement) {
-    addClass(elem, 'hcenter');
+    addClass(elem, styles.hcenter);
 }

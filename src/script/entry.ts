@@ -10,10 +10,9 @@ import * as messagePageScript from './message';
 import { show as showMessage } from './module/message';
 import { moduleImportError } from './module/message/param';
 import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect } from './module/global';
-
 import '../font/dist/NotoSansJP/NotoSansJP-Light.css';
 import '../font/dist/NotoSansJP/NotoSansJP-Medium.css';
-import '../css/common.scss';
+import * as styles from '../css/common.module.scss';
 import { enableTransition, setMinHeight, setOpacity, setVisibility, setWidth } from './module/style';
 import { CSS_UNIT } from './module/style/value';
 import { consolePageTitle, emailChangePageTitle, infoPageTitle, loginPageTitle, myAccountPageTitle, newsPageTitle, notFoundPageTitle, passwordResetPageTitle, registerPageTitle } from './module/text/page_title';
@@ -44,7 +43,7 @@ type PageMap = {
 
 let body: HTMLElement;
 const loadingBar = createDivElement();
-loadingBar.id = 'loading-bar';
+addClass(loadingBar, styles.loadingBar);
 let currentPage: {
     script: PageScript;
     htmlEntry: HTMLEntry;
@@ -291,8 +290,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
     }
     body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
     setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
-    const NO_THEME_CLASS = 'no-theme';
-    removeClass(body, NO_THEME_CLASS);
+    removeClass(body, styles.noTheme);
     setViewport(false);
 
     const scriptImportPromise = page.script();
@@ -366,7 +364,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, pageName: s
 
             const isStandardStyle = page.htmlEntry !== HTMLEntry.NO_THEME && page.nativeViewport !== true;
             setMinHeight(html, null);
-            page.htmlEntry === HTMLEntry.NO_THEME && addClass(body, NO_THEME_CLASS);
+            page.htmlEntry === HTMLEntry.NO_THEME && addClass(body, styles.noTheme);
             page.nativeViewport === true && setViewport(true);
             registerServiceWorker(isStandardStyle);
 
@@ -396,12 +394,11 @@ function setViewport(native: boolean) {
         appendChild(d.head, viewportTag);
     }
     let viewpartTagContent = 'width=device-width, initial-scale=1';
-    const NATIVE_VIEWPORT_CLASS = 'native-viewport';
     if (native) {
-        addClass(html, NATIVE_VIEWPORT_CLASS);
+        addClass(html, styles.nativeViewport);
     } else {
         viewpartTagContent += ', viewport-fit=cover';
-        removeClass(html, NATIVE_VIEWPORT_CLASS);
+        removeClass(html, styles.nativeViewport);
     }
     viewportTag.content = viewpartTagContent;
 }

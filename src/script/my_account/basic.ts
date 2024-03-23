@@ -26,6 +26,7 @@ import type { AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/server/message';
 import * as InviteResult from '../module/type/InviteResult';
 import { changeColor, hideElement, showElement } from '../module/style';
+import { CSS_COLOR } from '../module/style/value';
 
 const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 
@@ -35,7 +36,7 @@ export function changeEmail() {
     const warningElem = getSharedElement(SharedElementVarsIdx.emailWarning);
 
     hideElement(warningElem);
-    changeColor(warningElem, 'red');
+    changeColor(warningElem, CSS_COLOR.RED);
 
     sendServerRequest('send_email_change', {
         callback: function (response: string) {
@@ -43,7 +44,7 @@ export function changeEmail() {
                 replaceText(warningElem, '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。');
             } else if (response === 'DONE') {
                 replaceText(warningElem, emailSent);
-                changeColor(warningElem, 'green');
+                changeColor(warningElem, CSS_COLOR.GREEN);
             } else {
                 showMessage(invalidResponse());
                 return;
@@ -65,7 +66,7 @@ export function changePassword() {
     const newPasswordConfirm = newPasswordComfirmInput.value;
 
     hideElement(warningElem);
-    changeColor(warningElem, 'red');
+    changeColor(warningElem, CSS_COLOR.RED);
 
     if (!PASSWORD_REGEX.test(newPassword)) {
         replaceText(warningElem, invalidPasswordFormat);
@@ -84,7 +85,7 @@ export function changePassword() {
         (response: string) => {
             if (response === 'DONE') {
                 replaceText(warningElem, passwordChanged);
-                changeColor(warningElem, 'green');
+                changeColor(warningElem, CSS_COLOR.GREEN);
                 newPasswordInput.value = '';
                 newPasswordComfirmInput.value = '';
             } else if (response === 'PASSWORD INVALID') {
@@ -109,7 +110,7 @@ export function changeUsername(userInfo: AccountInfo) {
     const newUsername = getSharedInput(SharedInputVarsIdx.newUsernameInput).value;
 
     hideElement(warningElem);
-    changeColor(warningElem, 'red');
+    changeColor(warningElem, CSS_COLOR.RED);
 
     if (newUsername === '') {
         replaceText(warningElem, usernameEmpty);
@@ -128,7 +129,7 @@ export function changeUsername(userInfo: AccountInfo) {
         (response: string) => {
             if (response === 'DONE') {
                 replaceText(warningElem, usernameChanged);
-                changeColor(warningElem, 'green');
+                changeColor(warningElem, CSS_COLOR.GREEN);
                 userInfo.username = newUsername;
             } else if (response === 'DUPLICATED') {
                 replaceText(warningElem, usernameTaken);
@@ -159,7 +160,7 @@ export function invite() {
     const receiver = inviteReceiverEmailInput.value;
 
     hideElement(warningElem);
-    changeColor(warningElem, 'red');
+    changeColor(warningElem, CSS_COLOR.RED);
     if (!EMAIL_REGEX.test(receiver)) {
         replaceText(warningElem, invalidEmailFormat);
         showElement(warningElem);
@@ -194,7 +195,7 @@ export function invite() {
                     message += '現在、一般登録を受け付けているため、招待券はかかりませんでした。';
                 }
                 replaceText(warningElem, message);
-                changeColor(warningElem, 'green');
+                changeColor(warningElem, CSS_COLOR.GREEN);
             }
             showElement(warningElem);
             disableAllInputs(false);
@@ -208,14 +209,14 @@ export function invite() {
 export function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement, sessionWarningElem: HTMLDivElement) {
     disableAllInputs(true);
     hideElement(sessionWarningElem);
-    changeColor(sessionWarningElem, 'red');
+    changeColor(sessionWarningElem, CSS_COLOR.RED);
     reauthenticationPrompt(
         'logout_session',
         (response: string) => {
             if (response === 'DONE') {
                 remove(sessionLogoutButton);
                 sessionLogoutButtons.delete(sessionLogoutButton);
-                changeColor(sessionWarningElem, 'green');
+                changeColor(sessionWarningElem, CSS_COLOR.GREEN);
                 replaceText(sessionWarningElem, 'ログアウトしました。');
             } else {
                 showMessage(invalidResponse());
@@ -236,7 +237,7 @@ export function changeLoginNotification() {
     const warningElem = getSharedElement(SharedElementVarsIdx.loginNotificationWarning);
 
     hideElement(warningElem);
-    changeColor(warningElem, 'red');
+    changeColor(warningElem, CSS_COLOR.RED);
 
     const loginNotificationTargetStatus = !getSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus);
 
@@ -247,7 +248,7 @@ export function changeLoginNotification() {
                 setSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus, loginNotificationTargetStatus);
                 updateMfaUI(true);
                 replaceText(warningElem, loginNotificationTargetStatus ? 'ログイン通知が有効になりました。' : 'ログイン通知が無効になりました。');
-                changeColor(warningElem, 'green');
+                changeColor(warningElem, CSS_COLOR.GREEN);
             } else if (response === 'TOTP NOT SET') {
                 updateMfaUI(false);
                 replaceText(warningElem, mfaNotSet);

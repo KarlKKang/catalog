@@ -1,5 +1,6 @@
 import { addClass, appendText, createAnchorElement, createTextNode } from '../../dom';
 import { TOP_DOMAIN } from '../../env/constant';
+import * as styles from '../../../../css/common.module.scss';
 
 export const defaultErrorSuffix = 'このエラーが続く場合は、管理者にお問い合わせください。';
 
@@ -27,7 +28,7 @@ export const accountDeactivated = () => {
         createAnchorElement(),
         createTextNode('）にご連絡ください。')
     ];
-    addClass(message[1], 'link');
+    addClass(message[1], styles.link);
     message[1].href = 'mailto:admin@' + TOP_DOMAIN;
     appendText(message[1], 'admin@' + TOP_DOMAIN);
     return message;

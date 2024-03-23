@@ -1,4 +1,5 @@
 import { d } from './document';
+import * as styles from '../../../css/common.module.scss';
 
 export function getByIdNative(id: string) {
     return d.getElementById(id);
@@ -160,8 +161,8 @@ export function appendChildren(parent: Node, ...children: Node[]) {
 export function disableInput(inputElement: HTMLInputElement, disabled: boolean) {
     inputElement.disabled = disabled;
     if (disabled) {
-        addClass(getParentElement(inputElement), 'disabled');
+        addClass(getParentElement(inputElement), styles.disabled);
     } else {
-        removeClass(getParentElement(inputElement), 'disabled');
+        removeClass(getParentElement(inputElement), styles.disabled);
     }
 }

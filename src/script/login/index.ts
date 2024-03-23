@@ -40,7 +40,7 @@ import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
 import { forgetPasswordText } from '../module/text/ui';
-
+import * as commonStyles from '../../css/common.module.scss';
 import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
 
@@ -96,7 +96,7 @@ function showPageCallback() {
 
     const forgetPassword = createParagraphElement();
     const forgetPasswordLink = createSpanElement(forgetPasswordText);
-    addClass(forgetPasswordLink, 'link');
+    addClass(forgetPasswordLink, commonStyles.link);
     appendChild(forgetPassword, forgetPasswordLink);
     appendChild(container, forgetPassword);
 

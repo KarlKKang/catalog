@@ -26,7 +26,6 @@ import {
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 import type { VideoEPInfo, VideoFormatInfo } from '../module/type/BangumiInfo';
-
 import {
     MSE_SUPPORTED,
     NATIVE_HLS_SUPPORTED,
@@ -41,7 +40,6 @@ import {
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
-
 import { getFormatIndex, createQuery } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, showTextErrorMessage, type AccordionInstance } from './media_helper';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
@@ -52,8 +50,9 @@ import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_prom
 import { SharedElementVarsIdx, errorMessageElement, getSharedElement } from './shared_var';
 import { addInterval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
-import { CSS_UNIT } from '../module/style/value';
+import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import { getURLParam } from '../module/common';
+import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/bangumi.module.scss';
 
 let currentPgid: unknown;
@@ -204,7 +203,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
     }
 
     let formatString = '';
-    const mediaMessageQueue: [string, Node[], string | null][] = [];
+    const mediaMessageQueue: [string, Node[], CSS_COLOR | null][] = [];
 
     let USE_AVC = true;
     let AVC_FALLBACK = false;
@@ -394,7 +393,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 showMediaMessage(
                     '再生中に問題が発生した可能性があります',
                     [createTextNode('バッファリングに通常より時間がかかっています。遅いネットワークが原因かもしれません。または、デバイスのメモリが不足しています。このような場合、動画がスムーズに再生されるかどうかは保証できません。')],
-                    'orange'
+                    CSS_COLOR.ORANGE
                 );
             }
         };
@@ -519,7 +518,7 @@ async function canPlayHEVC(withFallback: boolean | undefined): Promise<boolean> 
 
 function createLinkElem(text: string, link: string) {
     const linkElem = createSpanElement(text);
-    addClass(linkElem, 'link');
+    addClass(linkElem, commonStyles.link);
     addEventListener(linkElem, 'click', () => {
         redirect(link);
     });

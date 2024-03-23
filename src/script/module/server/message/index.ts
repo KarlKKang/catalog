@@ -4,6 +4,7 @@ import { LOGIN_URL, TOP_URL } from '../../env/constant';
 import type { MaintenanceInfo } from '../../type/MaintenanceInfo';
 import { getBaseURL } from '../../dom';
 import { type MessageParam } from '../../message/type';
+import { CSS_COLOR } from '../../style/value';
 
 const reloadButtonText = '再読み込み';
 export const invalidResponse = () => {
@@ -16,13 +17,13 @@ export const invalidResponse = () => {
 export const sessionEnded = (url: string) => ({
     title: title.sessionEnded,
     message: body.sessionEnded,
-    color: 'orange',
+    color: CSS_COLOR.ORANGE,
     url: url
 });
 export const mediaSessionEnded = {
     title: title.sessionEnded,
     message: body.mediaSessionEnded,
-    color: 'orange',
+    color: CSS_COLOR.ORANGE,
     url: TOP_URL
 };
 export const connectionError = {
@@ -38,7 +39,7 @@ export const status429 = {
 export const status503 = (maintenanceInfo: MaintenanceInfo) => ({
     title: title.status503,
     message: body.status503(maintenanceInfo),
-    color: 'orange',
+    color: CSS_COLOR.ORANGE,
     buttonText: reloadButtonText
 });
 export const status400And500 = (responseText: string) => {
@@ -62,7 +63,7 @@ export const unknownServerError = () => {
 export const insufficientPermissions = {
     title: title.insufficientPermissions,
     message: body.insufficientPermissions,
-    color: 'red',
+    color: CSS_COLOR.RED,
     url: TOP_URL
 };
 

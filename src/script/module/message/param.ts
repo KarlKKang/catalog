@@ -2,6 +2,7 @@ import { defaultErrorSuffix, emailSentSuffix } from '../text/message/body';
 import { emailSent as emailSentTitle } from '../text/message/title';
 import { MessageParam } from './type';
 import { isString } from '../type/helper';
+import { CSS_COLOR } from '../style/value';
 
 export const moduleImportError = (e: unknown) => {
     let message = 'モジュールの読み込みに失敗しました。' + defaultErrorSuffix;
@@ -21,7 +22,7 @@ export const emailSent = (goBackUrl?: string) => {
     const param: MessageParam = {
         title: emailSentTitle,
         message: emailSentSuffix,
-        color: 'green',
+        color: CSS_COLOR.GREEN,
     };
     if (goBackUrl === undefined) {
         param.buttonText = null;

@@ -3,6 +3,7 @@ import { TOP_DOMAIN } from '../../env/constant';
 import { getLocalTimeString } from '../../common/pure';
 import { MaintenanceInfo } from '../../type/MaintenanceInfo';
 import { defaultErrorSuffix } from '../../text/message/body';
+import * as styles from '../../../../css/common.module.scss';
 
 export const invalidResponse = `サーバーが無効な応答を返しました。${defaultErrorSuffix}`;
 export const sessionEnded = 'もう一度ログインしてください。';
@@ -21,7 +22,7 @@ export const connectionError = function () {
     const listItem = createLIElement();
     appendText(listItem, 'あなたのIPアドレスはブラックリストに登録され、ファイアウォールでブロックされています。管理者（');
     const emailLink = createAnchorElement();
-    addClass(emailLink, 'link');
+    addClass(emailLink, styles.link);
     emailLink.href = 'mailto:admin@' + TOP_DOMAIN;
     appendText(emailLink, 'admin@' + TOP_DOMAIN);
     appendChild(listItem, emailLink);

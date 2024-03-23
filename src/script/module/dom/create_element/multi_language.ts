@@ -1,15 +1,15 @@
 import { addClass, appendChild } from '../element';
 import { createDivElement, createInputElement } from '.';
-
 import '../../../../font/dist/NotoSans/NotoSans-Light.css';
 import '../../../../font/dist/NotoSansTC/NotoSansTC-Light.css';
 import '../../../../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import { container as autoContainerClass } from '../../../../css/multi_language/auto.module.scss';
 import { container as manualContainerClass } from '../../../../css/multi_language/manual.module.scss';
+import * as styles from '../../../../css/common.module.scss';
 
 export function createUsernameInput() {
     const container = createDivElement();
-    addClass(container, 'input-field');
+    addClass(container, styles.inputField);
     addClass(container, autoContainerClass);
     const input = createInputElement('text');
     input.autocomplete = 'username';

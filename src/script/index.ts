@@ -41,11 +41,12 @@ import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout } from './module/timer';
 import { redirect, setCustomPopStateHandler } from './module/global';
 import { lazyloadImport, unloadLazyload } from './module/lazyload';
-import { changeColor } from './module/style';
+import { changeColor, setOpacity } from './module/style';
 import { allResultsShown, loading, noResult } from './module/text/ui';
 import { addAutoMultiLanguageClass } from './module/dom/create_element/multi_language';
 import * as styles from '../css/index.module.scss';
 import { lineClamp as lineClampClass } from '../css/line_clamp.module.scss';
+import { CSS_COLOR } from './module/style/value';
 
 let pivot: SeriesInfo.Pivot;
 let keywords: string;
@@ -125,7 +126,7 @@ function showPageCallback(
 
         const announcementTitle = createParagraphElement('メンテナンスのお知らせ');
         addClass(announcementTitle, styles.announcementTitle);
-        changeColor(announcementTitle, 'orange');
+        changeColor(announcementTitle, CSS_COLOR.ORANGE);
         appendChild(announcementInnerContainer, announcementTitle);
 
         const maintenanceInfo = seriesInfo.maintenance;
@@ -243,8 +244,8 @@ function showPageCallback(
         getInfiniteScrolling().setEnabled(false);
         scrollToTop();
 
-        addClass(containerElem, 'transparent');
-        addClass(loadingTextContainer, 'transparent');
+        setOpacity(containerElem, 0);
+        setOpacity(loadingTextContainer, 0);
         const animationTimeout = new Promise<void>((resolve) => {
             addTimeout(() => {
                 for (const eventTarget of eventTargetsTracker) {
@@ -263,8 +264,8 @@ function showPageCallback(
                     return;
                 }
                 showSeries(seriesInfo);
-                removeClass(containerElem, 'transparent');
-                removeClass(loadingTextContainer, 'transparent');
+                setOpacity(containerElem, 1);
+                setOpacity(loadingTextContainer, 1);
                 disableSearchBarInput(false);
             });
         }, true);

@@ -16,7 +16,7 @@ import { notFound as notFoundBody } from './module/server/message/body';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { redirect } from './module/global';
 import { changeColor, horizontalCenter, setWidth } from './module/style';
-import { CSS_AUTO } from './module/style/value';
+import { CSS_AUTO, CSS_COLOR } from './module/style/value';
 import * as styles from '../css/message.module.scss';
 
 export default function (showPage: ShowPageFunc) {
@@ -28,7 +28,7 @@ export default function (showPage: ShowPageFunc) {
 
     const title = createParagraphElement(notFoundTitle);
     addClass(title, styles.title);
-    changeColor(title, 'red');
+    changeColor(title, CSS_COLOR.RED);
     appendChild(container, title);
 
     const messageBody = createParagraphElement(notFoundBody);

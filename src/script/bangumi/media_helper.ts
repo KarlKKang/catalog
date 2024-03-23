@@ -33,7 +33,7 @@ import { addTimeout } from '../module/timer';
 import { CustomMediaError } from '../module/player/media_error';
 import { SharedElementVarsIdx, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
 import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
-import { CSS_UNIT } from '../module/style/value';
+import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import { defaultError } from '../module/text/message/title';
 import { defaultErrorSuffix } from '../module/text/message/body';
 import '../../font/dist/CourierNew/CourierNew-Regular.css'; // Needed for the accordion icon.
@@ -86,7 +86,7 @@ export function showErrorMessage(title: string, body: Node[]) {
     const mediaHolder = getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER);
     let messageElem = errorMessageElement;
     if (messageElem === null) {
-        messageElem = createMessageElem(title, body, 'red');
+        messageElem = createMessageElem(title, body, CSS_COLOR.RED);
         setErrorMessageElement(messageElem);
         insertBefore(messageElem, mediaHolder);
     } else {
@@ -98,7 +98,7 @@ export function showErrorMessage(title: string, body: Node[]) {
     hideElement(mediaHolder);
 }
 
-export function showMediaMessage(title: string, body: Node[], titleColor: string | null) {
+export function showMediaMessage(title: string, body: Node[], titleColor: CSS_COLOR | null) {
     const messageElem = createMessageElem(title, body, titleColor);
     prependChild(getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER), messageElem);
 }

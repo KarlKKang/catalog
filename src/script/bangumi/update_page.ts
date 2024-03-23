@@ -6,7 +6,6 @@ import { addNavBar } from '../module/nav_bar';
 import {
     w,
     addEventListener,
-    removeClass,
     setTitle,
     addClass,
     remove,
@@ -33,8 +32,8 @@ import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
 import { SharedElementVarsIdx, dereferenceSharedVars, getSharedElement, initializeSharedVars, setErrorMessageElement } from './shared_var';
-import { hideElement, setMaxHeight, setMinHeight, setPaddingBottom, showElement } from '../module/style';
-import { CSS_UNIT } from '../module/style/value';
+import { hideElement, setMaxHeight, setMinHeight, setOpacity, setPaddingBottom, setVisibility, showElement } from '../module/style';
+import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import '../../font/dist/Segoe/SegMDL2.css'; // Needed for the show more/less button.
 import * as styles from '../../css/bangumi.module.scss';
 
@@ -102,7 +101,7 @@ export default async function (
         appendChild(warningButtonGroup, warningButtonYes);
         appendChild(warningButtonGroup, warningButtonNo);
 
-        const warningElem = createMessageElem(warningTitle, [createTextNode('ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？')], 'red', warningButtonGroup);
+        const warningElem = createMessageElem(warningTitle, [createTextNode('ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？')], CSS_COLOR.RED, warningButtonGroup);
         addClass(warningElem, styles.warning);
 
         addEventListener(warningButtonYes, 'click', () => {
@@ -195,8 +194,8 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
 
     const showMoreButton = createParagraphElement();
     addClass(showMoreButton, styles.showMoreButton);
-    addClass(showMoreButton, 'invisible');
-    addClass(showMoreButton, 'transparent');
+    setVisibility(showMoreButton, false);
+    setOpacity(showMoreButton, 0);
     appendChild(epButtonWrapper, showMoreButton);
 
     const showMoreButtonFoldedText = [createTextNode('すべてを見る '), createSpanElement('')] as const;
@@ -274,8 +273,8 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
                             setMaxHeight(epButtonWrapper, 30, CSS_UNIT.VH);
                             setPaddingBottom(epButtonWrapper, null);
-                            removeClass(showMoreButton, 'invisible');
-                            removeClass(showMoreButton, 'transparent');
+                            setVisibility(showMoreButton, true);
+                            setOpacity(showMoreButton, 1);
                         }
                     });
                     currentStylingAnimationFrame = animationFrame;
@@ -291,12 +290,12 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
             currentToggleTimeout = null;
             isOversized = false;
             setMaxHeight(epButtonWrapper, height, CSS_UNIT.PX);
-            addClass(showMoreButton, 'transparent');
+            setOpacity(showMoreButton, 0);
             setPaddingBottom(epButtonWrapper, null);
             const timeout = addTimeout(() => {
                 if (currentStylingTimeout === timeout) {
                     setMaxHeight(epButtonWrapper, null);
-                    addClass(showMoreButton, 'invisible');
+                    setVisibility(showMoreButton, false);
                 }
             }, 400);
             currentStylingTimeout = timeout;

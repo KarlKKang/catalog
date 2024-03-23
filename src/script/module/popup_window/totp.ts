@@ -4,6 +4,7 @@ import { changeColor, hideElement, horizontalCenter, showElement } from '../styl
 import { addInterval, removeInterval } from '../timer';
 import type { initializePopupWindow as InitializePopupWindow } from './core';
 import { cancelButtonText, submitButtonText } from '../text/ui';
+import { CSS_COLOR } from '../style/value';
 
 export type TotpPopupWindow = [
     string, // totp
@@ -28,7 +29,7 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
     const promptText = createParagraphElement('二要素認証コードまたはリカバリーコードを入力してください。');
 
     const warningText = createParagraphElement(failedTotp);
-    changeColor(warningText, 'red');
+    changeColor(warningText, CSS_COLOR.RED);
     hideElement(warningText);
 
     const [totpInputContainer, totpInput] = createTotpInput(true);

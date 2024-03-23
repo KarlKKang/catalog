@@ -39,8 +39,9 @@ import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS
 import { changeColor, hideElement, horizontalCenter, setCursor, setHeight, showElement } from '../module/style';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
 import '../../font/dist/CourierNew/CourierNew-Regular.css';
+import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/my_account.module.scss';
-import { CSS_CURSOR } from '../module/style/value';
+import { CSS_COLOR, CSS_CURSOR } from '../module/style/value';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
@@ -49,14 +50,14 @@ export function enableMfa() {
     const mfaWarning = getSharedElement(SharedElementVarsIdx.mfaWarning);
 
     hideElement(mfaWarning);
-    changeColor(mfaWarning, 'red');
+    changeColor(mfaWarning, CSS_COLOR.RED);
 
     modifyMfaReauthenticationPrompt(
         'generate_totp',
         (response: string) => {
             if (response === AUTH_FAILED_TOTP) {
                 updateMfaUI(true);
-                changeColor(mfaWarning, 'green');
+                changeColor(mfaWarning, CSS_COLOR.GREEN);
                 replaceText(mfaWarning, mfaAlreadySet);
                 showElement(mfaWarning);
                 disableAllInputs(false);
@@ -82,14 +83,14 @@ export function disableMfa() {
     const mfaWarning = getSharedElement(SharedElementVarsIdx.mfaWarning);
 
     hideElement(mfaWarning);
-    changeColor(mfaWarning, 'red');
+    changeColor(mfaWarning, CSS_COLOR.RED);
 
     modifyMfaReauthenticationPrompt(
         'disable_totp',
         (response: string) => {
             if (response === 'DONE') {
                 updateMfaUI(false);
-                changeColor(mfaWarning, 'green');
+                changeColor(mfaWarning, CSS_COLOR.GREEN);
                 replaceText(mfaWarning, '二要素認証が無効になりました。');
                 showElement(mfaWarning);
             } else {
@@ -108,7 +109,7 @@ export function generateRecoveryCode() {
     const recoveryCodeWarning = getSharedElement(SharedElementVarsIdx.recoveryCodeWarning);
 
     hideElement(recoveryCodeWarning);
-    changeColor(recoveryCodeWarning, 'red');
+    changeColor(recoveryCodeWarning, CSS_COLOR.RED);
 
     reauthenticationPrompt(
         'generate_recovery_code',
@@ -270,13 +271,13 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     const uriElem = createParagraphElement();
     addClass(uriElem, styles.totpUri);
     const uriLink = createAnchorElement();
-    addClass(uriLink, 'link');
+    addClass(uriLink, commonStyles.link);
     appendText(uriLink, totpInfo.uri);
     uriLink.href = totpInfo.uri;
     appendChild(uriElem, uriLink);
 
     const warningText = createParagraphElement(failedTotp);
-    changeColor(warningText, 'red');
+    changeColor(warningText, CSS_COLOR.RED);
     hideElement(warningText);
 
     const [totpInputContainer, totpInput] = createTotpInput(false);
@@ -324,7 +325,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                 } else if (response === 'ALREADY SET') {
                     hidePopupWindow();
                     updateMfaUI(true);
-                    changeColor(mfaWarning, 'green');
+                    changeColor(mfaWarning, CSS_COLOR.GREEN);
                     replaceText(mfaWarning, mfaAlreadySet);
                     showElement(mfaWarning);
                     disableAllInputs(false);
@@ -339,7 +340,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                     }
                     showRecoveryCode(parsedResponse, () => {
                         updateMfaUI(true);
-                        changeColor(mfaWarning, 'green');
+                        changeColor(mfaWarning, CSS_COLOR.GREEN);
                         replaceText(mfaWarning, '二要素認証が有効になりました。');
                         showElement(mfaWarning);
                         disableAllInputs(false);

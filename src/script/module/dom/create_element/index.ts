@@ -1,6 +1,7 @@
 import { d } from '../document';
 import { addClass, appendChild, replaceChildren } from '../element';
 import { addEventListener } from '../event_listener';
+import * as styles from '../../../../css/common.module.scss';
 
 export function createElement(tag: string) {
     const elem = d.createElement(tag);
@@ -13,7 +14,7 @@ export function createDivElement() {
 
 export function createButtonElement(text?: string) {
     const elem = createElement('button') as HTMLButtonElement;
-    addClass(elem, 'button');
+    addClass(elem, styles.button);
     text === undefined || appendText(elem, text);
     return elem;
 }
@@ -111,7 +112,7 @@ export function appendListItems(list: HTMLUListElement | HTMLOListElement, ...co
 
 export function createEmailInput(placeholder = 'メールアドレス') {
     const container = createDivElement();
-    addClass(container, 'input-field');
+    addClass(container, styles.inputField);
     const input = createInputElement('email');
     input.autocomplete = 'email';
     input.placeholder = placeholder;
@@ -123,7 +124,7 @@ export function createEmailInput(placeholder = 'メールアドレス') {
 
 export function createPasswordInput(newPassword: boolean, placeholder = 'パスワード') {
     const container = createDivElement();
-    addClass(container, 'input-field');
+    addClass(container, styles.inputField);
     const input = createInputElement('password');
     input.autocomplete = newPassword ? 'new-password' : 'current-password';
     input.placeholder = placeholder;
@@ -161,7 +162,7 @@ export function passwordStyling(element: HTMLInputElement) {
 
 export function createTotpInput(allowRecoveryCode: boolean) {
     const container = createDivElement();
-    addClass(container, 'input-field');
+    addClass(container, styles.inputField);
     const input = createInputElement('text');
     input.autocomplete = 'one-time-code';
     input.placeholder = '認証コード';

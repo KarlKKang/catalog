@@ -121,7 +121,7 @@ body {
     }
 }
 
-#loading-bar {
+.loading-bar {
     background-color: var(properties.get(text-color));
     height: 1.5px;
     position: fixed;
@@ -220,18 +220,6 @@ input {
     cursor: pointer;
     color: var(properties.get(link-text-color));
     text-decoration: none;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.invisible {
-    visibility: hidden;
-}
-
-.transparent {
-    opacity: 0;
 }
 
 .color-green {

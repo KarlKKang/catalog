@@ -32,9 +32,11 @@ import { redirect } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { nextButtonText, passwordRules, usernameRule } from './module/text/ui';
+import * as commonStyles from '../css/common.module.scss';
 import * as styles from '../css/portal_form.module.scss';
 import { completed } from './module/text/message/title';
 import { addManualMultiLanguageClass, createUsernameInput } from './module/dom/create_element/multi_language';
+import { CSS_COLOR } from './module/style/value';
 
 const emailAlreadyRegistered = {
     title: '失敗しました',
@@ -180,7 +182,7 @@ function showPageCallback(param: string) {
                     showMessage({
                         title: completed,
                         message: 'アカウントが登録されました。',
-                        color: 'green',
+                        color: CSS_COLOR.GREEN,
                         url: LOGIN_URL,
                         buttonText: nextButtonText
                     });
@@ -217,7 +219,7 @@ function getInfoNote() {
             paragraph.lang = lang;
         }
         const link = createSpanElement(text[1]);
-        addClass(link, 'link');
+        addClass(link, commonStyles.link);
         appendChild(paragraph, link);
         appendText(paragraph, text[2]);
         appendChild(container, paragraph);

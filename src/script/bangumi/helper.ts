@@ -11,6 +11,7 @@ import {
 } from '../module/dom';
 import { changeColor } from '../module/style';
 import * as styles from '../../css/bangumi.module.scss';
+import { type CSS_COLOR } from '../module/style/value';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
     let height = elem.scrollHeight;
@@ -75,7 +76,7 @@ export function getFormatIndex(): number {
     return formatIndex;
 }
 
-export function createMessageElem(title: string, body: Node[], titleColor: string | null, additionalContent: HTMLElement | null = null) {
+export function createMessageElem(title: string, body: Node[], titleColor: CSS_COLOR | null, additionalContent: HTMLElement | null = null) {
     const outerContainer = createDivElement();
     const innerContainer = createDivElement();
     addClass(outerContainer, styles.message);
