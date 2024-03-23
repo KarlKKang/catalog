@@ -12,7 +12,6 @@ import { sendServerRequest } from './module/server';
 import {
     w,
     addEventListener,
-    getDescendantsByClassAt,
     removeClass,
     addClass,
     changeURL,
@@ -45,7 +44,7 @@ import { lazyloadImport, unloadLazyload } from './module/lazyload';
 import { changeColor } from './module/style';
 import { allResultsShown, loading, noResult } from './module/text/ui';
 import { addAutoMultiLanguageClass } from './module/dom/create_element/multi_language';
-import '../css/index.scss';
+import * as styles from '../css/index.module.scss';
 import { lineClamp as lineClampClass } from '../css/line_clamp.module.scss';
 
 let pivot: SeriesInfo.Pivot;
@@ -88,10 +87,10 @@ function showPageCallback(
     lazyload: Awaited<ReturnType<typeof lazyloadImport>>,
 ) {
     const searchBar = createDivElement();
-    searchBar.id = 'search-bar';
+    addClass(searchBar, styles.searchBar);
 
     const searchBarIcon = createDivElement();
-    addClass(searchBarIcon, 'icon');
+    addClass(searchBarIcon, styles.icon);
     appendChild(searchBarIcon, createSVGElement('0 0 24 24', 'M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'));
 
     const searchBarInput = createInputElement('text');
@@ -106,9 +105,9 @@ function showPageCallback(
     appendChild(searchBar, searchBarInput);
 
     const containerElem = createDivElement();
-    containerElem.id = 'container';
+    addClass(containerElem, styles.container);
     const loadingTextContainer = createDivElement();
-    loadingTextContainer.id = 'loading-text';
+    addClass(loadingTextContainer, styles.loadingText);
 
     const positionDetector = createDivElement();
 
@@ -120,12 +119,12 @@ function showPageCallback(
     if (seriesInfo.maintenance !== undefined) {
         const annoucementOuterContainer = createDivElement();
         const announcementInnerContainer = createDivElement();
-        addClass(annoucementOuterContainer, 'announcement');
+        addClass(annoucementOuterContainer, styles.announcement);
         appendChild(annoucementOuterContainer, announcementInnerContainer);
         insertBefore(annoucementOuterContainer, containerElem);
 
         const announcementTitle = createParagraphElement('メンテナンスのお知らせ');
-        addClass(announcementTitle, 'announcement-title');
+        addClass(announcementTitle, styles.announcementTitle);
         changeColor(announcementTitle, 'orange');
         appendChild(announcementInnerContainer, announcementTitle);
 
@@ -140,7 +139,7 @@ function showPageCallback(
         }
         message += 'ご不便をおかけして申し訳ありません。';
         const announcementBody = createParagraphElement(message);
-        addClass(announcementBody, 'announcement-body');
+        addClass(announcementBody, styles.announcementBody);
         appendChild(announcementInnerContainer, announcementBody);
     }
     showSeries(seriesInfo);
@@ -156,7 +155,7 @@ function showPageCallback(
         searchBarInput.value = '';
         search();
     });
-    addEventListener(getDescendantsByClassAt(searchBar, 'icon', 0), 'click', () => {
+    addEventListener(searchBarIcon, 'click', () => {
         if (!searchBarInput.disabled) {
             search();
         }
@@ -186,10 +185,10 @@ function showPageCallback(
         const newPivot = seriesInfo.pivot;
 
         if (pivot === 0 && series.length === 0) {
-            addClass(containerElem, 'empty');
+            addClass(containerElem, styles.empty);
             replaceText(loadingTextContainer, noResult);
         } else {
-            removeClass(containerElem, 'empty');
+            removeClass(containerElem, styles.empty);
             if (newPivot === 'EOF') {
                 replaceText(loadingTextContainer, allResultsShown);
             } else {
@@ -208,13 +207,12 @@ function showPageCallback(
             appendChild(seriesNode, overlay);
             appendChild(seriesNode, titleNode);
 
-            addClass(overlay, 'overlay');
-            addClass(thumbnailNode, 'lazyload');
+            addClass(overlay, styles.overlay);
+            addClass(thumbnailNode, styles.thumbnail);
             addClass(titleNode, lineClampClass);
 
             addEventListener(seriesNode, 'click', () => { goToSeries(seriesEntry.id); });
             eventTargetsTracker.add(seriesNode);
-            addClass(seriesNode, 'series');
 
             appendChild(containerElem, seriesNode);
             lazyload.default(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title);
@@ -275,9 +273,9 @@ function showPageCallback(
     function disableSearchBarInput(disabled: boolean) {
         disableInput(searchBarInput, disabled);
         if (disabled) {
-            addClass(searchBar, 'disabled');
+            addClass(searchBar, styles.disabled);
         } else {
-            removeClass(searchBar, 'disabled');
+            removeClass(searchBar, styles.disabled);
         }
     }
 }
