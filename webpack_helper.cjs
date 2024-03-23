@@ -162,7 +162,15 @@ function addWorkboxPlugin(config, dev) {
 function addCssLoader(config, dev) {
     config.module.rules.push(
         {
-            test: /\.s?css$/i,
+            test: /(?<!\.module)\.s?css$/i,
+            use: [
+                MiniCssExtractPlugin.loader,
+                'css-loader'
+            ],
+            sideEffects: true,
+        },
+        {
+            test: /\.module\.s?css$/i,
             use: [
                 MiniCssExtractPlugin.loader,
                 {
@@ -170,26 +178,17 @@ function addCssLoader(config, dev) {
                     options: {
                         modules: {
                             namedExport: true,
-                            exportGlobals: true,
                             localIdentName: dev ? '[path][name]__[local]' : '[hash:base64]',
-                            mode: (resourcePath) => {
-                                if (/\.module\.s?css$/i.test(resourcePath)) {
-                                    return 'local';
-                                }
-                                return 'global';
-                            }
                         }
                     }
                 }
             ],
-            sideEffects: true,
         },
         {
             test: /\.scss$/i,
             use: [
                 'sass-loader',
             ],
-            sideEffects: true,
         }
     );
 }
