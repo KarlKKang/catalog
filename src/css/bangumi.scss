@@ -1,9 +1,6 @@
 @use 'module/properties';
-@use 'module/common';
 
 #page-bangumi {
-    @include common.lazyload;
-
     .symbol {
         font-family: SegMDL2;
     }

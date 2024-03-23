@@ -78,7 +78,6 @@ export default async function (
     for (const file of files) {
         const imageNode = createDivElement();
         const lazyloadNode = createDivElement();
-        const overlay = createDivElement();
         const downloadPanel = createDivElement();
         const showFullSizeButton = createButtonElement('フルサイズで表示');
         const downloadButton = createButtonElement('ダウンロード');
@@ -87,8 +86,6 @@ export default async function (
 
         addClass(imageNode, 'image');
         addClass(lazyloadNode, 'lazyload');
-        addClass(overlay, 'overlay');
-        appendChild(lazyloadNode, overlay);
 
         addClass(downloadPanel, 'panel');
         setWidth(showFullSizeButton, CSS_AUTO);

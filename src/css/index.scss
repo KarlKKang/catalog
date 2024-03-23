@@ -2,7 +2,6 @@
 @use 'module/common';
 
 #page-top {
-    @include common.lazyload;
     @include common.ellipsis-clipping-2;
 
     #container {
@@ -36,21 +35,27 @@
             }
 
             >div {
-                position: relative;
                 padding-bottom: 141.4213562%;
                 margin: 0px;
+            }
 
-                >.overlay {
-                    background-color: rgb(255, 255, 255);
-                    transition: opacity .4s ease-out;
-                    opacity: 0;
-                }
+            >.lazyload {
+                position: relative;
+            }
+
+            >.overlay {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                background-color: rgb(255, 255, 255);
+                transition: opacity .4s ease-out;
+                opacity: 0;
             }
 
             &:hover {
                 box-shadow: var(properties.get(shadow-hover));
 
-                >div>.overlay {
+                >.overlay {
                     opacity: 0.1;
 
                     @media not screen and (hover: hover) and (pointer: fine) {
@@ -60,12 +65,12 @@
             }
 
             @media only screen and (prefers-color-scheme: dark) {
-                >div>.overlay {
+                >.overlay {
                     background-color: rgb(0, 0, 0);
                     opacity: 0.1;
                 }
 
-                &:hover>div>.overlay {
+                &:hover>.overlay {
                     opacity: 0;
 
                     @media not screen and (hover: hover) and (pointer: fine) {

@@ -2,7 +2,6 @@
 @use 'module/common';
 
 #page-news {
-    @include common.lazyload;
     @include common.ellipsis-clipping-2;
 
     #container {

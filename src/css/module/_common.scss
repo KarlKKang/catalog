@@ -1,33 +1,5 @@
 @use 'properties';
 
-@mixin lazyload {
-    .lazyload {
-        background: var(properties.get(foreground-color));
-
-        &.complete {
-            padding-bottom: 0px !important;
-        }
-
-        >img,
-        >canvas {
-            display: block;
-            margin: 0px;
-            padding: 0px;
-            width: 100%;
-            pointer-events: none;
-            -webkit-touch-callout: none;
-        }
-
-        >.overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-    }
-}
-
 @mixin ellipsis-clipping-2 {
     .ellipsis-clipping-2 {
         white-space: nowrap;

@@ -204,10 +204,10 @@ function showPageCallback(
             const titleNode = createParagraphElement(seriesEntry.title);
 
             appendChild(seriesNode, thumbnailNode);
+            appendChild(seriesNode, overlay);
             appendChild(seriesNode, titleNode);
 
             addClass(overlay, 'overlay');
-            appendChild(thumbnailNode, overlay);
             addClass(thumbnailNode, 'lazyload');
             addClass(titleNode, 'ellipsis-clipping-2');
 

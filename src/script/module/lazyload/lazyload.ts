@@ -3,12 +3,13 @@ import {
 } from '../common';
 import { sendServerRequest } from '../server';
 import {
-    addClass,
+    addClass, appendChild, createDivElement,
 } from '../dom';
 import { show as showMessage } from '../message';
 import { invalidResponse } from '../server/message';
 import { addTimeout } from '../timer';
 import type { default as ImageLoader } from '../image_loader';
+import * as styles from '../../../css/lazyload.module.scss';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,
@@ -63,6 +64,11 @@ export default function (
         options = {};
     }
 
+    addClass(target, styles.lazyload);
+    const overlay = createDivElement();
+    addClass(overlay, styles.overlay);
+    appendChild(target, overlay);
+
     observer.observe(target);
     targets.set(target, {
         src: src,
@@ -116,7 +122,7 @@ function loadImage(target: Element, targetData: TargetData) {
     const onImageDraw = (canvas: HTMLCanvasElement) => {
         observer.unobserve(target);
         targets.delete(target);
-        addClass(target, 'complete');
+        addClass(target, styles.complete);
         targetData.onImageDraw && targetData.onImageDraw(canvas);
     };
     const onUnrecoverableError = () => {
