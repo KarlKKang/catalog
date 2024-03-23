@@ -7,6 +7,6 @@ import '../../../../font/dist/NotoSansSC/NotoSansSC-Regular.css';
 import '../../../../font/dist/NotoSansSC/NotoSansSC-Medium.css';
 import { addManualMultiLanguageClass } from './multi_language';
 
-export {
-    addManualMultiLanguageClass as addManualAllLanguageClass,
-};
+export function addManualAllLanguageClass(elem: HTMLElement) {
+    addManualMultiLanguageClass(elem);
+}
