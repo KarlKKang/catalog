@@ -100,7 +100,7 @@ export default async function (
         appendChild(downloadPanel, downloadAnchor); // The element need to be in the document for some old browsers like Firefox <= 69.
 
         removeRightClick(lazyloadNode);
-        addAccordionEvent(lazyloadNode, downloadPanel, null, false);
+        addAccordionEvent([lazyloadNode, downloadPanel, false], null);
 
         appendChild(imageNode, lazyloadNode);
         appendChild(imageNode, downloadPanel);

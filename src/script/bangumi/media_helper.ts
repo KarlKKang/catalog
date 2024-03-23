@@ -224,7 +224,9 @@ export function buildDownloadAccordion(
     return [downloadElem, containerSelector];
 }
 
-export function buildAccordion(title: string, active: boolean): [HTMLDivElement, HTMLDivElement] {
+export type AccordionInstance = [HTMLDivElement, HTMLDivElement, boolean];
+
+export function buildAccordion(title: string, active: boolean) {
     const accordion = createDivElement();
     addClass(accordion, styles.accordion);
 
@@ -242,35 +244,35 @@ export function buildAccordion(title: string, active: boolean): [HTMLDivElement,
     const hr = createHRElement();
     addClass(hr, styles.hr);
     appendChild(accordionPanel, hr);
-    addAccordionEvent(accordion, accordionPanel, iconElem, active);
-    return [accordion, accordionPanel];
+    const instance: AccordionInstance = [accordion, accordionPanel, active];
+    addAccordionEvent(instance, iconElem);
+    return instance;
 }
 
-export function addAccordionEvent(acc: HTMLElement, panel: HTMLElement, icon: HTMLElement | null, active: boolean): void {
+export function addAccordionEvent(instance: AccordionInstance, icon: HTMLElement | null): void {
+    const [acc, panel] = instance;
+
     const hidePanel = () => {
         setMaxHeight(panel, 0, CSS_UNIT.PX);
     };
 
     const changeIcon = () => {
         if (icon !== null) {
-            replaceText(icon, active ? '-' : '+');
+            replaceText(icon, instance[2] ? '-' : '+');
         }
     };
 
-    if (!active) {
+    if (!instance[2]) {
         hidePanel();
-    } else {
-        addClass(acc, 'active');
     }
     changeIcon();
 
     let currentTimeout: NodeJS.Timeout | null = null;
     let currentAnimationFrame: number | null = null;
     addEventListener(acc, 'click', () => {
-        active = !active;
+        instance[2] = !instance[2];
         changeIcon();
-        if (active) {
-            addClass(acc, 'active');
+        if (instance[2]) {
             currentAnimationFrame = null;
             setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
             const timeout = addTimeout(() => {

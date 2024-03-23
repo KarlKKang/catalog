@@ -21,7 +21,6 @@ import {
     removeAllEventListeners,
     getParentElement,
     removeClass,
-    containsClass,
     changeURL,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
@@ -44,7 +43,7 @@ import type { Player, Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 
 import { getFormatIndex, createQuery } from './helper';
-import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, showTextErrorMessage } from './media_helper';
+import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, showTextErrorMessage, type AccordionInstance } from './media_helper';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { CustomMediaError } from '../module/player/media_error';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
@@ -67,7 +66,7 @@ let createMediaSessionPromise: Promise<MediaSessionInfo>;
 
 let currentFormat: VideoFormatInfo;
 let currentMediaInstance: PlayerType | null = null;
-let chaptersAccordion: HTMLElement | null = null;
+let chaptersAccordionInstance: AccordionInstance | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
 const timersTracker = new Set<ReturnType<typeof setInterval>>();
@@ -309,8 +308,8 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
 
     let chaptersActive = true;
     const beforeLoad = () => {
-        if (chaptersAccordion !== null) {
-            chaptersActive = containsClass(chaptersAccordion, 'active');
+        if (chaptersAccordionInstance !== null) {
+            chaptersActive = chaptersAccordionInstance[2];
         }
         if (currentMediaInstance !== null) {
             destroyMediaInstance();
@@ -422,8 +421,9 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
 }
 
 function displayChapters(mediaInstance: Player, offset: number, active: boolean) {
-    const [accordion, accordionPanel] = buildAccordion('チャプター', active);
-    chaptersAccordion = accordion;
+    const accordionInstance = buildAccordion('チャプター', active);
+    chaptersAccordionInstance = accordionInstance;
+    const [accordion, accordionPanel] = accordionInstance;
     eventTargetsTracker.add(accordion);
 
     const chapterElements: HTMLParagraphElement[] = [];
@@ -561,7 +561,7 @@ function destroyMediaInstance() {
     currentMediaInstance?.destroy();
     currentMediaInstance = null;
     cleanupEvents();
-    chaptersAccordion = null;
+    chaptersAccordionInstance = null;
 }
 
 export function offload() {
