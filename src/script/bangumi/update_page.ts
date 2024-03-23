@@ -23,6 +23,7 @@ import {
     replaceChildren,
     body,
     createTextAreaElement,
+    createHRElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
@@ -58,6 +59,7 @@ export default async function (
     const epSelector = createDivElement();
     epSelector.id = 'ep-selector';
     appendChild(body, epSelector);
+    appendChild(body, createHRElement());
 
     initializeSharedVars();
     addNavBar();
