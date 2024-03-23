@@ -9,7 +9,6 @@ import {
     appendChild,
     prependChild,
     insertBefore,
-    getByIdNative,
     remove,
     createParagraphElement,
     createDivElement,
@@ -51,11 +50,12 @@ import { CustomMediaError } from '../module/player/media_error';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
-import { SharedElementVarsIdx, getSharedElement } from './shared_var';
+import { SharedElementVarsIdx, errorMessageElement, getSharedElement } from './shared_var';
 import { addInterval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
 import { getURLParam } from '../module/common';
+import * as styles from '../../css/bangumi.module.scss';
 
 let currentPgid: unknown;
 
@@ -67,6 +67,7 @@ let createMediaSessionPromise: Promise<MediaSessionInfo>;
 
 let currentFormat: VideoFormatInfo;
 let currentMediaInstance: PlayerType | null = null;
+let chaptersAccordion: HTMLElement | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
 const timersTracker = new Set<ReturnType<typeof setInterval>>();
@@ -87,7 +88,7 @@ export default function (
     createMediaSessionPromise = _createMediaSessionPromise;
 
     const contentContainer = getSharedElement(SharedElementVarsIdx.CONTENT_CONTAINER);
-    addClass(contentContainer, 'video');
+    addClass(contentContainer, styles.video);
 
     const startTimeText = getURLParam('timestamp');
     let startTime: number | undefined = undefined;
@@ -102,8 +103,7 @@ export default function (
     // Title
     if (epInfo.title !== '') {
         const title = createParagraphElement();
-        addClass(title, 'sub-title');
-        addClass(title, 'center-align');
+        addClass(title, styles.subTitle, styles.centerAlign);
         title.innerHTML = epInfo.title; // This title is in HTML syntax.
         prependChild(contentContainer, title);
     }
@@ -113,10 +113,9 @@ export default function (
     const formats = epInfo.formats;
 
     const formatContainer = createDivElement();
-    formatContainer.id = 'format-container';
+    addClass(formatContainer, styles.formatContainer);
     const formatSelector = createDivElement();
-    formatSelector.id = 'format-selector';
-    addClass(formatSelector, 'select');
+    addClass(formatSelector, styles.select);
 
     const selectMenu = createSelectElement();
 
@@ -143,7 +142,7 @@ export default function (
     appendChild(formatContainer, formatSelector);
 
     const formatDisplay = createDivElement();
-    formatDisplay.id = 'format-display';
+    addClass(formatDisplay, styles.formatDisplay);
     hideElement(formatDisplay);
     appendChild(formatContainer, formatDisplay);
 
@@ -189,10 +188,8 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDi
     }
 
     addVideoNode(formatDisplay, play, startTime).then(() => {
-        if (mediaInstance === currentMediaInstance && mediaInstance !== null) {
-            mediaInstance.destroy();
-            currentMediaInstance = null;
-            cleanupEvents();
+        if (mediaInstance === currentMediaInstance) {
+            destroyMediaInstance();
         }
         if (currentMediaInstance === null) {
             hideElement(formatDisplay);
@@ -307,19 +304,16 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
     showElement(formatDisplay);
 
     const playerContainer = createDivElement();
-    addClass(playerContainer, 'player');
+    addClass(playerContainer, styles.player);
     setPaddingTop(playerContainer, 9 / 16 * 100, CSS_UNIT.PERCENT);
 
     let chaptersActive = true;
     const beforeLoad = () => {
-        const chaptersAccordion = getByIdNative('chapters-accordion');
         if (chaptersAccordion !== null) {
             chaptersActive = containsClass(chaptersAccordion, 'active');
         }
         if (currentMediaInstance !== null) {
-            currentMediaInstance.destroy();
-            currentMediaInstance = null;
-            cleanupEvents();
+            destroyMediaInstance();
         }
         const mediaHolder = getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER);
         replaceChildren(mediaHolder, playerContainer);
@@ -327,7 +321,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             showMediaMessage(...mediaMessage);
         }
         showElement(mediaHolder);
-        const errorMsgElem = getByIdNative('error');
+        const errorMsgElem = errorMessageElement;
         errorMsgElem && remove(errorMsgElem);
     };
     const afterLoad = (mediaInstance: PlayerType) => {
@@ -360,9 +354,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {
                 showPlayerError(errorCode);
-                currentMediaInstance = null;
-                mediaInstance.destroy();
-                cleanupEvents();
+                destroyMediaInstance();
             },
             play: play,
             startTime: startTime
@@ -420,9 +412,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 } else {
                     showPlayerError(errorCode);
                 }
-                currentMediaInstance = null;
-                mediaInstance.destroy();
-                cleanupEvents();
+                destroyMediaInstance();
             },
             play: play,
             startTime: startTime
@@ -433,7 +423,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
 
 function displayChapters(mediaInstance: Player, offset: number, active: boolean) {
     const [accordion, accordionPanel] = buildAccordion('チャプター', active);
-    accordion.id = 'chapters-accordion';
+    chaptersAccordion = accordion;
     eventTargetsTracker.add(accordion);
 
     const chapterElements: HTMLParagraphElement[] = [];
@@ -449,13 +439,13 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
         eventTargetsTracker.add(timestamp);
         appendChild(chapterNode, timestamp);
         appendChild(chapterNode, cueText);
-        setClass(chapterNode, 'inactive-chapter');
+        setClass(chapterNode, styles.inactiveChapter);
         appendChild(accordionPanel, chapterNode);
         chapterElements.push(chapterNode);
     }
 
     const chaptersNode = createDivElement();
-    addClass(chaptersNode, 'chapters');
+    addClass(chaptersNode, styles.chapters);
     appendChild(chaptersNode, accordion);
     appendChild(chaptersNode, accordionPanel);
     appendChild(getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER), chaptersNode);
@@ -468,14 +458,14 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
             if (currentTime >= (chapter[1] + offset) / 1000) {
                 const nextChapter = epInfo.chapters[index + 1];
                 if (nextChapter === undefined) {
-                    setClass(chapterElement, 'current-chapter');
+                    setClass(chapterElement, styles.currentChapter);
                 } else if (currentTime < (nextChapter[1] + offset) / 1000) {
-                    setClass(chapterElement, 'current-chapter');
+                    setClass(chapterElement, styles.currentChapter);
                 } else {
-                    setClass(chapterElement, 'inactive-chapter');
+                    setClass(chapterElement, styles.inactiveChapter);
                 }
             } else {
-                setClass(chapterElement, 'inactive-chapter');
+                setClass(chapterElement, styles.inactiveChapter);
             }
         });
     }
@@ -539,9 +529,9 @@ function createLinkElem(text: string, link: string) {
 function disableDropdown(selectElement: HTMLSelectElement, disabled: boolean) {
     selectElement.disabled = disabled;
     if (disabled) {
-        addClass(getParentElement(selectElement), 'disabled');
+        addClass(getParentElement(selectElement), styles.disabled);
     } else {
-        removeClass(getParentElement(selectElement), 'disabled');
+        removeClass(getParentElement(selectElement), styles.disabled);
     }
 }
 
@@ -567,9 +557,13 @@ function cleanupEvents() {
     timersTracker.clear();
 }
 
-export function offload() {
+function destroyMediaInstance() {
     currentMediaInstance?.destroy();
     currentMediaInstance = null;
-    eventTargetsTracker.clear();
-    timersTracker.clear();
+    cleanupEvents();
+    chaptersAccordion = null;
+}
+
+export function offload() {
+    destroyMediaInstance();
 }

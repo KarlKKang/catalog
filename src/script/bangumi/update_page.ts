@@ -34,9 +34,11 @@ import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
-import { SharedElementVarsIdx, dereferenceSharedVars, getSharedElement, initializeSharedVars } from './shared_var';
+import { SharedElementVarsIdx, dereferenceSharedVars, getSharedElement, initializeSharedVars, setErrorMessageElement } from './shared_var';
 import { hideElement, setMaxHeight, setMinHeight, setPaddingBottom, showElement } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
+import '../../font/dist/Segoe/SegMDL2.css'; // Needed for the show more/less button.
+import * as styles from '../../css/bangumi.module.scss';
 
 let seriesID: string;
 let epIndex: number;
@@ -53,13 +55,16 @@ export default async function (
     epIndex = _epIndex;
 
     const seasonSelector = createDivElement();
-    seasonSelector.id = 'season-selector';
+    addClass(seasonSelector, styles.seasonSelector);
     appendChild(body, seasonSelector);
 
     const epSelector = createDivElement();
-    epSelector.id = 'ep-selector';
+    addClass(epSelector, styles.epSelector);
     appendChild(body, epSelector);
-    appendChild(body, createHRElement());
+
+    const hr = createHRElement();
+    addClass(hr, styles.hr);
+    appendChild(body, hr);
 
     initializeSharedVars();
     addNavBar();
@@ -100,14 +105,14 @@ export default async function (
         }
 
         const warningButtonGroup = createDivElement();
-        warningButtonGroup.id = 'warning-button-group';
+        addClass(warningButtonGroup, styles.warningButtonGroup);
         const warningButtonYes = createButtonElement('はい');
         const warningButtonNo = createButtonElement('いいえ');
         appendChild(warningButtonGroup, warningButtonYes);
         appendChild(warningButtonGroup, warningButtonNo);
 
         const warningElem = createMessageElem(warningTitle, [createTextNode('ここから先は年齢制限のかかっている作品を取り扱うページとなります。表示しますか？')], 'red', warningButtonGroup);
-        warningElem.id = 'warning';
+        addClass(warningElem, styles.warning);
 
         addEventListener(warningButtonYes, 'click', () => {
             hideElement(warningElem);
@@ -176,7 +181,6 @@ export default async function (
 
 function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElement) {
     const epButtonWrapper = createDivElement();
-    epButtonWrapper.id = 'ep-button-wrapper';
     appendChild(epSelector, epButtonWrapper);
     let minHeight = Number.POSITIVE_INFINITY;
 
@@ -185,7 +189,7 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
         const epText = createParagraphElement(value);
 
         if (epIndex === index) {
-            addClass(epButton, 'current-ep');
+            addClass(epButton, styles.currentEp);
         }
 
         const targetEP = index + 1;
@@ -199,16 +203,16 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
     });
 
     const showMoreButton = createParagraphElement();
-    showMoreButton.id = 'show-more-button';
+    addClass(showMoreButton, styles.showMoreButton);
     addClass(showMoreButton, 'invisible');
     addClass(showMoreButton, 'transparent');
     appendChild(epButtonWrapper, showMoreButton);
 
     const showMoreButtonFoldedText = [createTextNode('すべてを見る '), createSpanElement('')] as const;
-    addClass(showMoreButtonFoldedText[1], 'symbol');
+    addClass(showMoreButtonFoldedText[1], styles.symbol);
 
     const showMoreButtonExpandedText = [createTextNode('非表示にする '), createSpanElement('')] as const;
-    addClass(showMoreButtonExpandedText[1], 'symbol');
+    addClass(showMoreButtonExpandedText[1], styles.symbol);
 
     let currentToggleTimeout: NodeJS.Timeout | null = null;
     let currentToggleAnimationFrame: number | null = null;
@@ -314,7 +318,6 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
 
 function updateSeasonSelector(seasons: BangumiInfo.Seasons, seasonSelector: HTMLElement) {
     const seasonButtonWrapper = createDivElement();
-    seasonButtonWrapper.id = 'season-button-wrapper';
 
     if (seasons.length !== 0) {
         for (const season of seasons) {
@@ -325,7 +328,7 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons, seasonSelector: HTML
                 const targetSeries = season.id;
                 addEventListener(seasonButton, 'click', () => { goToEP(targetSeries, 1); });
             } else {
-                addClass(seasonButton, 'current-season');
+                addClass(seasonButton, styles.currentSeason);
             }
             appendChild(seasonButton, seasonText);
             appendChild(seasonButtonWrapper, seasonButton);
@@ -344,4 +347,5 @@ function goToEP(destSeries: string, destEp: number) {
 export function offload() {
     currentPage?.offload();
     dereferenceSharedVars();
+    setErrorMessageElement(null);
 }

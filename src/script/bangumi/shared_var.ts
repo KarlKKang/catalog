@@ -1,6 +1,8 @@
-import { appendChild, body, createDivElement, createParagraphElement, prependChild } from '../module/dom';
+import { addClass, appendChild, body, createDivElement, createParagraphElement, prependChild } from '../module/dom';
+import * as styles from '../../css/bangumi.module.scss';
 
 let sharedElementVars: HTMLElement[] = [];
+export let errorMessageElement: HTMLElement | null = null;
 
 export const enum SharedElementVarsIdx {
     TITLE,
@@ -10,12 +12,12 @@ export const enum SharedElementVarsIdx {
 
 export function initializeSharedVars() {
     const titleElem = createParagraphElement();
-    titleElem.id = 'title';
+    addClass(titleElem, styles.title);
     prependChild(body, titleElem);
     const content = createDivElement();
-    content.id = 'content';
+    addClass(content, styles.content);
     const mediaHolder = createDivElement();
-    mediaHolder.id = 'media-holder';
+    addClass(mediaHolder, styles.mediaHolder);
     appendChild(content, mediaHolder);
     appendChild(body, content);
     sharedElementVars = [
@@ -35,4 +37,8 @@ export function getSharedElement(idx: SharedElementVarsIdx): HTMLElement {
         throw new Error('Cannot access shared variable.');
     }
     return value;
+}
+
+export function setErrorMessageElement(elem: HTMLElement | null) {
+    errorMessageElement = elem;
 }

@@ -29,6 +29,7 @@ import { SharedElementVarsIdx, getSharedElement } from './shared_var';
 import { unloadLazyload } from '../module/lazyload';
 import { hideElement, setWidth } from '../module/style';
 import { CSS_AUTO } from '../module/style/value';
+import * as styles from '../../css/bangumi.module.scss';
 
 type ImageLoader = typeof import(
     /* webpackExports: ["clearAllImageEvents"] */
@@ -46,14 +47,13 @@ export default async function (
 
     if (epInfo.gallery_title !== '') {
         const title = createParagraphElement();
-        addClass(title, 'sub-title');
-        addClass(title, 'center-align');
+        addClass(title, styles.subTitle, styles.centerAlign);
         title.innerHTML = epInfo.gallery_title; // Gallery title is in HTML syntax.
         prependChild(contentContainer, title);
     }
 
     const downloadElem = createDivElement();
-    addClass(downloadElem, 'download');
+    addClass(downloadElem, styles.download);
 
     const [downloadAccordion, downloadPanel] = buildAccordion('ダウンロード', true);
     const downloadPanelContent = createUListElement();
@@ -84,13 +84,13 @@ export default async function (
         const buttonFlexbox = createDivElement();
         const downloadAnchor = createElement('a') as HTMLAnchorElement;
 
-        addClass(imageNode, 'image');
-        addClass(lazyloadNode, 'lazyload');
+        addClass(imageNode, styles.imageContainer);
+        addClass(lazyloadNode, styles.image);
 
-        addClass(downloadPanel, 'panel');
+        addClass(downloadPanel, styles.accordionPanel);
         setWidth(showFullSizeButton, CSS_AUTO);
         downloadButton.disabled = true;
-        addClass(buttonFlexbox, 'image-button-flexbox');
+        addClass(buttonFlexbox, styles.imageButtonFlexbox);
         appendChild(buttonFlexbox, showFullSizeButton);
         appendChild(buttonFlexbox, downloadButton);
         appendChild(downloadPanel, buttonFlexbox);
@@ -128,13 +128,13 @@ export default async function (
             },
             onImageDraw: (canvas) => {
                 const subtitle = createParagraphElement();
-                addClass(subtitle, 'sub-title');
+                addClass(subtitle, styles.subTitle);
                 const subtitleStyle = subtitle.style;
                 subtitleStyle.fontSize = 'small';
                 subtitleStyle.marginTop = '0px';
                 subtitleStyle.marginBottom = '0.5em';
                 const formatText = createSpanElement(canvas.width + '×' + canvas.height);
-                addClass(formatText, 'format');
+                addClass(formatText, styles.subTitleFormat);
                 appendChild(subtitle, formatText);
                 insertBefore(subtitle, imageNode);
             },

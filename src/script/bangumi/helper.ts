@@ -10,6 +10,7 @@ import {
     appendChildren,
 } from '../module/dom';
 import { changeColor } from '../module/style';
+import * as styles from '../../css/bangumi.module.scss';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
     let height = elem.scrollHeight;
@@ -77,13 +78,13 @@ export function getFormatIndex(): number {
 export function createMessageElem(title: string, body: Node[], titleColor: string | null, additionalContent: HTMLElement | null = null) {
     const outerContainer = createDivElement();
     const innerContainer = createDivElement();
-    addClass(outerContainer, 'message');
+    addClass(outerContainer, styles.message);
     appendChild(outerContainer, innerContainer);
 
     const titleElem = createParagraphElement();
     const bodyElem = createDivElement();
-    addClass(titleElem, 'message-title');
-    addClass(bodyElem, 'message-body');
+    addClass(titleElem, styles.messageTitle);
+    addClass(bodyElem, styles.messageBody);
     titleElem.innerHTML = title;
     appendChildren(bodyElem, ...body);
     titleColor !== null && changeColor(titleElem, titleColor);

@@ -37,6 +37,7 @@ import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
 import { SharedElementVarsIdx, getSharedElement } from './shared_var';
+import * as styles from '../../css/bangumi.module.scss';
 
 let currentPgid: unknown;
 
@@ -114,7 +115,7 @@ async function addAudioNode(index: number) {
     }
 
     const playerContainer = createDivElement();
-    addClass(playerContainer, 'player');
+    addClass(playerContainer, styles.player);
     appendChild(mediaHolder, playerContainer);
     const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
@@ -192,21 +193,19 @@ function addAlbumInfo() {
     const albumInfo = (epInfo as AudioEPInfo).album_info;
     if (albumInfo.album_title !== '') {
         const albumTitleElem = createParagraphElement();
-        addClass(albumTitleElem, 'sub-title');
-        addClass(albumTitleElem, 'center-align');
+        addClass(albumTitleElem, styles.subTitle, styles.centerAlign);
         albumTitleElem.innerHTML = albumInfo.album_title; // Album title is in HTML syntax.
         const contentContainer = getSharedElement(SharedElementVarsIdx.CONTENT_CONTAINER);
         if (albumInfo.album_artist !== '') {
             const albumArtist = createParagraphElement(albumInfo.album_artist);
-            addClass(albumArtist, 'artist');
-            addClass(albumArtist, 'center-align');
+            addClass(albumArtist, styles.artist, styles.centerAlign);
             prependChild(contentContainer, albumArtist);
         }
         prependChild(contentContainer, albumTitleElem);
     } else if (albumInfo.album_artist !== '') {
         const titleElem = getSharedElement(SharedElementVarsIdx.TITLE);
         const artistElem = createSpanElement();
-        addClass(artistElem, 'artist');
+        addClass(artistElem, styles.artist);
         appendChild(artistElem, createBRElement());
         appendText(artistElem, albumInfo.album_artist);
         appendChild(titleElem, artistElem);
@@ -215,14 +214,14 @@ function addAlbumInfo() {
 
 function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
     const subtitle = createParagraphElement();
-    addClass(subtitle, 'sub-title');
+    addClass(subtitle, styles.subTitle);
 
     //subtitle
     if (file.title !== '') {
         appendText(subtitle, file.title);
         if (file.artist !== '') {
             const artist = createSpanElement('／' + file.artist);
-            addClass(artist, 'artist');
+            addClass(artist, styles.artist);
             appendChild(subtitle, artist);
         }
     }
@@ -234,7 +233,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
         }
 
         const format = createSpanElement(FLAC_FALLBACK ? 'FLAC' : file.format);
-        addClass(format, 'format');
+        addClass(format, styles.subTitleFormat);
 
         const samplerate = file.samplerate;
         if (samplerate !== '') {

@@ -10,7 +10,6 @@ import {
     appendChild,
     insertBefore,
     prependChild,
-    getByIdNative,
     getDescendantsByClassAt,
     getBaseURL,
     createButtonElement,
@@ -33,11 +32,13 @@ import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import { VideoFormatInfo } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
 import { CustomMediaError } from '../module/player/media_error';
-import { SharedElementVarsIdx, getSharedElement } from './shared_var';
+import { SharedElementVarsIdx, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
 import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
 import { defaultError } from '../module/text/message/title';
 import { defaultErrorSuffix } from '../module/text/message/body';
+import '../../font/dist/CourierNew/CourierNew-Regular.css'; // Needed for the accordion icon.
+import * as styles from '../../css/bangumi.module.scss';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -84,14 +85,14 @@ export function showTextErrorMessage(title: string, body: string) {
 
 export function showErrorMessage(title: string, body: Node[]) {
     const mediaHolder = getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER);
-    let messageElem = getByIdNative('error');
+    let messageElem = errorMessageElement;
     if (messageElem === null) {
         messageElem = createMessageElem(title, body, 'red');
-        messageElem.id = 'error';
+        setErrorMessageElement(messageElem);
         insertBefore(messageElem, mediaHolder);
     } else {
-        const titleElem = getDescendantsByClassAt(messageElem, 'message-title', 0);
-        const bodyElem = getDescendantsByClassAt(messageElem, 'message-body', 0);
+        const titleElem = getDescendantsByClassAt(messageElem, styles.messageTitle, 0);
+        const bodyElem = getDescendantsByClassAt(messageElem, styles.messageBody, 0);
         titleElem.innerHTML = title;
         replaceChildren(bodyElem, ...body);
     }
@@ -126,10 +127,10 @@ export function buildDownloadAccordion(
     appendChild(accordionPanel, accordionPanelContent);
 
     const downloadOptionsContainer = createDivElement();
-    downloadOptionsContainer.id = 'download-options';
+    addClass(downloadOptionsContainer, styles.downloadOptions);
 
     const osSelector = createDivElement();
-    addClass(osSelector, 'select');
+    addClass(osSelector, styles.select);
     const osSelectMenu = createSelectElement();
     const osOptionWindows = createOptionElement();
     const osOptionMac = createOptionElement();
@@ -154,7 +155,7 @@ export function buildDownloadAccordion(
     appendChild(downloadOptionsContainer, osSelector);
 
     const containerSelector = createDivElement();
-    addClass(containerSelector, 'select');
+    addClass(containerSelector, styles.select);
     const containerSelectMenu = createSelectElement();
     const containerOptionTS = createOptionElement();
     const containerOptionMKV = createOptionElement();
@@ -216,7 +217,7 @@ export function buildDownloadAccordion(
     appendChild(accordionPanel, downloadButton);
 
     const downloadElem = createDivElement();
-    addClass(downloadElem, 'download');
+    addClass(downloadElem, styles.download);
     appendChild(downloadElem, accordion);
     appendChild(downloadElem, accordionPanel);
     appendChild(downloadElem, iframe);
@@ -225,20 +226,22 @@ export function buildDownloadAccordion(
 
 export function buildAccordion(title: string, active: boolean): [HTMLDivElement, HTMLDivElement] {
     const accordion = createDivElement();
-    addClass(accordion, 'accordion');
+    addClass(accordion, styles.accordion);
 
     const titleElem = createDivElement();
-    addClass(titleElem, 'accordion-title');
+    addClass(titleElem, styles.accordionTitle);
     appendText(titleElem, title);
     appendChild(accordion, titleElem);
 
     const iconElem = createDivElement();
-    addClass(iconElem, 'accordion-icon');
+    addClass(iconElem, styles.accordionIcon);
     appendChild(accordion, iconElem);
 
     const accordionPanel = createDivElement();
-    addClass(accordionPanel, 'panel');
-    appendChild(accordionPanel, createHRElement());
+    addClass(accordionPanel, styles.accordionPanel);
+    const hr = createHRElement();
+    addClass(hr, styles.hr);
+    appendChild(accordionPanel, hr);
     addAccordionEvent(accordion, accordionPanel, iconElem, active);
     return [accordion, accordionPanel];
 }
