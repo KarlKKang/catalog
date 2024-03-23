@@ -110,13 +110,12 @@ function showPageCallback(
     loadingTextContainer.id = 'loading-text';
 
     const positionDetector = createDivElement();
-    positionDetector.id = 'position-detector';
 
     appendChildren(body, searchBar, containerElem, loadingTextContainer, positionDetector);
 
     const currentBaseURL = getBaseURL();
 
-    initializeInfiniteScrolling(() => { getSeries(showSeries, true); }, - 256 - 24);
+    initializeInfiniteScrolling(positionDetector, () => { getSeries(showSeries, true); }, - 256 - 24);
     if (seriesInfo.maintenance !== undefined) {
         const annoucementOuterContainer = createDivElement();
         const announcementInnerContainer = createDivElement();

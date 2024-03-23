@@ -257,10 +257,9 @@ function getAllNews(containerOrShowPage: ShowPageFunc | HTMLElement, loadingText
                 appendChild(body, container);
                 appendChild(body, loadingTextContainer);
                 const positionDetector = createDivElement();
-                positionDetector.id = 'position-detector';
                 appendChild(body, positionDetector);
                 addNavBar(NavBarPage.NEWS);
-                initializeInfiniteScrolling(() => { getAllNews(container, loadingTextContainer); });
+                initializeInfiniteScrolling(positionDetector, () => { getAllNews(container, loadingTextContainer); });
                 containerOrShowPage = container;
             }
             showAllNews(containerOrShowPage, parsedResponse, loadingTextContainer);

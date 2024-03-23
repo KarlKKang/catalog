@@ -1,22 +1,23 @@
 import {
     w,
     addEventListener,
-    getById,
     d,
     html,
+    addClass,
 } from './dom';
+import { positionDetector as positionDetectorClass } from '../../css/position_detector.module.scss';
 
 let instance: {
     updatePosition: () => void;
     setEnabled: (enabled: boolean) => void;
 } | null = null;
 
-export function initializeInfiniteScrolling(listener: () => void, offset?: number) {
+export function initializeInfiniteScrolling(positionDetector: HTMLElement, listener: () => void, offset?: number) {
     if (instance !== null) {
         throw new Error('Instance already initialized.');
     }
 
-    const positionDetector = getById('position-detector');
+    addClass(positionDetector, positionDetectorClass);
     let isEnabled = false;
 
     const updatePosition = () => {

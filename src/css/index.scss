@@ -4,7 +4,6 @@
 #page-top {
     @include common.lazyload;
     @include common.ellipsis-clipping-2;
-    @include common.position-detector;
 
     #container {
         display: flex;
