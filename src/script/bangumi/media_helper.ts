@@ -21,7 +21,6 @@ import {
     appendText,
     appendListItems,
     replaceText,
-    removeClass,
     replaceChildren,
     createTextNode,
 } from '../module/dom';
@@ -282,7 +281,6 @@ export function addAccordionEvent(instance: AccordionInstance, icon: HTMLElement
             }, 200);
             currentTimeout = timeout;
         } else {
-            removeClass(acc, 'active');
             currentTimeout = null;
             let animationFrame = w.requestAnimationFrame(() => {
                 if (currentAnimationFrame === animationFrame) {
