@@ -141,7 +141,7 @@ export class HlsPlayer extends NonNativePlayer {
         }
 
         this.hlsInstance.loadSource(url);
-        DEVELOPMENT && this.log?.('HLS source loaded.');
+        DEVELOPMENT && this.log?.('HLS source loaded: ' + url);
     }
 
     protected override detach(this: HlsPlayer) {

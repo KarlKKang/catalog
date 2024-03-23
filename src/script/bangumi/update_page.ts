@@ -16,13 +16,11 @@ import {
     createDivElement,
     createButtonElement,
     createParagraphElement,
-    insertAfter,
     appendText,
     createTextNode,
     createSpanElement,
     replaceChildren,
     body,
-    createTextAreaElement,
     createHRElement,
 } from '../module/dom';
 import { show as showMessage } from '../module/message';
@@ -82,13 +80,6 @@ export default async function (
     } else {
         appendText(titleElem, title);
         setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | ' + getTitle());
-    }
-
-    if (DEVELOPMENT) {
-        const onScreenConsole = createTextAreaElement(20);
-        onScreenConsole.id = 'on-screen-console';
-        onScreenConsole.readOnly = true;
-        insertAfter(onScreenConsole, contentContainer);
     }
 
     updateEPSelector(response.series_ep, epSelector);

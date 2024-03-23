@@ -1,5 +1,5 @@
 import 'core-js';
-import { body as innerBody, getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, d, addClass, removeClass, createParagraphElement, createButtonElement, createDivElement, appendChild, createElement, html } from './module/dom';
+import { body as innerBody, getBaseURL, w, addEventListener, addEventListenerOnce, setTitle, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, d, addClass, removeClass, createParagraphElement, createButtonElement, createDivElement, appendChild, createElement, html, setClass } from './module/dom';
 import { DOMAIN, TOP_DOMAIN, TOP_URL } from './module/env/constant';
 import { objectKeyExists } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -177,6 +177,7 @@ function offloadCurrentPage() {
     removeAllTimers();
     destroyPopupWindow();
     replaceChildren(innerBody);
+    setClass(innerBody, '');
     setCustomPopStateHandler(null);
 }
 

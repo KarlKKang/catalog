@@ -2,7 +2,6 @@ import {
     removeRightClick,
 } from '../common';
 import {
-    getById,
     addEventListener,
     addClass,
     removeClass,
@@ -23,6 +22,8 @@ import {
     removeEventsListener,
     containsClass,
     createElement,
+    createTextAreaElement,
+    body,
 } from '../dom';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
@@ -33,6 +34,7 @@ import { mediaErrorCodeLookup } from './media_error';
 import * as styles from '../../../css/player.module.scss';
 import { hideElement, setLeft, setPaddingTop, setRight, setWidth, showElement } from '../style';
 import { CSS_UNIT } from '../style/value';
+import { onScreenConsole as onScreenConsoleClass } from '../../../css/on_screen_console.module.scss';
 
 declare global {
     interface HTMLVideoElement {
@@ -91,6 +93,7 @@ export class Player {
     protected readonly maxBufferHole: number = 0;
     private onFullscreenChange: undefined | (() => void) = undefined;
     protected readonly log: undefined | ((message: string) => void) = undefined;
+    private readonly onScreenConsole: undefined | HTMLTextAreaElement = undefined;
 
     private playPromise: Promise<void> | undefined;
 
@@ -147,14 +150,16 @@ export class Player {
         this.IS_VIDEO = isVideo;
 
         if (DEVELOPMENT) {
+            const onScreenConsole = createTextAreaElement(20);
+            this.onScreenConsole = onScreenConsole;
+            addClass(onScreenConsole, onScreenConsoleClass);
+            onScreenConsole.readOnly = true;
+            appendChild(body, onScreenConsole);
             this.log = (message: string) => {
-                const onScreenConsole = getById('on-screen-console');
-                if (onScreenConsole instanceof HTMLTextAreaElement) {
-                    const date = getLocalTime();
-                    const newline = (date.hour < 10 ? '0' + date.hour : date.hour) + ':' + (date.minute < 10 ? '0' + date.minute : date.minute) + ':' + (date.second < 10 ? '0' + date.second : date.second) + '   ' + message + '\r\n';
-                    console.log(newline);
-                    onScreenConsole.value += newline;
-                }
+                const date = getLocalTime();
+                const newline = (date.hour < 10 ? '0' + date.hour : date.hour) + ':' + (date.minute < 10 ? '0' + date.minute : date.minute) + ':' + (date.second < 10 ? '0' + date.second : date.second) + '   ' + message + '\r\n';
+                console.log(newline);
+                onScreenConsole.value += newline;
             };
         }
 
@@ -368,7 +373,7 @@ export class Player {
 
         this.media.src = url;
         this.media.load();
-        DEVELOPMENT && this.log?.('Native HLS source loaded.');
+        DEVELOPMENT && this.log?.('Native HLS source loaded: ' + url);
     }
 
     public destroy(this: Player) {
@@ -388,6 +393,9 @@ export class Player {
         removeEventListener(w, 'resize', this.onWindowResize);
         removeEventsListener(d, ['mouseup', 'touchend', 'touchcancel'], this.onMouseUp);
         remove(this.controls);
+        if (DEVELOPMENT && this.onScreenConsole !== undefined) {
+            remove(this.onScreenConsole);
+        }
     }
 
     protected detach(this: Player) {

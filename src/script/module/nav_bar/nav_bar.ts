@@ -89,9 +89,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
         redirect(TOP_URL + '/info');
     });
 
-    const navBarPadding = createDivElement();
-    addClass(navBarPadding, styles.navBarPadding);
-    appendChild(body, navBarPadding);
+    addClass(body, styles.navBarPadding);
 
     appendChild(navButton1[1], page === NavBarPage.HOME ? icons.getHomeFillIcon() : icons.getHomeIcon());
     appendChild(navButton2[1], page === NavBarPage.NEWS ? icons.getNewsFillIcon() : icons.getNewsIcon());
