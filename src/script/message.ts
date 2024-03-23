@@ -41,7 +41,6 @@ export default function (showPage: ShowPageFunc) {
             appendText(titleElem, 'タイトルTitle');
             appendText(messageElem, 'メッセージMessage'.repeat(10));
             const button = createButtonElement('ボタンButton');
-            addClass(button, styles.button);
             horizontalCenter(button);
             appendChild(container, button);
         } else {
@@ -65,7 +64,6 @@ export default function (showPage: ShowPageFunc) {
                 return;
             }
             const button = createButtonElement(buttonText);
-            addClass(button, styles.button);
             horizontalCenter(button);
             appendChild(container, button);
             addEventListener(button, 'click', () => {

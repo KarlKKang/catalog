@@ -36,7 +36,6 @@ export default function (showPage: ShowPageFunc) {
     appendChild(container, messageBody);
 
     const button = createButtonElement('トップページへ戻る');
-    addClass(button, styles.button);
     horizontalCenter(button);
     setWidth(button, CSS_AUTO);
     addEventListener(button, 'click', () => {
