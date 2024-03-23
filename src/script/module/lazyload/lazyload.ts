@@ -23,15 +23,25 @@ const enum Status {
     LOADING,
 }
 
-type TargetData = {
-    src: string;
-    alt: string;
-    delay: number;
-    onDataLoad: ((data: Blob) => void) | undefined;
-    onImageDraw: ((canvas: HTMLCanvasElement) => void) | undefined;
-    status: Status;
-    xhr: XMLHttpRequest | null;
-};
+const enum TargetDataIdx {
+    SRC,
+    ALT,
+    DELAY,
+    ON_DATA_LOAD,
+    ON_IMAGE_DRAW,
+    STATUS,
+    XHR,
+}
+
+type TargetData = [
+    string, // src
+    string, // alt
+    number, // delay
+    ((data: Blob) => void) | undefined, // onDataLoad
+    ((canvas: HTMLCanvasElement) => void) | undefined, // onImageDraw
+    Status, // status
+    XMLHttpRequest | null, // xhr
+];
 
 const targets: Map<Element, TargetData> = new Map();
 let sessionCredentialPromise: Promise<void> | null = null;
@@ -70,15 +80,15 @@ export default function (
     appendChild(target, overlay);
 
     observer.observe(target);
-    targets.set(target, {
-        src: src,
-        alt: alt,
-        delay: options.delay || 0,
-        onDataLoad: options.onDataLoad,
-        onImageDraw: options.onImageDraw,
-        status: Status.LISTENING,
-        xhr: null
-    });
+    targets.set(target, [
+        src,
+        alt,
+        options.delay || 0,
+        options.onDataLoad,
+        options.onImageDraw,
+        Status.LISTENING,
+        null
+    ]);
 }
 
 function observerCallback(entries: IntersectionObserverEntry[]) {
@@ -90,29 +100,29 @@ function observerCallback(entries: IntersectionObserverEntry[]) {
         }
 
         if (entry['isIntersecting']) {
-            if (targetData.status === Status.LISTENING) {
-                targetData.status = Status.WAITING;
+            if (targetData[TargetDataIdx.STATUS] === Status.LISTENING) {
+                targetData[TargetDataIdx.STATUS] = Status.WAITING;
                 addTimeout(() => {
-                    if (!targets.has(target) || targetData.status !== Status.WAITING) {
+                    if (!targets.has(target) || targetData[TargetDataIdx.STATUS] !== Status.WAITING) {
                         return;
                     }
-                    targetData.status = Status.LOADING;
+                    targetData[TargetDataIdx.STATUS] = Status.LOADING;
                     loadImage(target, targetData);
-                }, targetData.delay);
+                }, targetData[TargetDataIdx.DELAY]);
             }
         } else {
-            if (targetData.status === Status.WAITING) {
-                targetData.status = Status.LISTENING;
-            } else if (targetData.status === Status.LOADING) {
-                if (targetData.xhr !== null) {
-                    if (targetData.xhr.readyState === XMLHttpRequest.DONE) { // onImageDraw for the imageLoader may be called after decoding webp.
+            if (targetData[TargetDataIdx.STATUS] === Status.WAITING) {
+                targetData[TargetDataIdx.STATUS] = Status.LISTENING;
+            } else if (targetData[TargetDataIdx.STATUS] === Status.LOADING) {
+                if (targetData[TargetDataIdx.XHR] !== null) {
+                    if (targetData[TargetDataIdx.XHR].readyState === XMLHttpRequest.DONE) { // onImageDraw for the imageLoader may be called after decoding webp.
                         continue;
                     } else {
-                        targetData.xhr.abort();
-                        targetData.xhr = null;
+                        targetData[TargetDataIdx.XHR].abort();
+                        targetData[TargetDataIdx.XHR] = null;
                     }
                 }
-                targetData.status = Status.LISTENING;
+                targetData[TargetDataIdx.STATUS] = Status.LISTENING;
             }
         }
     }
@@ -123,7 +133,7 @@ function loadImage(target: Element, targetData: TargetData) {
         observer.unobserve(target);
         targets.delete(target);
         addClass(target, styles.complete);
-        targetData.onImageDraw && targetData.onImageDraw(canvas);
+        targetData[TargetDataIdx.ON_IMAGE_DRAW] && targetData[TargetDataIdx.ON_IMAGE_DRAW](canvas);
     };
     const onUnrecoverableError = () => {
         observer.unobserve(target);
@@ -131,7 +141,7 @@ function loadImage(target: Element, targetData: TargetData) {
     };
     const onNetworkError = () => {
         addTimeout(() => {
-            if (targets.has(target) && targetData.status === Status.LOADING) {
+            if (targets.has(target) && targetData[TargetDataIdx.STATUS] === Status.LOADING) {
                 loadImage(target, targetData);
             }
         }, 5000);
@@ -160,12 +170,12 @@ function loadImage(target: Element, targetData: TargetData) {
             });
         }
         sessionCredentialPromise.then(() => {
-            if (targets.has(target) && targetData.status === Status.LOADING) {
-                targetData.xhr = imageLoader(target, targetData.src, targetData.alt, true, onImageDraw, targetData.onDataLoad, onNetworkError, onUnrecoverableError);
+            if (targets.has(target) && targetData[TargetDataIdx.STATUS] === Status.LOADING) {
+                targetData[TargetDataIdx.XHR] = imageLoader(target, targetData[TargetDataIdx.SRC], targetData[TargetDataIdx.ALT], true, onImageDraw, targetData[TargetDataIdx.ON_DATA_LOAD], onNetworkError, onUnrecoverableError);
             }
         });
     } else {
-        targetData.xhr = imageLoader(target, targetData.src, targetData.alt, false, onImageDraw, targetData.onDataLoad, onNetworkError, onUnrecoverableError);
+        targetData[TargetDataIdx.XHR] = imageLoader(target, targetData[TargetDataIdx.SRC], targetData[TargetDataIdx.ALT], false, onImageDraw, targetData[TargetDataIdx.ON_DATA_LOAD], onNetworkError, onUnrecoverableError);
     }
 }
 
