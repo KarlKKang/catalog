@@ -46,6 +46,7 @@ import { changeColor } from './module/style';
 import { allResultsShown, loading, noResult } from './module/text/ui';
 import { addAutoMultiLanguageClass } from './module/dom/create_element/multi_language';
 import '../css/index.scss';
+import { lineClamp as lineClampClass } from '../css/line_clamp.module.scss';
 
 let pivot: SeriesInfo.Pivot;
 let keywords: string;
@@ -209,7 +210,7 @@ function showPageCallback(
 
             addClass(overlay, 'overlay');
             addClass(thumbnailNode, 'lazyload');
-            addClass(titleNode, 'ellipsis-clipping-2');
+            addClass(titleNode, lineClampClass);
 
             addEventListener(seriesNode, 'click', () => { goToSeries(seriesEntry.id); });
             eventTargetsTracker.add(seriesNode);

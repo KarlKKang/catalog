@@ -1,9 +1,6 @@
 @use 'module/properties';
-@use 'module/common';
 
 #page-news {
-    @include common.ellipsis-clipping-2;
-
     #container {
         margin: 0px;
         padding: 0px;

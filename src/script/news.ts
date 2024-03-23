@@ -45,6 +45,7 @@ import { lazyloadImport, unloadLazyload } from './module/lazyload';
 import { allResultsShown, loading, noResult } from './module/text/ui';
 import '../css/news.scss';
 import { addManualAllLanguageClass } from './module/dom/create_element/all_language';
+import { lineClamp as lineClampClass } from '../css/line_clamp.module.scss';
 
 const NEWS_TOP_URL = TOP_URL + '/news/';
 let pivot: AllNewsInfo.PivotInfo;
@@ -297,7 +298,7 @@ function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInf
         const titleContainer = createDivElement();
         appendText(titleContainer, entry.title);
         addClass(titleContainer, 'overview-title');
-        addClass(titleContainer, 'ellipsis-clipping-2');
+        addClass(titleContainer, lineClampClass);
 
         appendChild(overviewContainer, dateContainer);
         appendChild(overviewContainer, titleContainer);
