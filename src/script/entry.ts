@@ -33,7 +33,6 @@ type Page = {
     script: () => PageScriptImport;
     htmlEntry: HTMLEntry;
     title?: string;
-    id?: string;
     nativeViewport?: boolean;
 };
 
@@ -59,14 +58,12 @@ const page404: Page = {
     script: () => import('./404'),
     htmlEntry: HTMLEntry.DEFAULT,
     title: notFoundPageTitle,
-    id: 'message',
 };
 
 const pages: PageMap = {
     '': {
         script: () => import('./index'),
         htmlEntry: HTMLEntry.DEFAULT,
-        id: 'top',
     },
     'confirm_new_email': {
         script: () => import('./confirm_new_email'),
@@ -87,7 +84,6 @@ const pages: PageMap = {
         script: () => import('./info'),
         title: infoPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
-        id: 'news',
     },
     'message': {
         script: () => Promise.resolve(messagePageScript),
@@ -117,7 +113,6 @@ const pages: PageMap = {
         script: () => import('./login'),
         title: loginPageTitle,
         htmlEntry: HTMLEntry.DEFAULT,
-        id: 'login',
     },
     'request_password_reset': {
         script: () => import('./request_password_reset'),
@@ -153,18 +148,18 @@ function load(url: string, withoutHistory: boolean | null = false) {
         let pageName = baseURL.substring(TOP_URL.length + 1);
         if (objectKeyExists(pageName, pages)) {
             const page = pages[pageName]!;
-            loadPage(url, withoutHistory, pageName, page);
+            loadPage(url, withoutHistory, page);
             return;
         }
         pageName = pageName.substring(0, pageName.indexOf('/'));
         if (objectKeyExists(pageName, directories)) {
             const page = directories[pageName]!;
-            loadPage(url, withoutHistory, pageName, page);
+            loadPage(url, withoutHistory, page);
             return;
         }
     }
 
-    loadPage(url, withoutHistory, '404', page404);
+    loadPage(url, withoutHistory, page404);
 }
 
 function offloadCurrentPage() {
@@ -281,14 +276,13 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
     }
 }
 
-async function loadPage(url: string, withoutHistory: boolean | null, pageName: string, page: Page) {
+async function loadPage(url: string, withoutHistory: boolean | null, page: Page) {
     offloadCurrentPage(); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     setMinHeight(html, 0, CSS_UNIT.PX); // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
 
     if (withoutHistory !== null) {
         changeURL(url, withoutHistory);
     }
-    body.id = 'page-' + (page.id ?? pageName).replace('_', '-');
     setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
     removeClass(body, styles.noTheme);
     setViewport(false);
