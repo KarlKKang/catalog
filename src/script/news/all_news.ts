@@ -1,5 +1,3 @@
-import { addNavBar } from '../module/nav_bar';
-import { NavBarPage } from '../module/nav_bar/enum';
 import { sendServerRequest } from '../module/server';
 import {
     addEventListener,
@@ -36,7 +34,6 @@ export default function (allNewsInfo: AllNewsInfo.AllNewsInfo) {
     const positionDetector = createDivElement();
     appendChild(body, positionDetector);
     initializeInfiniteScrolling(positionDetector, () => { getAllNews(container, loadingTextContainer); });
-    addNavBar(NavBarPage.NEWS);
     showAllNews(container, allNewsInfo, loadingTextContainer);
 }
 

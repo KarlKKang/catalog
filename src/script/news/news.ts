@@ -8,8 +8,6 @@ import {
     openImageWindow,
     SessionTypes,
 } from '../module/common';
-import { addNavBar } from '../module/nav_bar';
-import { NavBarPage } from '../module/nav_bar/enum';
 import {
     addEventListener,
     addClass,
@@ -56,10 +54,6 @@ export default function (newsInfo: NewsInfo.NewsInfo, lazyloadImportPromise: Ret
     const [contentOuterContainer, contentInnerContainer] = createNewsTemplate(newsInfo.title, newsInfo.create_time, newsInfo.update_time);
     appendChild(contentInnerContainer, contentContainer);
     appendChild(container, contentOuterContainer);
-
-    addNavBar(NavBarPage.NEWS, () => {
-        redirect(NEWS_TOP_URL);
-    });
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', CDN_URL + '/news/' + newsID + '.html');

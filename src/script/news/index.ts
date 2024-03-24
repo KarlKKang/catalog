@@ -9,11 +9,13 @@ import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import * as NewsInfo from '../module/type/NewsInfo';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
-import { pgid } from '../module/global';
+import { pgid, redirect } from '../module/global';
 import { lazyloadImport } from '../module/lazyload';
 import { NEWS_TOP_URL } from './helper';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';
 import { moduleImportError } from '../module/message/param';
+import { addNavBar } from '../module/nav_bar';
+import { NavBarPage } from '../module/nav_bar/enum';
 
 let offloadModule: (() => void) | null = null;
 
@@ -32,6 +34,7 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function getAllNews(showPage: ShowPageFunc): void {
+    addNavBar(NavBarPage.NEWS);
     const allNewsModuleImport = import(
         /* webpackExports: ["default", "offload"] */
         './all_news'
@@ -69,6 +72,10 @@ function getAllNews(showPage: ShowPageFunc): void {
 }
 
 function getNews(newsID: string, showPage: ShowPageFunc): void {
+    addNavBar(NavBarPage.NEWS, () => {
+        redirect(NEWS_TOP_URL);
+    });
+
     const lazyloadImportPromise = lazyloadImport();
     const newsModuleImport = import(
         /* webpackExports: ["default", "offload"] */
