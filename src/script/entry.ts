@@ -17,11 +17,6 @@ import { enableTransition, setMinHeight, setOpacity, setVisibility, setWidth } f
 import { CSS_UNIT } from './module/style/value';
 import { consolePageTitle, emailChangePageTitle, infoPageTitle, loginPageTitle, myAccountPageTitle, newsPageTitle, notFoundPageTitle, passwordResetPageTitle, registerPageTitle } from './module/text/page_title';
 
-const enum HTMLEntry {
-    DEFAULT,
-    NO_THEME,
-}
-
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 type PageScript = {
     default: PageInitCallback;
@@ -31,15 +26,15 @@ type PageScriptImport = Promise<PageScript>;
 
 const enum PageProp {
     SCRIPT,
-    HTML_ENTRY,
     TITLE,
     NATIVE_VIEWPORT,
+    NO_THEME,
 }
 type Page = {
     [PageProp.SCRIPT]: () => PageScriptImport;
-    [PageProp.HTML_ENTRY]: HTMLEntry;
     [PageProp.TITLE]?: string;
     [PageProp.NATIVE_VIEWPORT]?: boolean;
+    [PageProp.NO_THEME]?: boolean;
 };
 
 type PageMap = {
@@ -51,7 +46,6 @@ const loadingBar = createDivElement();
 addClass(loadingBar, styles.loadingBar);
 let currentPage: {
     script: PageScript;
-    htmlEntry: HTMLEntry;
 } | null = null;
 
 let swUpdateLastPromptTime: number = 0;
@@ -62,84 +56,70 @@ let loadingBarShown: boolean = false;
 
 const page404: Page = {
     [PageProp.SCRIPT]: () => import('./404'),
-    [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     [PageProp.TITLE]: notFoundPageTitle,
 };
 
 const pages: PageMap = {
     '': {
         [PageProp.SCRIPT]: () => import('./index'),
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'confirm_new_email': {
         [PageProp.SCRIPT]: () => import('./confirm_new_email'),
         [PageProp.TITLE]: emailChangePageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'console': {
         [PageProp.SCRIPT]: () => import('./console'),
         [PageProp.TITLE]: consolePageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.NO_THEME,
+        [PageProp.NO_THEME]: true,
     },
     'image': {
         [PageProp.SCRIPT]: () => import('./image'),
-        [PageProp.HTML_ENTRY]: HTMLEntry.NO_THEME,
+        [PageProp.NO_THEME]: true,
         [PageProp.NATIVE_VIEWPORT]: true,
     },
     'info': {
         [PageProp.SCRIPT]: () => import('./info'),
         [PageProp.TITLE]: infoPageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'message': {
         [PageProp.SCRIPT]: () => Promise.resolve(messagePageScript),
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'my_account': {
         [PageProp.SCRIPT]: () => import('./my_account'),
         [PageProp.TITLE]: myAccountPageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'new_email': {
         [PageProp.SCRIPT]: () => import('./new_email'),
         [PageProp.TITLE]: emailChangePageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'register': {
         [PageProp.SCRIPT]: () => import('./register'),
         [PageProp.TITLE]: registerPageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'special_register': {
         [PageProp.SCRIPT]: () => import('./special_register'),
         [PageProp.TITLE]: registerPageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'login': {
         [PageProp.SCRIPT]: () => import('./login'),
         [PageProp.TITLE]: loginPageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'request_password_reset': {
         [PageProp.SCRIPT]: () => import('./request_password_reset'),
         [PageProp.TITLE]: passwordResetPageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'password_reset': {
         [PageProp.SCRIPT]: () => import('./password_reset'),
         [PageProp.TITLE]: passwordResetPageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
 };
 const directories: PageMap = {
     'bangumi': {
         [PageProp.SCRIPT]: () => import('./bangumi'),
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'news': {
         [PageProp.SCRIPT]: () => import('./news'),
         [PageProp.TITLE]: newsPageTitle,
-        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
 };
 
@@ -354,7 +334,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
 
     currentPage = {
         script: script,
-        htmlEntry: page[PageProp.HTML_ENTRY],
     };
     script.default(
         () => {
@@ -362,10 +341,10 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
                 return;
             }
 
-            const isStandardStyle = page[PageProp.HTML_ENTRY] !== HTMLEntry.NO_THEME && page[PageProp.NATIVE_VIEWPORT] !== true;
+            const isStandardStyle = !page[PageProp.NO_THEME] && !page[PageProp.NATIVE_VIEWPORT];
             setMinHeight(html, null);
-            page[PageProp.HTML_ENTRY] === HTMLEntry.NO_THEME && addClass(body, styles.noTheme);
-            page[PageProp.NATIVE_VIEWPORT] === true && setViewport(true);
+            page[PageProp.NO_THEME] && addClass(body, styles.noTheme);
+            page[PageProp.NATIVE_VIEWPORT] && setViewport(true);
             registerServiceWorker(isStandardStyle);
 
             loadingBarWidth = 100;
