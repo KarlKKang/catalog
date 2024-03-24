@@ -40,6 +40,7 @@ import * as styles from '../../css/my_account.module.scss';
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
+    addNavBar(NavBarPage.MY_ACCOUNT);
     sendServerRequest('get_account', {
         callback: function (response: string) {
             let parsedResponse: AccountInfo.AccountInfo;
@@ -146,7 +147,6 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     appendText(getSharedElement(SharedElementVarsIdx.inviteCount), userInfo.invite_quota.toString());
     getSharedInput(SharedInputVarsIdx.newUsernameInput).value = userInfo.username;
     showSessions(userInfo);
-    addNavBar(NavBarPage.MY_ACCOUNT);
 }
 
 function showSessions(userInfo: AccountInfo.AccountInfo) {

@@ -18,6 +18,7 @@ import { importAll, updatePageImportPromise } from './import_promise';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import * as MediaSessionInfo from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
+import { addNavBar } from '../module/nav_bar';
 
 let updatePageModule: Awaited<typeof updatePageImportPromise> | null = null;
 
@@ -33,6 +34,7 @@ export default function (showPage: ShowPageFunc) {
     const seriesID = seriesIDParam;
 
     // Preload modules
+    addNavBar();
     importAll();
 
     // Parse other parameters

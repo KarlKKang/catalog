@@ -13,40 +13,32 @@ import { moduleImportError } from '../module/message/param';
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
+    authenticate({
+        successful: function () {
+            addNavBar(NavBarPage.INFO);
+        }
+    });
+    showMainBody(showPage);
+}
+
+async function showMainBody(showPage: ShowPageFunc) {
     const mainBodyImport = import(
         './info'
     );
-
-    const showPageCallback = async (navBar: boolean) => {
-        const currentPgid = pgid;
-        let mainBody: typeof import('./info').default;
-        try {
-            mainBody = (await mainBodyImport).default;
-        } catch (e) {
-            if (pgid === currentPgid) {
-                showMessage(moduleImportError(e));
-            }
-            throw e;
+    const currentPgid = pgid;
+    let mainBody: typeof import('./info').default;
+    try {
+        mainBody = (await mainBodyImport).default;
+    } catch (e) {
+        if (pgid === currentPgid) {
+            showMessage(moduleImportError(e));
         }
-        if (pgid !== currentPgid) {
-            return;
-        }
-        showPage();
-        mainBody();
-        if (navBar) {
-            addNavBar(NavBarPage.INFO);
-        }
-        scrollToHash();
-    };
-
-    authenticate({
-        successful:
-            function () {
-                showPageCallback(true);
-            },
-        failed:
-            function () {
-                showPageCallback(false);
-            },
-    });
+        throw e;
+    }
+    if (pgid !== currentPgid) {
+        return;
+    }
+    showPage();
+    mainBody();
+    scrollToHash();
 }

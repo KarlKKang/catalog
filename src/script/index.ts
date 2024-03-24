@@ -64,29 +64,11 @@ export default function (showPage: ShowPageFunc) {
         return;
     }
 
-    // Preload module
-    const lazyloadImportPromise = lazyloadImport();
-
     const urlKeywords = getURLKeywords();
     if (urlKeywords !== '') {
         keywords = 'keywords=' + encodeURIComponent(urlKeywords) + '&';
     }
 
-    getSeries(async (seriesInfo, xhr) => {
-        const lazyload = await lazyloadImportPromise;
-        if (currentRequest !== xhr) {
-            return;
-        }
-        showPage();
-        showPageCallback(seriesInfo, urlKeywords, lazyload);
-    }, false);
-}
-
-function showPageCallback(
-    seriesInfo: SeriesInfo.SeriesInfo,
-    urlKeywords: string,
-    lazyload: Awaited<ReturnType<typeof lazyloadImport>>,
-) {
     const searchBar = createDivElement();
     addClass(searchBar, styles.searchBar);
 
@@ -112,38 +94,6 @@ function showPageCallback(
 
     const positionDetector = createDivElement();
 
-    appendChildren(body, searchBar, containerElem, loadingTextContainer, positionDetector);
-
-    const currentBaseURL = getBaseURL();
-
-    initializeInfiniteScrolling(positionDetector, () => { getSeries(showSeries, true); }, - 256 - 24);
-    if (seriesInfo.maintenance !== undefined) {
-        const annoucementOuterContainer = createDivElement();
-        const announcementInnerContainer = createDivElement();
-        addClass(annoucementOuterContainer, styles.announcement);
-        appendChild(annoucementOuterContainer, announcementInnerContainer);
-        insertBefore(annoucementOuterContainer, containerElem);
-
-        const announcementTitle = createParagraphElement('メンテナンスのお知らせ');
-        addClass(announcementTitle, styles.announcementTitle);
-        changeColor(announcementTitle, CSS_COLOR.ORANGE);
-        appendChild(announcementInnerContainer, announcementTitle);
-
-        const maintenanceInfo = seriesInfo.maintenance;
-        let message = '';
-        const startTime = getLocalTimeString(maintenanceInfo.start, false, false);
-        if (maintenanceInfo.period > 0) {
-            const endTime = getLocalTimeString(maintenanceInfo.start + maintenanceInfo.period, false, false);
-            message = `${startTime}～${endTime}の間、メンテナンスを実施する予定です。`;
-        } else {
-            message = `メンテナンス開始は${startTime}を予定しております。`;
-        }
-        message += 'ご不便をおかけして申し訳ありません。';
-        const announcementBody = createParagraphElement(message);
-        addClass(announcementBody, styles.announcementBody);
-        appendChild(announcementInnerContainer, announcementBody);
-    }
-    showSeries(seriesInfo);
     addNavBar(NavBarPage.HOME, () => {
         if (w.scrollY !== 0) {
             scrollToTop();
@@ -156,30 +106,73 @@ function showPageCallback(
         searchBarInput.value = '';
         search();
     });
-    addEventListener(searchBarIcon, 'click', () => {
-        if (!searchBarInput.disabled) {
-            search();
-        }
-    });
-    addEventListener(searchBarInput, 'keyup', (event) => {
-        if ((event as KeyboardEvent).key === 'Enter') {
-            search();
-        }
-    });
-    setCustomPopStateHandler(() => {
-        if (currentBaseURL !== getBaseURL()) {
-            redirect(getFullURL(), null);
+    const lazyloadImportPromise = lazyloadImport();
+    let lazyload: Awaited<typeof lazyloadImportPromise>;
+    getSeries(async (seriesInfo, xhr) => {
+        lazyload = await lazyloadImportPromise;
+        if (currentRequest !== xhr) {
             return;
         }
-        const urlKeywords = getURLKeywords();
-        searchBarInput.value = urlKeywords;
-        if (urlKeywords === '') {
-            keywords = '';
-        } else {
-            keywords = 'keywords=' + encodeURIComponent(urlKeywords) + '&';
+        showPage();
+        showPageCallback(seriesInfo);
+    }, false);
+
+    function showPageCallback(seriesInfo: SeriesInfo.SeriesInfo) {
+        appendChildren(body, searchBar, containerElem, loadingTextContainer, positionDetector);
+        initializeInfiniteScrolling(positionDetector, () => { getSeries(showSeries, true); }, - 256 - 24);
+        if (seriesInfo.maintenance !== undefined) {
+            const annoucementOuterContainer = createDivElement();
+            const announcementInnerContainer = createDivElement();
+            addClass(annoucementOuterContainer, styles.announcement);
+            appendChild(annoucementOuterContainer, announcementInnerContainer);
+            insertBefore(annoucementOuterContainer, containerElem);
+
+            const announcementTitle = createParagraphElement('メンテナンスのお知らせ');
+            addClass(announcementTitle, styles.announcementTitle);
+            changeColor(announcementTitle, CSS_COLOR.ORANGE);
+            appendChild(announcementInnerContainer, announcementTitle);
+
+            const maintenanceInfo = seriesInfo.maintenance;
+            let message = '';
+            const startTime = getLocalTimeString(maintenanceInfo.start, false, false);
+            if (maintenanceInfo.period > 0) {
+                const endTime = getLocalTimeString(maintenanceInfo.start + maintenanceInfo.period, false, false);
+                message = `${startTime}～${endTime}の間、メンテナンスを実施する予定です。`;
+            } else {
+                message = `メンテナンス開始は${startTime}を予定しております。`;
+            }
+            message += 'ご不便をおかけして申し訳ありません。';
+            const announcementBody = createParagraphElement(message);
+            addClass(announcementBody, styles.announcementBody);
+            appendChild(announcementInnerContainer, announcementBody);
         }
-        requestSearchResults();
-    });
+        showSeries(seriesInfo);
+        addEventListener(searchBarIcon, 'click', () => {
+            if (!searchBarInput.disabled) {
+                search();
+            }
+        });
+        addEventListener(searchBarInput, 'keyup', (event) => {
+            if ((event as KeyboardEvent).key === 'Enter') {
+                search();
+            }
+        });
+        const currentBaseURL = getBaseURL();
+        setCustomPopStateHandler(() => {
+            if (currentBaseURL !== getBaseURL()) {
+                redirect(getFullURL(), null);
+                return;
+            }
+            const urlKeywords = getURLKeywords();
+            searchBarInput.value = urlKeywords;
+            if (urlKeywords === '') {
+                keywords = '';
+            } else {
+                keywords = 'keywords=' + encodeURIComponent(urlKeywords) + '&';
+            }
+            requestSearchResults();
+        });
+    }
 
     function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
         const series = seriesInfo.series;

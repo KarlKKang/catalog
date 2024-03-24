@@ -2,7 +2,6 @@ import {
     TOP_URL,
     CDN_URL,
 } from '../module/env/constant';
-import { addNavBar } from '../module/nav_bar';
 import {
     w,
     addEventListener,
@@ -64,7 +63,6 @@ export default async function (
     appendChild(body, hr);
 
     initializeSharedVars();
-    addNavBar();
 
     const titleElem = getSharedElement(SharedElementVarsIdx.TITLE);
     const contentContainer = getSharedElement(SharedElementVarsIdx.CONTENT_CONTAINER);
