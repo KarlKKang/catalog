@@ -613,7 +613,7 @@ export class Player {
         const IOS_FULLSCREEN = IS_IOS && webkitEnterFullscreen !== undefined;
 
         const toggleFullscreen = () => {
-            if (containsClass(this.controls, styles.playerDisabled)) {
+            if (containsClass(this.controls, styles.playerFullscreen)) {
                 screenfull.exit();
                 this.focus();
             } else {
