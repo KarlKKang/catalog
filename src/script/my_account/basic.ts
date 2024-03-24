@@ -18,7 +18,7 @@ import {
     emailSentSuffix,
 } from '../module/text/message/body';
 import { emailSent as emailSendPrefix } from '../module/text/message/title';
-import { SharedBoolVarsIdx, SharedElementVarsIdx, SharedInputVarsIdx, getSharedBool, getSharedElement, getSharedInput, sessionLogoutButtons, setSharedBool } from './shared_var';
+import { SharedBool, SharedElement, SharedInput, getSharedBool, getSharedElement, getSharedInput, sessionLogoutButtons, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
@@ -33,7 +33,7 @@ const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 export function changeEmail() {
     disableAllInputs(true);
 
-    const warningElem = getSharedElement(SharedElementVarsIdx.emailWarning);
+    const warningElem = getSharedElement(SharedElement.emailWarning);
 
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
@@ -59,9 +59,9 @@ export function changeEmail() {
 export function changePassword() {
     disableAllInputs(true);
 
-    const warningElem = getSharedElement(SharedElementVarsIdx.passwordWarning);
-    const newPasswordInput = getSharedInput(SharedInputVarsIdx.newPasswordInput);
-    const newPasswordComfirmInput = getSharedInput(SharedInputVarsIdx.newPasswordComfirmInput);
+    const warningElem = getSharedElement(SharedElement.passwordWarning);
+    const newPasswordInput = getSharedInput(SharedInput.newPasswordInput);
+    const newPasswordComfirmInput = getSharedInput(SharedInput.newPasswordComfirmInput);
     const newPassword = newPasswordInput.value;
     const newPasswordConfirm = newPasswordComfirmInput.value;
 
@@ -106,8 +106,8 @@ export function changePassword() {
 export function changeUsername(userInfo: AccountInfo) {
     disableAllInputs(true);
 
-    const warningElem = getSharedElement(SharedElementVarsIdx.usernameWarning);
-    const newUsername = getSharedInput(SharedInputVarsIdx.newUsernameInput).value;
+    const warningElem = getSharedElement(SharedElement.usernameWarning);
+    const newUsername = getSharedInput(SharedInput.newUsernameInput).value;
 
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
@@ -152,9 +152,9 @@ export function changeUsername(userInfo: AccountInfo) {
 
 export function invite() {
     disableAllInputs(true);
-    const inviteWarning = getSharedElement(SharedElementVarsIdx.inviteWarning);
-    const inviteReceiverEmailInput = getSharedInput(SharedInputVarsIdx.inviteReceiverEmailInput);
-    const inviteCount = getSharedElement(SharedElementVarsIdx.inviteCount);
+    const inviteWarning = getSharedElement(SharedElement.inviteWarning);
+    const inviteReceiverEmailInput = getSharedInput(SharedInput.inviteReceiverEmailInput);
+    const inviteCount = getSharedElement(SharedElement.inviteCount);
 
     const warningElem = inviteWarning;
     const receiver = inviteReceiverEmailInput.value;
@@ -234,18 +234,18 @@ export function logoutSession(sessionID: string, sessionLogoutButton: HTMLButton
 export function changeLoginNotification() {
     disableAllInputs(true);
 
-    const warningElem = getSharedElement(SharedElementVarsIdx.loginNotificationWarning);
+    const warningElem = getSharedElement(SharedElement.loginNotificationWarning);
 
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
 
-    const loginNotificationTargetStatus = !getSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus);
+    const loginNotificationTargetStatus = !getSharedBool(SharedBool.currentLoginNotificationStatus);
 
     reauthenticationPrompt(
         'change_login_notification',
         (response: string) => {
             if (response === 'DONE') {
-                setSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus, loginNotificationTargetStatus);
+                setSharedBool(SharedBool.currentLoginNotificationStatus, loginNotificationTargetStatus);
                 updateMfaUI(true);
                 replaceText(warningElem, loginNotificationTargetStatus ? 'ログイン通知が有効になりました。' : 'ログイン通知が無効になりました。');
                 changeColor(warningElem, CSS_COLOR.GREEN);

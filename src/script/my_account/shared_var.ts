@@ -20,19 +20,19 @@ import { createUsernameInput } from '../module/dom/create_element/multi_language
 
 import * as styles from '../../css/my_account.module.scss';
 
-export const enum SharedBoolVarsIdx {
+export const enum SharedBool {
     currentMfaStatus,
     currentLoginNotificationStatus,
 }
 
-export const enum SharedInputVarsIdx {
+export const enum SharedInput {
     newUsernameInput,
     newPasswordInput,
     newPasswordComfirmInput,
     inviteReceiverEmailInput,
 }
 
-export const enum SharedButtonVarsIdx {
+export const enum SharedButton {
     emailChangeButton,
     usernameChangeButton,
     passwordChangeButton,
@@ -43,7 +43,7 @@ export const enum SharedButtonVarsIdx {
     loginNotificationButton,
 }
 
-export const enum SharedElementVarsIdx {
+export const enum SharedElement {
     emailWarning,
     usernameWarning,
     passwordWarning,
@@ -58,10 +58,10 @@ export const enum SharedElementVarsIdx {
     sessionsContainer,
 }
 
-let sharedBoolVars: { [key in SharedBoolVarsIdx]: boolean } | null = null;
-let sharedInputVars: { [key in SharedInputVarsIdx]: HTMLInputElement } | null = null;
-let sharedButtonVars: { [key in SharedButtonVarsIdx]: HTMLButtonElement } | null = null;
-let sharedElementVars: { [key in SharedElementVarsIdx]: HTMLElement } | null = null;
+let sharedBools: { [key in SharedBool]: boolean } | null = null;
+let sharedInputs: { [key in SharedInput]: HTMLInputElement } | null = null;
+let sharedButtons: { [key in SharedButton]: HTMLButtonElement } | null = null;
+let sharedElements: { [key in SharedElement]: HTMLElement } | null = null;
 export const sessionLogoutButtons = new Set<HTMLButtonElement>();
 
 export function initializeSharedVars() {
@@ -104,39 +104,39 @@ export function initializeSharedVars() {
     const logoutButton = createButtonElement('ログアウ');
     appendChild(container, logoutButton);
 
-    sharedBoolVars = {
-        [SharedBoolVarsIdx.currentMfaStatus]: false,
-        [SharedBoolVarsIdx.currentLoginNotificationStatus]: false,
+    sharedBools = {
+        [SharedBool.currentMfaStatus]: false,
+        [SharedBool.currentLoginNotificationStatus]: false,
     };
-    sharedInputVars = {
-        [SharedInputVarsIdx.newUsernameInput]: usernameInput,
-        [SharedInputVarsIdx.newPasswordInput]: passwordInput,
-        [SharedInputVarsIdx.newPasswordComfirmInput]: passwordConfirmInput,
-        [SharedInputVarsIdx.inviteReceiverEmailInput]: inviteReceiverEmailInput,
+    sharedInputs = {
+        [SharedInput.newUsernameInput]: usernameInput,
+        [SharedInput.newPasswordInput]: passwordInput,
+        [SharedInput.newPasswordComfirmInput]: passwordConfirmInput,
+        [SharedInput.inviteReceiverEmailInput]: inviteReceiverEmailInput,
     };
-    sharedButtonVars = {
-        [SharedButtonVarsIdx.emailChangeButton]: changeEmailSubsec[1],
-        [SharedButtonVarsIdx.usernameChangeButton]: usernameSubsec[1],
-        [SharedButtonVarsIdx.passwordChangeButton]: passwordSubsec[1],
-        [SharedButtonVarsIdx.inviteButton]: inviteSubsec[1],
-        [SharedButtonVarsIdx.logoutButton]: logoutButton,
-        [SharedButtonVarsIdx.mfaButton]: mfaSubsec[1],
-        [SharedButtonVarsIdx.recoveryCodeButton]: recoveryCodeSubsec[1],
-        [SharedButtonVarsIdx.loginNotificationButton]: loginNotificationSubsec[1],
+    sharedButtons = {
+        [SharedButton.emailChangeButton]: changeEmailSubsec[1],
+        [SharedButton.usernameChangeButton]: usernameSubsec[1],
+        [SharedButton.passwordChangeButton]: passwordSubsec[1],
+        [SharedButton.inviteButton]: inviteSubsec[1],
+        [SharedButton.logoutButton]: logoutButton,
+        [SharedButton.mfaButton]: mfaSubsec[1],
+        [SharedButton.recoveryCodeButton]: recoveryCodeSubsec[1],
+        [SharedButton.loginNotificationButton]: loginNotificationSubsec[1],
     };
-    sharedElementVars = {
-        [SharedElementVarsIdx.emailWarning]: changeEmailSubsec[0],
-        [SharedElementVarsIdx.usernameWarning]: usernameSubsec[0],
-        [SharedElementVarsIdx.passwordWarning]: passwordSubsec[0],
-        [SharedElementVarsIdx.inviteWarning]: inviteSubsec[0],
-        [SharedElementVarsIdx.mfaWarning]: mfaSubsec[0],
-        [SharedElementVarsIdx.recoveryCodeWarning]: recoveryCodeSubsec[0],
-        [SharedElementVarsIdx.loginNotificationWarning]: loginNotificationSubsec[0],
-        [SharedElementVarsIdx.inviteCount]: inviteCount,
-        [SharedElementVarsIdx.mfaInfo]: mfaInfo,
-        [SharedElementVarsIdx.recoveryCodeInfo]: recoveryCodeInfo,
-        [SharedElementVarsIdx.loginNotificationInfo]: loginNotificationInfo,
-        [SharedElementVarsIdx.sessionsContainer]: sessionsContainer,
+    sharedElements = {
+        [SharedElement.emailWarning]: changeEmailSubsec[0],
+        [SharedElement.usernameWarning]: usernameSubsec[0],
+        [SharedElement.passwordWarning]: passwordSubsec[0],
+        [SharedElement.inviteWarning]: inviteSubsec[0],
+        [SharedElement.mfaWarning]: mfaSubsec[0],
+        [SharedElement.recoveryCodeWarning]: recoveryCodeSubsec[0],
+        [SharedElement.loginNotificationWarning]: loginNotificationSubsec[0],
+        [SharedElement.inviteCount]: inviteCount,
+        [SharedElement.mfaInfo]: mfaInfo,
+        [SharedElement.recoveryCodeInfo]: recoveryCodeInfo,
+        [SharedElement.loginNotificationInfo]: loginNotificationInfo,
+        [SharedElement.sessionsContainer]: sessionsContainer,
     };
 }
 
@@ -144,46 +144,46 @@ function triggerSharedVarAccessError(): never {
     throw new Error('Not initialized.');
 }
 
-export function setSharedBool(idx: SharedBoolVarsIdx, value: boolean) {
-    if (sharedBoolVars === null) {
+export function setSharedBool(idx: SharedBool, value: boolean) {
+    if (sharedBools === null) {
         triggerSharedVarAccessError();
     }
-    sharedBoolVars[idx] = value;
+    sharedBools[idx] = value;
 }
 
-export function getSharedBool(idx: SharedBoolVarsIdx) {
-    if (sharedBoolVars === null) {
+export function getSharedBool(idx: SharedBool) {
+    if (sharedBools === null) {
         triggerSharedVarAccessError();
     }
-    return sharedBoolVars[idx];
+    return sharedBools[idx];
 }
 
-export function getSharedInput(idx: SharedInputVarsIdx) {
-    if (sharedInputVars === null) {
+export function getSharedInput(idx: SharedInput) {
+    if (sharedInputs === null) {
         triggerSharedVarAccessError();
     }
-    return sharedInputVars[idx];
+    return sharedInputs[idx];
 }
 
-export function getSharedButton(idx: SharedButtonVarsIdx) {
-    if (sharedButtonVars === null) {
+export function getSharedButton(idx: SharedButton) {
+    if (sharedButtons === null) {
         triggerSharedVarAccessError();
     }
-    return sharedButtonVars[idx];
+    return sharedButtons[idx];
 }
 
-export function getSharedElement(idx: SharedElementVarsIdx) {
-    if (sharedElementVars === null) {
+export function getSharedElement(idx: SharedElement) {
+    if (sharedElements === null) {
         triggerSharedVarAccessError();
     }
-    return sharedElementVars[idx];
+    return sharedElements[idx];
 }
 
 export function dereferenceSharedVars() {
-    sharedBoolVars = null;
-    sharedInputVars = null;
-    sharedButtonVars = null;
-    sharedElementVars = null;
+    sharedBools = null;
+    sharedInputs = null;
+    sharedButtons = null;
+    sharedElements = null;
     sessionLogoutButtons.clear();
 }
 

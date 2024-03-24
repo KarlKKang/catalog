@@ -29,7 +29,7 @@ import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
 import { toCanvas } from 'qrcode';
 import { addInterval, removeInterval } from '../module/timer';
 import { pgid } from '../module/global';
-import { SharedElementVarsIdx, getSharedElement } from './shared_var';
+import { SharedElement, getSharedElement } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { popupWindowImportPromise } from './import_promise';
@@ -47,7 +47,7 @@ const mfaAlreadySet = '二要素認証はすでに有効になっています。
 
 export function enableMfa() {
     disableAllInputs(true);
-    const mfaWarning = getSharedElement(SharedElementVarsIdx.mfaWarning);
+    const mfaWarning = getSharedElement(SharedElement.mfaWarning);
 
     hideElement(mfaWarning);
     changeColor(mfaWarning, CSS_COLOR.RED);
@@ -80,7 +80,7 @@ export function enableMfa() {
 
 export function disableMfa() {
     disableAllInputs(true);
-    const mfaWarning = getSharedElement(SharedElementVarsIdx.mfaWarning);
+    const mfaWarning = getSharedElement(SharedElement.mfaWarning);
 
     hideElement(mfaWarning);
     changeColor(mfaWarning, CSS_COLOR.RED);
@@ -106,7 +106,7 @@ export function disableMfa() {
 
 export function generateRecoveryCode() {
     disableAllInputs(true);
-    const recoveryCodeWarning = getSharedElement(SharedElementVarsIdx.recoveryCodeWarning);
+    const recoveryCodeWarning = getSharedElement(SharedElement.recoveryCodeWarning);
 
     hideElement(recoveryCodeWarning);
     changeColor(recoveryCodeWarning, CSS_COLOR.RED);
@@ -133,7 +133,7 @@ export function generateRecoveryCode() {
                     return false;
                 }
                 showRecoveryCode(parsedResponse, () => {
-                    hideElement(getSharedElement(SharedElementVarsIdx.recoveryCodeInfo));
+                    hideElement(getSharedElement(SharedElement.recoveryCodeInfo));
                     disableAllInputs(false);
                 });
                 return false;
@@ -313,7 +313,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
 
         sendServerRequest('set_totp', {
             callback: (response: string) => {
-                const mfaWarning = getSharedElement(SharedElementVarsIdx.mfaWarning);
+                const mfaWarning = getSharedElement(SharedElement.mfaWarning);
                 if (response === 'EXPIRED') {
                     hidePopupWindow();
                     replaceText(mfaWarning, sessionEnded);

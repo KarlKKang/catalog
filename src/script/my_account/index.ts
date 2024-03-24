@@ -27,7 +27,7 @@ import { invalidResponse } from '../module/server/message';
 import * as AccountInfo from '../module/type/AccountInfo';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';
-import { SharedBoolVarsIdx, SharedButtonVarsIdx, SharedElementVarsIdx, SharedInputVarsIdx, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, sessionLogoutButtons, setSharedBool } from './shared_var';
+import { SharedBool, SharedButton, SharedElement, SharedInput, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, sessionLogoutButtons, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs } from './helper';
 import { getLocalTimeString } from '../module/common/pure';
 import { basicImportPromise, importAll, mfaImportPromise, parseBrowserImportPromise } from './import_promise';
@@ -61,32 +61,32 @@ export default function (showPage: ShowPageFunc) {
 function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     const currentPgid = pgid;
     initializeSharedVars();
-    setSharedBool(SharedBoolVarsIdx.currentLoginNotificationStatus, userInfo.login_notification);
+    setSharedBool(SharedBool.currentLoginNotificationStatus, userInfo.login_notification);
     updateMfaUI(userInfo.mfa_status);
 
-    addEventListener(getSharedButton(SharedButtonVarsIdx.emailChangeButton), 'click', () => {
+    addEventListener(getSharedButton(SharedButton.emailChangeButton), 'click', () => {
         getImport(basicImportPromise).then(({ changeEmail }) => {
             if (currentPgid === pgid) {
                 changeEmail();
             }
         });
     });
-    addEventListener(getSharedButton(SharedButtonVarsIdx.usernameChangeButton), 'click', () => {
+    addEventListener(getSharedButton(SharedButton.usernameChangeButton), 'click', () => {
         getImport(basicImportPromise).then(({ changeUsername }) => {
             if (currentPgid === pgid) {
                 changeUsername(userInfo);
             }
         });
     });
-    addEventListener(getSharedButton(SharedButtonVarsIdx.passwordChangeButton), 'click', () => {
+    addEventListener(getSharedButton(SharedButton.passwordChangeButton), 'click', () => {
         getImport(basicImportPromise).then(({ changePassword }) => {
             if (currentPgid === pgid) {
                 changePassword();
             }
         });
     });
-    addEventListener(getSharedButton(SharedButtonVarsIdx.mfaButton), 'click', () => {
-        if (getSharedBool(SharedBoolVarsIdx.currentMfaStatus)) {
+    addEventListener(getSharedButton(SharedButton.mfaButton), 'click', () => {
+        if (getSharedBool(SharedBool.currentMfaStatus)) {
             getImport(mfaImportPromise).then(({ disableMfa }) => {
                 if (currentPgid === pgid) {
                     disableMfa();
@@ -100,27 +100,27 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
             });
         }
     });
-    addEventListener(getSharedButton(SharedButtonVarsIdx.recoveryCodeButton), 'click', () => {
+    addEventListener(getSharedButton(SharedButton.recoveryCodeButton), 'click', () => {
         getImport(mfaImportPromise).then(({ generateRecoveryCode }) => {
             if (currentPgid === pgid) {
                 generateRecoveryCode();
             }
         });
     });
-    addEventListener(getSharedButton(SharedButtonVarsIdx.inviteButton), 'click', () => {
+    addEventListener(getSharedButton(SharedButton.inviteButton), 'click', () => {
         getImport(basicImportPromise).then(({ invite }) => {
             if (currentPgid === pgid) {
                 invite();
             }
         });
     });
-    addEventListener(getSharedButton(SharedButtonVarsIdx.logoutButton), 'click', () => {
+    addEventListener(getSharedButton(SharedButton.logoutButton), 'click', () => {
         disableAllInputs(true);
         logout(() => {
             redirect(LOGIN_URL);
         });
     });
-    addEventListener(getSharedButton(SharedButtonVarsIdx.loginNotificationButton), 'click', () => {
+    addEventListener(getSharedButton(SharedButton.loginNotificationButton), 'click', () => {
         getImport(basicImportPromise).then(({ changeLoginNotification }) => {
             if (currentPgid === pgid) {
                 changeLoginNotification();
@@ -128,11 +128,11 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
         });
     });
 
-    passwordStyling(getSharedInput(SharedInputVarsIdx.newPasswordInput));
-    passwordStyling(getSharedInput(SharedInputVarsIdx.newPasswordComfirmInput));
+    passwordStyling(getSharedInput(SharedInput.newPasswordInput));
+    passwordStyling(getSharedInput(SharedInput.newPasswordComfirmInput));
 
     if (userInfo.mfa_status) {
-        const recoveryCodeInfo = getSharedElement(SharedElementVarsIdx.recoveryCodeInfo);
+        const recoveryCodeInfo = getSharedElement(SharedElement.recoveryCodeInfo);
         if (userInfo.recovery_code_status === 0) {
             changeColor(recoveryCodeInfo, CSS_COLOR.RED);
             appendText(recoveryCodeInfo, 'リカバリーコードが残っていません。新しいリカバリーコードを生成してください。');
@@ -144,8 +144,8 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
         }
     }
 
-    appendText(getSharedElement(SharedElementVarsIdx.inviteCount), userInfo.invite_quota.toString());
-    getSharedInput(SharedInputVarsIdx.newUsernameInput).value = userInfo.username;
+    appendText(getSharedElement(SharedElement.inviteCount), userInfo.invite_quota.toString());
+    getSharedInput(SharedInput.newUsernameInput).value = userInfo.username;
     showSessions(userInfo);
 }
 
@@ -170,7 +170,7 @@ function showSessions(userInfo: AccountInfo.AccountInfo) {
         appendParagraph('最近のアクティビティ：' + getLocalTimeString(session.last_active_time, true, true), innerContainer);
 
         const sessionID = session.id;
-        const sessionsContainer = getSharedElement(SharedElementVarsIdx.sessionsContainer);
+        const sessionsContainer = getSharedElement(SharedElement.sessionsContainer);
         if (sessionID === undefined) {
             const thisDevicePrompt = createParagraphElement('※このデバイスです。');
             addClass(thisDevicePrompt, styles.warning);
