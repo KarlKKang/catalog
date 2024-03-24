@@ -6,12 +6,22 @@ export const MessageTitleColor = [
     CSS_COLOR.ORANGE,
 ] as const;
 
+export const enum MessageParamProp {
+    MESSAGE,
+    TITLE,
+    COLOR,
+    URL,
+    BUTTON_TEXT,
+    LOGOUT,
+    REPLACE_BODY,
+}
+
 export interface MessageParam {
-    message?: string;
-    title?: string;
-    color?: typeof MessageTitleColor[number];
-    url?: string;
-    buttonText?: string | null;
-    logout?: boolean;
-    replaceBody?: boolean;
+    [MessageParamProp.MESSAGE]?: string;
+    [MessageParamProp.TITLE]?: string;
+    [MessageParamProp.COLOR]?: typeof MessageTitleColor[number];
+    [MessageParamProp.URL]?: string;
+    [MessageParamProp.BUTTON_TEXT]?: string | null;
+    [MessageParamProp.LOGOUT]?: boolean;
+    [MessageParamProp.REPLACE_BODY]?: boolean;
 }

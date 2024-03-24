@@ -35,6 +35,7 @@ import { changeButtonText, nextButtonText, passwordRules } from './module/text/u
 import * as styles from '../css/portal_form.module.scss';
 import { completed } from './module/text/message/title';
 import { CSS_COLOR } from './module/style/value';
+import { MessageParamProp } from './module/message/type';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -163,11 +164,11 @@ function showPageCallback(user: string, signature: string, expires: string) {
                     disableAllInputs(false);
                 } else if (response === 'DONE') {
                     showMessage({
-                        title: completed,
-                        message: passwordChanged,
-                        color: CSS_COLOR.GREEN,
-                        url: LOGIN_URL,
-                        buttonText: nextButtonText
+                        [MessageParamProp.TITLE]: completed,
+                        [MessageParamProp.MESSAGE]: passwordChanged,
+                        [MessageParamProp.COLOR]: CSS_COLOR.GREEN,
+                        [MessageParamProp.URL]: LOGIN_URL,
+                        [MessageParamProp.BUTTON_TEXT]: nextButtonText
                     });
                 } else {
                     showMessage(invalidResponse());

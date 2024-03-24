@@ -1,6 +1,6 @@
 import { defaultErrorSuffix, emailSentSuffix } from '../text/message/body';
 import { emailSent as emailSentTitle } from '../text/message/title';
-import { MessageParam } from './type';
+import { MessageParam, MessageParamProp } from './type';
 import { isString } from '../type/helper';
 import { CSS_COLOR } from '../style/value';
 
@@ -11,23 +11,23 @@ export const moduleImportError = (e: unknown) => {
     } else if (e instanceof Error) {
         message += `<br>${e.message}`;
     }
-    return { message: message };
+    return { [MessageParamProp.MESSAGE]: message };
 };
 export const expired = {
-    title: '期限が切れています',
-    message: 'もう一度最初からやり直してください。',
-    buttonText: null
+    [MessageParamProp.TITLE]: '期限が切れています',
+    [MessageParamProp.MESSAGE]: 'もう一度最初からやり直してください。',
+    [MessageParamProp.BUTTON_TEXT]: null
 };
 export const emailSent = (goBackUrl?: string) => {
     const param: MessageParam = {
-        title: emailSentTitle,
-        message: emailSentSuffix,
-        color: CSS_COLOR.GREEN,
+        [MessageParamProp.TITLE]: emailSentTitle,
+        [MessageParamProp.MESSAGE]: emailSentSuffix,
+        [MessageParamProp.COLOR]: CSS_COLOR.GREEN,
     };
     if (goBackUrl === undefined) {
-        param.buttonText = null;
+        param[MessageParamProp.BUTTON_TEXT] = null;
     } else {
-        param.url = goBackUrl;
+        param[MessageParamProp.URL] = goBackUrl;
     }
     return param;
 };

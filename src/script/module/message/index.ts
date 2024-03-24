@@ -3,12 +3,20 @@ import {
 } from '../env/constant';
 import { getTitle, setSessionStorage, getFullURL } from '../dom/document';
 import { defaultError } from '../text/message/title';
-import type { MessageParam } from './type';
+import { MessageParamProp, type MessageParam } from './type';
 import { redirect } from '../global';
 import { defaultErrorSuffix } from '../text/message/body';
 import { CSS_COLOR } from '../style/value';
 
-export function showMessage({ message, title, color, url, buttonText, logout, replaceBody }: MessageParam) {
+export function showMessage({
+    [MessageParamProp.MESSAGE]: message,
+    [MessageParamProp.TITLE]: title,
+    [MessageParamProp.COLOR]: color,
+    [MessageParamProp.URL]: url,
+    [MessageParamProp.BUTTON_TEXT]: buttonText,
+    [MessageParamProp.LOGOUT]: logout,
+    [MessageParamProp.REPLACE_BODY]: replaceBody
+}: MessageParam) {
     setSessionStorage('message', message ?? ('不明なエラーが発生しました。' + defaultErrorSuffix));
     setSessionStorage('title', title ?? defaultError);
     setSessionStorage('color', (color ?? CSS_COLOR.RED).toString());

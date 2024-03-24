@@ -37,11 +37,12 @@ import * as styles from '../css/portal_form.module.scss';
 import { completed } from './module/text/message/title';
 import { addManualMultiLanguageClass, createUsernameInput } from './module/dom/create_element/multi_language';
 import { CSS_COLOR } from './module/style/value';
+import { MessageParamProp } from './module/message/type';
 
 const emailAlreadyRegistered = {
-    title: '失敗しました',
-    message: emailAlreadyRegisteredBody,
-    buttonText: null
+    [MessageParamProp.TITLE]: '失敗しました',
+    [MessageParamProp.MESSAGE]: emailAlreadyRegisteredBody,
+    [MessageParamProp.BUTTON_TEXT]: null
 };
 
 export default function (showPage: ShowPageFunc) {
@@ -180,11 +181,11 @@ function showPageCallback(param: string) {
                     showMessage(emailAlreadyRegistered);
                 } else if (response === 'DONE') {
                     showMessage({
-                        title: completed,
-                        message: 'アカウントが登録されました。',
-                        color: CSS_COLOR.GREEN,
-                        url: LOGIN_URL,
-                        buttonText: nextButtonText
+                        [MessageParamProp.TITLE]: completed,
+                        [MessageParamProp.MESSAGE]: 'アカウントが登録されました。',
+                        [MessageParamProp.COLOR]: CSS_COLOR.GREEN,
+                        [MessageParamProp.URL]: LOGIN_URL,
+                        [MessageParamProp.BUTTON_TEXT]: nextButtonText
                     });
                 } else {
                     showMessage(invalidResponse());
