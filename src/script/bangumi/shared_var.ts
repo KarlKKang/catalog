@@ -1,14 +1,13 @@
 import { addClass, appendChild, body, createDivElement, createParagraphElement, prependChild } from '../module/dom';
 import * as styles from '../../css/bangumi.module.scss';
 
-let sharedElementVars: HTMLElement[] = [];
-export let errorMessageElement: HTMLElement | null = null;
-
-export const enum SharedElementVarsIdx {
+export const enum SharedElement {
     TITLE,
     CONTENT_CONTAINER,
     MEDIA_HOLDER,
 }
+let sharedElements: { [key in SharedElement]: HTMLElement } | null = null;
+export let errorMessageElement: HTMLElement | null = null;
 
 export function initializeSharedVars() {
     const titleElem = createParagraphElement();
@@ -20,22 +19,22 @@ export function initializeSharedVars() {
     addClass(mediaHolder, styles.mediaHolder);
     appendChild(content, mediaHolder);
     appendChild(body, content);
-    sharedElementVars = [
-        titleElem,
-        content,
-        mediaHolder,
-    ];
+    sharedElements = {
+        [SharedElement.TITLE]: titleElem,
+        [SharedElement.CONTENT_CONTAINER]: content,
+        [SharedElement.MEDIA_HOLDER]: mediaHolder,
+    };
 }
 
 export function dereferenceSharedVars() {
-    sharedElementVars = [];
+    sharedElements = null;
 }
 
-export function getSharedElement(idx: SharedElementVarsIdx): HTMLElement {
-    const value = sharedElementVars[idx];
-    if (value === undefined) {
-        throw new Error('Cannot access shared variable.');
+export function getSharedElement(idx: SharedElement): HTMLElement {
+    if (sharedElements === null) {
+        throw new Error('Not initialized.');
     }
+    const value = sharedElements[idx];
     return value;
 }
 

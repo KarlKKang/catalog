@@ -36,7 +36,7 @@ import {
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
-import { SharedElementVarsIdx, getSharedElement } from './shared_var';
+import { SharedElement, getSharedElement } from './shared_var';
 import * as styles from '../../css/bangumi.module.scss';
 
 let currentPgid: unknown;
@@ -77,7 +77,7 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        appendChild(getSharedElement(SharedElementVarsIdx.CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, null)[0]);
+        appendChild(getSharedElement(SharedElement.CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, null)[0]);
     });
 
     if (!MSE_SUPPORTED && !NATIVE_HLS_SUPPORTED) {
@@ -95,7 +95,7 @@ async function addAudioNode(index: number) {
         return;
     }
 
-    const mediaHolder = getSharedElement(SharedElementVarsIdx.MEDIA_HOLDER);
+    const mediaHolder = getSharedElement(SharedElement.MEDIA_HOLDER);
 
     const audioEPInfo = epInfo as AudioEPInfo;
     const file = audioEPInfo.files[index] as AudioFile;
@@ -195,7 +195,7 @@ function addAlbumInfo() {
         const albumTitleElem = createParagraphElement();
         addClass(albumTitleElem, styles.subTitle, styles.centerAlign);
         albumTitleElem.innerHTML = albumInfo.album_title; // Album title is in HTML syntax.
-        const contentContainer = getSharedElement(SharedElementVarsIdx.CONTENT_CONTAINER);
+        const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
         if (albumInfo.album_artist !== '') {
             const albumArtist = createParagraphElement(albumInfo.album_artist);
             addClass(albumArtist, styles.artist, styles.centerAlign);
@@ -203,7 +203,7 @@ function addAlbumInfo() {
         }
         prependChild(contentContainer, albumTitleElem);
     } else if (albumInfo.album_artist !== '') {
-        const titleElem = getSharedElement(SharedElementVarsIdx.TITLE);
+        const titleElem = getSharedElement(SharedElement.TITLE);
         const artistElem = createSpanElement();
         addClass(artistElem, styles.artist);
         appendChild(artistElem, createBRElement());

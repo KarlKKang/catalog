@@ -30,7 +30,7 @@ import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
-import { SharedElementVarsIdx, dereferenceSharedVars, getSharedElement, initializeSharedVars, setErrorMessageElement } from './shared_var';
+import { SharedElement, dereferenceSharedVars, getSharedElement, initializeSharedVars, setErrorMessageElement } from './shared_var';
 import { hideElement, setMaxHeight, setMinHeight, setOpacity, setPaddingBottom, setVisibility, showElement } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import '../../font/dist/Segoe/SegMDL2.css'; // Needed for the show more/less button.
@@ -64,8 +64,8 @@ export default async function (
 
     initializeSharedVars();
 
-    const titleElem = getSharedElement(SharedElementVarsIdx.TITLE);
-    const contentContainer = getSharedElement(SharedElementVarsIdx.CONTENT_CONTAINER);
+    const titleElem = getSharedElement(SharedElement.TITLE);
+    const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
 
     const epInfo = response.ep_info;
 
