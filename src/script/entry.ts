@@ -44,9 +44,7 @@ type PageMap = {
 let body: HTMLElement;
 const loadingBar = createDivElement();
 addClass(loadingBar, styles.loadingBar);
-let currentPage: {
-    script: PageScript;
-} | null = null;
+let currentPageScript: PageScript | null = null;
 
 let swUpdateLastPromptTime: number = 0;
 let serviceWorker: WorkboxType | null = null;
@@ -149,10 +147,10 @@ function load(url: string, withoutHistory: boolean | null = false) {
 }
 
 function offloadCurrentPage() {
-    if (currentPage === null) {
+    if (currentPageScript === null) {
         return;
     }
-    currentPage.script.offload?.();
+    currentPageScript.offload?.();
     deregisterAllEventTargets();
     removeAllTimers();
     destroyPopupWindow();
@@ -332,9 +330,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         loadingBarWidth = 67;
     }
 
-    currentPage = {
-        script: script,
-    };
+    currentPageScript = script;
     script.default(
         () => {
             if (pgid !== newPgid) {
