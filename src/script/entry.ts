@@ -29,11 +29,17 @@ type PageScript = {
 };
 type PageScriptImport = Promise<PageScript>;
 
+const enum PageProp {
+    SCRIPT,
+    HTML_ENTRY,
+    TITLE,
+    NATIVE_VIEWPORT,
+}
 type Page = {
-    script: () => PageScriptImport;
-    htmlEntry: HTMLEntry;
-    title?: string;
-    nativeViewport?: boolean;
+    [PageProp.SCRIPT]: () => PageScriptImport;
+    [PageProp.HTML_ENTRY]: HTMLEntry;
+    [PageProp.TITLE]?: string;
+    [PageProp.NATIVE_VIEWPORT]?: boolean;
 };
 
 type PageMap = {
@@ -55,85 +61,85 @@ let serviceWorkerUpToDate: boolean = true;
 let loadingBarShown: boolean = false;
 
 const page404: Page = {
-    script: () => import('./404'),
-    htmlEntry: HTMLEntry.DEFAULT,
-    title: notFoundPageTitle,
+    [PageProp.SCRIPT]: () => import('./404'),
+    [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
+    [PageProp.TITLE]: notFoundPageTitle,
 };
 
 const pages: PageMap = {
     '': {
-        script: () => import('./index'),
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./index'),
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'confirm_new_email': {
-        script: () => import('./confirm_new_email'),
-        title: emailChangePageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./confirm_new_email'),
+        [PageProp.TITLE]: emailChangePageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'console': {
-        script: () => import('./console'),
-        title: consolePageTitle,
-        htmlEntry: HTMLEntry.NO_THEME,
+        [PageProp.SCRIPT]: () => import('./console'),
+        [PageProp.TITLE]: consolePageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.NO_THEME,
     },
     'image': {
-        script: () => import('./image'),
-        htmlEntry: HTMLEntry.NO_THEME,
-        nativeViewport: true,
+        [PageProp.SCRIPT]: () => import('./image'),
+        [PageProp.HTML_ENTRY]: HTMLEntry.NO_THEME,
+        [PageProp.NATIVE_VIEWPORT]: true,
     },
     'info': {
-        script: () => import('./info'),
-        title: infoPageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./info'),
+        [PageProp.TITLE]: infoPageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'message': {
-        script: () => Promise.resolve(messagePageScript),
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => Promise.resolve(messagePageScript),
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'my_account': {
-        script: () => import('./my_account'),
-        title: myAccountPageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./my_account'),
+        [PageProp.TITLE]: myAccountPageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'new_email': {
-        script: () => import('./new_email'),
-        title: emailChangePageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./new_email'),
+        [PageProp.TITLE]: emailChangePageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'register': {
-        script: () => import('./register'),
-        title: registerPageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./register'),
+        [PageProp.TITLE]: registerPageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'special_register': {
-        script: () => import('./special_register'),
-        title: registerPageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./special_register'),
+        [PageProp.TITLE]: registerPageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'login': {
-        script: () => import('./login'),
-        title: loginPageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./login'),
+        [PageProp.TITLE]: loginPageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'request_password_reset': {
-        script: () => import('./request_password_reset'),
-        title: passwordResetPageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./request_password_reset'),
+        [PageProp.TITLE]: passwordResetPageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'password_reset': {
-        script: () => import('./password_reset'),
-        title: passwordResetPageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./password_reset'),
+        [PageProp.TITLE]: passwordResetPageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
 };
 const directories: PageMap = {
     'bangumi': {
-        script: () => import('./bangumi'),
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./bangumi'),
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
     'news': {
-        script: () => import('./news'),
-        title: newsPageTitle,
-        htmlEntry: HTMLEntry.DEFAULT,
+        [PageProp.SCRIPT]: () => import('./news'),
+        [PageProp.TITLE]: newsPageTitle,
+        [PageProp.HTML_ENTRY]: HTMLEntry.DEFAULT,
     },
 };
 
@@ -283,11 +289,11 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     if (withoutHistory !== null) {
         changeURL(url, withoutHistory);
     }
-    setTitle((page.title === undefined ? '' : (page.title + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
+    setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
     removeClass(body, styles.noTheme);
     setViewport(false);
 
-    const scriptImportPromise = page.script();
+    const scriptImportPromise = page[PageProp.SCRIPT]();
 
     const newPgid = {};
     setPgid(newPgid);
@@ -348,7 +354,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
 
     currentPage = {
         script: script,
-        htmlEntry: page.htmlEntry,
+        htmlEntry: page[PageProp.HTML_ENTRY],
     };
     script.default(
         () => {
@@ -356,10 +362,10 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
                 return;
             }
 
-            const isStandardStyle = page.htmlEntry !== HTMLEntry.NO_THEME && page.nativeViewport !== true;
+            const isStandardStyle = page[PageProp.HTML_ENTRY] !== HTMLEntry.NO_THEME && page[PageProp.NATIVE_VIEWPORT] !== true;
             setMinHeight(html, null);
-            page.htmlEntry === HTMLEntry.NO_THEME && addClass(body, styles.noTheme);
-            page.nativeViewport === true && setViewport(true);
+            page[PageProp.HTML_ENTRY] === HTMLEntry.NO_THEME && addClass(body, styles.noTheme);
+            page[PageProp.NATIVE_VIEWPORT] === true && setViewport(true);
             registerServiceWorker(isStandardStyle);
 
             loadingBarWidth = 100;
