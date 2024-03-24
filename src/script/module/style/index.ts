@@ -67,23 +67,31 @@ export function setRight(element: HTMLElement, value: number | null, unit?: CSS_
 }
 
 export function setOpacity(element: HTMLElement, value: number) {
-    setStyle(element, CSS_PROPERTY.OPACITY, value);
+    addStyle(element, CSS_PROPERTY.OPACITY, value);
 }
 
 export function setVisibility(element: HTMLElement, visible: boolean) {
-    setStyle(element, CSS_PROPERTY.VISIBILITY, visible ? 'visible' : 'hidden');
+    addStyle(element, CSS_PROPERTY.VISIBILITY, visible ? 'visible' : 'hidden');
 }
 
 export function enableTransition(element: HTMLElement, enable: boolean) {
     if (enable) {
         removeStyle(element, CSS_PROPERTY.TRANSITION);
     } else {
-        setStyle(element, CSS_PROPERTY.TRANSITION, 'none');
+        addStyle(element, CSS_PROPERTY.TRANSITION, 'none');
     }
 }
 
 export function setCursor(element: HTMLElement, cursor: CSS_CURSOR | null) {
     setStyle(element, CSS_PROPERTY.CURSOR, cursor);
+}
+
+function addStyle(element: HTMLElement, property: CSS_PROPERTY, value: number | string, unit?: CSS_UNIT) {
+    let valueStr = value.toString();
+    if (unit !== undefined) {
+        valueStr += unit;
+    }
+    element.style[property] = valueStr;
 }
 
 function removeStyle(element: HTMLElement, property: CSS_PROPERTY) {
@@ -94,20 +102,16 @@ function setStyle(element: HTMLElement, property: CSS_PROPERTY, value: number | 
     if (value === null) {
         removeStyle(element, property);
     } else {
-        let valueStr = value.toString();
-        if (unit !== undefined) {
-            valueStr += unit;
-        }
-        element.style[property] = valueStr;
+        addStyle(element, property, value, unit);
     }
 }
 
 export function hideElement(elem: HTMLElement) {
-    setStyle(elem, CSS_PROPERTY.DISPLAY, 'none');
+    addStyle(elem, CSS_PROPERTY.DISPLAY, 'none');
 }
 
 export function showElement(elem: HTMLElement) {
-    removeClass(elem, CSS_PROPERTY.DISPLAY);
+    removeStyle(elem, CSS_PROPERTY.DISPLAY);
 }
 
 const colorMap: { [key in CSS_COLOR]: string } = {
