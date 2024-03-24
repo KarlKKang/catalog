@@ -3,7 +3,7 @@ import {
     replaceText,
     remove,
 } from '../module/dom';
-import { show as showMessage } from '../module/message';
+import { showMessage } from '../module/message';
 import {
     invalidPasswordFormat,
     passwordConfirmationMismatch,

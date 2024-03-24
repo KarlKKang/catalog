@@ -5,7 +5,7 @@ import { sendServerRequest } from '../server';
 import {
     addClass, appendChild, createDivElement,
 } from '../dom';
-import { show as showMessage } from '../message';
+import { showMessage } from '../message';
 import { invalidResponse } from '../server/message';
 import { addTimeout } from '../timer';
 import type { default as ImageLoader } from '../image_loader';

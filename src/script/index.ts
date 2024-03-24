@@ -31,7 +31,7 @@ import {
     body,
     disableInput,
 } from './module/dom';
-import { show as showMessage } from './module/message';
+import { showMessage } from './module/message';
 import { invalidResponse } from './module/server/message';
 import * as SeriesInfo from './module/type/SeriesInfo';
 import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';

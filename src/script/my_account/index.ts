@@ -22,7 +22,7 @@ import {
     replaceText,
     passwordStyling,
 } from '../module/dom';
-import { show as showMessage } from '../module/message';
+import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import * as AccountInfo from '../module/type/AccountInfo';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';

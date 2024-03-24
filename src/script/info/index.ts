@@ -7,7 +7,7 @@ import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import { scrollToHash } from '../module/common';
 import { pgid } from '../module/global';
-import { show as showMessage } from '../module/message';
+import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 
 export default function (showPage: ShowPageFunc) {

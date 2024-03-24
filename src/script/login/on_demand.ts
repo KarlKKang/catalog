@@ -4,7 +4,7 @@ import {
 import {
     getURLParam,
 } from '../module/common';
-import { show as showMessage } from '../module/message';
+import { showMessage } from '../module/message';
 import { UNRECOMMENDED_BROWSER } from '../module/browser';
 import { redirect } from '../module/global';
 import { nextButtonText } from '../module/text/ui';

@@ -9,7 +9,7 @@ import {
     clearSessionStorage,
     getBaseURL,
 } from '../module/dom';
-import { show as showMessage } from '../module/message';
+import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 import { invalidResponse, notFound } from '../module/server/message';
 import * as BangumiInfo from '../module/type/BangumiInfo';

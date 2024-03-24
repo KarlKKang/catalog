@@ -16,7 +16,7 @@ import {
     createSpanElement,
     addClass,
 } from './module/dom';
-import { show as showMessage } from './module/message';
+import { showMessage } from './module/message';
 import { emailSent } from './module/message/param';
 import { invalidEmailFormat } from './module/text/message/body';
 import { EMAIL_REGEX } from './module/common/pure';

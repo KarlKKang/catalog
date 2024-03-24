@@ -22,7 +22,7 @@ import {
     body,
     createHRElement,
 } from '../module/dom';
-import { show as showMessage } from '../module/message';
+import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import type * as BangumiInfo from '../module/type/BangumiInfo';

@@ -33,7 +33,7 @@ import {
     setTitle,
     getTitle,
 } from './module/dom';
-import { show as showMessage } from './module/message';
+import { showMessage } from './module/message';
 import { invalidResponse, notFound } from './module/server/message';
 import * as AllNewsInfo from './module/type/AllNewsInfo';
 import * as NewsInfo from './module/type/NewsInfo';

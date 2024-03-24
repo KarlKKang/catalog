@@ -21,7 +21,7 @@ import {
     appendListItems,
     addClass,
 } from './module/dom';
-import { show as showMessage } from './module/message';
+import { showMessage } from './module/message';
 import { invalidPasswordFormat, passwordChanged, passwordConfirmationMismatch } from './module/text/message/body';
 import { expired } from './module/message/param';
 import { PASSWORD_REGEX } from './module/common/pure';

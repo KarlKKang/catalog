@@ -1,7 +1,7 @@
 import { pgid } from '../global';
 import type { NavBarPage } from './enum';
 import { moduleImportError } from '../message/param';
-import { show as showMessage } from '../message';
+import { showMessage } from '../message';
 
 export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => void) {
     const currentPgid = pgid;

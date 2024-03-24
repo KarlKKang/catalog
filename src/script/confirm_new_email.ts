@@ -21,7 +21,7 @@ import {
     disableInput,
     addClass,
 } from './module/dom';
-import { show as showMessage } from './module/message';
+import { showMessage } from './module/message';
 import { expired } from './module/message/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/text/message/body';
 import { popupWindowImport, promptForTotpImport } from './module/popup_window';

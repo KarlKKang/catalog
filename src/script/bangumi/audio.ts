@@ -13,7 +13,7 @@ import {
     createBRElement,
     appendText,
 } from '../module/dom';
-import { show as showMessage } from '../module/message';
+import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 import type { AudioEPInfo, AudioFile } from '../module/type/BangumiInfo';
 

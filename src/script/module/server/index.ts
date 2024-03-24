@@ -1,5 +1,5 @@
 import { SERVER_URL, LOGIN_URL } from '../env/constant';
-import { show as showMessage } from '../message';
+import { showMessage } from '../message';
 import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
 import { addEventListener, removeAllEventListeners } from '../dom';
 import * as MaintenanceInfo from '../type/MaintenanceInfo';

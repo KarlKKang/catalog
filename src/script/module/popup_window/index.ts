@@ -1,5 +1,5 @@
 import { pgid } from '../global';
-import { show as showMessage } from '../message';
+import { showMessage } from '../message';
 import { moduleImportError } from '../message/param';
 import { initializePopupWindow as InitializePopupWindow, onPopupWindowClosed as OnPopupWindowClosed, type styles as Styles } from './core';
 

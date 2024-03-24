@@ -23,7 +23,7 @@ import {
     createUListElement,
     appendListItems,
 } from './module/dom';
-import { show as showMessage } from './module/message';
+import { showMessage } from './module/message';
 import { expired } from './module/message/param';
 import { emailAlreadyRegistered as emailAlreadyRegisteredBody, invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from './module/text/message/body';
 import { PASSWORD_REGEX } from './module/common/pure';

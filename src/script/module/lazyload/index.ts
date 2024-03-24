@@ -1,5 +1,5 @@
 import { pgid } from '../global';
-import { show as showMessage } from '../message';
+import { showMessage } from '../message';
 import { moduleImportError } from '../message/param';
 
 let lazyload: Awaited<typeof import(

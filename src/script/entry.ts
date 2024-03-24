@@ -7,7 +7,7 @@ import { addTimeout, removeAllTimers } from './module/timer';
 import { popupWindowImport, destroy as destroyPopupWindow } from './module/popup_window';
 import type { Workbox as WorkboxType } from 'workbox-window';
 import * as messagePageScript from './message';
-import { show as showMessage } from './module/message';
+import { showMessage } from './module/message';
 import { moduleImportError } from './module/message/param';
 import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect } from './module/global';
 import '../font/dist/NotoSansJP/NotoSansJP-Light.css';

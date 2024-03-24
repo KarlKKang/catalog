@@ -24,7 +24,7 @@ import {
     replaceChildren,
     createTextNode,
 } from '../module/dom';
-import { show as showMessage } from '../module/message';
+import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper';
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';

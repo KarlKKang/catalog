@@ -29,7 +29,7 @@ import {
     getParentElement,
     removeClass,
 } from '../module/dom';
-import { show as showMessage } from '../module/message';
+import { showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';
 import { moduleImportError } from '../module/message/param';
 import { popupWindowImport, promptForTotpImport } from '../module/popup_window';
