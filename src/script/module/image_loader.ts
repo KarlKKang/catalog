@@ -16,7 +16,20 @@ import { setHeight, setWidth } from './style';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
-type webpMachineQueueItem = { container: Element; image: HTMLImageElement; webpData: Uint8Array; onLoad: ((canvas: HTMLCanvasElement) => void) | undefined; onError: () => void };
+const enum WebpMachineQueueItemProp {
+    CONTAINER,
+    IMAGE,
+    WEBP_DATA,
+    ON_LOAD,
+    ON_ERROR,
+}
+type webpMachineQueueItem = {
+    [WebpMachineQueueItemProp.CONTAINER]: Element;
+    [WebpMachineQueueItemProp.IMAGE]: HTMLImageElement;
+    [WebpMachineQueueItemProp.WEBP_DATA]: Uint8Array;
+    [WebpMachineQueueItemProp.ON_LOAD]: ((canvas: HTMLCanvasElement) => void) | undefined;
+    [WebpMachineQueueItemProp.ON_ERROR]: () => void;
+};
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 
@@ -31,7 +44,7 @@ export default function (container: Element, src: string, alt: string, withCrede
 
     function finalizeUnrecoverableError() {
         if (DEVELOPMENT) {
-            console.log('Unrecoverable error occured when loading the image.');
+            console.error('Unrecoverable error occured when loading the image.');
         }
         const errorImage = new Image(); // Should not reuse the old Image instance since setting src to //:0 triggers onError event.
         errorImage.src = '//:0';
@@ -58,7 +71,13 @@ export default function (container: Element, src: string, alt: string, withCrede
             }
 
             const webpData = new Uint8Array(base64URL);
-            webpMachineQueue.push({ container: container, image: image, webpData: webpData, onLoad: onImageDraw, onError: finalizeUnrecoverableError });
+            webpMachineQueue.push({
+                [WebpMachineQueueItemProp.CONTAINER]: container,
+                [WebpMachineQueueItemProp.IMAGE]: image,
+                [WebpMachineQueueItemProp.WEBP_DATA]: webpData,
+                [WebpMachineQueueItemProp.ON_LOAD]: onImageDraw,
+                [WebpMachineQueueItemProp.ON_ERROR]: finalizeUnrecoverableError,
+            });
             if (webpMachineActive) {
                 if (DEVELOPMENT) {
                     console.log('Webp Machine active. Pushed ' + image.alt + ' to queue.');
@@ -158,7 +177,7 @@ async function startWebpMachine() {
     let queueNext = webpMachineQueue.shift();
     while (queueNext !== undefined) {
         if (webpSupported) {
-            queueNext.onError();
+            queueNext[WebpMachineQueueItemProp.ON_ERROR]();
         } else {
             await drawWebp(webpMachine, queueNext);
             if (currentPgid !== pgid) {
@@ -174,13 +193,13 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
     const currentPgid = pgid;
     const canvas = createCanvasElement();
     try {
-        await webpMachine.decodeToCanvas(canvas, queueItem.webpData);
+        await webpMachine.decodeToCanvas(canvas, queueItem[WebpMachineQueueItemProp.WEBP_DATA]);
     } catch (_) {
         if (currentPgid !== pgid) {
             return;
         }
         if (DEVELOPMENT) {
-            console.log('Failed to polyfill webp. Appended back to the queue to retry.');
+            console.warn('Failed to polyfill webp. Appended back to the queue to retry.');
         }
         webpMachineQueue.push(queueItem);
         webpMachine.clearCache();
@@ -193,8 +212,8 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
     setWidth(canvas, null); // webp-hero will add incorrect width and height properties
     setHeight(canvas, null);
     imageProtection(canvas);
-    appendChild(queueItem.container, canvas);
-    const onLoad = queueItem.onLoad;
+    appendChild(queueItem[WebpMachineQueueItemProp.CONTAINER], canvas);
+    const onLoad = queueItem[WebpMachineQueueItemProp.ON_LOAD];
     onLoad && onLoad(canvas);
 }
 
