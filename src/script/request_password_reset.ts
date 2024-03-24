@@ -1,7 +1,7 @@
 import {
     LOGIN_URL,
 } from './module/env/constant';
-import { sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import {
     addEventListener,
     replaceText,
@@ -93,7 +93,7 @@ function showPageCallback() {
         }
 
         sendServerRequest('send_password_reset', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 if (response === 'INVALID FORMAT') {
                     replaceText(warningElem, invalidEmailFormat);
                     showElement(warningElem);
@@ -104,7 +104,7 @@ function showPageCallback() {
                     showMessage(invalidResponse());
                 }
             },
-            content: 'email=' + encodeURIComponent(email),
+            [ServerRequestOptionProp.CONTENT]: 'email=' + encodeURIComponent(email),
         });
     }
 

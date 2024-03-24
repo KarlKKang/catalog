@@ -1,7 +1,7 @@
 import {
     CDN_URL, DOMAIN,
 } from '../module/env/constant';
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     w,
     addEventListener,
@@ -200,7 +200,7 @@ export function buildDownloadAccordion(
             }
         }
         sendServerRequest('start_download', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 if (getBaseURL(response).startsWith(CDN_URL + '/download/')) {
                     iframe.src = response;
                     downloadButton.disabled = false;
@@ -208,9 +208,9 @@ export function buildDownloadAccordion(
                     showMessage(invalidResponse());
                 }
             },
-            content: requestContent,
-            logoutParam: getLogoutParam(seriesID, epIndex),
-            showSessionEndedMessage: true,
+            [ServerRequestOptionProp.CONTENT]: requestContent,
+            [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
+            [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     });
     appendChild(accordionPanel, downloadButton);

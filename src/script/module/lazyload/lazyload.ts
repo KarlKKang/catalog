@@ -1,7 +1,7 @@
 import {
     SessionTypes,
 } from '../common';
-import { sendServerRequest } from '../server';
+import { ServerRequestOptionProp, sendServerRequest } from '../server';
 import {
     addClass, appendChild, createDivElement,
 } from '../dom';
@@ -154,7 +154,7 @@ function loadImage(target: Element, targetData: TargetData) {
         if (sessionCredentialPromise === null) {
             sessionCredentialPromise = new Promise((resolve) => {
                 sendServerRequest(uri, {
-                    callback: function (response: string) {
+                    [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                         if (response !== 'APPROVED') {
                             showMessage(invalidResponse());
                             return;
@@ -164,8 +164,8 @@ function loadImage(target: Element, targetData: TargetData) {
                         }, 15 * 1000);
                         resolve();
                     },
-                    content: sessionCredential,
-                    showSessionEndedMessage: true,
+                    [ServerRequestOptionProp.CONTENT]: sessionCredential,
+                    [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
                 });
             });
         }

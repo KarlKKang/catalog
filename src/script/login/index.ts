@@ -6,7 +6,8 @@ import {
 } from '../module/common';
 import {
     sendServerRequest,
-    authenticate
+    authenticate,
+    ServerRequestOptionProp
 } from '../module/server';
 import {
     addEventListener,
@@ -143,7 +144,7 @@ function showPageCallback() {
 
     function sendLoginRequest(content: string, totpPopupWindow?: TotpPopupWindow) {
         sendServerRequest('login', {
-            callback: async function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
                 switch (response) {
                     case AUTH_FAILED:
                         totpPopupWindow?.[2];
@@ -203,7 +204,7 @@ function showPageCallback() {
                         showMessage(invalidResponse());
                 }
             },
-            content: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
+            [ServerRequestOptionProp.CONTENT]: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
         });
     }
 

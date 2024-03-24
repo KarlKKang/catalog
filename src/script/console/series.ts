@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     getParentElement,
@@ -49,8 +49,8 @@ function modifySeries(button: Element) {
     } while (confirm !== 'modify');
 
     sendServerRequest('console', {
-        callback: seriesCompleteCallback,
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -71,8 +71,8 @@ function deleteSeries(id: string) {
     };
 
     sendServerRequest('console', {
-        callback: seriesCompleteCallback,
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -105,8 +105,8 @@ function addSeries(button: Element) {
     } while (confirm !== 'insert');
 
     sendServerRequest('console', {
-        callback: seriesCompleteCallback,
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -195,8 +195,8 @@ function updateSeriesTime(id: string) {
     };
 
     sendServerRequest('console', {
-        callback: seriesCompleteCallback,
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 

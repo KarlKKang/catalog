@@ -4,7 +4,7 @@ import {
 import {
     getURLParam,
 } from './module/common';
-import { sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import {
     addEventListener,
     openWindow,
@@ -60,7 +60,7 @@ export default function (showPage: ShowPageFunc) {
     }
 
     sendServerRequest('register', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
             } else if (response === 'ALREADY REGISTERED') {
@@ -72,7 +72,7 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
             }
         },
-        content: 'p=' + param,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + param,
     });
 }
 
@@ -161,7 +161,7 @@ function showPageCallback(param: string) {
         }
 
         sendServerRequest('register', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 const showInlineMessage = (message: string) => {
                     replaceText(warningElem, message);
                     showElement(warningElem);
@@ -191,7 +191,7 @@ function showPageCallback(param: string) {
                     showMessage(invalidResponse());
                 }
             },
-            content: 'p=' + param + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
+            [ServerRequestOptionProp.CONTENT]: 'p=' + param + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
         });
     }
 

@@ -4,7 +4,7 @@ import {
 import {
     getURLParam,
 } from '../module/common';
-import { sendServerRequest, setUpSessionAuthentication } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest, setUpSessionAuthentication } from '../module/server';
 import {
     clearSessionStorage,
     getBaseURL,
@@ -54,7 +54,7 @@ export default function (showPage: ShowPageFunc) {
     //send requests
     const createMediaSessionPromise = new Promise<MediaSessionInfo.MediaSessionInfo>((resolve) => {
         sendServerRequest('create_media_session', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 let parsedResponse: MediaSessionInfo.MediaSessionInfo;
                 try {
                     parsedResponse = JSON.parse(response);
@@ -66,13 +66,13 @@ export default function (showPage: ShowPageFunc) {
                 setUpSessionAuthentication(parsedResponse.credential, getLogoutParam(seriesID, epIndex));
                 resolve(parsedResponse);
             },
-            content: 'series=' + seriesID + '&ep=' + epIndex,
-            logoutParam: getLogoutParam(seriesID, epIndex)
+            [ServerRequestOptionProp.CONTENT]: 'series=' + seriesID + '&ep=' + epIndex,
+            [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex)
         });
     });
 
     sendServerRequest('get_ep?series=' + seriesID + '&ep=' + epIndex, {
-        callback: async function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             let parsedResponse: BangumiInfo.BangumiInfo;
             try {
                 parsedResponse = JSON.parse(response);
@@ -111,8 +111,8 @@ export default function (showPage: ShowPageFunc) {
                 createMediaSessionPromise,
             );
         },
-        logoutParam: getLogoutParam(seriesID, epIndex),
-        method: 'GET',
+        [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
+        [ServerRequestOptionProp.METHOD]: 'GET',
     });
 }
 

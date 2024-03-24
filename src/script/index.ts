@@ -8,7 +8,7 @@ import {
 } from './module/common';
 import { addNavBar } from './module/nav_bar';
 import { NavBarPage } from './module/nav_bar/enum';
-import { sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import {
     w,
     addEventListener,
@@ -296,7 +296,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo, xhr?: XMLHttpRe
         currentRequest.abort();
     }
     const request = sendServerRequest('get_series?' + keywords + 'pivot=' + pivot, {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (currentRequest !== request) {
                 return;
             }
@@ -310,9 +310,9 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo, xhr?: XMLHttpRe
             }
             callback(parsedResponse, request);
         },
-        logoutParam: keywords.slice(0, -1),
-        showSessionEndedMessage: showSessionEndedMessage,
-        method: 'GET',
+        [ServerRequestOptionProp.LOGOUT_PARAM]: keywords.slice(0, -1),
+        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: showSessionEndedMessage,
+        [ServerRequestOptionProp.METHOD]: 'GET',
     });
     currentRequest = request;
 }

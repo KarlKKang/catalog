@@ -6,37 +6,46 @@ import * as MaintenanceInfo from '../type/MaintenanceInfo';
 import { addTimeout } from '../timer';
 import { redirect } from '../global';
 
-interface SendServerRequestOption {
-    callback?: (response: string) => void | Promise<void>;
-    content?: string;
-    method?: 'POST' | 'GET';
-    logoutParam?: string | undefined;
-    connectionErrorRetry?: number | undefined;
-    connectionErrorRetryTimeout?: number;
-    showSessionEndedMessage?: boolean;
+export const enum ServerRequestOptionProp {
+    CALLBACK,
+    CONTENT,
+    METHOD,
+    LOGOUT_PARAM,
+    CONNECTION_ERROR_RETRY,
+    CONNECTION_ERROR_RETRY_TIMEOUT,
+    SHOW_SESSION_ENDED_MESSAGE,
 }
-function xhrOnErrorCallback(uri: string, options: SendServerRequestOption) {
-    if (options.connectionErrorRetry === undefined) {
-        options.connectionErrorRetry = 2;
+interface ServerRequestOption {
+    [ServerRequestOptionProp.CALLBACK]?: (response: string) => void | Promise<void>;
+    [ServerRequestOptionProp.CONTENT]?: string;
+    [ServerRequestOptionProp.METHOD]?: 'POST' | 'GET';
+    [ServerRequestOptionProp.LOGOUT_PARAM]?: string | undefined;
+    [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]?: number | undefined;
+    [ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
+    [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]?: boolean;
+}
+function xhrOnErrorCallback(uri: string, options: ServerRequestOption) {
+    if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] === undefined) {
+        options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] = 2;
     } else {
-        options.connectionErrorRetry -= 1;
+        options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] -= 1;
     }
 
-    if (options.connectionErrorRetryTimeout === undefined) {
-        options.connectionErrorRetryTimeout = 500;
+    if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] === undefined) {
+        options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] = 500;
     } else {
-        options.connectionErrorRetryTimeout *= 2;
+        options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] *= 2;
     }
 
-    if (options.connectionErrorRetry < 0) {
+    if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] < 0) {
         showMessage(connectionError);
     } else {
         addTimeout(() => {
             sendServerRequest(uri, options);
-        }, options.connectionErrorRetryTimeout);
+        }, options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]);
     }
 }
-function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServerRequestOption): boolean {
+function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRequestOption): boolean {
     const status = response.status;
     const responseText = response.responseText;
     if (status === 200) {
@@ -47,9 +56,9 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
         } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
             showMessage(insufficientPermissions);
         } else if (responseText === 'UNAUTHORIZED') {
-            const logoutParam = options.logoutParam;
+            const logoutParam = options[ServerRequestOptionProp.LOGOUT_PARAM];
             const url = LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam));
-            if (options.showSessionEndedMessage) {
+            if (options[ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]) {
                 showMessage(sessionEnded(url));
             } else {
                 redirect(url, true);
@@ -83,9 +92,9 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: SendServ
     return false;
 }
 
-export function sendServerRequest(uri: string, options: SendServerRequestOption): XMLHttpRequest {
+export function sendServerRequest(uri: string, options: ServerRequestOption): XMLHttpRequest {
     const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open(options.method ?? 'POST', SERVER_URL + '/' + uri, true);
+    xmlhttp.open(options[ServerRequestOptionProp.METHOD] ?? 'POST', SERVER_URL + '/' + uri, true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.withCredentials = true;
 
@@ -99,17 +108,17 @@ export function sendServerRequest(uri: string, options: SendServerRequestOption)
     addEventListener(xmlhttp, 'load', () => {
         removeAllEventListeners(xmlhttp);
         if (checkXHRStatus(xmlhttp, uri, options)) {
-            options.callback && options.callback(xmlhttp.responseText);
+            options[ServerRequestOptionProp.CALLBACK] && options[ServerRequestOptionProp.CALLBACK](xmlhttp.responseText);
         }
     });
 
-    xmlhttp.send(options.content ?? '');
+    xmlhttp.send(options[ServerRequestOptionProp.CONTENT] ?? '');
     return xmlhttp;
 }
 
 export function authenticate(callback: { successful?: () => void; failed?: () => void }) {
     sendServerRequest('get_authentication_state', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (response === 'APPROVED') {
                 callback.successful && callback.successful();
             } else if (response === 'FAILED') {
@@ -123,7 +132,7 @@ export function authenticate(callback: { successful?: () => void; failed?: () =>
 
 export function logout(callback: () => void) {
     sendServerRequest('logout', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (response === 'PARTIAL' || response === 'DONE') {
                 if (DEVELOPMENT) {
                     console.log(response);
@@ -139,17 +148,17 @@ export function logout(callback: () => void) {
 export function setUpSessionAuthentication(credential: string, logoutParam?: string) {
     addTimeout(() => {
         sendServerRequest('authenticate_media_session', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 if (response === 'APPROVED') {
                     setUpSessionAuthentication(credential, logoutParam);
                     return;
                 }
                 showMessage(invalidResponse());
             },
-            content: credential,
-            logoutParam: logoutParam,
-            connectionErrorRetry: 5,
-            showSessionEndedMessage: true,
+            [ServerRequestOptionProp.CONTENT]: credential,
+            [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
+            [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]: 5,
+            [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     }, 40 * 1000); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
 }

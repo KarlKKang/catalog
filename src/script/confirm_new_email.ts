@@ -5,7 +5,7 @@ import {
     getURLParam,
     handleFailedTotp,
 } from './module/common';
-import { sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import {
     addEventListener,
     replaceChildren,
@@ -54,7 +54,7 @@ export default function (showPage: ShowPageFunc) {
     }
 
     sendServerRequest('change_email', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
             } else if (response === 'APPROVED') {
@@ -64,7 +64,7 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
             }
         },
-        content: 'p=' + param,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + param,
     });
 }
 
@@ -137,7 +137,7 @@ function showPageCallback(param: string) {
 
     function sendChangeEmailRequest(content: string, totpPopupWindow?: TotpPopupWindow) {
         sendServerRequest('change_email', {
-            callback: async function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
                 switch (response) {
                     case AUTH_FAILED:
                         totpPopupWindow?.[2]();
@@ -193,7 +193,7 @@ function showPageCallback(param: string) {
                         showMessage(invalidResponse());
                 }
             },
-            content: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
+            [ServerRequestOptionProp.CONTENT]: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
         });
     }
 

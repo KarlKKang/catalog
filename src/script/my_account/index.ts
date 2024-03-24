@@ -7,7 +7,8 @@ import {
 import { NavBarPage } from '../module/nav_bar/enum';
 import {
     sendServerRequest,
-    logout
+    logout,
+    ServerRequestOptionProp
 } from '../module/server';
 import {
     addEventListener,
@@ -42,7 +43,7 @@ export default function (showPage: ShowPageFunc) {
 
     addNavBar(NavBarPage.MY_ACCOUNT);
     sendServerRequest('get_account', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             let parsedResponse: AccountInfo.AccountInfo;
             try {
                 parsedResponse = JSON.parse(response);

@@ -1,4 +1,4 @@
-import { sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import {
     addEventListener,
     replaceText,
@@ -75,7 +75,7 @@ function showPageCallback() {
         }
 
         sendServerRequest('send_invite', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 if (response === 'INVALID FORMAT') {
                     replaceText(warningElem, invalidEmailFormat);
                 } else if (response === 'ALREADY REGISTERED') {
@@ -94,7 +94,7 @@ function showPageCallback() {
                 showElement(warningElem);
                 disableAllInputs(false);
             },
-            content: 'special=1&receiver=' + encodeURIComponent(email),
+            [ServerRequestOptionProp.CONTENT]: 'special=1&receiver=' + encodeURIComponent(email),
         });
     }
 

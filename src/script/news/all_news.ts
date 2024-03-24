@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     addClass,
@@ -42,7 +42,7 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement): 
         return;
     }
     sendServerRequest('get_all_news?pivot=' + pivot, {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             let parsedResponse: AllNewsInfo.AllNewsInfo;
             try {
                 parsedResponse = JSON.parse(response);
@@ -53,7 +53,7 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement): 
             }
             showAllNews(container, parsedResponse, loadingTextContainer);
         },
-        method: 'GET',
+        [ServerRequestOptionProp.METHOD]: 'GET',
     });
 }
 

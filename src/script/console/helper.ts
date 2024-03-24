@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     getParentElement,
@@ -24,10 +24,10 @@ export function getTable(type: string, callback?: () => void) {
     const paramString = JSON.stringify(param);
 
     sendServerRequest('console', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             setOutput(response, callback);
         },
-        content: 'p=' + encodeURIComponent(paramString)
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(paramString)
     });
 }
 

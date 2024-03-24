@@ -1,5 +1,5 @@
 
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     appendText,
@@ -167,7 +167,7 @@ export function modifyMfaReauthenticationPrompt(
         return;
     }
     sendServerRequest(uri, {
-        callback: (response: string) => {
+        [ServerRequestOptionProp.CALLBACK]: (response: string) => {
             const closeAll = () => {
                 emailOtpPopupWindow?.[2]();
                 loginPopupWindow[3]();
@@ -215,8 +215,8 @@ export function modifyMfaReauthenticationPrompt(
                     }
             }
         },
-        content: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (emailOtpPopupWindow === undefined || emailOtpPopupWindow[0] === undefined ? '' : '&otp=' + emailOtpPopupWindow[0]),
-        showSessionEndedMessage: true,
+        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (emailOtpPopupWindow === undefined || emailOtpPopupWindow[0] === undefined ? '' : '&otp=' + emailOtpPopupWindow[0]),
+        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
 
@@ -312,7 +312,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
         }
 
         sendServerRequest('set_totp', {
-            callback: (response: string) => {
+            [ServerRequestOptionProp.CALLBACK]: (response: string) => {
                 const mfaWarning = getSharedElement(SharedElement.mfaWarning);
                 if (response === 'EXPIRED') {
                     hidePopupWindow();
@@ -347,8 +347,8 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                     });
                 }
             },
-            content: 'p=' + totpInfo.p + '&totp=' + totp,
-            showSessionEndedMessage: true,
+            [ServerRequestOptionProp.CONTENT]: 'p=' + totpInfo.p + '&totp=' + totp,
+            [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     };
     addEventListener(submitButton, 'click', submit);

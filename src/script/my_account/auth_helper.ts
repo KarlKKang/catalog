@@ -1,5 +1,5 @@
 import { handleFailedTotp } from '../module/common';
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 import { replaceChildren, replaceText } from '../module/dom';
 import { pgid } from '../module/global';
@@ -61,7 +61,7 @@ export function reauthenticationPrompt(
         return;
     }
     sendServerRequest(uri, {
-        callback: (response: string) => {
+        [ServerRequestOptionProp.CALLBACK]: (response: string) => {
             const closeAll = () => {
                 totpPopupWindow?.[2]();
                 loginPopupWindow[3]();
@@ -100,8 +100,8 @@ export function reauthenticationPrompt(
                     }
             }
         },
-        content: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
-        showSessionEndedMessage: true,
+        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
+        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
 

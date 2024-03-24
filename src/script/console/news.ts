@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     getParentElement,
@@ -40,10 +40,10 @@ function modifyNews(button: Element) {
     } while (confirm !== 'modify');
 
     sendServerRequest('console', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -64,8 +64,8 @@ function deleteNews(id: string) {
     };
 
     sendServerRequest('console', {
-        callback: (response) => { completeCallback(response, updateEventHandlers); },
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -94,10 +94,10 @@ function addNews(button: Element) {
     } while (confirm !== 'insert');
 
     sendServerRequest('console', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -132,8 +132,8 @@ function updateNewsTime(id: string) {
     };
 
     sendServerRequest('console', {
-        callback: (response) => { completeCallback(response, updateEventHandlers); },
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 

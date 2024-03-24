@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addClass,
     addEventListener,
@@ -27,7 +27,7 @@ export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     sendServerRequest('console', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (response !== 'APPROVED') {
                 showMessage(invalidResponse());
                 return;
@@ -143,7 +143,7 @@ export default function (showPage: ShowPageFunc) {
                 }
             });
         },
-        content: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
     });
 
     function generate(type: string, idOutput: HTMLParagraphElement) {
@@ -153,10 +153,10 @@ export default function (showPage: ShowPageFunc) {
         };
 
         sendServerRequest('console', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 setOutput(response, undefined, idOutput);
             },
-            content: 'p=' + encodeURIComponent(JSON.stringify(param))
+            [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
@@ -167,10 +167,10 @@ export default function (showPage: ShowPageFunc) {
         };
 
         sendServerRequest('console', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 setOutput(response);
             },
-            content: 'p=' + encodeURIComponent(JSON.stringify(param))
+            [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
@@ -195,10 +195,10 @@ export default function (showPage: ShowPageFunc) {
         };
 
         sendServerRequest('console', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 alert(response);
             },
-            content: 'p=' + encodeURIComponent(JSON.stringify(param))
+            [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
@@ -217,10 +217,10 @@ export default function (showPage: ShowPageFunc) {
         };
 
         sendServerRequest('console', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 alert(response);
             },
-            content: 'p=' + encodeURIComponent(JSON.stringify(param))
+            [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
@@ -239,10 +239,10 @@ export default function (showPage: ShowPageFunc) {
         };
 
         sendServerRequest('console', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 alert(response);
             },
-            content: 'p=' + encodeURIComponent(JSON.stringify(param))
+            [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 
@@ -266,10 +266,10 @@ export default function (showPage: ShowPageFunc) {
         };
 
         sendServerRequest('console', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 alert(response);
             },
-            content: 'p=' + encodeURIComponent(JSON.stringify(param))
+            [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
         });
     }
 }

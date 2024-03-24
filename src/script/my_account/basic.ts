@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     replaceText,
     remove,
@@ -39,7 +39,7 @@ export function changeEmail() {
     changeColor(warningElem, CSS_COLOR.RED);
 
     sendServerRequest('send_email_change', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (response === 'WAIT') {
                 replaceText(warningElem, '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。');
             } else if (response === 'DONE') {
@@ -52,7 +52,7 @@ export function changeEmail() {
             showElement(warningElem);
             disableAllInputs(false);
         },
-        showSessionEndedMessage: true,
+        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
 

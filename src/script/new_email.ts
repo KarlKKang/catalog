@@ -4,7 +4,7 @@ import {
 import {
     getURLParam,
 } from './module/common';
-import { sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import {
     addEventListener,
     replaceText,
@@ -46,7 +46,7 @@ export default function (showPage: ShowPageFunc) {
     }
 
     sendServerRequest('verify_email_change', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
             } else if (response === 'APPROVED') {
@@ -56,7 +56,7 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
             }
         },
-        content: 'p=' + param,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + param,
     });
 }
 
@@ -105,7 +105,7 @@ function showPageCallback(param: string) {
         }
 
         sendServerRequest('verify_email_change', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 if (response === 'EXPIRED') {
                     showMessage(expired);
                 } else if (response === 'DUPLICATED') {
@@ -122,7 +122,7 @@ function showPageCallback(param: string) {
                     showMessage(invalidResponse());
                 }
             },
-            content: 'p=' + param + '&new=' + newEmail,
+            [ServerRequestOptionProp.CONTENT]: 'p=' + param + '&new=' + newEmail,
         });
     }
 

@@ -5,7 +5,7 @@ import {
     SessionTypes,
     removeRightClick,
 } from './module/common';
-import { sendServerRequest, setUpSessionAuthentication } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest, setUpSessionAuthentication } from './module/server';
 import {
     setTitle,
     getSessionStorage,
@@ -58,7 +58,7 @@ export default function (showPage: ShowPageFunc) {
     setTitle(title);
 
     sendServerRequest(uri, {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (response !== 'APPROVED') {
                 showMessage(invalidResponse());
                 return;
@@ -96,8 +96,8 @@ export default function (showPage: ShowPageFunc) {
                 throw e;
             });
         },
-        content: sessionCredential,
-        showSessionEndedMessage: true,
+        [ServerRequestOptionProp.CONTENT]: sessionCredential,
+        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
 

@@ -4,7 +4,7 @@ import {
 import {
     getURLParam,
 } from './module/common';
-import { sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import {
     addEventListener,
     replaceText,
@@ -65,7 +65,7 @@ export default function (showPage: ShowPageFunc) {
     }
 
     sendServerRequest('reset_password', {
-        callback: function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
                 return;
@@ -76,7 +76,7 @@ export default function (showPage: ShowPageFunc) {
             showPage();
             showPageCallback(user, signature, expires);
         },
-        content: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
+        [ServerRequestOptionProp.CONTENT]: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
     });
 }
 
@@ -151,7 +151,7 @@ function showPageCallback(user: string, signature: string, expires: string) {
         }
 
         sendServerRequest('reset_password', {
-            callback: function (response: string) {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 if (response === 'EXPIRED') {
                     showMessage(expired);
                 } else if (response === 'SAME') {
@@ -174,7 +174,7 @@ function showPageCallback(user: string, signature: string, expires: string) {
                     showMessage(invalidResponse());
                 }
             },
-            content: 'user=' + user + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),
+            [ServerRequestOptionProp.CONTENT]: 'user=' + user + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),
         });
     }
 

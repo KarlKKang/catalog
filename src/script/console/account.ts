@@ -1,4 +1,4 @@
-import { sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     getParentElement,
@@ -71,8 +71,8 @@ function addAccount(button: Element) {
     } while (confirm !== 'insert');
 
     sendServerRequest('console', {
-        callback: accountCompleteCallback,
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CALLBACK]: accountCompleteCallback,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -123,8 +123,8 @@ function modifyAccount(button: Element, id: string) {
     } while (confirm !== 'modify');
 
     sendServerRequest('console', {
-        callback: accountCompleteCallback,
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CALLBACK]: accountCompleteCallback,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 
@@ -208,8 +208,8 @@ function deleteAccount(id: string) {
     };
 
     sendServerRequest('console', {
-        callback: accountCompleteCallback,
-        content: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CALLBACK]: accountCompleteCallback,
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
     });
 }
 

@@ -1,4 +1,4 @@
-import { sendServerRequest, setUpSessionAuthentication } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest, setUpSessionAuthentication } from '../module/server';
 import {
     getHash,
     clearSessionStorage,
@@ -40,7 +40,7 @@ function getAllNews(showPage: ShowPageFunc): void {
         './all_news'
     );
     sendServerRequest('get_all_news?pivot=0', {
-        callback: async function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             let parsedResponse: AllNewsInfo.AllNewsInfo;
             try {
                 parsedResponse = JSON.parse(response);
@@ -67,7 +67,7 @@ function getAllNews(showPage: ShowPageFunc): void {
             showPage();
             allNewsModule.default(parsedResponse);
         },
-        method: 'GET',
+        [ServerRequestOptionProp.METHOD]: 'GET',
     });
 }
 
@@ -85,7 +85,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
     const hash = getHash();
     const logoutParam = 'news=' + newsID + (hash === '' ? '' : ('&hash=' + hash));
     sendServerRequest('get_news', {
-        callback: async function (response: string) {
+        [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             let parsedResponse: NewsInfo.NewsInfo;
             try {
                 parsedResponse = JSON.parse(response);
@@ -113,8 +113,8 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             setUpSessionAuthentication(parsedResponse.credential, logoutParam);
             newsModule.default(parsedResponse, lazyloadImportPromise, newsID);
         },
-        content: 'id=' + newsID,
-        logoutParam: logoutParam
+        [ServerRequestOptionProp.CONTENT]: 'id=' + newsID,
+        [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam
     });
 }
 
