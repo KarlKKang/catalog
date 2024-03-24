@@ -19,9 +19,9 @@ export default function (showPage: ShowPageFunc) {
 
     const showPageCallback = async (navBar: boolean) => {
         const currentPgid = pgid;
+        let mainBody: typeof import('./info').default;
         try {
-            const { default: mainBody } = await mainBodyImport;
-            mainBody();
+            mainBody = (await mainBodyImport).default;
         } catch (e) {
             if (pgid === currentPgid) {
                 showMessage(moduleImportError(e));
@@ -32,6 +32,7 @@ export default function (showPage: ShowPageFunc) {
             return;
         }
         showPage();
+        mainBody();
         if (navBar) {
             addNavBar(NavBarPage.INFO);
         }
