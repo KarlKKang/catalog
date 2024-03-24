@@ -44,6 +44,7 @@ import { lazyloadImport, unloadLazyload } from './module/lazyload';
 import { changeColor, setOpacity } from './module/style';
 import { allResultsShown, loading, noResult } from './module/text/ui';
 import { addAutoMultiLanguageClass } from './module/dom/create_element/multi_language';
+import * as commonStyles from '../css/common.module.scss';
 import * as styles from '../css/index.module.scss';
 import { lineClamp as lineClampClass } from '../css/line_clamp.module.scss';
 import { CSS_COLOR } from './module/style/value';
@@ -70,7 +71,7 @@ export default function (showPage: ShowPageFunc) {
     }
 
     const searchBar = createDivElement();
-    addClass(searchBar, styles.searchBar);
+    addClass(searchBar, styles.searchBar, commonStyles.inputField);
 
     const searchBarIcon = createDivElement();
     addClass(searchBarIcon, styles.icon);
