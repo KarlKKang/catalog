@@ -63,7 +63,6 @@ function getAllNews(showPage: ShowPageFunc): void {
             if (pgid !== currentPgid) {
                 return;
             }
-            offloadModule = allNewsModule.offload;
             showPage();
             allNewsModule.default(parsedResponse);
         },

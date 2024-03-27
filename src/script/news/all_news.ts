@@ -13,7 +13,7 @@ import {
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';
-import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from '../module/infinite_scrolling';
+import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTime } from '../module/common/pure';
 import { redirect } from '../module/global';
 import { allResultsShown, loading, noResult } from '../module/text/ui';
@@ -33,11 +33,13 @@ export default function (allNewsInfo: AllNewsInfo.AllNewsInfo) {
     appendChild(body, loadingTextContainer);
     const positionDetector = createDivElement();
     appendChild(body, positionDetector);
-    initializeInfiniteScrolling(positionDetector, () => { getAllNews(container, loadingTextContainer); });
-    showAllNews(container, allNewsInfo, loadingTextContainer);
+    const infiniteScrolling = initializeInfiniteScrolling(positionDetector, () => {
+        getAllNews(container, loadingTextContainer, infiniteScrolling);
+    });
+    showAllNews(allNewsInfo, container, loadingTextContainer, infiniteScrolling);
 }
 
-function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement): void {
+function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement, infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>): void {
     if (pivot === 'EOF') {
         return;
     }
@@ -51,13 +53,13 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement): 
                 showMessage(invalidResponse());
                 return;
             }
-            showAllNews(container, parsedResponse, loadingTextContainer);
+            showAllNews(parsedResponse, container, loadingTextContainer, infiniteScrolling);
         },
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
 }
 
-function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInfo, loadingTextContainer: HTMLElement): void {
+function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo, container: HTMLElement, loadingTextContainer: HTMLElement, infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>): void {
     const newPivot = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.PivotInfo;
     const allNewsInfoEntries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
 
@@ -97,11 +99,6 @@ function showAllNews(container: HTMLElement, allNewsInfo: AllNewsInfo.AllNewsInf
 
         appendChild(container, overviewContainer);
     }
-    const infiniteScrolling = getInfiniteScrolling();
-    infiniteScrolling.setEnabled(true);
-    infiniteScrolling.updatePosition();
-}
-
-export function offload() {
-    destroyInfiniteScrolling();
+    infiniteScrolling[InfiniteScrollingProp.SET_ENABLED](true);
+    infiniteScrolling[InfiniteScrollingProp.UPDATE_POSITION]();
 }

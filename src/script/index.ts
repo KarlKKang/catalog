@@ -34,7 +34,7 @@ import {
 import { showMessage } from './module/message';
 import { invalidResponse } from './module/server/message';
 import * as SeriesInfo from './module/type/SeriesInfo';
-import { getInfiniteScrolling, initializeInfiniteScrolling, destroy as destroyInfiniteScrolling } from './module/infinite_scrolling';
+import { initializeInfiniteScrolling, InfiniteScrollingProp } from './module/infinite_scrolling';
 import { isbot } from 'isbot';
 import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
@@ -94,6 +94,7 @@ export default function (showPage: ShowPageFunc) {
     addClass(loadingTextContainer, styles.loadingText);
 
     const positionDetector = createDivElement();
+    const infiniteScrolling = initializeInfiniteScrolling(positionDetector, () => { getSeries(showSeries, true); }, - 256 - 24);
 
     addNavBar(NavBarPage.HOME, () => {
         if (w.scrollY !== 0) {
@@ -120,7 +121,6 @@ export default function (showPage: ShowPageFunc) {
 
     function showPageCallback(seriesInfo: SeriesInfo.SeriesInfo) {
         appendChildren(body, searchBar, containerElem, loadingTextContainer, positionDetector);
-        initializeInfiniteScrolling(positionDetector, () => { getSeries(showSeries, true); }, - 256 - 24);
         if (seriesInfo.maintenance !== undefined) {
             const annoucementOuterContainer = createDivElement();
             const announcementInnerContainer = createDivElement();
@@ -213,9 +213,8 @@ export default function (showPage: ShowPageFunc) {
             lazyload.default(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title);
         }
 
-        const infiniteScrolling = getInfiniteScrolling();
-        infiniteScrolling.setEnabled(true);
-        infiniteScrolling.updatePosition();
+        infiniteScrolling[InfiniteScrollingProp.SET_ENABLED](true);
+        infiniteScrolling[InfiniteScrollingProp.UPDATE_POSITION]();
     }
 
     function search() {
@@ -235,7 +234,7 @@ export default function (showPage: ShowPageFunc) {
     function requestSearchResults() {
         pivot = 0;
         disableSearchBarInput(true);
-        getInfiniteScrolling().setEnabled(false);
+        infiniteScrolling[InfiniteScrollingProp.SET_ENABLED](false);
         scrollToTop();
 
         setOpacity(containerElem, 0);
@@ -319,7 +318,6 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo, xhr?: XMLHttpRe
 
 export function offload() {
     unloadLazyload();
-    destroyInfiniteScrolling();
     eventTargetsTracker.clear();
     currentRequest = null;
 }
