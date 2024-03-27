@@ -15,7 +15,7 @@ export function approvedCallback() {
     if (UNRECOMMENDED_BROWSER) {
         showMessage({
             [MessageParamProp.TITLE]: 'お使いのブラウザは推奨環境ではありません',
-            [MessageParamProp.MESSAGE]: '一部のコンテンツが正常に再生されない場合は、Safari 11またはChrome 63以降のブラウザをお使いください。',
+            [MessageParamProp.MESSAGE]: '一部のコンテンツが正常に再生されない場合は、Safari 12またはChrome 63以降のブラウザをお使いください。',
             [MessageParamProp.COLOR]: CSS_COLOR.ORANGE,
             [MessageParamProp.URL]: getForwardURL(),
             [MessageParamProp.BUTTON_TEXT]: nextButtonText
