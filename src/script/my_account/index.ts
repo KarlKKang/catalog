@@ -14,34 +14,28 @@ import {
     addEventListener,
     appendText,
     clearSessionStorage,
-    createDivElement,
     appendChild,
-    addClass,
-    createParagraphElement,
-    prependChild,
-    createButtonElement,
-    replaceText,
     passwordStyling,
+    body,
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import * as AccountInfo from '../module/type/AccountInfo';
+import * as Sessions from '../module/type/Sessions';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';
-import { SharedBool, SharedButton, SharedElement, SharedInput, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, sessionLogoutButtons, setSharedBool } from './shared_var';
+import { SharedBool, SharedButton, SharedElement, SharedInput, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs } from './helper';
-import { getLocalTimeString } from '../module/common/pure';
-import { basicImportPromise, importAll, mfaImportPromise, parseBrowserImportPromise } from './import_promise';
+import { basicImportPromise, importAll, mfaImportPromise } from './import_promise';
 import { moduleImportError } from '../module/message/param';
-import { changeColor, hideElement, showElement } from '../module/style';
-import { loading } from '../module/text/ui';
+import { changeColor, showElement } from '../module/style';
 import { CSS_COLOR } from '../module/style/value';
-import * as styles from '../../css/my_account.module.scss';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     addNavBar(NavBarPage.MY_ACCOUNT);
+    const container = initializeSharedVars();
     sendServerRequest('get_account', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             let parsedResponse: AccountInfo.AccountInfo;
@@ -53,7 +47,27 @@ export default function (showPage: ShowPageFunc) {
                 return;
             }
             showPage();
+            appendChild(body, container);
             showPageCallback(parsedResponse);
+        }
+    });
+    const sessionsModuleImport = import('./sessions');
+    sendServerRequest('get_sessions', {
+        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+            let parsedResponse: Sessions.Sessions;
+            try {
+                parsedResponse = JSON.parse(response);
+                Sessions.check(parsedResponse);
+            } catch (e) {
+                showMessage(invalidResponse());
+                return;
+            }
+            const currentPgid = pgid;
+            getImport(sessionsModuleImport).then(({ default: showSessions }) => {
+                if (currentPgid === pgid) {
+                    showSessions(parsedResponse);
+                }
+            });
         }
     });
     importAll();
@@ -61,7 +75,6 @@ export default function (showPage: ShowPageFunc) {
 
 function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     const currentPgid = pgid;
-    initializeSharedVars();
     setSharedBool(SharedBool.currentLoginNotificationStatus, userInfo.login_notification);
     updateMfaUI(userInfo.mfa_status);
 
@@ -147,63 +160,6 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
 
     appendText(getSharedElement(SharedElement.inviteCount), userInfo.invite_quota.toString());
     getSharedInput(SharedInput.newUsernameInput).value = userInfo.username;
-    showSessions(userInfo);
-}
-
-function showSessions(userInfo: AccountInfo.AccountInfo) {
-    for (const session of userInfo.sessions) {
-        const outerContainer = createDivElement();
-        const innerContainer = createDivElement();
-        appendChild(outerContainer, innerContainer);
-
-        appendParagraph('場所：' + session.country, innerContainer);
-        appendParagraph('IPアドレス：' + session.ip, innerContainer);
-
-        const browserTextElem = appendParagraph('ブラウザ：' + loading, innerContainer);
-        const osTextElem = appendParagraph('OS：' + loading, innerContainer);
-        getImport(parseBrowserImportPromise).then(({ default: parseBrowser }) => {
-            const [browser, os] = parseBrowser(session.ua);
-            replaceText(browserTextElem, 'ブラウザ：' + browser);
-            replaceText(osTextElem, 'OS：' + os);
-        });
-
-        appendParagraph('最初のログイン：' + getLocalTimeString(session.login_time, true, true), innerContainer);
-        appendParagraph('最近のアクティビティ：' + getLocalTimeString(session.last_active_time, true, true), innerContainer);
-
-        const sessionID = session.id;
-        const sessionsContainer = getSharedElement(SharedElement.sessionsContainer);
-        if (sessionID === undefined) {
-            const thisDevicePrompt = createParagraphElement('※このデバイスです。');
-            addClass(thisDevicePrompt, styles.warning);
-            appendChild(innerContainer, thisDevicePrompt);
-            prependChild(sessionsContainer, outerContainer);
-        } else {
-            const sessionWarningElem = createParagraphElement();
-            addClass(sessionWarningElem, styles.warning);
-            hideElement(sessionWarningElem);
-            appendChild(innerContainer, sessionWarningElem);
-
-            const sessionLogoutButton = createButtonElement('ログアウト');
-            appendChild(innerContainer, sessionLogoutButton);
-            sessionLogoutButtons.add(sessionLogoutButton);
-
-            addEventListener(sessionLogoutButton, 'click', () => {
-                const currentPgid = pgid;
-                getImport(basicImportPromise).then(({ logoutSession }) => {
-                    if (currentPgid === pgid) {
-                        logoutSession(sessionID, sessionLogoutButton, sessionWarningElem);
-                    }
-                });
-            });
-            appendChild(sessionsContainer, outerContainer);
-        }
-    }
-}
-
-function appendParagraph(text: string, container: HTMLElement) {
-    const elem = createParagraphElement(text);
-    appendChild(container, elem);
-    return elem;
 }
 
 async function getImport<T>(importPromise: Promise<T>) {

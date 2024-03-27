@@ -1,7 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     replaceText,
-    remove,
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import {
@@ -18,7 +17,7 @@ import {
     emailSentSuffix,
 } from '../module/text/message/body';
 import { emailSent as emailSendPrefix } from '../module/text/message/title';
-import { SharedBool, SharedElement, SharedInput, getSharedBool, getSharedElement, getSharedInput, sessionLogoutButtons, setSharedBool } from './shared_var';
+import { SharedBool, SharedElement, SharedInput, getSharedBool, getSharedElement, getSharedInput, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
@@ -203,31 +202,6 @@ export function invite() {
         },
         warningElem,
         'receiver=' + encodeURIComponent(receiver),
-    );
-}
-
-export function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement, sessionWarningElem: HTMLDivElement) {
-    disableAllInputs(true);
-    hideElement(sessionWarningElem);
-    changeColor(sessionWarningElem, CSS_COLOR.RED);
-    reauthenticationPrompt(
-        'logout_session',
-        (response: string) => {
-            if (response === 'DONE') {
-                remove(sessionLogoutButton);
-                sessionLogoutButtons.delete(sessionLogoutButton);
-                changeColor(sessionWarningElem, CSS_COLOR.GREEN);
-                replaceText(sessionWarningElem, 'ログアウトしました。');
-            } else {
-                showMessage(invalidResponse());
-                return false;
-            }
-            showElement(sessionWarningElem);
-            disableAllInputs(false);
-            return true;
-        },
-        sessionWarningElem,
-        'id=' + sessionID,
     );
 }
 

@@ -3,7 +3,6 @@ import {
     appendChild,
     appendChildren,
     appendListItems,
-    body,
     createButtonElement,
     createDivElement,
     createEmailInput,
@@ -15,7 +14,7 @@ import {
 } from '../module/dom';
 import { hideElement } from '../module/style';
 import { myAccountPageTitle } from '../module/text/page_title';
-import { changeButtonText, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
+import { changeButtonText, loading, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
 import { createUsernameInput } from '../module/dom/create_element/multi_language';
 
 import * as styles from '../../css/my_account.module.scss';
@@ -67,7 +66,6 @@ export const sessionLogoutButtons = new Set<HTMLButtonElement>();
 export function initializeSharedVars() {
     const container = createDivElement();
     addClass(container, styles.container);
-    appendChild(body, container);
     const titleElem = createParagraphElement(myAccountPageTitle);
     addClass(titleElem, styles.title);
     appendChild(container, titleElem);
@@ -92,6 +90,8 @@ export function initializeSharedVars() {
 
     const sessionsContainer = createDivElement();
     addClass(sessionsContainer, styles.sessions);
+    const sessionsLoadingText = createParagraphElement(loading);
+    appendChild(sessionsContainer, sessionsLoadingText);
     appendSubsection(container, 'お使いのデバイス', [sessionsContainer], null, [], null, []);
 
     const inviteCountInfo = createParagraphElement('保有している招待券の枚数：');
@@ -138,6 +138,8 @@ export function initializeSharedVars() {
         [SharedElement.loginNotificationInfo]: loginNotificationInfo,
         [SharedElement.sessionsContainer]: sessionsContainer,
     };
+
+    return container;
 }
 
 function triggerSharedVarAccessError(): never {
