@@ -49,7 +49,8 @@ export default function (showPage: ShowPageFunc) {
             showPage();
             appendChild(body, container);
             showPageCallback(parsedResponse);
-        }
+        },
+        [ServerRequestOptionProp.METHOD]: 'GET',
     });
     const sessionsModuleImport = import('./sessions');
     sendServerRequest('get_sessions', {
