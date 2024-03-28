@@ -30,12 +30,42 @@ import { basicImportPromise, importAll, mfaImportPromise } from './import_promis
 import { moduleImportError } from '../module/message/param';
 import { changeColor, showElement } from '../module/style';
 import { CSS_COLOR } from '../module/style/value';
+import { addTimeout } from '../module/timer';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     addNavBar(NavBarPage.MY_ACCOUNT);
     const container = initializeSharedVars();
+
+    let getSessionsStarted = false;
+    const getSessions = () => {
+        if (getSessionsStarted) {
+            return;
+        }
+        getSessionsStarted = true;
+        const sessionsModuleImport = import('./sessions');
+        sendServerRequest('get_sessions', {
+            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+                let parsedResponse: Sessions.Sessions;
+                try {
+                    parsedResponse = JSON.parse(response);
+                    Sessions.check(parsedResponse);
+                } catch (e) {
+                    showMessage(invalidResponse());
+                    return;
+                }
+                const currentPgid = pgid;
+                getImport(sessionsModuleImport).then(({ default: showSessions }) => {
+                    if (currentPgid === pgid) {
+                        showSessions(parsedResponse);
+                    }
+                });
+            }
+        });
+    };
+    addTimeout(getSessions, 1000); // In case the network latency is high, we might as well start the request early
+
     sendServerRequest('get_account', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             let parsedResponse: AccountInfo.AccountInfo;
@@ -49,27 +79,9 @@ export default function (showPage: ShowPageFunc) {
             showPage();
             appendChild(body, container);
             showPageCallback(parsedResponse);
+            getSessions();
         },
         [ServerRequestOptionProp.METHOD]: 'GET',
-    });
-    const sessionsModuleImport = import('./sessions');
-    sendServerRequest('get_sessions', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-            let parsedResponse: Sessions.Sessions;
-            try {
-                parsedResponse = JSON.parse(response);
-                Sessions.check(parsedResponse);
-            } catch (e) {
-                showMessage(invalidResponse());
-                return;
-            }
-            const currentPgid = pgid;
-            getImport(sessionsModuleImport).then(({ default: showSessions }) => {
-                if (currentPgid === pgid) {
-                    showSessions(parsedResponse);
-                }
-            });
-        }
     });
     importAll();
 }
