@@ -29,12 +29,14 @@ const enum PageProp {
     TITLE,
     NATIVE_VIEWPORT,
     NO_THEME,
+    SCRIPT_CACHED,
 }
 type Page = {
     [PageProp.SCRIPT]: () => PageScriptImport;
     [PageProp.TITLE]?: string;
     [PageProp.NATIVE_VIEWPORT]?: boolean;
     [PageProp.NO_THEME]?: boolean;
+    [PageProp.SCRIPT_CACHED]?: PageScript;
 };
 
 type PageMap = {
@@ -271,8 +273,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     removeClass(body, styles.noTheme);
     setViewport(false);
 
-    const scriptImportPromise = page[PageProp.SCRIPT]();
-
     const newPgid = {};
     setPgid(newPgid);
 
@@ -310,18 +310,22 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         }, 300);
     }
 
-    let script: Awaited<typeof scriptImportPromise>;
-    try {
-        script = await scriptImportPromise;
-    } catch (e) {
-        if (pgid === newPgid) {
-            showMessage(moduleImportError(e));
+    if (page[PageProp.SCRIPT_CACHED] === undefined) {
+        if (DEVELOPMENT) {
+            console.log('First time loading page: ' + url);
         }
-        throw e;
-    }
-
-    if (pgid !== newPgid) {
-        return;
+        const scriptImportPromise = page[PageProp.SCRIPT]();
+        try {
+            page[PageProp.SCRIPT_CACHED] = await scriptImportPromise;
+        } catch (e) {
+            if (pgid === newPgid) {
+                showMessage(moduleImportError(e));
+            }
+            throw e;
+        }
+        if (pgid !== newPgid) {
+            return;
+        }
     }
 
     if (loadingBarShown) {
@@ -330,8 +334,8 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         loadingBarWidth = 67;
     }
 
-    currentPageScript = script;
-    script.default(
+    currentPageScript = page[PageProp.SCRIPT_CACHED];
+    page[PageProp.SCRIPT_CACHED].default(
         () => {
             if (pgid !== newPgid) {
                 return;
