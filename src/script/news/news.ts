@@ -28,7 +28,7 @@ import { notFound } from '../module/server/message';
 import * as NewsInfo from '../module/type/NewsInfo';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { pgid, redirect } from '../module/global';
-import { lazyloadImport, unloadLazyload } from '../module/lazyload';
+import { importLazyload, unloadLazyload } from '../module/lazyload';
 import { loading } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
 import { addManualAllLanguageClass } from '../module/dom/create_element/all_language';
@@ -38,7 +38,7 @@ import { NEWS_TOP_URL } from './helper';
 const INTERNAL_IMAGE_CLASS = 'image-internal';
 const IMAGE_ENLARGE_CLASS = 'image-enlarge';
 
-export default function (newsInfo: NewsInfo.NewsInfo, lazyloadImportPromise: ReturnType<typeof lazyloadImport>, newsID: string): void {
+export default function (newsInfo: NewsInfo.NewsInfo, lazyloadImportPromise: ReturnType<typeof importLazyload>, newsID: string): void {
     setTitle(newsInfo.title + ' | ' + getTitle());
 
     const contentContainer = createDivElement();
@@ -83,7 +83,7 @@ export default function (newsInfo: NewsInfo.NewsInfo, lazyloadImportPromise: Ret
     xhr.send();
 }
 
-async function attachImage(lazyloadImportPromise: ReturnType<typeof lazyloadImport>, contentContainer: HTMLElement, newsID: string, credential: string): Promise<void> {
+async function attachImage(lazyloadImportPromise: ReturnType<typeof importLazyload>, contentContainer: HTMLElement, newsID: string, credential: string): Promise<void> {
     const currentPgid = pgid;
     const lazyload = await lazyloadImportPromise;
     if (currentPgid !== pgid) {

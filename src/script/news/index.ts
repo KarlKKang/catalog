@@ -10,7 +10,7 @@ import { invalidResponse } from '../module/server/message';
 import * as NewsInfo from '../module/type/NewsInfo';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import { pgid, redirect } from '../module/global';
-import { lazyloadImport } from '../module/lazyload';
+import { importLazyload } from '../module/lazyload';
 import { NEWS_TOP_URL } from './helper';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';
 import { moduleImportError } from '../module/message/param';
@@ -75,7 +75,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         redirect(NEWS_TOP_URL);
     });
 
-    const lazyloadImportPromise = lazyloadImport();
+    const lazyloadImportPromise = importLazyload();
     const newsModuleImport = import(
         /* webpackExports: ["default", "offload"] */
         './news'

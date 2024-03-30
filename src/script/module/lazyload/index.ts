@@ -3,16 +3,14 @@ import { showMessage } from '../message';
 import { moduleImportError } from '../message/param';
 
 let lazyload: Awaited<typeof import(
-    /* webpackExports: ["default", "unobserveAll"] */
     './lazyload'
 )> | null = null;
 
 let imageLoader: Awaited<typeof import(
-    /* webpackExports: ["default", "clearAllImageEvents"] */
     '../image_loader'
 )> | null = null;
 
-export async function lazyloadImport() {
+export async function importLazyload() {
     if (lazyload !== null && imageLoader !== null) {
         return lazyload;
     }

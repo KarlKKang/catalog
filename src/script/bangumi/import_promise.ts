@@ -1,4 +1,4 @@
-import { lazyloadImport } from '../module/lazyload';
+import { importLazyload } from '../module/lazyload';
 
 export let updatePageImportPromise: Promise<typeof import(
     /* webpackExports: ["default", "offload"] */
@@ -16,7 +16,7 @@ export let videoImportPromise: Promise<typeof import(
     /* webpackExports: ["default", "offload"] */
     './video'
 )>;
-export let lazyloadImportPromise: ReturnType<typeof lazyloadImport>;
+export let lazyloadImportPromise: ReturnType<typeof importLazyload>;
 export let nativePlayerImportPromise: Promise<typeof import(
     /* webpackExports: ["Player"] */
     '../module/player/player'
@@ -43,7 +43,7 @@ export function importAll() {
         /* webpackExports: ["default", "offload"] */
         './video'
     );
-    lazyloadImportPromise = lazyloadImport();
+    lazyloadImportPromise = importLazyload();
     nativePlayerImportPromise = import(
         /* webpackExports: ["Player"] */
         '../module/player/player'
