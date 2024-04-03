@@ -12,6 +12,7 @@ import {
     createSpanElement,
     createBRElement,
     appendText,
+    replaceChildren,
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
@@ -85,24 +86,29 @@ export default function (
         return;
     }
 
+    const container = createDivElement();
+    const addAudioNodePromises = [];
     for (let i = 0; i < audioEPInfo.files.length; i++) {
-        addAudioNode(i);
+        addAudioNodePromises.push(addAudioNode(container, i));
     }
+    Promise.all(addAudioNodePromises).then(() => {
+        if (currentPgid === pgid) {
+            replaceChildren(getSharedElement(SharedElement.MEDIA_HOLDER), container);
+        }
+    });
 }
 
-async function addAudioNode(index: number) {
+async function addAudioNode(container: HTMLDivElement, index: number) {
     if (error) {
         return;
     }
-
-    const mediaHolder = getSharedElement(SharedElement.MEDIA_HOLDER);
 
     const audioEPInfo = epInfo as AudioEPInfo;
     const file = audioEPInfo.files[index] as AudioFile;
 
     const FLAC_FALLBACK = (file.flac_fallback && !CAN_PLAY_ALAC);
 
-    appendChild(mediaHolder, getAudioSubtitleNode(file, FLAC_FALLBACK));
+    appendChild(container, getAudioSubtitleNode(file, FLAC_FALLBACK));
 
     const IS_FLAC = (file.format.toLowerCase() === 'flac' || FLAC_FALLBACK);
 
@@ -116,7 +122,7 @@ async function addAudioNode(index: number) {
 
     const playerContainer = createDivElement();
     addClass(playerContainer, styles.player);
-    appendChild(mediaHolder, playerContainer);
+    appendChild(container, playerContainer);
     const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
     if (!MSE_SUPPORTED) {

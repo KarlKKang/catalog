@@ -197,6 +197,12 @@
                 cursor: pointer;
             }
         }
+
+        >.loading-text {
+            text-align: center;
+            color: var(properties.get(alt-text-color));
+            margin: 1em 0px 2em 0px;
+        }
     }
 
     &.video>.media-holder {

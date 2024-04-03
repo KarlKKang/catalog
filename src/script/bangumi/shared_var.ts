@@ -1,5 +1,6 @@
 import { addClass, appendChild, body, createDivElement, createParagraphElement, prependChild } from '../module/dom';
 import * as styles from '../../css/bangumi.module.scss';
+import { loading } from '../module/text/ui';
 
 export const enum SharedElement {
     TITLE,
@@ -15,10 +16,13 @@ export function initializeSharedVars() {
     prependChild(body, titleElem);
     const content = createDivElement();
     addClass(content, styles.content);
+    appendChild(body, content);
     const mediaHolder = createDivElement();
     addClass(mediaHolder, styles.mediaHolder);
     appendChild(content, mediaHolder);
-    appendChild(body, content);
+    const loadingText = createParagraphElement(loading);
+    addClass(loadingText, styles.loadingText);
+    appendChild(mediaHolder, loadingText);
     sharedElements = {
         [SharedElement.TITLE]: titleElem,
         [SharedElement.CONTENT_CONTAINER]: content,

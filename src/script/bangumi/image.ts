@@ -17,6 +17,7 @@ import {
     appendText,
     createSpanElement,
     insertBefore,
+    replaceChildren,
 } from '../module/dom';
 import type { ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
@@ -43,7 +44,6 @@ export default async function (
     createMediaSessionPromise: Promise<MediaSessionInfo>
 ) {
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
-    const mediaHolder = getSharedElement(SharedElement.MEDIA_HOLDER);
 
     if (epInfo.gallery_title !== '') {
         const title = createParagraphElement();
@@ -66,15 +66,18 @@ export default async function (
     appendChild(downloadElem, downloadPanel);
     appendChild(contentContainer, downloadElem);
 
-    const files = epInfo.files;
-
     const currentPgid = pgid;
     const [lazyloadModule, mediaSessionCredential] = await Promise.all([lazyloadImportPromise, createMediaSessionPromise]);
     if (currentPgid !== pgid) {
         return;
     }
     lazyloadModule.setCredential(mediaSessionCredential.credential, SessionTypes.MEDIA);
+    showImages(epInfo.files, baseURL, mediaSessionCredential.credential, lazyloadModule);
+}
 
+function showImages(files: ImageEPInfo['files'], baseURL: string, credential: string, lazyloadModule: Awaited<typeof lazyloadImportPromise>) {
+    const mediaHolder = getSharedElement(SharedElement.MEDIA_HOLDER);
+    replaceChildren(mediaHolder);
     for (const file of files) {
         const imageNode = createDivElement();
         const lazyloadNode = createDivElement();
@@ -107,7 +110,7 @@ export default async function (
         appendChild(mediaHolder, imageNode);
 
         addEventListener(showFullSizeButton, 'click', () => {
-            openImageWindow(baseURL, file.file_name, mediaSessionCredential.credential, SessionTypes.MEDIA);
+            openImageWindow(baseURL, file.file_name, credential, SessionTypes.MEDIA);
         });
         lazyloadModule.default(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
             delay: 250,
