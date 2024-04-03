@@ -1,9 +1,5 @@
 import { importLazyload } from '../module/lazyload';
 
-export let updatePageImportPromise: Promise<typeof import(
-    /* webpackExports: ["default", "offload"] */
-    './update_page'
-)>;
 export let imageImportPromise: Promise<typeof import(
     /* webpackExports: ["default", "offload"] */
     './image'
@@ -27,10 +23,6 @@ export let hlsPlayerImportPromise: Promise<typeof import(
 )>;
 
 export function importAll() {
-    updatePageImportPromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './update_page'
-    );
     imageImportPromise = import(
         /* webpackExports: ["default", "offload"] */
         './image'

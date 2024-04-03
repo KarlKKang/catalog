@@ -14,13 +14,16 @@ import { moduleImportError } from '../module/message/param';
 import { invalidResponse, notFound } from '../module/server/message';
 import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam } from './helper';
-import { importAll, updatePageImportPromise } from './import_promise';
+import { importAll } from './import_promise';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import * as MediaSessionInfo from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
+import { addTimeout } from '../module/timer';
 
-let updatePageModule: Awaited<typeof updatePageImportPromise> | null = null;
+let updatePageModule: Awaited<typeof import(
+    './update_page'
+)> | null = null;
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -35,7 +38,6 @@ export default function (showPage: ShowPageFunc) {
 
     // Preload modules
     addNavBar();
-    importAll();
 
     // Parse other parameters
     const epIndexParam = getURLParam('ep');
@@ -52,24 +54,38 @@ export default function (showPage: ShowPageFunc) {
     }
 
     //send requests
-    const createMediaSessionPromise = new Promise<MediaSessionInfo.MediaSessionInfo>((resolve) => {
-        sendServerRequest('create_media_session', {
-            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                let parsedResponse: MediaSessionInfo.MediaSessionInfo;
-                try {
-                    parsedResponse = JSON.parse(response);
-                    MediaSessionInfo.check(parsedResponse);
-                } catch (e) {
-                    showMessage(invalidResponse());
-                    return;
-                }
-                setUpSessionAuthentication(parsedResponse.credential, getLogoutParam(seriesID, epIndex));
-                resolve(parsedResponse);
-            },
-            [ServerRequestOptionProp.CONTENT]: 'series=' + seriesID + '&ep=' + epIndex,
-            [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex)
+    let createMediaSessionPromise: Promise<MediaSessionInfo.MediaSessionInfo> | null = null;
+    const createMediaSession = () => {
+        importAll();
+        return new Promise<MediaSessionInfo.MediaSessionInfo>((resolve) => {
+            sendServerRequest('create_media_session', {
+                [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+                    let parsedResponse: MediaSessionInfo.MediaSessionInfo;
+                    try {
+                        parsedResponse = JSON.parse(response);
+                        MediaSessionInfo.check(parsedResponse);
+                    } catch (e) {
+                        showMessage(invalidResponse());
+                        return;
+                    }
+                    setUpSessionAuthentication(parsedResponse.credential, getLogoutParam(seriesID, epIndex));
+                    resolve(parsedResponse);
+                },
+                [ServerRequestOptionProp.CONTENT]: 'series=' + seriesID + '&ep=' + epIndex,
+                [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex)
+            });
         });
-    });
+    };
+    addTimeout(() => {
+        if (createMediaSessionPromise === null) {
+            createMediaSessionPromise = createMediaSession();
+        }
+    }, 1000);
+
+    const updatePageImportPromise = import(
+        /* webpackExports: ["default", "offload"] */
+        './update_page'
+    );
 
     sendServerRequest('get_ep?series=' + seriesID + '&ep=' + epIndex, {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
@@ -83,6 +99,9 @@ export default function (showPage: ShowPageFunc) {
             }
 
             const currentPgid = pgid;
+            if (createMediaSessionPromise === null) {
+                createMediaSessionPromise = createMediaSession();
+            }
             createMediaSessionPromise.then((mediaSessionInfo) => {
                 if (currentPgid !== pgid) {
                     return;
@@ -92,19 +111,19 @@ export default function (showPage: ShowPageFunc) {
                 }
             });
 
-            let updatePage: Awaited<typeof updatePageImportPromise>;
-            try {
-                updatePageModule = await updatePageImportPromise;
-                updatePage = updatePageModule;
-            } catch (e) {
-                if (currentPgid === pgid) {
-                    showMessage(moduleImportError(e));
+            if (updatePageModule === null) {
+                try {
+                    updatePageModule = await updatePageImportPromise;
+                } catch (e) {
+                    if (currentPgid === pgid) {
+                        showMessage(moduleImportError(e));
+                    }
+                    throw e;
                 }
-                throw e;
             }
 
             showPage();
-            updatePage.default(
+            updatePageModule.default(
                 parsedResponse,
                 seriesID,
                 epIndex,
