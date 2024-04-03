@@ -32,12 +32,6 @@ import { hideElement, setWidth } from '../module/style';
 import { CSS_AUTO } from '../module/style/value';
 import * as styles from '../../css/bangumi.module.scss';
 
-type ImageLoader = typeof import(
-    /* webpackExports: ["clearAllImageEvents"] */
-    '../module/image_loader'
-);
-let imageLoader: ImageLoader | null = null;
-
 export default async function (
     epInfo: ImageEPInfo,
     baseURL: string,
@@ -147,6 +141,4 @@ function showImages(files: ImageEPInfo['files'], baseURL: string, credential: st
 
 export function offload() {
     unloadLazyload();
-    imageLoader?.clearAllImageEvents();
-    imageLoader = null;
 }
