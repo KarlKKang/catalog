@@ -1,42 +1,49 @@
 import { pgid } from '../global';
+import { importImageLoader, offloadImageLoader } from '../image_loader';
 import { showMessage } from '../message';
 import { moduleImportError } from '../message/param';
+import type * as Lazyload from './lazyload';
 
-let lazyload: Awaited<typeof import(
-    './lazyload'
-)> | null = null;
+export const enum LazyloadProp {
+    DEFAULT,
+    SET_CREDENTIAL,
+}
 
-let imageLoader: Awaited<typeof import(
-    '../image_loader'
-)> | null = null;
+let lazyload: {
+    [LazyloadProp.DEFAULT]: typeof Lazyload.default;
+    [LazyloadProp.SET_CREDENTIAL]: typeof Lazyload.setCredential;
+} | null = null;
+let unobserveAll: typeof Lazyload.unobserveAll | null = null;
 
 export async function importLazyload() {
-    if (lazyload !== null && imageLoader !== null) {
+    if (lazyload !== null) {
         return lazyload;
     }
+    const imageLoaderImportPromise = importImageLoader();
+    let lazyloadDefault: typeof Lazyload.default;
+    let attachImageLoader: typeof Lazyload.attachImageLoader;
+    let setCredential: typeof Lazyload.setCredential;
     const currentPgid = pgid;
     try {
-        [lazyload, imageLoader] = await Promise.all([
-            import(
-                /* webpackExports: ["default", "unobserveAll", "attachImageLoader", "setCredential"] */
-                './lazyload'
-            ),
-            import(
-                /* webpackExports: ["default", "clearAllImageEvents"] */
-                '../image_loader'
-            )
-        ]);
+        ({ default: lazyloadDefault, unobserveAll, attachImageLoader, setCredential } = await import(
+            './lazyload'
+        ));
     } catch (e) {
         if (pgid === currentPgid) {
             showMessage(moduleImportError(e));
         }
         throw e;
     }
-    lazyload.attachImageLoader(imageLoader.default);
+    const imageLoader = await imageLoaderImportPromise;
+    attachImageLoader(imageLoader);
+    lazyload = {
+        [LazyloadProp.DEFAULT]: lazyloadDefault,
+        [LazyloadProp.SET_CREDENTIAL]: setCredential,
+    };
     return lazyload;
 }
 
-export function unloadLazyload() {
-    lazyload?.unobserveAll();
-    imageLoader?.clearAllImageEvents();
+export function offloadLazyload() {
+    unobserveAll?.();
+    offloadImageLoader();
 }

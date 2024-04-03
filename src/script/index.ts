@@ -40,7 +40,7 @@ import { getLocalTimeString } from './module/common/pure';
 import type { ShowPageFunc } from './module/type/ShowPageFunc';
 import { addTimeout } from './module/timer';
 import { redirect, setCustomPopStateHandler } from './module/global';
-import { importLazyload, unloadLazyload } from './module/lazyload';
+import { LazyloadProp, importLazyload, offloadLazyload } from './module/lazyload';
 import { changeColor, setOpacity } from './module/style';
 import { allResultsShown, loading, noResult } from './module/text/ui';
 import { addAutoMultiLanguageClass } from './module/dom/create_element/multi_language';
@@ -210,7 +210,7 @@ export default function (showPage: ShowPageFunc) {
             eventTargetsTracker.add(seriesNode);
 
             appendChild(containerElem, seriesNode);
-            lazyload.default(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title);
+            lazyload[LazyloadProp.DEFAULT](thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title);
         }
 
         infiniteScrolling[InfiniteScrollingProp.SET_ENABLED](true);
@@ -245,7 +245,7 @@ export default function (showPage: ShowPageFunc) {
                     removeAllEventListeners(eventTarget);
                 }
                 eventTargetsTracker.clear();
-                lazyload.unobserveAll();
+                offloadLazyload();
                 replaceChildren(containerElem);
                 resolve();
             }, 400);
@@ -317,7 +317,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo, xhr?: XMLHttpRe
 }
 
 export function offload() {
-    unloadLazyload();
+    offloadLazyload();
     eventTargetsTracker.clear();
     currentRequest = null;
 }

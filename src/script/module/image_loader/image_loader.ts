@@ -1,18 +1,18 @@
 import type { WebpMachine } from 'webp-hero';
 import {
     removeRightClick,
-} from './common';
+} from '../common';
 import {
     appendChild,
     addEventListener,
     addEventListenerOnce,
     createCanvasElement,
     removeAllEventListeners,
-} from './dom';
-import { showMessage } from './message';
-import { moduleImportError } from './message/param';
-import { pgid } from './global';
-import { setHeight, setWidth } from './style';
+} from '../dom';
+import { showMessage } from '../message';
+import { moduleImportError } from '../message/param';
+import { pgid } from '../global';
+import { setHeight, setWidth } from '../style';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
@@ -225,7 +225,7 @@ function imageProtection(elem: HTMLElement) {
     });
 }
 
-export function clearAllImageEvents() {
+export function offload() {
     webpMachineQueue.length = 0;
     webpMachineActive = false;
     webpMachine?.clearCache();

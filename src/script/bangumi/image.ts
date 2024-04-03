@@ -27,7 +27,7 @@ import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 import { lazyloadImportPromise } from './import_promise';
 import { SharedElement, getSharedElement } from './shared_var';
-import { unloadLazyload } from '../module/lazyload';
+import { LazyloadProp, offloadLazyload } from '../module/lazyload';
 import { hideElement, setWidth } from '../module/style';
 import { CSS_AUTO } from '../module/style/value';
 import * as styles from '../../css/bangumi.module.scss';
@@ -61,11 +61,12 @@ export default async function (
     appendChild(contentContainer, downloadElem);
 
     const currentPgid = pgid;
-    const [lazyloadModule, mediaSessionCredential] = await Promise.all([lazyloadImportPromise, createMediaSessionPromise]);
+    const mediaSessionCredential = await createMediaSessionPromise;
+    const lazyloadModule = await lazyloadImportPromise;
     if (currentPgid !== pgid) {
         return;
     }
-    lazyloadModule.setCredential(mediaSessionCredential.credential, SessionTypes.MEDIA);
+    lazyloadModule[LazyloadProp.SET_CREDENTIAL](mediaSessionCredential.credential, SessionTypes.MEDIA);
     showImages(epInfo.files, baseURL, mediaSessionCredential.credential, lazyloadModule);
 }
 
@@ -106,7 +107,7 @@ function showImages(files: ImageEPInfo['files'], baseURL: string, credential: st
         addEventListener(showFullSizeButton, 'click', () => {
             openImageWindow(baseURL, file.file_name, credential, SessionTypes.MEDIA);
         });
-        lazyloadModule.default(lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
+        lazyloadModule[LazyloadProp.DEFAULT](lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
             delay: 250,
             onDataLoad: (data: Blob) => {
                 addEventListener(downloadButton, 'click', () => {
@@ -140,5 +141,5 @@ function showImages(files: ImageEPInfo['files'], baseURL: string, credential: st
 }
 
 export function offload() {
-    unloadLazyload();
+    offloadLazyload();
 }

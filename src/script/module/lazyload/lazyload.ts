@@ -8,7 +8,7 @@ import {
 import { showMessage } from '../message';
 import { invalidResponse } from '../server/message';
 import { addTimeout } from '../timer';
-import type { default as ImageLoader } from '../image_loader';
+import type { default as ImageLoader } from '../image_loader/image_loader';
 import * as styles from '../../../css/lazyload.module.scss';
 
 const observer = new IntersectionObserver(observerCallback, {

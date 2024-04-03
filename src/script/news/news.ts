@@ -28,7 +28,7 @@ import { notFound } from '../module/server/message';
 import * as NewsInfo from '../module/type/NewsInfo';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { pgid, redirect } from '../module/global';
-import { importLazyload, unloadLazyload } from '../module/lazyload';
+import { LazyloadProp, importLazyload, offloadLazyload } from '../module/lazyload';
 import { loading } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
 import { addManualAllLanguageClass } from '../module/dom/create_element/all_language';
@@ -89,7 +89,7 @@ async function attachImage(lazyloadImportPromise: ReturnType<typeof importLazylo
     if (currentPgid !== pgid) {
         return;
     }
-    lazyload.setCredential(credential, SessionTypes.NEWS);
+    lazyload[LazyloadProp.SET_CREDENTIAL](credential, SessionTypes.NEWS);
 
     const baseURL = CDN_URL + '/news/' + newsID + '/';
     const elems = getDescendantsByClass(contentContainer, INTERNAL_IMAGE_CLASS);
@@ -101,7 +101,7 @@ async function attachImage(lazyloadImportPromise: ReturnType<typeof importLazylo
         if (src === null) {
             continue;
         }
-        lazyload.default(elem, baseURL + encodeCFURIComponent(src), src, { delay: 250 });
+        lazyload[LazyloadProp.DEFAULT](elem, baseURL + encodeCFURIComponent(src), src, { delay: 250 });
         if (containsClass(elem, IMAGE_ENLARGE_CLASS)) {
             removeClass(elem, IMAGE_ENLARGE_CLASS);
             addClass(elem, styles.imageEnlarge);
@@ -157,5 +157,5 @@ function bindEventListners(contentContainer: HTMLElement): void {
 }
 
 export function offload() {
-    unloadLazyload();
+    offloadLazyload();
 }
