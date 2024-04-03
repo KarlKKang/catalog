@@ -218,10 +218,9 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
         if (serviceWorker === null) {
             let Workbox: typeof WorkboxType;
             try {
-                Workbox = (await import(
-                    /* webpackExports: ["Workbox"] */
+                ({ Workbox } = await import(
                     'workbox-window'
-                )).Workbox;
+                ));
             } catch (e) {
                 if (pgid === currentPgid) {
                     showMessage(moduleImportError(e));
