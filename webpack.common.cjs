@@ -13,7 +13,7 @@ const optimization = {
     concatenateModules: true,
     flagIncludedChunks: true,
     removeAvailableModules: true,
-    usedExports: 'global',
+    usedExports: true,
 };
 
 const configs = [
