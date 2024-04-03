@@ -62,7 +62,7 @@ function showPageCallback() {
     appendChild(container, submitButton);
 
     const goBack = createParagraphElement();
-    const goBackText = createSpanElement('❮ 戻る');
+    const goBackText = createSpanElement('❮　戻る');
     addClass(goBack, commonStyles.link);
     appendChild(goBack, goBackText);
     appendChild(container, goBack);
