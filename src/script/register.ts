@@ -225,7 +225,7 @@ function getInfoNote() {
         appendText(paragraph, text[2]);
         appendChild(container, paragraph);
         addEventListener(link, 'click', () => {
-            const uri = 'info' + (lang === null ? '' : '#' + lang);
+            const uri = 'info?nav-bar=no' + (lang === null ? '' : '#' + lang);
             openWindow(uri);
         });
     }
