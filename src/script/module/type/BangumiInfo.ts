@@ -25,31 +25,31 @@ export type VideoFormat = {
 };
 export type VideoFormats = readonly [VideoFormat, ...VideoFormat[]];
 
-interface EPInfo {
+type EPInfoComm = {
     readonly age_restricted: string | false;
     readonly dir: string;
     readonly series_override: string | undefined;
-}
-export interface VideoEPInfo extends EPInfo {
-    readonly type: 'video';
+};
+type VideoEPInfoPartial = {
     readonly title: string;
     readonly formats: VideoFormats;
     readonly chapters: Chapters;
     readonly file_name: string;
-}
-export interface AudioEPInfo extends EPInfo {
-    readonly type: 'audio';
+};
+type AudioEPInfoPartial = {
     readonly album_info: {
         readonly album_title: string;
         readonly album_artist: string;
     };
     readonly files: readonly [AudioFile, ...AudioFile[]];
-}
-export interface ImageEPInfo extends EPInfo {
-    readonly type: 'image';
+};
+type ImageEPInfoPartial = {
     readonly gallery_title: string;
     readonly files: readonly [ImageFile, ...ImageFile[]];
-}
+};
+export type VideoEPInfo = EPInfoComm & VideoEPInfoPartial & { readonly type: 'video' };
+export type AudioEPInfo = EPInfoComm & AudioEPInfoPartial & { readonly type: 'audio' };
+export type ImageEPInfo = EPInfoComm & ImageEPInfoPartial & { readonly type: 'image' };
 
 type Season = {
     readonly id: string;
@@ -104,13 +104,13 @@ function parseChapters(chapters: unknown): Chapters {
     return chaptersParsed;
 }
 
-function parseVideoEPInfo(epInfo: ReturnType<typeof parseObject>) {
+function parseVideoEPInfo(epInfo: ReturnType<typeof parseObject>): VideoEPInfoPartial {
     return {
         title: parseString(epInfo.title),
         formats: parseVideoFormatInfo(epInfo.formats),
         chapters: parseChapters(epInfo.chapters),
         file_name: parseString(epInfo.file_name),
-    } as const;
+    };
 }
 
 function parseAudioFile(audioFile: unknown): AudioFile {
@@ -126,7 +126,7 @@ function parseAudioFile(audioFile: unknown): AudioFile {
     };
 }
 
-function parseAudioEPInfo(epInfo: ReturnType<typeof parseObject>) {
+function parseAudioEPInfo(epInfo: ReturnType<typeof parseObject>): AudioEPInfoPartial {
     const albumInfo = parseObject(epInfo.album_info);
 
     const files = parseArray(epInfo.files);
@@ -145,7 +145,7 @@ function parseAudioEPInfo(epInfo: ReturnType<typeof parseObject>) {
             album_artist: parseString(albumInfo.album_artist),
         },
         files: [fileFirst, ...filesParsed.slice(1)],
-    } as const;
+    };
 }
 
 function parseImageFile(imageFile: unknown): ImageFile {
@@ -154,7 +154,7 @@ function parseImageFile(imageFile: unknown): ImageFile {
     };
 }
 
-function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>) {
+function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>): ImageEPInfoPartial {
     const files = parseArray(epInfo.files);
     const filesParsed: ImageFile[] = [];
     for (const file of files) {
@@ -168,7 +168,7 @@ function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>) {
     return {
         gallery_title: parseString(epInfo.gallery_title),
         files: [fileFirst, ...filesParsed.slice(1)],
-    } as const;
+    };
 }
 
 function checkEPInfo(epInfo: unknown): VideoEPInfo | AudioEPInfo | ImageEPInfo {
@@ -177,11 +177,11 @@ function checkEPInfo(epInfo: unknown): VideoEPInfo | AudioEPInfo | ImageEPInfo {
     const seriesOverride = epInfoObj.series_override;
 
     const type = parseString(epInfoObj.type);
-    const epInfoComm = {
+    const epInfoComm: EPInfoComm = {
         age_restricted: ageRestricted === false ? false : parseString(ageRestricted),
         dir: parseString(epInfoObj.dir),
         series_override: seriesOverride === undefined ? undefined : parseString(seriesOverride),
-    } as const;
+    };
     if (type === 'video') {
         const videoEPInfo = parseVideoEPInfo(epInfoObj);
         return {
