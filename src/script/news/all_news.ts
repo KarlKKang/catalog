@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     addClass,
@@ -10,8 +10,6 @@ import {
     body,
     createParagraphElement,
 } from '../module/dom';
-import { showMessage } from '../module/message';
-import { invalidResponse } from '../module/server/message';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTime } from '../module/common/pure';
@@ -45,15 +43,7 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement, i
     }
     sendServerRequest('get_all_news?pivot=' + pivot, {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-            let parsedResponse: AllNewsInfo.AllNewsInfo;
-            try {
-                parsedResponse = JSON.parse(response);
-                AllNewsInfo.check(parsedResponse);
-            } catch (e) {
-                showMessage(invalidResponse());
-                return;
-            }
-            showAllNews(parsedResponse, container, loadingTextContainer, infiniteScrolling);
+            showAllNews(parseResponse(response, AllNewsInfo.parseAllNewsInfo), container, loadingTextContainer, infiniteScrolling);
         },
         [ServerRequestOptionProp.METHOD]: 'GET',
     });

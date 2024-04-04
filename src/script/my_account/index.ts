@@ -8,7 +8,8 @@ import { NavBarPage } from '../module/nav_bar/enum';
 import {
     sendServerRequest,
     logout,
-    ServerRequestOptionProp
+    ServerRequestOptionProp,
+    parseResponse
 } from '../module/server';
 import {
     addEventListener,
@@ -19,7 +20,6 @@ import {
     body,
 } from '../module/dom';
 import { showMessage } from '../module/message';
-import { invalidResponse } from '../module/server/message';
 import * as AccountInfo from '../module/type/AccountInfo';
 import * as Sessions from '../module/type/Sessions';
 import type { ShowPageFunc } from '../module/type/ShowPageFunc';
@@ -47,18 +47,10 @@ export default function (showPage: ShowPageFunc) {
         const sessionsModuleImport = import('./sessions');
         sendServerRequest('get_sessions', {
             [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                let parsedResponse: Sessions.Sessions;
-                try {
-                    parsedResponse = JSON.parse(response);
-                    Sessions.check(parsedResponse);
-                } catch (e) {
-                    showMessage(invalidResponse());
-                    return;
-                }
                 const currentPgid = pgid;
                 getImport(sessionsModuleImport).then(({ default: showSessions }) => {
                     if (currentPgid === pgid) {
-                        showSessions(parsedResponse);
+                        showSessions(parseResponse(response, Sessions.parseSession));
                     }
                 });
             }
@@ -68,17 +60,9 @@ export default function (showPage: ShowPageFunc) {
 
     sendServerRequest('get_account', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-            let parsedResponse: AccountInfo.AccountInfo;
-            try {
-                parsedResponse = JSON.parse(response);
-                AccountInfo.check(parsedResponse);
-            } catch (e) {
-                showMessage(invalidResponse());
-                return;
-            }
             showPage();
             appendChild(body, container);
-            showPageCallback(parsedResponse);
+            showPageCallback(parseResponse(response, AccountInfo.parseAccountInfo));
             getSessions();
         },
         [ServerRequestOptionProp.METHOD]: 'GET',

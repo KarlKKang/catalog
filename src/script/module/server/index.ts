@@ -2,9 +2,9 @@ import { SERVER_URL, LOGIN_URL } from '../env/constant';
 import { showMessage } from '../message';
 import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
 import { addEventListener, removeAllEventListeners } from '../dom';
-import * as MaintenanceInfo from '../type/MaintenanceInfo';
 import { addTimeout } from '../timer';
 import { redirect } from '../global';
+import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 
 export const enum ServerRequestOptionProp {
     CALLBACK,
@@ -69,15 +69,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRe
     } else if (status === 429) {
         showMessage(status429);
     } else if (status === 503) {
-        let parsedResponse: MaintenanceInfo.MaintenanceInfo;
-        try {
-            parsedResponse = JSON.parse(responseText);
-            MaintenanceInfo.check(parsedResponse);
-        } catch (e) {
-            showMessage(invalidResponse());
-            return false;
-        }
-        showMessage(status503(parsedResponse));
+        showMessage(status503(parseResponse(responseText, parseMaintenanceInfo)));
     } else if (status === 500 || status === 400) {
         if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
             showMessage(status400And500(responseText));
@@ -161,4 +153,13 @@ export function setUpSessionAuthentication(credential: string, logoutParam?: str
             [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     }, 40 * 1000); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
+}
+
+export function parseResponse<T>(response: string, parser: (response: unknown) => T): T {
+    try {
+        return parser(JSON.parse(response));
+    } catch (e) {
+        showMessage(invalidResponse());
+        throw e;
+    }
 }

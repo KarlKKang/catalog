@@ -1,318 +1,247 @@
-import { throwError, isObject, isArray, isNumber, isBoolean, isString } from './helper';
+import { parseArray, parseBoolean, parseNumber, parseObject, parseString, throwError } from './helper';
 
 export type AudioFile = {
-    title: string;
-    artist: string;
-    format: string;
-    samplerate: string;
-    bitdepth: string;
-    file_name: string;
-    flac_fallback: boolean;
+    readonly title: string;
+    readonly artist: string;
+    readonly format: string;
+    readonly samplerate: string;
+    readonly bitdepth: string;
+    readonly file_name: string;
+    readonly flac_fallback: boolean;
 };
-
 type ImageFile = {
-    file_name: string;
+    readonly file_name: string;
 };
+type Chapter = [string, number];
+type Chapters = ReadonlyArray<Chapter>;
+export type VideoFormat = {
+    readonly value: string;
+    readonly tag: string | undefined;
+    readonly video: string | undefined;
+    readonly audio: string | undefined;
+    readonly avc_fallback: boolean | undefined;
+    readonly aac_fallback: boolean | undefined;
+    readonly direct_download: boolean | undefined;
+};
+export type VideoFormats = readonly [VideoFormat, ...VideoFormat[]];
 
 interface EPInfo {
-    age_restricted: string | false;
-    dir: string;
-    series_override?: string;
+    readonly age_restricted: string | false;
+    readonly dir: string;
+    readonly series_override: string | undefined;
 }
-
-type Chapters = Array<[string, number]>;
-export type VideoFormatInfo = {
-    value: string;
-    tag?: string;
-    video?: string;
-    audio?: string;
-    avc_fallback?: boolean;
-    aac_fallback?: boolean;
-    direct_download?: boolean;
-};
 export interface VideoEPInfo extends EPInfo {
-    type: 'video';
-    title: string;
-    formats: [VideoFormatInfo, ...VideoFormatInfo[]];
-    chapters: Chapters;
-    file_name: string;
+    readonly type: 'video';
+    readonly title: string;
+    readonly formats: VideoFormats;
+    readonly chapters: Chapters;
+    readonly file_name: string;
 }
-
 export interface AudioEPInfo extends EPInfo {
-    type: 'audio';
-    album_info: {
-        album_title: string;
-        album_artist: string;
+    readonly type: 'audio';
+    readonly album_info: {
+        readonly album_title: string;
+        readonly album_artist: string;
     };
-    files: [AudioFile, ...AudioFile[]];
+    readonly files: readonly [AudioFile, ...AudioFile[]];
 }
-
 export interface ImageEPInfo extends EPInfo {
-    type: 'image';
-    gallery_title: string;
-    files: [ImageFile, ...ImageFile[]];
+    readonly type: 'image';
+    readonly gallery_title: string;
+    readonly files: readonly [ImageFile, ...ImageFile[]];
 }
 
-export type Seasons = { id: string; season_name: string }[];
-export type SeriesEP = [string, ...string[]];
+type Season = {
+    readonly id: string;
+    readonly season_name: string;
+};
+export type Seasons = readonly Season[];
+export type SeriesEP = readonly [string, ...string[]];
 
 export type BangumiInfo = {
-    title: string;
-    title_override?: string;
-    seasons: Seasons;
-    series_ep: SeriesEP;
-    ep_info: VideoEPInfo | AudioEPInfo | ImageEPInfo;
+    readonly title: string;
+    readonly title_override: string | undefined;
+    readonly seasons: Seasons;
+    readonly series_ep: SeriesEP;
+    readonly ep_info: VideoEPInfo | AudioEPInfo | ImageEPInfo;
 };
 
-function checkVideoEPInfo(epInfo: any) {
-
-    if (!isString(epInfo.title)) {
+function parseVideoFormatInfo(formats: unknown): VideoFormats {
+    const formatsArr = parseArray(formats);
+    const formatsParsed: VideoFormat[] = [];
+    for (const format of formatsArr) {
+        const formatObj = parseObject(format);
+        const tag = formatObj.tag;
+        const video = formatObj.video;
+        const audio = formatObj.audio;
+        const avcFallback = formatObj.avc_fallback;
+        const aacFallback = formatObj.aac_fallback;
+        const directDownload = formatObj.direct_download;
+        formatsParsed.push({
+            value: parseString(formatObj.value),
+            tag: tag === undefined ? undefined : parseString(tag),
+            video: video === undefined ? undefined : parseString(video),
+            audio: audio === undefined ? undefined : parseString(audio),
+            avc_fallback: avcFallback === undefined ? undefined : parseBoolean(avcFallback),
+            aac_fallback: aacFallback === undefined ? undefined : parseBoolean(aacFallback),
+            direct_download: directDownload === undefined ? undefined : parseBoolean(directDownload),
+        });
+    }
+    const formatFirst = formatsParsed[0];
+    if (formatFirst === undefined) {
         throwError();
     }
-
-    const formats = epInfo.formats;
-    if (!isArray(formats)) {
-        throwError();
-    }
-
-    if (formats.length < 1) {
-        throwError();
-    }
-
-    for (const format of formats) {
-        if (!isObject(format)) {
-            throwError();
-        }
-
-        if (!isString(format.value)) {
-            throwError();
-        }
-
-        if (format.tag !== undefined && !isString(format.tag)) {
-            throwError();
-        }
-
-        if (format.video !== undefined && !isString(format.video)) {
-            throwError();
-        }
-
-        if (format.audio !== undefined && !isString(format.audio)) {
-            throwError();
-        }
-
-        if (format.avc_fallback !== undefined && !isBoolean(format.avc_fallback)) {
-            throwError();
-        }
-
-        if (format.aac_fallback !== undefined && !isBoolean(format.aac_fallback)) {
-            throwError();
-        }
-
-        if (format.direct_download !== undefined && !isBoolean(format.direct_download)) {
-            throwError();
-        }
-    }
-
-    const chapters = epInfo.chapters;
-    if (!isArray(chapters)) {
-        throwError();
-    }
-
-    for (const chapter of chapters) {
-        if (!isArray(chapter)) {
-            throwError();
-        }
-
-        if (!isString(chapter[0])) {
-            throwError();
-        }
-
-        if (!isNumber(chapter[1])) {
-            throwError();
-        }
-    }
-
-    if (!isString(epInfo.file_name)) {
-        throwError();
-    }
+    return [formatFirst, ...formatsParsed.slice(1)];
 }
 
-function checkAudioFile(audioFile: any) {
-    if (!isObject(audioFile)) {
-        throwError();
+function parseChapters(chapters: unknown): Chapters {
+    const chaptersArr = parseArray(chapters);
+    const chaptersParsed: Chapter[] = [];
+    for (const chapter of chaptersArr) {
+        const chapterArr = parseArray(chapter);
+        chaptersParsed.push([parseString(chapterArr[0]), parseNumber(chapterArr[1])]);
     }
-
-    if (!isString(audioFile.title)) {
-        throwError();
-    }
-
-    if (!isString(audioFile.artist)) {
-        throwError();
-    }
-
-    if (!isString(audioFile.format)) {
-        throwError();
-    }
-
-    if (!isString(audioFile.samplerate)) {
-        throwError();
-    }
-
-    if (!isString(audioFile.bitdepth)) {
-        throwError();
-    }
-
-    if (!isString(audioFile.file_name)) {
-        throwError();
-    }
-
-    if (!isBoolean(audioFile.flac_fallback)) {
-        throwError();
-    }
+    return chaptersParsed;
 }
 
-function checkAudioEPInfo(epInfo: any) {
+function parseVideoEPInfo(epInfo: ReturnType<typeof parseObject>) {
+    return {
+        title: parseString(epInfo.title),
+        formats: parseVideoFormatInfo(epInfo.formats),
+        chapters: parseChapters(epInfo.chapters),
+        file_name: parseString(epInfo.file_name),
+    } as const;
+}
 
-    const albumInfo = epInfo.album_info;
-    if (!isObject(albumInfo)) {
-        throwError();
-    }
+function parseAudioFile(audioFile: unknown): AudioFile {
+    const audioFileObj = parseObject(audioFile);
+    return {
+        title: parseString(audioFileObj.title),
+        artist: parseString(audioFileObj.artist),
+        format: parseString(audioFileObj.format),
+        samplerate: parseString(audioFileObj.samplerate),
+        bitdepth: parseString(audioFileObj.bitdepth),
+        file_name: parseString(audioFileObj.file_name),
+        flac_fallback: parseBoolean(audioFileObj.flac_fallback),
+    };
+}
 
-    if (!isString(albumInfo.album_title) || !isString(albumInfo.album_artist)) {
-        throwError();
-    }
+function parseAudioEPInfo(epInfo: ReturnType<typeof parseObject>) {
+    const albumInfo = parseObject(epInfo.album_info);
 
-    const files = epInfo.files;
-    if (!isArray(files)) {
-        throwError();
-    }
-
-    if (files.length < 1) {
-        throwError();
-    }
-
+    const files = parseArray(epInfo.files);
+    const filesParsed: AudioFile[] = [];
     for (const file of files) {
-        checkAudioFile(file);
+        filesParsed.push(parseAudioFile(file));
     }
+    const fileFirst = filesParsed[0];
+    if (fileFirst === undefined) {
+        throwError();
+    }
+
+    return {
+        album_info: {
+            album_title: parseString(albumInfo.album_title),
+            album_artist: parseString(albumInfo.album_artist),
+        },
+        files: [fileFirst, ...filesParsed.slice(1)],
+    } as const;
 }
 
-function checkImageFile(imageFile: any) {
-    if (!isObject(imageFile)) {
-        throwError();
-    }
-
-    if (!isString(imageFile.file_name)) {
-        throwError();
-    }
+function parseImageFile(imageFile: unknown): ImageFile {
+    return {
+        file_name: parseString(parseObject(imageFile).file_name),
+    };
 }
 
-function checkImageEPInfo(epInfo: any) {
-    if (!isString(epInfo.gallery_title)) {
-        throwError();
-    }
-
-    const files = epInfo.files;
-    if (!isArray(files)) {
-        throwError();
-    }
-
-    if (files.length < 1) {
-        throwError();
-    }
-
+function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>) {
+    const files = parseArray(epInfo.files);
+    const filesParsed: ImageFile[] = [];
     for (const file of files) {
-        checkImageFile(file);
+        filesParsed.push(parseImageFile(file));
     }
+    const fileFirst = filesParsed[0];
+    if (fileFirst === undefined) {
+        throwError();
+    }
+
+    return {
+        gallery_title: parseString(epInfo.gallery_title),
+        files: [fileFirst, ...filesParsed.slice(1)],
+    } as const;
 }
 
-function checkEPInfo(epInfo: any) {
-    if (!isObject(epInfo)) {
-        throwError();
-    }
+function checkEPInfo(epInfo: unknown): VideoEPInfo | AudioEPInfo | ImageEPInfo {
+    const epInfoObj = parseObject(epInfo);
+    const ageRestricted = epInfoObj.age_restricted;
+    const seriesOverride = epInfoObj.series_override;
 
-    const ageRestricted = epInfo.age_restricted;
-    if (!isString(ageRestricted) && ageRestricted !== false) {
-        throwError();
-    }
-
-    const dir = epInfo.dir;
-    if (!isString(dir)) {
-        throwError();
-    }
-
-    const seriesOverride = epInfo.series_override;
-    if (seriesOverride !== undefined && !isString(seriesOverride)) {
-        throwError();
-    }
-
-    const type = epInfo.type;
+    const type = parseString(epInfoObj.type);
+    const epInfoComm = {
+        age_restricted: ageRestricted === false ? false : parseString(ageRestricted),
+        dir: parseString(epInfoObj.dir),
+        series_override: seriesOverride === undefined ? undefined : parseString(seriesOverride),
+    } as const;
     if (type === 'video') {
-        checkVideoEPInfo(epInfo);
+        const videoEPInfo = parseVideoEPInfo(epInfoObj);
+        return {
+            ...epInfoComm,
+            ...videoEPInfo,
+            type: type,
+        };
     } else if (type === 'audio') {
-        checkAudioEPInfo(epInfo);
+        const audioEPInfo = parseAudioEPInfo(epInfoObj);
+        return {
+            ...epInfoComm,
+            ...audioEPInfo,
+            type: type,
+        };
     } else if (type === 'image') {
-        checkImageEPInfo(epInfo);
-    } else {
-        throwError();
+        const imageEPInfo = parseImageEPInfo(epInfoObj);
+        return {
+            ...epInfoComm,
+            ...imageEPInfo,
+            type: type,
+        };
     }
+    throwError();
 }
 
-function checkSeason(season: any) {
-    if (!isObject(season)) {
-        throwError();
+function parseSeasons(seasons: unknown): Seasons {
+    const seasonsArr = parseArray(seasons);
+    const seasonsParsed: Season[] = [];
+    for (const season of seasonsArr) {
+        const seasonObj = parseObject(season);
+        seasonsParsed.push({
+            id: parseString(seasonObj.id),
+            season_name: parseString(seasonObj.season_name),
+        });
     }
-
-    if (!isString(season.id)) {
-        throwError();
-    }
-
-    if (!isString(season.season_name)) {
-        throwError();
-    }
+    return seasonsParsed;
 }
 
-function checkSeriesEP(seriesEP: any) {
-    if (!isString(seriesEP)) {
+function parseSeriesEP(seriesEP: unknown): SeriesEP {
+    const seriesEPArr = parseArray(seriesEP);
+    const seriesEPParsed: string[] = [];
+    for (const seriesEP of seriesEPArr) {
+        seriesEPParsed.push(parseString(seriesEP));
+    }
+    const seriesEPFirst = seriesEPParsed[0];
+    if (seriesEPFirst === undefined) {
         throwError();
     }
+    return [seriesEPFirst, ...seriesEPParsed.slice(1)];
 }
 
-export function check(bangumiInfo: any) {
-    if (!isObject(bangumiInfo)) {
-        throwError();
-    }
-
-    const title = bangumiInfo.title;
-    if (!isString(title)) {
-        throwError();
-    }
-
-    const titleOverride = bangumiInfo.title_override;
-    if (titleOverride !== undefined && !isString(titleOverride)) {
-        throwError();
-    }
-
-    const seasons = bangumiInfo.seasons;
-    if (!isArray(seasons)) {
-        throwError();
-    }
-
-    for (const season of seasons) {
-        checkSeason(season);
-    }
-
-    const seriesEPs = bangumiInfo.series_ep;
-    if (!isArray(seriesEPs)) {
-        throwError();
-    }
-
-    if (seriesEPs.length < 1) {
-        throwError();
-    }
-
-    for (const seriesEP of seriesEPs) {
-        checkSeriesEP(seriesEP);
-    }
-
-    checkEPInfo(bangumiInfo.ep_info);
+export function parseBangumiInfo(bangumiInfo: unknown): BangumiInfo {
+    const bangumiInfoObj = parseObject(bangumiInfo);
+    const epInfo = checkEPInfo(bangumiInfoObj.ep_info);
+    const titleOverride = bangumiInfoObj.title_override;
+    return {
+        title: parseString(bangumiInfoObj.title),
+        title_override: titleOverride === undefined ? undefined : parseString(titleOverride),
+        seasons: parseSeasons(bangumiInfoObj.seasons),
+        series_ep: parseSeriesEP(bangumiInfoObj.series_ep),
+        ep_info: epInfo,
+    };
 }

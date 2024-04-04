@@ -1,48 +1,40 @@
-import { throwError, isObject, isArray, isNumber, isString } from './helper';
-import * as MaintenanceInfo from './MaintenanceInfo';
+import { parseArray, parseNumber, parseObject, parseString } from './helper';
+import { parseMaintenanceInfo, type MaintenanceInfo } from './MaintenanceInfo';
 
 export interface SeriesEntry {
-    title: string;
-    thumbnail: string;
-    id: string;
+    readonly title: string;
+    readonly thumbnail: string;
+    readonly id: string;
 }
-
-export type Series = SeriesEntry[];
-
+export type Series = readonly SeriesEntry[];
 export type Pivot = 'EOF' | number;
-
 export type SeriesInfo = {
-    series: Series;
-    pivot: Pivot;
-    maintenance?: MaintenanceInfo.MaintenanceInfo;
+    readonly series: Series;
+    readonly pivot: Pivot;
+    readonly maintenance: MaintenanceInfo | undefined;
 };
 
-export function check(seriesInfo: any) {
-    if (!isObject(seriesInfo)) {
-        throwError();
-    }
+export function parseSeriesInfo(seriesInfo: unknown): SeriesInfo {
+    const seriesInfoObj = parseObject(seriesInfo);
 
-    const series = seriesInfo.series;
-    if (!isArray(series)) {
-        throwError();
-    }
+    const series = parseArray(seriesInfoObj.series);
+    const seriesParsed: SeriesEntry[] = [];
     for (const seriesEntry of series) {
-        if (!isObject(seriesEntry)) {
-            throwError();
-        }
-        if (!isString(seriesEntry.title) || !isString(seriesEntry.thumbnail) || !isString(seriesEntry.id)) {
-            throwError();
-        }
+        const seriesEntryObj = parseObject(seriesEntry);
+        seriesParsed.push({
+            title: parseString(seriesEntryObj.title),
+            thumbnail: parseString(seriesEntryObj.thumbnail),
+            id: parseString(seriesEntryObj.id),
+        });
     }
 
-    const pivot = seriesInfo.pivot;
-    if (!isNumber(pivot) && pivot !== 'EOF') {
-        throwError();
-    }
-
-    if (seriesInfo.maintenance !== undefined) {
-        MaintenanceInfo.check(seriesInfo.maintenance);
-    }
+    const pivot = seriesInfoObj.pivot;
+    const maintenance = seriesInfoObj.maintenance;
+    return {
+        series: seriesParsed,
+        pivot: pivot === 'EOF' ? pivot : parseNumber(pivot),
+        maintenance: maintenance === undefined ? undefined : parseMaintenanceInfo(maintenance),
+    };
 }
 
 

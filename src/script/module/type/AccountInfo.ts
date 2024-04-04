@@ -1,19 +1,20 @@
-import { throwError, isObject, isNumber, isBoolean, isString } from './helper';
+import { parseBoolean, parseNumber, parseObject, parseString } from './helper';
 
-export interface AccountInfo {
+export type AccountInfo = {
     username: string;
-    invite_quota: number;
-    mfa_status: boolean;
-    recovery_code_status: number;
-    login_notification: boolean;
-}
+    readonly invite_quota: number;
+    readonly mfa_status: boolean;
+    readonly recovery_code_status: number;
+    readonly login_notification: boolean;
+};
 
-export function check(accountInfo: any) {
-    if (!isObject(accountInfo)) {
-        throwError();
-    }
-
-    if (!isString(accountInfo.username) || !isNumber(accountInfo.invite_quota) || !isBoolean(accountInfo.mfa_status) || !isNumber(accountInfo.recovery_code_status) || !isBoolean(accountInfo.login_notification)) {
-        throwError();
-    }
+export function parseAccountInfo(accountInfo: unknown): AccountInfo {
+    const accountInfoObj = parseObject(accountInfo);
+    return {
+        username: parseString(accountInfoObj.username),
+        invite_quota: parseNumber(accountInfoObj.invite_quota),
+        mfa_status: parseBoolean(accountInfoObj.mfa_status),
+        recovery_code_status: parseNumber(accountInfoObj.recovery_code_status),
+        login_notification: parseBoolean(accountInfoObj.login_notification),
+    };
 }

@@ -1,16 +1,14 @@
-import { throwError, isObject, isString } from './helper';
+import { parseObject, parseString } from './helper';
 
 export type MediaSessionInfo = {
-    type: string;
-    credential: string;
+    readonly type: string;
+    readonly credential: string;
 };
 
-export function check(mediaSessionInfo: any) {
-    if (!isObject(mediaSessionInfo)) {
-        throwError();
-    }
-
-    if (!isString(mediaSessionInfo.type) || !isString(mediaSessionInfo.credential)) {
-        throwError();
-    }
+export function parseMediaSessionInfo(mediaSessionInfo: unknown): MediaSessionInfo {
+    const mediaSessionInfoObj = parseObject(mediaSessionInfo);
+    return {
+        type: parseString(mediaSessionInfoObj.type),
+        credential: parseString(mediaSessionInfoObj.credential),
+    };
 }

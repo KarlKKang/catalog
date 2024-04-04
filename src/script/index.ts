@@ -8,7 +8,7 @@ import {
 } from './module/common';
 import { addNavBar } from './module/nav_bar';
 import { NavBarPage } from './module/nav_bar/enum';
-import { ServerRequestOptionProp, sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, parseResponse, sendServerRequest } from './module/server';
 import {
     w,
     addEventListener,
@@ -31,8 +31,6 @@ import {
     body,
     disableInput,
 } from './module/dom';
-import { showMessage } from './module/message';
-import { invalidResponse } from './module/server/message';
 import * as SeriesInfo from './module/type/SeriesInfo';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from './module/infinite_scrolling';
 import { isbot } from 'isbot';
@@ -299,15 +297,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo, xhr?: XMLHttpRe
             if (currentRequest !== request) {
                 return;
             }
-            let parsedResponse: SeriesInfo.SeriesInfo;
-            try {
-                parsedResponse = JSON.parse(response);
-                SeriesInfo.check(parsedResponse);
-            } catch (e) {
-                showMessage(invalidResponse());
-                return;
-            }
-            callback(parsedResponse, request);
+            callback(parseResponse(response, SeriesInfo.parseSeriesInfo), request);
         },
         [ServerRequestOptionProp.LOGOUT_PARAM]: keywords.slice(0, -1),
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: showSessionEndedMessage,

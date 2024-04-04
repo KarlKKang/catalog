@@ -1,16 +1,14 @@
-import { isObject, throwError, isString } from './helper';
+import { parseObject, parseString } from './helper';
 
 export type TOTPInfo = {
-    uri: string;
-    p: string;
+    readonly uri: string;
+    readonly p: string;
 };
 
-export function check(totpInfo: any) {
-    if (!isObject(totpInfo)) {
-        throwError();
-    }
-
-    if (!isString(totpInfo.uri) || !isString(totpInfo.p)) {
-        throwError();
-    }
+export function parseTotpInfo(totpInfo: unknown): TOTPInfo {
+    const totpInfoObj = parseObject(totpInfo);
+    return {
+        uri: parseString(totpInfoObj.uri),
+        p: parseString(totpInfoObj.p),
+    };
 }

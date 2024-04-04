@@ -1,30 +1,29 @@
-import { isArray, isNumber, isObject, isString, throwError } from './helper';
+import { parseArray, parseNumber, parseObject, parseString } from './helper';
 
-export type Sessions = {
-    id?: string;
-    ua: string;
-    ip: string;
-    country: string;
-    last_active_time: number;
-    login_time: number;
-}[];
+type Session = {
+    readonly id: string | undefined;
+    readonly ua: string;
+    readonly ip: string;
+    readonly country: string;
+    readonly last_active_time: number;
+    readonly login_time: number;
+};
+export type Sessions = readonly Session[];
 
-export function check(sessions: any) {
-    if (!isArray(sessions)) {
-        throwError();
+export function parseSession(sessions: unknown): Sessions {
+    const sessionArr = parseArray(sessions);
+    const sessionArrParsed: Session[] = [];
+    for (const session of sessionArr) {
+        const sessionObj = parseObject(session);
+        const id = sessionObj.id;
+        sessionArrParsed.push({
+            id: id === undefined ? undefined : parseString(id),
+            ua: parseString(sessionObj.ua),
+            ip: parseString(sessionObj.ip),
+            country: parseString(sessionObj.country),
+            last_active_time: parseNumber(sessionObj.last_active_time),
+            login_time: parseNumber(sessionObj.login_time),
+        });
     }
-
-    for (const session of sessions) {
-        if (!isObject(session)) {
-            throwError();
-        }
-
-        if (!isString(session.ua) || !isString(session.ip) || !isString(session.country) || !isNumber(session.last_active_time) || !isNumber(session.login_time)) {
-            throwError();
-        }
-
-        if (session.id !== undefined && !isString(session.id)) {
-            throwError();
-        }
-    }
+    return sessionArrParsed;
 }

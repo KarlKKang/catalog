@@ -4,14 +4,14 @@ import {
 import {
     getURLParam,
 } from '../module/common';
-import { ServerRequestOptionProp, sendServerRequest, setUpSessionAuthentication } from '../module/server';
+import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
 import {
     clearSessionStorage,
     getBaseURL,
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
-import { invalidResponse, notFound } from '../module/server/message';
+import { notFound } from '../module/server/message';
 import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam } from './helper';
 import { importAll } from './import_promise';
@@ -60,14 +60,7 @@ export default function (showPage: ShowPageFunc) {
         return new Promise<MediaSessionInfo.MediaSessionInfo>((resolve) => {
             sendServerRequest('create_media_session', {
                 [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                    let parsedResponse: MediaSessionInfo.MediaSessionInfo;
-                    try {
-                        parsedResponse = JSON.parse(response);
-                        MediaSessionInfo.check(parsedResponse);
-                    } catch (e) {
-                        showMessage(invalidResponse());
-                        return;
-                    }
+                    const parsedResponse = parseResponse(response, MediaSessionInfo.parseMediaSessionInfo);
                     setUpSessionAuthentication(parsedResponse.credential, getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);
                 },
@@ -89,15 +82,7 @@ export default function (showPage: ShowPageFunc) {
 
     sendServerRequest('get_ep?series=' + seriesID + '&ep=' + epIndex, {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
-            let parsedResponse: BangumiInfo.BangumiInfo;
-            try {
-                parsedResponse = JSON.parse(response);
-                BangumiInfo.check(parsedResponse);
-            } catch (e) {
-                showMessage(invalidResponse());
-                return;
-            }
-
+            const parsedResponse = parseResponse(response, BangumiInfo.parseBangumiInfo);
             const currentPgid = pgid;
             if (createMediaSessionPromise === null) {
                 createMediaSessionPromise = createMediaSession();

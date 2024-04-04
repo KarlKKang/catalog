@@ -1,19 +1,14 @@
-import { throwError, isObject, isNumber, isBoolean } from './helper';
+import { parseBoolean, parseNumber, parseObject } from './helper';
 export type InviteResult = {
-    special?: boolean;
-    quota: number;
+    readonly special: boolean | undefined;
+    readonly quota: number;
 };
 
-export function check(inviteResult: any) {
-    if (!isObject(inviteResult)) {
-        throwError();
-    }
-
-    if (!isNumber(inviteResult.quota)) {
-        throwError();
-    }
-
-    if (inviteResult.special !== undefined && !isBoolean(inviteResult.special)) {
-        throwError();
-    }
+export function parseInviteResult(inviteResult: unknown): InviteResult {
+    const inviteResultObj = parseObject(inviteResult);
+    const special = inviteResultObj.special;
+    return {
+        special: special === undefined ? undefined : parseBoolean(special),
+        quota: parseNumber(inviteResultObj.quota),
+    };
 }

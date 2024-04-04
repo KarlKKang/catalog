@@ -25,7 +25,7 @@ import {
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
-import type { VideoEPInfo, VideoFormatInfo } from '../module/type/BangumiInfo';
+import type { VideoEPInfo, VideoFormat } from '../module/type/BangumiInfo';
 import {
     MSE_SUPPORTED,
     NATIVE_HLS_SUPPORTED,
@@ -63,7 +63,7 @@ let epInfo: VideoEPInfo;
 let baseURL: string;
 let createMediaSessionPromise: Promise<MediaSessionInfo>;
 
-let currentFormat: VideoFormatInfo;
+let currentFormat: VideoFormat;
 let currentMediaInstance: PlayerType | null = null;
 let chaptersAccordionInstance: AccordionInstance | null = null;
 

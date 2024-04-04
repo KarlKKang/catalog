@@ -1,42 +1,31 @@
-import { throwError, isObject, isArray, isNumber, isString } from './helper';
+import { parseArray, parseNumber, parseObject, parseString } from './helper';
 
 type AllNewsInfoEntry = {
-    id: string;
-    title: string;
-    update_time: number;
+    readonly id: string;
+    readonly title: string;
+    readonly update_time: number;
 };
-
-export type AllNewsInfoEntries = AllNewsInfoEntry[];
-
+export type AllNewsInfoEntries = readonly AllNewsInfoEntry[];
 export type PivotInfo = number | 'EOF';
-
-export type AllNewsInfo = [
+export type AllNewsInfo = readonly [
     ...AllNewsInfoEntries,
     PivotInfo
 ];
 
-export function check(allNewsInfo: any) {
-    if (!isArray(allNewsInfo)) {
-        throwError();
-    }
+export function parseAllNewsInfo(allNewsInfo: unknown): AllNewsInfo {
+    const allNewsInfoArr = parseArray(allNewsInfo);
 
-    if (allNewsInfo.length < 1) {
-        throwError();
-    }
-
-    const pivotInfo = allNewsInfo[allNewsInfo.length - 1];
-
-    if (!isNumber(pivotInfo) && pivotInfo !== 'EOF') {
-        throwError();
-    }
-
-    const allNewsInfoEntries = allNewsInfo.slice(0, -1);
+    const allNewsInfoEntries = allNewsInfoArr.slice(0, -1);
+    const allNewsInfoEntriesParsed: AllNewsInfoEntry[] = [];
     for (const allNewsInfoEntry of allNewsInfoEntries) {
-        if (!isObject(allNewsInfoEntry)) {
-            throwError();
-        }
-        if (!isNumber(allNewsInfoEntry.update_time) || !isString(allNewsInfoEntry.title) || !isString(allNewsInfoEntry.id)) {
-            throwError();
-        }
+        const allNewsInfoEntryObj = parseObject(allNewsInfoEntry);
+        allNewsInfoEntriesParsed.push({
+            id: parseString(allNewsInfoEntryObj.id),
+            title: parseString(allNewsInfoEntryObj.title),
+            update_time: parseNumber(allNewsInfoEntryObj.update_time),
+        });
     }
+
+    const pivotInfo = allNewsInfoArr[allNewsInfoArr.length - 1];
+    return [...allNewsInfoEntriesParsed, pivotInfo === 'EOF' ? pivotInfo : parseNumber(pivotInfo)];
 }

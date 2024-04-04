@@ -1,26 +1,19 @@
-import { throwError, isObject, isNumber, isString } from './helper';
+import { parseNumber, parseObject, parseString } from './helper';
 
 export type NewsInfo = {
-    title: string;
-    create_time: number;
-    update_time: number | null;
-    credential: string;
+    readonly title: string;
+    readonly create_time: number;
+    readonly update_time: number | null;
+    readonly credential: string;
 };
 
-export function check(newsInfo: any) {
-    if (!isObject(newsInfo)) {
-        throwError();
-    }
-
-    if (!isNumber(newsInfo.create_time) || !isString(newsInfo.title)) {
-        throwError();
-    }
-
-    if (!isNumber(newsInfo.update_time) && newsInfo.update_time !== null) {
-        throwError();
-    }
-
-    if (!isString(newsInfo.credential)) {
-        throwError();
-    }
+export function parseNewsInfo(newsInfo: unknown): NewsInfo {
+    const newsInfoObj = parseObject(newsInfo);
+    const updateTime = newsInfoObj.update_time;
+    return {
+        title: parseString(newsInfoObj.title),
+        create_time: parseNumber(newsInfoObj.create_time),
+        update_time: updateTime === null ? null : parseNumber(updateTime),
+        credential: parseString(newsInfoObj.credential),
+    };
 }

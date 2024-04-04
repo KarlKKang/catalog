@@ -1,5 +1,5 @@
 
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     appendText,
@@ -63,15 +63,7 @@ export function enableMfa() {
                 disableAllInputs(false);
                 return true;
             }
-            let parsedResponse: TOTPInfo.TOTPInfo;
-            try {
-                parsedResponse = JSON.parse(response);
-                TOTPInfo.check(parsedResponse);
-            } catch (e) {
-                showMessage(invalidResponse());
-                return false;
-            }
-            promptForTotpSetup(parsedResponse);
+            promptForTotpSetup(parseResponse(response, TOTPInfo.parseTotpInfo));
             return false;
         },
         mfaWarning
@@ -124,15 +116,7 @@ export function generateRecoveryCode() {
                 showElement(recoveryCodeWarning);
                 disableAllInputs(false);
             } else {
-                let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
-                try {
-                    parsedResponse = JSON.parse(response);
-                    RecoveryCodeInfo.check(parsedResponse);
-                } catch (e) {
-                    showMessage(invalidResponse());
-                    return false;
-                }
-                showRecoveryCode(parsedResponse, () => {
+                showRecoveryCode(parseResponse(response, RecoveryCodeInfo.parseRecoveryCodeInfo), () => {
                     hideElement(getSharedElement(SharedElement.recoveryCodeInfo));
                     disableAllInputs(false);
                 });
@@ -330,15 +314,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                     showElement(mfaWarning);
                     disableAllInputs(false);
                 } else {
-                    let parsedResponse: RecoveryCodeInfo.RecoveryCodeInfo;
-                    try {
-                        parsedResponse = JSON.parse(response);
-                        RecoveryCodeInfo.check(parsedResponse);
-                    } catch (e) {
-                        showMessage(invalidResponse());
-                        return;
-                    }
-                    showRecoveryCode(parsedResponse, () => {
+                    showRecoveryCode(parseResponse(response, RecoveryCodeInfo.parseRecoveryCodeInfo), () => {
                         updateMfaUI(true);
                         changeColor(mfaWarning, CSS_COLOR.GREEN);
                         replaceText(mfaWarning, '二要素認証が有効になりました。');

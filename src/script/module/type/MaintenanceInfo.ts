@@ -1,17 +1,15 @@
-import { throwError, isObject, isNumber } from './helper';
+import { parseNumber, parseObject } from './helper';
 export type MaintenanceInfo = {
-    start: number;
-    period: number;
+    readonly start: number;
+    readonly period: number;
 };
 
-export function check(maintenanceInfo: any) {
-    if (!isObject(maintenanceInfo)) {
-        throwError();
-    }
-
-    if (!isNumber(maintenanceInfo.start) || !isNumber(maintenanceInfo.period)) {
-        throwError();
-    }
+export function parseMaintenanceInfo(maintenanceInfo: unknown): MaintenanceInfo {
+    const maintenanceInfoObj = parseObject(maintenanceInfo);
+    return {
+        start: parseNumber(maintenanceInfoObj.start),
+        period: parseNumber(maintenanceInfoObj.period),
+    };
 }
 
 

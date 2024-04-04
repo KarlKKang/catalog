@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import {
     replaceText,
 } from '../module/dom';
@@ -180,14 +180,7 @@ export function invite() {
             } else if (response === 'CLOSED') {
                 replaceText(warningElem, invitationClosed);
             } else {
-                let parsedResponse: InviteResult.InviteResult;
-                try {
-                    parsedResponse = JSON.parse(response);
-                    InviteResult.check(parsedResponse);
-                } catch (e) {
-                    showMessage(invalidResponse());
-                    return false;
-                }
+                const parsedResponse = parseResponse(response, InviteResult.parseInviteResult);
                 replaceText(inviteCount, parsedResponse.quota.toString());
                 let message = emailSent;
                 if (parsedResponse.special) {

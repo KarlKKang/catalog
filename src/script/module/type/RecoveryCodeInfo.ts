@@ -1,15 +1,12 @@
-import { isArray, throwError, isString } from './helper';
+import { parseArray, parseString } from './helper';
 
-export type RecoveryCodeInfo = string[];
+export type RecoveryCodeInfo = readonly string[];
 
-export function check(recoveryCodeInfo: any) {
-    if (!isArray(recoveryCodeInfo)) {
-        throwError();
+export function parseRecoveryCodeInfo(recoveryCodeInfo: unknown): RecoveryCodeInfo {
+    const recoveryCodeInfoArr = parseArray(recoveryCodeInfo);
+    const recoveryCodeInfoArrParsed: string[] = [];
+    for (const recoveryCode of recoveryCodeInfoArr) {
+        recoveryCodeInfoArrParsed.push(parseString(recoveryCode));
     }
-
-    for (const recoveryCode of recoveryCodeInfo) {
-        if (!isString(recoveryCode)) {
-            throwError();
-        }
-    }
+    return recoveryCodeInfoArrParsed;
 }

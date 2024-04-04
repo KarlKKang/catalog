@@ -1,27 +1,38 @@
-export function throwError(message?: string) {
+export function throwError(message?: string): never {
     throw new Error(message);
 }
 
-export function isObject(obj: any) {
-    return objectToString(obj) === '[object Object]';
+export function parseObject(obj: unknown): { [key: string]: unknown } {
+    if (obj instanceof Object && obj.constructor === Object) {
+        return obj as { [key: string]: unknown };
+    }
+    throwError();
 }
 
-export function isNumber(num: any) {
-    return objectToString(num) === '[object Number]';
+export function parseNumber(num: unknown) {
+    if (typeof num === 'number') {
+        return num;
+    }
+    throwError();
 }
 
-export function isArray(arr: any) {
-    return Array.isArray(arr);
+export function parseArray(arr: unknown): unknown[] {
+    if (Array.isArray(arr)) {
+        return arr;
+    }
+    throwError();
 }
 
-export function isBoolean(bool: any) {
-    return bool === true || bool === false;
+export function parseBoolean(bool: unknown) {
+    if (bool === true || bool === false) {
+        return bool;
+    }
+    throwError();
 }
 
-export function isString(str: any) {
-    return typeof str === 'string' || str instanceof String;
-}
-
-function objectToString(obj: any) {
-    return Object.prototype.toString.call(obj);
+export function parseString(str: unknown) {
+    if (typeof str === 'string') {
+        return str;
+    }
+    throwError();
 }
