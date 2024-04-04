@@ -337,7 +337,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             Player = (await nativePlayerImportPromise).Player;
         } catch (e) {
             if (currentPgid === pgid) {
-                showMessage(moduleImportError(e));
+                showMessage(moduleImportError);
             }
             throw e;
         }
@@ -365,7 +365,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
         } catch (e) {
             if (currentPgid === pgid) {
-                showMessage(moduleImportError(e));
+                showMessage(moduleImportError);
             }
             throw e;
         }

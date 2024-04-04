@@ -116,7 +116,7 @@ export default function (showPage: ShowPageFunc) {
                     updatePageModule = await updatePageImportPromise;
                 } catch (e) {
                     if (currentPgid === pgid) {
-                        showMessage(moduleImportError(e));
+                        showMessage(moduleImportError);
                     }
                     throw e;
                 }

@@ -1,17 +1,10 @@
 import { defaultErrorSuffix, emailSentSuffix } from '../text/message/body';
 import { emailSent as emailSentTitle } from '../text/message/title';
 import { MessageParam, MessageParamProp } from './type';
-import { isString } from '../type/helper';
 import { CSS_COLOR } from '../style/value';
 
-export const moduleImportError = (e: unknown) => {
-    let message = 'モジュールの読み込みに失敗しました。' + defaultErrorSuffix;
-    if (isString(e)) {
-        message += `<br>${e}`;
-    } else if (e instanceof Error) {
-        message += `<br>${e.message}`;
-    }
-    return { [MessageParamProp.MESSAGE]: message };
+export const moduleImportError = {
+    [MessageParamProp.MESSAGE]: 'ページの読み込みに失敗しました。再読み込みをお試しください。' + defaultErrorSuffix,
 };
 export const expired = {
     [MessageParamProp.TITLE]: '期限が切れています',

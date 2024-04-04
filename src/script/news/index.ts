@@ -56,7 +56,7 @@ function getAllNews(showPage: ShowPageFunc): void {
                 allNewsModule = await allNewsModuleImport;
             } catch (e) {
                 if (pgid === currentPgid) {
-                    showMessage(moduleImportError(e));
+                    showMessage(moduleImportError);
                 }
                 throw e;
             }
@@ -100,7 +100,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
                 newsModule = await newsModuleImport;
             } catch (e) {
                 if (pgid === currentPgid) {
-                    showMessage(moduleImportError(e));
+                    showMessage(moduleImportError);
                 }
                 throw e;
             }

@@ -191,7 +191,7 @@ function showPageCallback() {
                             onDemandImport = await onDemandImportPromise;
                         } catch (e) {
                             if (currentPgid === pgid) {
-                                showMessage(moduleImportError(e));
+                                showMessage(moduleImportError);
                             }
                             throw e;
                         }

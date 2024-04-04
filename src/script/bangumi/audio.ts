@@ -132,7 +132,7 @@ async function addAudioNode(container: HTMLDivElement, index: number) {
             Player = (await nativePlayerImportPromise).Player;
         } catch (e) {
             if (currentPgid === pgid) {
-                showMessage(moduleImportError(e));
+                showMessage(moduleImportError);
             }
             throw e;
         }
@@ -161,7 +161,7 @@ async function addAudioNode(container: HTMLDivElement, index: number) {
             HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
         } catch (e) {
             if (currentPgid === pgid) {
-                showMessage(moduleImportError(e));
+                showMessage(moduleImportError);
             }
             throw e;
         }

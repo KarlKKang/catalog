@@ -81,7 +81,7 @@ export default function (showPage: ShowPageFunc) {
                 });
             }).catch((e) => {
                 if (currentPgid !== pgid) {
-                    showMessage(moduleImportError(e));
+                    showMessage(moduleImportError);
                 }
                 throw e;
             });

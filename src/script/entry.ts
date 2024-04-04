@@ -223,7 +223,7 @@ async function registerServiceWorker(showPrompt: boolean) { // This function sho
                 ));
             } catch (e) {
                 if (pgid === currentPgid) {
-                    showMessage(moduleImportError(e));
+                    showMessage(moduleImportError);
                 }
                 throw e;
             }
@@ -318,7 +318,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
             page[PageProp.SCRIPT_CACHED] = await scriptImportPromise;
         } catch (e) {
             if (pgid === newPgid) {
-                showMessage(moduleImportError(e));
+                showMessage(moduleImportError);
             }
             throw e;
         }

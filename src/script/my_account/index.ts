@@ -181,7 +181,7 @@ async function getImport<T>(importPromise: Promise<T>) {
         return await importPromise;
     } catch (e) {
         if (currentPgid === pgid) {
-            showMessage(moduleImportError(e));
+            showMessage(moduleImportError);
         }
         throw e;
     }

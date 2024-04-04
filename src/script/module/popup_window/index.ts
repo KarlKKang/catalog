@@ -22,7 +22,7 @@ export async function popupWindowImport(): Promise<{
         );
     } catch (e) {
         if (pgid === currentPgid) {
-            showMessage(moduleImportError(e));
+            showMessage(moduleImportError);
         }
         throw e;
     }
@@ -37,7 +37,7 @@ export async function promptForTotpImport() {
         );
     } catch (e) {
         if (pgid === currentPgid) {
-            showMessage(moduleImportError(e));
+            showMessage(moduleImportError);
         }
         throw e;
     }

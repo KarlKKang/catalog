@@ -30,7 +30,7 @@ export async function importLazyload() {
         ));
     } catch (e) {
         if (pgid === currentPgid) {
-            showMessage(moduleImportError(e));
+            showMessage(moduleImportError);
         }
         throw e;
     }

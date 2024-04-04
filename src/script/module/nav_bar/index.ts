@@ -21,7 +21,7 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
         navBarFunc(page, currentPageCallback);
     } catch (e) {
         if (currentPgid === pgid) {
-            showMessage(moduleImportError(e));
+            showMessage(moduleImportError);
         }
         throw e;
     }

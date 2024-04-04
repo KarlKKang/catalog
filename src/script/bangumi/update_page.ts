@@ -128,7 +128,7 @@ export default async function (
             currentPage = await videoImportPromise;
         } catch (e) {
             if (currentPgid === pgid) {
-                showMessage(moduleImportError(e));
+                showMessage(moduleImportError);
             }
             throw e;
         }
@@ -142,7 +142,7 @@ export default async function (
                 currentPage = await audioImportPromise;
             } catch (e) {
                 if (currentPgid === pgid) {
-                    showMessage(moduleImportError(e));
+                    showMessage(moduleImportError);
                 }
                 throw e;
             }
@@ -155,7 +155,7 @@ export default async function (
                 currentPage = await imageImportPromise;
             } catch (e) {
                 if (currentPgid === pgid) {
-                    showMessage(moduleImportError(e));
+                    showMessage(moduleImportError);
                 }
                 throw e;
             }

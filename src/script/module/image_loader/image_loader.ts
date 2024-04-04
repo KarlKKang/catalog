@@ -165,7 +165,7 @@ async function startWebpMachine() {
             webpSupported = await detectWebpSupport();
         } catch (e: unknown) {
             if (currentPgid === pgid) {
-                showMessage(moduleImportError(e));
+                showMessage(moduleImportError);
             }
             throw e;
         }

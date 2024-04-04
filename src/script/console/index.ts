@@ -139,7 +139,7 @@ export default function (showPage: ShowPageFunc) {
                 appendChild(container, output);
             }).catch((e) => {
                 if (currentPgid === pgid) {
-                    showMessage(moduleImportError(e));
+                    showMessage(moduleImportError);
                 }
             });
         },
