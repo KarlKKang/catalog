@@ -141,6 +141,7 @@ export default function (showPage: ShowPageFunc) {
                 if (currentPgid === pgid) {
                     showMessage(moduleImportError);
                 }
+                throw e;
             });
         },
         [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
