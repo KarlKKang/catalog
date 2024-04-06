@@ -1,4 +1,4 @@
-import { parseArray, parseNumber, parseObject, parseOptional, parseString } from './helper';
+import { parseNumber, parseObject, parseOptional, parseString, parseTypedArray } from './helper';
 import { parseMaintenanceInfo, type MaintenanceInfo } from './MaintenanceInfo';
 
 export interface SeriesEntry {
@@ -16,21 +16,17 @@ export type SeriesInfo = {
 
 export function parseSeriesInfo(seriesInfo: unknown): SeriesInfo {
     const seriesInfoObj = parseObject(seriesInfo);
-
-    const series = parseArray(seriesInfoObj.series);
-    const seriesParsed: SeriesEntry[] = [];
-    for (const seriesEntry of series) {
+    const series = parseTypedArray(seriesInfoObj.series, (seriesEntry): SeriesEntry => {
         const seriesEntryObj = parseObject(seriesEntry);
-        seriesParsed.push({
+        return {
             title: parseString(seriesEntryObj.title),
             thumbnail: parseString(seriesEntryObj.thumbnail),
             id: parseString(seriesEntryObj.id),
-        });
-    }
-
+        };
+    });
     const pivot = seriesInfoObj.pivot;
     return {
-        series: seriesParsed,
+        series: series,
         pivot: pivot === 'EOF' ? pivot : parseNumber(pivot),
         maintenance: parseOptional(seriesInfoObj.maintenance, parseMaintenanceInfo)
     };

@@ -1,4 +1,4 @@
-import { parseArray, parseNumber, parseObject, parseOptional, parseString } from './helper';
+import { parseNumber, parseObject, parseOptional, parseString, parseTypedArray } from './helper';
 
 type Session = {
     readonly id: string | undefined;
@@ -11,18 +11,15 @@ type Session = {
 export type Sessions = readonly Session[];
 
 export function parseSession(sessions: unknown): Sessions {
-    const sessionArr = parseArray(sessions);
-    const sessionArrParsed: Session[] = [];
-    for (const session of sessionArr) {
+    return parseTypedArray(sessions, (session): Session => {
         const sessionObj = parseObject(session);
-        sessionArrParsed.push({
+        return {
             id: parseOptional(sessionObj.id, parseString),
             ua: parseString(sessionObj.ua),
             ip: parseString(sessionObj.ip),
             country: parseString(sessionObj.country),
             last_active_time: parseNumber(sessionObj.last_active_time),
             login_time: parseNumber(sessionObj.login_time),
-        });
-    }
-    return sessionArrParsed;
+        };
+    });
 }

@@ -23,6 +23,24 @@ export function parseArray(arr: unknown): unknown[] {
     throwError();
 }
 
+export function parseTypedArray<T>(arr: unknown, elementParser: (value: unknown) => T): T[] {
+    const untypedArr = parseArray(arr);
+    const parsedArr: T[] = [];
+    for (const element of untypedArr) {
+        parsedArr.push(elementParser(element));
+    }
+    return parsedArr;
+}
+
+export function parseNonEmptyTypedArray<T>(arr: unknown, elementParser: (value: unknown) => T): [T, ...T[]] {
+    const parsedArr = parseTypedArray(arr, elementParser);
+    const firstElement = parsedArr[0];
+    if (firstElement === undefined) {
+        throwError();
+    }
+    return [firstElement, ...parsedArr.slice(1)];
+}
+
 export function parseBoolean(bool: unknown) {
     if (bool === true || bool === false) {
         return bool;

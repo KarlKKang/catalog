@@ -1,4 +1,4 @@
-import { parseArray, parseBoolean, parseNumber, parseObject, parseOptional, parseString, throwError } from './helper';
+import { parseArray, parseBoolean, parseNonEmptyTypedArray, parseNumber, parseObject, parseOptional, parseString, parseTypedArray, throwError } from './helper';
 
 export type AudioFile = {
     readonly title: string;
@@ -67,11 +67,9 @@ export type BangumiInfo = {
 };
 
 function parseVideoFormatInfo(formats: unknown): VideoFormats {
-    const formatsArr = parseArray(formats);
-    const formatsParsed: VideoFormat[] = [];
-    for (const format of formatsArr) {
+    return parseNonEmptyTypedArray(formats, (format): VideoFormat => {
         const formatObj = parseObject(format);
-        formatsParsed.push({
+        return {
             value: parseString(formatObj.value),
             tag: parseOptional(formatObj.tag, parseString),
             video: parseOptional(formatObj.video, parseString),
@@ -79,23 +77,15 @@ function parseVideoFormatInfo(formats: unknown): VideoFormats {
             avc_fallback: parseOptional(formatObj.avc_fallback, parseBoolean),
             aac_fallback: parseOptional(formatObj.aac_fallback, parseBoolean),
             direct_download: parseOptional(formatObj.direct_download, parseBoolean),
-        });
-    }
-    const formatFirst = formatsParsed[0];
-    if (formatFirst === undefined) {
-        throwError();
-    }
-    return [formatFirst, ...formatsParsed.slice(1)];
+        };
+    });
 }
 
 function parseChapters(chapters: unknown): Chapters {
-    const chaptersArr = parseArray(chapters);
-    const chaptersParsed: Chapter[] = [];
-    for (const chapter of chaptersArr) {
+    return parseTypedArray(chapters, (chapter): Chapter => {
         const chapterArr = parseArray(chapter);
-        chaptersParsed.push([parseString(chapterArr[0]), parseNumber(chapterArr[1])]);
-    }
-    return chaptersParsed;
+        return [parseString(chapterArr[0]), parseNumber(chapterArr[1])];
+    });
 }
 
 function parseVideoEPInfo(epInfo: ReturnType<typeof parseObject>): VideoEPInfoPartial {
@@ -122,23 +112,12 @@ function parseAudioFile(audioFile: unknown): AudioFile {
 
 function parseAudioEPInfo(epInfo: ReturnType<typeof parseObject>): AudioEPInfoPartial {
     const albumInfo = parseObject(epInfo.album_info);
-
-    const files = parseArray(epInfo.files);
-    const filesParsed: AudioFile[] = [];
-    for (const file of files) {
-        filesParsed.push(parseAudioFile(file));
-    }
-    const fileFirst = filesParsed[0];
-    if (fileFirst === undefined) {
-        throwError();
-    }
-
     return {
         album_info: {
             album_title: parseString(albumInfo.album_title),
             album_artist: parseString(albumInfo.album_artist),
         },
-        files: [fileFirst, ...filesParsed.slice(1)],
+        files: parseNonEmptyTypedArray(epInfo.files, parseAudioFile),
     };
 }
 
@@ -149,19 +128,9 @@ function parseImageFile(imageFile: unknown): ImageFile {
 }
 
 function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>): ImageEPInfoPartial {
-    const files = parseArray(epInfo.files);
-    const filesParsed: ImageFile[] = [];
-    for (const file of files) {
-        filesParsed.push(parseImageFile(file));
-    }
-    const fileFirst = filesParsed[0];
-    if (fileFirst === undefined) {
-        throwError();
-    }
-
     return {
         gallery_title: parseString(epInfo.gallery_title),
-        files: [fileFirst, ...filesParsed.slice(1)],
+        files: parseNonEmptyTypedArray(epInfo.files, parseImageFile),
     };
 }
 
@@ -201,29 +170,13 @@ function checkEPInfo(epInfo: unknown): VideoEPInfo | AudioEPInfo | ImageEPInfo {
 }
 
 function parseSeasons(seasons: unknown): Seasons {
-    const seasonsArr = parseArray(seasons);
-    const seasonsParsed: Season[] = [];
-    for (const season of seasonsArr) {
+    return parseNonEmptyTypedArray(seasons, (season): Season => {
         const seasonObj = parseObject(season);
-        seasonsParsed.push({
+        return {
             id: parseString(seasonObj.id),
             season_name: parseString(seasonObj.season_name),
-        });
-    }
-    return seasonsParsed;
-}
-
-function parseSeriesEP(seriesEP: unknown): SeriesEP {
-    const seriesEPArr = parseArray(seriesEP);
-    const seriesEPParsed: string[] = [];
-    for (const seriesEP of seriesEPArr) {
-        seriesEPParsed.push(parseString(seriesEP));
-    }
-    const seriesEPFirst = seriesEPParsed[0];
-    if (seriesEPFirst === undefined) {
-        throwError();
-    }
-    return [seriesEPFirst, ...seriesEPParsed.slice(1)];
+        };
+    });
 }
 
 export function parseBangumiInfo(bangumiInfo: unknown): BangumiInfo {
@@ -232,7 +185,7 @@ export function parseBangumiInfo(bangumiInfo: unknown): BangumiInfo {
         title: parseString(bangumiInfoObj.title),
         title_override: parseOptional(bangumiInfoObj.title_override, parseString),
         seasons: parseSeasons(bangumiInfoObj.seasons),
-        series_ep: parseSeriesEP(bangumiInfoObj.series_ep),
+        series_ep: parseNonEmptyTypedArray(bangumiInfoObj.series_ep, parseString),
         ep_info: checkEPInfo(bangumiInfoObj.ep_info),
     };
 }

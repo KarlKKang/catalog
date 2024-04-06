@@ -1,4 +1,4 @@
-import { parseArray, parseNumber, parseObject, parseString } from './helper';
+import { parseArray, parseNumber, parseObject, parseString, parseTypedArray } from './helper';
 
 type AllNewsInfoEntry = {
     readonly id: string;
@@ -14,18 +14,14 @@ export type AllNewsInfo = readonly [
 
 export function parseAllNewsInfo(allNewsInfo: unknown): AllNewsInfo {
     const allNewsInfoArr = parseArray(allNewsInfo);
-
-    const allNewsInfoEntries = allNewsInfoArr.slice(0, -1);
-    const allNewsInfoEntriesParsed: AllNewsInfoEntry[] = [];
-    for (const allNewsInfoEntry of allNewsInfoEntries) {
+    const allNewsInfoEntries = parseTypedArray(allNewsInfoArr.slice(0, -1), (allNewsInfoEntry): AllNewsInfoEntry => {
         const allNewsInfoEntryObj = parseObject(allNewsInfoEntry);
-        allNewsInfoEntriesParsed.push({
+        return {
             id: parseString(allNewsInfoEntryObj.id),
             title: parseString(allNewsInfoEntryObj.title),
             update_time: parseNumber(allNewsInfoEntryObj.update_time),
-        });
-    }
-
+        };
+    });
     const pivotInfo = allNewsInfoArr[allNewsInfoArr.length - 1];
-    return [...allNewsInfoEntriesParsed, pivotInfo === 'EOF' ? pivotInfo : parseNumber(pivotInfo)];
+    return [...allNewsInfoEntries, pivotInfo === 'EOF' ? pivotInfo : parseNumber(pivotInfo)];
 }
