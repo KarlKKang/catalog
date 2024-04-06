@@ -44,7 +44,7 @@ type AudioEPInfoPartial = {
     readonly files: readonly [AudioFile, ...AudioFile[]];
 };
 type ImageEPInfoPartial = {
-    readonly gallery_title: string;
+    readonly gallery_title: string | undefined;
     readonly files: readonly [ImageFile, ...ImageFile[]];
 };
 export type VideoEPInfo = EPInfoComm & VideoEPInfoPartial & { readonly type: 'video' };
@@ -129,7 +129,7 @@ function parseImageFile(imageFile: unknown): ImageFile {
 
 function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>): ImageEPInfoPartial {
     return {
-        gallery_title: parseString(epInfo.gallery_title),
+        gallery_title: parseOptional(epInfo.gallery_title, parseString),
         files: parseNonEmptyTypedArray(epInfo.files, parseImageFile),
     };
 }

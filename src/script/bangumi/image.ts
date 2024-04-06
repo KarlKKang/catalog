@@ -39,7 +39,7 @@ export default async function (
 ) {
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
 
-    if (epInfo.gallery_title !== '') {
+    if (epInfo.gallery_title !== undefined) {
         const title = createParagraphElement();
         addClass(title, styles.subTitle, styles.centerAlign);
         title.innerHTML = epInfo.gallery_title; // Gallery title is in HTML syntax.
