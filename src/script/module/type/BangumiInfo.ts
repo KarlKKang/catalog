@@ -31,7 +31,7 @@ type EPInfoComm = {
     readonly series_override: string | undefined;
 };
 type VideoEPInfoPartial = {
-    readonly title: string;
+    readonly title: string | undefined;
     readonly formats: VideoFormats;
     readonly chapters: Chapters;
     readonly file_name: string;
@@ -90,7 +90,7 @@ function parseChapters(chapters: unknown): Chapters {
 
 function parseVideoEPInfo(epInfo: ReturnType<typeof parseObject>): VideoEPInfoPartial {
     return {
-        title: parseString(epInfo.title),
+        title: parseOptional(epInfo.title, parseString),
         formats: parseVideoFormatInfo(epInfo.formats),
         chapters: parseChapters(epInfo.chapters),
         file_name: parseString(epInfo.file_name),

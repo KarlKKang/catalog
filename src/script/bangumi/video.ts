@@ -99,7 +99,7 @@ export default function (
     const play = getURLParam('play') === '1';
 
     // Title
-    if (epInfo.title !== '') {
+    if (epInfo.title !== undefined) {
         const title = createParagraphElement();
         addClass(title, styles.subTitle, styles.centerAlign);
         title.innerHTML = epInfo.title; // This title is in HTML syntax.
