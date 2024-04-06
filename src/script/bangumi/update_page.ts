@@ -136,7 +136,7 @@ export default async function (
         if (currentPgid !== pgid) {
             return;
         }
-        currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.VideoEPInfo, baseURL, createMediaSessionPromise);
+        currentPage.default(seriesID, epIndex, epInfo, baseURL, createMediaSessionPromise);
     } else {
         if (type === 'audio') {
             try {
@@ -150,7 +150,7 @@ export default async function (
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
+            currentPage.default(seriesID, epIndex, epInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
         } else {
             try {
                 currentPage = await imageImportPromise;
@@ -163,7 +163,7 @@ export default async function (
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(epInfo as BangumiInfo.ImageEPInfo, baseURL, createMediaSessionPromise);
+            currentPage.default(epInfo, baseURL, createMediaSessionPromise);
         }
     }
 }
