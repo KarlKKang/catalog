@@ -26,7 +26,7 @@ export type VideoFormat = {
 export type VideoFormats = readonly [VideoFormat, ...VideoFormat[]];
 
 type EPInfoComm = {
-    readonly age_restricted: string | false;
+    readonly age_restricted: string | undefined;
     readonly dir: string;
     readonly series_override: string | undefined;
 };
@@ -136,11 +136,9 @@ function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>): ImageEPInfoPa
 
 function checkEPInfo(epInfo: unknown): VideoEPInfo | AudioEPInfo | ImageEPInfo {
     const epInfoObj = parseObject(epInfo);
-    const ageRestricted = epInfoObj.age_restricted;
-
     const type = parseString(epInfoObj.type);
     const epInfoComm: EPInfoComm = {
-        age_restricted: ageRestricted === false ? false : parseString(ageRestricted),
+        age_restricted: parseOptional(epInfoObj.age_restricted, parseString),
         dir: parseString(epInfoObj.dir),
         series_override: parseOptional(epInfoObj.series_override, parseString),
     };

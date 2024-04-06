@@ -84,7 +84,7 @@ export default async function (
 
     const ageRestricted = epInfo.age_restricted;
 
-    if (ageRestricted) {
+    if (ageRestricted !== undefined) {
         let warningTitle = '年齢認証';
         if (ageRestricted.toLowerCase() === 'r15+') {
             warningTitle = '「R15+指定」<br>年齢認証';
