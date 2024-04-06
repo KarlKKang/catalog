@@ -58,7 +58,8 @@ export default function (
     _epIndex: number,
     _epInfo: AudioEPInfo,
     _baseURL: string,
-    _createMediaSessionPromise: Promise<MediaSessionInfo>
+    _createMediaSessionPromise: Promise<MediaSessionInfo>,
+    seriesTitle: string,
 ) {
     currentPgid = pgid;
 
@@ -73,7 +74,7 @@ export default function (
 
     const audioEPInfo = epInfo as AudioEPInfo;
 
-    addAlbumInfo();
+    addAlbumInfo(seriesTitle);
     createMediaSessionPromise.then((mediaSessionInfo) => {
         if (currentPgid !== pgid) {
             return;
@@ -194,12 +195,12 @@ async function addAudioNode(container: HTMLDivElement, index: number) {
     }
 }
 
-function addAlbumInfo() {
+function addAlbumInfo(seriesTitle: string) {
     const { title, artist } = epInfo.album_info;
-    if (title !== undefined) {
+    if (title !== undefined || artist !== undefined) {
         const titleElem = createParagraphElement();
         addClass(titleElem, styles.subTitle, styles.centerAlign);
-        titleElem.innerHTML = title; // Album title is in HTML syntax.
+        titleElem.innerHTML = title ?? seriesTitle; // Album title is in HTML syntax.
         const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
         if (artist !== undefined) {
             const artistElem = createParagraphElement(artist);
@@ -207,13 +208,6 @@ function addAlbumInfo() {
             prependChild(contentContainer, artistElem);
         }
         prependChild(contentContainer, titleElem);
-    } else if (artist !== undefined) {
-        const titleElem = getSharedElement(SharedElement.TITLE);
-        const artistElem = createSpanElement();
-        addClass(artistElem, styles.artist);
-        appendChild(artistElem, createBRElement());
-        appendText(artistElem, artist);
-        appendChild(titleElem, artistElem);
     }
 }
 

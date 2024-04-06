@@ -50,6 +50,10 @@ export default async function (
     seriesID = _seriesID;
     epIndex = _epIndex;
 
+    const titleElem = createParagraphElement();
+    addClass(titleElem, styles.title);
+    appendChild(body, titleElem);
+
     const seasonSelector = createDivElement();
     addClass(seasonSelector, styles.seasonSelector);
     appendChild(body, seasonSelector);
@@ -63,12 +67,9 @@ export default async function (
     appendChild(body, hr);
 
     initializeSharedVars();
-
-    const titleElem = getSharedElement(SharedElement.TITLE);
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
 
     const epInfo = response.ep_info;
-
     const title = response.title;
     const titleOverride = response.title_override;
     if (titleOverride !== undefined) {
@@ -149,7 +150,7 @@ export default async function (
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, createMediaSessionPromise);
+            currentPage.default(seriesID, epIndex, epInfo as BangumiInfo.AudioEPInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
         } else {
             try {
                 currentPage = await imageImportPromise;
