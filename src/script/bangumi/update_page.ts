@@ -310,7 +310,7 @@ function updateSeasonSelector(seasons: BangumiInfo.Seasons, seasonSelector: HTML
     if (seasons.length !== 0) {
         for (const season of seasons) {
             const seasonButton = createDivElement();
-            const seasonText = createParagraphElement(season.season_name);
+            const seasonText = createParagraphElement(season.name);
 
             if (season.id !== seriesID) {
                 const targetSeries = season.id;

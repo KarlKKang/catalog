@@ -53,7 +53,7 @@ export type ImageEPInfo = EPInfoComm & ImageEPInfoPartial & { readonly type: 'im
 
 type Season = {
     readonly id: string;
-    readonly season_name: string;
+    readonly name: string;
 };
 export type Seasons = readonly Season[];
 export type SeriesEP = readonly [string, ...string[]];
@@ -174,7 +174,7 @@ function parseSeasons(seasons: unknown): Seasons {
         const seasonObj = parseObject(season);
         return {
             id: parseString(seasonObj.id),
-            season_name: parseString(seasonObj.season_name),
+            name: parseString(seasonObj.name),
         };
     });
 }
