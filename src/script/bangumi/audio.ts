@@ -72,8 +72,6 @@ export default function (
     audioReadyCounter = 0;
     error = false;
 
-    const audioEPInfo = epInfo as AudioEPInfo;
-
     addAlbumInfo(seriesTitle);
     createMediaSessionPromise.then((mediaSessionInfo) => {
         if (currentPgid !== pgid) {
@@ -89,8 +87,8 @@ export default function (
 
     const container = createDivElement();
     const addAudioNodePromises = [];
-    for (let i = 0; i < audioEPInfo.files.length; i++) {
-        addAudioNodePromises.push(addAudioNode(container, i));
+    for (const file of epInfo.files) {
+        addAudioNodePromises.push(addAudioNode(container, file));
     }
     Promise.all(addAudioNodePromises).then(() => {
         if (currentPgid === pgid) {
@@ -99,13 +97,12 @@ export default function (
     });
 }
 
-async function addAudioNode(container: HTMLDivElement, index: number) {
+async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
     if (error) {
         return;
     }
 
-    const audioEPInfo = epInfo as AudioEPInfo;
-    const file = audioEPInfo.files[index] as AudioFile;
+    const audioEPInfo = epInfo;
 
     const FLAC_FALLBACK = (file.flac_fallback === true && !CAN_PLAY_ALAC);
     appendChild(container, getAudioSubtitleNode(file, FLAC_FALLBACK));
@@ -148,7 +145,7 @@ async function addAudioNode(container: HTMLDivElement, index: number) {
                 destroyAll();
             },
         });
-        mediaInstances[index] = audioInstance;
+        mediaInstances.push(audioInstance);
         setMediaTitle(audioInstance);
         audioReadyCounter++;
         if (audioReadyCounter === audioEPInfo.files.length) {
@@ -182,7 +179,7 @@ async function addAudioNode(container: HTMLDivElement, index: number) {
                 destroyAll();
             },
         });
-        mediaInstances[index] = audioInstance;
+        mediaInstances.push(audioInstance);
         setMediaTitle(audioInstance);
         audioReadyCounter++;
         if (audioReadyCounter === audioEPInfo.files.length) {
