@@ -60,7 +60,6 @@ export const enum EPInfoKey {
     FILE_NAME,
     ALBUM_INFO,
     FILES,
-    GALLERY_TITLE,
 }
 export const enum AlbumInfoKey {
     TITLE,
@@ -85,7 +84,7 @@ type AudioEPInfoPartial = {
     readonly [EPInfoKey.FILES]: readonly [AudioFile, ...AudioFile[]];
 };
 type ImageEPInfoPartial = {
-    readonly [EPInfoKey.GALLERY_TITLE]: string | undefined;
+    readonly [EPInfoKey.TITLE]: string | undefined;
     readonly [EPInfoKey.FILES]: readonly [ImageFile, ...ImageFile[]];
 };
 export type VideoEPInfo = EPInfoComm & VideoEPInfoPartial & { readonly [EPInfoKey.TYPE]: 'video' };
@@ -181,7 +180,7 @@ function parseImageFile(imageFile: unknown): ImageFile {
 
 function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>): ImageEPInfoPartial {
     return {
-        [EPInfoKey.GALLERY_TITLE]: parseOptional(epInfo.gallery_title, parseString),
+        [EPInfoKey.TITLE]: parseOptional(epInfo.gallery_title, parseString),
         [EPInfoKey.FILES]: parseNonEmptyTypedArray(epInfo.files, parseImageFile),
     };
 }
