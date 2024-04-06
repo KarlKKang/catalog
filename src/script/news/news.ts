@@ -51,7 +51,7 @@ export default function (newsInfo: NewsInfo.NewsInfo, lazyloadImportPromise: Ret
     addClass(container, styles.container);
     appendChild(body, container);
 
-    const [contentOuterContainer, contentInnerContainer] = createNewsTemplate(newsInfo.title, newsInfo.create_time, newsInfo.update_time);
+    const [contentOuterContainer, contentInnerContainer] = createNewsTemplate(newsInfo.title, newsInfo.create_time, newsInfo.update_time ?? null);
     appendChild(contentInnerContainer, contentContainer);
     appendChild(container, contentOuterContainer);
 
