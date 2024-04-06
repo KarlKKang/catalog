@@ -22,3 +22,5 @@ export { customPopStateHandler };
 export function setCustomPopStateHandler(handler: (() => void) | null) {
     customPopStateHandler = handler;
 }
+
+export type ShowPageFunc = () => void;

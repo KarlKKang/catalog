@@ -22,8 +22,7 @@ import {
 import { showMessage } from '../module/message';
 import * as AccountInfo from '../module/type/AccountInfo';
 import * as Sessions from '../module/type/Sessions';
-import type { ShowPageFunc } from '../module/type/ShowPageFunc';
-import { pgid, redirect } from '../module/global';
+import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { SharedBool, SharedButton, SharedElement, SharedInput, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs } from './helper';
 import { basicImportPromise, importAll, mfaImportPromise } from './import_promise';

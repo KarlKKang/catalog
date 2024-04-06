@@ -16,7 +16,7 @@ import { showMessage } from './module/message';
 import { emailSent } from './module/message/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed } from './module/text/message/body';
 import { EMAIL_REGEX } from './module/common/pure';
-import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { ShowPageFunc } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';

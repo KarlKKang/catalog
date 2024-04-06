@@ -13,8 +13,7 @@ import {
 } from './module/dom';
 import { notFound as notFoundTitle } from './module/server/message/title';
 import { notFound as notFoundBody } from './module/server/message/body';
-import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import { redirect } from './module/global';
+import { redirect, type ShowPageFunc } from './module/global';
 import { changeColor, horizontalCenter, setWidth } from './module/style';
 import { CSS_AUTO, CSS_COLOR } from './module/style/value';
 import * as styles from '../css/message.module.scss';

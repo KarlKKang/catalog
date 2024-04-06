@@ -35,8 +35,7 @@ import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } fro
 import { moduleImportError } from '../module/message/param';
 import { popupWindowImport, promptForTotpImport } from '../module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
-import type { ShowPageFunc } from '../module/type/ShowPageFunc';
-import { pgid, redirect } from '../module/global';
+import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';

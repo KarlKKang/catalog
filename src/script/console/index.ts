@@ -17,8 +17,7 @@ import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 import { invalidResponse } from '../module/server/message';
 import { getTable, setOutput, setOutputElement } from './helper';
-import type { ShowPageFunc } from '../module/type/ShowPageFunc';
-import { pgid } from '../module/global';
+import { pgid, type ShowPageFunc } from '../module/global';
 
 import * as styles from '../../css/console.module.scss';
 import { addAutoMultiLanguageClass } from '../module/dom/create_element/multi_language';

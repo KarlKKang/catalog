@@ -7,8 +7,7 @@ import {
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import * as NewsInfo from '../module/type/NewsInfo';
-import type { ShowPageFunc } from '../module/type/ShowPageFunc';
-import { pgid, redirect } from '../module/global';
+import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { importLazyload } from '../module/lazyload';
 import { NEWS_TOP_URL } from './helper';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';

@@ -4,7 +4,7 @@ import {
     body,
     clearSessionStorage, createDivElement,
 } from './module/dom';
-import type { ShowPageFunc } from './module/type/ShowPageFunc';
+import type { ShowPageFunc } from './module/global';
 import { addNavBar } from './module/nav_bar';
 import { NavBarPage } from './module/nav_bar/enum';
 import { getURLParam, scrollToHash } from './module/common';

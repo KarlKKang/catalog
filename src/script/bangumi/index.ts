@@ -15,9 +15,8 @@ import { notFound } from '../module/server/message';
 import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam } from './helper';
 import { importAll } from './import_promise';
-import type { ShowPageFunc } from '../module/type/ShowPageFunc';
 import * as MediaSessionInfo from '../module/type/MediaSessionInfo';
-import { pgid, redirect } from '../module/global';
+import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
 import { addTimeout } from '../module/timer';
 

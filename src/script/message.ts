@@ -16,8 +16,7 @@ import {
     addClass,
     body,
 } from './module/dom';
-import type { ShowPageFunc } from './module/type/ShowPageFunc';
-import { redirect } from './module/global';
+import { redirect, type ShowPageFunc } from './module/global';
 import * as styles from '../css/message.module.scss';
 import { changeColor, horizontalCenter } from './module/style';
 import { CSS_COLOR } from './module/style/value';
