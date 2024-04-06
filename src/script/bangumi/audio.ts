@@ -196,24 +196,24 @@ async function addAudioNode(container: HTMLDivElement, index: number) {
 }
 
 function addAlbumInfo() {
-    const albumInfo = (epInfo as AudioEPInfo).album_info;
-    if (albumInfo.album_title !== '') {
-        const albumTitleElem = createParagraphElement();
-        addClass(albumTitleElem, styles.subTitle, styles.centerAlign);
-        albumTitleElem.innerHTML = albumInfo.album_title; // Album title is in HTML syntax.
+    const { title, artist } = epInfo.album_info;
+    if (title !== undefined) {
+        const titleElem = createParagraphElement();
+        addClass(titleElem, styles.subTitle, styles.centerAlign);
+        titleElem.innerHTML = title; // Album title is in HTML syntax.
         const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
-        if (albumInfo.album_artist !== '') {
-            const albumArtist = createParagraphElement(albumInfo.album_artist);
-            addClass(albumArtist, styles.artist, styles.centerAlign);
-            prependChild(contentContainer, albumArtist);
+        if (artist !== undefined) {
+            const artistElem = createParagraphElement(artist);
+            addClass(artistElem, styles.artist, styles.centerAlign);
+            prependChild(contentContainer, artistElem);
         }
-        prependChild(contentContainer, albumTitleElem);
-    } else if (albumInfo.album_artist !== '') {
+        prependChild(contentContainer, titleElem);
+    } else if (artist !== undefined) {
         const titleElem = getSharedElement(SharedElement.TITLE);
         const artistElem = createSpanElement();
         addClass(artistElem, styles.artist);
         appendChild(artistElem, createBRElement());
-        appendText(artistElem, albumInfo.album_artist);
+        appendText(artistElem, artist);
         appendChild(titleElem, artistElem);
     }
 }

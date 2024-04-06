@@ -38,8 +38,8 @@ type VideoEPInfoPartial = {
 };
 type AudioEPInfoPartial = {
     readonly album_info: {
-        readonly album_title: string;
-        readonly album_artist: string;
+        readonly title: string | undefined;
+        readonly artist: string | undefined;
     };
     readonly files: readonly [AudioFile, ...AudioFile[]];
 };
@@ -114,8 +114,8 @@ function parseAudioEPInfo(epInfo: ReturnType<typeof parseObject>): AudioEPInfoPa
     const albumInfo = parseObject(epInfo.album_info);
     return {
         album_info: {
-            album_title: parseString(albumInfo.album_title),
-            album_artist: parseString(albumInfo.album_artist),
+            title: parseOptional(albumInfo.title, parseString),
+            artist: parseOptional(albumInfo.artist, parseString),
         },
         files: parseNonEmptyTypedArray(epInfo.files, parseAudioFile),
     };
