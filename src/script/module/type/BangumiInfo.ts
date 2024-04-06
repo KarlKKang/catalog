@@ -1,4 +1,4 @@
-import { parseArray, parseBoolean, parseNumber, parseObject, parseString, throwError } from './helper';
+import { parseArray, parseBoolean, parseNumber, parseObject, parseOptional, parseString, throwError } from './helper';
 
 export type AudioFile = {
     readonly title: string;
@@ -71,20 +71,14 @@ function parseVideoFormatInfo(formats: unknown): VideoFormats {
     const formatsParsed: VideoFormat[] = [];
     for (const format of formatsArr) {
         const formatObj = parseObject(format);
-        const tag = formatObj.tag;
-        const video = formatObj.video;
-        const audio = formatObj.audio;
-        const avcFallback = formatObj.avc_fallback;
-        const aacFallback = formatObj.aac_fallback;
-        const directDownload = formatObj.direct_download;
         formatsParsed.push({
             value: parseString(formatObj.value),
-            tag: tag === undefined ? undefined : parseString(tag),
-            video: video === undefined ? undefined : parseString(video),
-            audio: audio === undefined ? undefined : parseString(audio),
-            avc_fallback: avcFallback === undefined ? undefined : parseBoolean(avcFallback),
-            aac_fallback: aacFallback === undefined ? undefined : parseBoolean(aacFallback),
-            direct_download: directDownload === undefined ? undefined : parseBoolean(directDownload),
+            tag: parseOptional(formatObj.tag, parseString),
+            video: parseOptional(formatObj.video, parseString),
+            audio: parseOptional(formatObj.audio, parseString),
+            avc_fallback: parseOptional(formatObj.avc_fallback, parseBoolean),
+            aac_fallback: parseOptional(formatObj.aac_fallback, parseBoolean),
+            direct_download: parseOptional(formatObj.direct_download, parseBoolean),
         });
     }
     const formatFirst = formatsParsed[0];
@@ -174,13 +168,12 @@ function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>): ImageEPInfoPa
 function checkEPInfo(epInfo: unknown): VideoEPInfo | AudioEPInfo | ImageEPInfo {
     const epInfoObj = parseObject(epInfo);
     const ageRestricted = epInfoObj.age_restricted;
-    const seriesOverride = epInfoObj.series_override;
 
     const type = parseString(epInfoObj.type);
     const epInfoComm: EPInfoComm = {
         age_restricted: ageRestricted === false ? false : parseString(ageRestricted),
         dir: parseString(epInfoObj.dir),
-        series_override: seriesOverride === undefined ? undefined : parseString(seriesOverride),
+        series_override: parseOptional(epInfoObj.series_override, parseString),
     };
     if (type === 'video') {
         const videoEPInfo = parseVideoEPInfo(epInfoObj);
@@ -235,13 +228,11 @@ function parseSeriesEP(seriesEP: unknown): SeriesEP {
 
 export function parseBangumiInfo(bangumiInfo: unknown): BangumiInfo {
     const bangumiInfoObj = parseObject(bangumiInfo);
-    const epInfo = checkEPInfo(bangumiInfoObj.ep_info);
-    const titleOverride = bangumiInfoObj.title_override;
     return {
         title: parseString(bangumiInfoObj.title),
-        title_override: titleOverride === undefined ? undefined : parseString(titleOverride),
+        title_override: parseOptional(bangumiInfoObj.title_override, parseString),
         seasons: parseSeasons(bangumiInfoObj.seasons),
         series_ep: parseSeriesEP(bangumiInfoObj.series_ep),
-        ep_info: epInfo,
+        ep_info: checkEPInfo(bangumiInfoObj.ep_info),
     };
 }

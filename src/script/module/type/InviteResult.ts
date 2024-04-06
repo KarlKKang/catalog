@@ -1,4 +1,4 @@
-import { parseBoolean, parseNumber, parseObject } from './helper';
+import { parseBoolean, parseNumber, parseObject, parseOptional } from './helper';
 export type InviteResult = {
     readonly special: boolean | undefined;
     readonly quota: number;
@@ -6,9 +6,8 @@ export type InviteResult = {
 
 export function parseInviteResult(inviteResult: unknown): InviteResult {
     const inviteResultObj = parseObject(inviteResult);
-    const special = inviteResultObj.special;
     return {
-        special: special === undefined ? undefined : parseBoolean(special),
+        special: parseOptional(inviteResultObj.special, parseBoolean),
         quota: parseNumber(inviteResultObj.quota),
     };
 }
