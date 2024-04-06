@@ -2,9 +2,9 @@ export function throwError(message?: string): never {
     throw new Error(message);
 }
 
-export function parseObject(obj: unknown): { [key: string]: unknown } {
-    if (obj instanceof Object && obj.constructor === Object) {
-        return obj as { [key: string]: unknown };
+export function parseObject(obj: unknown) {
+    if (obj instanceof Object) {
+        return obj as { [key: string | number]: unknown };
     }
     throwError();
 }
