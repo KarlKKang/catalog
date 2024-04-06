@@ -106,13 +106,12 @@ async function addAudioNode(container: HTMLDivElement, index: number) {
     const audioEPInfo = epInfo as AudioEPInfo;
     const file = audioEPInfo.files[index] as AudioFile;
 
-    const FLAC_FALLBACK = (file.flac_fallback && !CAN_PLAY_ALAC);
-
+    const FLAC_FALLBACK = (file.flac_fallback === true && !CAN_PLAY_ALAC);
     appendChild(container, getAudioSubtitleNode(file, FLAC_FALLBACK));
 
-    const IS_FLAC = (file.format.toLowerCase() === 'flac' || FLAC_FALLBACK);
-
-    const IS_MP3 = file.format.toLowerCase() === 'mp3';
+    const formatLower = file.format?.toLowerCase();
+    const IS_FLAC = (formatLower === 'flac' || FLAC_FALLBACK);
+    const IS_MP3 = formatLower === 'mp3';
     const CAN_PLAY_MP3 = audioCanPlay('mp3') || canPlay('audio', 'mpeg', ''); // mp3: Firefox; mpeg: Safari and Chrome
     if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { // ALAC has already fallen back to FLAC if not supported.
         showCodecCompatibilityError();
@@ -174,7 +173,7 @@ async function addAudioNode(container: HTMLDivElement, index: number) {
         const audioInstance = new HlsPlayer(playerContainer, configHls, false);
         audioInstance.load(url, {
             onerror: function (errorCode: number | null) {
-                if (IS_FIREFOX && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
+                if (IS_FIREFOX && file.samplerate !== undefined && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
                     showTextErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
                 } else {
                     showPlayerError(errorCode);
@@ -191,7 +190,7 @@ async function addAudioNode(container: HTMLDivElement, index: number) {
     }
 
     function setMediaTitle(audioInstance: PlayerType) {
-        audioInstance.media.title = (file.title === '' ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();
+        audioInstance.media.title = (file.title === undefined ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();
     }
 }
 
@@ -223,9 +222,9 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
     addClass(subtitle, styles.subTitle);
 
     //subtitle
-    if (file.title !== '') {
+    if (file.title !== undefined) {
         appendText(subtitle, file.title);
-        if (file.artist !== '') {
+        if (file.artist !== undefined) {
             const artist = createSpanElement('／' + file.artist);
             addClass(artist, styles.artist);
             appendChild(subtitle, artist);
@@ -233,8 +232,8 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
     }
 
     //format
-    if (file.format !== '') {
-        if (file.title !== '') {
+    if (file.format !== undefined) {
+        if (file.title !== undefined) {
             appendChild(subtitle, createBRElement());
         }
 
@@ -242,7 +241,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
         addClass(format, styles.subTitleFormat);
 
         const samplerate = file.samplerate;
-        if (samplerate !== '') {
+        if (samplerate !== undefined) {
             let samplerateText = samplerate;
             switch (samplerate) {
                 case '44100':
@@ -264,7 +263,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
             appendText(format, ' ' + samplerateText);
 
             const bitdepth = file.bitdepth;
-            if (bitdepth !== '') {
+            if (bitdepth !== undefined) {
                 let bitdepthText = bitdepth;
                 switch (bitdepth) {
                     case '16':

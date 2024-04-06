@@ -1,13 +1,13 @@
 import { parseArray, parseBoolean, parseNonEmptyTypedArray, parseNumber, parseObject, parseOptional, parseString, parseTypedArray, throwError } from './helper';
 
 export type AudioFile = {
-    readonly title: string;
-    readonly artist: string;
-    readonly format: string;
-    readonly samplerate: string;
-    readonly bitdepth: string;
+    readonly title: string | undefined;
+    readonly artist: string | undefined;
+    readonly format: string | undefined;
+    readonly samplerate: string | undefined;
+    readonly bitdepth: string | undefined;
     readonly file_name: string;
-    readonly flac_fallback: boolean;
+    readonly flac_fallback: boolean | undefined;
 };
 type ImageFile = {
     readonly file_name: string;
@@ -100,13 +100,13 @@ function parseVideoEPInfo(epInfo: ReturnType<typeof parseObject>): VideoEPInfoPa
 function parseAudioFile(audioFile: unknown): AudioFile {
     const audioFileObj = parseObject(audioFile);
     return {
-        title: parseString(audioFileObj.title),
-        artist: parseString(audioFileObj.artist),
-        format: parseString(audioFileObj.format),
-        samplerate: parseString(audioFileObj.samplerate),
-        bitdepth: parseString(audioFileObj.bitdepth),
+        title: parseOptional(audioFileObj.title, parseString),
+        artist: parseOptional(audioFileObj.artist, parseString),
+        format: parseOptional(audioFileObj.format, parseString),
+        samplerate: parseOptional(audioFileObj.samplerate, parseString),
+        bitdepth: parseOptional(audioFileObj.bitdepth, parseString),
         file_name: parseString(audioFileObj.file_name),
-        flac_fallback: parseBoolean(audioFileObj.flac_fallback),
+        flac_fallback: parseOptional(audioFileObj.flac_fallback, parseBoolean),
     };
 }
 
