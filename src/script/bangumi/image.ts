@@ -4,7 +4,6 @@ import {
     removeRightClick,
 } from '../module/common';
 import {
-    createElement,
     addClass,
     appendChild,
     prependChild,
@@ -18,12 +17,13 @@ import {
     createSpanElement,
     insertBefore,
     replaceChildren,
+    createAnchorElement,
 } from '../module/dom';
-import type { ImageEPInfo } from '../module/type/BangumiInfo';
+import { EPInfoKey, ImageFileKey, type ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
-import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
+import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 import { lazyloadImportPromise } from './import_promise';
 import { SharedElement, getSharedElement } from './shared_var';
@@ -39,10 +39,10 @@ export default async function (
 ) {
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
 
-    if (epInfo.gallery_title !== undefined) {
+    if (epInfo[EPInfoKey.GALLERY_TITLE] !== undefined) {
         const title = createParagraphElement();
         addClass(title, styles.subTitle, styles.centerAlign);
-        title.innerHTML = epInfo.gallery_title; // Gallery title is in HTML syntax.
+        title.innerHTML = epInfo[EPInfoKey.GALLERY_TITLE]; // Gallery title is in HTML syntax.
         prependChild(contentContainer, title);
     }
 
@@ -66,21 +66,23 @@ export default async function (
     if (currentPgid !== pgid) {
         return;
     }
-    lazyloadModule[LazyloadProp.SET_CREDENTIAL](mediaSessionCredential.credential, SessionTypes.MEDIA);
-    showImages(epInfo.files, baseURL, mediaSessionCredential.credential, lazyloadModule);
+    const credential = mediaSessionCredential[MediaSessionInfoKey.CREDENTIAL];
+    lazyloadModule[LazyloadProp.SET_CREDENTIAL](credential, SessionTypes.MEDIA);
+    showImages(epInfo[EPInfoKey.FILES], baseURL, credential, lazyloadModule);
 }
 
-function showImages(files: ImageEPInfo['files'], baseURL: string, credential: string, lazyloadModule: Awaited<typeof lazyloadImportPromise>) {
+function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, credential: string, lazyloadModule: Awaited<typeof lazyloadImportPromise>) {
     const mediaHolder = getSharedElement(SharedElement.MEDIA_HOLDER);
     replaceChildren(mediaHolder);
     for (const file of files) {
+        const fileName = file[ImageFileKey.FILE_NAME];
         const imageNode = createDivElement();
         const lazyloadNode = createDivElement();
         const downloadPanel = createDivElement();
         const showFullSizeButton = createButtonElement('フルサイズで表示');
         const downloadButton = createButtonElement('ダウンロード');
         const buttonFlexbox = createDivElement();
-        const downloadAnchor = createElement('a') as HTMLAnchorElement;
+        const downloadAnchor = createAnchorElement();
 
         addClass(imageNode, styles.imageContainer);
         addClass(lazyloadNode, styles.image);
@@ -94,7 +96,7 @@ function showImages(files: ImageEPInfo['files'], baseURL: string, credential: st
         appendChild(downloadPanel, buttonFlexbox);
 
         hideElement(downloadAnchor);
-        downloadAnchor.download = file.file_name;
+        downloadAnchor.download = fileName;
         appendChild(downloadPanel, downloadAnchor); // The element need to be in the document for some old browsers like Firefox <= 69.
 
         removeRightClick(lazyloadNode);
@@ -105,9 +107,9 @@ function showImages(files: ImageEPInfo['files'], baseURL: string, credential: st
         appendChild(mediaHolder, imageNode);
 
         addEventListener(showFullSizeButton, 'click', () => {
-            openImageWindow(baseURL, file.file_name, credential, SessionTypes.MEDIA);
+            openImageWindow(baseURL, fileName, credential, SessionTypes.MEDIA);
         });
-        lazyloadModule[LazyloadProp.DEFAULT](lazyloadNode, baseURL + encodeCFURIComponent(file.file_name), file.file_name, {
+        lazyloadModule[LazyloadProp.DEFAULT](lazyloadNode, baseURL + encodeCFURIComponent(fileName), fileName, {
             delay: 250,
             onDataLoad: (data: Blob) => {
                 addEventListener(downloadButton, 'click', () => {

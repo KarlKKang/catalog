@@ -1,18 +1,24 @@
 import { parseNumber, parseObject, parseOptional, parseString } from './helper';
 
+export const enum NewsInfoKey {
+    TITLE,
+    CREATE_TIME,
+    UPDATE_TIME,
+    CREDENTIAL,
+}
 export type NewsInfo = {
-    readonly title: string;
-    readonly create_time: number;
-    readonly update_time: number | undefined;
-    readonly credential: string;
+    readonly [NewsInfoKey.TITLE]: string;
+    readonly [NewsInfoKey.CREATE_TIME]: number;
+    readonly [NewsInfoKey.UPDATE_TIME]: number | undefined;
+    readonly [NewsInfoKey.CREDENTIAL]: string;
 };
 
 export function parseNewsInfo(newsInfo: unknown): NewsInfo {
     const newsInfoObj = parseObject(newsInfo);
     return {
-        title: parseString(newsInfoObj.title),
-        create_time: parseNumber(newsInfoObj.create_time),
-        update_time: parseOptional(newsInfoObj.update_time, parseNumber),
-        credential: parseString(newsInfoObj.credential),
+        [NewsInfoKey.TITLE]: parseString(newsInfoObj.title),
+        [NewsInfoKey.CREATE_TIME]: parseNumber(newsInfoObj.create_time),
+        [NewsInfoKey.UPDATE_TIME]: parseOptional(newsInfoObj.update_time, parseNumber),
+        [NewsInfoKey.CREDENTIAL]: parseString(newsInfoObj.credential),
     };
 }

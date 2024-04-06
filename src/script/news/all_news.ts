@@ -10,7 +10,6 @@ import {
     body,
     createParagraphElement,
 } from '../module/dom';
-import * as AllNewsInfo from '../module/type/AllNewsInfo';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTime } from '../module/common/pure';
 import { redirect } from '../module/global';
@@ -18,10 +17,11 @@ import { allResultsShown, loading, noResult } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
 import { lineClamp as lineClampClass } from '../../css/line_clamp.module.scss';
 import { NEWS_TOP_URL } from './helper';
+import { type AllNewsInfo, parseAllNewsInfo, type Pivot, AllNewsInfoKey, AllNewsInfoEntryKey } from '../module/type/AllNewsInfo';
 
-let pivot: AllNewsInfo.Pivot;
+let pivot: Pivot;
 
-export default function (allNewsInfo: AllNewsInfo.AllNewsInfo) {
+export default function (allNewsInfo: AllNewsInfo) {
     pivot = 0;
     const container = createDivElement();
     addClass(container, styles.container);
@@ -43,15 +43,15 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement, i
     }
     sendServerRequest('get_all_news?pivot=' + pivot, {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-            showAllNews(parseResponse(response, AllNewsInfo.parseAllNewsInfo), container, loadingTextContainer, infiniteScrolling);
+            showAllNews(parseResponse(response, parseAllNewsInfo), container, loadingTextContainer, infiniteScrolling);
         },
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
 }
 
-function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo, container: HTMLElement, loadingTextContainer: HTMLElement, infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>): void {
-    const newPivot = allNewsInfo.pivot;
-    const allNewsInfoEntries = allNewsInfo.news;
+function showAllNews(allNewsInfo: AllNewsInfo, container: HTMLElement, loadingTextContainer: HTMLElement, infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>): void {
+    const newPivot = allNewsInfo[AllNewsInfoKey.PIVOT];
+    const allNewsInfoEntries = allNewsInfo[AllNewsInfoKey.NEWS];
 
     if (pivot === 0 && allNewsInfoEntries.length === 0) {
         replaceText(loadingTextContainer, noResult);
@@ -70,13 +70,13 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo, container: HTMLElemen
 
         const dateContainer = createDivElement();
         addClass(dateContainer, styles.date);
-        const updateTime = getLocalTime(entry.update_time);
+        const updateTime = getLocalTime(entry[AllNewsInfoEntryKey.UPDATE_TIME]);
         appendText(dateContainer, updateTime.year + '年');
         appendChild(dateContainer, createBRElement());
         appendText(dateContainer, updateTime.month.toString().padStart(2, '0') + '月' + updateTime.date.toString().padStart(2, '0') + '日');
 
         const titleContainer = createDivElement();
-        appendText(titleContainer, entry.title);
+        appendText(titleContainer, entry[AllNewsInfoEntryKey.TITLE]);
         addClass(titleContainer, styles.overviewTitle);
         addClass(titleContainer, lineClampClass);
 
@@ -84,7 +84,7 @@ function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo, container: HTMLElemen
         appendChild(overviewContainer, titleContainer);
 
         addEventListener(overviewContainer, 'click', () => {
-            redirect(NEWS_TOP_URL + entry.id);
+            redirect(NEWS_TOP_URL + entry[AllNewsInfoEntryKey.ID]);
         });
 
         appendChild(container, overviewContainer);

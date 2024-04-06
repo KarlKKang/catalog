@@ -1,17 +1,28 @@
 import { parseNumber, parseObject, parseOptional, parseString, parseTypedArray } from './helper';
 import { parseMaintenanceInfo, type MaintenanceInfo } from './MaintenanceInfo';
 
-export interface SeriesEntry {
-    readonly title: string;
-    readonly thumbnail: string;
-    readonly id: string;
+export const enum SeriesEntryKey {
+    TITLE,
+    THUMBNAIL,
+    ID,
 }
+export interface SeriesEntry {
+    readonly [SeriesEntryKey.TITLE]: string;
+    readonly [SeriesEntryKey.THUMBNAIL]: string;
+    readonly [SeriesEntryKey.ID]: string;
+}
+
 export type Series = readonly SeriesEntry[];
 export type Pivot = 'EOF' | number;
+export const enum SeriesInfoKey {
+    SERIES,
+    PIVOT,
+    MAINTENANCE,
+}
 export type SeriesInfo = {
-    readonly series: Series;
-    readonly pivot: Pivot;
-    readonly maintenance: MaintenanceInfo | undefined;
+    readonly [SeriesInfoKey.SERIES]: Series;
+    readonly [SeriesInfoKey.PIVOT]: Pivot;
+    readonly [SeriesInfoKey.MAINTENANCE]: MaintenanceInfo | undefined;
 };
 
 export function parseSeriesInfo(seriesInfo: unknown): SeriesInfo {
@@ -19,16 +30,16 @@ export function parseSeriesInfo(seriesInfo: unknown): SeriesInfo {
     const series = parseTypedArray(seriesInfoObj.series, (seriesEntry): SeriesEntry => {
         const seriesEntryObj = parseObject(seriesEntry);
         return {
-            title: parseString(seriesEntryObj.title),
-            thumbnail: parseString(seriesEntryObj.thumbnail),
-            id: parseString(seriesEntryObj.id),
+            [SeriesEntryKey.TITLE]: parseString(seriesEntryObj.title),
+            [SeriesEntryKey.THUMBNAIL]: parseString(seriesEntryObj.thumbnail),
+            [SeriesEntryKey.ID]: parseString(seriesEntryObj.id),
         };
     });
     const pivot = seriesInfoObj.pivot;
     return {
-        series: series,
-        pivot: pivot === 'EOF' ? pivot : parseNumber(pivot),
-        maintenance: parseOptional(seriesInfoObj.maintenance, parseMaintenanceInfo)
+        [SeriesInfoKey.SERIES]: series,
+        [SeriesInfoKey.PIVOT]: pivot === 'EOF' ? pivot : parseNumber(pivot),
+        [SeriesInfoKey.MAINTENANCE]: parseOptional(seriesInfoObj.maintenance, parseMaintenanceInfo)
     };
 }
 

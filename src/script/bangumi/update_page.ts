@@ -24,7 +24,6 @@ import {
 import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
-import type * as BangumiInfo from '../module/type/BangumiInfo';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
@@ -35,6 +34,7 @@ import { hideElement, setMaxHeight, setMinHeight, setOpacity, setPaddingBottom, 
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import '../../font/dist/Segoe/SegMDL2.css'; // Needed for the show more/less button.
 import * as styles from '../../css/bangumi.module.scss';
+import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoEPInfo, AudioEPInfo, ImageEPInfo } from '../module/type/BangumiInfo';
 
 let seriesID: string;
 let epIndex: number;
@@ -42,7 +42,7 @@ let epIndex: number;
 let currentPage: Awaited<typeof videoImportPromise> | Awaited<typeof audioImportPromise> | Awaited<typeof imageImportPromise> | null = null;
 
 export default async function (
-    response: BangumiInfo.BangumiInfo,
+    response: BangumiInfo,
     _seriesID: string,
     _epIndex: number,
     createMediaSessionPromise: Promise<MediaSessionInfo>,
@@ -69,21 +69,21 @@ export default async function (
     initializeSharedVars();
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
 
-    const epInfo = response.ep_info;
-    const title = response.title;
-    const titleOverride = response.title_override;
+    const epInfo = response[BangumiInfoKey.EP_INFO];
+    const title = response[BangumiInfoKey.TITLE];
+    const titleOverride = response[BangumiInfoKey.TITLE_OVERRIDE];
     if (titleOverride !== undefined) {
         appendText(titleElem, titleOverride);
         setTitle(parseCharacters(titleOverride) + ' | ' + getTitle());
     } else {
         appendText(titleElem, title);
-        setTitle(parseCharacters(title) + '[' + response.series_ep[epIndex] + '] | ' + getTitle());
+        setTitle(parseCharacters(title) + '[' + response[BangumiInfoKey.SERIES_EP][epIndex] + '] | ' + getTitle());
     }
 
-    updateEPSelector(response.series_ep, epSelector);
-    updateSeasonSelector(response.seasons, seasonSelector);
+    updateEPSelector(response[BangumiInfoKey.SERIES_EP], epSelector);
+    updateSeasonSelector(response[BangumiInfoKey.SEASONS], seasonSelector);
 
-    const ageRestricted = epInfo.age_restricted;
+    const ageRestricted = epInfo[EPInfoKey.AGE_RESTRICTED];
 
     if (ageRestricted !== undefined) {
         let warningTitle = '年齢認証';
@@ -119,9 +119,9 @@ export default async function (
 
 
     /////////////////////////////////////////////Add Media/////////////////////////////////////////////
-    const type = epInfo.type;
-    const seriesOverride = epInfo.series_override;
-    const baseURL = CDN_URL + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo.dir) + '/';
+    const type = epInfo[EPInfoKey.TYPE];
+    const seriesOverride = epInfo[EPInfoKey.SERIES_OVERRIDE];
+    const baseURL = CDN_URL + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo[EPInfoKey.DIR]) + '/';
 
     const currentPgid = pgid;
     if (type === 'video') {
@@ -136,7 +136,7 @@ export default async function (
         if (currentPgid !== pgid) {
             return;
         }
-        currentPage.default(seriesID, epIndex, epInfo, baseURL, createMediaSessionPromise);
+        currentPage.default(seriesID, epIndex, epInfo as VideoEPInfo, baseURL, createMediaSessionPromise);
     } else {
         if (type === 'audio') {
             try {
@@ -150,7 +150,7 @@ export default async function (
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(seriesID, epIndex, epInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
+            currentPage.default(seriesID, epIndex, epInfo as AudioEPInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
         } else {
             try {
                 currentPage = await imageImportPromise;
@@ -163,12 +163,12 @@ export default async function (
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(epInfo, baseURL, createMediaSessionPromise);
+            currentPage.default(epInfo as ImageEPInfo, baseURL, createMediaSessionPromise);
         }
     }
 }
 
-function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElement) {
+function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
     const epButtonWrapper = createDivElement();
     appendChild(epSelector, epButtonWrapper);
     let minHeight = Number.POSITIVE_INFINITY;
@@ -305,16 +305,17 @@ function updateEPSelector(seriesEP: BangumiInfo.SeriesEP, epSelector: HTMLElemen
     addEventListener(w, 'resize', styleEPSelector);
 }
 
-function updateSeasonSelector(seasons: BangumiInfo.Seasons, seasonSelector: HTMLElement) {
+function updateSeasonSelector(seasons: Seasons, seasonSelector: HTMLElement) {
     const seasonButtonWrapper = createDivElement();
 
     if (seasons.length !== 0) {
         for (const season of seasons) {
             const seasonButton = createDivElement();
-            const seasonText = createParagraphElement(season.name);
+            const seasonText = createParagraphElement(season[SeasonKey.NAME]);
 
-            if (season.id !== seriesID) {
-                const targetSeries = season.id;
+            const id = season[SeasonKey.ID];
+            if (id !== seriesID) {
+                const targetSeries = id;
                 addEventListener(seasonButton, 'click', () => { goToEP(targetSeries, 1); });
             } else {
                 addClass(seasonButton, styles.currentSeason);

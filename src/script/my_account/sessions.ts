@@ -11,7 +11,7 @@ import {
     remove,
     replaceChildren,
 } from '../module/dom';
-import type { Sessions } from '../module/type/Sessions';
+import { SessionKey, type Sessions } from '../module/type/Sessions';
 import { SharedElement, getSharedElement, sessionLogoutButtons } from './shared_var';
 import { getLocalTimeString } from '../module/common/pure';
 import { changeColor, hideElement, showElement } from '../module/style';
@@ -30,17 +30,17 @@ export default function (sessions: Sessions) {
         const innerContainer = createDivElement();
         appendChild(outerContainer, innerContainer);
 
-        appendParagraph('場所：' + session.country, innerContainer);
-        appendParagraph('IPアドレス：' + session.ip, innerContainer);
+        appendParagraph('場所：' + session[SessionKey.COUNTRY], innerContainer);
+        appendParagraph('IPアドレス：' + session[SessionKey.IP], innerContainer);
 
-        const [browser, os] = parseBrowser(session.ua);
+        const [browser, os] = parseBrowser(session[SessionKey.UA]);
         appendParagraph('ブラウザ：' + browser, innerContainer);
         appendParagraph('OS：' + os, innerContainer);
 
-        appendParagraph('最初のログイン：' + getLocalTimeString(session.login_time, true, true), innerContainer);
-        appendParagraph('最近のアクティビティ：' + getLocalTimeString(session.last_active_time, true, true), innerContainer);
+        appendParagraph('最初のログイン：' + getLocalTimeString(session[SessionKey.LOGIN_TIME], true, true), innerContainer);
+        appendParagraph('最近のアクティビティ：' + getLocalTimeString(session[SessionKey.LAST_ACTIVE_TIME], true, true), innerContainer);
 
-        const sessionID = session.id;
+        const sessionID = session[SessionKey.ID];
         if (sessionID === undefined) {
             const thisDevicePrompt = createParagraphElement('※このデバイスです。');
             addClass(thisDevicePrompt, styles.warning);

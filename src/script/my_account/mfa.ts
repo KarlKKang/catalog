@@ -24,8 +24,7 @@ import {
     tooManyFailedLogin,
     loginFailed,
 } from '../module/text/message/body';
-import * as TOTPInfo from '../module/type/TOTPInfo';
-import * as RecoveryCodeInfo from '../module/type/RecoveryCodeInfo';
+import { type TOTPInfo, TOTPInfoKey, parseTotpInfo } from '../module/type/TOTPInfo';
 import { toCanvas } from 'qrcode';
 import { addInterval, removeInterval } from '../module/timer';
 import { pgid } from '../module/global';
@@ -42,6 +41,7 @@ import '../../font/dist/CourierNew/CourierNew-Regular.css';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/my_account.module.scss';
 import { CSS_COLOR, CSS_CURSOR } from '../module/style/value';
+import { type RecoveryCodeInfo, parseRecoveryCodeInfo } from '../module/type/RecoveryCodeInfo';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
@@ -63,7 +63,7 @@ export function enableMfa() {
                 disableAllInputs(false);
                 return true;
             }
-            promptForTotpSetup(parseResponse(response, TOTPInfo.parseTotpInfo));
+            promptForTotpSetup(parseResponse(response, parseTotpInfo));
             return false;
         },
         mfaWarning
@@ -116,7 +116,7 @@ export function generateRecoveryCode() {
                 showElement(recoveryCodeWarning);
                 disableAllInputs(false);
             } else {
-                showRecoveryCode(parseResponse(response, RecoveryCodeInfo.parseRecoveryCodeInfo), () => {
+                showRecoveryCode(parseResponse(response, parseRecoveryCodeInfo), () => {
                     hideElement(getSharedElement(SharedElement.recoveryCodeInfo));
                     disableAllInputs(false);
                 });
@@ -236,7 +236,7 @@ async function handleFailedEmailOtp(
     retryCallback(currentEmailOtpPopupWindow);
 }
 
-async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
+async function promptForTotpSetup(totpInfo: TOTPInfo) {
     const currentPgid = pgid;
     const popupWindow = await popupWindowImportPromise;
     if (currentPgid !== pgid) {
@@ -245,10 +245,11 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
 
     const promptText = createParagraphElement('二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
+    const totpURI = totpInfo[TOTPInfoKey.URI];
     const qrcode = createCanvasElement();
     addClass(qrcode, styles.totpQrcode);
     horizontalCenter(qrcode);
-    toCanvas(qrcode, totpInfo.uri, { errorCorrectionLevel: 'H', margin: 0 }, () => {
+    toCanvas(qrcode, totpURI, { errorCorrectionLevel: 'H', margin: 0 }, () => {
         setHeight(qrcode, null);
     });
 
@@ -256,8 +257,8 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     addClass(uriElem, styles.totpUri);
     const uriLink = createAnchorElement();
     addClass(uriLink, commonStyles.link);
-    appendText(uriLink, totpInfo.uri);
-    uriLink.href = totpInfo.uri;
+    appendText(uriLink, totpURI);
+    uriLink.href = totpURI;
     appendChild(uriElem, uriLink);
 
     const warningText = createParagraphElement(failedTotp);
@@ -314,7 +315,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                     showElement(mfaWarning);
                     disableAllInputs(false);
                 } else {
-                    showRecoveryCode(parseResponse(response, RecoveryCodeInfo.parseRecoveryCodeInfo), () => {
+                    showRecoveryCode(parseResponse(response, parseRecoveryCodeInfo), () => {
                         updateMfaUI(true);
                         changeColor(mfaWarning, CSS_COLOR.GREEN);
                         replaceText(mfaWarning, '二要素認証が有効になりました。');
@@ -323,7 +324,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
                     });
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: 'p=' + totpInfo.p + '&totp=' + totp,
+            [ServerRequestOptionProp.CONTENT]: 'p=' + totpInfo[TOTPInfoKey.P] + '&totp=' + totp,
             [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     };
@@ -339,7 +340,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo.TOTPInfo) {
     });
 }
 
-async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo.RecoveryCodeInfo, completedCallback: () => void) {
+async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo, completedCallback: () => void) {
     const currentPgid = pgid;
     const popupWindowInitialize = (await popupWindowImportPromise).initializePopupWindow;
     if (currentPgid !== pgid) {

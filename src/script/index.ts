@@ -31,7 +31,6 @@ import {
     body,
     disableInput,
 } from './module/dom';
-import * as SeriesInfo from './module/type/SeriesInfo';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from './module/infinite_scrolling';
 import { isbot } from 'isbot';
 import { getLocalTimeString } from './module/common/pure';
@@ -45,8 +44,10 @@ import * as commonStyles from '../css/common.module.scss';
 import * as styles from '../css/index.module.scss';
 import { lineClamp as lineClampClass } from '../css/line_clamp.module.scss';
 import { CSS_COLOR } from './module/style/value';
+import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntryKey } from './module/type/SeriesInfo';
+import { MaintenanceInfoKey } from './module/type/MaintenanceInfo';
 
-let pivot: SeriesInfo.Pivot;
+let pivot: Pivot;
 let keywords: string;
 let currentRequest: XMLHttpRequest | null = null;
 
@@ -116,9 +117,10 @@ export default function (showPage: ShowPageFunc) {
         showPageCallback(seriesInfo);
     }, false);
 
-    function showPageCallback(seriesInfo: SeriesInfo.SeriesInfo) {
+    function showPageCallback(seriesInfo: SeriesInfo) {
         appendChildren(body, searchBar, containerElem, loadingTextContainer, positionDetector);
-        if (seriesInfo.maintenance !== undefined) {
+        const maintenanceInfo = seriesInfo[SeriesInfoKey.MAINTENANCE];
+        if (maintenanceInfo !== undefined) {
             const annoucementOuterContainer = createDivElement();
             const announcementInnerContainer = createDivElement();
             addClass(annoucementOuterContainer, styles.announcement);
@@ -130,11 +132,12 @@ export default function (showPage: ShowPageFunc) {
             changeColor(announcementTitle, CSS_COLOR.ORANGE);
             appendChild(announcementInnerContainer, announcementTitle);
 
-            const maintenanceInfo = seriesInfo.maintenance;
             let message = '';
-            const startTime = getLocalTimeString(maintenanceInfo.start, false, false);
-            if (maintenanceInfo.period > 0) {
-                const endTime = getLocalTimeString(maintenanceInfo.start + maintenanceInfo.period, false, false);
+            const maintenanceStart = maintenanceInfo[MaintenanceInfoKey.START];
+            const maintenancePeriod = maintenanceInfo[MaintenanceInfoKey.PERIOD];
+            const startTime = getLocalTimeString(maintenanceStart, false, false);
+            if (maintenancePeriod > 0) {
+                const endTime = getLocalTimeString(maintenanceStart + maintenancePeriod, false, false);
                 message = `${startTime}～${endTime}の間、メンテナンスを実施する予定です。`;
             } else {
                 message = `メンテナンス開始は${startTime}を予定しております。`;
@@ -172,9 +175,9 @@ export default function (showPage: ShowPageFunc) {
         });
     }
 
-    function showSeries(seriesInfo: SeriesInfo.SeriesInfo): void {
-        const series = seriesInfo.series;
-        const newPivot = seriesInfo.pivot;
+    function showSeries(seriesInfo: SeriesInfo): void {
+        const series = seriesInfo[SeriesInfoKey.SERIES];
+        const newPivot = seriesInfo[SeriesInfoKey.PIVOT];
 
         if (pivot === 0 && series.length === 0) {
             addClass(containerElem, styles.empty);
@@ -190,10 +193,11 @@ export default function (showPage: ShowPageFunc) {
 
         pivot = newPivot;
         for (const seriesEntry of series) {
+            const title = seriesEntry[SeriesEntryKey.TITLE];
             const seriesNode = createDivElement();
             const thumbnailNode = createDivElement();
             const overlay = createDivElement();
-            const titleNode = createParagraphElement(seriesEntry.title);
+            const titleNode = createParagraphElement(title);
 
             appendChild(seriesNode, thumbnailNode);
             appendChild(seriesNode, overlay);
@@ -203,11 +207,11 @@ export default function (showPage: ShowPageFunc) {
             addClass(thumbnailNode, styles.thumbnail);
             addClass(titleNode, lineClampClass);
 
-            addEventListener(seriesNode, 'click', () => { goToSeries(seriesEntry.id); });
+            addEventListener(seriesNode, 'click', () => { goToSeries(seriesEntry[SeriesEntryKey.ID]); });
             eventTargetsTracker.add(seriesNode);
 
             appendChild(containerElem, seriesNode);
-            lazyload[LazyloadProp.DEFAULT](thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry.thumbnail, 'サムネイル：' + seriesEntry.title);
+            lazyload[LazyloadProp.DEFAULT](thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry[SeriesEntryKey.THUMBNAIL], 'サムネイル：' + title);
         }
 
         infiniteScrolling[InfiniteScrollingProp.SET_ENABLED](true);
@@ -284,7 +288,7 @@ function getURLKeywords() {
     }
 }
 
-function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo, xhr?: XMLHttpRequest) => void, showSessionEndedMessage: boolean) {
+function getSeries(callback: (seriesInfo: SeriesInfo, xhr?: XMLHttpRequest) => void, showSessionEndedMessage: boolean) {
     if (pivot === 'EOF') {
         return;
     }
@@ -296,7 +300,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo.SeriesInfo, xhr?: XMLHttpRe
             if (currentRequest !== request) {
                 return;
             }
-            callback(parseResponse(response, SeriesInfo.parseSeriesInfo), request);
+            callback(parseResponse(response, parseSeriesInfo), request);
         },
         [ServerRequestOptionProp.LOGOUT_PARAM]: keywords.slice(0, -1),
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: showSessionEndedMessage,

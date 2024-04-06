@@ -6,7 +6,6 @@ import {
     changeURL,
 } from '../module/dom';
 import { showMessage } from '../module/message';
-import * as NewsInfo from '../module/type/NewsInfo';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { importLazyload } from '../module/lazyload';
 import { NEWS_TOP_URL } from './helper';
@@ -14,6 +13,7 @@ import * as AllNewsInfo from '../module/type/AllNewsInfo';
 import { moduleImportError } from '../module/message/param';
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
+import { NewsInfoKey, parseNewsInfo } from '../module/type/NewsInfo';
 
 let offloadModule: (() => void) | null = null;
 
@@ -74,7 +74,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
     const logoutParam = 'news=' + newsID + (hash === '' ? '' : ('&hash=' + hash));
     sendServerRequest('get_news', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
-            const parsedResponse = parseResponse(response, NewsInfo.parseNewsInfo);
+            const parsedResponse = parseResponse(response, parseNewsInfo);
             const currentPgid = pgid;
             let newsModule: Awaited<typeof newsModuleImport>;
             try {
@@ -90,7 +90,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             }
             offloadModule = newsModule.offload;
             showPage();
-            setUpSessionAuthentication(parsedResponse.credential, logoutParam);
+            setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], logoutParam);
             newsModule.default(parsedResponse, lazyloadImportPromise, newsID);
         },
         [ServerRequestOptionProp.CONTENT]: 'id=' + newsID,

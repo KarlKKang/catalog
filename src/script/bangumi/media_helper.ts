@@ -28,7 +28,7 @@ import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper';
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
-import { VideoFormat, VideoFormats } from '../module/type/BangumiInfo';
+import { VideoFormat, VideoFormatKey, VideoFormats } from '../module/type/BangumiInfo';
 import { addTimeout } from '../module/timer';
 import { CustomMediaError } from '../module/player/media_error';
 import { SharedElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
@@ -171,7 +171,7 @@ export function buildDownloadAccordion(
     appendChild(containerSelectMenu, containerOptionMP4);
     appendChild(containerSelector, containerSelectMenu);
     appendChild(downloadOptionsContainer, containerSelector);
-    if (videoFormats === null || videoFormats.initialFormat.direct_download) {
+    if (videoFormats === null || videoFormats.initialFormat[VideoFormatKey.DIRECT_DOWNLOAD]) {
         hideElement(containerSelector);
     }
 
@@ -195,7 +195,7 @@ export function buildDownloadAccordion(
             if (format === undefined) {
                 return;
             }
-            if (format.direct_download !== true) {
+            if (format[VideoFormatKey.DIRECT_DOWNLOAD] !== true) {
                 requestContent += '&container=' + containerSelectMenu.value;
             }
         }

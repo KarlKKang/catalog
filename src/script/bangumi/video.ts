@@ -25,7 +25,7 @@ import {
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
-import type { VideoEPInfo, VideoFormat } from '../module/type/BangumiInfo';
+import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';
 import {
     MSE_SUPPORTED,
     NATIVE_HLS_SUPPORTED,
@@ -44,7 +44,7 @@ import { getFormatIndex, createQuery } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, showTextErrorMessage, type AccordionInstance } from './media_helper';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { CustomMediaError } from '../module/player/media_error';
-import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
+import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
 import { SharedElement, errorMessageElement, getSharedElement } from './shared_var';
@@ -99,16 +99,16 @@ export default function (
     const play = getURLParam('play') === '1';
 
     // Title
-    if (epInfo.title !== undefined) {
+    if (epInfo[EPInfoKey.TITLE] !== undefined) {
         const title = createParagraphElement();
         addClass(title, styles.subTitle, styles.centerAlign);
-        title.innerHTML = epInfo.title; // This title is in HTML syntax.
+        title.innerHTML = epInfo[EPInfoKey.TITLE]; // This title is in HTML syntax.
         prependChild(contentContainer, title);
     }
 
     // Formats
     let formatIndex = getFormatIndex();
-    const formats = epInfo.formats;
+    const formats = epInfo[EPInfoKey.FORMATS];
 
     const formatContainer = createDivElement();
     addClass(formatContainer, styles.formatContainer);
@@ -124,8 +124,8 @@ export default function (
     formats.forEach((format, index) => {
         const option = createOptionElement();
 
-        option.value = format.value;
-        appendText(option, (format.tag === undefined) ? format.value : format.tag);
+        option.value = format[VideoFormatKey.VALUE];
+        appendText(option, (format[VideoFormatKey.TAG] === undefined) ? format[VideoFormatKey.VALUE] : format[VideoFormatKey.TAG]);
 
         if (index === formatIndex) {
             option.selected = true;
@@ -150,7 +150,7 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
+        const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
         appendChild(contentContainer, downloadAccordion);
         addEventListener(selectMenu, 'change', () => { formatSwitch(selectMenu, formatDisplay, containerSelector); });
     });
@@ -164,14 +164,14 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDi
     disableDropdown(formatSelectMenu, true);
     const formatIndex = formatSelectMenu.selectedIndex;
 
-    const format = epInfo.formats[formatIndex];
+    const format = epInfo[EPInfoKey.FORMATS][formatIndex];
     if (format === undefined) {
         return;
     }
     currentFormat = format;
     updateURLParam(seriesID, epIndex, formatIndex);
 
-    if (format.direct_download) {
+    if (format[VideoFormatKey.DIRECT_DOWNLOAD]) {
         hideElement(containerSelector);
     } else {
         showElement(containerSelector);
@@ -208,14 +208,14 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
     let USE_AVC = true;
     let AVC_FALLBACK = false;
 
-    if (currentFormat.video === 'dv5') {
+    if (currentFormat[VideoFormatKey.VIDEO] === 'dv5') {
         if (!videoCanPlay('dvh1.05.06')) {
             showDolbyVisionError();
             return;
         }
         formatString = 'HEVC/Main 10/L5.1/High/dvhe.05.06';
         USE_AVC = false;
-    } else if (currentFormat.video === 'hdr10') {
+    } else if (currentFormat[VideoFormatKey.VIDEO] === 'hdr10') {
         if (!videoCanPlay('hvc1.2.4.H153.90')) {
             showErrorMessage(incompatibleTitle, [
                 createTextNode('お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは'),
@@ -231,15 +231,15 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             createLinkElem('こちら', TOP_URL + '/news/0p7hzGpxfMh'),
             createTextNode('をご覧ください。')
         ], null]);
-    } else if (currentFormat.video === 'hevc41') {
-        const CAN_PLAY_HEVC = await canPlayHEVC(currentFormat.avc_fallback);
+    } else if (currentFormat[VideoFormatKey.VIDEO] === 'hevc41') {
+        const CAN_PLAY_HEVC = await canPlayHEVC(currentFormat[VideoFormatKey.AVC_FALLBACK]);
         if (currentPgid !== pgid) {
             return;
         }
         if (CAN_PLAY_HEVC) {
             formatString = 'HEVC/Main 10/L4.1/High';
             USE_AVC = false;
-        } else if (currentFormat.avc_fallback) {
+        } else if (currentFormat[VideoFormatKey.AVC_FALLBACK]) {
             AVC_FALLBACK = true;
         } else {
             showCodecCompatibilityError();
@@ -260,11 +260,11 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
     let AAC_FALLBACK = false;
     let USE_AAC = false;
     let audioOffset = 0;
-    if (currentFormat.audio !== 'none') {
+    if (currentFormat[VideoFormatKey.AUDIO] !== 'none') {
         USE_AAC = true;
 
-        if (currentFormat.audio !== undefined) {
-            if (currentFormat.audio.startsWith('atmos')) {
+        if (currentFormat[VideoFormatKey.AUDIO] !== undefined) {
+            if (currentFormat[VideoFormatKey.AUDIO].startsWith('atmos')) {
                 mediaMessageQueue.push(['Dolby Atmos®について', [
                     createTextNode('Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは'),
                     createLinkElem('こちら', TOP_URL + '/news/yMq2BLvq-8Yq'),
@@ -272,11 +272,11 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 ], null]);
             }
 
-            if (currentFormat.audio.startsWith('atmos_ac3')) {
+            if (currentFormat[VideoFormatKey.AUDIO].startsWith('atmos_ac3')) {
                 if (audioCanPlay('ac-3')) {
                     formatString += ' + AC-3';
                     USE_AAC = false;
-                } else if (currentFormat.aac_fallback) {
+                } else if (currentFormat[VideoFormatKey.AAC_FALLBACK]) {
                     AAC_FALLBACK = true;
                 } else {
                     showCodecCompatibilityError();
@@ -292,7 +292,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 showCodecCompatibilityError();
                 return;
             }
-            if (currentFormat.audio !== 'raw_aac_lc') {
+            if (currentFormat[VideoFormatKey.AUDIO] !== 'raw_aac_lc') {
                 audioOffset = 44;
             }
         }
@@ -324,12 +324,12 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
     };
     const afterLoad = (mediaInstance: PlayerType) => {
         mediaInstance.media.title = getTitle();
-        if (epInfo.chapters.length > 0) {
+        if (epInfo[EPInfoKey.CHAPTERS].length > 0) {
             displayChapters(mediaInstance, audioOffset, chaptersActive);
         }
     };
 
-    const url = baseURL + encodeCFURIComponent('_MASTER_' + epInfo.file_name + '[' + currentFormat.value + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
+    const url = baseURL + encodeCFURIComponent('_MASTER_' + epInfo[EPInfoKey.FILE_NAME] + '[' + currentFormat[VideoFormatKey.VALUE] + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
     if (!MSE_SUPPORTED) {
         let Player: typeof PlayerType;
         try {
@@ -400,9 +400,9 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         mediaInstance.load(url, {
             onerror: function (errorCode: number | null) {
                 if (errorCode === CustomMediaError.HLS_BUFFER_APPEND_ERROR) {
-                    if (currentFormat.video === 'dv5') {
+                    if (currentFormat[VideoFormatKey.VIDEO] === 'dv5') {
                         showDolbyVisionError();
-                    } else if (currentFormat.audio === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
+                    } else if (currentFormat[VideoFormatKey.AUDIO] === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
                         show8chAudioError();
                     } else {
                         showPlayerError(errorCode);
@@ -426,7 +426,7 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     eventTargetsTracker.add(accordion);
 
     const chapterElements: HTMLParagraphElement[] = [];
-    for (const chapter of epInfo.chapters) {
+    for (const chapter of epInfo[EPInfoKey.CHAPTERS]) {
         const chapterNode = createParagraphElement();
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
         const startTime = (chapter[1] + offset) / 1000;
@@ -452,10 +452,10 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     const video = mediaInstance.media;
     function updateChapterDisplay() {
         const currentTime = video.currentTime;
-        epInfo.chapters.forEach((chapter, index) => {
+        epInfo[EPInfoKey.CHAPTERS].forEach((chapter, index) => {
             const chapterElement = chapterElements[index] as HTMLElement;
             if (currentTime >= (chapter[1] + offset) / 1000) {
-                const nextChapter = epInfo.chapters[index + 1];
+                const nextChapter = epInfo[EPInfoKey.CHAPTERS][index + 1];
                 if (nextChapter === undefined) {
                     setClass(chapterElement, styles.currentChapter);
                 } else if (currentTime < (nextChapter[1] + offset) / 1000) {

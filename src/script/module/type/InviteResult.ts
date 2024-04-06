@@ -1,13 +1,18 @@
 import { parseBoolean, parseNumber, parseObject, parseOptional } from './helper';
+
+export const enum InviteResultKey {
+    SPECIAL,
+    QUOTA,
+}
 export type InviteResult = {
-    readonly special: boolean | undefined;
-    readonly quota: number;
+    readonly [InviteResultKey.SPECIAL]: boolean | undefined;
+    readonly [InviteResultKey.QUOTA]: number;
 };
 
 export function parseInviteResult(inviteResult: unknown): InviteResult {
     const inviteResultObj = parseObject(inviteResult);
     return {
-        special: parseOptional(inviteResultObj.special, parseBoolean),
-        quota: parseNumber(inviteResultObj.quota),
+        [InviteResultKey.SPECIAL]: parseOptional(inviteResultObj.special, parseBoolean),
+        [InviteResultKey.QUOTA]: parseNumber(inviteResultObj.quota),
     };
 }

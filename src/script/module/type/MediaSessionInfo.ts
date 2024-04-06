@@ -1,14 +1,18 @@
 import { parseObject, parseString } from './helper';
 
+export const enum MediaSessionInfoKey {
+    TYPE,
+    CREDENTIAL,
+}
 export type MediaSessionInfo = {
-    readonly type: string;
-    readonly credential: string;
+    readonly [MediaSessionInfoKey.TYPE]: string;
+    readonly [MediaSessionInfoKey.CREDENTIAL]: string;
 };
 
 export function parseMediaSessionInfo(mediaSessionInfo: unknown): MediaSessionInfo {
     const mediaSessionInfoObj = parseObject(mediaSessionInfo);
     return {
-        type: parseString(mediaSessionInfoObj.type),
-        credential: parseString(mediaSessionInfoObj.credential),
+        [MediaSessionInfoKey.TYPE]: parseString(mediaSessionInfoObj.type),
+        [MediaSessionInfoKey.CREDENTIAL]: parseString(mediaSessionInfoObj.credential),
     };
 }

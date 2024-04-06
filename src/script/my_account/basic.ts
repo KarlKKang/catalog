@@ -21,11 +21,11 @@ import { SharedBool, SharedElement, SharedInput, getSharedBool, getSharedElement
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
-import type { AccountInfo } from '../module/type/AccountInfo';
+import { AccountInfoKey, type AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/server/message';
-import * as InviteResult from '../module/type/InviteResult';
 import { changeColor, hideElement, showElement } from '../module/style';
 import { CSS_COLOR } from '../module/style/value';
+import { InviteResultKey, parseInviteResult } from '../module/type/InviteResult';
 
 const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 
@@ -116,7 +116,7 @@ export function changeUsername(userInfo: AccountInfo) {
         showElement(warningElem);
         disableAllInputs(false);
         return;
-    } else if (newUsername === userInfo.username) {
+    } else if (newUsername === userInfo[AccountInfoKey.USERNAME]) {
         replaceText(warningElem, '新しいユーザー名は元のユーザー名と同じです。');
         showElement(warningElem);
         disableAllInputs(false);
@@ -129,7 +129,7 @@ export function changeUsername(userInfo: AccountInfo) {
             if (response === 'DONE') {
                 replaceText(warningElem, usernameChanged);
                 changeColor(warningElem, CSS_COLOR.GREEN);
-                userInfo.username = newUsername;
+                userInfo[AccountInfoKey.USERNAME] = newUsername;
             } else if (response === 'DUPLICATED') {
                 replaceText(warningElem, usernameTaken);
             } else if (response === 'EMPTY') {
@@ -180,10 +180,10 @@ export function invite() {
             } else if (response === 'CLOSED') {
                 replaceText(warningElem, invitationClosed);
             } else {
-                const parsedResponse = parseResponse(response, InviteResult.parseInviteResult);
-                replaceText(inviteCount, parsedResponse.quota.toString());
+                const parsedResponse = parseResponse(response, parseInviteResult);
+                replaceText(inviteCount, parsedResponse[InviteResultKey.QUOTA].toString());
                 let message = emailSent;
-                if (parsedResponse.special) {
+                if (parsedResponse[InviteResultKey.SPECIAL]) {
                     message += '現在、一般登録を受け付けているため、招待券はかかりませんでした。';
                 }
                 replaceText(warningElem, message);

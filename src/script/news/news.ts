@@ -25,7 +25,6 @@ import {
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
-import * as NewsInfo from '../module/type/NewsInfo';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { pgid, redirect } from '../module/global';
 import { LazyloadProp, importLazyload, offloadLazyload } from '../module/lazyload';
@@ -34,12 +33,14 @@ import * as styles from '../../css/news.module.scss';
 import { addManualAllLanguageClass } from '../module/dom/create_element/all_language';
 import { createNewsTemplate, parseNewsStyle } from '../module/news';
 import { NEWS_TOP_URL } from './helper';
+import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
 
 const INTERNAL_IMAGE_CLASS = 'image-internal';
 const IMAGE_ENLARGE_CLASS = 'image-enlarge';
 
-export default function (newsInfo: NewsInfo.NewsInfo, lazyloadImportPromise: ReturnType<typeof importLazyload>, newsID: string): void {
-    setTitle(newsInfo.title + ' | ' + getTitle());
+export default function (newsInfo: NewsInfo, lazyloadImportPromise: ReturnType<typeof importLazyload>, newsID: string): void {
+    const title = newsInfo[NewsInfoKey.TITLE];
+    setTitle(title + ' | ' + getTitle());
 
     const contentContainer = createDivElement();
     addClass(contentContainer, styles.content);
@@ -51,7 +52,7 @@ export default function (newsInfo: NewsInfo.NewsInfo, lazyloadImportPromise: Ret
     addClass(container, styles.container);
     appendChild(body, container);
 
-    const [contentOuterContainer, contentInnerContainer] = createNewsTemplate(newsInfo.title, newsInfo.create_time, newsInfo.update_time ?? null);
+    const [contentOuterContainer, contentInnerContainer] = createNewsTemplate(title, newsInfo[NewsInfoKey.CREATE_TIME], newsInfo[NewsInfoKey.UPDATE_TIME] ?? null);
     appendChild(contentInnerContainer, contentContainer);
     appendChild(container, contentOuterContainer);
 
@@ -72,7 +73,7 @@ export default function (newsInfo: NewsInfo.NewsInfo, lazyloadImportPromise: Ret
             contentContainer.innerHTML = xhr.responseText;
             addManualAllLanguageClass(contentContainer);
             bindEventListners(contentContainer);
-            attachImage(lazyloadImportPromise, contentContainer, newsID, newsInfo.credential);
+            attachImage(lazyloadImportPromise, contentContainer, newsID, newsInfo[NewsInfoKey.CREDENTIAL]);
             parseNewsStyle(contentContainer);
             scrollToHash();
         } else {

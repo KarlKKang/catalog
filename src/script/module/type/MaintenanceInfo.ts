@@ -1,14 +1,19 @@
 import { parseNumber, parseObject } from './helper';
+
+export const enum MaintenanceInfoKey {
+    START,
+    PERIOD,
+}
 export type MaintenanceInfo = {
-    readonly start: number;
-    readonly period: number;
+    readonly [MaintenanceInfoKey.START]: number;
+    readonly [MaintenanceInfoKey.PERIOD]: number;
 };
 
 export function parseMaintenanceInfo(maintenanceInfo: unknown): MaintenanceInfo {
     const maintenanceInfoObj = parseObject(maintenanceInfo);
     return {
-        start: parseNumber(maintenanceInfoObj.start),
-        period: parseNumber(maintenanceInfoObj.period),
+        [MaintenanceInfoKey.START]: parseNumber(maintenanceInfoObj.start),
+        [MaintenanceInfoKey.PERIOD]: parseNumber(maintenanceInfoObj.period),
     };
 }
 

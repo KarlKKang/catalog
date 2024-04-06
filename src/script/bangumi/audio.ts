@@ -16,8 +16,7 @@ import {
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
-import type { AudioEPInfo, AudioFile } from '../module/type/BangumiInfo';
-
+import { EPInfoKey, type AudioEPInfo, type AudioFile, AudioFileKey, AlbumInfoKey } from '../module/type/BangumiInfo';
 import {
     IS_FIREFOX,
     MSE_SUPPORTED,
@@ -29,12 +28,11 @@ import {
 } from '../module/browser';
 import type { Player as PlayerType } from '../module/player/player';
 import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
-
 import { parseCharacters } from './helper';
 import {
     showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError, showTextErrorMessage
 } from './media_helper';
-import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
+import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
 import { SharedElement, getSharedElement } from './shared_var';
@@ -77,7 +75,7 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        appendChild(getSharedElement(SharedElement.CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo.credential, seriesID, epIndex, null)[0]);
+        appendChild(getSharedElement(SharedElement.CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], seriesID, epIndex, null)[0]);
     });
 
     if (!MSE_SUPPORTED && !NATIVE_HLS_SUPPORTED) {
@@ -87,7 +85,7 @@ export default function (
 
     const container = createDivElement();
     const addAudioNodePromises = [];
-    for (const file of epInfo.files) {
+    for (const file of epInfo[EPInfoKey.FILES]) {
         addAudioNodePromises.push(addAudioNode(container, file));
     }
     Promise.all(addAudioNodePromises).then(() => {
@@ -104,10 +102,10 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
 
     const audioEPInfo = epInfo;
 
-    const FLAC_FALLBACK = (file.flac_fallback === true && !CAN_PLAY_ALAC);
+    const FLAC_FALLBACK = (file[AudioFileKey.FLAC_FALLBACK] === true && !CAN_PLAY_ALAC);
     appendChild(container, getAudioSubtitleNode(file, FLAC_FALLBACK));
 
-    const formatLower = file.format?.toLowerCase();
+    const formatLower = file[AudioFileKey.FORMAT]?.toLowerCase();
     const IS_FLAC = (formatLower === 'flac' || FLAC_FALLBACK);
     const IS_MP3 = formatLower === 'mp3';
     const CAN_PLAY_MP3 = audioCanPlay('mp3') || canPlay('audio', 'mpeg', ''); // mp3: Firefox; mpeg: Safari and Chrome
@@ -120,7 +118,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
     const playerContainer = createDivElement();
     addClass(playerContainer, styles.player);
     appendChild(container, playerContainer);
-    const url = baseURL + encodeCFURIComponent('_MASTER_' + file.file_name + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
+    const url = baseURL + encodeCFURIComponent('_MASTER_' + file[AudioFileKey.FILE_NAME] + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
     if (!MSE_SUPPORTED) {
         let Player: typeof PlayerType;
@@ -148,7 +146,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         mediaInstances.push(audioInstance);
         setMediaTitle(audioInstance);
         audioReadyCounter++;
-        if (audioReadyCounter === audioEPInfo.files.length) {
+        if (audioReadyCounter === audioEPInfo[EPInfoKey.FILES].length) {
             audioReady();
         }
     } else {
@@ -171,7 +169,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         const audioInstance = new HlsPlayer(playerContainer, configHls, false);
         audioInstance.load(url, {
             onerror: function (errorCode: number | null) {
-                if (IS_FIREFOX && file.samplerate !== undefined && parseInt(file.samplerate) > 48000) { //Firefox has problem playing Hi-res audio
+                if (IS_FIREFOX && file[AudioFileKey.SAMPLERATE] !== undefined && parseInt(file[AudioFileKey.SAMPLERATE]) > 48000) { //Firefox has problem playing Hi-res audio
                     showTextErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
                 } else {
                     showPlayerError(errorCode);
@@ -182,18 +180,18 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         mediaInstances.push(audioInstance);
         setMediaTitle(audioInstance);
         audioReadyCounter++;
-        if (audioReadyCounter === audioEPInfo.files.length) {
+        if (audioReadyCounter === audioEPInfo[EPInfoKey.FILES].length) {
             audioReady();
         }
     }
 
     function setMediaTitle(audioInstance: PlayerType) {
-        audioInstance.media.title = (file.title === undefined ? '' : (parseCharacters(file.title) + ' | ')) + getTitle();
+        audioInstance.media.title = (file[AudioFileKey.TITLE] === undefined ? '' : (parseCharacters(file[AudioFileKey.TITLE]) + ' | ')) + getTitle();
     }
 }
 
 function addAlbumInfo(seriesTitle: string) {
-    const { title, artist } = epInfo.album_info;
+    const { [AlbumInfoKey.TITLE]: title, [AlbumInfoKey.ARTIST]: artist } = epInfo[EPInfoKey.ALBUM_INFO];
     if (title !== undefined || artist !== undefined) {
         const titleElem = createParagraphElement();
         addClass(titleElem, styles.subTitle, styles.centerAlign);
@@ -213,25 +211,25 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
     addClass(subtitle, styles.subTitle);
 
     //subtitle
-    if (file.title !== undefined) {
-        appendText(subtitle, file.title);
-        if (file.artist !== undefined) {
-            const artist = createSpanElement('／' + file.artist);
+    if (file[AudioFileKey.TITLE] !== undefined) {
+        appendText(subtitle, file[AudioFileKey.TITLE]);
+        if (file[AudioFileKey.ARTIST] !== undefined) {
+            const artist = createSpanElement('／' + file[AudioFileKey.ARTIST]);
             addClass(artist, styles.artist);
             appendChild(subtitle, artist);
         }
     }
 
     //format
-    if (file.format !== undefined) {
-        if (file.title !== undefined) {
+    if (file[AudioFileKey.FORMAT] !== undefined) {
+        if (file[AudioFileKey.TITLE] !== undefined) {
             appendChild(subtitle, createBRElement());
         }
 
-        const format = createSpanElement(FLAC_FALLBACK ? 'FLAC' : file.format);
+        const format = createSpanElement(FLAC_FALLBACK ? 'FLAC' : file[AudioFileKey.FORMAT]);
         addClass(format, styles.subTitleFormat);
 
-        const samplerate = file.samplerate;
+        const samplerate = file[AudioFileKey.SAMPLERATE];
         if (samplerate !== undefined) {
             let samplerateText = samplerate;
             switch (samplerate) {
@@ -253,7 +251,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
             }
             appendText(format, ' ' + samplerateText);
 
-            const bitdepth = file.bitdepth;
+            const bitdepth = file[AudioFileKey.BITDEPTH];
             if (bitdepth !== undefined) {
                 let bitdepthText = bitdepth;
                 switch (bitdepth) {

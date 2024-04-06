@@ -1,14 +1,18 @@
 import { parseObject, parseString } from './helper';
 
+export const enum TOTPInfoKey {
+    URI,
+    P,
+}
 export type TOTPInfo = {
-    readonly uri: string;
-    readonly p: string;
+    readonly [TOTPInfoKey.URI]: string;
+    readonly [TOTPInfoKey.P]: string;
 };
 
 export function parseTotpInfo(totpInfo: unknown): TOTPInfo {
     const totpInfoObj = parseObject(totpInfo);
     return {
-        uri: parseString(totpInfoObj.uri),
-        p: parseString(totpInfoObj.p),
+        [TOTPInfoKey.URI]: parseString(totpInfoObj.uri),
+        [TOTPInfoKey.P]: parseString(totpInfoObj.p),
     };
 }

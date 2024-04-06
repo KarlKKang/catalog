@@ -1,7 +1,7 @@
 import { addClass, appendChild, appendChildren, appendListItems, appendText, createAnchorElement, createDivElement, createLIElement, createParagraphElement, createUListElement } from '../../dom';
 import { TOP_DOMAIN } from '../../env/constant';
 import { getLocalTimeString } from '../../common/pure';
-import { MaintenanceInfo } from '../../type/MaintenanceInfo';
+import { type MaintenanceInfo, MaintenanceInfoKey } from '../../type/MaintenanceInfo';
 import { defaultErrorSuffix } from '../../text/message/body';
 import * as styles from '../../../../css/common.module.scss';
 
@@ -37,8 +37,9 @@ export const status429 = 'リクエストを送信する頻度が高すぎる。
 export const status503 = (maintenanceInfo: MaintenanceInfo) => {
     let message = '';
     const suffix = 'ご不便をおかけして申し訳ありません。';
-    if (maintenanceInfo.period > 0) {
-        const endTime = getLocalTimeString(maintenanceInfo.start + maintenanceInfo.period, false, false);
+    const period = maintenanceInfo[MaintenanceInfoKey.PERIOD];
+    if (period > 0) {
+        const endTime = getLocalTimeString(maintenanceInfo[MaintenanceInfoKey.START] + period, false, false);
         message = `メンテナンス期間は${endTime}までとさせていただきます。${suffix}`;
     } else {
         message = suffix + '後ほどもう一度お試しください。';

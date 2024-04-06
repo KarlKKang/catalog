@@ -12,13 +12,13 @@ import {
 import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 import { notFound } from '../module/server/message';
-import * as BangumiInfo from '../module/type/BangumiInfo';
 import { getLogoutParam } from './helper';
 import { importAll } from './import_promise';
-import * as MediaSessionInfo from '../module/type/MediaSessionInfo';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
 import { addTimeout } from '../module/timer';
+import { type MediaSessionInfo, MediaSessionInfoKey, parseMediaSessionInfo } from '../module/type/MediaSessionInfo';
+import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/BangumiInfo';
 
 let updatePageModule: Awaited<typeof import(
     './update_page'
@@ -53,14 +53,14 @@ export default function (showPage: ShowPageFunc) {
     }
 
     //send requests
-    let createMediaSessionPromise: Promise<MediaSessionInfo.MediaSessionInfo> | null = null;
+    let createMediaSessionPromise: Promise<MediaSessionInfo> | null = null;
     const createMediaSession = () => {
         importAll();
-        return new Promise<MediaSessionInfo.MediaSessionInfo>((resolve) => {
+        return new Promise<MediaSessionInfo>((resolve) => {
             sendServerRequest('create_media_session', {
                 [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                    const parsedResponse = parseResponse(response, MediaSessionInfo.parseMediaSessionInfo);
-                    setUpSessionAuthentication(parsedResponse.credential, getLogoutParam(seriesID, epIndex));
+                    const parsedResponse = parseResponse(response, parseMediaSessionInfo);
+                    setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);
                 },
                 [ServerRequestOptionProp.CONTENT]: 'series=' + seriesID + '&ep=' + epIndex,
@@ -81,7 +81,7 @@ export default function (showPage: ShowPageFunc) {
 
     sendServerRequest('get_ep?series=' + seriesID + '&ep=' + epIndex, {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
-            const parsedResponse = parseResponse(response, BangumiInfo.parseBangumiInfo);
+            const parsedResponse = parseResponse(response, parseBangumiInfo);
             const currentPgid = pgid;
             if (createMediaSessionPromise === null) {
                 createMediaSessionPromise = createMediaSession();
@@ -90,7 +90,7 @@ export default function (showPage: ShowPageFunc) {
                 if (currentPgid !== pgid) {
                     return;
                 }
-                if (mediaSessionInfo.type !== parsedResponse.ep_info.type) {
+                if (mediaSessionInfo[MediaSessionInfoKey.TYPE] !== parsedResponse[BangumiInfoKey.EP_INFO][EPInfoKey.TYPE]) {
                     showMessage(notFound);
                 }
             });

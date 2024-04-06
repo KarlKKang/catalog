@@ -20,7 +20,6 @@ import {
     body,
 } from '../module/dom';
 import { showMessage } from '../module/message';
-import * as AccountInfo from '../module/type/AccountInfo';
 import * as Sessions from '../module/type/Sessions';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { SharedBool, SharedButton, SharedElement, SharedInput, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
@@ -30,6 +29,7 @@ import { moduleImportError } from '../module/message/param';
 import { changeColor, showElement } from '../module/style';
 import { CSS_COLOR } from '../module/style/value';
 import { addTimeout } from '../module/timer';
+import { type AccountInfo, parseAccountInfo, AccountInfoKey } from '../module/type/AccountInfo';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -61,7 +61,7 @@ export default function (showPage: ShowPageFunc) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             showPage();
             appendChild(body, container);
-            showPageCallback(parseResponse(response, AccountInfo.parseAccountInfo));
+            showPageCallback(parseResponse(response, parseAccountInfo));
             getSessions();
         },
         [ServerRequestOptionProp.METHOD]: 'GET',
@@ -69,10 +69,10 @@ export default function (showPage: ShowPageFunc) {
     importAll();
 }
 
-function showPageCallback(userInfo: AccountInfo.AccountInfo) {
+function showPageCallback(userInfo: AccountInfo) {
     const currentPgid = pgid;
-    setSharedBool(SharedBool.currentLoginNotificationStatus, userInfo.login_notification);
-    updateMfaUI(userInfo.mfa_status);
+    setSharedBool(SharedBool.currentLoginNotificationStatus, userInfo[AccountInfoKey.LOGIN_NOTIFICATION]);
+    updateMfaUI(userInfo[AccountInfoKey.MFA_STATUS]);
 
     addEventListener(getSharedButton(SharedButton.emailChangeButton), 'click', () => {
         getImport(basicImportPromise).then(({ changeEmail }) => {
@@ -141,21 +141,21 @@ function showPageCallback(userInfo: AccountInfo.AccountInfo) {
     passwordStyling(getSharedInput(SharedInput.newPasswordInput));
     passwordStyling(getSharedInput(SharedInput.newPasswordComfirmInput));
 
-    if (userInfo.mfa_status) {
+    if (userInfo[AccountInfoKey.MFA_STATUS]) {
         const recoveryCodeInfo = getSharedElement(SharedElement.recoveryCodeInfo);
-        if (userInfo.recovery_code_status === 0) {
+        if (userInfo[AccountInfoKey.RECOVERY_CODE_STATUS] === 0) {
             changeColor(recoveryCodeInfo, CSS_COLOR.RED);
             appendText(recoveryCodeInfo, 'リカバリーコードが残っていません。新しいリカバリーコードを生成してください。');
             showElement(recoveryCodeInfo);
-        } else if (userInfo.recovery_code_status === 1) {
+        } else if (userInfo[AccountInfoKey.RECOVERY_CODE_STATUS] === 1) {
             changeColor(recoveryCodeInfo, CSS_COLOR.ORANGE);
             appendText(recoveryCodeInfo, 'リカバリーコードが残りわずかです。新しいリカバリーコードを生成することをお勧めします。');
             showElement(recoveryCodeInfo);
         }
     }
 
-    appendText(getSharedElement(SharedElement.inviteCount), userInfo.invite_quota.toString());
-    getSharedInput(SharedInput.newUsernameInput).value = userInfo.username;
+    appendText(getSharedElement(SharedElement.inviteCount), userInfo[AccountInfoKey.INVITE_QUOTA].toString());
+    getSharedInput(SharedInput.newUsernameInput).value = userInfo[AccountInfoKey.USERNAME];
 }
 
 async function getImport<T>(importPromise: Promise<T>) {
