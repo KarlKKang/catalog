@@ -1,4 +1,4 @@
-import { parseArray, parseNumber, parseObject, parseString, parseTypedArray } from './helper';
+import { parseNumber, parseObject, parseString, parseTypedArray } from './helper';
 
 type AllNewsInfoEntry = {
     readonly id: string;
@@ -6,22 +6,25 @@ type AllNewsInfoEntry = {
     readonly update_time: number;
 };
 export type AllNewsInfoEntries = readonly AllNewsInfoEntry[];
-export type PivotInfo = number | 'EOF';
-export type AllNewsInfo = readonly [
-    ...AllNewsInfoEntries,
-    PivotInfo
-];
+export type Pivot = 'EOF' | number;
+export type AllNewsInfo = {
+    readonly news: AllNewsInfoEntries;
+    readonly pivot: Pivot;
+};
 
 export function parseAllNewsInfo(allNewsInfo: unknown): AllNewsInfo {
-    const allNewsInfoArr = parseArray(allNewsInfo);
-    const allNewsInfoEntries = parseTypedArray(allNewsInfoArr.slice(0, -1), (allNewsInfoEntry): AllNewsInfoEntry => {
-        const allNewsInfoEntryObj = parseObject(allNewsInfoEntry);
+    const allNewsInfoObj = parseObject(allNewsInfo);
+    const news = parseTypedArray(allNewsInfoObj.news, (allNewsEntry): AllNewsInfoEntry => {
+        const allNewsInfoEntryObj = parseObject(allNewsEntry);
         return {
             id: parseString(allNewsInfoEntryObj.id),
             title: parseString(allNewsInfoEntryObj.title),
             update_time: parseNumber(allNewsInfoEntryObj.update_time),
         };
     });
-    const pivotInfo = allNewsInfoArr[allNewsInfoArr.length - 1];
-    return [...allNewsInfoEntries, pivotInfo === 'EOF' ? pivotInfo : parseNumber(pivotInfo)];
+    const pivot = allNewsInfoObj.pivot;
+    return {
+        news: news,
+        pivot: pivot === 'EOF' ? pivot : parseNumber(pivot),
+    };
 }

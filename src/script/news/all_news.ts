@@ -19,7 +19,7 @@ import * as styles from '../../css/news.module.scss';
 import { lineClamp as lineClampClass } from '../../css/line_clamp.module.scss';
 import { NEWS_TOP_URL } from './helper';
 
-let pivot: AllNewsInfo.PivotInfo;
+let pivot: AllNewsInfo.Pivot;
 
 export default function (allNewsInfo: AllNewsInfo.AllNewsInfo) {
     pivot = 0;
@@ -50,8 +50,8 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement, i
 }
 
 function showAllNews(allNewsInfo: AllNewsInfo.AllNewsInfo, container: HTMLElement, loadingTextContainer: HTMLElement, infiniteScrolling: ReturnType<typeof initializeInfiniteScrolling>): void {
-    const newPivot = allNewsInfo[allNewsInfo.length - 1] as AllNewsInfo.PivotInfo;
-    const allNewsInfoEntries = allNewsInfo.slice(0, -1) as AllNewsInfo.AllNewsInfoEntries;
+    const newPivot = allNewsInfo.pivot;
+    const allNewsInfoEntries = allNewsInfo.news;
 
     if (pivot === 0 && allNewsInfoEntries.length === 0) {
         replaceText(loadingTextContainer, noResult);
