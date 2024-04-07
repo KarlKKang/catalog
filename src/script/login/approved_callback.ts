@@ -11,7 +11,7 @@ import { nextButtonText } from '../module/text/ui';
 import { CSS_COLOR } from '../module/style/value';
 import { MessageParamProp } from '../module/message/type';
 
-export function approvedCallback() {
+export default function () {
     if (UNRECOMMENDED_BROWSER) {
         showMessage({
             [MessageParamProp.TITLE]: 'お使いのブラウザは推奨環境ではありません',
