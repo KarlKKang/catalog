@@ -17,14 +17,13 @@ import {
     body,
 } from './module/dom';
 import { showMessage } from './module/message';
-import { moduleImportError } from './module/message/param';
 import { invalidResponse, notFound } from './module/server/message';
 import { encodeCFURIComponent } from './module/common/pure';
-import { pgid, redirect, type ShowPageFunc } from './module/global';
+import { redirect, type ShowPageFunc } from './module/global';
 import { setWidth } from './module/style';
 import { CSS_UNIT } from './module/style/value';
 import * as styles from '../css/image.module.scss';
-import { importImageLoader, offloadImageLoader } from './module/image_loader';
+import { imageLoader, offload as offloadImageLoader } from './module/image_loader';
 
 export default function (showPage: ShowPageFunc) {
     const baseURL = getSessionStorage('base-url');
@@ -39,8 +38,6 @@ export default function (showPage: ShowPageFunc) {
         redirect(TOP_URL, true);
         return;
     }
-
-    const imageLoaderImportPromise = importImageLoader();
 
     const uri = sessionType === SessionTypes.MEDIA ? 'get_image' : 'get_news_image';
     setUpSessionAuthentication(sessionCredential);
@@ -64,25 +61,14 @@ export default function (showPage: ShowPageFunc) {
             appendChild(container, overlay);
             appendChild(flexContainer, container);
             appendChild(body, flexContainer);
-
             removeRightClick(container);
-            const currentPgid = pgid;
-            imageLoaderImportPromise.then((imageLoader) => {
-                if (currentPgid !== pgid) {
-                    return;
-                }
-                imageLoader(container, baseURL + encodeCFURIComponent(fileName), fileName, true, (canvas) => {
-                    setWidth(canvas, canvas.width / w.devicePixelRatio, CSS_UNIT.PX);
-                    // We won't listen to DPI change since we want to allow the user to zoom in and out.
-                    // This has the side effect of not updating the image size when the screen DPI actually changes.
-                }, undefined, () => {
-                    showMessage(notFound);
-                });
-            }).catch((e) => {
-                if (currentPgid !== pgid) {
-                    showMessage(moduleImportError);
-                }
-                throw e;
+
+            imageLoader(container, baseURL + encodeCFURIComponent(fileName), fileName, true, (canvas) => {
+                setWidth(canvas, canvas.width / w.devicePixelRatio, CSS_UNIT.PX);
+                // We won't listen to DPI change since we want to allow the user to zoom in and out.
+                // This has the side effect of not updating the image size when the screen DPI actually changes.
+            }, undefined, () => {
+                showMessage(notFound);
             });
         },
         [ServerRequestOptionProp.CONTENT]: sessionCredential,

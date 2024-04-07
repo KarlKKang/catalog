@@ -1,18 +1,18 @@
 import type { WebpMachine } from 'webp-hero';
 import {
     removeRightClick,
-} from '../common';
+} from './common';
 import {
     appendChild,
     addEventListener,
     addEventListenerOnce,
     createCanvasElement,
     removeAllEventListeners,
-} from '../dom';
-import { showMessage } from '../message';
-import { moduleImportError } from '../message/param';
-import { pgid } from '../global';
-import { setHeight, setWidth } from '../style';
+} from './dom';
+import { showMessage } from './message';
+import { moduleImportError } from './message/param';
+import { pgid } from './global';
+import { setHeight, setWidth } from './style';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
@@ -35,7 +35,7 @@ let webpSupported: boolean;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
-export default function (container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: (canvas: HTMLCanvasElement) => void, onDataLoad?: (data: Blob) => void, onNetworkError?: () => void, onUnrecoverableError?: () => void): XMLHttpRequest {
+export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: (canvas: HTMLCanvasElement) => void, onDataLoad?: (data: Blob) => void, onNetworkError?: () => void, onUnrecoverableError?: () => void): XMLHttpRequest {
     let imageData: Blob;
     let isWebp: boolean;
 

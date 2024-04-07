@@ -26,19 +26,19 @@ import {
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { encodeCFURIComponent } from '../module/common/pure';
-import { pgid, redirect } from '../module/global';
-import { LazyloadProp, importLazyload, offloadLazyload } from '../module/lazyload';
+import { redirect } from '../module/global';
 import { loading } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
 import { addManualAllLanguageClass } from '../module/dom/create_element/all_language';
 import { createNewsTemplate, parseNewsStyle } from '../module/news';
 import { NEWS_TOP_URL } from './helper';
 import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
+import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
 
 const INTERNAL_IMAGE_CLASS = 'image-internal';
 const IMAGE_ENLARGE_CLASS = 'image-enlarge';
 
-export default function (newsInfo: NewsInfo, lazyloadImportPromise: ReturnType<typeof importLazyload>, newsID: string): void {
+export default function (newsInfo: NewsInfo, newsID: string): void {
     const title = newsInfo[NewsInfoKey.TITLE];
     setTitle(title + ' | ' + getTitle());
 
@@ -73,7 +73,7 @@ export default function (newsInfo: NewsInfo, lazyloadImportPromise: ReturnType<t
             contentContainer.innerHTML = xhr.responseText;
             addManualAllLanguageClass(contentContainer);
             bindEventListners(contentContainer);
-            attachImage(lazyloadImportPromise, contentContainer, newsID, newsInfo[NewsInfoKey.CREDENTIAL]);
+            attachImage(contentContainer, newsID, newsInfo[NewsInfoKey.CREDENTIAL]);
             parseNewsStyle(contentContainer);
             scrollToHash();
         } else {
@@ -84,13 +84,8 @@ export default function (newsInfo: NewsInfo, lazyloadImportPromise: ReturnType<t
     xhr.send();
 }
 
-async function attachImage(lazyloadImportPromise: ReturnType<typeof importLazyload>, contentContainer: HTMLElement, newsID: string, credential: string): Promise<void> {
-    const currentPgid = pgid;
-    const lazyload = await lazyloadImportPromise;
-    if (currentPgid !== pgid) {
-        return;
-    }
-    lazyload[LazyloadProp.SET_CREDENTIAL](credential, SessionTypes.NEWS);
+async function attachImage(contentContainer: HTMLElement, newsID: string, credential: string): Promise<void> {
+    setLazyloadCredential(credential, SessionTypes.NEWS);
 
     const baseURL = CDN_URL + '/news/' + newsID + '/';
     const elems = getDescendantsByClass(contentContainer, INTERNAL_IMAGE_CLASS);
@@ -102,7 +97,7 @@ async function attachImage(lazyloadImportPromise: ReturnType<typeof importLazylo
         if (src === null) {
             continue;
         }
-        lazyload[LazyloadProp.DEFAULT](elem, baseURL + encodeCFURIComponent(src), src, { delay: 250 });
+        attachLazyload(elem, baseURL + encodeCFURIComponent(src), src, { delay: 250 });
         if (containsClass(elem, IMAGE_ENLARGE_CLASS)) {
             removeClass(elem, IMAGE_ENLARGE_CLASS);
             addClass(elem, styles.imageEnlarge);

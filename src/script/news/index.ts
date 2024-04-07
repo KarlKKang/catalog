@@ -7,7 +7,6 @@ import {
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
-import { importLazyload } from '../module/lazyload';
 import { NEWS_TOP_URL } from './helper';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';
 import { moduleImportError } from '../module/message/param';
@@ -64,7 +63,6 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         redirect(NEWS_TOP_URL);
     });
 
-    const lazyloadImportPromise = importLazyload();
     const newsModuleImport = import(
         /* webpackExports: ["default", "offload"] */
         './news'
@@ -91,7 +89,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             offloadModule = newsModule.offload;
             showPage();
             setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], logoutParam);
-            newsModule.default(parsedResponse, lazyloadImportPromise, newsID);
+            newsModule.default(parsedResponse, newsID);
         },
         [ServerRequestOptionProp.CONTENT]: 'id=' + newsID,
         [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam

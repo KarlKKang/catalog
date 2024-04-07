@@ -1,5 +1,3 @@
-import { importLazyload } from '../module/lazyload';
-
 export let imageImportPromise: Promise<typeof import(
     /* webpackExports: ["default", "offload"] */
     './image'
@@ -12,7 +10,6 @@ export let videoImportPromise: Promise<typeof import(
     /* webpackExports: ["default", "offload"] */
     './video'
 )>;
-export let lazyloadImportPromise: ReturnType<typeof importLazyload>;
 export let nativePlayerImportPromise: Promise<typeof import(
     /* webpackExports: ["Player"] */
     '../module/player/player'
@@ -35,7 +32,6 @@ export function importAll() {
         /* webpackExports: ["default", "offload"] */
         './video'
     );
-    lazyloadImportPromise = importLazyload();
     nativePlayerImportPromise = import(
         /* webpackExports: ["Player"] */
         '../module/player/player'

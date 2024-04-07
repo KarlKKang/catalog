@@ -36,7 +36,6 @@ import { isbot } from 'isbot';
 import { getLocalTimeString } from './module/common/pure';
 import { addTimeout } from './module/timer';
 import { redirect, setCustomPopStateHandler, type ShowPageFunc } from './module/global';
-import { LazyloadProp, importLazyload, offloadLazyload } from './module/lazyload';
 import { changeColor, setOpacity } from './module/style';
 import { allResultsShown, loading, noResult } from './module/text/ui';
 import { addAutoMultiLanguageClass } from './module/dom/create_element/multi_language';
@@ -46,6 +45,7 @@ import { lineClamp as lineClampClass } from '../css/line_clamp.module.scss';
 import { CSS_COLOR } from './module/style/value';
 import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntryKey } from './module/type/SeriesInfo';
 import { MaintenanceInfoKey } from './module/type/MaintenanceInfo';
+import { attachLazyload, offload as offloadLazyload } from './module/lazyload';
 
 let pivot: Pivot;
 let keywords: string;
@@ -106,13 +106,7 @@ export default function (showPage: ShowPageFunc) {
         searchBarInput.value = '';
         search();
     });
-    const lazyloadImportPromise = importLazyload();
-    let lazyload: Awaited<typeof lazyloadImportPromise>;
-    getSeries(async (seriesInfo, xhr) => {
-        lazyload = await lazyloadImportPromise;
-        if (currentRequest !== xhr) {
-            return;
-        }
+    getSeries(async (seriesInfo) => {
         showPage();
         showPageCallback(seriesInfo);
     }, false);
@@ -211,7 +205,7 @@ export default function (showPage: ShowPageFunc) {
             eventTargetsTracker.add(seriesNode);
 
             appendChild(containerElem, seriesNode);
-            lazyload[LazyloadProp.DEFAULT](thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry[SeriesEntryKey.THUMBNAIL], 'サムネイル：' + title);
+            attachLazyload(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry[SeriesEntryKey.THUMBNAIL], 'サムネイル：' + title);
         }
 
         infiniteScrolling[InfiniteScrollingProp.SET_ENABLED](true);

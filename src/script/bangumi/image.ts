@@ -24,13 +24,11 @@ import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
-import { pgid } from '../module/global';
-import { lazyloadImportPromise } from './import_promise';
 import { SharedElement, getSharedElement } from './shared_var';
-import { LazyloadProp, offloadLazyload } from '../module/lazyload';
 import { hideElement, setWidth } from '../module/style';
 import { CSS_AUTO } from '../module/style/value';
 import * as styles from '../../css/bangumi.module.scss';
+import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
 
 export default async function (
     epInfo: ImageEPInfo,
@@ -60,18 +58,13 @@ export default async function (
     appendChild(downloadElem, downloadPanel);
     appendChild(contentContainer, downloadElem);
 
-    const currentPgid = pgid;
     const mediaSessionCredential = await createMediaSessionPromise;
-    const lazyloadModule = await lazyloadImportPromise;
-    if (currentPgid !== pgid) {
-        return;
-    }
     const credential = mediaSessionCredential[MediaSessionInfoKey.CREDENTIAL];
-    lazyloadModule[LazyloadProp.SET_CREDENTIAL](credential, SessionTypes.MEDIA);
-    showImages(epInfo[EPInfoKey.FILES], baseURL, credential, lazyloadModule);
+    setLazyloadCredential(credential, SessionTypes.MEDIA);
+    showImages(epInfo[EPInfoKey.FILES], baseURL, credential);
 }
 
-function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, credential: string, lazyloadModule: Awaited<typeof lazyloadImportPromise>) {
+function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, credential: string) {
     const mediaHolder = getSharedElement(SharedElement.MEDIA_HOLDER);
     replaceChildren(mediaHolder);
     for (const file of files) {
@@ -109,7 +102,7 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
         addEventListener(showFullSizeButton, 'click', () => {
             openImageWindow(baseURL, fileName, credential, SessionTypes.MEDIA);
         });
-        lazyloadModule[LazyloadProp.DEFAULT](lazyloadNode, baseURL + encodeCFURIComponent(fileName), fileName, {
+        attachLazyload(lazyloadNode, baseURL + encodeCFURIComponent(fileName), fileName, {
             delay: 250,
             onDataLoad: (data: Blob) => {
                 addEventListener(downloadButton, 'click', () => {

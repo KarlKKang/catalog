@@ -1,15 +1,15 @@
 import {
     SessionTypes,
-} from '../common';
-import { ServerRequestOptionProp, sendServerRequest } from '../server';
+} from './common';
+import { ServerRequestOptionProp, sendServerRequest } from './server';
 import {
     addClass, appendChild, createDivElement,
-} from '../dom';
-import { showMessage } from '../message';
-import { invalidResponse } from '../server/message';
-import { addTimeout } from '../timer';
-import type { default as ImageLoader } from '../image_loader/image_loader';
-import * as styles from '../../../css/lazyload.module.scss';
+} from './dom';
+import { showMessage } from './message';
+import { invalidResponse } from './server/message';
+import { addTimeout } from './timer';
+import * as styles from '../../css/lazyload.module.scss';
+import { imageLoader, offload as offloadImageLoader } from './image_loader';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,
@@ -50,17 +50,11 @@ let credential: [
     SessionTypes // sessionType
 ] | null = null;
 
-let imageLoader: typeof ImageLoader;
-
-export function attachImageLoader(loader: typeof ImageLoader) {
-    imageLoader = loader;
-}
-
-export function setCredential(sessionCredential: string, sessionType: SessionTypes) {
+export function setLazyloadCredential(sessionCredential: string, sessionType: SessionTypes) {
     credential = [sessionCredential, sessionType];
 }
 
-export default function (
+export function attachLazyload(
     target: Element,
     src: string,
     alt: string,
@@ -179,9 +173,10 @@ function loadImage(target: Element, targetData: TargetData) {
     }
 }
 
-export function unobserveAll() {
+export function offload() {
     observer.disconnect();
     targets.clear();
     sessionCredentialPromise = null;
     credential = null;
+    offloadImageLoader();
 }
