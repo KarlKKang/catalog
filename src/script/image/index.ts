@@ -70,5 +70,8 @@ export default function (showPage: ShowPageFunc) {
 }
 
 export function offload() {
-    offloadAsyncModule?.();
+    if (offloadAsyncModule !== null) {
+        offloadAsyncModule();
+        offloadAsyncModule = null;
+    }
 }
