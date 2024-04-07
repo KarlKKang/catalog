@@ -60,7 +60,7 @@ const page404: Page = {
 
 const pages: PageMap = {
     '': {
-        [PageProp.SCRIPT]: () => import('./index'),
+        [PageProp.SCRIPT]: () => import('./home'),
     },
     'confirm_new_email': {
         [PageProp.SCRIPT]: () => import('./confirm_new_email'),
