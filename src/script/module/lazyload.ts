@@ -83,7 +83,7 @@ function observerCallback(entries: IntersectionObserverEntry[]) {
         const target = entry.target;
         const targetData = targets.get(target);
         if (targetData === undefined) {
-            throw new Error('Cannot find lazyload target data.');
+            continue;
         }
 
         if (entry['isIntersecting']) {
