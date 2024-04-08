@@ -36,7 +36,6 @@ import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import { defaultError } from '../module/text/message/title';
 import { defaultErrorSuffix } from '../module/text/message/body';
-import '../../font/dist/CourierNew/CourierNew-Regular.css'; // Needed for the accordion icon.
 import * as styles from '../../css/bangumi.module.scss';
 
 export const incompatibleTitle = '再生できません';

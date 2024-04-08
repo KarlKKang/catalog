@@ -29,11 +29,11 @@ import { encodeCFURIComponent } from '../module/common/pure';
 import { redirect } from '../module/global';
 import { loading } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
-import { addManualAllLanguageClass } from '../module/dom/create_element/all_language';
 import { createNewsTemplate, parseNewsStyle } from '../module/news';
 import { NEWS_TOP_URL } from './helper';
 import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
+import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 
 const INTERNAL_IMAGE_CLASS = 'image-internal';
 const IMAGE_ENLARGE_CLASS = 'image-enlarge';
@@ -71,7 +71,7 @@ export default function (newsInfo: NewsInfo, newsID: string): void {
         removeAllEventListeners(xhr);
         if (xhr.status === 200) {
             contentContainer.innerHTML = xhr.responseText;
-            addManualAllLanguageClass(contentContainer);
+            addManualMultiLanguageClass(contentContainer);
             bindEventListners(contentContainer);
             attachImage(contentContainer, newsID, newsInfo[NewsInfoKey.CREDENTIAL]);
             parseNewsStyle(contentContainer);

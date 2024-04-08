@@ -1,8 +1,5 @@
 import { addClass, appendChild } from '../element';
 import { createDivElement, createInputElement } from '.';
-import '../../../../font/dist/NotoSans/NotoSans-Light.css';
-import '../../../../font/dist/NotoSansTC/NotoSansTC-Light.css';
-import '../../../../font/dist/NotoSansSC/NotoSansSC-Light.css';
 import { container as autoContainerClass } from '../../../../css/multi_language/auto.module.scss';
 import { container as manualContainerClass } from '../../../../css/multi_language/manual.module.scss';
 import * as styles from '../../../../css/common.module.scss';

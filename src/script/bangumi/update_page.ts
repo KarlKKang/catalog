@@ -32,7 +32,6 @@ import { audioImportPromise, imageImportPromise, videoImportPromise } from './im
 import { SharedElement, dereferenceSharedVars, getSharedElement, initializeSharedVars, setErrorMessageElement } from './shared_var';
 import { hideElement, setMaxHeight, setMinHeight, setOpacity, setPaddingBottom, setVisibility, showElement } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
-import '../../font/dist/Segoe/SegMDL2.css'; // Needed for the show more/less button.
 import * as styles from '../../css/bangumi.module.scss';
 import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoEPInfo, AudioEPInfo, ImageEPInfo } from '../module/type/BangumiInfo';
 

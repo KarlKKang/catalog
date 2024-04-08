@@ -7,8 +7,6 @@ import * as messagePageScript from '../message';
 import { showMessage } from '../module/message';
 import { moduleImportError } from '../module/message/param';
 import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect, type ShowPageFunc } from '../module/global';
-import '../../font/dist/NotoSansJP/NotoSansJP-Light.css';
-import '../../font/dist/NotoSansJP/NotoSansJP-Medium.css';
 import * as styles from '../../css/common.module.scss';
 import { enableTransition, setMinHeight, setOpacity, setVisibility, setWidth } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
@@ -291,6 +289,17 @@ function setViewport(native: boolean) {
     viewportTag.content = viewpartTagContent;
 }
 
+function importFont(delay: number) {
+    setTimeout(async () => {
+        try {
+            await import('./font');
+        } catch (e) {
+            importFont(Math.min(60 * 1000, Math.max(1000, delay * 2)));
+            throw e;
+        }
+    }, delay);
+}
+
 const fullURL = getFullURL();
 changeURL(fullURL, true);
 if (history.scrollRestoration !== undefined) {
@@ -302,6 +311,7 @@ addEventListenerOnce(w, 'load', () => {
     appendChild(body, innerBody);
     setRedirect(load);
     load(fullURL, null);
+    importFont(0);
     w.addEventListener('popstate', (state) => {
         if (state.state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
             if (customPopStateHandler === null) {
