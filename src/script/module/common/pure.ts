@@ -61,10 +61,6 @@ function getDayOfWeek(date: Date): string {
     return result;
 }
 
-export function objectKeyExists(key: PropertyKey, obj: object) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
 export const AUTH_FAILED = 'FAILED';
 export const AUTH_FAILED_TOTP = 'FAILED TOTP';
 export const AUTH_DEACTIVATED = 'DEACTIVATED';

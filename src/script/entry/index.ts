@@ -1,7 +1,6 @@
 import 'core-js';
 import { body as innerBody, getBaseURL, w, addEventListenerOnce, setTitle, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, d, addClass, removeClass, createDivElement, appendChild, createElement, html, setClass } from '../module/dom';
 import { TOP_DOMAIN, TOP_URL } from '../module/env/constant';
-import { objectKeyExists } from '../module/common/pure';
 import { addTimeout, removeAllTimers } from '../module/timer';
 import * as messagePageScript from '../message';
 import { showMessage } from '../module/message';
@@ -34,10 +33,6 @@ type Page = {
     [PageProp.SCRIPT_CACHED]?: PageScript;
 };
 
-type PageMap = {
-    [key: string]: Page;
-};
-
 let body: HTMLElement;
 const loadingBar = createDivElement();
 addClass(loadingBar, styles.loadingBar);
@@ -48,12 +43,11 @@ let serviceWorkerModule: {
 } | null = null;
 let loadingBarShown: boolean = false;
 
-const page404: Page = {
+const page404 = {
     [PageProp.SCRIPT]: () => import('../404'),
     [PageProp.TITLE]: notFoundPageTitle,
 };
-
-const pages: PageMap = {
+const pages = {
     '': {
         [PageProp.SCRIPT]: () => import('../home'),
     },
@@ -108,7 +102,7 @@ const pages: PageMap = {
         [PageProp.TITLE]: passwordResetPageTitle,
     },
 };
-const directories: PageMap = {
+const directories = {
     'bangumi': {
         [PageProp.SCRIPT]: () => import('../bangumi'),
     },
@@ -128,13 +122,13 @@ function load(url: string, withoutHistory: boolean | null = false) {
     if (baseURL.startsWith(TOP_URL + '/')) {
         let pageName = baseURL.substring(TOP_URL.length + 1);
         if (objectKeyExists(pageName, pages)) {
-            const page = pages[pageName]!;
+            const page = pages[pageName];
             loadPage(url, withoutHistory, page);
             return;
         }
         pageName = pageName.substring(0, pageName.indexOf('/'));
         if (objectKeyExists(pageName, directories)) {
-            const page = directories[pageName]!;
+            const page = directories[pageName];
             loadPage(url, withoutHistory, page);
             return;
         }
@@ -298,6 +292,10 @@ function importFont(delay: number) {
             throw e;
         }
     }, delay);
+}
+
+function objectKeyExists<T extends object>(key: PropertyKey, obj: T): key is keyof T {
+    return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
 const fullURL = getFullURL();
