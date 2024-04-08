@@ -28,7 +28,7 @@ import { type TOTPInfo, TOTPInfoKey, parseTotpInfo } from '../module/type/TOTPIn
 import { toCanvas } from 'qrcode';
 import { addInterval, removeInterval } from '../module/timer';
 import { pgid } from '../module/global';
-import { SharedElement, getSharedElement } from './shared_var';
+import { SharedBool, SharedButton, SharedElement, getSharedBool, getSharedButton, getSharedElement } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { popupWindowImportPromise } from './import_promise';
@@ -45,7 +45,20 @@ import { type RecoveryCodeInfo, parseRecoveryCodeInfo } from '../module/type/Rec
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
-export function enableMfa() {
+export default function () {
+    addEventListener(getSharedButton(SharedButton.mfaButton), 'click', () => {
+        if (getSharedBool(SharedBool.currentMfaStatus)) {
+            disableMfa();
+        } else {
+            enableMfa();
+        }
+    });
+    addEventListener(getSharedButton(SharedButton.recoveryCodeButton), 'click', () => {
+        generateRecoveryCode();
+    });
+}
+
+function enableMfa() {
     disableAllInputs(true);
     const mfaWarning = getSharedElement(SharedElement.mfaWarning);
 
@@ -70,7 +83,7 @@ export function enableMfa() {
     );
 }
 
-export function disableMfa() {
+function disableMfa() {
     disableAllInputs(true);
     const mfaWarning = getSharedElement(SharedElement.mfaWarning);
 
@@ -96,7 +109,7 @@ export function disableMfa() {
     );
 }
 
-export function generateRecoveryCode() {
+function generateRecoveryCode() {
     disableAllInputs(true);
     const recoveryCodeWarning = getSharedElement(SharedElement.recoveryCodeWarning);
 
@@ -130,7 +143,7 @@ export function generateRecoveryCode() {
     );
 }
 
-export function modifyMfaReauthenticationPrompt(
+function modifyMfaReauthenticationPrompt(
     uri: string,
     callback: (response: string) => boolean,
     warningElem: HTMLElement,
