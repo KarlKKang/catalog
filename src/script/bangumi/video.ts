@@ -348,7 +348,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         });
         afterLoad(mediaInstance);
     } else {
-        const HlsPlayer = (await importModule(hlsPlayerImportPromise)).HlsPlayer
+        const HlsPlayer = (await importModule(hlsPlayerImportPromise)).HlsPlayer;
         await createMediaSessionPromise;
         if (currentPgid !== pgid) {
             return;

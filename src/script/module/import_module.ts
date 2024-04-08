@@ -1,6 +1,6 @@
-import { pgid } from "./global";
-import { showMessage } from "./message";
-import { moduleImportError } from "./message/param";
+import { pgid } from './global';
+import { showMessage } from './message';
+import { moduleImportError } from './message/param';
 
 export async function importModule<T>(importPromise: Promise<T>) {
     const currentPgid = pgid;
