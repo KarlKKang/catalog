@@ -30,7 +30,7 @@ export default function (showPage: ShowPageFunc) {
         }
         asyncModule.default(param);
         showPage();
-    }
+    };
 
     const param = getURLParam('p');
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {

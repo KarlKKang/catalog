@@ -1,4 +1,4 @@
-import { MessageParamProp } from "../module/message/type";
+import { MessageParamProp } from '../module/message/type';
 import { emailAlreadyRegistered as emailAlreadyRegisteredBody } from '../module/text/message/body';
 
 export const emailAlreadyRegistered = {
