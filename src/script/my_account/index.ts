@@ -25,7 +25,7 @@ export default function (showPage: ShowPageFunc) {
 
     addNavBar(NavBarPage.MY_ACCOUNT);
     let resolveUIInit: () => void;
-    const uiInitPromise = new Promise<void>(resolve => {
+    const uiInitPromise = new Promise<void>((resolve) => {
         resolveUIInit = resolve;
     });
     const currentPgid = pgid;
