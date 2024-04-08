@@ -430,7 +430,7 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     appendChild(getSharedElement(SharedElement.MEDIA_HOLDER), chaptersNode);
 
     const video = mediaInstance.media;
-    function updateChapterDisplay() {
+    const updateChapterDisplay = () => {
         const currentTime = video.currentTime;
         epInfo[EPInfoKey.CHAPTERS].forEach((chapter, index) => {
             const chapterElement = chapterElements[index] as HTMLElement;
@@ -447,7 +447,7 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
                 setClass(chapterElement, styles.inactiveChapter);
             }
         });
-    }
+    };
     addEventsListener(video, ['play', 'pause', 'seeking', 'seeked'], updateChapterDisplay);
     const timer = addInterval(updateChapterDisplay, 500);
     timersTracker.add(timer);
