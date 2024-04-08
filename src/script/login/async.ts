@@ -32,7 +32,7 @@ import { showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { pgid, redirect } from '../module/global';
-import type { TotpPopupWindow } from '../module/popup_window/totp';
+import { TotpPopupWindowKey, type TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
 import { forgetPasswordText } from '../module/text/ui';
@@ -125,7 +125,7 @@ export default function (
             [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
                 switch (response) {
                     case AUTH_FAILED:
-                        totpPopupWindow?.[2];
+                        totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
                         replaceText(warningElem, loginFailed);
                         showElement(warningElem);
                         disableAllInputs(false);
@@ -149,13 +149,13 @@ export default function (
                         );
                         break;
                     case AUTH_DEACTIVATED:
-                        totpPopupWindow?.[2];
+                        totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
                         replaceChildren(warningElem, ...accountDeactivated());
                         showElement(warningElem);
                         disableAllInputs(false);
                         break;
                     case AUTH_TOO_MANY_REQUESTS:
-                        totpPopupWindow?.[2];
+                        totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
                         replaceText(warningElem, tooManyFailedLogin);
                         showElement(warningElem);
                         disableAllInputs(false);
@@ -172,7 +172,7 @@ export default function (
                         showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
+            [ServerRequestOptionProp.CONTENT]: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[TotpPopupWindowKey.TOTP]),
         });
     }
 

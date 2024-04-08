@@ -14,7 +14,7 @@ import {
 
 import { addTimeout } from '../timer';
 import { pgid } from '../global';
-import { promptForTotp, RejectReason, type TotpPopupWindow } from '../popup_window/totp';
+import { promptForTotp, RejectReason, TotpPopupWindowKey, type TotpPopupWindow } from '../popup_window/totp';
 
 export function getURLParam(name: string): string | null {
     const urlObj = new URL(w.location.href);
@@ -53,7 +53,7 @@ export async function handleFailedTotp(
     if (currentTotpPopupWindow === undefined) {
         totpPopupWindowPromise = promptForTotp();
     } else {
-        totpPopupWindowPromise = currentTotpPopupWindow[1]();
+        totpPopupWindowPromise = currentTotpPopupWindow[TotpPopupWindowKey.SHOW_WARNING]();
     }
 
     try {

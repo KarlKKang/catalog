@@ -6,11 +6,16 @@ import { cancelButtonText, submitButtonText } from '../text/ui';
 import { CSS_COLOR } from '../style/value';
 import { initializePopupWindow, styles } from './core';
 
-export type TotpPopupWindow = [
-    string, // totp
-    () => Promise<TotpPopupWindow>, // show warning
-    () => void, // close
-];
+export const enum TotpPopupWindowKey {
+    TOTP,
+    SHOW_WARNING,
+    CLOSE,
+}
+export type TotpPopupWindow = {
+    [TotpPopupWindowKey.TOTP]: string;
+    [TotpPopupWindowKey.SHOW_WARNING]: () => Promise<TotpPopupWindow>;
+    [TotpPopupWindowKey.CLOSE]: () => void;
+};
 
 export const enum RejectReason {
     TIMEOUT,
@@ -75,9 +80,9 @@ export function promptForTotp() {
         }
 
         timerBlocked = true;
-        returnPromiseResolve([
-            totp,
-            () => {
+        returnPromiseResolve({
+            [TotpPopupWindowKey.TOTP]: totp,
+            [TotpPopupWindowKey.SHOW_WARNING]: () => {
                 disableAllInputs(false);
                 showElement(warningText);
                 timerBlocked = false;
@@ -86,11 +91,11 @@ export function promptForTotp() {
                     returnPromiseReject = reject;
                 });
             },
-            () => {
+            [TotpPopupWindowKey.CLOSE]: () => {
                 removeInterval(timer);
                 hidePopupWindow();
             }
-        ]);
+        });
     };
     addEventListener(submitButton, 'click', submit);
     addEventListener(totpInput, 'keydown', (event) => {

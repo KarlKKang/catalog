@@ -4,7 +4,7 @@ import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS
 import { replaceChildren, replaceText } from '../module/dom';
 import { pgid } from '../module/global';
 import { accountDeactivated, loginFailed, sessionEnded, tooManyFailedLogin } from '../module/text/message/body';
-import type { TotpPopupWindow } from '../module/popup_window/totp';
+import { TotpPopupWindowKey, type TotpPopupWindow } from '../module/popup_window/totp';
 import { showElement } from '../module/style';
 import { disableAllInputs } from './helper';
 import { promptForLogin, type LoginPopupWindow } from './login_popup_window';
@@ -60,7 +60,7 @@ export function reauthenticationPrompt(
     sendServerRequest(uri, {
         [ServerRequestOptionProp.CALLBACK]: (response: string) => {
             const closeAll = () => {
-                totpPopupWindow?.[2]();
+                totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
                 loginPopupWindow[3]();
             };
             switch (response) {
@@ -97,7 +97,7 @@ export function reauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[0]),
+        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[TotpPopupWindowKey.TOTP]),
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
