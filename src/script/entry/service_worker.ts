@@ -1,4 +1,4 @@
-import { w, addEventListener, addClass, createParagraphElement, createButtonElement, createDivElement, appendChild } from '../module/dom';
+import { addEventListener, addClass, createParagraphElement, createButtonElement, createDivElement, appendChild, windowLocation } from '../module/dom';
 import { DOMAIN } from '../module/env/constant';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, offloadPopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
@@ -33,11 +33,11 @@ export default async function (showPrompt: boolean) { // This function should be
                     if (DEVELOPMENT) {
                         console.log('Service worker already up to date.');
                     }
-                    w.location.reload();
+                    windowLocation.reload();
                     return;
                 }
                 addEventListener(wb as unknown as EventTarget, 'controlling', () => {
-                    w.location.reload();
+                    windowLocation.reload();
                 });
                 wb.messageSkipWaiting();
             });

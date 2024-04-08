@@ -6,7 +6,7 @@ import { STATE_TRACKER } from '../global';
 export const d = document;
 export const w = window;
 export const html = d.documentElement;
-const windowLocation = w.location;
+export const windowLocation = w.location;
 
 export function getFullURL() {
     return windowLocation.href;

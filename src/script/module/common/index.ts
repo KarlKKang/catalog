@@ -10,6 +10,7 @@ import {
     getTitle,
     openWindow,
     clearSessionStorage,
+    windowLocation,
 } from '../dom';
 
 import { addTimeout } from '../timer';
@@ -17,7 +18,7 @@ import { pgid } from '../global';
 import { promptForTotp, RejectReason, TotpPopupWindowKey, type TotpPopupWindow } from '../popup_window/totp';
 
 export function getURLParam(name: string): string | null {
-    const urlObj = new URL(w.location.href);
+    const urlObj = new URL(windowLocation.href);
     return urlObj.searchParams.get(name);
 }
 
