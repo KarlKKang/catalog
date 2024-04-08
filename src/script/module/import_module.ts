@@ -1,6 +1,7 @@
 import { pgid } from './global';
 import { showMessage } from './message';
-import { moduleImportError } from './message/param';
+import { MessageParamProp } from './message/type';
+import { defaultErrorSuffix } from './text/message/body';
 
 export async function importModule<T>(importPromise: Promise<T>) {
     const currentPgid = pgid;
@@ -9,7 +10,9 @@ export async function importModule<T>(importPromise: Promise<T>) {
         module = await importPromise;
     } catch (e) {
         if (currentPgid === pgid) {
-            showMessage(moduleImportError);
+            showMessage({
+                [MessageParamProp.MESSAGE]: 'ページの読み込みに失敗しました。再読み込みをお試しください。' + defaultErrorSuffix,
+            });
         }
         throw e;
     }
