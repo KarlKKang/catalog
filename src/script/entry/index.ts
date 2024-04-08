@@ -229,7 +229,10 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
 
             if ('serviceWorker' in navigator) {
                 if (serviceWorkerModule === null) {
-                    import('./service_worker').then((module) => {
+                    import(
+                        /* webpackExports: ["default", "offload"] */
+                        './service_worker'
+                    ).then((module) => {
                         if (pgid !== newPgid) {
                             return;
                         }
