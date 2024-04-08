@@ -108,20 +108,6 @@ export function sendServerRequest(uri: string, options: ServerRequestOption): XM
     return xmlhttp;
 }
 
-export function authenticate(callback: { successful?: () => void; failed?: () => void }) {
-    sendServerRequest('get_authentication_state', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-            if (response === 'APPROVED') {
-                callback.successful && callback.successful();
-            } else if (response === 'FAILED') {
-                callback.failed && callback.failed();
-            } else {
-                showMessage(invalidResponse());
-            }
-        }
-    });
-}
-
 export function logout(callback: () => void) {
     sendServerRequest('logout', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {

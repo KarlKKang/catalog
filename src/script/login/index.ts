@@ -2,7 +2,8 @@ import {
     TOP_URL,
 } from '../module/env/constant';
 import {
-    authenticate,
+    ServerRequestOptionProp,
+    sendServerRequest,
 } from '../module/server';
 import {
     clearSessionStorage,
@@ -10,6 +11,8 @@ import {
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addTimeout } from '../module/timer';
 import { importModule } from '../module/import_module';
+import { showMessage } from '../module/message';
+import { invalidResponse } from '../module/server/message';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -34,19 +37,21 @@ export default function (showPage: ShowPageFunc) {
         /* webpackExports: ["default"] */
         './async'
     );
-
-    authenticate({
-        successful: () => {
-            redirect(TOP_URL, true);
-        },
-        failed: async () => {
-            const currentPgid = pgid;
-            const asyncModule = await importModule(asyncModulePromise);
-            if (currentPgid !== pgid) {
-                return;
+    sendServerRequest('get_authentication_state', {
+        [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
+            if (response === 'APPROVED') {
+                redirect(TOP_URL, true);
+            } else if (response === 'FAILED') {
+                const currentPgid = pgid;
+                const asyncModule = await importModule(asyncModulePromise);
+                if (currentPgid !== pgid) {
+                    return;
+                }
+                showPage();
+                asyncModule.default(importApprovedCallback());
+            } else {
+                showMessage(invalidResponse());
             }
-            showPage();
-            asyncModule.default(importApprovedCallback());
         }
     });
 }
