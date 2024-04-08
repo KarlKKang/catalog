@@ -1,15 +1,11 @@
 import {
     LOGIN_URL,
-} from './module/env/constant';
-import {
-    getURLParam,
-} from './module/common';
-import { ServerRequestOptionProp, sendServerRequest } from './module/server';
+} from '../module/env/constant';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     openWindow,
     replaceText,
-    clearSessionStorage,
     disableInput,
     createDivElement,
     createParagraphElement,
@@ -22,60 +18,23 @@ import {
     createButtonElement,
     createUListElement,
     appendListItems,
-} from './module/dom';
-import { showMessage } from './module/message';
-import { expired } from './module/message/param';
-import { emailAlreadyRegistered as emailAlreadyRegisteredBody, invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from './module/text/message/body';
-import { PASSWORD_REGEX } from './module/common/pure';
-import { redirect, type ShowPageFunc } from './module/global';
-import { invalidResponse } from './module/server/message';
-import { hideElement, horizontalCenter, showElement } from './module/style';
-import { nextButtonText, passwordRules, usernameRule } from './module/text/ui';
+} from '../module/dom';
+import { showMessage } from '../module/message';
+import { expired } from '../module/message/param';
+import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from '../module/text/message/body';
+import { PASSWORD_REGEX } from '../module/common/pure';
+import { invalidResponse } from '../module/server/message';
+import { hideElement, horizontalCenter, showElement } from '../module/style';
+import { nextButtonText, passwordRules, usernameRule } from '../module/text/ui';
 import * as commonStyles from '../css/common.module.scss';
 import * as styles from '../css/portal_form.module.scss';
-import { completed } from './module/text/message/title';
-import { addManualMultiLanguageClass, createUsernameInput } from './module/dom/create_element/multi_language';
-import { CSS_COLOR } from './module/style/value';
-import { MessageParamProp } from './module/message/type';
+import { completed } from '../module/text/message/title';
+import { addManualMultiLanguageClass, createUsernameInput } from '../module/dom/create_element/multi_language';
+import { CSS_COLOR } from '../module/style/value';
+import { MessageParamProp } from '../module/message/type';
+import { emailAlreadyRegistered } from './shared';
 
-const emailAlreadyRegistered = {
-    [MessageParamProp.TITLE]: '失敗しました',
-    [MessageParamProp.MESSAGE]: emailAlreadyRegisteredBody,
-    [MessageParamProp.BUTTON_TEXT]: null
-};
-
-export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
-    const param = getURLParam('p');
-    if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
-        if (DEVELOPMENT) {
-            showPage();
-            showPageCallback('test');
-        } else {
-            redirect(LOGIN_URL, true);
-        }
-        return;
-    }
-
-    sendServerRequest('register', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-            if (response === 'EXPIRED') {
-                showMessage(expired);
-            } else if (response === 'ALREADY REGISTERED') {
-                showMessage(emailAlreadyRegistered);
-            } else if (response === 'APPROVED') {
-                showPage();
-                showPageCallback(param);
-            } else {
-                showMessage(invalidResponse());
-            }
-        },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + param,
-    });
-}
-
-function showPageCallback(param: string) {
+export default function (param: string) {
     const container = createDivElement();
     addClass(container, styles.container);
     appendChild(body, container);
