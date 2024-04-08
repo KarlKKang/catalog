@@ -51,7 +51,7 @@ const configs = [
                     lang: "ja-JP",
                     start_url: "/",
                     icons: {
-                        appleStartup: { offset: 20 },
+                        appleStartup: false,
                     }
                 }
             })
