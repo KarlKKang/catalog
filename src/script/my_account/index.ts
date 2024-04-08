@@ -43,7 +43,10 @@ export default function (showPage: ShowPageFunc) {
             return;
         }
         getSessionsStarted = true;
-        const sessionsModuleImport = import('./sessions');
+        const sessionsModuleImport = import(
+            /* webpackExports: ["default"] */
+            './sessions'
+        );
         sendServerRequest('get_sessions', {
             [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 const currentPgid = pgid;
