@@ -47,7 +47,8 @@ export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void
             showContents(container, contentContainer);
         });
     } else {
-        showContents(...popupWindow);
+        [container, contentContainer] = popupWindow;
+        showContents(container, contentContainer);
     }
 
     return () => {
