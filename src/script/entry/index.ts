@@ -227,16 +227,18 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
             page[PageProp.NO_THEME] && addClass(body, styles.noTheme);
             page[PageProp.NATIVE_VIEWPORT] && setViewport(true);
 
-            if (serviceWorkerModule === null) {
-                import('./service_worker').then((module) => {
-                    if (pgid !== newPgid) {
-                        return;
-                    }
-                    serviceWorkerModule = module;
+            if ('serviceWorker' in navigator) {
+                if (serviceWorkerModule === null) {
+                    import('./service_worker').then((module) => {
+                        if (pgid !== newPgid) {
+                            return;
+                        }
+                        serviceWorkerModule = module;
+                        serviceWorkerModule.default(isStandardStyle);
+                    }); // No need to catch error since this module is not critical.
+                } else {
                     serviceWorkerModule.default(isStandardStyle);
-                }); // No need to catch error since this module is not critical.
-            } else {
-                serviceWorkerModule.default(isStandardStyle);
+                }
             }
 
             loadingBarWidth = 100;
