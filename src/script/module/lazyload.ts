@@ -23,7 +23,7 @@ const enum Status {
     LOADING,
 }
 
-const enum TargetDataIdx {
+const enum TargetDataKey {
     SRC,
     ALT,
     DELAY,
@@ -32,16 +32,15 @@ const enum TargetDataIdx {
     STATUS,
     XHR,
 }
-
-type TargetData = [
-    string, // src
-    string, // alt
-    number, // delay
-    ((data: Blob) => void) | undefined, // onDataLoad
-    ((canvas: HTMLCanvasElement) => void) | undefined, // onImageDraw
-    Status, // status
-    XMLHttpRequest | null, // xhr
-];
+type TargetData = {
+    [TargetDataKey.SRC]: string;
+    [TargetDataKey.ALT]: string;
+    [TargetDataKey.DELAY]: number;
+    [TargetDataKey.ON_DATA_LOAD]: ((data: Blob) => void) | undefined;
+    [TargetDataKey.ON_IMAGE_DRAW]: ((canvas: HTMLCanvasElement) => void) | undefined;
+    [TargetDataKey.STATUS]: Status;
+    [TargetDataKey.XHR]: XMLHttpRequest | null;
+};
 
 const targets: Map<Element, TargetData> = new Map();
 let sessionCredentialPromise: Promise<void> | null = null;
@@ -68,15 +67,15 @@ export function attachLazyload(
     appendChild(target, overlay);
 
     observer.observe(target);
-    targets.set(target, [
-        src,
-        alt,
-        delay || 0,
-        onDataLoad,
-        onImageDraw,
-        Status.LISTENING,
-        null
-    ]);
+    targets.set(target, {
+        [TargetDataKey.SRC]: src,
+        [TargetDataKey.ALT]: alt,
+        [TargetDataKey.DELAY]: delay || 0,
+        [TargetDataKey.ON_DATA_LOAD]: onDataLoad,
+        [TargetDataKey.ON_IMAGE_DRAW]: onImageDraw,
+        [TargetDataKey.STATUS]: Status.LISTENING,
+        [TargetDataKey.XHR]: null
+    });
 }
 
 function observerCallback(entries: IntersectionObserverEntry[]) {
@@ -88,29 +87,29 @@ function observerCallback(entries: IntersectionObserverEntry[]) {
         }
 
         if (entry['isIntersecting']) {
-            if (targetData[TargetDataIdx.STATUS] === Status.LISTENING) {
-                targetData[TargetDataIdx.STATUS] = Status.WAITING;
+            if (targetData[TargetDataKey.STATUS] === Status.LISTENING) {
+                targetData[TargetDataKey.STATUS] = Status.WAITING;
                 addTimeout(() => {
-                    if (!targets.has(target) || targetData[TargetDataIdx.STATUS] !== Status.WAITING) {
+                    if (!targets.has(target) || targetData[TargetDataKey.STATUS] !== Status.WAITING) {
                         return;
                     }
-                    targetData[TargetDataIdx.STATUS] = Status.LOADING;
+                    targetData[TargetDataKey.STATUS] = Status.LOADING;
                     loadImage(target, targetData);
-                }, targetData[TargetDataIdx.DELAY]);
+                }, targetData[TargetDataKey.DELAY]);
             }
         } else {
-            if (targetData[TargetDataIdx.STATUS] === Status.WAITING) {
-                targetData[TargetDataIdx.STATUS] = Status.LISTENING;
-            } else if (targetData[TargetDataIdx.STATUS] === Status.LOADING) {
-                if (targetData[TargetDataIdx.XHR] !== null) {
-                    if (targetData[TargetDataIdx.XHR].readyState === XMLHttpRequest.DONE) { // onImageDraw for the imageLoader may be called after decoding webp.
+            if (targetData[TargetDataKey.STATUS] === Status.WAITING) {
+                targetData[TargetDataKey.STATUS] = Status.LISTENING;
+            } else if (targetData[TargetDataKey.STATUS] === Status.LOADING) {
+                if (targetData[TargetDataKey.XHR] !== null) {
+                    if (targetData[TargetDataKey.XHR].readyState === XMLHttpRequest.DONE) { // onImageDraw for the imageLoader may be called after decoding webp.
                         continue;
                     } else {
-                        targetData[TargetDataIdx.XHR].abort();
-                        targetData[TargetDataIdx.XHR] = null;
+                        targetData[TargetDataKey.XHR].abort();
+                        targetData[TargetDataKey.XHR] = null;
                     }
                 }
-                targetData[TargetDataIdx.STATUS] = Status.LISTENING;
+                targetData[TargetDataKey.STATUS] = Status.LISTENING;
             }
         }
     }
@@ -121,7 +120,7 @@ function loadImage(target: Element, targetData: TargetData) {
         observer.unobserve(target);
         targets.delete(target);
         addClass(target, styles.complete);
-        targetData[TargetDataIdx.ON_IMAGE_DRAW] && targetData[TargetDataIdx.ON_IMAGE_DRAW](canvas);
+        targetData[TargetDataKey.ON_IMAGE_DRAW] && targetData[TargetDataKey.ON_IMAGE_DRAW](canvas);
     };
     const onUnrecoverableError = () => {
         observer.unobserve(target);
@@ -129,7 +128,7 @@ function loadImage(target: Element, targetData: TargetData) {
     };
     const onNetworkError = () => {
         addTimeout(() => {
-            if (targets.has(target) && targetData[TargetDataIdx.STATUS] === Status.LOADING) {
+            if (targets.has(target) && targetData[TargetDataKey.STATUS] === Status.LOADING) {
                 loadImage(target, targetData);
             }
         }, 5000);
@@ -158,12 +157,12 @@ function loadImage(target: Element, targetData: TargetData) {
             });
         }
         sessionCredentialPromise.then(() => {
-            if (targets.has(target) && targetData[TargetDataIdx.STATUS] === Status.LOADING) {
-                targetData[TargetDataIdx.XHR] = imageLoader(target, targetData[TargetDataIdx.SRC], targetData[TargetDataIdx.ALT], true, onImageDraw, targetData[TargetDataIdx.ON_DATA_LOAD], onNetworkError, onUnrecoverableError);
+            if (targets.has(target) && targetData[TargetDataKey.STATUS] === Status.LOADING) {
+                targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], true, onImageDraw, targetData[TargetDataKey.ON_DATA_LOAD], onNetworkError, onUnrecoverableError);
             }
         });
     } else {
-        targetData[TargetDataIdx.XHR] = imageLoader(target, targetData[TargetDataIdx.SRC], targetData[TargetDataIdx.ALT], false, onImageDraw, targetData[TargetDataIdx.ON_DATA_LOAD], onNetworkError, onUnrecoverableError);
+        targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], false, onImageDraw, targetData[TargetDataKey.ON_DATA_LOAD], onNetworkError, onUnrecoverableError);
     }
 }
 
