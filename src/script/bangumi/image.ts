@@ -102,9 +102,12 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
         addEventListener(showFullSizeButton, 'click', () => {
             openImageWindow(baseURL, fileName, credential, SessionTypes.MEDIA);
         });
-        attachLazyload(lazyloadNode, baseURL + encodeCFURIComponent(fileName), fileName, {
-            delay: 250,
-            onDataLoad: (data: Blob) => {
+        attachLazyload(
+            lazyloadNode,
+            baseURL + encodeCFURIComponent(fileName),
+            fileName,
+            250,
+            (data: Blob) => {
                 addEventListener(downloadButton, 'click', () => {
                     downloadButton.disabled = true;
                     downloadAnchor.href = URL.createObjectURL(data);
@@ -119,7 +122,7 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
                 });
                 downloadButton.disabled = false;
             },
-            onImageDraw: (canvas) => {
+            (canvas) => {
                 const subtitle = createParagraphElement();
                 addClass(subtitle, styles.subTitle);
                 const subtitleStyle = subtitle.style;
@@ -131,7 +134,7 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
                 appendChild(subtitle, formatText);
                 insertBefore(subtitle, imageNode);
             },
-        });
+        );
     }
 }
 

@@ -97,7 +97,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
         if (src === null) {
             continue;
         }
-        attachLazyload(elem, baseURL + encodeCFURIComponent(src), src, { delay: 250 });
+        attachLazyload(elem, baseURL + encodeCFURIComponent(src), src, 250);
         if (containsClass(elem, IMAGE_ENLARGE_CLASS)) {
             removeClass(elem, IMAGE_ENLARGE_CLASS);
             addClass(elem, styles.imageEnlarge);

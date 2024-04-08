@@ -58,16 +58,10 @@ export function attachLazyload(
     target: Element,
     src: string,
     alt: string,
-    options?: {
-        delay?: number;
-        onDataLoad?: (data: Blob) => void;
-        onImageDraw?: (canvas: HTMLCanvasElement) => void;
-    }
+    delay?: number,
+    onDataLoad?: (data: Blob) => void,
+    onImageDraw?: (canvas: HTMLCanvasElement) => void,
 ) {
-    if (options === undefined) {
-        options = {};
-    }
-
     addClass(target, styles.lazyload);
     const overlay = createDivElement();
     addClass(overlay, styles.overlay);
@@ -77,9 +71,9 @@ export function attachLazyload(
     targets.set(target, [
         src,
         alt,
-        options.delay || 0,
-        options.onDataLoad,
-        options.onImageDraw,
+        delay || 0,
+        onDataLoad,
+        onImageDraw,
         Status.LISTENING,
         null
     ]);
