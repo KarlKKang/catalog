@@ -14,8 +14,6 @@ import {
     appendText,
     replaceChildren,
 } from '../module/dom';
-import { showMessage } from '../module/message';
-import { moduleImportError } from '../module/message/param';
 import { EPInfoKey, type AudioEPInfo, type AudioFile, AudioFileKey, AlbumInfoKey } from '../module/type/BangumiInfo';
 import {
     IS_FIREFOX,
@@ -27,7 +25,6 @@ import {
     canPlay,
 } from '../module/browser';
 import type { Player as PlayerType } from '../module/player/player';
-import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 import { parseCharacters } from './helper';
 import {
     showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError, showTextErrorMessage
@@ -37,6 +34,7 @@ import { pgid } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
 import { SharedElement, getSharedElement } from './shared_var';
 import * as styles from '../../css/bangumi.module.scss';
+import { importModule } from '../module/import_module';
 
 let currentPgid: unknown;
 
@@ -121,17 +119,8 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
     const url = baseURL + encodeCFURIComponent('_MASTER_' + file[AudioFileKey.FILE_NAME] + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
     if (!MSE_SUPPORTED) {
-        let Player: typeof PlayerType;
-        try {
-            await createMediaSessionPromise;
-            Player = (await nativePlayerImportPromise).Player;
-        } catch (e) {
-            if (currentPgid === pgid) {
-                showMessage(moduleImportError);
-            }
-            throw e;
-        }
-
+        const Player = (await importModule(nativePlayerImportPromise)).Player;
+        await createMediaSessionPromise;
         if (currentPgid !== pgid) {
             return;
         }
@@ -150,17 +139,8 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
             audioReady();
         }
     } else {
-        let HlsPlayer: typeof HlsPlayerType;
-        try {
-            await createMediaSessionPromise;
-            HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
-        } catch (e) {
-            if (currentPgid === pgid) {
-                showMessage(moduleImportError);
-            }
-            throw e;
-        }
-
+        const HlsPlayer = (await importModule(hlsPlayerImportPromise)).HlsPlayer;
+        await createMediaSessionPromise;
         if (currentPgid !== pgid) {
             return;
         }

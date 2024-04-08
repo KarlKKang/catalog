@@ -10,12 +10,11 @@ import {
 import {
     clearSessionStorage,
 } from '../module/dom';
-import { showMessage } from '../module/message';
 import { pgid, type ShowPageFunc } from '../module/global';
-import { moduleImportError } from '../module/message/param';
 import { addTimeout } from '../module/timer';
 import { parseAccountInfo } from '../module/type/AccountInfo';
 import { parseSession } from '../module/type/Sessions';
+import { importModule } from '../module/import_module';
 
 let offloadModule: (() => void) | null = null;
 
@@ -35,15 +34,13 @@ export default function (showPage: ShowPageFunc) {
             return;
         }
         getSessionsStarted = true;
-        const sessionsModuleImport = getModulePromise(
-            import(
-                /* webpackExports: ["default"] */
-                './sessions'
-            )
+        const sessionsModuleImport = import(
+            /* webpackExports: ["default"] */
+            './sessions'
         );
         sendServerRequest('get_sessions', {
             [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
-                const sessionsModule = await sessionsModuleImport;
+                const sessionsModule = await importModule(sessionsModuleImport);
                 await uiInitPromise;
                 if (currentPgid !== pgid) {
                     return;
@@ -54,17 +51,15 @@ export default function (showPage: ShowPageFunc) {
     };
     addTimeout(getSessions, 1000); // In case the network latency is high, we might as well start the request early
 
-    const asyncModulePromise = getModulePromise(
-        import(
-            /* webpackExports: ["default", "offload"] */
-            './async'
-        )
+    const asyncModulePromise = import(
+        /* webpackExports: ["default", "offload"] */
+        './async'
     );
 
     sendServerRequest('get_account', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
             const userInfo = parseResponse(response, parseAccountInfo);
-            const asyncModule = await asyncModulePromise;
+            const asyncModule = await importModule(asyncModulePromise);
             if (currentPgid !== pgid) {
                 return;
             }
@@ -76,20 +71,6 @@ export default function (showPage: ShowPageFunc) {
         },
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
-}
-
-async function getModulePromise<T>(importPromise: Promise<T>) {
-    const currentPgid = pgid;
-    let module: T;
-    try {
-        module = await importPromise;
-    } catch (e) {
-        if (currentPgid === pgid) {
-            showMessage(moduleImportError);
-        }
-        throw e;
-    }
-    return module;
 }
 
 export function offload() {

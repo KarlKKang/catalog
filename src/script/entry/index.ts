@@ -3,13 +3,12 @@ import { body as innerBody, getBaseURL, w, addEventListenerOnce, setTitle, chang
 import { TOP_DOMAIN, TOP_URL } from '../module/env/constant';
 import { addTimeout, removeAllTimers } from '../module/timer';
 import * as messagePageScript from '../message';
-import { showMessage } from '../module/message';
-import { moduleImportError } from '../module/message/param';
 import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect, type ShowPageFunc } from '../module/global';
 import * as styles from '../../css/common.module.scss';
 import { enableTransition, setMinHeight, setOpacity, setVisibility, setWidth } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
 import { consolePageTitle, emailChangePageTitle, infoPageTitle, loginPageTitle, myAccountPageTitle, newsPageTitle, notFoundPageTitle, passwordResetPageTitle, registerPageTitle } from '../module/text/page_title';
+import { importModule } from '../module/import_module';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 type PageScript = {
@@ -204,15 +203,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         if (DEVELOPMENT) {
             console.log('First time loading page: ' + url);
         }
-        const scriptImportPromise = page[PageProp.SCRIPT]();
-        try {
-            page[PageProp.SCRIPT_CACHED] = await scriptImportPromise;
-        } catch (e) {
-            if (pgid === newPgid) {
-                showMessage(moduleImportError);
-            }
-            throw e;
-        }
+        page[PageProp.SCRIPT_CACHED] = await importModule(page[PageProp.SCRIPT]());
         if (pgid !== newPgid) {
             return;
         }

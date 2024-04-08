@@ -9,10 +9,9 @@ import {
     createCanvasElement,
     removeAllEventListeners,
 } from './dom';
-import { showMessage } from './message';
-import { moduleImportError } from './message/param';
 import { pgid } from './global';
 import { setHeight, setWidth } from './style';
+import { importModule } from './import_module';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
@@ -154,24 +153,17 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
 async function startWebpMachine() {
     const currentPgid = pgid;
     if (webpMachine === null) {
-        try {
-            const { WebpMachine, detectWebpSupport } = await import(
+        const { WebpMachine, detectWebpSupport } = await importModule(
+            import(
+                /* webpackExports: ["WebpMachine", "detectWebpSupport"] */
                 'webp-hero'
-            );
-            if (currentPgid !== pgid) {
-                return;
-            }
-            webpMachine = new WebpMachine();
-            webpSupported = await detectWebpSupport();
-        } catch (e: unknown) {
-            if (currentPgid === pgid) {
-                showMessage(moduleImportError);
-            }
-            throw e;
+            )
+        );
+        webpMachine = new WebpMachine();
+        webpSupported = await detectWebpSupport();
+        if (currentPgid !== pgid) {
+            return;
         }
-    }
-    if (currentPgid !== pgid) {
-        return;
     }
 
     let queueNext = webpMachineQueue.shift();

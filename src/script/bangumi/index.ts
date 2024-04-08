@@ -10,7 +10,6 @@ import {
     getBaseURL,
 } from '../module/dom';
 import { showMessage } from '../module/message';
-import { moduleImportError } from '../module/message/param';
 import { notFound } from '../module/server/message';
 import { getLogoutParam } from './helper';
 import { importAll } from './import_promise';
@@ -19,6 +18,7 @@ import { addNavBar } from '../module/nav_bar';
 import { addTimeout } from '../module/timer';
 import { type MediaSessionInfo, MediaSessionInfoKey, parseMediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/BangumiInfo';
+import { importModule } from '../module/import_module';
 
 let updatePageModule: Awaited<typeof import(
     './update_page'
@@ -96,13 +96,9 @@ export default function (showPage: ShowPageFunc) {
             });
 
             if (updatePageModule === null) {
-                try {
-                    updatePageModule = await updatePageImportPromise;
-                } catch (e) {
-                    if (currentPgid === pgid) {
-                        showMessage(moduleImportError);
-                    }
-                    throw e;
+                updatePageModule = await importModule(updatePageImportPromise);
+                if (currentPgid !== pgid) {
+                    return;
                 }
             }
 

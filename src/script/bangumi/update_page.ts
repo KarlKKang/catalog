@@ -21,8 +21,6 @@ import {
     body,
     createHRElement,
 } from '../module/dom';
-import { showMessage } from '../module/message';
-import { moduleImportError } from '../module/message/param';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
@@ -34,6 +32,7 @@ import { hideElement, setMaxHeight, setMinHeight, setOpacity, setPaddingBottom, 
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import * as styles from '../../css/bangumi.module.scss';
 import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoEPInfo, AudioEPInfo, ImageEPInfo } from '../module/type/BangumiInfo';
+import { importModule } from '../module/import_module';
 
 let seriesID: string;
 let epIndex: number;
@@ -124,41 +123,20 @@ export default async function (
 
     const currentPgid = pgid;
     if (type === 'video') {
-        try {
-            currentPage = await videoImportPromise;
-        } catch (e) {
-            if (currentPgid === pgid) {
-                showMessage(moduleImportError);
-            }
-            throw e;
-        }
+        currentPage = await importModule(videoImportPromise);
         if (currentPgid !== pgid) {
             return;
         }
         currentPage.default(seriesID, epIndex, epInfo as VideoEPInfo, baseURL, createMediaSessionPromise);
     } else {
         if (type === 'audio') {
-            try {
-                currentPage = await audioImportPromise;
-            } catch (e) {
-                if (currentPgid === pgid) {
-                    showMessage(moduleImportError);
-                }
-                throw e;
-            }
+            currentPage = await importModule(audioImportPromise);
             if (currentPgid !== pgid) {
                 return;
             }
             currentPage.default(seriesID, epIndex, epInfo as AudioEPInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
         } else {
-            try {
-                currentPage = await imageImportPromise;
-            } catch (e) {
-                if (currentPgid === pgid) {
-                    showMessage(moduleImportError);
-                }
-                throw e;
-            }
+            currentPage = await importModule(imageImportPromise);
             if (currentPgid !== pgid) {
                 return;
             }

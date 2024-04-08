@@ -16,8 +16,7 @@ import { isbot } from 'isbot';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { parseSeriesInfo } from '../module/type/SeriesInfo';
 import { getURLKeywords, search, setSearch } from './shared';
-import { showMessage } from '../module/message';
-import { moduleImportError } from '../module/message/param';
+import { importModule } from '../module/import_module';
 
 let offloadModule: (() => void) | null = null;
 
@@ -52,15 +51,7 @@ export default function (showPage: ShowPageFunc) {
     sendServerRequest('get_series?' + keywordsQuery + 'pivot=0', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
             const currentPgid = pgid;
-            let asyncModule: Awaited<typeof asyncModulePromise>;
-            try {
-                asyncModule = await asyncModulePromise;
-            } catch (e) {
-                if (pgid === currentPgid) {
-                    showMessage(moduleImportError);
-                }
-                throw e;
-            }
+            const asyncModule = await importModule(asyncModulePromise);
             if (pgid !== currentPgid) {
                 return;
             }

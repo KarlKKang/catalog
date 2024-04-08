@@ -13,7 +13,7 @@ import {
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
-import { moduleImportError } from '../module/message/param';
+import { importModule } from '../module/import_module';
 
 let offloadAsyncModule: (() => void) | null = null;
 
@@ -47,16 +47,8 @@ export default function (showPage: ShowPageFunc) {
                 return;
             }
 
-            let asyncModule: Awaited<typeof asyncModulePromise>;
             const currentPgid = pgid;
-            try {
-                asyncModule = await asyncModulePromise;
-            } catch (e) {
-                if (pgid === currentPgid) {
-                    showMessage(moduleImportError);
-                }
-                throw e;
-            }
+            const asyncModule = await importModule(asyncModulePromise);
             if (pgid !== currentPgid) {
                 return;
             }

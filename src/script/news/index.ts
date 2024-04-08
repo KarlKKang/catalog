@@ -5,14 +5,13 @@ import {
     getBaseURL,
     changeURL,
 } from '../module/dom';
-import { showMessage } from '../module/message';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { NEWS_TOP_URL } from './helper';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';
-import { moduleImportError } from '../module/message/param';
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import { NewsInfoKey, parseNewsInfo } from '../module/type/NewsInfo';
+import { importModule } from '../module/import_module';
 
 let offloadModule: (() => void) | null = null;
 
@@ -32,22 +31,14 @@ export default function (showPage: ShowPageFunc) {
 
 function getAllNews(showPage: ShowPageFunc): void {
     addNavBar(NavBarPage.NEWS);
-    const allNewsModuleImport = import(
+    const allNewsModulePromise = import(
         /* webpackExports: ["default", "offload"] */
         './all_news'
     );
     sendServerRequest('get_all_news?pivot=0', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const currentPgid = pgid;
-            let allNewsModule: Awaited<typeof allNewsModuleImport>;
-            try {
-                allNewsModule = await allNewsModuleImport;
-            } catch (e) {
-                if (pgid === currentPgid) {
-                    showMessage(moduleImportError);
-                }
-                throw e;
-            }
+            const allNewsModule = await importModule(allNewsModulePromise);
             if (pgid !== currentPgid) {
                 return;
             }
@@ -63,7 +54,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         redirect(NEWS_TOP_URL);
     });
 
-    const newsModuleImport = import(
+    const newsModulePromise = import(
         /* webpackExports: ["default", "offload"] */
         './news'
     );
@@ -74,15 +65,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);
             const currentPgid = pgid;
-            let newsModule: Awaited<typeof newsModuleImport>;
-            try {
-                newsModule = await newsModuleImport;
-            } catch (e) {
-                if (pgid === currentPgid) {
-                    showMessage(moduleImportError);
-                }
-                throw e;
-            }
+            const newsModule = await importModule(newsModulePromise);
             if (pgid !== currentPgid) {
                 return;
             }

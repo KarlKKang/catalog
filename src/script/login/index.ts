@@ -7,10 +7,9 @@ import {
 import {
     clearSessionStorage,
 } from '../module/dom';
-import { showMessage } from '../module/message';
-import { moduleImportError } from '../module/message/param';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addTimeout } from '../module/timer';
+import { importModule } from '../module/import_module';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -42,14 +41,9 @@ export default function (showPage: ShowPageFunc) {
         },
         failed: async () => {
             const currentPgid = pgid;
-            let asyncModule: Awaited<typeof asyncModulePromise>;
-            try {
-                asyncModule = await asyncModulePromise;
-            } catch (e) {
-                if (pgid === currentPgid) {
-                    showMessage(moduleImportError);
-                }
-                throw e;
+            const asyncModule = await importModule(asyncModulePromise);
+            if (currentPgid !== pgid) {
+                return;
             }
             showPage();
             asyncModule.default(importApprovedCallback());

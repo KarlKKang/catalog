@@ -30,7 +30,6 @@ import {
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';
-import { moduleImportError } from '../module/message/param';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { pgid, redirect } from '../module/global';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
@@ -41,6 +40,7 @@ import * as commonStyles from '../../css/common.module.scss';
 import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
 import { offloadPopupWindow } from '../module/popup_window/core';
+import { importModule } from '../module/import_module';
 
 export default function (
     approvedCallbackPromise: Promise<typeof import(
@@ -162,15 +162,7 @@ export default function (
                         break;
                     case 'APPROVED': {
                         const currentPgid = pgid;
-                        let approvedCallback: Awaited<typeof approvedCallbackPromise>;
-                        try {
-                            approvedCallback = await approvedCallbackPromise;
-                        } catch (e) {
-                            if (currentPgid === pgid) {
-                                showMessage(moduleImportError);
-                            }
-                            throw e;
-                        }
+                        const approvedCallback = await importModule(approvedCallbackPromise);
                         if (currentPgid === pgid) {
                             approvedCallback.default();
                         }

@@ -23,8 +23,6 @@ import {
     removeClass,
     changeURL,
 } from '../module/dom';
-import { showMessage } from '../module/message';
-import { moduleImportError } from '../module/message/param';
 import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';
 import {
     MSE_SUPPORTED,
@@ -39,7 +37,6 @@ import {
     MIN_MSE_BUFFER_SIZE,
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
-import type { HlsPlayer as HlsPlayerType } from '../module/player/hls_player';
 import { getFormatIndex, createQuery } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, showTextErrorMessage, type AccordionInstance } from './media_helper';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
@@ -54,6 +51,7 @@ import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import { getURLParam } from '../module/common';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/bangumi.module.scss';
+import { importModule } from '../module/import_module';
 
 let currentPgid: unknown;
 
@@ -331,17 +329,8 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
 
     const url = baseURL + encodeCFURIComponent('_MASTER_' + epInfo[EPInfoKey.FILE_NAME] + '[' + currentFormat[VideoFormatKey.VALUE] + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
     if (!MSE_SUPPORTED) {
-        let Player: typeof PlayerType;
-        try {
-            await createMediaSessionPromise;
-            Player = (await nativePlayerImportPromise).Player;
-        } catch (e) {
-            if (currentPgid === pgid) {
-                showMessage(moduleImportError);
-            }
-            throw e;
-        }
-
+        const Player = (await importModule(nativePlayerImportPromise)).Player;
+        await createMediaSessionPromise;
         if (currentPgid !== pgid) {
             return;
         }
@@ -359,17 +348,8 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         });
         afterLoad(mediaInstance);
     } else {
-        let HlsPlayer: typeof HlsPlayerType;
-        try {
-            await createMediaSessionPromise;
-            HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
-        } catch (e) {
-            if (currentPgid === pgid) {
-                showMessage(moduleImportError);
-            }
-            throw e;
-        }
-
+        const HlsPlayer = (await importModule(hlsPlayerImportPromise)).HlsPlayer
+        await createMediaSessionPromise;
         if (currentPgid !== pgid) {
             return;
         }
