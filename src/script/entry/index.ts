@@ -79,6 +79,7 @@ const pages: PageMap = {
     },
     'message': {
         [PageProp.SCRIPT]: () => Promise.resolve(messagePageScript),
+        [PageProp.SCRIPT_CACHED]: messagePageScript,
     },
     'my_account': {
         [PageProp.SCRIPT]: () => import('../my_account'),
