@@ -7,7 +7,7 @@ import { accountDeactivated, loginFailed, sessionEnded, tooManyFailedLogin } fro
 import { TotpPopupWindowKey, type TotpPopupWindow } from '../module/popup_window/totp';
 import { showElement } from '../module/style';
 import { disableAllInputs } from './helper';
-import { promptForLogin, type LoginPopupWindow } from './login_popup_window';
+import { promptForLogin, type LoginPopupWindow, LoginPopupWindowKey } from './login_popup_window';
 
 export function reauthenticationPrompt(
     uri: string,
@@ -61,7 +61,7 @@ export function reauthenticationPrompt(
         [ServerRequestOptionProp.CALLBACK]: (response: string) => {
             const closeAll = () => {
                 totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
-                loginPopupWindow[3]();
+                loginPopupWindow[LoginPopupWindowKey.CLOSE]();
             };
             switch (response) {
                 case AUTH_DEACTIVATED:
@@ -97,7 +97,7 @@ export function reauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[TotpPopupWindowKey.TOTP]),
+        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.EMAIL]) + '&password=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.PASSWORD]) + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[TotpPopupWindowKey.TOTP]),
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
@@ -116,7 +116,7 @@ export async function handleFailedLogin(
         if (message === undefined) {
             message = loginFailed;
         }
-        loginPopupWindowPromise = currentLoginPopupWindow[2](message);
+        loginPopupWindowPromise = currentLoginPopupWindow[LoginPopupWindowKey.SHOW_WARNING](message);
     }
 
     let newLoginPopupWindow: LoginPopupWindow;

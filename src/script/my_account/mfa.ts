@@ -32,7 +32,7 @@ import { SharedBool, SharedButton, SharedElement, getSharedBool, getSharedButton
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
-import type { LoginPopupWindow } from './login_popup_window';
+import { LoginPopupWindowKey, type LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 import { changeColor, hideElement, horizontalCenter, setCursor, setHeight, showElement } from '../module/style';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
@@ -166,7 +166,7 @@ function modifyMfaReauthenticationPrompt(
         [ServerRequestOptionProp.CALLBACK]: (response: string) => {
             const closeAll = () => {
                 emailOtpPopupWindow?.[2]();
-                loginPopupWindow[3]();
+                loginPopupWindow[LoginPopupWindowKey.CLOSE]();
             };
             switch (response) {
                 case AUTH_DEACTIVATED:
@@ -211,7 +211,7 @@ function modifyMfaReauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[0]) + '&password=' + encodeURIComponent(loginPopupWindow[1]) + (emailOtpPopupWindow === undefined || emailOtpPopupWindow[0] === undefined ? '' : '&otp=' + emailOtpPopupWindow[0]),
+        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.EMAIL]) + '&password=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.PASSWORD]) + (emailOtpPopupWindow === undefined || emailOtpPopupWindow[0] === undefined ? '' : '&otp=' + emailOtpPopupWindow[0]),
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }

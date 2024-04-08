@@ -8,12 +8,18 @@ import * as commonStyles from '../../css/common.module.scss';
 import { CSS_COLOR } from '../module/style/value';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
 
-export type LoginPopupWindow = [
-    string, // email
-    string, // password
-    (message: string) => Promise<LoginPopupWindow>, // show warning
-    () => void, // close
-];
+export const enum LoginPopupWindowKey {
+    EMAIL,
+    PASSWORD,
+    SHOW_WARNING,
+    CLOSE,
+}
+export type LoginPopupWindow = {
+    [LoginPopupWindowKey.EMAIL]: string;
+    [LoginPopupWindowKey.PASSWORD]: string;
+    [LoginPopupWindowKey.SHOW_WARNING]: (message: string) => Promise<LoginPopupWindow>;
+    [LoginPopupWindowKey.CLOSE]: () => void;
+};
 
 const enum RejectReason {
     CLOSE,
@@ -83,10 +89,10 @@ export function promptForLogin(message?: string) {
             return;
         }
 
-        returnPromiseResolve([
-            email,
-            password,
-            (message: string) => {
+        returnPromiseResolve({
+            [LoginPopupWindowKey.EMAIL]: email,
+            [LoginPopupWindowKey.PASSWORD]: password,
+            [LoginPopupWindowKey.SHOW_WARNING]: (message: string) => {
                 disableAllInputs(false);
                 replaceText(warningText, message);
                 showElement(warningText);
@@ -95,8 +101,8 @@ export function promptForLogin(message?: string) {
                     returnPromiseReject = reject;
                 });
             },
-            hidePopupWindow
-        ]);
+            [LoginPopupWindowKey.CLOSE]: hidePopupWindow
+        });
     };
     const submitOnKeyDown = (event: Event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
