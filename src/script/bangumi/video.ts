@@ -148,7 +148,7 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], seriesID, epIndex, { selectMenu: selectMenu, formats: formats, initialFormat: currentFormat });
+        const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], seriesID, epIndex, [selectMenu, formats, currentFormat]);
         appendChild(contentContainer, downloadAccordion);
         addEventListener(selectMenu, 'change', () => { formatSwitch(selectMenu, formatDisplay, containerSelector); });
     });

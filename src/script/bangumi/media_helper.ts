@@ -106,11 +106,11 @@ export function buildDownloadAccordion(
     mediaSessionCredential: string,
     seriesID: string,
     epIndex: number,
-    videoFormats: null | {
-        selectMenu: HTMLSelectElement;
-        formats: VideoFormats;
-        initialFormat: VideoFormat;
-    }
+    videoFormats: null | [
+        HTMLSelectElement,
+        VideoFormats,
+        VideoFormat,
+    ]
 ): [HTMLDivElement, HTMLDivElement] {
     const [accordion, accordionPanel] = buildAccordion('ダウンロード', true);
 
@@ -170,7 +170,7 @@ export function buildDownloadAccordion(
     appendChild(containerSelectMenu, containerOptionMP4);
     appendChild(containerSelector, containerSelectMenu);
     appendChild(downloadOptionsContainer, containerSelector);
-    if (videoFormats === null || videoFormats.initialFormat[VideoFormatKey.DIRECT_DOWNLOAD]) {
+    if (videoFormats === null || videoFormats[2][VideoFormatKey.DIRECT_DOWNLOAD]) {
         hideElement(containerSelector);
     }
 
@@ -188,9 +188,9 @@ export function buildDownloadAccordion(
         downloadButton.disabled = true;
         let requestContent = mediaSessionCredential + '&os=' + osSelectMenu.value;
         if (videoFormats !== null) {
-            const formatIndex = videoFormats.selectMenu.selectedIndex;
+            const formatIndex = videoFormats[0].selectedIndex;
             requestContent += '&format=' + formatIndex;
-            const format = videoFormats.formats[formatIndex];
+            const format = videoFormats[1][formatIndex];
             if (format === undefined) {
                 return;
             }
