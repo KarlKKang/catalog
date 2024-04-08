@@ -177,7 +177,7 @@ function addCssLoader(config, dev) {
                     loader: 'css-loader',
                     options: {
                         modules: {
-                            namedExport: true,
+                            exportLocalsConvention: 'camel-case-only',
                             localIdentName: dev ? '[path][name]__[local]' : '[hash:base64]',
                         }
                     }
