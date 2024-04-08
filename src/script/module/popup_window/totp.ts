@@ -5,6 +5,7 @@ import { addInterval, removeInterval } from '../timer';
 import { cancelButtonText, submitButtonText } from '../text/ui';
 import { CSS_COLOR } from '../style/value';
 import { initializePopupWindow, styles } from './core';
+import { pgid } from '../global';
 
 export const enum TotpPopupWindowKey {
     TOTP,
@@ -17,12 +18,12 @@ export type TotpPopupWindow = {
     [TotpPopupWindowKey.CLOSE]: () => void;
 };
 
-export const enum RejectReason {
+const enum RejectReason {
     TIMEOUT,
     CLOSE,
 }
 
-export function promptForTotp() {
+function promptForTotp() {
     let returnPromiseResolve: (value: TotpPopupWindow) => void;
     let returnPromiseReject: (reason: unknown) => void;
 
@@ -110,4 +111,37 @@ export function promptForTotp() {
     });
 
     return returnPromise;
+}
+
+export async function handleFailedTotp(
+    currentTotpPopupWindow: TotpPopupWindow | undefined,
+    closeCallback: () => void,
+    timeoutCallback: () => void,
+    retryCallback: (totpPopupWindow: TotpPopupWindow) => void,
+) {
+    const currentPgid = pgid;
+    let totpPopupWindowPromise: Promise<TotpPopupWindow>;
+    if (currentTotpPopupWindow === undefined) {
+        totpPopupWindowPromise = promptForTotp();
+    } else {
+        totpPopupWindowPromise = currentTotpPopupWindow[TotpPopupWindowKey.SHOW_WARNING]();
+    }
+
+    try {
+        currentTotpPopupWindow = await totpPopupWindowPromise;
+    } catch (e) {
+        if (currentPgid !== pgid) {
+            return;
+        }
+        if (e === RejectReason.TIMEOUT) {
+            timeoutCallback();
+        } else {
+            closeCallback();
+        }
+        return;
+    }
+    if (currentPgid !== pgid) {
+        return;
+    }
+    retryCallback(currentTotpPopupWindow);
 }

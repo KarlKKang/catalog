@@ -3,7 +3,6 @@ import {
 } from './module/env/constant';
 import {
     getURLParam,
-    handleFailedTotp,
 } from './module/common';
 import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import {
@@ -26,7 +25,7 @@ import { expired } from './module/message/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/text/message/body';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import { redirect, type ShowPageFunc } from './module/global';
-import { TotpPopupWindowKey, type TotpPopupWindow } from './module/popup_window/totp';
+import { TotpPopupWindowKey, handleFailedTotp, type TotpPopupWindow } from './module/popup_window/totp';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';

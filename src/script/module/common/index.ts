@@ -12,10 +12,7 @@ import {
     clearSessionStorage,
     windowLocation,
 } from '../dom';
-
 import { addTimeout } from '../timer';
-import { pgid } from '../global';
-import { promptForTotp, RejectReason, TotpPopupWindowKey, type TotpPopupWindow } from '../popup_window/totp';
 
 export function getURLParam(name: string): string | null {
     const urlObj = new URL(windowLocation.href);
@@ -41,39 +38,6 @@ export function scrollToHash() {
             }, 500); //Give UI some time to load.
         }
     }
-}
-
-export async function handleFailedTotp(
-    currentTotpPopupWindow: TotpPopupWindow | undefined,
-    closeCallback: () => void,
-    timeoutCallback: () => void,
-    retryCallback: (totpPopupWindow: TotpPopupWindow) => void,
-) {
-    const currentPgid = pgid;
-    let totpPopupWindowPromise: Promise<TotpPopupWindow>;
-    if (currentTotpPopupWindow === undefined) {
-        totpPopupWindowPromise = promptForTotp();
-    } else {
-        totpPopupWindowPromise = currentTotpPopupWindow[TotpPopupWindowKey.SHOW_WARNING]();
-    }
-
-    try {
-        currentTotpPopupWindow = await totpPopupWindowPromise;
-    } catch (e) {
-        if (currentPgid !== pgid) {
-            return;
-        }
-        if (e === RejectReason.TIMEOUT) {
-            timeoutCallback();
-        } else {
-            closeCallback();
-        }
-        return;
-    }
-    if (currentPgid !== pgid) {
-        return;
-    }
-    retryCallback(currentTotpPopupWindow);
 }
 
 export const enum SessionTypes {

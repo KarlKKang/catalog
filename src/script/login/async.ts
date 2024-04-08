@@ -2,9 +2,6 @@ import {
     TOP_URL,
 } from '../module/env/constant';
 import {
-    handleFailedTotp,
-} from '../module/common';
-import {
     sendServerRequest,
     ServerRequestOptionProp
 } from '../module/server';
@@ -32,7 +29,7 @@ import { showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { pgid, redirect } from '../module/global';
-import { TotpPopupWindowKey, type TotpPopupWindow } from '../module/popup_window/totp';
+import { handleFailedTotp, TotpPopupWindowKey, type TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
 import { forgetPasswordText } from '../module/text/ui';
