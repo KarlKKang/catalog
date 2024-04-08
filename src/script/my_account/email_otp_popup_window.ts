@@ -6,11 +6,16 @@ import { CSS_AUTO, CSS_COLOR, CSS_CURSOR } from '../module/style/value';
 import { addInterval, removeInterval } from '../module/timer';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
 
-export type EmailOtpPopupWindow = [
-    string | undefined, // otp
-    () => Promise<EmailOtpPopupWindow>, // show warning or reset resend timer
-    () => void, // close
-];
+export const enum EmailOtpPopupWindowKey {
+    OTP,
+    SHOW_WARNING,
+    CLOSE,
+}
+export type EmailOtpPopupWindow = {
+    [EmailOtpPopupWindowKey.OTP]: string | undefined;
+    [EmailOtpPopupWindowKey.SHOW_WARNING]: () => Promise<EmailOtpPopupWindow>;
+    [EmailOtpPopupWindowKey.CLOSE]: () => void;
+};
 
 const enum RejectReason {
     CLOSE,
@@ -81,17 +86,17 @@ export function promptForEmailOtp() {
 
     addEventListener(resendButton, 'click', () => {
         resendButton.disabled = true;
-        returnPromiseResolve([
-            undefined,
-            () => {
+        returnPromiseResolve({
+            [EmailOtpPopupWindowKey.OTP]: undefined,
+            [EmailOtpPopupWindowKey.SHOW_WARNING]: () => {
                 resetResendTimer();
                 return new Promise<EmailOtpPopupWindow>((resolve, reject) => {
                     returnPromiseResolve = resolve;
                     returnPromiseReject = reject;
                 });
             },
-            hidePopupWindow
-        ]);
+            [EmailOtpPopupWindowKey.CLOSE]: hidePopupWindow
+        });
     });
 
     const disableAllInputs = (disabled: boolean) => {
@@ -113,9 +118,9 @@ export function promptForEmailOtp() {
             return;
         }
 
-        returnPromiseResolve([
-            otp,
-            () => {
+        returnPromiseResolve({
+            [EmailOtpPopupWindowKey.OTP]: otp,
+            [EmailOtpPopupWindowKey.SHOW_WARNING]: () => {
                 disableAllInputs(false);
                 showElement(warningText);
                 return new Promise<EmailOtpPopupWindow>((resolve, reject) => {
@@ -123,8 +128,8 @@ export function promptForEmailOtp() {
                     returnPromiseReject = reject;
                 });
             },
-            hidePopupWindow
-        ]);
+            [EmailOtpPopupWindowKey.CLOSE]: hidePopupWindow
+        });
     };
     addEventListener(submitButton, 'click', submit);
     addEventListener(otpInput, 'keydown', (event) => {

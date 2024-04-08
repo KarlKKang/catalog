@@ -31,7 +31,7 @@ import { pgid } from '../module/global';
 import { SharedBool, SharedButton, SharedElement, getSharedBool, getSharedButton, getSharedElement } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
-import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
+import { promptForEmailOtp, type EmailOtpPopupWindow, EmailOtpPopupWindowKey } from './email_otp_popup_window';
 import { LoginPopupWindowKey, type LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
 import { changeColor, hideElement, horizontalCenter, setCursor, setHeight, showElement } from '../module/style';
@@ -165,7 +165,7 @@ function modifyMfaReauthenticationPrompt(
     sendServerRequest(uri, {
         [ServerRequestOptionProp.CALLBACK]: (response: string) => {
             const closeAll = () => {
-                emailOtpPopupWindow?.[2]();
+                emailOtpPopupWindow?.[EmailOtpPopupWindowKey.CLOSE]();
                 loginPopupWindow[LoginPopupWindowKey.CLOSE]();
             };
             switch (response) {
@@ -211,7 +211,7 @@ function modifyMfaReauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.EMAIL]) + '&password=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.PASSWORD]) + (emailOtpPopupWindow === undefined || emailOtpPopupWindow[0] === undefined ? '' : '&otp=' + emailOtpPopupWindow[0]),
+        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.EMAIL]) + '&password=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.PASSWORD]) + ((emailOtpPopupWindow === undefined || emailOtpPopupWindow[EmailOtpPopupWindowKey.OTP] === undefined) ? '' : ('&otp=' + emailOtpPopupWindow[EmailOtpPopupWindowKey.OTP])),
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
@@ -226,7 +226,7 @@ async function handleFailedEmailOtp(
     if (currentEmailOtpPopupWindow === undefined) {
         emailOtpPopupWindowPromise = promptForEmailOtp();
     } else {
-        emailOtpPopupWindowPromise = currentEmailOtpPopupWindow[1]();
+        emailOtpPopupWindowPromise = currentEmailOtpPopupWindow[EmailOtpPopupWindowKey.SHOW_WARNING]();
     }
 
     try {
