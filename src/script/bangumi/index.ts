@@ -20,9 +20,7 @@ import { type MediaSessionInfo, MediaSessionInfoKey, parseMediaSessionInfo } fro
 import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/BangumiInfo';
 import { importModule } from '../module/import_module';
 
-let updatePageModule: Awaited<typeof import(
-    './update_page'
-)> | null = null;
+let offloadModule: (() => void) | null = null;
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -74,11 +72,10 @@ export default function (showPage: ShowPageFunc) {
         }
     }, 1000);
 
-    const updatePageImportPromise = import(
+    const asyncModulePromise = import(
         /* webpackExports: ["default", "offload"] */
-        './update_page'
+        './async'
     );
-
     sendServerRequest('get_ep?series=' + seriesID + '&ep=' + epIndex, {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseBangumiInfo);
@@ -95,20 +92,18 @@ export default function (showPage: ShowPageFunc) {
                 }
             });
 
-            if (updatePageModule === null) {
-                updatePageModule = await importModule(updatePageImportPromise);
-                if (currentPgid !== pgid) {
-                    return;
-                }
+            const asyncModule = await importModule(asyncModulePromise);
+            if (currentPgid !== pgid) {
+                return;
             }
-
-            showPage();
-            updatePageModule.default(
+            offloadModule = asyncModule.offload;
+            asyncModule.default(
                 parsedResponse,
                 seriesID,
                 epIndex,
                 createMediaSessionPromise,
             );
+            showPage();
         },
         [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
         [ServerRequestOptionProp.METHOD]: 'GET',
@@ -121,5 +116,8 @@ function getSeriesID(): string | null {
 }
 
 export function offload() {
-    updatePageModule?.offload();
+    if (offloadModule !== null) {
+        offloadModule();
+        offloadModule = null;
+    }
 }
