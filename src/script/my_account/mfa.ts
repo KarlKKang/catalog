@@ -31,7 +31,6 @@ import { pgid } from '../module/global';
 import { SharedBool, SharedButton, SharedElement, getSharedBool, getSharedButton, getSharedElement } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
-import { popupWindowImportPromise } from './import_promise';
 import { promptForEmailOtp, type EmailOtpPopupWindow } from './email_otp_popup_window';
 import type { LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
@@ -42,6 +41,7 @@ import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/my_account.module.scss';
 import { CSS_COLOR, CSS_CURSOR } from '../module/style/value';
 import { type RecoveryCodeInfo, parseRecoveryCodeInfo } from '../module/type/RecoveryCodeInfo';
+import { initializePopupWindow, styles as popupWindowStyles } from '../module/popup_window/core';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
@@ -225,11 +225,7 @@ async function handleFailedEmailOtp(
     const currentPgid = pgid;
     let emailOtpPopupWindowPromise: Promise<EmailOtpPopupWindow>;
     if (currentEmailOtpPopupWindow === undefined) {
-        const popupWindow = await popupWindowImportPromise;
-        if (currentPgid !== pgid) {
-            return;
-        }
-        emailOtpPopupWindowPromise = promptForEmailOtp(popupWindow.initializePopupWindow, popupWindow.styles.inputFlexbox);
+        emailOtpPopupWindowPromise = promptForEmailOtp();
     } else {
         emailOtpPopupWindowPromise = currentEmailOtpPopupWindow[1]();
     }
@@ -250,12 +246,6 @@ async function handleFailedEmailOtp(
 }
 
 async function promptForTotpSetup(totpInfo: TOTPInfo) {
-    const currentPgid = pgid;
-    const popupWindow = await popupWindowImportPromise;
-    if (currentPgid !== pgid) {
-        return;
-    }
-
     const promptText = createParagraphElement('二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
     const totpURI = totpInfo[TOTPInfoKey.URI];
@@ -284,11 +274,11 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
     const submitButton = createButtonElement(submitButtonText);
     const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
-    addClass(buttonFlexbox, popupWindow.styles.inputFlexbox);
+    addClass(buttonFlexbox, popupWindowStyles.inputFlexbox);
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 
-    const hidePopupWindow = popupWindow.initializePopupWindow(
+    const hidePopupWindow = initializePopupWindow(
         [promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox],
         () => { totpInput.focus(); },
     );
@@ -354,12 +344,6 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
 }
 
 async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo, completedCallback: () => void) {
-    const currentPgid = pgid;
-    const popupWindowInitialize = (await popupWindowImportPromise).initializePopupWindow;
-    if (currentPgid !== pgid) {
-        return;
-    }
-
     const promptText = createParagraphElement('リカバリーコードを安全な場所に保存してください。リカバリーコードは、二要素認証コードが利用できない場合にアカウントにアクセスするために使用できます。各リカバリコードは1回のみ使用できます。');
 
     const recoveryCodeContainer = createDivElement();
@@ -387,7 +371,7 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo, completedCallba
         }
     }, 1000);
 
-    const hidePopupWindow = popupWindowInitialize([promptText, recoveryCodeContainer, closeButton]);
+    const hidePopupWindow = initializePopupWindow([promptText, recoveryCodeContainer, closeButton]);
 
     addEventListener(closeButton, 'click', () => {
         hidePopupWindow();

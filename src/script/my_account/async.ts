@@ -33,6 +33,7 @@ import { InviteResultKey, parseInviteResult } from '../module/type/InviteResult'
 import { redirect } from '../module/global';
 import { LOGIN_URL } from '../module/env/constant';
 import { default as initializeMFAModule } from './mfa';
+import { offloadPopupWindow } from '../module/popup_window/core';
 
 const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 
@@ -284,4 +285,5 @@ function changeLoginNotification() {
 
 export function offload() {
     dereferenceSharedVars();
+    offloadPopupWindow();
 }

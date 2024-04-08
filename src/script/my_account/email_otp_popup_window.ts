@@ -1,6 +1,6 @@
 import { addClass, appendChild, addEventListener, createButtonElement, createDivElement, createParagraphElement, replaceText, createTotpInput, disableInput } from '../module/dom';
 import { failedTotp } from '../module/text/message/body';
-import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
+import { initializePopupWindow, styles, } from '../module/popup_window/core';
 import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';
 import { CSS_AUTO, CSS_COLOR, CSS_CURSOR } from '../module/style/value';
 import { addInterval, removeInterval } from '../module/timer';
@@ -16,7 +16,7 @@ const enum RejectReason {
     CLOSE,
 }
 
-export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupWindow, inputFlexboxClass: string) {
+export function promptForEmailOtp() {
     let returnPromiseResolve: (value: EmailOtpPopupWindow) => void;
     let returnPromiseReject: (reason: unknown) => void;
 
@@ -32,7 +32,7 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     hideElement(warningText);
 
     const inputFlexbox = createDivElement();
-    addClass(inputFlexbox, inputFlexboxClass);
+    addClass(inputFlexbox, styles.inputFlexbox);
 
     const [otpInputContainer, otpInput] = createTotpInput(false);
     appendChild(inputFlexbox, otpInputContainer);
@@ -70,7 +70,7 @@ export function promptForEmailOtp(initializePopupWindow: typeof InitializePopupW
     const submitButton = createButtonElement(submitButtonText);
     const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
-    addClass(buttonFlexbox, inputFlexboxClass);
+    addClass(buttonFlexbox, styles.inputFlexbox);
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 

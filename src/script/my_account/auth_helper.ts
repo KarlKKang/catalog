@@ -7,7 +7,6 @@ import { accountDeactivated, loginFailed, sessionEnded, tooManyFailedLogin } fro
 import type { TotpPopupWindow } from '../module/popup_window/totp';
 import { showElement } from '../module/style';
 import { disableAllInputs } from './helper';
-import { popupWindowImportPromise, promptForTotpImportPromise } from './import_promise';
 import { promptForLogin, type LoginPopupWindow } from './login_popup_window';
 
 export function reauthenticationPrompt(
@@ -33,8 +32,6 @@ export function reauthenticationPrompt(
     }
     const _handleFailedTotp = () => {
         handleFailedTotp(
-            popupWindowImportPromise,
-            promptForTotpImportPromise,
             totpPopupWindow,
             () => {
                 disableAllInputs(false);
@@ -114,11 +111,7 @@ export async function handleFailedLogin(
     const currentPgid = pgid;
     let loginPopupWindowPromise: Promise<LoginPopupWindow>;
     if (currentLoginPopupWindow === undefined) {
-        const popupWindow = await popupWindowImportPromise;
-        if (currentPgid !== pgid) {
-            return;
-        }
-        loginPopupWindowPromise = promptForLogin(popupWindow.initializePopupWindow, popupWindow.styles.inputFlexbox, message);
+        loginPopupWindowPromise = promptForLogin(message);
     } else {
         if (message === undefined) {
             message = loginFailed;

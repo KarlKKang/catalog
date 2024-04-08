@@ -24,7 +24,6 @@ import {
 import { showMessage } from './module/message';
 import { expired } from './module/message/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from './module/text/message/body';
-import { popupWindowImport, promptForTotpImport } from './module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from './module/common/pure';
 import { redirect, type ShowPageFunc } from './module/global';
 import type { TotpPopupWindow } from './module/popup_window/totp';
@@ -32,11 +31,11 @@ import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';
 import { emailChangePageTitle } from './module/text/page_title';
-
 import * as styles from '../css/portal_form.module.scss';
 import { completed } from './module/text/message/title';
 import { CSS_COLOR } from './module/style/value';
 import { MessageParamProp } from './module/message/type';
+import { offloadPopupWindow } from './module/popup_window/core';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -97,9 +96,6 @@ function showPageCallback(param: string) {
     horizontalCenter(submitButton);
     appendChild(container, submitButton);
 
-    const popupWindowImportPromise = popupWindowImport();
-    const promptForTotpImportPromise = promptForTotpImport();
-
     const changeEmailOnKeyDown = (event: Event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
             changeEmail();
@@ -146,8 +142,6 @@ function showPageCallback(param: string) {
                         break;
                     case AUTH_FAILED_TOTP:
                         handleFailedTotp(
-                            popupWindowImportPromise,
-                            promptForTotpImportPromise,
                             totpPopupWindow,
                             () => {
                                 disableAllInputs(false);
@@ -201,4 +195,8 @@ function showPageCallback(param: string) {
         disableInput(emailInput, disabled);
         disableInput(passwordInput, disabled);
     }
+}
+
+export function offload() {
+    offloadPopupWindow();
 }

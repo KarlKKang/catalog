@@ -87,7 +87,7 @@ export function onPopupWindowClosed(callback: () => void) {
     waitingQueue.push(callback);
 }
 
-export function destroy() {
+export function offloadPopupWindow() {
     wid = {};
     popupWindow = null;
     windowOpen = false;

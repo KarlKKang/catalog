@@ -31,7 +31,6 @@ import {
 import { showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';
 import { moduleImportError } from '../module/message/param';
-import { popupWindowImport, promptForTotpImport } from '../module/popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { pgid, redirect } from '../module/global';
 import type { TotpPopupWindow } from '../module/popup_window/totp';
@@ -41,6 +40,7 @@ import { forgetPasswordText } from '../module/text/ui';
 import * as commonStyles from '../../css/common.module.scss';
 import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
+import { offloadPopupWindow } from '../module/popup_window/core';
 
 export default function (
     approvedCallbackPromise: Promise<typeof import(
@@ -81,9 +81,6 @@ export default function (
     addClass(forgetPasswordLink, commonStyles.link);
     appendChild(forgetPassword, forgetPasswordLink);
     appendChild(container, forgetPassword);
-
-    const popupWindowImportPromise = popupWindowImport();
-    const promptForTotpImportPromise = promptForTotpImport();
 
     const loginOnKeyDown = (event: Event) => {
         if ((event as KeyboardEvent).key === 'Enter') {
@@ -135,8 +132,6 @@ export default function (
                         break;
                     case AUTH_FAILED_TOTP:
                         handleFailedTotp(
-                            popupWindowImportPromise,
-                            promptForTotpImportPromise,
                             totpPopupWindow,
                             () => {
                                 disableAllInputs(false);
@@ -224,4 +219,8 @@ function disableCheckbox(checkbox: HTMLInputElement, disabled: boolean) {
     } else {
         removeClass(getParentElement(checkbox), styles.disabled);
     }
+}
+
+export function offload() {
+    offloadPopupWindow();
 }

@@ -2,11 +2,11 @@ import { addEventListener, addClass, appendChild, appendText, createButtonElemen
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { loginFailed } from '../module/text/message/body';
 import { TOP_URL } from '../module/env/constant';
-import type { initializePopupWindow as InitializePopupWindow } from '../module/popup_window/core';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../module/style';
 import { cancelButtonText, forgetPasswordText, submitButtonText } from '../module/text/ui';
 import * as commonStyles from '../../css/common.module.scss';
 import { CSS_COLOR } from '../module/style/value';
+import { initializePopupWindow, styles } from '../module/popup_window/core';
 
 export type LoginPopupWindow = [
     string, // email
@@ -19,7 +19,7 @@ const enum RejectReason {
     CLOSE,
 }
 
-export function promptForLogin(initializePopupWindow: typeof InitializePopupWindow, inputFlexboxClass: string, message?: string) {
+export function promptForLogin(message?: string) {
     let returnPromiseResolve: (value: LoginPopupWindow) => void;
     let returnPromiseReject: (reason: unknown) => void;
 
@@ -47,7 +47,7 @@ export function promptForLogin(initializePopupWindow: typeof InitializePopupWind
     const submitButton = createButtonElement(submitButtonText);
     const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
-    addClass(buttonFlexbox, inputFlexboxClass);
+    addClass(buttonFlexbox, styles.inputFlexbox);
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 

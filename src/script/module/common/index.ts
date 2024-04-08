@@ -14,8 +14,7 @@ import {
 
 import { addTimeout } from '../timer';
 import { pgid } from '../global';
-import type { TotpPopupWindow } from '../popup_window/totp';
-import type { popupWindowImport, promptForTotpImport } from '../popup_window';
+import { promptForTotp, RejectReason, type TotpPopupWindow } from '../popup_window/totp';
 
 export function getURLParam(name: string): string | null {
     const urlObj = new URL(w.location.href);
@@ -44,22 +43,15 @@ export function scrollToHash() {
 }
 
 export async function handleFailedTotp(
-    popupWindowImportPromise: ReturnType<typeof popupWindowImport>,
-    promptForTotpImportPromise: ReturnType<typeof promptForTotpImport>,
     currentTotpPopupWindow: TotpPopupWindow | undefined,
     closeCallback: () => void,
     timeoutCallback: () => void,
     retryCallback: (totpPopupWindow: TotpPopupWindow) => void,
 ) {
     const currentPgid = pgid;
-    const promptForTotp = await promptForTotpImportPromise;
     let totpPopupWindowPromise: Promise<TotpPopupWindow>;
     if (currentTotpPopupWindow === undefined) {
-        const popupWindow = await popupWindowImportPromise;
-        if (currentPgid !== pgid) {
-            return;
-        }
-        totpPopupWindowPromise = promptForTotp.promptForTotp(popupWindow.initializePopupWindow, popupWindow.styles.inputFlexbox);
+        totpPopupWindowPromise = promptForTotp();
     } else {
         totpPopupWindowPromise = currentTotpPopupWindow[1]();
     }
@@ -70,7 +62,7 @@ export async function handleFailedTotp(
         if (currentPgid !== pgid) {
             return;
         }
-        if (e === promptForTotp.RejectReason.TIMEOUT) {
+        if (e === RejectReason.TIMEOUT) {
             timeoutCallback();
         } else {
             closeCallback();

@@ -2,9 +2,9 @@ import { addEventListener, addClass, appendChild, createButtonElement, createDiv
 import { failedTotp } from '../text/message/body';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../style';
 import { addInterval, removeInterval } from '../timer';
-import type { initializePopupWindow as InitializePopupWindow } from './core';
 import { cancelButtonText, submitButtonText } from '../text/ui';
 import { CSS_COLOR } from '../style/value';
+import { initializePopupWindow, styles } from './core';
 
 export type TotpPopupWindow = [
     string, // totp
@@ -17,7 +17,7 @@ export const enum RejectReason {
     CLOSE,
 }
 
-export function promptForTotp(initializePopupWindow: typeof InitializePopupWindow, inputFlexboxClass: string) {
+export function promptForTotp() {
     let returnPromiseResolve: (value: TotpPopupWindow) => void;
     let returnPromiseReject: (reason: unknown) => void;
 
@@ -38,7 +38,7 @@ export function promptForTotp(initializePopupWindow: typeof InitializePopupWindo
     const submitButton = createButtonElement(submitButtonText);
     const cancelButton = createButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
-    addClass(buttonFlexbox, inputFlexboxClass);
+    addClass(buttonFlexbox, styles.inputFlexbox);
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 

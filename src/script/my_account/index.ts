@@ -12,7 +12,6 @@ import {
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { pgid, type ShowPageFunc } from '../module/global';
-import { importAll } from './import_promise';
 import { moduleImportError } from '../module/message/param';
 import { addTimeout } from '../module/timer';
 import { parseAccountInfo } from '../module/type/AccountInfo';
@@ -77,7 +76,6 @@ export default function (showPage: ShowPageFunc) {
         },
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
-    importAll();
 }
 
 async function getModulePromise<T>(importPromise: Promise<T>) {
