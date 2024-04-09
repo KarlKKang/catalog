@@ -31,7 +31,10 @@ export default function (sessions: Sessions) {
         appendChild(outerContainer, innerContainer);
 
         appendParagraph('場所：' + session[SessionKey.COUNTRY], innerContainer);
-        appendParagraph('IPアドレス：' + session[SessionKey.IP], innerContainer);
+
+        const ipParagraph = createParagraphElement('IPアドレス：' + session[SessionKey.IP]);
+        appendChild(innerContainer, ipParagraph);
+        addClass(ipParagraph, styles.ip);
 
         const [browser, os] = parseBrowser(session[SessionKey.UA]);
         appendParagraph('ブラウザ：' + browser, innerContainer);
