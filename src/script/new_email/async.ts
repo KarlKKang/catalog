@@ -1,14 +1,7 @@
-import {
-    TOP_URL,
-} from './module/env/constant';
-import {
-    getURLParam,
-} from './module/common';
-import { ServerRequestOptionProp, sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     replaceText,
-    clearSessionStorage,
     createDivElement,
     appendChild,
     createParagraphElement,
@@ -17,49 +10,18 @@ import {
     body,
     disableInput,
     addClass,
-} from './module/dom';
-import { showMessage } from './module/message';
-import { invalidEmailFormat, emailAlreadyRegistered } from './module/text/message/body';
-import { expired, emailSent } from './module/message/param';
-import { EMAIL_REGEX } from './module/common/pure';
-import { redirect, type ShowPageFunc } from './module/global';
-import { invalidResponse } from './module/server/message';
-import { hideElement, horizontalCenter, showElement } from './module/style';
-import { submitButtonText } from './module/text/ui';
-import { emailChangePageTitle } from './module/text/page_title';
+} from '../module/dom';
+import { showMessage } from '../module/message';
+import { invalidEmailFormat, emailAlreadyRegistered } from '../module/text/message/body';
+import { expired, emailSent } from '../module/message/param';
+import { EMAIL_REGEX } from '../module/common/pure';
+import { invalidResponse } from '../module/server/message';
+import { hideElement, horizontalCenter, showElement } from '../module/style';
+import { submitButtonText } from '../module/text/ui';
+import { emailChangePageTitle } from '../module/text/page_title';
+import * as styles from '../../css/portal_form.module.scss';
 
-import * as styles from '../css/portal_form.module.scss';
-
-export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
-    const param = getURLParam('p');
-    if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
-        if (DEVELOPMENT) {
-            showPage();
-            showPageCallback('test');
-        } else {
-            redirect(TOP_URL, true);
-        }
-        return;
-    }
-
-    sendServerRequest('verify_email_change', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-            if (response === 'EXPIRED') {
-                showMessage(expired);
-            } else if (response === 'APPROVED') {
-                showPage();
-                showPageCallback(param);
-            } else {
-                showMessage(invalidResponse());
-            }
-        },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + param,
-    });
-}
-
-function showPageCallback(param: string) {
+export default function (param: string) {
     const container = createDivElement();
     addClass(container, styles.container);
     appendChild(body, container);
