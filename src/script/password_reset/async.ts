@@ -1,14 +1,10 @@
 import {
     LOGIN_URL,
-} from './module/env/constant';
-import {
-    getURLParam,
-} from './module/common';
-import { ServerRequestOptionProp, sendServerRequest } from './module/server';
+} from '../module/env/constant';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import {
     addEventListener,
     replaceText,
-    clearSessionStorage,
     passwordStyling,
     disableInput,
     createDivElement,
@@ -20,66 +16,21 @@ import {
     createUListElement,
     appendListItems,
     addClass,
-} from './module/dom';
-import { showMessage } from './module/message';
-import { invalidPasswordFormat, passwordChanged, passwordConfirmationMismatch } from './module/text/message/body';
-import { expired } from './module/message/param';
-import { PASSWORD_REGEX } from './module/common/pure';
-import { redirect, type ShowPageFunc } from './module/global';
-import { invalidResponse } from './module/server/message';
-import { hideElement, horizontalCenter, showElement } from './module/style';
-import { passwordResetPageTitle } from './module/text/page_title';
-import { changeButtonText, nextButtonText, passwordRules } from './module/text/ui';
+} from '../module/dom';
+import { showMessage } from '../module/message';
+import { invalidPasswordFormat, passwordChanged, passwordConfirmationMismatch } from '../module/text/message/body';
+import { expired } from '../module/message/param';
+import { PASSWORD_REGEX } from '../module/common/pure';
+import { invalidResponse } from '../module/server/message';
+import { hideElement, horizontalCenter, showElement } from '../module/style';
+import { passwordResetPageTitle } from '../module/text/page_title';
+import { changeButtonText, nextButtonText, passwordRules } from '../module/text/ui';
+import * as styles from '../../css/portal_form.module.scss';
+import { completed } from '../module/text/message/title';
+import { CSS_COLOR } from '../module/style/value';
+import { MessageParamProp } from '../module/message/type';
 
-import * as styles from '../css/portal_form.module.scss';
-import { completed } from './module/text/message/title';
-import { CSS_COLOR } from './module/style/value';
-import { MessageParamProp } from './module/message/type';
-
-export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
-    const user = getURLParam('user');
-    const signature = getURLParam('signature');
-    const expires = getURLParam('expires');
-
-    if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
-        if (DEVELOPMENT) {
-            showPage();
-            showPageCallback('test', 'test', 'test');
-        } else {
-            redirect(LOGIN_URL, true);
-        }
-        return;
-    }
-
-    if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-        redirect(LOGIN_URL, true);
-        return;
-    }
-
-    if (expires === null || !/^[0-9]+$/.test(expires)) {
-        redirect(LOGIN_URL, true);
-        return;
-    }
-
-    sendServerRequest('reset_password', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-            if (response === 'EXPIRED') {
-                showMessage(expired);
-                return;
-            } else if (response !== 'APPROVED') {
-                showMessage(invalidResponse());
-                return;
-            }
-            showPage();
-            showPageCallback(user, signature, expires);
-        },
-        [ServerRequestOptionProp.CONTENT]: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
-    });
-}
-
-function showPageCallback(user: string, signature: string, expires: string) {
+export default function (user: string, signature: string, expires: string) {
     const container = createDivElement();
     addClass(container, styles.container);
     appendChild(body, container);
