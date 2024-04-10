@@ -1,11 +1,11 @@
-const configs = require('./webpack.common.cjs');
-const TerserPlugin = require('terser-webpack-plugin');
-const path = require('path');
-const { addPlugins } = require('./webpack_helper.cjs');
+import configs from './webpack.common.js';
+import TerserPlugin from 'terser-webpack-plugin';
+import path from 'path';
+import { addPlugins, getDirname } from './webpack.helper.js';
 
 for (const config of configs) {
     config.mode = 'development';
-    config.output.path = path.resolve(__dirname, 'dev');
+    config.output.path = path.resolve(getDirname(), 'dev');
     config.devtool = 'source-map';
     config.optimization.minimizer.push(
         new TerserPlugin({
@@ -38,4 +38,4 @@ configs[1].module.rules.push(
     }
 );
 
-module.exports = configs;
+export default configs;

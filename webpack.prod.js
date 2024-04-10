@@ -1,11 +1,11 @@
-const configs = require('./webpack.common.cjs');
-const TerserPlugin = require('terser-webpack-plugin');
-const path = require('path');
-const { addPlugins } = require('./webpack_helper.cjs');
+import configs from './webpack.common.js';
+import TerserPlugin from 'terser-webpack-plugin';
+import path from 'path';
+import { addPlugins, getDirname } from './webpack.helper.js';
 
 for (const config of configs) {
     config.mode = 'production';
-    config.output.path = path.resolve(__dirname, 'dist');
+    config.output.path = path.resolve(getDirname(), 'dist');
     config.optimization.minimizer.push(
         new TerserPlugin({
             terserOptions: {
@@ -22,4 +22,4 @@ for (const config of configs) {
 addPlugins(configs[0], false);
 configs[1].entry = './temp/sw.js';
 
-module.exports = configs;
+export default configs;

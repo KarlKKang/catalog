@@ -1,11 +1,13 @@
-const htmlMinifyOptions = require('./build_config.cjs').htmlMinifyOptions;
-const { DOMAIN, DESCRIPTION } = require('./env/index.cjs');;
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { DefinePlugin } = require('webpack');
-const { GenerateSW } = require('workbox-webpack-plugin');
-const fs = require('fs');
-const crypto = require('crypto');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+import { htmlMinifyOptions } from './build_config.js';
+import { DOMAIN, DESCRIPTION } from './env/index.js';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
+import { GenerateSW } from 'workbox-webpack-plugin';
+import crypto from 'crypto';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { readSync } from './file_system.js';
 
 function addHTMLConfig(config, dev) {
     const pageTitle = DOMAIN + (dev ? ' (alpha)' : '');
@@ -48,7 +50,7 @@ function addFontLoader(config, dev) {
 
 function addDefinePlugin(config, dev) {
     config.plugins.push(
-        new DefinePlugin({
+        new webpack.DefinePlugin({
             DEVELOPMENT: JSON.stringify(dev),
             ENV_DOMAIN: JSON.stringify(DOMAIN),
         })
@@ -58,7 +60,7 @@ function addDefinePlugin(config, dev) {
 function addWorkboxPlugin(config, dev) {
     const destDir = dev ? 'dev/' : 'dist/';
     const browserScript = destDir + 'script/browser.js';
-    const buffer = fs.readFileSync(browserScript);
+    const buffer = readSync(browserScript);
     const hash = crypto.createHash('md5');
     hash.update(buffer);
     const browserScriptRevision = hash.digest('hex');
@@ -193,7 +195,7 @@ function addCssLoader(config, dev) {
     );
 }
 
-module.exports.addPlugins = function (config, dev) {
+export function addPlugins(config, dev) {
     addDefinePlugin(config, dev);
     addHTMLConfig(config, dev);
     addFontLoader(config, dev);
@@ -201,7 +203,7 @@ module.exports.addPlugins = function (config, dev) {
     addCssLoader(config, dev);
 }
 
-module.exports.getCoreJSVersion = function () {
-    const pkg = require('core-js/package.json');
-    return pkg.version;
+export function getDirname() {
+    const filename = fileURLToPath(import.meta.url);
+    return dirname(filename);
 }

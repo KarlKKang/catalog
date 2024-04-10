@@ -3,7 +3,7 @@ import babel from '@babel/core';
 import { minify as terser } from 'terser';
 import cssMinify from './css_minifier.js';
 import * as fs from './file_system.js';
-import { DOMAIN } from './env/index.cjs';
+import { DOMAIN } from './env/index.js';
 
 process.env.BROWSERSLIST_ENV = 'legacy';
 const dev = process.argv[2] === 'dev';

@@ -1,13 +1,13 @@
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const CircularDependencyPlugin = require('circular-dependency-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const path = require('path');
-const { htmlMinifyOptions } = require('./build_config.cjs');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const { cssMinifyOptions } = require('./build_config.cjs');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
-const { DOMAIN, DESCRIPTION } = require('./env/index.cjs');
-const { getCoreJSVersion } = require('./webpack_helper.cjs');
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import CircularDependencyPlugin from 'circular-dependency-plugin';
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import path from 'path';
+import { htmlMinifyOptions, cssMinifyOptions } from './build_config.js';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
+import { DOMAIN, DESCRIPTION } from './env/index.js';
+import { readSync } from './file_system.js';
+import { getDirname } from './webpack.helper.js';
 
 const optimization = {
     concatenateModules: true,
@@ -15,6 +15,8 @@ const optimization = {
     removeAvailableModules: true,
     usedExports: true,
 };
+
+const coreJSPkg = JSON.parse(readSync('node_modules/core-js/package.json'));
 
 const configs = [
     {
@@ -103,7 +105,7 @@ const configs = [
                                     "@babel/preset-env",
                                     {
                                         "useBuiltIns": "entry",
-                                        "corejs": getCoreJSVersion(),
+                                        "corejs": coreJSPkg.version,
                                     }
                                 ]
                             ],
@@ -125,7 +127,7 @@ const configs = [
                 {
                     test: /\.ejs$/i,
                     include: [
-                        path.resolve(__dirname, "src/html/module")
+                        path.resolve(getDirname(), "src/html/module")
                     ],
                     loader: 'ejs-loader',
                     options: {
@@ -181,7 +183,7 @@ const configs = [
                                     "@babel/preset-env",
                                     {
                                         "useBuiltIns": "usage",
-                                        "corejs": getCoreJSVersion(),
+                                        "corejs": coreJSPkg.version,
                                     }
                                 ]
                             ]
@@ -193,4 +195,4 @@ const configs = [
     }
 ];
 
-module.exports = configs;
+export default configs;

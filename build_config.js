@@ -1,4 +1,4 @@
-module.exports.htmlMinifyOptions = {
+export const htmlMinifyOptions = {
     collapseBooleanAttributes: true,
     collapseWhitespace: true,
     keepClosingSlash: false,
@@ -11,7 +11,7 @@ module.exports.htmlMinifyOptions = {
     sortClassName: true
 };
 
-module.exports.cssMinifyOptions = {
+export const cssMinifyOptions = {
     preset: [
         'cssnano-preset-advanced',
         {

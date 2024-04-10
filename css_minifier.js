@@ -1,7 +1,7 @@
 import postcss from 'postcss';
 import cssnano from 'cssnano';
 import * as fs from './file_system.js';
-import { cssMinifyOptions } from './build_config.cjs';
+import { cssMinifyOptions } from './build_config.js';
 
 export default function (srcDir, destDir, srcFilename, destFilename) {
     if (destFilename === undefined) {
