@@ -2,18 +2,20 @@ import { NonNativePlayer } from './non-native-player';
 import HlsLight from '../../../../hls.js/dist/hls.light.mjs';
 import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from '../../../../hls.js';
 import { CustomMediaError } from './media_error';
+import { PlayerKey } from './player_key';
+import { HlsPlayerKey } from './hls_player_key';
 
 const Hls = HlsLight as unknown as typeof HlsFull;
 
 export class HlsPlayer extends NonNativePlayer {
-    protected override readonly maxBufferHole = 0.5;
-    private readonly hlsInstance: HlsFull;
-    private fragStart = 0;
+    protected override readonly [PlayerKey.MAX_BUFFER_HOLE] = 0.5;
+    private readonly [HlsPlayerKey.HLS_INSTANCE]: HlsFull;
+    private [HlsPlayerKey.FRAG_START] = 0;
 
-    private onHlsError: undefined | ((_: Events.ERROR, data: ErrorData) => void) = undefined;
-    private onHlsManifestParsed: undefined | ((event: Events.MANIFEST_PARSED, data: ManifestParsedData) => void) = undefined;
-    private onHlsFragChange: undefined | ((_: Events.FRAG_CHANGED, data: FragChangedData) => void) = undefined;
-    private onHlsBufferFlushed: undefined | (() => void) = undefined;
+    private [HlsPlayerKey.ON_HLS_ERROR]: undefined | ((_: Events.ERROR, data: ErrorData) => void) = undefined;
+    private [HlsPlayerKey.ON_HLS_MANIFEST_PARSED]: undefined | ((event: Events.MANIFEST_PARSED, data: ManifestParsedData) => void) = undefined;
+    private [HlsPlayerKey.ON_HLS_FRAG_CHANGE]: undefined | ((_: Events.FRAG_CHANGED, data: FragChangedData) => void) = undefined;
+    private [HlsPlayerKey.ON_HLS_BUFFER_FLUSHED]: undefined | (() => void) = undefined;
 
     constructor(
         container: HTMLDivElement,
@@ -48,15 +50,15 @@ export class HlsPlayer extends NonNativePlayer {
         const fragLoadPolicy = deepCopyLoadPolicy(defaultHlsConfig.fragLoadPolicy);
         fragLoadPolicy.default.maxTimeToFirstByteMs = 30000;
         userHlsConfig.fragLoadPolicy = fragLoadPolicy;
-        this.hlsInstance = new Hls(userHlsConfig);
-        DEVELOPMENT && console.log(this.hlsInstance.config);
+        this[HlsPlayerKey.HLS_INSTANCE] = new Hls(userHlsConfig);
+        DEVELOPMENT && console.log(this[HlsPlayerKey.HLS_INSTANCE].config);
     }
 
-    protected attach(this: HlsPlayer, onload: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
-        this.preattach();
+    protected [PlayerKey.ATTACH](this: HlsPlayer, onload: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
+        this[PlayerKey.PRE_ATTACH]();
 
         const onHlsError = (_: Events.ERROR, data: ErrorData) => {
-            if (this.onHlsError !== onHlsError) {
+            if (this[HlsPlayerKey.ON_HLS_ERROR] !== onHlsError) {
                 return;
             }
             if (data.fatal) {
@@ -85,35 +87,35 @@ export class HlsPlayer extends NonNativePlayer {
                 DEVELOPMENT && console.warn(data);
             }
         };
-        this.onHlsError = onHlsError;
-        this.hlsInstance.on(Hls.Events.ERROR, this.onHlsError);
+        this[HlsPlayerKey.ON_HLS_ERROR] = onHlsError;
+        this[HlsPlayerKey.HLS_INSTANCE].on(Hls.Events.ERROR, this[HlsPlayerKey.ON_HLS_ERROR]);
 
         const onHlsManifestParsed = () => {
-            if (this.onHlsManifestParsed !== onHlsManifestParsed) {
+            if (this[HlsPlayerKey.ON_HLS_MANIFEST_PARSED] !== onHlsManifestParsed) {
                 return;
             }
-            this.onHlsManifestParsed = undefined;
+            this[HlsPlayerKey.ON_HLS_MANIFEST_PARSED] = undefined;
             onload();
         };
-        this.onHlsManifestParsed = onHlsManifestParsed;
-        this.hlsInstance.once(Hls.Events.MANIFEST_PARSED, this.onHlsManifestParsed);
+        this[HlsPlayerKey.ON_HLS_MANIFEST_PARSED] = onHlsManifestParsed;
+        this[HlsPlayerKey.HLS_INSTANCE].once(Hls.Events.MANIFEST_PARSED, this[HlsPlayerKey.ON_HLS_MANIFEST_PARSED]);
 
         const onHlsFragChange = (_: Events.FRAG_CHANGED, data: FragChangedData) => {
-            if (this.onHlsFragChange !== onHlsFragChange) {
+            if (this[HlsPlayerKey.ON_HLS_FRAG_CHANGE] !== onHlsFragChange) {
                 return;
             }
-            this.fragStart = data.frag.startDTS;
-            DEVELOPMENT && this.log?.('Fragment changed: ' + this.fragStart + '-' + data.frag.endDTS);
+            this[HlsPlayerKey.FRAG_START] = data.frag.startDTS;
+            DEVELOPMENT && this[PlayerKey.LOG]?.('Fragment changed: ' + this[HlsPlayerKey.FRAG_START] + '-' + data.frag.endDTS);
         };
-        this.onHlsFragChange = onHlsFragChange;
-        this.hlsInstance.on(Hls.Events.FRAG_CHANGED, this.onHlsFragChange);
+        this[HlsPlayerKey.ON_HLS_FRAG_CHANGE] = onHlsFragChange;
+        this[HlsPlayerKey.HLS_INSTANCE].on(Hls.Events.FRAG_CHANGED, this[HlsPlayerKey.ON_HLS_FRAG_CHANGE]);
 
-        this.hlsInstance.attachMedia(this.media);
-        this.media.volume = 1;
-        DEVELOPMENT && this.log?.('HLS is attached.');
+        this[HlsPlayerKey.HLS_INSTANCE].attachMedia(this[PlayerKey.MEDIA]);
+        this[PlayerKey.MEDIA].volume = 1;
+        DEVELOPMENT && this[PlayerKey.LOG]?.('HLS is attached.');
     }
 
-    public load(
+    public [PlayerKey.LOAD](
         this: HlsPlayer,
         url: string,
         config?: {
@@ -127,59 +129,59 @@ export class HlsPlayer extends NonNativePlayer {
         const play = config.play === true;
         const startTime = config.startTime;
 
-        if (!this.attached) {
+        if (!this[PlayerKey.ATTACHED]) {
             const onload = config.onload;
-            this.attach((event: Events.MANIFEST_PARSED, data: ManifestParsedData) => {
+            this[PlayerKey.ATTACH]((event: Events.MANIFEST_PARSED, data: ManifestParsedData) => {
                 if (startTime !== undefined) {
-                    this.seek(startTime);
+                    this[PlayerKey.SEEK](startTime);
                 }
                 if (play) {
-                    this.play();
+                    this[PlayerKey.PLAY]();
                 }
                 onload && onload(event, data);
             }, config.onerror);
         }
 
-        this.hlsInstance.loadSource(url);
-        DEVELOPMENT && this.log?.('HLS source loaded: ' + url);
+        this[HlsPlayerKey.HLS_INSTANCE].loadSource(url);
+        DEVELOPMENT && this[PlayerKey.LOG]?.('HLS source loaded: ' + url);
     }
 
-    protected override detach(this: HlsPlayer) {
-        this.onHlsError && this.hlsInstance.off(Hls.Events.ERROR, this.onHlsError);
-        this.onHlsError = undefined;
-        this.onHlsManifestParsed && this.hlsInstance.off(Hls.Events.MANIFEST_PARSED, this.onHlsManifestParsed);
-        this.onHlsManifestParsed = undefined;
-        this.onHlsFragChange && this.hlsInstance.off(Hls.Events.FRAG_CHANGED, this.onHlsFragChange);
-        this.onHlsFragChange = undefined;
-        this.onHlsBufferFlushed && this.hlsInstance.off(Hls.Events.BUFFER_FLUSHED, this.onHlsBufferFlushed);
-        this.onHlsBufferFlushed = undefined;
-        this.hlsInstance.destroy();
-        super.detach();
+    protected override[PlayerKey.DETACH](this: HlsPlayer) {
+        this[HlsPlayerKey.ON_HLS_ERROR] && this[HlsPlayerKey.HLS_INSTANCE].off(Hls.Events.ERROR, this[HlsPlayerKey.ON_HLS_ERROR]);
+        this[HlsPlayerKey.ON_HLS_ERROR] = undefined;
+        this[HlsPlayerKey.ON_HLS_MANIFEST_PARSED] && this[HlsPlayerKey.HLS_INSTANCE].off(Hls.Events.MANIFEST_PARSED, this[HlsPlayerKey.ON_HLS_MANIFEST_PARSED]);
+        this[HlsPlayerKey.ON_HLS_MANIFEST_PARSED] = undefined;
+        this[HlsPlayerKey.ON_HLS_FRAG_CHANGE] && this[HlsPlayerKey.HLS_INSTANCE].off(Hls.Events.FRAG_CHANGED, this[HlsPlayerKey.ON_HLS_FRAG_CHANGE]);
+        this[HlsPlayerKey.ON_HLS_FRAG_CHANGE] = undefined;
+        this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] && this[HlsPlayerKey.HLS_INSTANCE].off(Hls.Events.BUFFER_FLUSHED, this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED]);
+        this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] = undefined;
+        this[HlsPlayerKey.HLS_INSTANCE].destroy();
+        super[PlayerKey.DETACH]();
     }
 
-    public override seek(this: HlsPlayer, timestamp: number) {
-        if (this.IS_VIDEO) {
-            this.seekCheck(timestamp);
-            if (timestamp >= this.fragStart) {
-                this.media.currentTime = timestamp;
-                DEVELOPMENT && this.log?.('Skipped buffer flushing.');
+    public override[PlayerKey.SEEK](this: HlsPlayer, timestamp: number) {
+        if (this[PlayerKey.IS_VIDEO]) {
+            this[PlayerKey.SEEK_CHECK](timestamp);
+            if (timestamp >= this[HlsPlayerKey.FRAG_START]) {
+                this[PlayerKey.MEDIA].currentTime = timestamp;
+                DEVELOPMENT && this[PlayerKey.LOG]?.('Skipped buffer flushing.');
             } else {
                 const onHlsBufferFlushed = () => {
-                    if (this.onHlsBufferFlushed !== onHlsBufferFlushed) {
+                    if (this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] !== onHlsBufferFlushed) {
                         return;
                     }
-                    this.onHlsBufferFlushed = undefined;
-                    this.media.currentTime = timestamp;
-                    this.hlsInstance.startLoad(timestamp);
-                    DEVELOPMENT && this.log?.('Buffer reloaded.');
+                    this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] = undefined;
+                    this[PlayerKey.MEDIA].currentTime = timestamp;
+                    this[HlsPlayerKey.HLS_INSTANCE].startLoad(timestamp);
+                    DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer reloaded.');
                 };
-                this.onHlsBufferFlushed = onHlsBufferFlushed;
-                this.hlsInstance.once(Hls.Events.BUFFER_FLUSHED, this.onHlsBufferFlushed);
-                this.hlsInstance.trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: Number.POSITIVE_INFINITY, type: null });
-                DEVELOPMENT && this.log?.('Buffer flushed.');
+                this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] = onHlsBufferFlushed;
+                this[HlsPlayerKey.HLS_INSTANCE].once(Hls.Events.BUFFER_FLUSHED, this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED]);
+                this[HlsPlayerKey.HLS_INSTANCE].trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: Number.POSITIVE_INFINITY, type: null });
+                DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer flushed.');
             }
         } else {
-            super.seek(timestamp);
+            super[PlayerKey.SEEK](timestamp);
         }
     }
 }

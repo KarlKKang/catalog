@@ -52,6 +52,8 @@ import { getURLParam } from '../module/common';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/bangumi.module.scss';
 import { importModule } from '../module/import_module';
+import { PlayerKey } from '../module/player/player_key';
+import { NonNativePlayerKey } from '../module/player/non_native_player_key';
 
 let currentPgid: unknown;
 
@@ -179,8 +181,8 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDi
     let play: boolean | undefined = undefined;
     const mediaInstance = currentMediaInstance;
     if (mediaInstance !== null) {
-        play = mediaInstance.playing;
-        startTime = mediaInstance.media.currentTime;
+        play = mediaInstance[PlayerKey.PLAYING];
+        startTime = mediaInstance[PlayerKey.MEDIA].currentTime;
     }
 
     addVideoNode(formatDisplay, play, startTime).then(() => {
@@ -321,7 +323,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         errorMsgElem && remove(errorMsgElem);
     };
     const afterLoad = (mediaInstance: PlayerType) => {
-        mediaInstance.media.title = getTitle();
+        mediaInstance[PlayerKey.MEDIA].title = getTitle();
         if (epInfo[EPInfoKey.CHAPTERS].length > 0) {
             displayChapters(mediaInstance, audioOffset, chaptersActive);
         }
@@ -338,7 +340,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         const mediaInstance = new Player(playerContainer, true);
         beforeLoad();
         currentMediaInstance = mediaInstance;
-        mediaInstance.load(url, {
+        mediaInstance[PlayerKey.LOAD](url, {
             onerror: function (errorCode: number | null) {
                 showPlayerError(errorCode);
                 destroyMediaInstance();
@@ -367,7 +369,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         let bufferStalledMessageShown = false;
         beforeLoad();
         currentMediaInstance = mediaInstance;
-        mediaInstance.onbufferstalled = () => {
+        mediaInstance[NonNativePlayerKey.ON_BUFFER_STALLED] = () => {
             if (!bufferStalledMessageShown) {
                 bufferStalledMessageShown = true;
                 showMediaMessage(
@@ -377,7 +379,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 );
             }
         };
-        mediaInstance.load(url, {
+        mediaInstance[PlayerKey.LOAD](url, {
             onerror: function (errorCode: number | null) {
                 if (errorCode === CustomMediaError.HLS_BUFFER_APPEND_ERROR) {
                     if (currentFormat[VideoFormatKey.VIDEO] === 'dv5') {
@@ -412,8 +414,8 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
         const startTime = (chapter[1] + offset) / 1000;
         const timestamp = createSpanElement(secToTimestamp(startTime));
         addEventListener(timestamp, 'click', () => {
-            mediaInstance.seek(startTime);
-            mediaInstance.focus();
+            mediaInstance[PlayerKey.SEEK](startTime);
+            mediaInstance[PlayerKey.FOCUS]();
         });
         eventTargetsTracker.add(timestamp);
         appendChild(chapterNode, timestamp);
@@ -429,7 +431,7 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     appendChild(chaptersNode, accordionPanel);
     appendChild(getSharedElement(SharedElement.MEDIA_HOLDER), chaptersNode);
 
-    const video = mediaInstance.media;
+    const video = mediaInstance[PlayerKey.MEDIA];
     const updateChapterDisplay = () => {
         const currentTime = video.currentTime;
         epInfo[EPInfoKey.CHAPTERS].forEach((chapter, index) => {
@@ -537,7 +539,7 @@ function cleanupEvents() {
 }
 
 function destroyMediaInstance() {
-    currentMediaInstance?.destroy();
+    currentMediaInstance?.[PlayerKey.DESTROY]();
     currentMediaInstance = null;
     cleanupEvents();
     chaptersAccordionInstance = null;

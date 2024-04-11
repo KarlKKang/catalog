@@ -35,6 +35,7 @@ import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_prom
 import { SharedElement, getSharedElement } from './shared_var';
 import * as styles from '../../css/bangumi.module.scss';
 import { importModule } from '../module/import_module';
+import { PlayerKey } from '../module/player/player_key';
 
 let currentPgid: unknown;
 
@@ -126,7 +127,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         }
 
         const audioInstance = new Player(playerContainer, false);
-        audioInstance.load(url, {
+        audioInstance[PlayerKey.LOAD](url, {
             onerror: function (errorCode: number | null) {
                 showPlayerError(errorCode);
                 destroyAll();
@@ -147,7 +148,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
 
         const configHls = { maxBufferLength: 15 };
         const audioInstance = new HlsPlayer(playerContainer, configHls, false);
-        audioInstance.load(url, {
+        audioInstance[PlayerKey.LOAD](url, {
             onerror: function (errorCode: number | null) {
                 if (IS_FIREFOX && file[AudioFileKey.SAMPLERATE] !== undefined && parseInt(file[AudioFileKey.SAMPLERATE]) > 48000) { //Firefox has problem playing Hi-res audio
                     showTextErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
@@ -166,7 +167,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
     }
 
     function setMediaTitle(audioInstance: PlayerType) {
-        audioInstance.media.title = (file[AudioFileKey.TITLE] === undefined ? '' : (parseCharacters(file[AudioFileKey.TITLE]) + ' | ')) + getTitle();
+        audioInstance[PlayerKey.MEDIA].title = (file[AudioFileKey.TITLE] === undefined ? '' : (parseCharacters(file[AudioFileKey.TITLE]) + ' | ')) + getTitle();
     }
 }
 
@@ -262,13 +263,13 @@ function audioReady() {
     function pauseAll(currentIndex: number) {
         mediaInstances.forEach((mediaInstance, index) => {
             if (index !== currentIndex) {
-                mediaInstance.pause();
+                mediaInstance[PlayerKey.PAUSE]();
             }
         });
     }
 
     mediaInstances.forEach((instance, index) => {
-        addEventListener(instance.media, 'play', () => { // The media play event doesn't need to be handled separately since it catches all play events.
+        addEventListener(instance[PlayerKey.MEDIA], 'play', () => { // The media play event doesn't need to be handled separately since it catches all play events.
             pauseAll(index);
         });
     });
@@ -278,7 +279,7 @@ function destroyAll() {
     currentPgid = null;
     let mediaInstance = mediaInstances.pop();
     while (mediaInstance !== undefined) {
-        mediaInstance.destroy();
+        mediaInstance[PlayerKey.DESTROY]();
         mediaInstance = mediaInstances.pop();
     }
 }

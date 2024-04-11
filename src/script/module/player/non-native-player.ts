@@ -7,19 +7,21 @@ import {
 } from '../dom';
 import { addTimeout } from '../timer';
 import { playerSeeking } from '../../../css/player.module.scss';
+import { PlayerKey } from './player_key';
+import { NonNativePlayerKey } from './non_native_player_key';
 
 export abstract class NonNativePlayer extends Player {
-    private buffering = false;
-    private lastBufferUpdateTime = new Date().getTime();
-    public onbufferstalled: (() => void) | undefined = undefined;
+    private [NonNativePlayerKey.BUFFERING] = false;
+    private [NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = new Date().getTime();
+    public [NonNativePlayerKey.ON_BUFFER_STALLED]: (() => void) | undefined = undefined;
 
     constructor(container: HTMLDivElement, isVideo: boolean) {
         super(container, isVideo);
-        this.checkBuffer = this.checkBuffer.bind(this);
+        this[NonNativePlayerKey.CHECK_BUFFER] = this[NonNativePlayerKey.CHECK_BUFFER].bind(this);
     }
 
-    protected abstract override attach(this: NonNativePlayer, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void;
-    public abstract override load(
+    protected abstract override[PlayerKey.ATTACH](this: NonNativePlayer, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void;
+    public abstract override[PlayerKey.LOAD](
         this: Player,
         url: string,
         config?: {
@@ -29,40 +31,40 @@ export abstract class NonNativePlayer extends Player {
             onerror?: (errorCode: number | null) => void;
         }
     ): void;
-    protected override detach(this: NonNativePlayer) {
-        this.buffering = false;
+    protected override[PlayerKey.DETACH](this: NonNativePlayer) {
+        this[NonNativePlayerKey.BUFFERING] = false;
     }
 
-    public override play(this: NonNativePlayer) {
-        this.startBuffer();
-        super.play();
+    public override[PlayerKey.PLAY](this: NonNativePlayer) {
+        this[NonNativePlayerKey.START_BUFFER]();
+        super[PlayerKey.PLAY]();
     }
 
-    private checkBuffer(this: NonNativePlayer, event?: Event) {
-        if (!this.buffering) {
+    private [NonNativePlayerKey.CHECK_BUFFER](this: NonNativePlayer, event?: Event) {
+        if (!this[NonNativePlayerKey.BUFFERING]) {
             return;
         }
 
         const endBuffer = () => {
-            removeEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
-            removeClass(this.controls, playerSeeking);
-            this.buffering = false;
+            removeEventsListener(this[PlayerKey.MEDIA], ['progress', 'playing', 'timeupdate'], this[NonNativePlayerKey.CHECK_BUFFER]);
+            removeClass(this[PlayerKey.CONTROLS], playerSeeking);
+            this[NonNativePlayerKey.BUFFERING] = false;
         };
 
-        const bufferedRange = this.getBufferedRange();
-        if (bufferedRange.length === 0 && this.media.currentTime >= this.media.duration - this.maxBufferHole) {
+        const bufferedRange = this[PlayerKey.GET_BUFFERED_RANGE]();
+        if (bufferedRange.length === 0 && this[PlayerKey.MEDIA].currentTime >= this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE]) {
             endBuffer();
-            this.ended = true;
+            this[PlayerKey.ENDED] = true;
             return;
         }
         for (const buffer of bufferedRange) {
-            if (this.media.currentTime < buffer.end) {
-                DEVELOPMENT && this.log?.('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this.media.currentTime);
-                if (buffer.start <= this.media.currentTime + this.maxBufferHole && buffer.end >= Math.min(this.media.currentTime + 15, this.media.duration - this.maxBufferHole)) {
+            if (this[PlayerKey.MEDIA].currentTime < buffer.end) {
+                DEVELOPMENT && this[PlayerKey.LOG]?.('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this[PlayerKey.MEDIA].currentTime);
+                if (buffer.start <= this[PlayerKey.MEDIA].currentTime + this[PlayerKey.MAX_BUFFER_HOLE] && buffer.end >= Math.min(this[PlayerKey.MEDIA].currentTime + 15, this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE])) {
                     endBuffer();
-                    DEVELOPMENT && this.log?.('Buffer complete!');
-                    if (!this.dragging) {
-                        this.media.playbackRate = 1;
+                    DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer complete!');
+                    if (!this[PlayerKey.DRAGGING]) {
+                        this[PlayerKey.MEDIA].playbackRate = 1;
                     }
                     return;
                 }
@@ -71,51 +73,51 @@ export abstract class NonNativePlayer extends Player {
         }
 
         if (event !== undefined) {
-            this.lastBufferUpdateTime = new Date().getTime();
-        } else if (this.lastBufferUpdateTime + 16000 <= new Date().getTime()) {
-            DEVELOPMENT && this.log?.('Buffer stalled.');
-            this.onbufferstalled?.();
+            this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = new Date().getTime();
+        } else if (this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] + 16000 <= new Date().getTime()) {
+            DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer stalled.');
+            this[NonNativePlayerKey.ON_BUFFER_STALLED]?.();
         }
 
-        addTimeout(this.checkBuffer, 1000); // To prevent 'progress' event not firing sometimes
-        addClass(this.controls, playerSeeking);
-        this.media.playbackRate = 0;
+        addTimeout(this[NonNativePlayerKey.CHECK_BUFFER], 1000); // To prevent 'progress' event not firing sometimes
+        addClass(this[PlayerKey.CONTROLS], playerSeeking);
+        this[PlayerKey.MEDIA].playbackRate = 0;
     }
 
-    private startBuffer(this: NonNativePlayer) {
-        if (!this.IS_VIDEO || this.buffering) {
+    private [NonNativePlayerKey.START_BUFFER](this: NonNativePlayer) {
+        if (!this[PlayerKey.IS_VIDEO] || this[NonNativePlayerKey.BUFFERING]) {
             return;
         }
 
-        this.buffering = true;
-        this.lastBufferUpdateTime = new Date().getTime();
-        addEventsListener(this.media, ['progress', 'playing', 'timeupdate'], this.checkBuffer);
-        this.checkBuffer();
+        this[NonNativePlayerKey.BUFFERING] = true;
+        this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = new Date().getTime();
+        addEventsListener(this[PlayerKey.MEDIA], ['progress', 'playing', 'timeupdate'], this[NonNativePlayerKey.CHECK_BUFFER]);
+        this[NonNativePlayerKey.CHECK_BUFFER]();
     }
 
-    protected override onloadedmetadata(this: NonNativePlayer): void {
-        super.onloadedmetadata();
-        this.startBuffer();
+    protected override[PlayerKey.ON_LOADED_METADATA](this: NonNativePlayer): void {
+        super[PlayerKey.ON_LOADED_METADATA]();
+        this[NonNativePlayerKey.START_BUFFER]();
     }
 
-    protected override onplay(this: NonNativePlayer): void {
-        super.onplay();
-        this.startBuffer();
+    protected override[PlayerKey.ON_PLAY](this: NonNativePlayer): void {
+        super[PlayerKey.ON_PLAY]();
+        this[NonNativePlayerKey.START_BUFFER]();
     }
 
-    protected override oncanplaythrough(this: NonNativePlayer): void {
-        if (!this.buffering) {
-            super.oncanplaythrough();
+    protected override[PlayerKey.ON_CAN_PLAY_THROUGH](this: NonNativePlayer): void {
+        if (!this[NonNativePlayerKey.BUFFERING]) {
+            super[PlayerKey.ON_CAN_PLAY_THROUGH]();
         }
     }
 
-    protected override onwaiting(this: NonNativePlayer): void {
-        super.onwaiting();
-        this.startBuffer();
+    protected override[PlayerKey.ON_WAITING](this: NonNativePlayer): void {
+        super[PlayerKey.ON_WAITING]();
+        this[NonNativePlayerKey.START_BUFFER]();
     }
 
-    protected override onseeking(this: NonNativePlayer): void {
-        super.onseeking();
-        this.startBuffer();
+    protected override[PlayerKey.ON_SEEKING](this: NonNativePlayer): void {
+        super[PlayerKey.ON_SEEKING]();
+        this[NonNativePlayerKey.START_BUFFER]();
     }
 }
