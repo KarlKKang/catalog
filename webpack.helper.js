@@ -161,6 +161,37 @@ function addWorkboxPlugin(config, dev) {
     );
 }
 
+const localIdentCache = new Map();
+const localIdentLookup = new Map();
+function getLocalIdent(context, _, localName) {
+    const key = context.resourcePath + '/' + localName;
+    const cached = localIdentCache.get(key);
+    if (cached !== undefined) {
+        return cached;
+    }
+
+    const hash = crypto.createHash('md5');
+    hash.update(key);
+    let ident = hash.digest('base64');
+    ident = ident.replaceAll(/[+/=]/g, '_');
+    const nonNumIndex = ident.search(/[^0-9]/);
+    if (nonNumIndex === -1) {
+        ident = '_' + ident;
+    } else {
+        ident = ident.slice(nonNumIndex);
+    }
+    ident = ident.slice(0, 3);
+
+    const existing = localIdentLookup.get(ident);
+    if (existing !== undefined) {
+        throw new Error('CSS class name collision: ' + ident + ' (' + key + ' and ' + existing + ')');
+    }
+    localIdentCache.set(key, ident);
+    localIdentLookup.set(ident, key);
+
+    return ident;
+}
+
 function addCssLoader(config, dev) {
     config.module.rules.push(
         {
@@ -180,7 +211,8 @@ function addCssLoader(config, dev) {
                     options: {
                         modules: {
                             exportLocalsConvention: 'camel-case-only',
-                            localIdentName: dev ? '[path][name]__[local]' : '[hash:base64]',
+                            localIdentName: '[path][name]__[local]',
+                            getLocalIdent: dev ? undefined : getLocalIdent,
                         }
                     }
                 }
