@@ -1,4 +1,4 @@
-import { NonNativePlayer } from './non-native-player';
+import { NonNativePlayer } from './non_native_player';
 import HlsLight from '../../../../hls.js/dist/hls.light.mjs';
 import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from '../../../../hls.js';
 import { CustomMediaError } from './media_error';
