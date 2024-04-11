@@ -219,7 +219,7 @@ function checkEPInfo(epInfo: unknown): VideoEPInfo | AudioEPInfo | ImageEPInfo {
 }
 
 function parseSeasons(seasons: unknown): Seasons {
-    return parseNonEmptyTypedArray(seasons, (season): Season => {
+    return parseTypedArray(seasons, (season): Season => {
         const seasonObj = parseObject(season);
         return {
             [SeasonKey.ID]: parseString(seasonObj.id),
