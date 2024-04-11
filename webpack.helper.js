@@ -43,7 +43,7 @@ function addFontLoader(config, dev) {
         test: /\.woff2?$/i,
         type: 'asset/resource',
         generator: {
-            filename: 'font/' + (dev ? '[file]' : '[hash][ext]')
+            filename: 'font/' + (dev ? '[file]' : '[hash:5][ext]')
         }
     });
 }
