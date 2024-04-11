@@ -21,6 +21,7 @@ export abstract class NonNativePlayer extends Player {
     }
 
     protected abstract override[PlayerKey.ATTACH](this: NonNativePlayer, onload?: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void;
+
     public abstract override[PlayerKey.LOAD](
         this: Player,
         url: string,
@@ -31,6 +32,7 @@ export abstract class NonNativePlayer extends Player {
             onerror?: (errorCode: number | null) => void;
         }
     ): void;
+
     protected override[PlayerKey.DETACH](this: NonNativePlayer) {
         this[NonNativePlayerKey.BUFFERING] = false;
     }

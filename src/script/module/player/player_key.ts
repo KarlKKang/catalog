@@ -2,6 +2,9 @@ export const enum PlayerKey {
     IS_VIDEO,
     _MEDIA,
     MEDIA,
+    MAX_BUFFER_HOLE,
+    LOG,
+    ON_SCREEN_CONSOLE,
 
     CONTROLS,
     BIG_PLAY_BUTTON,
@@ -22,18 +25,12 @@ export const enum PlayerKey {
     FULLSCREEN_BUTTON,
 
     TIMER,
+    ON_FULLSCREEN_CHANGE,
     INACTIVE_TIMEOUT,
     DRAGGING_PREVIEW_TIMEOUT,
     DROPPED_FRAMES,
     CORRUPTED_FRAMES,
     PLAY_PROMISE,
-    MAX_BUFFER_HOLE,
-
-    LOG,
-    ON_SCREEN_CONSOLE,
-
-    ON_FULLSCREEN_CHANGE,
-
     ATTACHED,
     DRAGGING,
     PLAYING,

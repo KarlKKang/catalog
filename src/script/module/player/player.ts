@@ -60,9 +60,11 @@ declare global {
 
 export class Player {
     protected readonly [PlayerKey.IS_VIDEO]: boolean;
-
     private readonly [PlayerKey._MEDIA]: HTMLVideoElement | HTMLAudioElement;
     public get [PlayerKey.MEDIA]() { return this[PlayerKey._MEDIA]; }
+    protected readonly [PlayerKey.MAX_BUFFER_HOLE]: number = 0;
+    protected readonly [PlayerKey.LOG]: undefined | ((message: string) => void) = undefined;
+    private readonly [PlayerKey.ON_SCREEN_CONSOLE]: undefined | HTMLTextAreaElement = undefined;
 
     public readonly [PlayerKey.CONTROLS]: HTMLElement;
     public readonly [PlayerKey.BIG_PLAY_BUTTON]: HTMLButtonElement;
@@ -82,21 +84,15 @@ export class Player {
     private readonly [PlayerKey.PIP_BUTTON]: HTMLButtonElement | undefined;
     private readonly [PlayerKey.FULLSCREEN_BUTTON]: HTMLButtonElement;
 
-    protected [PlayerKey.ATTACHED] = false;
-    protected [PlayerKey.DRAGGING] = false;
-
     protected [PlayerKey.TIMER]: ReturnType<typeof setInterval> | undefined;
+    private [PlayerKey.ON_FULLSCREEN_CHANGE]: undefined | (() => void) = undefined;
     private [PlayerKey.INACTIVE_TIMEOUT] = 12; // 3000 / 250
     private [PlayerKey.DRAGGING_PREVIEW_TIMEOUT] = 4; // 1000 / 250
     private [PlayerKey.DROPPED_FRAMES] = 0;
     private [PlayerKey.CORRUPTED_FRAMES] = 0;
-
-    protected readonly [PlayerKey.MAX_BUFFER_HOLE]: number = 0;
-    private [PlayerKey.ON_FULLSCREEN_CHANGE]: undefined | (() => void) = undefined;
-    protected readonly [PlayerKey.LOG]: undefined | ((message: string) => void) = undefined;
-    private readonly [PlayerKey.ON_SCREEN_CONSOLE]: undefined | HTMLTextAreaElement = undefined;
-
     private [PlayerKey.PLAY_PROMISE]: Promise<void> | undefined;
+    protected [PlayerKey.ATTACHED] = false;
+    protected [PlayerKey.DRAGGING] = false;
 
     public get [PlayerKey.PLAYING](): boolean {
         return containsClass(this[PlayerKey.CONTROLS], styles.playerPlaying);
