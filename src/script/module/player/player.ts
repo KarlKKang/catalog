@@ -61,7 +61,7 @@ declare global {
 export class Player {
     protected readonly [PlayerKey.IS_VIDEO]: boolean;
 
-    protected readonly [PlayerKey._MEDIA]: HTMLVideoElement | HTMLAudioElement;
+    private readonly [PlayerKey._MEDIA]: HTMLVideoElement | HTMLAudioElement;
     public get [PlayerKey.MEDIA]() { return this[PlayerKey._MEDIA]; }
 
     public readonly [PlayerKey.CONTROLS]: HTMLElement;
