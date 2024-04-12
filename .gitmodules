@@ -1,3 +1,6 @@
 [submodule "hls.js"]
 	path = hls.js
 	url = https://github.com/KarlKKang/hls.js.git
+[submodule "aws-s3-js"]
+	path = aws-s3-js
+	url = https://github.com/KarlKKang/aws-s3-js.git
