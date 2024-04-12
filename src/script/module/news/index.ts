@@ -6,6 +6,7 @@ import { addClass, appendChild, createDivElement, createHRElement, createParagra
 const classMap = {
     'sub-title': styles.subTitle,
     'bolder': styles.bolder,
+    'bold': styles.bold,
     'line-break': styles.lineBreak,
     'code-inline': styles.codeInline,
     'color-red': commonStyles.colorRed,
