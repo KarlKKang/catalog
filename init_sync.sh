@@ -5,7 +5,5 @@ if [[ "$#" -ne 2 || ("$1" != "featherine-website" && "$1" != "featherine-website
     exit 1
 fi
 
-echo "Syncing s3://$1/ to $2"
 aws s3 sync "s3://$1/" "$2" 2>>"init_sync.log"
-echo "DONE"
-printf "\n"
+node ./aws-s3-js/verify_dir.js "$1" "/" "$2" 2>>"init_sync.log"
