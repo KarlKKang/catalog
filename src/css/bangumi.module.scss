@@ -161,11 +161,11 @@
         >.select {
             width: 200px;
             max-width: 70%;
-            margin: 0px 16px 16px 0px;
+            margin: 0px 1rem 1rem 0px;
         }
 
         >.format-display {
-            margin: 0px 0px 16px 0px;
+            margin: 0px 0px 1rem 0px;
             color: var(properties.get(alt-text-color));
             font-size: small;
         }
@@ -176,7 +176,7 @@
 
         >.player {
             width: 100%;
-            margin: 0px 0px 16px 0px;
+            margin: 0px 0px 1rem 0px;
 
             >video,
             >audio {
@@ -223,24 +223,25 @@
     &:after {
         content: '\E70D';
         font-family: SegMDL2;
-        font-size: 0.9em;
+        font-size: small;
         color: var(properties.get(alt-text-color));
-        top: 10px;
-        right: 11px;
+        top: 0.5em;
+        right: 0.5em;
         position: absolute;
         pointer-events: none;
+        line-height: 2em;
     }
 
     >select {
         border: none;
         border-radius: 0px;
-        font-size: 0.9em;
+        font-size: small;
         margin: 0px;
         width: 100%;
-        padding: 5px 35px 5px 5px;
+        padding: 0.5em 2em 0.5em 0.5em;
         appearance: none;
-        height: 34px;
-        line-height: 22px;
+        height: 2.5em;
+        line-height: 1.5em;
         background-color: var(properties.get(foreground-color));
 
         &::-ms-expand {
@@ -259,7 +260,7 @@
 
 .sub-title {
     width: 100%;
-    margin: 32px 0px 32px 0px;
+    margin: 2rem 0px 2rem 0px;
 
     &,
     * {
@@ -277,7 +278,7 @@
 .content.video,
 .media-holder {
     .sub-title {
-        margin: 32px 0px 16px 0px;
+        margin: 2rem 0px 1rem 0px;
     }
 }
 
