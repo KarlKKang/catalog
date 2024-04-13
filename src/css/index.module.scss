@@ -5,18 +5,18 @@
     flex-wrap: wrap;
     justify-content: center;
     padding: 0px;
-    margin: calc(3vh - 12px) calc(5% - 12px) -12px;
+    margin: calc(3vh - 0.75em) calc(5% - 0.75em) -0.75em;
     transition: opacity .4s ease-out;
 
     >div {
         position: relative;
         width: 256px;
-        max-width: calc(50% - 2 * 12px);
+        max-width: calc(50% - 2 * 0.75em);
         height: auto;
         background-color: var(properties.get(foreground-color));
         box-shadow: var(properties.get(shadow));
         transition: box-shadow .4s ease-out;
-        margin: 12px;
+        margin: 0.75em;
         cursor: pointer;
         align-self: flex-start;
 
@@ -76,12 +76,12 @@
         }
     }
 
-    @supports (max-width: calc(50% - min(2%, 12px) * 2)) and (margin: calc(3vh - min(2%, 12px)) calc(5% - min(2%, 12px)) max(-2%, -12px)) and (margin: min(2%, 12px)) {
-        margin: calc(3vh - min(2%, 12px)) calc(5% - min(2%, 12px)) max(-2%, -12px);
+    @supports (max-width: calc(50% - min(2%, 0.75em) * 2)) and (margin: calc(3vh - min(2%, 0.75em)) calc(5% - min(2%, 0.75em)) max(-2%, -0.75em)) and (margin: min(2%, 0.75em)) {
+        margin: calc(3vh - min(2%, 0.75em)) calc(5% - min(2%, 0.75em)) max(-2%, -0.75em);
 
         >div {
-            max-width: calc(50% - min(2%, 12px) * 2);
-            margin: min(2%, 12px);
+            max-width: calc(50% - min(2%, 0.75em) * 2);
+            margin: min(2%, 0.75em);
         }
     }
 

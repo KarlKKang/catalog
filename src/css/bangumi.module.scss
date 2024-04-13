@@ -71,7 +71,7 @@
 
 .ep-selector>div {
     margin: 0px;
-    padding: calc(2em - 12px) calc(5% - 12px);
+    padding: calc(2em - 0.75em) calc(5% - 0.75em);
     overflow-y: hidden;
     box-sizing: content-box;
     transition: max-height .4s ease-out, padding-bottom .4s ease-out;
@@ -81,7 +81,7 @@
         height: auto;
         background-color: var(properties.get(foreground-color));
         padding: 0.6em 1em;
-        margin: 12px;
+        margin: 0.75em;
         cursor: pointer;
 
         >* {
@@ -95,11 +95,11 @@
         }
     }
 
-    @supports (padding: calc(2em - min(2%, 12px)) calc(5% - min(2%, 12px))) and (margin: min(2%, 12px)) {
-        padding: calc(2em - min(2%, 12px)) calc(5% - min(2%, 12px));
+    @supports (padding: calc(2em - min(2%, 0.75em)) calc(5% - min(2%, 0.75em))) and (margin: min(2%, 0.75em)) {
+        padding: calc(2em - min(2%, 0.75em)) calc(5% - min(2%, 0.75em));
 
         >div {
-            margin: min(2%, 12px);
+            margin: min(2%, 0.75em);
         }
     }
 
@@ -159,7 +159,7 @@
         align-items: center;
 
         >.select {
-            width: 200px;
+            width: 15em;
             max-width: 70%;
             margin: 0px 1rem 1rem 0px;
         }
@@ -437,7 +437,7 @@ p.artist {
         margin: 0px -0.5em -1em -0.5em;
 
         >div {
-            max-width: 150px;
+            max-width: 10em;
             width: 100%;
             margin: 0px 0.5em 1em 0.5em;
         }

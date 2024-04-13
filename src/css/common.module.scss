@@ -166,7 +166,7 @@ input {
 }
 
 .button {
-    width: 150px;
+    width: 10em;
     min-height: 2.5em;
     cursor: pointer;
     text-align: center;
@@ -174,7 +174,7 @@ input {
 }
 
 .input-field {
-    width: 300px;
+    width: 20em;
     padding: 0px;
     /* There are some weird issues on some iOS devices where if you clear and re-enter in input fields the container will have a few extra pixels in height */
     height: 2.5em;
