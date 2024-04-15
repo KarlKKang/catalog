@@ -202,14 +202,14 @@ export class Player {
         // Play button
         const playButton = createPlayerButton('Play');
         this[PlayerKey.PLAY_BUTTON] = playButton;
-        addClass(playButton, styles.playerPlayControl, styles.playerControl, styles.playerButton);
+        addClass(playButton, styles.playerPlayControl, styles.playerButton);
         const playButtonIconPlaceholder = addPlayerPlaceholder(playButton);
         appendChild(controlBar, playButton);
 
         // Current time display
         const currentTimeDisplay = createDivElement();
         this[PlayerKey.CURRENT_TIME_DISPLAY] = currentTimeDisplay;
-        addClass(currentTimeDisplay, styles.playerTimeControl, styles.playerControl);
+        addClass(currentTimeDisplay, styles.playerTimeControl);
         appendChild(controlBar, currentTimeDisplay);
 
         const currentTimeDisplayText = createSpanElement('--:--');
@@ -228,7 +228,7 @@ export class Player {
         // Duration display
         const durationDisplay = createDivElement();
         this[PlayerKey.DURATION_DISPLAY] = durationDisplay;
-        addClass(durationDisplay, styles.playerTimeControl, styles.playerControl);
+        addClass(durationDisplay, styles.playerTimeControl);
         appendChild(controlBar, durationDisplay);
 
         const durationDisplayText = createDivElement();
@@ -245,7 +245,7 @@ export class Player {
         // Progress control
         const progressControl = createDivElement();
         this[PlayerKey.PROGRESS_CONTROL] = progressControl;
-        addClass(progressControl, styles.playerProgressControl, styles.playerControl);
+        addClass(progressControl, styles.playerProgressControl);
         appendChild(controlBar, progressControl);
 
         const progressHolder = createDivElement();
@@ -287,7 +287,7 @@ export class Player {
         if (d.pictureInPictureEnabled) {
             const PIPButton = createPlayerButton('Picture-in-Picture');
             this[PlayerKey.PIP_BUTTON] = PIPButton;
-            addClass(PIPButton, styles.playerPictureInPictureControl, styles.playerControl, styles.playerButton);
+            addClass(PIPButton, styles.playerPictureInPictureControl, styles.playerButton);
             PIPButtonPlaceholder = addPlayerPlaceholder(PIPButton);
             this[PlayerKey.IS_VIDEO] && appendChild(controlBar, PIPButton);
         }
@@ -295,7 +295,7 @@ export class Player {
         // Fullscreen
         const fullscreenButton = createPlayerButton('Fullscreen');
         this[PlayerKey.FULLSCREEN_BUTTON] = fullscreenButton;
-        addClass(fullscreenButton, styles.playerFullscreenControl, styles.playerControl, styles.playerButton);
+        addClass(fullscreenButton, styles.playerFullscreenControl, styles.playerButton);
         const fullscreenButtonPlaceholder = addPlayerPlaceholder(fullscreenButton);
         this[PlayerKey.IS_VIDEO] && appendChild(controlBar, fullscreenButton);
 

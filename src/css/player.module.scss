@@ -7,7 +7,7 @@
     background-color: #000;
     position: relative;
     padding: 0;
-    font-size: 10px;
+    font-size: small;
     line-height: 1;
     font-weight: 400;
     font-style: normal;
@@ -53,24 +53,6 @@
         min-height: auto;
     }
 
-    .player-button {
-        width: 10%;
-        max-width: 4em;
-        min-width: 2.5em;
-
-        >.player-icon-placeholder {
-            display: block;
-        }
-
-        &.player-disabled {
-            cursor: default !important;
-
-            svg {
-                fill: var(properties.get(alt-text-color)) !important;
-            }
-        }
-    }
-
     .player-hidden {
         display: none !important;
     }
@@ -80,7 +62,7 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        height: 2.2em;
+        height: 1.8em;
         fill: var(properties.get(text-color));
         transition: fill 0.4s;
     }
@@ -98,15 +80,15 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        margin: -25px 0 0 -25px;
+        margin: -1.5rem 0 0 -1.5rem;
         opacity: 1;
         text-align: left;
         border: 3px solid var(properties.get(text-color));
         box-sizing: border-box;
         background-clip: padding-box;
-        width: 50px;
-        height: 50px;
-        border-radius: 25px;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 1.5rem;
         visibility: hidden;
 
         &:before,
@@ -135,7 +117,7 @@
     }
 
     .player-big-play-button {
-        width: 6em;
+        width: 4rem;
         display: block;
         position: absolute;
         padding: 0;
@@ -159,8 +141,8 @@
             height: 70%;
         }
 
-        @supports (width: min(30%, 7em)) {
-            width: min(30%, 6em);
+        @supports (width: min(30%, 4rem)) {
+            width: min(30%, 4rem);
         }
     }
 
@@ -171,23 +153,35 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 3em;
+        height: 2.5em;
+        line-height: 2.5em;
         background-color: var(properties.get(foreground-color));
 
-        .player-control {
+        .player-button {
             position: relative;
-            text-align: center;
+            width: 10%;
+            max-width: 3.5em;
+            min-width: 2em;
+            height: 100%;
+            flex: none;
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 4em;
-            flex: none;
+            cursor: pointer;
+
+            >.player-icon-placeholder {
+                display: block;
+            }
+
+            &.player-disabled {
+                cursor: default !important;
+
+                svg {
+                    fill: var(properties.get(alt-text-color)) !important;
+                }
+            }
         }
 
         .player-play-control {
-            cursor: pointer;
-            flex: none;
-
             .player-icon-placeholder {
                 >.player-play-icon {
                     visibility: visible;
@@ -202,11 +196,8 @@
 
         .player-time-control {
             flex: none;
-            font-size: 1.2em;
-            line-height: 2.5;
             width: auto;
             display: block;
-            min-width: 2em;
             padding: 0px 0.3em;
         }
 
@@ -224,7 +215,8 @@
             touch-action: none;
 
             .player-progress-holder {
-                margin: 0 10px;
+                font-size: 0.8em;
+                margin: 0 1em;
                 flex: auto;
                 transition: all 0.2s;
                 height: 0.4em;
@@ -289,21 +281,21 @@
                         background-color: var(properties.get(text-color));
                         border-radius: 0.3em;
                         float: right;
-                        font-size: 0.8em;
-                        padding: 6px 8px;
+                        padding: 0.6em 0.8em;
                         pointer-events: none;
                         position: absolute;
                         top: -2.8em;
                         visibility: hidden;
                         z-index: 1;
                         white-space: nowrap;
+                        line-height: 1;
                     }
                 }
             }
 
             &:hover {
                 .player-progress-holder {
-                    font-size: 1.4em;
+                    font-size: 1em;
 
                     @media not screen and (hover: hover) and (pointer: fine) {
                         font-size: inherit;
@@ -326,9 +318,6 @@
         }
 
         .player-picture-in-picture-control {
-            cursor: pointer;
-            flex: none;
-
             .player-icon-placeholder {
                 >.player-picture-in-picture-enter-icon {
                     visibility: visible;
@@ -341,9 +330,6 @@
         }
 
         .player-fullscreen-control {
-            cursor: pointer;
-            flex: none;
-
             .player-icon-placeholder {
                 >.player-fullscreen-enter-icon {
                     visibility: visible;
@@ -357,7 +343,7 @@
     }
 
     &.player-audio {
-        min-height: 3em;
+        min-height: 2.5em;
         padding-top: 0px;
 
         .player-control-bar {
@@ -462,40 +448,15 @@
         height: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
-
-        .player-icon-placeholder>svg {
-            height: 2.6em;
-        }
+        font-size: medium;
 
         .player-control-bar {
             width: 95%;
             margin: 0px auto 3em auto;
-            border-radius: 10px;
+            border-radius: 1em;
             padding: 0px 0.5em 0px 0.5em;
-            height: 4em;
             box-shadow: var(properties.get(shadow));
-
-            .player-time-control {
-                font-size: 1.4em;
-                line-height: 2.86;
-            }
-
-            .player-progress-control {
-                .player-progress-holder {
-                    .player-play-progress {
-                        .player-icon-placeholder>svg {
-                            height: 1.6em;
-                        }
-                    }
-
-                    .player-mouse-display {
-                        .player-time-tooltip {
-                            font-size: 1em;
-                            padding: 8px 10px;
-                        }
-                    }
-                }
-            }
+            box-sizing: border-box;
 
             .player-fullscreen-control .player-icon-placeholder {
                 >.player-fullscreen-exit-icon {
