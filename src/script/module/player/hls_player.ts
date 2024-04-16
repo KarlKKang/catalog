@@ -162,8 +162,8 @@ export class HlsPlayer extends NonNativePlayer {
     public override[PlayerKey.SEEK](this: HlsPlayer, timestamp: number) {
         if (this[PlayerKey.IS_VIDEO]) {
             this[PlayerKey.SEEK_CHECK](timestamp);
+            this[PlayerKey.MEDIA].currentTime = timestamp;
             if (timestamp >= this[HlsPlayerKey.FRAG_START]) {
-                this[PlayerKey.MEDIA].currentTime = timestamp;
                 DEVELOPMENT && this[PlayerKey.LOG]?.('Skipped buffer flushing.');
             } else {
                 const onHlsBufferFlushed = () => {
