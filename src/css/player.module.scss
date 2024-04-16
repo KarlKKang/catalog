@@ -62,7 +62,7 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        height: 1.8em;
+        width: 2em;
         fill: var(properties.get(text-color));
         transition: fill 0.4s;
     }
@@ -138,7 +138,7 @@
         }
 
         .player-icon-placeholder>svg {
-            height: 70%;
+            width: 70%;
         }
 
         @supports (width: min(30%, 4rem)) {
@@ -198,7 +198,7 @@
             flex: none;
             width: auto;
             display: block;
-            padding: 0px 0.3em;
+            padding: 0px 0.5em;
         }
 
         .player-time-divider {
@@ -211,7 +211,6 @@
             flex: auto;
             display: flex;
             align-items: center;
-            min-width: 4em;
             touch-action: none;
 
             .player-progress-holder {
@@ -250,7 +249,7 @@
                     background-color: var(properties.get(text-color));
 
                     .player-icon-placeholder>svg {
-                        height: 1.4em;
+                        width: 1.4em;
                         left: 100%;
                         z-index: 1;
                     }
