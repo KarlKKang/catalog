@@ -106,7 +106,6 @@ export class Player {
             if (this[PlayerKey.ENDED]) {
                 this[PlayerKey.SEEK](0);
             }
-            this[PlayerKey.ENDED] = false;
         } else {
             removeClass(this[PlayerKey.PLAY_BUTTON], styles.playerPlaying);
             removeClass(this[PlayerKey.CONTROLS], styles.playerPlaying);
@@ -438,9 +437,10 @@ export class Player {
         }
     }
 
-    public [PlayerKey.SEEK](this: Player, timestamp: number) {
+    public [PlayerKey.SEEK](this: Player, timestamp: number, callback?: () => void) {
         this[PlayerKey.SEEK_CHECK](timestamp);
         this[PlayerKey.MEDIA].currentTime = timestamp;
+        callback?.();
     }
 
     private [PlayerKey.SET_MEDIA_ATTRIBUTES](this: Player) {
@@ -471,10 +471,12 @@ export class Player {
             this[PlayerKey.PAUSE]();
         } else {
             if (this[PlayerKey.ENDED]) {
-                this[PlayerKey.SEEK](0);
-                this[PlayerKey.ENDED] = false;
+                this[PlayerKey.SEEK](0, () => {
+                    this[PlayerKey.PLAY]();
+                });
+            } else {
+                this[PlayerKey.PLAY]();
             }
-            this[PlayerKey.PLAY]();
         }
     }
 
@@ -746,14 +748,13 @@ export class Player {
     }
 
     protected [PlayerKey.ON_DRAG_ENDED](this: Player, event: MouseEvent | TouchEvent): void {
+        event.preventDefault(); // Prevent triggering mouse events after `touchend` on mobile devices.
+
         this[PlayerKey.DRAGGING] = false;
         this[PlayerKey.ACTIVE] = true; // The timeout won't decrease when this[PlayerKey.DRAGGING] == true.
 
         const currentTime = this[PlayerKey.PROGRESS_UPDATE](event);
-        event.preventDefault(); // Prevent triggering mouse events after `touchend` on mobile devices.
-        this[PlayerKey.SEEK](currentTime);
-
-        this[PlayerKey.MEDIA].playbackRate = 1;
+        this[PlayerKey.SEEK](currentTime, () => { this[PlayerKey.MEDIA].playbackRate = 1; });
         this[PlayerKey.FOCUS]();
     }
 
@@ -791,8 +792,7 @@ export class Player {
         }
         if (this[PlayerKey.DRAGGING]) {
             if (this[PlayerKey.DRAGGING_PREVIEW_TIMEOUT] === 0) {
-                this[PlayerKey.SEEK](currentTime);
-                this[PlayerKey.DRAGGING_PREVIEW_TIMEOUT] = 4;
+                this[PlayerKey.SEEK](currentTime, () => { this[PlayerKey.DRAGGING_PREVIEW_TIMEOUT] = 4; });
             }
             replaceText(this[PlayerKey.CURRENT_TIME_DISPLAY_TEXT], currentTimestamp);
             setWidth(this[PlayerKey.PROGRESS_BAR], percentage * 100, CSS_UNIT.PERCENT);

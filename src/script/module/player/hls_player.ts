@@ -159,11 +159,12 @@ export class HlsPlayer extends NonNativePlayer {
         super[PlayerKey.DETACH]();
     }
 
-    public override[PlayerKey.SEEK](this: HlsPlayer, timestamp: number) {
+    public override[PlayerKey.SEEK](this: HlsPlayer, timestamp: number, callback?: () => void) {
         if (this[PlayerKey.IS_VIDEO]) {
             this[PlayerKey.SEEK_CHECK](timestamp);
             this[PlayerKey.MEDIA].currentTime = timestamp;
             if (timestamp >= this[HlsPlayerKey.FRAG_START]) {
+                callback?.();
                 DEVELOPMENT && this[PlayerKey.LOG]?.('Skipped buffer flushing.');
             } else {
                 const onHlsBufferFlushed = () => {
@@ -173,6 +174,7 @@ export class HlsPlayer extends NonNativePlayer {
                     this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] = undefined;
                     this[PlayerKey.MEDIA].currentTime = timestamp;
                     this[HlsPlayerKey.HLS_INSTANCE].startLoad(timestamp);
+                    callback?.();
                     DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer reloaded.');
                 };
                 this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] = onHlsBufferFlushed;
@@ -181,7 +183,7 @@ export class HlsPlayer extends NonNativePlayer {
                 DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer flushed.');
             }
         } else {
-            super[PlayerKey.SEEK](timestamp);
+            super[PlayerKey.SEEK](timestamp, callback);
         }
     }
 }
