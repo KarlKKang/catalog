@@ -7,6 +7,7 @@ import { MessageParamProp, type MessageParam } from './type';
 import { redirect } from '../global';
 import { defaultErrorSuffix } from '../text/message/body';
 import { CSS_COLOR } from '../style/value';
+import { goBackButtonText } from '../text/ui';
 
 export function showMessage({
     [MessageParamProp.MESSAGE]: message,
@@ -23,7 +24,7 @@ export function showMessage({
     setSessionStorage('document-title', getTitle());
 
     if (buttonText !== null) {
-        setSessionStorage('button-text', buttonText ?? '戻る');
+        setSessionStorage('button-text', buttonText ?? goBackButtonText);
         if (url === undefined) {
             setSessionStorage('url', getFullURL());
         } else {

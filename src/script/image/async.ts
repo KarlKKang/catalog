@@ -7,6 +7,11 @@ import {
     addClass,
     appendChild,
     body,
+    createButtonElement,
+    addEventListener,
+    removeClass,
+    addEventsListener,
+    d,
 } from '../module/dom';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
@@ -15,17 +20,16 @@ import { setWidth } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
 import * as styles from '../../css/image.module.scss';
 import { imageLoader, offload as offloadImageLoader } from '../module/image_loader';
+import { goBackButtonText } from '../module/text/ui';
+import { addTimeout } from '../module/timer';
 
 export default function (baseURL: string, fileName: string) {
-    const flexContainer = createDivElement();
-    addClass(flexContainer, styles.flexContainer);
     const container = createDivElement();
     addClass(container, styles.imageContainer);
     const overlay = createDivElement();
     addClass(overlay, styles.overlay);
     appendChild(container, overlay);
-    appendChild(flexContainer, container);
-    appendChild(body, flexContainer);
+    appendChild(body, container);
     removeRightClick(container);
 
     imageLoader(container, baseURL + encodeCFURIComponent(fileName), fileName, true, (canvas) => {
@@ -35,6 +39,26 @@ export default function (baseURL: string, fileName: string) {
     }, undefined, () => {
         showMessage(notFound);
     });
+
+    const backButton = createButtonElement(goBackButtonText);
+    addClass(backButton, styles.backButton);
+    addEventListener(backButton, 'click', () => {
+        w.close();
+    });
+    appendChild(body, backButton);
+
+    let inactiveTimeout: ReturnType<typeof addTimeout> | null = null;
+    const setActive = () => {
+        removeClass(backButton, styles.inactive);
+        const currentTimeout = addTimeout(() => {
+            if (inactiveTimeout === currentTimeout) {
+                addClass(backButton, styles.inactive);
+            }
+        }, 3000);
+        inactiveTimeout = currentTimeout;
+    };
+    setActive();
+    addEventsListener(d, ['mousemove', 'click'], setActive, { passive: true });
 }
 
 export function offload() {

@@ -23,7 +23,7 @@ import { EMAIL_REGEX } from './module/common/pure';
 import { redirect, type ShowPageFunc } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
-import { submitButtonText } from './module/text/ui';
+import { goBackButtonText, submitButtonText } from './module/text/ui';
 import { passwordResetPageTitle } from './module/text/page_title';
 import * as commonStyles from '../css/common.module.scss';
 import * as styles from '../css/portal_form.module.scss';
@@ -61,7 +61,7 @@ function showPageCallback() {
     appendChild(container, submitButton);
 
     const goBack = createParagraphElement();
-    const goBackText = createSpanElement('❮　戻る');
+    const goBackText = createSpanElement('❮　' + goBackButtonText);
     addClass(goBack, commonStyles.link);
     appendChild(goBack, goBackText);
     appendChild(container, goBack);

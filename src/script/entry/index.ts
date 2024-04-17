@@ -1,5 +1,5 @@
 import 'core-js';
-import { body as innerBody, getBaseURL, w, addEventListenerOnce, setTitle, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, d, addClass, removeClass, createDivElement, appendChild, createElement, html, setClass } from '../module/dom';
+import { body as innerBody, getBaseURL, w, addEventListenerOnce, setTitle, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, d, addClass, removeClass, createDivElement, appendChild, html, setClass } from '../module/dom';
 import { TOP_DOMAIN, TOP_URL } from '../module/env/constant';
 import { addTimeout, removeAllTimers } from '../module/timer';
 import * as messagePageScript from '../message';
@@ -27,7 +27,6 @@ const enum PageProp {
 type Page = {
     [PageProp.SCRIPT]: () => PageScriptImport;
     [PageProp.TITLE]?: string;
-    [PageProp.NATIVE_VIEWPORT]?: boolean;
     [PageProp.NO_THEME]?: boolean;
     [PageProp.SCRIPT_CACHED]?: PageScript;
 };
@@ -61,8 +60,6 @@ const pages = {
     },
     'image': {
         [PageProp.SCRIPT]: () => import('../image'),
-        [PageProp.NO_THEME]: true,
-        [PageProp.NATIVE_VIEWPORT]: true,
     },
     'info': {
         [PageProp.SCRIPT]: () => import('../info'),
@@ -160,7 +157,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     }
     setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
     removeClass(body, styles.noTheme);
-    setViewport(false);
 
     const newPgid = {};
     setPgid(newPgid);
@@ -222,10 +218,9 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
                 return;
             }
 
-            const isStandardStyle = !page[PageProp.NO_THEME] && !page[PageProp.NATIVE_VIEWPORT];
+            const isStandardStyle = !page[PageProp.NO_THEME];
             setMinHeight(html, null);
             page[PageProp.NO_THEME] && addClass(body, styles.noTheme);
-            page[PageProp.NATIVE_VIEWPORT] && setViewport(true);
 
             if ('serviceWorker' in navigator) {
                 if (serviceWorkerModule === null) {
@@ -260,23 +255,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
             }
         }
     );
-}
-
-function setViewport(native: boolean) {
-    let viewportTag = d.querySelector('meta[name=viewport]') as HTMLMetaElement;
-    if (!viewportTag) {
-        viewportTag = createElement('meta') as HTMLMetaElement;
-        viewportTag.name = 'viewport';
-        appendChild(d.head, viewportTag);
-    }
-    let viewpartTagContent = 'width=device-width, initial-scale=1';
-    if (native) {
-        addClass(html, styles.nativeViewport);
-    } else {
-        viewpartTagContent += ', viewport-fit=cover';
-        removeClass(html, styles.nativeViewport);
-    }
-    viewportTag.content = viewpartTagContent;
 }
 
 function importFont(delay: number) {
