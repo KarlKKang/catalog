@@ -3,6 +3,7 @@ export const submitButtonText = '送信する';
 export const cancelButtonText = 'キャンセル';
 export const changeButtonText = '変更する';
 export const goBackButtonText = '戻る';
+export const closeButtonText = '閉じる';
 
 export const loading = '読み込み中…';
 export const allResultsShown = 'すべての結果が表示されました。';

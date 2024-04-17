@@ -20,7 +20,7 @@ import { setWidth } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
 import * as styles from '../../css/image.module.scss';
 import { imageLoader, offload as offloadImageLoader } from '../module/image_loader';
-import { goBackButtonText } from '../module/text/ui';
+import { closeButtonText } from '../module/text/ui';
 import { addTimeout } from '../module/timer';
 
 export default function (baseURL: string, fileName: string) {
@@ -40,19 +40,19 @@ export default function (baseURL: string, fileName: string) {
         showMessage(notFound);
     });
 
-    const backButton = createButtonElement(goBackButtonText);
-    addClass(backButton, styles.backButton);
-    addEventListener(backButton, 'click', () => {
+    const closeButton = createButtonElement(closeButtonText);
+    addClass(closeButton, styles.backButton);
+    addEventListener(closeButton, 'click', () => {
         w.close();
     });
-    appendChild(body, backButton);
+    appendChild(body, closeButton);
 
     let inactiveTimeout: ReturnType<typeof addTimeout> | null = null;
     const setActive = () => {
-        removeClass(backButton, styles.inactive);
+        removeClass(closeButton, styles.inactive);
         const currentTimeout = addTimeout(() => {
             if (inactiveTimeout === currentTimeout) {
-                addClass(backButton, styles.inactive);
+                addClass(closeButton, styles.inactive);
             }
         }, 3000);
         inactiveTimeout = currentTimeout;
