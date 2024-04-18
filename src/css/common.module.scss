@@ -82,13 +82,10 @@ html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     min-height: 100%;
+    padding: var(properties.get(safe-area-inset-top)) var(properties.get(safe-area-inset-right)) var(properties.get(safe-area-inset-bottom)) var(properties.get(safe-area-inset-left));
 
     @media screen {
         display: block;
-    }
-
-    &:not(.native-viewport) {
-        padding: var(properties.get(safe-area-inset-top)) var(properties.get(safe-area-inset-right)) var(properties.get(safe-area-inset-bottom)) var(properties.get(safe-area-inset-left));
     }
 }
 
@@ -99,10 +96,7 @@ body {
 
 body {
     padding: 0px;
-
-    &:not(.no-theme) {
-        background: var(properties.get(background-color));
-    }
+    background: var(properties.get(background-color));
 }
 
 .loading-bar {

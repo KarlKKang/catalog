@@ -1,6 +1,6 @@
 import 'core-js';
 import { createDivElement } from '../module/dom/create_element';
-import { addClass, appendChild, removeClass, replaceChildren, setClass } from '../module/dom/element';
+import { addClass, appendChild, replaceChildren, setClass } from '../module/dom/element';
 import { changeURL, d, getBaseURL, getFullURL, html, setTitle, w } from '../module/dom/document';
 import { addEventListenerOnce, deregisterAllEventTargets } from '../module/dom/event_listener';
 import { body } from '../module/dom/body';
@@ -31,7 +31,6 @@ const enum PageProp {
 type Page = {
     [PageProp.SCRIPT]: () => PageScriptImport;
     [PageProp.TITLE]?: string;
-    [PageProp.NO_THEME]?: boolean;
     [PageProp.SCRIPT_CACHED]?: PageScript;
 };
 
@@ -40,7 +39,7 @@ const loadingBar = createDivElement();
 addClass(loadingBar, styles.loadingBar);
 let currentPageScript: PageScript | null = null;
 let serviceWorkerModule: {
-    default: (showPrompt: boolean) => void;
+    default: () => void;
     offload: () => void;
 } | null = null;
 let loadingBarShown: boolean = false;
@@ -60,7 +59,6 @@ const pages = {
     'console': {
         [PageProp.SCRIPT]: () => import('../console'),
         [PageProp.TITLE]: consolePageTitle,
-        [PageProp.NO_THEME]: true,
     },
     'image': {
         [PageProp.SCRIPT]: () => import('../image'),
@@ -160,7 +158,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         changeURL(url, withoutHistory);
     }
     setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
-    removeClass(nativeBody, styles.noTheme);
 
     const newPgid = {};
     setPgid(newPgid);
@@ -222,9 +219,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
                 return;
             }
 
-            const isStandardStyle = !page[PageProp.NO_THEME];
             setMinHeight(html, null);
-            page[PageProp.NO_THEME] && addClass(nativeBody, styles.noTheme);
 
             if ('serviceWorker' in navigator) {
                 if (serviceWorkerModule === null) {
@@ -236,26 +231,21 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
                             return;
                         }
                         serviceWorkerModule = module;
-                        serviceWorkerModule.default(isStandardStyle);
+                        serviceWorkerModule.default();
                     }); // No need to catch error since this module is not critical.
                 } else {
-                    serviceWorkerModule.default(isStandardStyle);
+                    serviceWorkerModule.default();
                 }
             }
 
             loadingBarWidth = 100;
             if (loadingBarShown) {
-                const hideLoadingBar = () => {
+                setWidth(loadingBar, 100, CSS_UNIT.PERCENT);
+                addTimeout(() => {
                     loadingBarShown = false;
                     setVisibility(loadingBar, false);
                     setOpacity(loadingBar, 0);
-                };
-                if (isStandardStyle) {
-                    setWidth(loadingBar, 100, CSS_UNIT.PERCENT);
-                    addTimeout(hideLoadingBar, 300);
-                } else {
-                    hideLoadingBar(); // Directly hide the loading bar for pages with non-standard style.
-                }
+                }, 300);
             }
         }
     );

@@ -10,7 +10,7 @@ let swUpdateLastPromptTime: number = 0;
 let serviceWorker: Workbox | null = null;
 let serviceWorkerUpToDate: boolean = true;
 
-export default async function (showPrompt: boolean) { // This function should be called after setting the `pgid`.
+export default async function () { // This function should be called after setting the `pgid`.
     const showSkipWaitingPrompt = (wb: Workbox) => {
         const titleText = createParagraphElement('アップデートが利用可能です');
         addClass(titleText, styles.title);
@@ -53,7 +53,7 @@ export default async function (showPrompt: boolean) { // This function should be
 
     const addWaitingListener = (wb: Workbox) => {
         addEventListener(serviceWorker as unknown as EventTarget, 'waiting', () => {
-            showPrompt && showSkipWaitingPrompt(wb);
+            showSkipWaitingPrompt(wb);
         });
     };
 
@@ -82,7 +82,7 @@ export default async function (showPrompt: boolean) { // This function should be
                 addWaitingListener(serviceWorker);
                 serviceWorker.update();
             } else {
-                showPrompt && showSkipWaitingPrompt(serviceWorker);
+                showSkipWaitingPrompt(serviceWorker);
             }
         }
     }
