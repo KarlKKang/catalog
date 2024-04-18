@@ -133,7 +133,7 @@ export function createPasswordInput(newPassword: boolean, placeholder = 'パス�
     return [container, input] as const;
 }
 
-export function passwordStyling(element: HTMLInputElement) {
+function passwordStyling(element: HTMLInputElement) {
     function inputChangeHandler() {
         const style = element.style;
         if (element.value === '') {

@@ -5,7 +5,7 @@ import {
     sendServerRequest,
     ServerRequestOptionProp
 } from '../module/server';
-import { createButtonElement, createDivElement, createElement, createEmailInput, createInputElement, createParagraphElement, createPasswordInput, createSpanElement, passwordStyling, replaceText } from '../module/dom/create_element';
+import { createButtonElement, createDivElement, createElement, createEmailInput, createInputElement, createParagraphElement, createPasswordInput, createSpanElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput, getParentElement, removeClass, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/dom/event_listener';
@@ -76,7 +76,6 @@ export default function (
     addEventListener(forgetPasswordLink, 'click', () => {
         redirect(TOP_URL + '/request_password_reset', true);
     });
-    passwordStyling(passwordInput);
 
     function login() {
         disableAllInputs(true);

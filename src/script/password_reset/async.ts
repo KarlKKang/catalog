@@ -2,7 +2,7 @@ import {
     LOGIN_URL,
 } from '../module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { appendListItems, createButtonElement, createDivElement, createParagraphElement, createPasswordInput, createUListElement, passwordStyling, replaceText } from '../module/dom/create_element';
+import { appendListItems, createButtonElement, createDivElement, createParagraphElement, createPasswordInput, createUListElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/dom/event_listener';
@@ -67,9 +67,6 @@ export default function (user: string, signature: string, expires: string) {
     addEventListener(submitButton, 'click', () => {
         submitRequest();
     });
-
-    passwordStyling(newPasswordInput);
-    passwordStyling(newPasswordConfirmInput);
 
     function submitRequest() {
         disableAllInputs(true);
