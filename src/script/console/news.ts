@@ -1,13 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import {
-    addEventListener,
-    getParentElement,
-    getDescendantsByClassAt,
-    getByClass,
-    addClass,
-    containsClass,
-    getDataAttribute
-} from '../module/dom';
+import { addClass, containsClass, getByClass, getDataAttribute, getDescendantsByClassAt, getParentElement } from '../module/dom/element';
+import { addEventListener } from '../module/dom/event_listener';
 import { completeCallback, getTable, initializedClass } from './helper';
 
 export function getNewsTable() {

@@ -6,26 +6,11 @@ import {
     scrollToTop,
 } from '../module/common';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
-import {
-    addEventListener,
-    removeClass,
-    addClass,
-    changeURL,
-    appendChild,
-    insertBefore,
-    createDivElement,
-    createParagraphElement,
-    replaceChildren,
-    removeAllEventListeners,
-    replaceText,
-    getBaseURL,
-    getFullURL,
-    createSVGElement,
-    createInputElement,
-    appendChildren,
-    body,
-    disableInput,
-} from '../module/dom';
+import { createDivElement, createInputElement, createParagraphElement, createSVGElement, replaceText } from '../module/dom/create_element';
+import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { changeURL, getBaseURL, getFullURL } from '../module/dom/document';
+import { addEventListener, removeAllEventListeners } from '../module/dom/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/common/pure';
 import { addTimeout } from '../module/timer';

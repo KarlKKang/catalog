@@ -2,25 +2,11 @@ import {
     TOP_URL,
     CDN_URL,
 } from '../module/env/constant';
-import {
-    w,
-    addEventListener,
-    setTitle,
-    addClass,
-    remove,
-    appendChild,
-    insertBefore,
-    getTitle,
-    createDivElement,
-    createButtonElement,
-    createParagraphElement,
-    appendText,
-    createTextNode,
-    createSpanElement,
-    replaceChildren,
-    body,
-    createHRElement,
-} from '../module/dom';
+import { appendText, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement, createTextNode } from '../module/dom/create_element';
+import { addClass, appendChild, insertBefore, remove, replaceChildren } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { getTitle, setTitle, w } from '../module/dom/document';
+import { addEventListener } from '../module/dom/event_listener';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';

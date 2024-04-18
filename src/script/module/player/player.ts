@@ -1,30 +1,11 @@
 import {
     removeRightClick,
 } from '../common';
-import {
-    addEventListener,
-    addClass,
-    removeClass,
-    d,
-    w,
-    remove,
-    addEventListenerOnce,
-    appendChild,
-    createDivElement,
-    createSpanElement,
-    createVideoElement,
-    createAudioElement,
-    appendText,
-    replaceText,
-    removeAllEventListeners,
-    removeEventListener,
-    addEventsListener,
-    removeEventsListener,
-    containsClass,
-    createElement,
-    createTextAreaElement,
-    body,
-} from '../dom';
+import { addClass, appendChild, containsClass, remove, removeClass } from '../dom/element';
+import { appendText, createAudioElement, createDivElement, createElement, createSpanElement, createTextAreaElement, createVideoElement, replaceText } from '../dom/create_element';
+import { body } from '../dom/body';
+import { d, w } from '../dom/document';
+import { addEventListener, addEventListenerOnce, addEventsListener, removeAllEventListeners, removeEventListener, removeEventsListener } from '../dom/event_listener';
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import * as icons from './icons';

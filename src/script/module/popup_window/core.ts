@@ -1,4 +1,7 @@
-import { addClass, appendChild, body, createDivElement, replaceChildren, w } from '../dom';
+import { w } from '../dom/document';
+import { addClass, appendChild, replaceChildren } from '../dom/element';
+import { createDivElement } from '../dom/create_element';
+import { body } from '../dom/body';
 import { addTimeout } from '../timer';
 import * as styles from '../../../css/popup_window.module.scss';
 import { setOpacity, setVisibility } from '../style';

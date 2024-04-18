@@ -1,7 +1,7 @@
 import { getManagedMediaSource, getMediaSource, isSupported } from './hls_helper';
 import { UAParser } from 'ua-parser-js';
-
-import { createAudioElement, createVideoElement, w } from '../dom';
+import { createAudioElement, createVideoElement } from '../dom/create_element';
+import { w } from '../dom/document';
 
 declare global {
     interface Window {

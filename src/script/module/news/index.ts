@@ -1,7 +1,8 @@
 import * as commonStyles from '../../../css/common.module.scss';
 import * as styles from '../../../css/news.module.scss';
 import { getLocalTimeString } from '../common/pure';
-import { addClass, appendChild, createDivElement, createHRElement, createParagraphElement, getDescendantsByClass, removeClass } from '../dom';
+import { createDivElement, createHRElement, createParagraphElement } from '../dom/create_element';
+import { addClass, appendChild, getDescendantsByClass, removeClass } from '../dom/element';
 
 const classMap = {
     'sub-title': styles.subTitle,

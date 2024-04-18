@@ -1,16 +1,8 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import {
-    addEventListener,
-    replaceText,
-    createDivElement,
-    appendChild,
-    createParagraphElement,
-    createEmailInput,
-    createButtonElement,
-    body,
-    disableInput,
-    addClass,
-} from '../module/dom';
+import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, replaceText } from '../module/dom/create_element';
+import { addClass, appendChild, disableInput } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { addEventListener } from '../module/dom/event_listener';
 import { showMessage } from '../module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from '../module/text/message/body';
 import { expired, emailSent } from '../module/message/param';

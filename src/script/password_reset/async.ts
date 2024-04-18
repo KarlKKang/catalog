@@ -2,21 +2,10 @@ import {
     LOGIN_URL,
 } from '../module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import {
-    addEventListener,
-    replaceText,
-    passwordStyling,
-    disableInput,
-    createDivElement,
-    appendChild,
-    body,
-    createParagraphElement,
-    createPasswordInput,
-    createButtonElement,
-    createUListElement,
-    appendListItems,
-    addClass,
-} from '../module/dom';
+import { appendListItems, createButtonElement, createDivElement, createParagraphElement, createPasswordInput, createUListElement, passwordStyling, replaceText } from '../module/dom/create_element';
+import { addClass, appendChild, disableInput } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { addEventListener } from '../module/dom/event_listener';
 import { showMessage } from '../module/message';
 import { invalidPasswordFormat, passwordChanged, passwordConfirmationMismatch } from '../module/text/message/body';
 import { expired } from '../module/message/param';

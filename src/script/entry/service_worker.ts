@@ -1,4 +1,7 @@
-import { addEventListener, addClass, createParagraphElement, createButtonElement, createDivElement, appendChild, windowLocation } from '../module/dom';
+import { createButtonElement, createDivElement, createParagraphElement } from '../module/dom/create_element';
+import { addClass, appendChild } from '../module/dom/element';
+import { windowLocation } from '../module/dom/document';
+import { addEventListener } from '../module/dom/event_listener';
 import { DOMAIN } from '../module/env/constant';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, offloadPopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';

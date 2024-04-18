@@ -1,15 +1,8 @@
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
-import {
-    addEventListener,
-    addClass,
-    appendChild,
-    createDivElement,
-    createBRElement,
-    appendText,
-    replaceText,
-    body,
-    createParagraphElement,
-} from '../module/dom';
+import { appendText, createBRElement, createDivElement, createParagraphElement, replaceText } from '../module/dom/create_element';
+import { addClass, appendChild } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { addEventListener } from '../module/dom/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTime } from '../module/common/pure';
 import { redirect } from '../module/global';

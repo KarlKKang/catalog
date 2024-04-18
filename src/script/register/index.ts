@@ -5,9 +5,7 @@ import {
     getURLParam,
 } from '../module/common';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import {
-    clearSessionStorage,
-} from '../module/dom';
+import { clearSessionStorage } from '../module/dom/document';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';

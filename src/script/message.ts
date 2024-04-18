@@ -2,20 +2,11 @@ import {
     TOP_URL,
 } from './module/env/constant';
 import { logout } from './module/server';
-import {
-    addEventListener,
-    setTitle,
-    appendText,
-    getSessionStorage,
-    clearSessionStorage,
-    createDivElement,
-    createParagraphElement,
-    appendChildren,
-    createButtonElement,
-    appendChild,
-    addClass,
-    body,
-} from './module/dom';
+import { clearSessionStorage, getSessionStorage, setTitle } from './module/dom/document';
+import { appendText, createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
+import { addClass, appendChild, appendChildren } from './module/dom/element';
+import { body } from './module/dom/body';
+import { addEventListener } from './module/dom/event_listener';
 import { redirect, type ShowPageFunc } from './module/global';
 import * as styles from '../css/message.module.scss';
 import { changeColor, horizontalCenter } from './module/style';

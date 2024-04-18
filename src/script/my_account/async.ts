@@ -1,11 +1,8 @@
 import { ServerRequestOptionProp, logout, parseResponse, sendServerRequest } from '../module/server';
-import {
-    addEventListener,
-    appendChild,
-    appendText,
-    body,
-    replaceText,
-} from '../module/dom';
+import { addEventListener } from '../module/dom/event_listener';
+import { appendChild } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { appendText, replaceText } from '../module/dom/create_element';
 import { showMessage } from '../module/message';
 import {
     invalidPasswordFormat,

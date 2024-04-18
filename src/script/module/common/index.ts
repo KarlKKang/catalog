@@ -1,17 +1,9 @@
 import {
     TOP_URL
 } from '../env/constant';
-import {
-    w,
-    getHash,
-    getByIdNative,
-    addEventListener,
-    setSessionStorage,
-    getTitle,
-    openWindow,
-    clearSessionStorage,
-    windowLocation,
-} from '../dom';
+import { clearSessionStorage, getHash, getTitle, openWindow, setSessionStorage, w, windowLocation } from '../dom/document';
+import { getByIdNative } from '../dom/element';
+import { addEventListener } from '../dom/event_listener';
 import { addTimeout } from '../timer';
 
 export function getURLParam(name: string): string | null {

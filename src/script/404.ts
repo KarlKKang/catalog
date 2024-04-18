@@ -1,16 +1,11 @@
 import {
     TOP_URL,
 } from './module/env/constant';
-import {
-    addEventListener,
-    clearSessionStorage,
-    createDivElement,
-    createParagraphElement,
-    createButtonElement,
-    appendChild,
-    addClass,
-    body,
-} from './module/dom';
+import { clearSessionStorage } from './module/dom/document';
+import { createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
+import { addClass, appendChild } from './module/dom/element';
+import { body } from './module/dom/body';
+import { addEventListener } from './module/dom/event_listener';
 import { notFound as notFoundTitle } from './module/server/message/title';
 import { notFound as notFoundBody } from './module/server/message/body';
 import { redirect, type ShowPageFunc } from './module/global';

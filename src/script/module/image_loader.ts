@@ -2,13 +2,9 @@ import type { WebpMachine } from 'webp-hero';
 import {
     removeRightClick,
 } from './common';
-import {
-    appendChild,
-    addEventListener,
-    addEventListenerOnce,
-    createCanvasElement,
-    removeAllEventListeners,
-} from './dom';
+import { appendChild } from './dom/element';
+import { addEventListener, addEventListenerOnce, removeAllEventListeners } from './dom/event_listener';
+import { createCanvasElement } from './dom/create_element';
 import { pgid } from './global';
 import { setHeight, setWidth } from './style';
 import { importModule } from './import_module';

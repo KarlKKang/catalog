@@ -1,4 +1,6 @@
-import { addClass, appendChild, body, createDivElement, createParagraphElement } from '../module/dom';
+import { body } from '../module/dom/body';
+import { createDivElement, createParagraphElement } from '../module/dom/create_element';
+import { addClass, appendChild } from '../module/dom/element';
 import * as styles from '../../css/bangumi.module.scss';
 import { loading } from '../module/text/ui';
 

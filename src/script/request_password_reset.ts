@@ -2,20 +2,11 @@ import {
     LOGIN_URL,
 } from './module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from './module/server';
-import {
-    addEventListener,
-    replaceText,
-    clearSessionStorage,
-    disableInput,
-    createDivElement,
-    appendChild,
-    body,
-    createParagraphElement,
-    createEmailInput,
-    createButtonElement,
-    createSpanElement,
-    addClass,
-} from './module/dom';
+import { clearSessionStorage } from './module/dom/document';
+import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, createSpanElement, replaceText } from './module/dom/create_element';
+import { addClass, appendChild, disableInput } from './module/dom/element';
+import { body } from './module/dom/body';
+import { addEventListener } from './module/dom/event_listener';
 import { showMessage } from './module/message';
 import { emailSent } from './module/message/param';
 import { invalidEmailFormat } from './module/text/message/body';

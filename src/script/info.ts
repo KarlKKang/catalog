@@ -1,9 +1,7 @@
-import {
-    addClass,
-    appendChild,
-    body,
-    clearSessionStorage, createDivElement,
-} from './module/dom';
+import { clearSessionStorage } from './module/dom/document';
+import { createDivElement } from './module/dom/create_element';
+import { addClass, appendChild } from './module/dom/element';
+import { body } from './module/dom/body';
 import type { ShowPageFunc } from './module/global';
 import { addNavBar } from './module/nav_bar';
 import { NavBarPage } from './module/nav_bar/enum';

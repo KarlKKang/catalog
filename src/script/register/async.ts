@@ -2,23 +2,11 @@ import {
     LOGIN_URL,
 } from '../module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import {
-    addEventListener,
-    openWindow,
-    replaceText,
-    disableInput,
-    createDivElement,
-    createParagraphElement,
-    createSpanElement,
-    addClass,
-    appendChild,
-    appendText,
-    body,
-    createPasswordInput,
-    createButtonElement,
-    createUListElement,
-    appendListItems,
-} from '../module/dom';
+import { appendListItems, appendText, createButtonElement, createDivElement, createParagraphElement, createPasswordInput, createSpanElement, createUListElement, replaceText } from '../module/dom/create_element';
+import { addClass, appendChild, disableInput } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { openWindow } from '../module/dom/document';
+import { addEventListener } from '../module/dom/event_listener';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from '../module/text/message/body';

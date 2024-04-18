@@ -7,9 +7,7 @@ import {
     ServerRequestOptionProp,
     parseResponse
 } from '../module/server';
-import {
-    clearSessionStorage,
-} from '../module/dom';
+import { clearSessionStorage } from '../module/dom/document';
 import { pgid, type ShowPageFunc } from '../module/global';
 import { addTimeout } from '../module/timer';
 import { parseAccountInfo } from '../module/type/AccountInfo';

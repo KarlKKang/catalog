@@ -1,4 +1,5 @@
-import { disableInput, replaceText } from '../module/dom';
+import { replaceText } from '../module/dom/create_element';
+import { disableInput } from '../module/dom/element';
 import { changeColor, hideElement, setCursor, showElement } from '../module/style';
 import { CSS_CURSOR } from '../module/style/value';
 import { SharedBool, SharedButton, SharedInput, SharedElement, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setSharedBool } from './shared_var';

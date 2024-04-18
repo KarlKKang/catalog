@@ -1,4 +1,5 @@
-import { addClass, appendText, createAnchorElement, createTextNode } from '../../dom';
+import { appendText, createAnchorElement, createTextNode } from '../../dom/create_element';
+import { addClass } from '../../dom/element';
 import { TOP_DOMAIN } from '../../env/constant';
 import * as styles from '../../../../css/common.module.scss';
 

@@ -1,16 +1,7 @@
 import { UAParser } from 'ua-parser-js';
-import {
-    addEventListener,
-    createDivElement,
-    appendChild,
-    addClass,
-    createParagraphElement,
-    prependChild,
-    createButtonElement,
-    replaceText,
-    remove,
-    replaceChildren,
-} from '../module/dom';
+import { addClass, appendChild, prependChild, remove, replaceChildren } from '../module/dom/element';
+import { createButtonElement, createDivElement, createParagraphElement, replaceText } from '../module/dom/create_element';
+import { addEventListener } from '../module/dom/event_listener';
 import { SessionKey, type Sessions } from '../module/type/Sessions';
 import { SharedElement, getSharedElement, sessionLogoutButtons } from './shared_var';
 import { getLocalTimeString } from '../module/common/pure';

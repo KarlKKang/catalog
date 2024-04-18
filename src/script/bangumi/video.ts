@@ -1,28 +1,8 @@
 import { TOP_URL } from '../module/env/constant';
-import {
-    addEventListener,
-    addClass,
-    getTitle,
-    setClass,
-    createTextNode,
-    addEventsListener,
-    appendChild,
-    prependChild,
-    insertBefore,
-    remove,
-    createParagraphElement,
-    createDivElement,
-    createSelectElement,
-    createOptionElement,
-    createSpanElement,
-    appendText,
-    replaceChildren,
-    replaceText,
-    removeAllEventListeners,
-    getParentElement,
-    removeClass,
-    changeURL,
-} from '../module/dom';
+import { addClass, appendChild, getParentElement, insertBefore, prependChild, remove, removeClass, replaceChildren, setClass } from '../module/dom/element';
+import { appendText, createDivElement, createOptionElement, createParagraphElement, createSelectElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
+import { changeURL, getTitle } from '../module/dom/document';
+import { addEventListener, addEventsListener, removeAllEventListeners } from '../module/dom/event_listener';
 import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';
 import {
     MSE_SUPPORTED,

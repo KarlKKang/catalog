@@ -1,17 +1,9 @@
 import { ServerRequestOptionProp, sendServerRequest } from './module/server';
-import {
-    addEventListener,
-    replaceText,
-    clearSessionStorage,
-    disableInput,
-    createDivElement,
-    appendChild,
-    body,
-    createParagraphElement,
-    createEmailInput,
-    createButtonElement,
-    addClass,
-} from './module/dom';
+import { clearSessionStorage } from './module/dom/document';
+import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, replaceText } from './module/dom/create_element';
+import { addClass, appendChild, disableInput } from './module/dom/element';
+import { body } from './module/dom/body';
+import { addEventListener } from './module/dom/event_listener';
 import { showMessage } from './module/message';
 import { emailSent } from './module/message/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed } from './module/text/message/body';
@@ -21,7 +13,6 @@ import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
 import { submitButtonText } from './module/text/ui';
 import { registerPageTitle } from './module/text/page_title';
-
 import * as styles from '../css/portal_form.module.scss';
 
 export default function (showPage: ShowPageFunc) {

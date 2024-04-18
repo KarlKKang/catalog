@@ -1,4 +1,4 @@
-import { createSVGElement } from '../dom';
+import { createSVGElement } from '../dom/create_element';
 
 const viewBox = '0 0 64 64';
 

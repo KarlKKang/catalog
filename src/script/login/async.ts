@@ -5,26 +5,10 @@ import {
     sendServerRequest,
     ServerRequestOptionProp
 } from '../module/server';
-import {
-    addEventListener,
-    replaceChildren,
-    replaceText,
-    passwordStyling,
-    disableInput,
-    createDivElement,
-    createElement,
-    addClass,
-    appendChild,
-    createParagraphElement,
-    createInputElement,
-    body,
-    createButtonElement,
-    createEmailInput,
-    createPasswordInput,
-    createSpanElement,
-    getParentElement,
-    removeClass,
-} from '../module/dom';
+import { createButtonElement, createDivElement, createElement, createEmailInput, createInputElement, createParagraphElement, createPasswordInput, createSpanElement, passwordStyling, replaceText } from '../module/dom/create_element';
+import { addClass, appendChild, disableInput, getParentElement, removeClass, replaceChildren } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { addEventListener } from '../module/dom/event_listener';
 import { showMessage } from '../module/message';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';

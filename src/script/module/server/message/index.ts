@@ -2,7 +2,7 @@ import * as body from './body';
 import * as title from './title';
 import { LOGIN_URL, TOP_URL } from '../../env/constant';
 import type { MaintenanceInfo } from '../../type/MaintenanceInfo';
-import { getBaseURL } from '../../dom';
+import { getBaseURL } from '../../dom/document';
 import { MessageParamProp, type MessageParam } from '../../message/type';
 import { CSS_COLOR } from '../../style/value';
 

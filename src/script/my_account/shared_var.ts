@@ -1,22 +1,9 @@
-import {
-    addClass,
-    appendChild,
-    appendChildren,
-    appendListItems,
-    createButtonElement,
-    createDivElement,
-    createEmailInput,
-    createHRElement,
-    createParagraphElement,
-    createPasswordInput,
-    createSpanElement,
-    createUListElement,
-} from '../module/dom';
+import { appendListItems, createButtonElement, createDivElement, createEmailInput, createHRElement, createParagraphElement, createPasswordInput, createSpanElement, createUListElement } from '../module/dom/create_element';
+import { addClass, appendChild, appendChildren } from '../module/dom/element';
 import { hideElement } from '../module/style';
 import { myAccountPageTitle } from '../module/text/page_title';
 import { changeButtonText, loading, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
 import { createUsernameInput } from '../module/dom/create_element/multi_language';
-
 import * as styles from '../../css/my_account.module.scss';
 
 export const enum SharedBool {

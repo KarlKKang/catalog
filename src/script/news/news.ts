@@ -8,21 +8,11 @@ import {
     openImageWindow,
     SessionTypes,
 } from '../module/common';
-import {
-    addEventListener,
-    addClass,
-    appendChild,
-    getDescendantsByClass,
-    getDataAttribute,
-    containsClass,
-    createDivElement,
-    createParagraphElement,
-    removeAllEventListeners,
-    body,
-    removeClass,
-    setTitle,
-    getTitle,
-} from '../module/dom';
+import { getTitle, setTitle } from '../module/dom/document';
+import { createDivElement, createParagraphElement } from '../module/dom/create_element';
+import { addClass, appendChild, containsClass, getDataAttribute, getDescendantsByClass, removeClass } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { addEventListener, removeAllEventListeners } from '../module/dom/event_listener';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { encodeCFURIComponent } from '../module/common/pure';

@@ -2,20 +2,10 @@ import {
     TOP_URL,
 } from '../module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import {
-    addEventListener,
-    replaceChildren,
-    replaceText,
-    createDivElement,
-    appendChild,
-    createParagraphElement,
-    createEmailInput,
-    createPasswordInput,
-    createButtonElement,
-    body,
-    disableInput,
-    addClass,
-} from '../module/dom';
+import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, createPasswordInput, replaceText } from '../module/dom/create_element';
+import { addClass, appendChild, disableInput, replaceChildren } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { addEventListener } from '../module/dom/event_listener';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';

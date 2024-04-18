@@ -1,4 +1,5 @@
-import { addClass, createSVGElement } from '../dom';
+import { createSVGElement } from '../dom/create_element';
+import { addClass } from '../dom/element';
 import { playerFullscreenEnterIcon, playerFullscreenExitIcon, playerPauseIcon, playerPictureInPictureEnterIcon, playerPictureInPictureExitIcon, playerPlayIcon, playerReplayIcon } from '../../../css/player.module.scss';
 
 const viewBox = '0 0 1802 1792';

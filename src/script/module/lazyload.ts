@@ -2,9 +2,8 @@ import {
     SessionTypes,
 } from './common';
 import { ServerRequestOptionProp, sendServerRequest } from './server';
-import {
-    addClass, appendChild, createDivElement,
-} from './dom';
+import { addClass, appendChild } from './dom/element';
+import { createDivElement } from './dom/create_element';
 import { showMessage } from './message';
 import { invalidResponse } from './server/message';
 import { addTimeout } from './timer';

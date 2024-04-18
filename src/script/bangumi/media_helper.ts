@@ -2,28 +2,10 @@ import {
     CDN_URL, DOMAIN,
 } from '../module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import {
-    w,
-    addEventListener,
-    createElement,
-    addClass,
-    appendChild,
-    insertBefore,
-    prependChild,
-    getDescendantsByClassAt,
-    getBaseURL,
-    createButtonElement,
-    createDivElement,
-    createSelectElement,
-    createOptionElement,
-    createHRElement,
-    createUListElement,
-    appendText,
-    appendListItems,
-    replaceText,
-    replaceChildren,
-    createTextNode,
-} from '../module/dom';
+import { appendListItems, appendText, createButtonElement, createDivElement, createElement, createHRElement, createOptionElement, createSelectElement, createTextNode, createUListElement, replaceText } from '../module/dom/create_element';
+import { addClass, appendChild, getDescendantsByClassAt, insertBefore, prependChild, replaceChildren } from '../module/dom/element';
+import { getBaseURL, w } from '../module/dom/document';
+import { addEventListener } from '../module/dom/event_listener';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper';

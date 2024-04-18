@@ -5,10 +5,7 @@ import {
     getURLParam,
 } from '../module/common';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
-import {
-    clearSessionStorage,
-    getBaseURL,
-} from '../module/dom';
+import { clearSessionStorage, getBaseURL } from '../module/dom/document';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { getLogoutParam } from './helper';

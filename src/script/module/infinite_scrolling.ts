@@ -1,10 +1,6 @@
-import {
-    w,
-    addEventListener,
-    d,
-    html,
-    addClass,
-} from './dom';
+import { d, html, w } from './dom/document';
+import { addClass } from './dom/element';
+import { addEventListener } from './dom/event_listener';
 import { positionDetector as positionDetectorClass } from '../../css/position_detector.module.scss';
 
 export const enum InfiniteScrollingProp {

@@ -1,14 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import {
-    addEventListener,
-    getParentElement,
-    getDescendantsByClassAt,
-    getDescendantsByTag,
-    getByClass,
-    containsClass,
-    addClass,
-    getDataAttribute
-} from '../module/dom';
+import { addClass, containsClass, getByClass, getDataAttribute, getDescendantsByClassAt, getDescendantsByTag, getParentElement } from '../module/dom/element';
+import { addEventListener } from '../module/dom/event_listener';
 import { completeCallback, getTable, initializedClass } from './helper';
 import { PASSWORD_REGEX } from '../module/common/pure';
 

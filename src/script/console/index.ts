@@ -1,7 +1,5 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import {
-    clearSessionStorage,
-} from '../module/dom';
+import { clearSessionStorage } from '../module/dom/document';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { pgid, type ShowPageFunc } from '../module/global';

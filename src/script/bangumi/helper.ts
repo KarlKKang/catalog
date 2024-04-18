@@ -1,14 +1,9 @@
 import {
     getURLParam,
 } from '../module/common';
-import {
-    w,
-    addClass,
-    appendChild,
-    createDivElement,
-    createParagraphElement,
-    appendChildren,
-} from '../module/dom';
+import { w } from '../module/dom/document';
+import { createDivElement, createParagraphElement } from '../module/dom/create_element';
+import { addClass, appendChild, appendChildren } from '../module/dom/element';
 import { changeColor } from '../module/style';
 import * as styles from '../../css/bangumi.module.scss';
 import { type CSS_COLOR } from '../module/style/value';

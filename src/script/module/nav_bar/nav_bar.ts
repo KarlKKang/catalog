@@ -1,18 +1,14 @@
 import { TOP_URL } from '../env/constant';
-import {
-    w, addClass,
-    addEventListener,
-    appendChild,
-    createParagraphElement,
-    createDivElement,
-    prependChild, body
-} from '../dom';
+import { createDivElement, createParagraphElement } from '../dom/create_element';
+import { addClass, appendChild, prependChild } from '../dom/element';
+import { body } from '../dom/body';
+import { addEventListener } from '../dom/event_listener';
+import { w } from '../dom/document';
 import { redirect } from '../global';
 import { scrollToTop } from '../common';
 import { NavBarPage } from './enum';
 import * as icons from './icons';
 import { infoPageTitle, myAccountPageTitle, newsPageTitle } from '../text/page_title';
-
 import * as styles from '../../../css/nav_bar.module.scss';
 
 export default function (page?: NavBarPage, currentPageCallback?: () => void) {

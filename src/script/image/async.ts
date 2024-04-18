@@ -1,18 +1,11 @@
 import {
     removeRightClick,
 } from '../module/common';
-import {
-    w,
-    createDivElement,
-    addClass,
-    appendChild,
-    body,
-    createButtonElement,
-    addEventListener,
-    removeClass,
-    addEventsListener,
-    d,
-} from '../module/dom';
+import { createButtonElement, createDivElement } from '../module/dom/create_element';
+import { addClass, appendChild, removeClass } from '../module/dom/element';
+import { body } from '../module/dom/body';
+import { d, w } from '../module/dom/document';
+import { addEventListener, addEventsListener } from '../module/dom/event_listener';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { encodeCFURIComponent } from '../module/common/pure';

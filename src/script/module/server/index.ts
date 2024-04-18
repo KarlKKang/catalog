@@ -1,7 +1,7 @@
 import { SERVER_URL, LOGIN_URL } from '../env/constant';
 import { showMessage } from '../message';
 import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
-import { addEventListener, removeAllEventListeners } from '../dom';
+import { addEventListener, removeAllEventListeners } from '../dom/event_listener';
 import { addTimeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';

@@ -1,5 +1,9 @@
 import 'core-js';
-import { body as innerBody, getBaseURL, w, addEventListenerOnce, setTitle, changeURL, getFullURL, deregisterAllEventTargets, replaceChildren, d, addClass, removeClass, createDivElement, appendChild, html, setClass } from '../module/dom';
+import { createDivElement } from '../module/dom/create_element';
+import { addClass, appendChild, removeClass, replaceChildren, setClass } from '../module/dom/element';
+import { changeURL, d, getBaseURL, getFullURL, html, setTitle, w } from '../module/dom/document';
+import { addEventListenerOnce, deregisterAllEventTargets } from '../module/dom/event_listener';
+import { body } from '../module/dom/body';
 import { TOP_DOMAIN, TOP_URL } from '../module/env/constant';
 import { addTimeout, removeAllTimers } from '../module/timer';
 import * as messagePageScript from '../message';
@@ -31,7 +35,7 @@ type Page = {
     [PageProp.SCRIPT_CACHED]?: PageScript;
 };
 
-let body: HTMLElement;
+let nativeBody: HTMLElement;
 const loadingBar = createDivElement();
 addClass(loadingBar, styles.loadingBar);
 let currentPageScript: PageScript | null = null;
@@ -143,8 +147,8 @@ function offloadCurrentPage() {
     if (serviceWorkerModule !== null) {
         serviceWorkerModule.offload();
     }
-    replaceChildren(innerBody);
-    setClass(innerBody, '');
+    replaceChildren(body);
+    setClass(body, '');
     setCustomPopStateHandler(null);
 }
 
@@ -156,7 +160,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         changeURL(url, withoutHistory);
     }
     setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
-    removeClass(body, styles.noTheme);
+    removeClass(nativeBody, styles.noTheme);
 
     const newPgid = {};
     setPgid(newPgid);
@@ -220,7 +224,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
 
             const isStandardStyle = !page[PageProp.NO_THEME];
             setMinHeight(html, null);
-            page[PageProp.NO_THEME] && addClass(body, styles.noTheme);
+            page[PageProp.NO_THEME] && addClass(nativeBody, styles.noTheme);
 
             if ('serviceWorker' in navigator) {
                 if (serviceWorkerModule === null) {
@@ -278,9 +282,9 @@ if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
 addEventListenerOnce(w, 'load', () => {
-    body = d.body;
-    appendChild(body, loadingBar);
-    appendChild(body, innerBody);
+    nativeBody = d.body;
+    appendChild(nativeBody, loadingBar);
+    appendChild(nativeBody, body);
     setRedirect(load);
     load(fullURL, null);
     importFont(0);
