@@ -407,7 +407,7 @@ export class Player {
         }
     }
 
-    protected [PlayerKey.SEEK_CHECK](this: Player, timestamp: number): void {
+    protected [PlayerKey.END_CHECK](this: Player, timestamp: number): void {
         if (timestamp >= this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE]) {
             if (!this[PlayerKey.DRAGGING]) {
                 DEVELOPMENT && this[PlayerKey.LOG]?.('Seeked to end: ' + timestamp + '.');
@@ -419,7 +419,7 @@ export class Player {
     }
 
     public [PlayerKey.SEEK](this: Player, timestamp: number, callback?: () => void) {
-        this[PlayerKey.SEEK_CHECK](timestamp);
+        this[PlayerKey.END_CHECK](timestamp);
         this[PlayerKey.MEDIA].currentTime = timestamp;
         callback?.();
     }
@@ -470,6 +470,7 @@ export class Player {
 
         addEventListener(this[PlayerKey.MEDIA], 'durationchange', () => {
             DEVELOPMENT && this[PlayerKey.LOG]?.('Duration changed: ' + this[PlayerKey.MEDIA].duration);
+            this[PlayerKey.END_CHECK](this[PlayerKey.MEDIA].currentTime);
             replaceText(this[PlayerKey.DURATION_DISPLAY_TEXT], secToTimestamp(this[PlayerKey.MEDIA].duration));
         });
 
@@ -572,10 +573,8 @@ export class Player {
         });
 
         addEventListener(this[PlayerKey.MEDIA], 'waiting', () => {
-            if (this[PlayerKey.MEDIA].currentTime >= this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE] && !this[PlayerKey.DRAGGING]) {
-                DEVELOPMENT && this[PlayerKey.LOG]?.('Playback entered waiting state before ended at ' + this[PlayerKey.MEDIA].currentTime + '.');
-                this[PlayerKey.ENDED] = true;
-            } else {
+            this[PlayerKey.END_CHECK](this[PlayerKey.MEDIA].currentTime);
+            if (!this[PlayerKey.ENDED]) {
                 this[PlayerKey.ON_WAITING]();
             }
         });

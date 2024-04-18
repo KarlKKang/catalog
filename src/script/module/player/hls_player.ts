@@ -161,9 +161,9 @@ export class HlsPlayer extends NonNativePlayer {
 
     public override[PlayerKey.SEEK](this: HlsPlayer, timestamp: number, callback?: () => void) {
         if (this[PlayerKey.IS_VIDEO]) {
-            this[PlayerKey.SEEK_CHECK](timestamp);
-            this[PlayerKey.MEDIA].currentTime = timestamp;
+            this[PlayerKey.END_CHECK](timestamp);
             if (timestamp >= this[HlsPlayerKey.FRAG_START]) {
+                this[PlayerKey.MEDIA].currentTime = timestamp;
                 callback?.();
                 DEVELOPMENT && this[PlayerKey.LOG]?.('Skipped buffer flushing.');
             } else {
@@ -172,6 +172,7 @@ export class HlsPlayer extends NonNativePlayer {
                         return;
                     }
                     this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] = undefined;
+                    this[PlayerKey.END_CHECK](timestamp); // Check again in case other events caused the player to end.
                     this[PlayerKey.MEDIA].currentTime = timestamp;
                     this[HlsPlayerKey.HLS_INSTANCE].startLoad(timestamp);
                     callback?.();

@@ -44,7 +44,7 @@ export const enum PlayerKey {
     DETACH,
     PLAY,
     PAUSE,
-    SEEK_CHECK,
+    END_CHECK,
     SEEK,
     SET_MEDIA_ATTRIBUTES,
     TOGGLE_PLAYBACK,
