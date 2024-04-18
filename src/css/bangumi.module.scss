@@ -223,7 +223,7 @@
     &:after {
         content: '\E70D';
         font-family: SegMDL2;
-        font-size: small;
+        font-size: medium;
         color: var(properties.get(alt-text-color));
         top: 0.5em;
         right: 0.5em;
@@ -235,7 +235,7 @@
     >select {
         border: none;
         border-radius: 0px;
-        font-size: small;
+        font-size: medium;
         margin: 0px;
         width: 100%;
         padding: 0.5em 2em 0.5em 0.5em;
