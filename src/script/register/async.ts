@@ -6,7 +6,7 @@ import { appendListItems, appendText, createButtonElement, createDivElement, cre
 import { addClass, appendChild, disableInput } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { openWindow } from '../module/dom/document';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from '../module/text/message/body';

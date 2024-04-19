@@ -5,7 +5,7 @@ import { createButtonElement, createDivElement } from '../module/dom/create_elem
 import { addClass, appendChild, removeClass } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { d, w } from '../module/dom/document';
-import { addEventListener, addEventsListener } from '../module/dom/event_listener';
+import { addEventListener, addEventsListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { encodeCFURIComponent } from '../module/common/pure';

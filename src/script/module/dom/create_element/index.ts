@@ -1,6 +1,6 @@
 import { d } from '../document';
 import { addClass, appendChild, replaceChildren } from '../element';
-import { addEventListener } from '../event_listener';
+import { addEventListener } from '../../event_listener';
 import * as styles from '../../../../css/common.module.scss';
 
 export function createElement(tag: string) {

@@ -6,7 +6,7 @@ import { appendText, createButtonElement, createDivElement, createHRElement, cre
 import { addClass, appendChild, insertBefore, remove, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { getTitle, setTitle, w } from '../module/dom/document';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';

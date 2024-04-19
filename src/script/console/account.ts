@@ -1,6 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { addClass, containsClass, getByClass, getDataAttribute, getDescendantsByClassAt, getDescendantsByTag, getParentElement } from '../module/dom/element';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { completeCallback, getTable, initializedClass } from './helper';
 import { PASSWORD_REGEX } from '../module/common/pure';
 

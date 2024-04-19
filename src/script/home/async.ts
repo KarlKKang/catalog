@@ -10,7 +10,7 @@ import { createDivElement, createInputElement, createParagraphElement, createSVG
 import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { changeURL, getBaseURL, getFullURL } from '../module/dom/document';
-import { addEventListener, removeAllEventListeners } from '../module/dom/event_listener';
+import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/common/pure';
 import { addTimeout } from '../module/timer';

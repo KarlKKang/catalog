@@ -3,7 +3,7 @@ import {
 } from '../module/common/pure';
 import { addClass, appendChild, prependChild, replaceChildren } from '../module/dom/element';
 import { appendText, createBRElement, createDivElement, createParagraphElement, createSpanElement } from '../module/dom/create_element';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { getTitle } from '../module/dom/document';
 import { EPInfoKey, type AudioEPInfo, type AudioFile, AudioFileKey, AlbumInfoKey } from '../module/type/BangumiInfo';
 import {

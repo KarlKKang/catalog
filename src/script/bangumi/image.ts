@@ -5,7 +5,7 @@ import {
 } from '../module/common';
 import { appendText, createAnchorElement, createButtonElement, createDivElement, createLIElement, createParagraphElement, createSpanElement, createUListElement } from '../module/dom/create_element';
 import { addClass, appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/element';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { EPInfoKey, ImageFileKey, type ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCFURIComponent } from '../module/common/pure';

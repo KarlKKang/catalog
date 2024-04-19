@@ -1,5 +1,5 @@
 import { ServerRequestOptionProp, logout, parseResponse, sendServerRequest } from '../module/server';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { appendChild } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { appendText, replaceText } from '../module/dom/create_element';

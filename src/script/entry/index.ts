@@ -2,7 +2,7 @@ import 'core-js';
 import { createDivElement } from '../module/dom/create_element';
 import { addClass, appendChild, replaceChildren, setClass } from '../module/dom/element';
 import { changeURL, d, getBaseURL, getFullURL, html, setTitle, w } from '../module/dom/document';
-import { addEventListenerOnce, deregisterAllEventTargets } from '../module/dom/event_listener';
+import { addEventListenerOnce, deregisterAllEventTargets } from '../module/event_listener';
 import { body } from '../module/dom/body';
 import { TOP_DOMAIN, TOP_URL } from '../module/env/constant';
 import { addTimeout, removeAllTimers } from '../module/timer';

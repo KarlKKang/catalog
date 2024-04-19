@@ -5,7 +5,7 @@ import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { appendListItems, createButtonElement, createDivElement, createParagraphElement, createPasswordInput, createUListElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { invalidPasswordFormat, passwordChanged, passwordConfirmationMismatch } from '../module/text/message/body';
 import { expired } from '../module/message/param';

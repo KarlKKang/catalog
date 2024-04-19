@@ -2,7 +2,7 @@ import { TOP_URL } from '../env/constant';
 import { createDivElement, createParagraphElement } from '../dom/create_element';
 import { addClass, appendChild, prependChild } from '../dom/element';
 import { body } from '../dom/body';
-import { addEventListener } from '../dom/event_listener';
+import { addEventListener } from '../event_listener';
 import { w } from '../dom/document';
 import { redirect } from '../global';
 import { scrollToTop } from '../common';

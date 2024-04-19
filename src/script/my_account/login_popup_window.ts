@@ -1,7 +1,7 @@
 import { appendText, createButtonElement, createDivElement, createEmailInput, createParagraphElement, createPasswordInput, createSpanElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput } from '../module/dom/element';
 import { openWindow } from '../module/dom/document';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { loginFailed } from '../module/text/message/body';
 import { TOP_URL } from '../module/env/constant';

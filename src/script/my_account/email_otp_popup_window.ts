@@ -1,6 +1,6 @@
 import { createButtonElement, createDivElement, createParagraphElement, createTotpInput, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput } from '../module/dom/element';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { failedTotp } from '../module/text/message/body';
 import { initializePopupWindow, styles, } from '../module/popup_window/core';
 import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';

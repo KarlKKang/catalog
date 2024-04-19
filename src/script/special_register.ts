@@ -3,7 +3,7 @@ import { clearSessionStorage } from './module/dom/document';
 import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, replaceText } from './module/dom/create_element';
 import { addClass, appendChild, disableInput } from './module/dom/element';
 import { body } from './module/dom/body';
-import { addEventListener } from './module/dom/event_listener';
+import { addEventListener } from './module/event_listener';
 import { showMessage } from './module/message';
 import { emailSent } from './module/message/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed } from './module/text/message/body';

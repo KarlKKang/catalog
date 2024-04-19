@@ -5,7 +5,7 @@ import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { appendListItems, appendText, createButtonElement, createDivElement, createElement, createHRElement, createOptionElement, createSelectElement, createTextNode, createUListElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, getDescendantsByClassAt, insertBefore, prependChild, replaceChildren } from '../module/dom/element';
 import { getBaseURL, w } from '../module/dom/document';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { createMessageElem, getContentBoxHeight, getLogoutParam } from './helper';

@@ -3,7 +3,7 @@ import {
 } from '../env/constant';
 import { clearSessionStorage, getHash, getTitle, openWindow, setSessionStorage, w, windowLocation } from '../dom/document';
 import { getByIdNative } from '../dom/element';
-import { addEventListener } from '../dom/event_listener';
+import { addEventListener } from '../event_listener';
 import { addTimeout } from '../timer';
 
 export function getURLParam(name: string): string | null {

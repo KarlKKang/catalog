@@ -1,6 +1,6 @@
 
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { appendText, createAnchorElement, createButtonElement, createCanvasElement, createDivElement, createParagraphElement, createTotpInput, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput, replaceChildren } from '../module/dom/element';
 import { showMessage } from '../module/message';

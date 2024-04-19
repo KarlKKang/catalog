@@ -2,7 +2,7 @@ import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../mo
 import { appendText, createBRElement, createDivElement, createParagraphElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTime } from '../module/common/pure';
 import { redirect } from '../module/global';

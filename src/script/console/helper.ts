@@ -1,6 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { addClass, containsClass, getByClass, getParentElement } from '../module/dom/element';
-import { addEventListener } from '../module/dom/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { changed as changedClass } from '../../css/console.module.scss';
 
 let outputElement: HTMLDivElement | null = null;

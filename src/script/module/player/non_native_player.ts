@@ -1,5 +1,5 @@
 import { Player } from './player';
-import { addEventsListener, removeEventsListener } from '../dom/event_listener';
+import { addEventsListener, removeEventsListener } from '../event_listener';
 import { addClass, removeClass } from '../dom/element';
 import { addTimeout } from '../timer';
 import { playerSeeking } from '../../../css/player.module.scss';
