@@ -17,6 +17,7 @@ import { hideElement, setLeft, setPaddingTop, setRight, setWidth, showElement } 
 import { CSS_UNIT } from '../style/value';
 import { onScreenConsole as onScreenConsoleClass } from '../../../css/on_screen_console.module.scss';
 import { PlayerKey } from './player_key';
+import { addMouseTouchEventListener } from '../event_listener/mouse_touch_event';
 
 declare global {
     interface HTMLVideoElement {
@@ -524,28 +525,23 @@ export class Player {
         });
 
         //UI activity
-        let touchClick = 0;
-        addEventListener(this[PlayerKey.CONTROLS], 'touchend', () => {
-            DEVELOPMENT && this[PlayerKey.LOG]?.('Touchend on controls.');
-            touchClick++;
-            addTimeout(() => { touchClick--; }, 300); // https://web.dev/mobile-touchandmouse/
-        });
-        addEventListener(this[PlayerKey.CONTROLS], 'click', () => {
-            if (touchClick > 0) {
-                DEVELOPMENT && this[PlayerKey.LOG]?.('Touch click on controls.');
-                this[PlayerKey.ACTIVE] = !this[PlayerKey.ACTIVE];
-            } else {
-                DEVELOPMENT && this[PlayerKey.LOG]?.('Mouse click on controls.');
-                if (!this[PlayerKey.ENDED]) {
-                    this[PlayerKey.TOGGLE_PLAYBACK]();
+        addMouseTouchEventListener(
+            this[PlayerKey.CONTROLS],
+            (isMouseClick) => {
+                if (isMouseClick) {
+                    DEVELOPMENT && this[PlayerKey.LOG]?.('Mouse click on controls.');
+                    if (!this[PlayerKey.ENDED]) {
+                        this[PlayerKey.TOGGLE_PLAYBACK]();
+                    }
+                } else {
+                    DEVELOPMENT && this[PlayerKey.LOG]?.('Touch click on controls.');
+                    this[PlayerKey.ACTIVE] = !this[PlayerKey.ACTIVE];
                 }
-            }
-        });
-        addEventListener(this[PlayerKey.CONTROLS], 'mousemove', () => {
-            if (touchClick <= 0) {
+            },
+            () => {
                 this[PlayerKey.ACTIVE] = true;
             }
-        }, { passive: true });
+        );
 
         //Big play button
         addEventListener(this[PlayerKey.BIG_PLAY_BUTTON], 'click', (event) => {
