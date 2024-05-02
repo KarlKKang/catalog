@@ -148,13 +148,13 @@
 
     .player-control-bar {
         display: none;
+        align-items: center;
         width: 100%;
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
         height: 2.5em;
-        line-height: 2.5em;
         background-color: var(properties.get(foreground-color));
 
         .player-button {
@@ -199,11 +199,13 @@
             width: auto;
             display: block;
             padding: 0px 0.5em;
+            height: 1.15em;
         }
 
         .player-time-divider {
             min-width: 0em;
             padding: 0px;
+            height: 1.2em;
         }
 
         .player-progress-control {
@@ -287,7 +289,6 @@
                         visibility: hidden;
                         z-index: 1;
                         white-space: nowrap;
-                        line-height: 1;
                     }
                 }
             }
