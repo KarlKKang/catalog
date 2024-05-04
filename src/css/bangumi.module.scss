@@ -221,15 +221,16 @@
     }
 
     &:after {
-        content: '\E70D';
-        font-family: SegMDL2;
-        font-size: medium;
-        color: var(properties.get(alt-text-color));
-        top: 0.5em;
-        right: 0.5em;
+        content: "";
         position: absolute;
+        top: 0.6464em;
+        right: 0.6464em;
+        width: 0.7071em;
+        height: 0.7071em;
+        border: solid var(properties.get(alt-text-color));
+        border-width: 0 1px 1px 0;
+        transform: rotate(45deg);
         pointer-events: none;
-        line-height: 2em;
     }
 
     >select {
