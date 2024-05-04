@@ -410,7 +410,7 @@ p.artist {
 /*Chapters*/
 .chapters>.accordion-panel {
     >p {
-        transition: .4s ease-out;
+        transition: color .4s ease-out;
 
         >span {
             cursor: pointer;
@@ -420,7 +420,6 @@ p.artist {
 
     >.current-chapter {
         color: var(properties.get(text-color));
-        font-weight: 500;
     }
 
     >.inactive-chapter {
