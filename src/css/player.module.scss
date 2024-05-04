@@ -299,7 +299,7 @@
                     font-size: 1em;
 
                     @media not screen and (hover: hover) and (pointer: fine) {
-                        font-size: inherit;
+                        font-size: 0.8em;
                     }
 
                     .player-mouse-display {
