@@ -184,5 +184,5 @@ font_splitter(
     {},
     dir_surfix,
     "block",
-    {"custom": "U+E70D,U+E971,U+E972"},
+    {"custom": "U+E971,U+E972"},
 )
