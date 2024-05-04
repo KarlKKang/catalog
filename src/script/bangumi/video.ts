@@ -135,7 +135,7 @@ export default function (
         addEventListener(selectMenu, 'change', () => { formatSwitch(selectMenu, formatDisplay, containerSelector); });
     });
 
-    addVideoNode(formatDisplay, play, startTime).then(() => {
+    addVideoNode(formatDisplay, play, startTime, false).then(() => {
         disableDropdown(selectMenu, false);
     });
 }
@@ -165,7 +165,7 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDi
         startTime = mediaInstance[PlayerKey.MEDIA].currentTime;
     }
 
-    addVideoNode(formatDisplay, play, startTime).then(() => {
+    addVideoNode(formatDisplay, play, startTime, true).then(() => {
         if (mediaInstance === currentMediaInstance) {
             destroyMediaInstance();
         }
@@ -176,7 +176,7 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDi
     });
 }
 
-async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undefined, startTime: number | undefined) {
+async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undefined, startTime: number | undefined, focus: boolean) {
     if (!MSE_SUPPORTED && !NATIVE_HLS_SUPPORTED) {
         showHLSCompatibilityError();
         return;
@@ -306,6 +306,9 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         mediaInstance[PlayerKey.MEDIA].title = getTitle();
         if (epInfo[EPInfoKey.CHAPTERS].length > 0) {
             displayChapters(mediaInstance, audioOffset, chaptersActive);
+        }
+        if (focus) {
+            mediaInstance[PlayerKey.FOCUS]();
         }
     };
 
