@@ -97,13 +97,15 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
 
 function bindEventListners(contentContainer: HTMLElement): void {
     const elems = getDescendantsByClass(contentContainer, 'open-window');
-    for (const elem of (elems as HTMLCollectionOf<HTMLElement>)) {
-        removeClass(elem, 'open-window');
-        addEventListener(elem, 'click', () => {
-            const page = getDataAttribute(elem, 'page');
+    let elem = elems[0];
+    while (elem !== undefined) {
+        const currentElem = elem;
+        removeClass(currentElem, 'open-window');
+        addEventListener(currentElem, 'click', () => {
+            const page = getDataAttribute(currentElem, 'page');
 
             if (page === 'news') {
-                const newsID = getDataAttribute(elem, 'news-id');
+                const newsID = getDataAttribute(currentElem, 'news-id');
                 if (newsID !== null) {
                     redirect(NEWS_TOP_URL + newsID);
                 }
@@ -112,7 +114,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
 
             if (page === 'bangumi') {
                 let separator: '?' | '&' = '?';
-                const seriesID = getDataAttribute(elem, 'series-id');
+                const seriesID = getDataAttribute(currentElem, 'series-id');
 
                 if (seriesID === null) {
                     return;
@@ -120,12 +122,12 @@ function bindEventListners(contentContainer: HTMLElement): void {
 
                 let url = TOP_URL + '/bangumi/' + seriesID;
 
-                const epIndex = getDataAttribute(elem, 'ep-index');
+                const epIndex = getDataAttribute(currentElem, 'ep-index');
                 if (epIndex !== null) {
                     url += separator + 'ep=' + epIndex;
                     separator = '&';
                 }
-                const formatIndex = getDataAttribute(elem, 'format-index');
+                const formatIndex = getDataAttribute(currentElem, 'format-index');
                 if (formatIndex !== null) {
                     url += separator + 'format=' + formatIndex;
                 }
@@ -134,6 +136,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
                 return;
             }
         });
+        elem = elems[0];
     }
 }
 
