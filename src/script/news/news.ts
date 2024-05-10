@@ -25,8 +25,6 @@ import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 
-const INTERNAL_IMAGE_CLASS = 'image-internal';
-
 export default function (newsInfo: NewsInfo, newsID: string): void {
     const title = newsInfo[NewsInfoKey.TITLE];
     setTitle(title + ' | ' + getTitle());
@@ -77,6 +75,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
     setLazyloadCredential(credential, SessionTypes.NEWS);
 
     const baseURL = CDN_URL + '/news/' + newsID + '/';
+    const INTERNAL_IMAGE_CLASS = 'image-internal';
     const elems = getDescendantsByClass(contentContainer, INTERNAL_IMAGE_CLASS);
     let elem = elems[0];
     while (elem !== undefined) {
@@ -96,10 +95,11 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
 }
 
 function bindEventListners(contentContainer: HTMLElement): void {
-    const elems = getDescendantsByClass(contentContainer, 'open-window');
+    const INTERNAL_LINK_CLASS = 'link-internal';
+    const elems = getDescendantsByClass(contentContainer, INTERNAL_LINK_CLASS);
     let elem = elems[0];
     while (elem !== undefined) {
-        removeClass(elem, 'open-window');
+        removeClass(elem, INTERNAL_LINK_CLASS);
         const internalLink = getInternalLink(elem);
         addEventListener(elem, 'click', () => {
             if (internalLink !== null) {
