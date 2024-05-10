@@ -10,7 +10,7 @@ import {
 } from '../module/common';
 import { getTitle, setTitle } from '../module/dom/document';
 import { createDivElement, createParagraphElement } from '../module/dom/create_element';
-import { addClass, appendChild, containsClass, getDataAttribute, getDescendantsByClass, removeClass } from '../module/dom/element';
+import { addClass, appendChild, getDataAttribute, getDescendantsByClass, removeClass } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { showMessage } from '../module/message';
@@ -26,7 +26,6 @@ import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } fro
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 
 const INTERNAL_IMAGE_CLASS = 'image-internal';
-const IMAGE_ENLARGE_CLASS = 'image-enlarge';
 
 export default function (newsInfo: NewsInfo, newsID: string): void {
     const title = newsInfo[NewsInfoKey.TITLE];
@@ -88,13 +87,9 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
             continue;
         }
         attachLazyload(elem, baseURL + encodeCFURIComponent(src), src, 250);
-        if (containsClass(elem, IMAGE_ENLARGE_CLASS)) {
-            removeClass(elem, IMAGE_ENLARGE_CLASS);
-            addClass(elem, styles.imageEnlarge);
-            addEventListener(elem, 'click', () => {
-                openImageWindow(baseURL, src, credential, SessionTypes.NEWS);
-            });
-        }
+        addEventListener(elem, 'click', () => {
+            openImageWindow(baseURL, src, credential, SessionTypes.NEWS);
+        });
         removeRightClick(elem);
         elem = elems[0];
     }
