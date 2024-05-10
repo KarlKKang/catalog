@@ -19,6 +19,7 @@ import { encodeCFURIComponent } from '../module/common/pure';
 import { redirect } from '../module/global';
 import { loading } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
+import { link as linkClass } from '../../css/common.module.scss';
 import { createNewsTemplate, parseNewsStyle } from '../module/news';
 import { NEWS_TOP_URL } from './helper';
 import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
@@ -100,6 +101,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
     let elem = elems[0];
     while (elem !== undefined) {
         removeClass(elem, INTERNAL_LINK_CLASS);
+        addClass(elem, linkClass);
         const internalLink = getInternalLink(elem);
         addEventListener(elem, 'click', () => {
             if (internalLink !== null) {
