@@ -99,45 +99,52 @@ function bindEventListners(contentContainer: HTMLElement): void {
     const elems = getDescendantsByClass(contentContainer, 'open-window');
     let elem = elems[0];
     while (elem !== undefined) {
-        const currentElem = elem;
-        removeClass(currentElem, 'open-window');
-        addEventListener(currentElem, 'click', () => {
-            const page = getDataAttribute(currentElem, 'page');
-
-            if (page === 'news') {
-                const newsID = getDataAttribute(currentElem, 'news-id');
-                if (newsID !== null) {
-                    redirect(NEWS_TOP_URL + newsID);
-                }
-                return;
-            }
-
-            if (page === 'bangumi') {
-                let separator: '?' | '&' = '?';
-                const seriesID = getDataAttribute(currentElem, 'series-id');
-
-                if (seriesID === null) {
-                    return;
-                }
-
-                let url = TOP_URL + '/bangumi/' + seriesID;
-
-                const epIndex = getDataAttribute(currentElem, 'ep-index');
-                if (epIndex !== null) {
-                    url += separator + 'ep=' + epIndex;
-                    separator = '&';
-                }
-                const formatIndex = getDataAttribute(currentElem, 'format-index');
-                if (formatIndex !== null) {
-                    url += separator + 'format=' + formatIndex;
-                }
-
-                redirect(url);
-                return;
+        removeClass(elem, 'open-window');
+        const internalLink = getInternalLink(elem);
+        addEventListener(elem, 'click', () => {
+            if (internalLink !== null) {
+                redirect(internalLink);
             }
         });
         elem = elems[0];
     }
+}
+
+function getInternalLink(elem: Element): string | null {
+    const page = getDataAttribute(elem, 'page');
+
+    if (page === 'news') {
+        const newsID = getDataAttribute(elem, 'news-id');
+        if (newsID === null) {
+            return null;
+        }
+        return NEWS_TOP_URL + newsID;
+    }
+
+    if (page === 'bangumi') {
+        let separator: '?' | '&' = '?';
+        const seriesID = getDataAttribute(elem, 'series-id');
+
+        if (seriesID === null) {
+            return null;
+        }
+
+        let url = TOP_URL + '/bangumi/' + seriesID;
+
+        const epIndex = getDataAttribute(elem, 'ep-index');
+        if (epIndex !== null) {
+            url += separator + 'ep=' + epIndex;
+            separator = '&';
+        }
+        const formatIndex = getDataAttribute(elem, 'format-index');
+        if (formatIndex !== null) {
+            url += separator + 'format=' + formatIndex;
+        }
+
+        return url;
+    }
+
+    return null;
 }
 
 export function offload() {
