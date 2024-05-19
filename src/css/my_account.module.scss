@@ -45,24 +45,6 @@
         }
     }
 
-    .totp-qrcode {
-        display: block;
-        max-width: 100%;
-        margin: 0px;
-    }
-
-    .totp-uri {
-        overflow-wrap: break-word;
-    }
-
-    .recovery-codes {
-        background-color: var(properties.get(grey-background-color));
-        display: inline-block;
-        width: 100%;
-        overflow-wrap: anywhere;
-        font-family: 'Courier New', Courier, monospace;
-    }
-
     .sessions {
         >div {
             margin: 2em 0px;
@@ -105,4 +87,22 @@
             }
         }
     }
+}
+
+.totp-qrcode {
+    display: block;
+    max-width: 100%;
+    margin: 0px;
+}
+
+.totp-uri {
+    overflow-wrap: break-word;
+}
+
+.recovery-codes {
+    background-color: var(properties.get(grey-background-color));
+    display: inline-block;
+    width: 100%;
+    overflow-wrap: anywhere;
+    font-family: 'Courier New', Courier, monospace;
 }
