@@ -1,8 +1,5 @@
-import {
-    getURLParam,
-} from '../module/common';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { clearSessionStorage } from '../module/dom/document';
+import { clearSessionStorage, getSearchParam } from '../module/dom/document';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
@@ -28,7 +25,7 @@ export default function (showPage: ShowPageFunc) {
         showPage();
     };
 
-    const param = getURLParam('p');
+    const param = getSearchParam('p');
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
         if (DEVELOPMENT) {
             runAsyncModule(getAsyncModulePromise(), 'test');

@@ -44,6 +44,11 @@ export function getHash() {
     return windowLocation.hash.substring(1);
 }
 
+export function getSearchParam(name: string): string | null {
+    const urlObj = new URL(getHref());
+    return urlObj.searchParams.get(name);
+}
+
 export function changeURL(url: string, withoutHistory?: boolean) {
     if (withoutHistory === true) {
         history.replaceState(STATE_TRACKER, '', url);

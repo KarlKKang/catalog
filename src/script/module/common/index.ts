@@ -1,13 +1,8 @@
-import { clearSessionStorage, getHash, getTitle, openWindow, setSessionStorage, w, windowLocation } from '../dom/document';
+import { clearSessionStorage, getHash, getTitle, openWindow, setSessionStorage, w } from '../dom/document';
 import { getByIdNative } from '../dom/element';
 import { IMAGE_URI } from '../env/uri';
 import { addEventListener } from '../event_listener';
 import { addTimeout } from '../timer';
-
-export function getURLParam(name: string): string | null {
-    const urlObj = new URL(windowLocation.href);
-    return urlObj.searchParams.get(name);
-}
 
 export function scrollToTop() {
     w.scrollBy(0, -1 * w.scrollY);

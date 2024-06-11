@@ -1,7 +1,4 @@
-import {
-    getURLParam,
-} from '../module/common';
-import { w } from '../module/dom/document';
+import { getSearchParam, w } from '../module/dom/document';
 import { createDivElement, createParagraphElement } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren } from '../module/dom/element';
 import { changeColor } from '../module/style';
@@ -56,7 +53,7 @@ export function parseCharacters(txt: string) {
 }
 
 export function getFormatIndex(): number {
-    const formatIndexParam = getURLParam('format');
+    const formatIndexParam = getSearchParam('format');
     let formatIndex: number;
     if (formatIndexParam === null) {
         formatIndex = 0;

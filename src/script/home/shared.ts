@@ -1,4 +1,4 @@
-import { getURLParam } from '../module/common';
+import { getSearchParam } from '../module/dom/document';
 
 export let search: ((useURLKeywords: boolean) => void) | null = null;
 export function setSearch(func: ((useURLKeywords: boolean) => void) | null) {
@@ -6,7 +6,7 @@ export function setSearch(func: ((useURLKeywords: boolean) => void) | null) {
 }
 
 export function getURLKeywords() {
-    const urlParam = getURLParam('keywords');
+    const urlParam = getSearchParam('keywords');
     if (urlParam === null) {
         return '';
     } else {

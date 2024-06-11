@@ -1,6 +1,6 @@
 import { addClass, appendChild, getParentElement, insertBefore, prependChild, remove, removeClass, replaceChildren, setClass } from '../module/dom/element';
 import { appendText, createDivElement, createOptionElement, createParagraphElement, createSelectElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
-import { changeURL, getTitle } from '../module/dom/document';
+import { changeURL, getSearchParam, getTitle } from '../module/dom/document';
 import { addEventListener, addEventsListener, removeAllEventListeners } from '../module/event_listener';
 import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';
 import {
@@ -27,7 +27,6 @@ import { SharedElement, errorMessageElement, getSharedElement } from './shared_v
 import { addInterval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
-import { getURLParam } from '../module/common';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/bangumi.module.scss';
 import { importModule } from '../module/import_module';
@@ -68,7 +67,7 @@ export default function (
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
     addClass(contentContainer, styles.video);
 
-    const startTimeText = getURLParam('timestamp');
+    const startTimeText = getSearchParam('timestamp');
     let startTime: number | undefined = undefined;
     if (startTimeText !== null) {
         startTime = parseFloat(startTimeText);
@@ -76,7 +75,7 @@ export default function (
             startTime = undefined;
         }
     }
-    const play = getURLParam('play') === '1';
+    const play = getSearchParam('play') === '1';
 
     // Title
     if (epInfo[EPInfoKey.TITLE] !== undefined) {

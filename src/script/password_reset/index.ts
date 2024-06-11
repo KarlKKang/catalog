@@ -1,8 +1,5 @@
-import {
-    getURLParam,
-} from '../module/common';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { clearSessionStorage } from '../module/dom/document';
+import { clearSessionStorage, getSearchParam } from '../module/dom/document';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
@@ -27,9 +24,9 @@ export default function (showPage: ShowPageFunc) {
         showPage();
     };
 
-    const user = getURLParam('user');
-    const signature = getURLParam('signature');
-    const expires = getURLParam('expires');
+    const user = getSearchParam('user');
+    const signature = getSearchParam('signature');
+    const expires = getSearchParam('expires');
 
     if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
         if (DEVELOPMENT) {

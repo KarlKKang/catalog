@@ -1,11 +1,11 @@
-import { clearSessionStorage } from './module/dom/document';
+import { clearSessionStorage, getSearchParam } from './module/dom/document';
 import { createDivElement } from './module/dom/create_element';
 import { addClass, appendChild } from './module/dom/element';
 import { body } from './module/dom/body';
 import type { ShowPageFunc } from './module/global';
 import { addNavBar } from './module/nav_bar';
 import { NavBarPage } from './module/nav_bar/enum';
-import { getURLParam, scrollToHash } from './module/common';
+import { scrollToHash } from './module/common';
 import html from '../html/info.html';
 import * as styles from '../css/news.module.scss';
 import { createNewsTemplate, parseNewsStyle } from './module/news';
@@ -15,7 +15,7 @@ import { addManualMultiLanguageClass } from './module/dom/create_element/multi_l
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
-    if (getURLParam('nav-bar') !== 'no') {
+    if (getSearchParam('nav-bar') !== 'no') {
         addNavBar(NavBarPage.INFO);
     }
     showPage();

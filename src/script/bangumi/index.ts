@@ -1,8 +1,5 @@
-import {
-    getURLParam,
-} from '../module/common';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
-import { clearSessionStorage, getURI } from '../module/dom/document';
+import { clearSessionStorage, getSearchParam, getURI } from '../module/dom/document';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { getLogoutParam } from './helper';
@@ -32,7 +29,7 @@ export default function (showPage: ShowPageFunc) {
     addNavBar();
 
     // Parse other parameters
-    const epIndexParam = getURLParam('ep');
+    const epIndexParam = getSearchParam('ep');
     let epIndex: number;
     if (epIndexParam === null) {
         epIndex = 0;
