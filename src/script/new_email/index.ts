@@ -1,7 +1,4 @@
 import {
-    TOP_URL,
-} from '../module/env/constant';
-import {
     getURLParam,
 } from '../module/common';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
@@ -11,6 +8,7 @@ import { expired } from '../module/message/param';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { invalidResponse } from '../module/server/message';
 import { importModule } from '../module/import_module';
+import { TOP_URI } from '../module/env/uri';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -34,7 +32,7 @@ export default function (showPage: ShowPageFunc) {
         if (DEVELOPMENT) {
             runAsyncModule(getAsyncModulePromise(), 'test');
         } else {
-            redirect(TOP_URL, true);
+            redirect(TOP_URI, true);
         }
         return;
     }

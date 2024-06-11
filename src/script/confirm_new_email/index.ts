@@ -1,7 +1,4 @@
 import {
-    LOGIN_URL,
-} from '../module/env/constant';
-import {
     getURLParam,
 } from '../module/common';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
@@ -11,6 +8,7 @@ import { expired } from '../module/message/param';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { invalidResponse } from '../module/server/message';
 import { importModule } from '../module/import_module';
+import { LOGIN_URI } from '../module/env/uri';
 
 let offloadModule: (() => void) | null = null;
 
@@ -38,7 +36,7 @@ export default function (showPage: ShowPageFunc) {
         if (DEVELOPMENT) {
             runAsyncModule(getAsyncModulePromise(), 'test');
         } else {
-            redirect(LOGIN_URL, true);
+            redirect(LOGIN_URI, true);
         }
         return;
     }

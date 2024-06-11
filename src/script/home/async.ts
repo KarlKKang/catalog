@@ -1,15 +1,11 @@
 import {
-    TOP_URL,
-    CDN_URL,
-} from '../module/env/constant';
-import {
     scrollToTop,
 } from '../module/common';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { changeURL, getBaseURL, getFullURL } from '../module/dom/document';
+import { changeURL, getFullPath, getHostname, getURI } from '../module/dom/document';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/common/pure';
@@ -26,6 +22,8 @@ import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntr
 import { MaintenanceInfoKey } from '../module/type/MaintenanceInfo';
 import { attachLazyload, offload as offloadLazyload } from '../module/lazyload';
 import { getURLKeywords, setSearch } from './shared';
+import { getCDNOrigin } from '../module/env/constant';
+import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 
 let pivot: Pivot;
 let keywords: string;
@@ -142,10 +140,10 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
             searchClosure(false);
         }
     });
-    const currentBaseURL = getBaseURL();
+    const currentURI = getURI();
     setCustomPopStateHandler(() => {
-        if (currentBaseURL !== getBaseURL()) {
-            redirect(getFullURL(), null);
+        if (currentURI !== getURI()) {
+            redirect(getFullPath(), null);
             return;
         }
         searchClosure(true);
@@ -193,7 +191,7 @@ function showSeries(
         eventTargetsTracker.add(seriesNode);
 
         appendChild(containerElem, seriesNode);
-        attachLazyload(thumbnailNode, CDN_URL + '/thumbnails/' + seriesEntry[SeriesEntryKey.THUMBNAIL], 'サムネイル：' + title);
+        attachLazyload(thumbnailNode, getCDNOrigin(getHostname()) + '/thumbnails/' + seriesEntry[SeriesEntryKey.THUMBNAIL], 'サムネイル：' + title);
     }
 
     infiniteScrolling[InfiniteScrollingProp.SET_ENABLED](true);
@@ -219,9 +217,9 @@ function search(
     } else {
         keywords = searchBarInput.value.substring(0, 50);
         if (keywords === '') {
-            changeURL(TOP_URL);
+            changeURL(TOP_URI);
         } else {
-            changeURL(TOP_URL + '?' + 'keywords=' + encodeURIComponent(keywords));
+            changeURL(TOP_URI + '?' + 'keywords=' + encodeURIComponent(keywords));
         }
     }
 
@@ -258,7 +256,7 @@ function search(
 }
 
 function goToSeries(id: string) {
-    redirect(TOP_URL + '/bangumi/' + id);
+    redirect(BANGUMI_ROOT_URI + id);
 }
 
 function getSeries(callback: (seriesInfo: SeriesInfo, xhr?: XMLHttpRequest) => void) {

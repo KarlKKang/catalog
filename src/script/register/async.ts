@@ -1,6 +1,3 @@
-import {
-    LOGIN_URL,
-} from '../module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { appendListItems, appendText, createButtonElement, createDivElement, createParagraphElement, createPasswordInput, createSpanElement, createUListElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput } from '../module/dom/element';
@@ -21,6 +18,7 @@ import { addManualMultiLanguageClass, createUsernameInput } from '../module/dom/
 import { CSS_COLOR } from '../module/style/value';
 import { MessageParamProp } from '../module/message/type';
 import { emailAlreadyRegistered } from './shared';
+import { INFO_URI, LOGIN_URI } from '../module/env/uri';
 
 export default function (param: string) {
     const container = createDivElement();
@@ -130,7 +128,7 @@ export default function (param: string) {
                         [MessageParamProp.TITLE]: completed,
                         [MessageParamProp.MESSAGE]: 'アカウントが登録されました。',
                         [MessageParamProp.COLOR]: CSS_COLOR.GREEN,
-                        [MessageParamProp.URL]: LOGIN_URL,
+                        [MessageParamProp.URL]: LOGIN_URI,
                         [MessageParamProp.BUTTON_TEXT]: nextButtonText
                     });
                 } else {
@@ -171,7 +169,7 @@ function getInfoNote() {
         appendText(paragraph, text[2]);
         appendChild(container, paragraph);
         addEventListener(link, 'click', () => {
-            const uri = 'info?nav-bar=no' + (lang === null ? '' : '#' + lang);
+            const uri = INFO_URI + '?nav-bar=no' + (lang === null ? '' : '#' + lang);
             openWindow(uri);
         });
     }

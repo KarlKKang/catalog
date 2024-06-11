@@ -1,7 +1,4 @@
 import {
-    TOP_URL,
-} from '../module/env/constant';
-import {
     SessionTypes,
 } from '../module/common';
 import { ServerRequestOptionProp, sendServerRequest, setUpSessionAuthentication } from '../module/server';
@@ -10,6 +7,7 @@ import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { importModule } from '../module/import_module';
+import { TOP_URI } from '../module/env/uri';
 
 let offloadAsyncModule: (() => void) | null = null;
 
@@ -23,7 +21,7 @@ export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
     if (baseURL === null || fileName === null || title === null || sessionCredential === null || sessionType === null) {
-        redirect(TOP_URL, true);
+        redirect(TOP_URI, true);
         return;
     }
 

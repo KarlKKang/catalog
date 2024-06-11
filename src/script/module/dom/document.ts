@@ -1,6 +1,3 @@
-import {
-    TOP_URL
-} from '../env/constant';
 import { STATE_TRACKER } from '../global';
 
 export const d = document;
@@ -8,43 +5,39 @@ export const w = window;
 export const html = d.documentElement;
 export const windowLocation = w.location;
 
-export function getFullURL() {
+function getHref() {
     return windowLocation.href;
 }
 
-export function getBaseURL(url?: string): string {
+function getOrigin() {
+    return windowLocation.origin;
+}
+
+export function getURI(url?: string | URL): string {
     if (url === undefined) {
-        url = getFullURL();
+        url = getHref();
     }
 
-    const protocolIndex = url.indexOf('://');
-    let protocol = '';
-    if (protocolIndex >= 0) {
-        protocol = url.substring(0, protocolIndex + 3);
-        url = url.substring(protocolIndex + 3);
+    const urlObj = new URL(url, getOrigin());
+    return urlObj.pathname;
+}
+
+export function getHostname(url?: string | URL) {
+    if (url === undefined) {
+        url = getHref();
     }
 
-    const atIndex = url.lastIndexOf('@');
-    url = url.substring(atIndex + 1);
+    const urlObj = new URL(url, getOrigin());
+    return urlObj.hostname;
+}
 
-    const hashIndex = url.indexOf('#');
-    if (hashIndex >= 0) {
-        url = url.substring(0, hashIndex);
+export function getFullPath(url?: string | URL) {
+    if (url === undefined) {
+        url = getHref();
     }
 
-    const queryIndex = url.indexOf('?');
-    if (queryIndex >= 0) {
-        url = url.substring(0, queryIndex);
-    }
-
-    if (url.endsWith('/')) {
-        const urlTrimmed = url.substring(0, url.length - 1);
-        if (!urlTrimmed.includes('/')) {
-            url = urlTrimmed;
-        }
-    }
-
-    return protocol + url;
+    const urlObj = new URL(url, getOrigin());
+    return urlObj.pathname + urlObj.search + urlObj.hash;
 }
 
 export function getHash() {
@@ -67,7 +60,7 @@ export function setSessionStorage(key: string, value: string) {
     try {
         w.sessionStorage.setItem(key, value);
     } catch (e) {
-        windowLocation.replace(TOP_URL + '/unsupported_browser');
+        windowLocation.replace('/unsupported_browser');
         throw e;
     }
 }

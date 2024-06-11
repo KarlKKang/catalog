@@ -1,10 +1,10 @@
 import 'core-js';
 import { createDivElement } from '../module/dom/create_element';
 import { addClass, appendChild, replaceChildren, setClass } from '../module/dom/element';
-import { changeURL, d, getBaseURL, getFullURL, html, setTitle, w } from '../module/dom/document';
+import { changeURL, d, getFullPath, getURI, html, setTitle, w } from '../module/dom/document';
 import { addEventListenerOnce, deregisterAllEventTargets } from '../module/event_listener';
 import { body } from '../module/dom/body';
-import { TOP_DOMAIN, TOP_URL } from '../module/env/constant';
+import { TOP_DOMAIN } from '../module/env/constant';
 import { addTimeout, removeAllTimers } from '../module/timer';
 import * as messagePageScript from '../message';
 import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect, type ShowPageFunc } from '../module/global';
@@ -13,6 +13,7 @@ import { enableTransition, setMinHeight, setOpacity, setVisibility, setWidth } f
 import { CSS_UNIT } from '../module/style/value';
 import { consolePageTitle, emailChangePageTitle, infoPageTitle, loginPageTitle, myAccountPageTitle, newsPageTitle, notFoundPageTitle, passwordResetPageTitle, registerPageTitle } from '../module/text/page_title';
 import { importModule } from '../module/import_module';
+import { BANGUMI_ROOT_URI, CONFIRM_NEW_EMAIL_URI, CONSOLE_URI, IMAGE_URI, INFO_URI, LOGIN_URI, MESSAGE_URI, MY_ACCOUNT_URI, NEWS_ROOT_URI, NEW_EMAIL_URI, PASSWORD_RESET_URI, REGISTER_URI, REQUEST_PASSWORD_RESET_URI, SPECIAL_REGISTER_URI, TOP_URI } from '../module/env/uri';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 type PageScript = {
@@ -49,87 +50,80 @@ const page404 = {
     [PageProp.TITLE]: notFoundPageTitle,
 };
 const pages = {
-    '': {
+    [TOP_URI]: {
         [PageProp.SCRIPT]: () => import('../home'),
     },
-    'confirm_new_email': {
+    [CONFIRM_NEW_EMAIL_URI]: {
         [PageProp.SCRIPT]: () => import('../confirm_new_email'),
         [PageProp.TITLE]: emailChangePageTitle,
     },
-    'console': {
+    [CONSOLE_URI]: {
         [PageProp.SCRIPT]: () => import('../console'),
         [PageProp.TITLE]: consolePageTitle,
     },
-    'image': {
+    [IMAGE_URI]: {
         [PageProp.SCRIPT]: () => import('../image'),
     },
-    'info': {
+    [INFO_URI]: {
         [PageProp.SCRIPT]: () => import('../info'),
         [PageProp.TITLE]: infoPageTitle,
     },
-    'message': {
+    [MESSAGE_URI]: {
         [PageProp.SCRIPT]: () => Promise.resolve(messagePageScript),
         [PageProp.SCRIPT_CACHED]: messagePageScript,
     },
-    'my_account': {
+    [MY_ACCOUNT_URI]: {
         [PageProp.SCRIPT]: () => import('../my_account'),
         [PageProp.TITLE]: myAccountPageTitle,
     },
-    'new_email': {
+    [NEW_EMAIL_URI]: {
         [PageProp.SCRIPT]: () => import('../new_email'),
         [PageProp.TITLE]: emailChangePageTitle,
     },
-    'register': {
+    [REGISTER_URI]: {
         [PageProp.SCRIPT]: () => import('../register'),
         [PageProp.TITLE]: registerPageTitle,
     },
-    'special_register': {
+    [SPECIAL_REGISTER_URI]: {
         [PageProp.SCRIPT]: () => import('../special_register'),
         [PageProp.TITLE]: registerPageTitle,
     },
-    'login': {
+    [LOGIN_URI]: {
         [PageProp.SCRIPT]: () => import('../login'),
         [PageProp.TITLE]: loginPageTitle,
     },
-    'request_password_reset': {
+    [REQUEST_PASSWORD_RESET_URI]: {
         [PageProp.SCRIPT]: () => import('../request_password_reset'),
         [PageProp.TITLE]: passwordResetPageTitle,
     },
-    'password_reset': {
+    [PASSWORD_RESET_URI]: {
         [PageProp.SCRIPT]: () => import('../password_reset'),
         [PageProp.TITLE]: passwordResetPageTitle,
     },
 };
 const directories = {
-    'bangumi': {
+    [BANGUMI_ROOT_URI]: {
         [PageProp.SCRIPT]: () => import('../bangumi'),
     },
-    'news': {
+    [NEWS_ROOT_URI]: {
         [PageProp.SCRIPT]: () => import('../news'),
         [PageProp.TITLE]: newsPageTitle,
     },
 };
 
 function load(url: string, withoutHistory: boolean | null = false) {
-    let baseURL = getBaseURL(url);
+    let uri = getURI(url);
 
-    if (baseURL === TOP_URL) {
-        baseURL += '/';
+    if (objectKeyExists(uri, pages)) {
+        const page = pages[uri];
+        loadPage(url, withoutHistory, page);
+        return;
     }
-
-    if (baseURL.startsWith(TOP_URL + '/')) {
-        let pageName = baseURL.substring(TOP_URL.length + 1);
-        if (objectKeyExists(pageName, pages)) {
-            const page = pages[pageName];
-            loadPage(url, withoutHistory, page);
-            return;
-        }
-        pageName = pageName.substring(0, pageName.indexOf('/'));
-        if (objectKeyExists(pageName, directories)) {
-            const page = directories[pageName];
-            loadPage(url, withoutHistory, page);
-            return;
-        }
+    uri = uri.substring(0, uri.indexOf('/', 1) + 1);
+    if (objectKeyExists(uri, directories)) {
+        const page = directories[uri];
+        loadPage(url, withoutHistory, page);
+        return;
     }
 
     loadPage(url, withoutHistory, page404);
@@ -266,8 +260,8 @@ function objectKeyExists<T extends object>(key: PropertyKey, obj: T): key is key
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-const fullURL = getFullURL();
-changeURL(fullURL, true);
+const fullPath = getFullPath();
+changeURL(fullPath, true);
 if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
@@ -276,12 +270,12 @@ addEventListenerOnce(w, 'load', () => {
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
     setRedirect(load);
-    load(fullURL, null);
+    load(fullPath, null);
     importFont(0);
     w.addEventListener('popstate', (state) => {
         if (state.state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
             if (customPopStateHandler === null) {
-                load(getFullURL(), null);
+                load(getFullPath(), null);
                 if (DEVELOPMENT) {
                     console.log('popstate handled by the loader.');
                 }

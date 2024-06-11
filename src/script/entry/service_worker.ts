@@ -1,8 +1,7 @@
 import { createButtonElement, createDivElement, createParagraphElement } from '../module/dom/create_element';
 import { addClass, appendChild } from '../module/dom/element';
-import { windowLocation } from '../module/dom/document';
+import { getHostname, windowLocation } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
-import { DOMAIN } from '../module/env/constant';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, offloadPopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
 
@@ -15,7 +14,8 @@ export default async function () { // This function should be called after setti
         const titleText = createParagraphElement('アップデートが利用可能です');
         addClass(titleText, styles.title);
 
-        const promptText = createParagraphElement('今すぐインストールすると、ページが再読み込みされます。' + DOMAIN + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + DOMAIN + 'のすべてのタブを閉じてから再読み込みしてください。');
+        const domain = getHostname();
+        const promptText = createParagraphElement('今すぐインストールすると、ページが再読み込みされます。' + domain + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + domain + 'のすべてのタブを閉じてから再読み込みしてください。');
 
         const updateButton = createButtonElement('インストール');
         const cancelButton = createButtonElement('後で');

@@ -1,4 +1,3 @@
-import { TOP_URL } from '../env/constant';
 import { createDivElement, createParagraphElement } from '../dom/create_element';
 import { addClass, appendChild, prependChild } from '../dom/element';
 import { body } from '../dom/body';
@@ -10,6 +9,7 @@ import { NavBarPage } from './enum';
 import * as icons from './icons';
 import { infoPageTitle, myAccountPageTitle, newsPageTitle } from '../text/page_title';
 import * as styles from '../../../css/nav_bar.module.scss';
+import { INFO_URI, MY_ACCOUNT_URI, NEWS_ROOT_URI, TOP_URI } from '../env/uri';
 
 export default function (page?: NavBarPage, currentPageCallback?: () => void) {
     const getNavButton = (name: string): [HTMLDivElement, HTMLDivElement] => {
@@ -55,7 +55,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
                 return;
             }
         }
-        redirect(TOP_URL);
+        redirect(TOP_URI);
     });
 
     addEventListener(navButton2[0], 'click', () => {
@@ -64,7 +64,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
                 return;
             }
         }
-        redirect(TOP_URL + '/news/');
+        redirect(NEWS_ROOT_URI);
     });
 
     addEventListener(navButton3[0], 'click', () => {
@@ -73,7 +73,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
                 return;
             }
         }
-        redirect(TOP_URL + '/my_account');
+        redirect(MY_ACCOUNT_URI);
     });
 
     addEventListener(navButton4[0], 'click', () => {
@@ -82,7 +82,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
                 return;
             }
         }
-        redirect(TOP_URL + '/info');
+        redirect(INFO_URI);
     });
 
     addClass(body, styles.navBarPadding);

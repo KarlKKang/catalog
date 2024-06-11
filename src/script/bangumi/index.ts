@@ -1,11 +1,8 @@
 import {
-    TOP_URL,
-} from '../module/env/constant';
-import {
     getURLParam,
 } from '../module/common';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
-import { clearSessionStorage, getBaseURL } from '../module/dom/document';
+import { clearSessionStorage, getURI } from '../module/dom/document';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { getLogoutParam } from './helper';
@@ -16,6 +13,7 @@ import { addTimeout } from '../module/timer';
 import { type MediaSessionInfo, MediaSessionInfoKey, parseMediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/BangumiInfo';
 import { importModule } from '../module/import_module';
+import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 
 let offloadModule: (() => void) | null = null;
 
@@ -25,7 +23,7 @@ export default function (showPage: ShowPageFunc) {
     // Parse parameters
     const seriesIDParam = getSeriesID();
     if (seriesIDParam === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(seriesIDParam)) {
-        redirect(TOP_URL, true);
+        redirect(TOP_URI, true);
         return;
     }
     const seriesID = seriesIDParam;
@@ -108,8 +106,7 @@ export default function (showPage: ShowPageFunc) {
 }
 
 function getSeriesID(): string | null {
-    const start = (TOP_URL + '/bangumi/').length;
-    return getBaseURL().substring(start);
+    return getURI().substring(BANGUMI_ROOT_URI.length);
 }
 
 export function offload() {

@@ -1,8 +1,6 @@
-import {
-    TOP_URL
-} from '../env/constant';
 import { clearSessionStorage, getHash, getTitle, openWindow, setSessionStorage, w, windowLocation } from '../dom/document';
 import { getByIdNative } from '../dom/element';
+import { IMAGE_URI } from '../env/uri';
 import { addEventListener } from '../event_listener';
 import { addTimeout } from '../timer';
 
@@ -43,6 +41,6 @@ export function openImageWindow(baseURL: string, fileName: string, credential: s
     setSessionStorage('title', getTitle());
     setSessionStorage('session-credential', credential);
     setSessionStorage('session-type', sessionType);
-    openWindow(TOP_URL + '/image');
+    openWindow(IMAGE_URI);
     clearSessionStorage();
 }

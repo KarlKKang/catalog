@@ -1,6 +1,3 @@
-import {
-    TOP_URL,
-} from './module/env/constant';
 import { logout } from './module/server';
 import { clearSessionStorage, getSessionStorage, setTitle } from './module/dom/document';
 import { appendText, createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
@@ -12,6 +9,7 @@ import * as styles from '../css/message.module.scss';
 import { changeColor, horizontalCenter } from './module/style';
 import { CSS_COLOR } from './module/style/value';
 import { MessageTitleColor } from './module/message/type';
+import { TOP_URI } from './module/env/uri';
 
 export default function (showPage: ShowPageFunc) {
     const message = getSessionStorage('message');
@@ -36,7 +34,7 @@ export default function (showPage: ShowPageFunc) {
             horizontalCenter(button);
             appendChild(container, button);
         } else {
-            redirect(TOP_URL, true);
+            redirect(TOP_URI, true);
         }
         return;
     }
@@ -60,7 +58,7 @@ export default function (showPage: ShowPageFunc) {
 
         if (buttonText !== null) {
             if (url === null) {
-                redirect(TOP_URL, true);
+                redirect(TOP_URI, true);
                 return;
             }
             const button = createButtonElement(buttonText);

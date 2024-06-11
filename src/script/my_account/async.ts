@@ -28,9 +28,9 @@ import { changeColor, hideElement, showElement } from '../module/style';
 import { CSS_COLOR } from '../module/style/value';
 import { InviteResultKey, parseInviteResult } from '../module/type/InviteResult';
 import { redirect } from '../module/global';
-import { LOGIN_URL } from '../module/env/constant';
 import { default as initializeMFAModule } from './mfa';
 import { offloadPopupWindow } from '../module/popup_window/core';
+import { LOGIN_URI } from '../module/env/uri';
 
 const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 
@@ -46,7 +46,7 @@ export default function (userInfo: AccountInfo) {
     addEventListener(getSharedButton(SharedButton.logoutButton), 'click', () => {
         disableAllInputs(true);
         logout(() => {
-            redirect(LOGIN_URL);
+            redirect(LOGIN_URI);
         });
     });
     initializeMFAModule();

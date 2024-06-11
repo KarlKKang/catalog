@@ -1,13 +1,11 @@
-import {
-    TOP_URL,
-} from '../env/constant';
-import { getTitle, setSessionStorage, getFullURL } from '../dom/document';
+import { getFullPath, getTitle, setSessionStorage } from '../dom/document';
 import { defaultError } from '../text/message/title';
 import { MessageParamProp, type MessageParam } from './type';
 import { redirect } from '../global';
 import { defaultErrorSuffix } from '../text/message/body';
 import { CSS_COLOR } from '../style/value';
 import { goBackButtonText } from '../text/ui';
+import { MESSAGE_URI } from '../env/uri';
 
 export function showMessage({
     [MessageParamProp.MESSAGE]: message,
@@ -26,7 +24,7 @@ export function showMessage({
     if (buttonText !== null) {
         setSessionStorage('button-text', buttonText ?? goBackButtonText);
         if (url === undefined) {
-            setSessionStorage('url', getFullURL());
+            setSessionStorage('url', getFullPath());
         } else {
             setSessionStorage('url', url);
         }
@@ -39,5 +37,5 @@ export function showMessage({
         setSessionStorage('replace-body', '1');
     }
 
-    redirect(TOP_URL + '/message', true);
+    redirect(MESSAGE_URI, true);
 }

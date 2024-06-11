@@ -1,6 +1,3 @@
-import {
-    LOGIN_URL,
-} from './module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import { clearSessionStorage } from './module/dom/document';
 import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, createSpanElement, replaceText } from './module/dom/create_element';
@@ -18,6 +15,7 @@ import { goBackButtonText, submitButtonText } from './module/text/ui';
 import { passwordResetPageTitle } from './module/text/page_title';
 import * as commonStyles from '../css/common.module.scss';
 import * as styles from '../css/portal_form.module.scss';
+import { LOGIN_URI } from './module/env/uri';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -68,7 +66,7 @@ function showPageCallback() {
     });
 
     addEventListener(goBackText, 'click', () => {
-        redirect(LOGIN_URL, true);
+        redirect(LOGIN_URI, true);
     });
 
     function submitRequest() {
@@ -89,7 +87,7 @@ function showPageCallback() {
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response === 'DONE') {
-                    showMessage(emailSent(LOGIN_URL));
+                    showMessage(emailSent(LOGIN_URI));
                 } else {
                     showMessage(invalidResponse());
                 }

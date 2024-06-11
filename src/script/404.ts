@@ -1,6 +1,3 @@
-import {
-    TOP_URL,
-} from './module/env/constant';
 import { clearSessionStorage } from './module/dom/document';
 import { createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
 import { addClass, appendChild } from './module/dom/element';
@@ -12,6 +9,7 @@ import { redirect, type ShowPageFunc } from './module/global';
 import { changeColor, horizontalCenter, setWidth } from './module/style';
 import { CSS_AUTO, CSS_COLOR } from './module/style/value';
 import * as styles from '../css/message.module.scss';
+import { TOP_URI } from './module/env/uri';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -33,7 +31,7 @@ export default function (showPage: ShowPageFunc) {
     horizontalCenter(button);
     setWidth(button, CSS_AUTO);
     addEventListener(button, 'click', () => {
-        redirect(TOP_URL);
+        redirect(TOP_URI);
     });
     appendChild(container, button);
 

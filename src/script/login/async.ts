@@ -1,7 +1,4 @@
 import {
-    TOP_URL,
-} from '../module/env/constant';
-import {
     sendServerRequest,
     ServerRequestOptionProp
 } from '../module/server';
@@ -22,6 +19,7 @@ import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
 import { offloadPopupWindow } from '../module/popup_window/core';
 import { importModule } from '../module/import_module';
+import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 
 export default function (
     approvedCallbackPromise: Promise<typeof import(
@@ -74,7 +72,7 @@ export default function (
 
     addEventListener(submitButton, 'click', login);
     addEventListener(forgetPasswordLink, 'click', () => {
-        redirect(TOP_URL + '/request_password_reset', true);
+        redirect(REQUEST_PASSWORD_RESET_URI, true);
     });
 
     function login() {

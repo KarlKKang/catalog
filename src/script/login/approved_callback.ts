@@ -1,7 +1,4 @@
 import {
-    TOP_URL,
-} from '../module/env/constant';
-import {
     getURLParam,
 } from '../module/common';
 import { showMessage } from '../module/message';
@@ -10,6 +7,7 @@ import { redirect } from '../module/global';
 import { nextButtonText } from '../module/text/ui';
 import { CSS_COLOR } from '../module/style/value';
 import { MessageParamProp } from '../module/message/type';
+import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 
 export default function () {
     if (UNRECOMMENDED_BROWSER) {
@@ -30,7 +28,7 @@ function getForwardURL() {
     if (series !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
         let url: string;
         let separator: '?' | '&' = '?';
-        url = TOP_URL + '/bangumi/' + series;
+        url = BANGUMI_ROOT_URI + series;
 
         const ep = getURLParam('ep');
         if (ep !== null && ep !== '1') {
@@ -49,13 +47,13 @@ function getForwardURL() {
     if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
         const hash = getURLParam('hash');
         const hashString = (hash === null) ? '' : ('#' + hash);
-        return TOP_URL + '/news/' + news + hashString;
+        return NEWS_ROOT_URI + news + hashString;
     }
 
     const keywords = getURLParam('keywords');
     if (keywords !== null) {
-        return TOP_URL + '?keywords=' + keywords;
+        return TOP_URI + '?keywords=' + keywords;
     }
 
-    return TOP_URL;
+    return TOP_URI;
 }

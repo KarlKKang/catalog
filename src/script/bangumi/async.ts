@@ -1,11 +1,7 @@
-import {
-    TOP_URL,
-    CDN_URL,
-} from '../module/env/constant';
 import { appendText, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement, createTextNode } from '../module/dom/create_element';
 import { addClass, appendChild, insertBefore, remove, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { getTitle, setTitle, w } from '../module/dom/document';
+import { getHostname, getTitle, setTitle, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import { encodeCFURIComponent } from '../module/common/pure';
@@ -19,6 +15,8 @@ import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import * as styles from '../../css/bangumi.module.scss';
 import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoEPInfo, AudioEPInfo, ImageEPInfo } from '../module/type/BangumiInfo';
 import { importModule } from '../module/import_module';
+import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
+import { getCDNOrigin } from '../module/env/constant';
 
 let seriesID: string;
 let epIndex: number;
@@ -92,7 +90,7 @@ export default async function (
             showElement(contentContainer);
         });
         addEventListener(warningButtonNo, 'click', () => {
-            redirect(TOP_URL);
+            redirect(TOP_URI);
         });
 
         hideElement(contentContainer);
@@ -105,7 +103,7 @@ export default async function (
     /////////////////////////////////////////////Add Media/////////////////////////////////////////////
     const type = epInfo[EPInfoKey.TYPE];
     const seriesOverride = epInfo[EPInfoKey.SERIES_OVERRIDE];
-    const baseURL = CDN_URL + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo[EPInfoKey.DIR]) + '/';
+    const baseURL = getCDNOrigin(getHostname()) + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo[EPInfoKey.DIR]) + '/';
 
     const currentPgid = pgid;
     if (type === 'video') {
@@ -293,7 +291,7 @@ function updateSeasonSelector(seasons: Seasons, seasonSelector: HTMLElement) {
 }
 
 function goToEP(destSeries: string, destEp: number) {
-    const url = TOP_URL + '/bangumi/' + destSeries + (destEp === 1 ? '' : ('?ep=' + destEp));
+    const url = BANGUMI_ROOT_URI + destSeries + (destEp === 1 ? '' : ('?ep=' + destEp));
     redirect(url);
 }
 

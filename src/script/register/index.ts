@@ -1,7 +1,4 @@
 import {
-    LOGIN_URL,
-} from '../module/env/constant';
-import {
     getURLParam,
 } from '../module/common';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
@@ -12,6 +9,7 @@ import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { invalidResponse } from '../module/server/message';
 import { importModule } from '../module/import_module';
 import { emailAlreadyRegistered } from './shared';
+import { LOGIN_URI } from '../module/env/uri';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -35,7 +33,7 @@ export default function (showPage: ShowPageFunc) {
         if (DEVELOPMENT) {
             runAsyncModule(getAsyncModulePromise(), 'test');
         } else {
-            redirect(LOGIN_URL, true);
+            redirect(LOGIN_URI, true);
         }
         return;
     }

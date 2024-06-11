@@ -9,8 +9,8 @@ import { redirect } from '../module/global';
 import { allResultsShown, loading, noResult } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
 import { lineClamp as lineClampClass } from '../../css/line_clamp.module.scss';
-import { NEWS_TOP_URL } from './helper';
 import { type AllNewsInfo, parseAllNewsInfo, type Pivot, AllNewsInfoKey, AllNewsInfoEntryKey } from '../module/type/AllNewsInfo';
+import { NEWS_ROOT_URI } from '../module/env/uri';
 
 let pivot: Pivot;
 
@@ -77,7 +77,7 @@ function showAllNews(allNewsInfo: AllNewsInfo, container: HTMLElement, loadingTe
         appendChild(overviewContainer, titleContainer);
 
         addEventListener(overviewContainer, 'click', () => {
-            redirect(NEWS_TOP_URL + entry[AllNewsInfoEntryKey.ID]);
+            redirect(NEWS_ROOT_URI + entry[AllNewsInfoEntryKey.ID]);
         });
 
         appendChild(container, overviewContainer);

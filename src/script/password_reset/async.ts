@@ -1,6 +1,3 @@
-import {
-    LOGIN_URL,
-} from '../module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { appendListItems, createButtonElement, createDivElement, createParagraphElement, createPasswordInput, createUListElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput } from '../module/dom/element';
@@ -18,6 +15,7 @@ import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
 import { CSS_COLOR } from '../module/style/value';
 import { MessageParamProp } from '../module/message/type';
+import { LOGIN_URI } from '../module/env/uri';
 
 export default function (user: string, signature: string, expires: string) {
     const container = createDivElement();
@@ -103,7 +101,7 @@ export default function (user: string, signature: string, expires: string) {
                         [MessageParamProp.TITLE]: completed,
                         [MessageParamProp.MESSAGE]: passwordChanged,
                         [MessageParamProp.COLOR]: CSS_COLOR.GREEN,
-                        [MessageParamProp.URL]: LOGIN_URL,
+                        [MessageParamProp.URL]: LOGIN_URI,
                         [MessageParamProp.BUTTON_TEXT]: nextButtonText
                     });
                 } else {

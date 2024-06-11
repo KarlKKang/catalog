@@ -1,12 +1,12 @@
 import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
-import { changeURL, clearSessionStorage, getBaseURL, getHash } from '../module/dom/document';
+import { changeURL, clearSessionStorage, getHash, getURI } from '../module/dom/document';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
-import { NEWS_TOP_URL } from './helper';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import { NewsInfoKey, parseNewsInfo } from '../module/type/NewsInfo';
 import { importModule } from '../module/import_module';
+import { NEWS_ROOT_URI } from '../module/env/uri';
 
 let offloadModule: (() => void) | null = null;
 
@@ -15,8 +15,8 @@ export default function (showPage: ShowPageFunc) {
 
     const newsID = getNewsID();
     if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {
-        if (getBaseURL() !== NEWS_TOP_URL) {
-            changeURL(NEWS_TOP_URL, true);
+        if (getURI() !== NEWS_ROOT_URI) {
+            changeURL(NEWS_ROOT_URI, true);
         }
         getAllNews(showPage);
     } else {
@@ -46,7 +46,7 @@ function getAllNews(showPage: ShowPageFunc): void {
 
 function getNews(newsID: string, showPage: ShowPageFunc): void {
     addNavBar(NavBarPage.NEWS, () => {
-        redirect(NEWS_TOP_URL);
+        redirect(NEWS_ROOT_URI);
     });
 
     const newsModulePromise = import(
@@ -75,8 +75,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
 }
 
 function getNewsID(): string | null {
-    const start = NEWS_TOP_URL.length;
-    return getBaseURL().substring(start);
+    return getURI().substring(NEWS_ROOT_URI.length);
 }
 
 export function offload() {

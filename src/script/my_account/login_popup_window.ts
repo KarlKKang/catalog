@@ -4,12 +4,12 @@ import { openWindow } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
 import { loginFailed } from '../module/text/message/body';
-import { TOP_URL } from '../module/env/constant';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../module/style';
 import { cancelButtonText, forgetPasswordText, submitButtonText } from '../module/text/ui';
 import * as commonStyles from '../../css/common.module.scss';
 import { CSS_COLOR } from '../module/style/value';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
+import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 
 export const enum LoginPopupWindowKey {
     EMAIL,
@@ -65,7 +65,7 @@ export function promptForLogin(message?: string) {
     addClass(forgetPasswordLink, commonStyles.link);
     appendChild(forgetPasswordParagraph, forgetPasswordLink);
     addEventListener(forgetPasswordLink, 'click', () => {
-        openWindow(TOP_URL + '/request_password_reset');
+        openWindow(REQUEST_PASSWORD_RESET_URI);
     });
 
     const hidePopupWindow = initializePopupWindow(

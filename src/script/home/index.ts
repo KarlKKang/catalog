@@ -1,7 +1,4 @@
 import {
-    TOP_URL,
-} from '../module/env/constant';
-import {
     scrollToTop,
 } from '../module/common';
 import { addNavBar } from '../module/nav_bar';
@@ -13,6 +10,7 @@ import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { parseSeriesInfo } from '../module/type/SeriesInfo';
 import { getURLKeywords, search, setSearch } from './shared';
 import { importModule } from '../module/import_module';
+import { TOP_URI } from '../module/env/uri';
 
 let offloadModule: (() => void) | null = null;
 
@@ -30,10 +28,10 @@ export default function (showPage: ShowPageFunc) {
         }
         const keywords = getURLKeywords();
         if (search === null || keywords === '') {
-            redirect(TOP_URL);
+            redirect(TOP_URI);
             return;
         }
-        changeURL(TOP_URL);
+        changeURL(TOP_URI);
         search(true);
     });
 

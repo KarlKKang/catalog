@@ -1,10 +1,12 @@
-import { SERVER_URL, LOGIN_URL } from '../env/constant';
+import { getServerOrigin } from '../env/constant';
 import { showMessage } from '../message';
 import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
 import { addEventListener, removeAllEventListeners } from '../event_listener';
 import { addTimeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
+import { getHostname } from '../dom/document';
+import { LOGIN_URI } from '../env/uri';
 
 export const enum ServerRequestOptionProp {
     CALLBACK,
@@ -57,7 +59,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRe
             showMessage(insufficientPermissions);
         } else if (responseText === 'UNAUTHORIZED') {
             const logoutParam = options[ServerRequestOptionProp.LOGOUT_PARAM];
-            const url = LOGIN_URL + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam));
+            const url = LOGIN_URI + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam));
             if (options[ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]) {
                 showMessage(sessionEnded(url));
             } else {
@@ -86,7 +88,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRe
 
 export function sendServerRequest(uri: string, options: ServerRequestOption): XMLHttpRequest {
     const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open(options[ServerRequestOptionProp.METHOD] ?? 'POST', SERVER_URL + '/' + uri, true);
+    xmlhttp.open(options[ServerRequestOptionProp.METHOD] ?? 'POST', getServerOrigin(getHostname()) + '/' + uri, true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.withCredentials = true;
 

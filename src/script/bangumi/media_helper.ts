@@ -1,10 +1,7 @@
-import {
-    CDN_URL, DOMAIN,
-} from '../module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { appendListItems, appendText, createButtonElement, createDivElement, createElement, createHRElement, createOptionElement, createSelectElement, createTextNode, createUListElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, getDescendantsByClassAt, insertBefore, prependChild, replaceChildren } from '../module/dom/element';
-import { getBaseURL, w } from '../module/dom/document';
+import { getHostname, getURI, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
@@ -19,12 +16,13 @@ import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import { defaultError } from '../module/text/message/title';
 import { defaultErrorSuffix } from '../module/text/message/body';
 import * as styles from '../../css/bangumi.module.scss';
+import { getCDNOrigin } from '../module/env/constant';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
 function showNetworkError() {
-    showTextErrorMessage(defaultError, 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。または、' + DOMAIN + 'の他のタブでの操作が、現在のタブに干渉している可能性があります。この場合、ページを再読み込みしてみてください。');
+    showTextErrorMessage(defaultError, 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。または、' + getHostname() + 'の他のタブでの操作が、現在のタブに干渉している可能性があります。この場合、ページを再読み込みしてみてください。');
 }
 
 function showUnknownPlaybackError() {
@@ -182,7 +180,7 @@ export function buildDownloadAccordion(
         }
         sendServerRequest('start_download', {
             [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                if (getBaseURL(response).startsWith(CDN_URL + '/download/')) {
+                if (getHostname(response) === getCDNOrigin(getHostname()) && getURI(response).startsWith('/download/')) {
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {

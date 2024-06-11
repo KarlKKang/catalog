@@ -1,4 +1,3 @@
-import { TOP_URL } from '../module/env/constant';
 import { addClass, appendChild, getParentElement, insertBefore, prependChild, remove, removeClass, replaceChildren, setClass } from '../module/dom/element';
 import { appendText, createDivElement, createOptionElement, createParagraphElement, createSelectElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
 import { changeURL, getTitle } from '../module/dom/document';
@@ -34,6 +33,7 @@ import * as styles from '../../css/bangumi.module.scss';
 import { importModule } from '../module/import_module';
 import { PlayerKey } from '../module/player/player_key';
 import { NonNativePlayerKey } from '../module/player/non_native_player_key';
+import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 
 let currentPgid: unknown;
 
@@ -199,7 +199,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         if (!videoCanPlay('hvc1.2.4.H153.90')) {
             showErrorMessage(incompatibleTitle, [
                 createTextNode('お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは'),
-                createLinkElem('こちら', TOP_URL + '/news/UFzUoubmOzd'),
+                createLinkElem('こちら', NEWS_ROOT_URI + 'UFzUoubmOzd'),
                 createTextNode('をご覧ください。')
             ]);
             return;
@@ -208,7 +208,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         USE_AVC = false;
         mediaMessageQueue.push(['HDR10について', [
             createTextNode('詳しくは'),
-            createLinkElem('こちら', TOP_URL + '/news/0p7hzGpxfMh'),
+            createLinkElem('こちら', NEWS_ROOT_URI + '0p7hzGpxfMh'),
             createTextNode('をご覧ください。')
         ], null]);
     } else if (currentFormat[VideoFormatKey.VIDEO] === 'hevc41') {
@@ -247,7 +247,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             if (currentFormat[VideoFormatKey.AUDIO].startsWith('atmos')) {
                 mediaMessageQueue.push(['Dolby Atmos®について', [
                     createTextNode('Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは'),
-                    createLinkElem('こちら', TOP_URL + '/news/yMq2BLvq-8Yq'),
+                    createLinkElem('こちら', NEWS_ROOT_URI + 'yMq2BLvq-8Yq'),
                     createTextNode('をご覧ください。')
                 ], null]);
             }
@@ -441,7 +441,7 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
 function showDolbyVisionError() {
     showErrorMessage('Dolby Vision®に対応していません', [
         createTextNode('Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは'),
-        createLinkElem('こちら', TOP_URL + '/news/0p7hzGpxfMh'),
+        createLinkElem('こちら', NEWS_ROOT_URI + '0p7hzGpxfMh'),
         createTextNode('をご覧ください。')
     ]);
 }
@@ -500,7 +500,7 @@ function disableDropdown(selectElement: HTMLSelectElement, disabled: boolean) {
 }
 
 function updateURLParam(seriesID: string, epIndex: number, formatIndex: number): void {
-    let url = TOP_URL + '/bangumi/' + seriesID;
+    let url = BANGUMI_ROOT_URI + seriesID;
 
     const query = createQuery(epIndex, formatIndex);
     if (query !== '') {

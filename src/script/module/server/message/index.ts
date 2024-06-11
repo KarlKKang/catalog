@@ -1,10 +1,10 @@
 import * as body from './body';
 import * as title from './title';
-import { LOGIN_URL, TOP_URL } from '../../env/constant';
 import type { MaintenanceInfo } from '../../type/MaintenanceInfo';
-import { getBaseURL } from '../../dom/document';
+import { getURI } from '../../dom/document';
 import { MessageParamProp, type MessageParam } from '../../message/type';
 import { CSS_COLOR } from '../../style/value';
+import { LOGIN_URI, TOP_URI } from '../../env/uri';
 
 const reloadButtonText = '再読み込み';
 export const invalidResponse = () => {
@@ -24,13 +24,13 @@ export const mediaSessionEnded = {
     [MessageParamProp.TITLE]: title.sessionEnded,
     [MessageParamProp.MESSAGE]: body.mediaSessionEnded,
     [MessageParamProp.COLOR]: CSS_COLOR.ORANGE,
-    [MessageParamProp.URL]: TOP_URL
+    [MessageParamProp.URL]: TOP_URI
 };
 export const connectionError = {
     [MessageParamProp.TITLE]: title.connectionError,
     [MessageParamProp.MESSAGE]: body.connectionError,
     [MessageParamProp.REPLACE_BODY]: true,
-    [MessageParamProp.URL]: TOP_URL // In case of request containing malicious string, the page needs to be reset to the top page.
+    [MessageParamProp.URL]: TOP_URI // In case of request containing malicious string, the page needs to be reset to the top page.
 };
 export const status429 = {
     [MessageParamProp.TITLE]: title.status429,
@@ -53,7 +53,7 @@ export const status400And500 = (responseText: string) => {
 export const notFound = {
     [MessageParamProp.TITLE]: title.notFound,
     [MessageParamProp.MESSAGE]: body.notFound,
-    [MessageParamProp.URL]: TOP_URL
+    [MessageParamProp.URL]: TOP_URI
 };
 export const unknownServerError = () => {
     const param: MessageParam = {};
@@ -64,17 +64,17 @@ export const insufficientPermissions = {
     [MessageParamProp.TITLE]: title.insufficientPermissions,
     [MessageParamProp.MESSAGE]: body.insufficientPermissions,
     [MessageParamProp.COLOR]: CSS_COLOR.RED,
-    [MessageParamProp.URL]: TOP_URL
+    [MessageParamProp.URL]: TOP_URI
 };
 
 function setRedirectUrl(param: MessageParam) {
-    const href = getBaseURL();
-    if (href === TOP_URL) {
-        param[MessageParamProp.URL] = LOGIN_URL;
+    const uri = getURI();
+    if (uri === TOP_URI) {
+        param[MessageParamProp.URL] = LOGIN_URI;
         param[MessageParamProp.LOGOUT] = true;
-    } else if (href === LOGIN_URL) {
-        param[MessageParamProp.URL] = LOGIN_URL; // This will strip away any query string that might cause the problem.
+    } else if (uri === LOGIN_URI) {
+        param[MessageParamProp.URL] = LOGIN_URI; // This will strip away any query string that might cause the problem.
     } else {
-        param[MessageParamProp.URL] = TOP_URL;
+        param[MessageParamProp.URL] = LOGIN_URI;
     }
 }

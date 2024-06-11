@@ -1,6 +1,3 @@
-import {
-    TOP_URL,
-} from '../module/env/constant';
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, createPasswordInput, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput, replaceChildren } from '../module/dom/element';
@@ -20,6 +17,7 @@ import { completed } from '../module/text/message/title';
 import { CSS_COLOR } from '../module/style/value';
 import { MessageParamProp } from '../module/message/type';
 import { offloadPopupWindow } from '../module/popup_window/core';
+import { TOP_URI } from '../module/env/uri';
 
 export default function (param: string) {
     const container = createDivElement();
@@ -133,7 +131,7 @@ export default function (param: string) {
                             [MessageParamProp.TITLE]: completed,
                             [MessageParamProp.MESSAGE]: 'メールアドレスが変更されました。',
                             [MessageParamProp.COLOR]: CSS_COLOR.GREEN,
-                            [MessageParamProp.URL]: TOP_URL,
+                            [MessageParamProp.URL]: TOP_URI,
                             [MessageParamProp.BUTTON_TEXT]: 'トップページへ'
                         });
                         break;

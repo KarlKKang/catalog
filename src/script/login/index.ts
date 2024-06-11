@@ -1,7 +1,4 @@
 import {
-    TOP_URL,
-} from '../module/env/constant';
-import {
     ServerRequestOptionProp,
     sendServerRequest,
 } from '../module/server';
@@ -11,6 +8,7 @@ import { addTimeout } from '../module/timer';
 import { importModule } from '../module/import_module';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
+import { TOP_URI } from '../module/env/uri';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -38,7 +36,7 @@ export default function (showPage: ShowPageFunc) {
     sendServerRequest('get_authentication_state', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
             if (response === 'APPROVED') {
-                redirect(TOP_URL, true);
+                redirect(TOP_URI, true);
             } else if (response === 'FAILED') {
                 const currentPgid = pgid;
                 const asyncModule = await importModule(asyncModulePromise);
