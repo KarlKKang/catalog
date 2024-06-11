@@ -65,8 +65,6 @@ function addWorkboxPlugin(config, dev) {
     hash.update(buffer);
     const browserScriptRevision = hash.digest('hex');
 
-    const domain = (dev ? 'alpha.' : '') + DOMAIN;
-    const domainEscaped = domain.replace(/\./g, '\\.');
     config.plugins.push(
         new GenerateSW({
             inlineWorkboxRuntime: true,
@@ -99,7 +97,9 @@ function addWorkboxPlugin(config, dev) {
             ],
             runtimeCaching: [
                 {
-                    urlPattern: /\.woff2?$/,
+                    urlPattern: ({ url }) => {
+                        return url.pathname.endsWith('.woff2');
+                    },
                     handler: 'CacheFirst',
                     options: {
                         cacheName: 'font',
@@ -128,7 +128,9 @@ function addWorkboxPlugin(config, dev) {
                     },
                 },
                 {
-                    urlPattern: new RegExp('^https://' + domainEscaped + '/icon/'),
+                    urlPattern: ({ url }) => {
+                        return url.pathname.startsWith('/icon/');
+                    },
                     handler: 'CacheFirst',
                     options: {
                         cacheName: 'icon',
