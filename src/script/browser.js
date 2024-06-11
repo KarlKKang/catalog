@@ -1,9 +1,8 @@
 let dynamicImportTest = null; // eslint-disable-line @typescript-eslint/no-unused-vars, prefer-const
 
 function unsupportRedirect() {
-    const URL = 'https://<%=data.domain%>/unsupported_browser';
-    const windowLocation = window.location;
-    windowLocation.replace(URL);
+    const URL = '/unsupported_browser';
+    window.location.replace(URL);
 }
 
 (function () {
@@ -62,6 +61,12 @@ function unsupportRedirect() {
         return;
     }
 
+    const hostname = w.location.hostname;
+    if (!hostname) {
+        _unsupportRedirect();
+        return;
+    }
+
     const getCookie = (name) => {
         name = name + '=';
         const cookies = d.cookie.split(';');
@@ -79,12 +84,12 @@ function unsupportRedirect() {
 
     try {
         const x = '__cookie_test__';
-        d.cookie = x + '=' + x + ';max-age=10;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
+        d.cookie = x + '=' + x + ';max-age=10;path=/;domain=.' + hostname + ';secure;samesite=strict';
         if (getCookie(x) !== x) {
             _unsupportRedirect();
             return;
         }
-        d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.<%=data.domain%>;secure;samesite=strict';
+        d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.' + hostname + ';secure;samesite=strict';
     } catch (e) {
         _unsupportRedirect();
         return;

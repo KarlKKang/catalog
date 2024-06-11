@@ -1,9 +1,7 @@
-import lodashTemplate from 'lodash/template.js';
 import babel from '@babel/core';
 import { minify as terser } from 'terser';
 import cssMinify from './css_minifier.js';
 import * as fs from './file_system.js';
-import { DOMAIN } from './env/index.js';
 
 process.env.BROWSERSLIST_ENV = 'legacy';
 const dev = process.argv[2] === 'dev';
@@ -16,7 +14,6 @@ if (dev) {
 const srcFile = './src/script/browser.js';
 const destFile = destDirPrefix + 'script/browser.js';
 fs.read(srcFile, function (code) {
-    code = lodashTemplate(code)({ data: { domain: (dev ? 'alpha.' : '') + DOMAIN } });
     babel.transform(
         code,
         { filename: srcFile, presets: ["@babel/preset-env"] },
