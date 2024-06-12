@@ -1,11 +1,10 @@
-import { getServerOrigin } from '../env/constant';
+import { getServerOrigin } from '../env/origin';
 import { showMessage } from '../message';
 import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
 import { addEventListener, removeAllEventListeners } from '../event_listener';
 import { addTimeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
-import { getHostname } from '../dom/document';
 import { LOGIN_URI } from '../env/uri';
 
 export const enum ServerRequestOptionProp {
@@ -88,7 +87,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRe
 
 export function sendServerRequest(uri: string, options: ServerRequestOption): XMLHttpRequest {
     const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open(options[ServerRequestOptionProp.METHOD] ?? 'POST', getServerOrigin(getHostname()) + '/' + uri, true);
+    xmlhttp.open(options[ServerRequestOptionProp.METHOD] ?? 'POST', getServerOrigin() + '/' + uri, true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.withCredentials = true;
 

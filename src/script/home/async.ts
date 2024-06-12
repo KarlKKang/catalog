@@ -5,7 +5,7 @@ import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../mo
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { changeURL, getFullPath, getHostname, getURI } from '../module/dom/document';
+import { changeURL, getFullPath, getURI } from '../module/dom/document';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/common/pure';
@@ -22,7 +22,7 @@ import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntr
 import { MaintenanceInfoKey } from '../module/type/MaintenanceInfo';
 import { attachLazyload, offload as offloadLazyload } from '../module/lazyload';
 import { getURLKeywords, setSearch } from './shared';
-import { getCDNOrigin } from '../module/env/constant';
+import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 
 let pivot: Pivot;
@@ -191,7 +191,7 @@ function showSeries(
         eventTargetsTracker.add(seriesNode);
 
         appendChild(containerElem, seriesNode);
-        attachLazyload(thumbnailNode, getCDNOrigin(getHostname()) + '/thumbnails/' + seriesEntry[SeriesEntryKey.THUMBNAIL], 'サムネイル：' + title);
+        attachLazyload(thumbnailNode, getCDNOrigin() + '/thumbnails/' + seriesEntry[SeriesEntryKey.THUMBNAIL], 'サムネイル：' + title);
     }
 
     infiniteScrolling[InfiniteScrollingProp.SET_ENABLED](true);

@@ -4,7 +4,7 @@ import { addClass, appendChild, replaceChildren, setClass } from '../module/dom/
 import { changeURL, d, getFullPath, getURI, html, setTitle, w } from '../module/dom/document';
 import { addEventListenerOnce, deregisterAllEventTargets } from '../module/event_listener';
 import { body } from '../module/dom/body';
-import { TOP_DOMAIN } from '../module/env/constant';
+import { TOP_DOMAIN } from '../module/env/domain';
 import { addTimeout, removeAllTimers } from '../module/timer';
 import * as messagePageScript from '../message';
 import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect, type ShowPageFunc } from '../module/global';

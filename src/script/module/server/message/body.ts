@@ -1,6 +1,6 @@
 import { appendListItems, appendText, createAnchorElement, createDivElement, createLIElement, createParagraphElement, createUListElement } from '../../dom/create_element';
 import { addClass, appendChild, appendChildren } from '../../dom/element';
-import { TOP_DOMAIN } from '../../env/constant';
+import { TOP_DOMAIN } from '../../env/domain';
 import { getLocalTimeString } from '../../common/pure';
 import { type MaintenanceInfo, MaintenanceInfoKey } from '../../type/MaintenanceInfo';
 import { defaultErrorSuffix } from '../../text/message/body';

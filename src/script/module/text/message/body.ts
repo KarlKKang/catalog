@@ -1,6 +1,6 @@
 import { appendText, createAnchorElement, createTextNode } from '../../dom/create_element';
 import { addClass } from '../../dom/element';
-import { TOP_DOMAIN } from '../../env/constant';
+import { TOP_DOMAIN } from '../../env/domain';
 import * as styles from '../../../../css/common.module.scss';
 
 export const defaultErrorSuffix = 'このエラーが続く場合は、管理者にお問い合わせください。';

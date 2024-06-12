@@ -1,7 +1,7 @@
 import { appendText, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement, createTextNode } from '../module/dom/create_element';
 import { addClass, appendChild, insertBefore, remove, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { getHostname, getTitle, setTitle, w } from '../module/dom/document';
+import { getTitle, setTitle, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import { encodeCFURIComponent } from '../module/common/pure';
@@ -16,7 +16,7 @@ import * as styles from '../../css/bangumi.module.scss';
 import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoEPInfo, AudioEPInfo, ImageEPInfo } from '../module/type/BangumiInfo';
 import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
-import { getCDNOrigin } from '../module/env/constant';
+import { getCDNOrigin } from '../module/env/origin';
 
 let seriesID: string;
 let epIndex: number;
@@ -103,7 +103,7 @@ export default async function (
     /////////////////////////////////////////////Add Media/////////////////////////////////////////////
     const type = epInfo[EPInfoKey.TYPE];
     const seriesOverride = epInfo[EPInfoKey.SERIES_OVERRIDE];
-    const baseURL = getCDNOrigin(getHostname()) + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo[EPInfoKey.DIR]) + '/';
+    const baseURL = getCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo[EPInfoKey.DIR]) + '/';
 
     const currentPgid = pgid;
     if (type === 'video') {

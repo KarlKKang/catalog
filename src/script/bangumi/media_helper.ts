@@ -16,7 +16,7 @@ import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import { defaultError } from '../module/text/message/title';
 import { defaultErrorSuffix } from '../module/text/message/body';
 import * as styles from '../../css/bangumi.module.scss';
-import { getCDNOrigin } from '../module/env/constant';
+import { getCDNOrigin } from '../module/env/origin';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -180,7 +180,7 @@ export function buildDownloadAccordion(
         }
         sendServerRequest('start_download', {
             [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                if (getHostname(response) === getCDNOrigin(getHostname()) && getURI(response).startsWith('/download/')) {
+                if (getHostname(response) === getCDNOrigin() && getURI(response).startsWith('/download/')) {
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {

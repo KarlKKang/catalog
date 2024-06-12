@@ -4,7 +4,7 @@ import {
     openImageWindow,
     SessionTypes,
 } from '../module/common';
-import { getHostname, getTitle, setTitle } from '../module/dom/document';
+import { getTitle, setTitle } from '../module/dom/document';
 import { createDivElement, createParagraphElement } from '../module/dom/create_element';
 import { addClass, appendChild, getDataAttribute, getDescendantsByClass, removeClass } from '../module/dom/element';
 import { body } from '../module/dom/body';
@@ -20,7 +20,7 @@ import { createNewsTemplate, parseNewsStyle } from '../module/news';
 import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
-import { getCDNOrigin } from '../module/env/constant';
+import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 
 export default function (newsInfo: NewsInfo, newsID: string): void {
@@ -42,7 +42,7 @@ export default function (newsInfo: NewsInfo, newsID: string): void {
     appendChild(container, contentOuterContainer);
 
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', getCDNOrigin(getHostname()) + '/news/' + newsID + '.html');
+    xhr.open('GET', getCDNOrigin() + '/news/' + newsID + '.html');
     xhr.withCredentials = true;
 
     addEventListener(xhr, 'error', () => {
@@ -72,7 +72,7 @@ export default function (newsInfo: NewsInfo, newsID: string): void {
 async function attachImage(contentContainer: HTMLElement, newsID: string, credential: string): Promise<void> {
     setLazyloadCredential(credential, SessionTypes.NEWS);
 
-    const baseURL = getCDNOrigin(getHostname()) + '/news/' + newsID + '/';
+    const baseURL = getCDNOrigin() + '/news/' + newsID + '/';
     const INTERNAL_IMAGE_CLASS = 'image-internal';
     const elems = getDescendantsByClass(contentContainer, INTERNAL_IMAGE_CLASS);
     let elem = elems[0];
