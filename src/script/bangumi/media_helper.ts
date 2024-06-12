@@ -1,7 +1,7 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { appendListItems, appendText, createButtonElement, createDivElement, createElement, createHRElement, createOptionElement, createSelectElement, createTextNode, createUListElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, getDescendantsByClassAt, insertBefore, prependChild, replaceChildren } from '../module/dom/element';
-import { getHostname, getURI, w } from '../module/dom/document';
+import { getHostname, parseOrigin, parseURI, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
@@ -180,7 +180,8 @@ export function buildDownloadAccordion(
         }
         sendServerRequest('start_download', {
             [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                if (getHostname(response) === getCDNOrigin() && getURI(response).startsWith('/download/')) {
+                const downloadURI = parseURI(response);
+                if (parseOrigin(response) === getCDNOrigin() && downloadURI?.startsWith('/download/')) {
                     iframe.src = response;
                     downloadButton.disabled = false;
                 } else {

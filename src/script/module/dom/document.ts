@@ -13,31 +13,32 @@ function getOrigin() {
     return windowLocation.origin;
 }
 
-export function getURI(url?: string | URL): string {
-    if (url === undefined) {
-        url = getHref();
+export function parseOrigin(url: string | URL) {
+    try {
+        return new URL(url).origin;
+    } catch (e) {
+        return null;
     }
-
-    const urlObj = new URL(url, getOrigin());
-    return urlObj.pathname;
 }
 
-export function getHostname(url?: string | URL) {
-    if (url === undefined) {
-        url = getHref();
-    }
-
-    const urlObj = new URL(url, getOrigin());
-    return urlObj.hostname;
+export function getURI() {
+    return windowLocation.pathname;
 }
 
-export function getFullPath(url?: string | URL) {
-    if (url === undefined) {
-        url = getHref();
+export function parseURI(url: string | URL) {
+    try {
+        return new URL(url, getOrigin()).pathname;
+    } catch (e) {
+        return null;
     }
+}
 
-    const urlObj = new URL(url, getOrigin());
-    return urlObj.pathname + urlObj.search + urlObj.hash;
+export function getHostname() {
+    return windowLocation.hostname;
+}
+
+export function getFullPath() {
+    return windowLocation.pathname + windowLocation.search + windowLocation.hash;
 }
 
 export function getHash() {

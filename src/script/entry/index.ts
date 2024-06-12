@@ -1,7 +1,7 @@
 import 'core-js';
 import { createDivElement } from '../module/dom/create_element';
 import { addClass, appendChild, replaceChildren, setClass } from '../module/dom/element';
-import { changeURL, d, getFullPath, getURI, html, setTitle, w } from '../module/dom/document';
+import { changeURL, d, getFullPath, html, parseURI, setTitle, w } from '../module/dom/document';
 import { addEventListenerOnce, deregisterAllEventTargets } from '../module/event_listener';
 import { body } from '../module/dom/body';
 import { TOP_DOMAIN } from '../module/env/domain';
@@ -112,7 +112,11 @@ const directories = {
 };
 
 function load(url: string, withoutHistory: boolean | null = false) {
-    let uri = getURI(url);
+    let uri = parseURI(url);
+    if (uri === null) {
+        loadPage(url, withoutHistory, page404);
+        return;
+    }
 
     if (objectKeyExists(uri, pages)) {
         const page = pages[uri];
