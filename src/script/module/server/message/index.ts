@@ -75,6 +75,6 @@ function setRedirectUrl(param: MessageParam) {
     } else if (uri === LOGIN_URI) {
         param[MessageParamProp.URL] = LOGIN_URI; // This will strip away any query string that might cause the problem.
     } else {
-        param[MessageParamProp.URL] = LOGIN_URI;
+        param[MessageParamProp.URL] = TOP_URI;
     }
 }
