@@ -61,12 +61,6 @@ function unsupportRedirect() {
         return;
     }
 
-    const hostname = w.location.hostname;
-    if (!hostname) {
-        _unsupportRedirect();
-        return;
-    }
-
     const getCookie = (name) => {
         name = name + '=';
         const cookies = d.cookie.split(';');
@@ -84,12 +78,12 @@ function unsupportRedirect() {
 
     try {
         const x = '__cookie_test__';
-        d.cookie = x + '=' + x + ';max-age=10;path=/;domain=.' + hostname + ';secure;samesite=strict';
+        d.cookie = x + '=' + x + ';max-age=10;path=/;secure;samesite=strict';
         if (getCookie(x) !== x) {
             _unsupportRedirect();
             return;
         }
-        d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.' + hostname + ';secure;samesite=strict';
+        d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict';
     } catch (e) {
         _unsupportRedirect();
         return;
