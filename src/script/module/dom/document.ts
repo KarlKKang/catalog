@@ -33,8 +33,12 @@ export function parseURI(url: string | URL) {
     }
 }
 
-export function getHostname() {
-    return windowLocation.hostname;
+export function getHostname(port = false) {
+    const hostname = windowLocation.hostname;
+    if (port === true) {
+        return hostname;
+    }
+    return hostname.replace(/:\d+$/, '');
 }
 
 export function getFullPath() {
