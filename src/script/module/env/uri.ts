@@ -11,5 +11,6 @@ export const SPECIAL_REGISTER_URI = '/special_register';
 export const LOGIN_URI = '/login';
 export const REQUEST_PASSWORD_RESET_URI = '/request_password_reset';
 export const PASSWORD_RESET_URI = '/password_reset';
+export const POPS_URI = '/pops';
 export const BANGUMI_ROOT_URI = '/bangumi/';
 export const NEWS_ROOT_URI = '/news/';

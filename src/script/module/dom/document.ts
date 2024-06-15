@@ -45,6 +45,14 @@ export function getHash() {
     return windowLocation.hash.substring(1);
 }
 
+export function getProtocol() {
+    return windowLocation.protocol;
+}
+
+export function getHost() {
+    return windowLocation.host;
+}
+
 export function getSearchParam(name: string): string | null {
     const urlObj = new URL(getHref());
     return urlObj.searchParams.get(name);
