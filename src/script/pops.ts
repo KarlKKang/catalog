@@ -1,4 +1,4 @@
-import { appendText, createDivElement, createParagraphElement, createSpanElement } from './module/dom/create_element';
+import { appendText, createDivElement, createEmailLink, createParagraphElement, createSpanElement } from './module/dom/create_element';
 import { clearSessionStorage, getHost, getProtocol, windowLocation } from './module/dom/document';
 import { addClass, appendChild, replaceChildren } from './module/dom/element';
 import { getServerOrigin, splitHostname } from './module/env/origin';
@@ -13,6 +13,7 @@ import * as styles from '../css/news.module.scss';
 import { body } from './module/dom/body';
 import { popsPageTitle } from './module/text/page_title';
 import { POPS_URI } from './module/env/uri';
+import { TOP_DOMAIN } from './module/env/domain';
 
 const enum PopInfoNodeKey {
     INFO,
@@ -43,9 +44,12 @@ export default function (showPage: ShowPageFunc) {
             appendChild(innerContainer, contentContainer);
             appendChild(body, outerContainer);
 
-            appendChild(contentContainer, createParagraphElement(
-                '以下は、いくつかのPoints of Presenceの専用エンドポイントです。「自動」が最適でない場合は、これらのいずれかを使用することができます。他のPoints of Presenceを専用エンドポイントとして公開する必要がある場合は、管理者にお問い合わせください。'
-            ));
+            const promptParagraph = createParagraphElement(
+                '以下は、いくつかのPoints of Presenceの専用エンドポイントです。「自動」が最適でない場合は、これらのいずれかを使用することができます。他のPoints of Presenceを専用エンドポイントとして公開する必要がある場合は、管理者（'
+            );
+            appendChild(promptParagraph, createEmailLink('admin@' + TOP_DOMAIN));
+            appendText(promptParagraph, '）にお問い合わせください。');
+            appendChild(contentContainer, promptParagraph);
 
             const popListContainer = createDivElement();
             popListContainer.style.textAlign = 'center';
@@ -136,10 +140,12 @@ function testNextPop(container: HTMLDivElement, head: PopInfoNode, locationPrefi
     if (testPopNodePrevious !== null) { // Remove the node from the linked list.
         testPopNodePrevious[PopInfoNodeKey.NEXT] = testPopNodeConst[PopInfoNodeKey.NEXT];
     }
+    let code = '';
     let locationPrefix = '';
     const popInfo = testPopNodeConst[PopInfoNodeKey.INFO];
     if (popInfo !== null) {
-        locationPrefix = popInfo[PopInfoKey.CODE].toLowerCase() + '.';
+        code = popInfo[PopInfoKey.CODE].toLowerCase();
+        locationPrefix = code + '.';
     }
     const sortResult = (latency: number | false) => {
         if (testPopNodePrevious !== null) {// Add the node back to the linked list, in sorted order.
@@ -170,6 +176,10 @@ function testNextPop(container: HTMLDivElement, head: PopInfoNode, locationPrefi
     testPop(locationPrefix, () => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
         const start = performance.now();
         testPop(locationPrefix, (fullCode) => {
+            if (fullCode === null || !fullCode.toLowerCase().startsWith(code)) {
+                onErrorCallback();
+                return;
+            }
             const latency = Math.round(performance.now() - start);
             testPopNodeConst[PopInfoNodeKey.FULL_CODE] = fullCode;
             testPopNodeConst[PopInfoNodeKey.LATENCY] = latency;

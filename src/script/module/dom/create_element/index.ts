@@ -181,3 +181,11 @@ export function createTextAreaElement(row?: number, column?: number) {
     }
     return elem;
 }
+
+export function createEmailLink(email: string) {
+    const elem = createAnchorElement();
+    addClass(elem, styles.link);
+    elem.href = 'mailto:' + email;
+    appendText(elem, email);
+    return elem;
+}

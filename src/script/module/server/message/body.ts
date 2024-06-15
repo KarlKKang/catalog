@@ -1,10 +1,9 @@
-import { appendListItems, appendText, createAnchorElement, createDivElement, createLIElement, createParagraphElement, createUListElement } from '../../dom/create_element';
-import { addClass, appendChild, appendChildren } from '../../dom/element';
+import { appendListItems, appendText, createDivElement, createEmailLink, createLIElement, createParagraphElement, createUListElement } from '../../dom/create_element';
+import { appendChild, appendChildren } from '../../dom/element';
 import { TOP_DOMAIN } from '../../env/domain';
 import { getLocalTimeString } from '../../common/pure';
 import { type MaintenanceInfo, MaintenanceInfoKey } from '../../type/MaintenanceInfo';
 import { defaultErrorSuffix } from '../../text/message/body';
-import * as styles from '../../../../css/common.module.scss';
 
 export const invalidResponse = `サーバーが無効な応答を返しました。${defaultErrorSuffix}`;
 export const sessionEnded = 'もう一度ログインしてください。';
@@ -22,11 +21,7 @@ export const connectionError = function () {
 
     const listItem = createLIElement();
     appendText(listItem, 'あなたのIPアドレスはブラックリストに登録され、ファイアウォールでブロックされています。管理者（');
-    const emailLink = createAnchorElement();
-    addClass(emailLink, styles.link);
-    emailLink.href = 'mailto:admin@' + TOP_DOMAIN;
-    appendText(emailLink, 'admin@' + TOP_DOMAIN);
-    appendChild(listItem, emailLink);
+    appendChild(listItem, createEmailLink('admin@' + TOP_DOMAIN));
     appendText(listItem, '）またはISPにお問い合わせください。');
     appendChild(list, listItem);
 

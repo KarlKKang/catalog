@@ -1,7 +1,5 @@
-import { appendText, createAnchorElement, createTextNode } from '../../dom/create_element';
-import { addClass } from '../../dom/element';
+import { createEmailLink, createTextNode } from '../../dom/create_element';
 import { TOP_DOMAIN } from '../../env/domain';
-import * as styles from '../../../../css/common.module.scss';
 
 export const defaultErrorSuffix = 'このエラーが続く場合は、管理者にお問い合わせください。';
 
@@ -26,12 +24,9 @@ export const failedTotp = '入力されたコードが正しくありません�
 export const accountDeactivated = () => {
     const message: [Text, HTMLAnchorElement, Text] = [
         createTextNode('お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（'),
-        createAnchorElement(),
+        createEmailLink('admin@' + TOP_DOMAIN),
         createTextNode('）にご連絡ください。')
     ];
-    addClass(message[1], styles.link);
-    message[1].href = 'mailto:admin@' + TOP_DOMAIN;
-    appendText(message[1], 'admin@' + TOP_DOMAIN);
     return message;
 };
 export const sessionEnded = 'セッションは終了した。もう一度お試しください。';
