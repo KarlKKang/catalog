@@ -184,6 +184,7 @@ export function createTextAreaElement(row?: number, column?: number) {
 
 export function createEmailLink(email: string) {
     const elem = createAnchorElement();
+    elem.style.wordBreak = 'break-all';
     addClass(elem, styles.link);
     elem.href = 'mailto:' + email;
     appendText(elem, email);
