@@ -10,7 +10,7 @@ export type PopInfo = {
     readonly [PopInfoKey.COUNTRY]: string;
     readonly [PopInfoKey.CODE]: string;
 };
-type PopsList = PopInfo[];
+export type PopsList = PopInfo[];
 
 export function parsePopsList(popsList: unknown): PopsList {
     return parseTypedArray(popsList, (popInfo): PopInfo => {

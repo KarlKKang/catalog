@@ -1,19 +1,16 @@
-import { appendText, createDivElement, createEmailLink, createParagraphElement, createSpanElement } from './module/dom/create_element';
-import { clearSessionStorage, getHost, getProtocol, windowLocation } from './module/dom/document';
-import { addClass, appendChild, replaceChildren } from './module/dom/element';
-import { getServerOrigin, splitHostname } from './module/env/origin';
-import { addEventListener, removeAllEventListeners } from './module/event_listener';
-import { ShowPageFunc } from './module/global';
-import { addNavBar } from './module/nav_bar';
-import { createNewsTemplate } from './module/news';
-import { ServerRequestOptionProp, parseResponse, sendServerRequest } from './module/server';
-import { type PopInfo, parsePopsList, PopInfoKey } from './module/type/PopsList';
-import * as commonStyles from '../css/common.module.scss';
-import * as styles from '../css/news.module.scss';
-import { body } from './module/dom/body';
-import { popsPageTitle } from './module/text/page_title';
-import { POPS_URI } from './module/env/uri';
-import { TOP_DOMAIN } from './module/env/domain';
+import { appendText, createDivElement, createEmailLink, createParagraphElement, createSpanElement } from '../module/dom/create_element';
+import { getHost, getProtocol, windowLocation } from '../module/dom/document';
+import { addClass, appendChild, replaceChildren } from '../module/dom/element';
+import { getServerOrigin, splitHostname } from '../module/env/origin';
+import { addEventListener, removeAllEventListeners } from '../module/event_listener';
+import { createNewsTemplate } from '../module/news';
+import { type PopInfo, PopInfoKey, type PopsList } from '../module/type/PopsList';
+import * as commonStyles from '../../css/common.module.scss';
+import * as styles from '../../css/news.module.scss';
+import { body } from '../module/dom/body';
+import { popsPageTitle } from '../module/text/page_title';
+import { POPS_URI } from '../module/env/uri';
+import { TOP_DOMAIN } from '../module/env/domain';
 
 const enum PopInfoNodeKey {
     INFO,
@@ -30,55 +27,45 @@ type PopInfoNode = {
     [PopInfoNodeKey.NEXT]: PopInfoNode | null;
 };
 
-export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-    addNavBar();
+export default function (popsList: PopsList) {
+    const [outerContainer, innerContainer] = createNewsTemplate(popsPageTitle, null, null);
+    const contentContainer = createDivElement();
+    addClass(contentContainer, styles.content);
+    appendChild(innerContainer, contentContainer);
+    appendChild(body, outerContainer);
 
-    sendServerRequest('list_pops', {
-        [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
-            const popsList = parseResponse(response, parsePopsList);
-            showPage();
-            const [outerContainer, innerContainer] = createNewsTemplate(popsPageTitle, null, null);
-            const contentContainer = createDivElement();
-            addClass(contentContainer, styles.content);
-            appendChild(innerContainer, contentContainer);
-            appendChild(body, outerContainer);
+    const promptParagraph = createParagraphElement(
+        '以下は、いくつかのPoints of Presenceの専用エンドポイントです。「自動」が最適でない場合は、これらのいずれかを使用することができます。他のPoints of Presenceを専用エンドポイントとして公開する必要がある場合は、管理者（'
+    );
+    appendChild(promptParagraph, createEmailLink('admin@' + TOP_DOMAIN));
+    appendText(promptParagraph, '）にお問い合わせください。');
+    appendChild(contentContainer, promptParagraph);
 
-            const promptParagraph = createParagraphElement(
-                '以下は、いくつかのPoints of Presenceの専用エンドポイントです。「自動」が最適でない場合は、これらのいずれかを使用することができます。他のPoints of Presenceを専用エンドポイントとして公開する必要がある場合は、管理者（'
-            );
-            appendChild(promptParagraph, createEmailLink('admin@' + TOP_DOMAIN));
-            appendText(promptParagraph, '）にお問い合わせください。');
-            appendChild(contentContainer, promptParagraph);
+    const popListContainer = createDivElement();
+    popListContainer.style.textAlign = 'center';
+    appendChild(contentContainer, popListContainer);
 
-            const popListContainer = createDivElement();
-            popListContainer.style.textAlign = 'center';
-            appendChild(contentContainer, popListContainer);
-
-            const currentLocation = splitHostname()[0].toLowerCase();
-            const head = {
-                [PopInfoNodeKey.INFO]: null,
-                [PopInfoNodeKey.FULL_CODE]: null,
-                [PopInfoNodeKey.LATENCY]: null,
-                [PopInfoNodeKey.IN_USE]: currentLocation === '',
-                [PopInfoNodeKey.NEXT]: null,
-            };
-            let current: PopInfoNode = head;
-            for (const popInfo of popsList) {
-                const next = {
-                    [PopInfoNodeKey.INFO]: popInfo,
-                    [PopInfoNodeKey.FULL_CODE]: null,
-                    [PopInfoNodeKey.LATENCY]: null,
-                    [PopInfoNodeKey.IN_USE]: currentLocation === (popInfo[PopInfoKey.CODE].toLowerCase() + '.'),
-                    [PopInfoNodeKey.NEXT]: null,
-                };
-                current[PopInfoNodeKey.NEXT] = next;
-                current = next;
-            }
-            testNextPop(popListContainer, head, currentLocation.length);
-        },
-        [ServerRequestOptionProp.METHOD]: 'GET',
-    });
+    const currentLocation = splitHostname()[0].toLowerCase();
+    const head = {
+        [PopInfoNodeKey.INFO]: null,
+        [PopInfoNodeKey.FULL_CODE]: null,
+        [PopInfoNodeKey.LATENCY]: null,
+        [PopInfoNodeKey.IN_USE]: currentLocation === '',
+        [PopInfoNodeKey.NEXT]: null,
+    };
+    let current: PopInfoNode = head;
+    for (const popInfo of popsList) {
+        const next = {
+            [PopInfoNodeKey.INFO]: popInfo,
+            [PopInfoNodeKey.FULL_CODE]: null,
+            [PopInfoNodeKey.LATENCY]: null,
+            [PopInfoNodeKey.IN_USE]: currentLocation === (popInfo[PopInfoKey.CODE].toLowerCase() + '.'),
+            [PopInfoNodeKey.NEXT]: null,
+        };
+        current[PopInfoNodeKey.NEXT] = next;
+        current = next;
+    }
+    testNextPop(popListContainer, head, currentLocation.length);
 }
 
 function testNextPop(container: HTMLDivElement, head: PopInfoNode, locationPrefixLength: number) {
