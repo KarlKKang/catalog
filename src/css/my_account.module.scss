@@ -96,13 +96,13 @@
 }
 
 .totp-uri {
-    overflow-wrap: break-word;
+    word-break: break-all;
 }
 
 .recovery-codes {
     background-color: var(properties.get(grey-background-color));
     display: inline-block;
     width: 100%;
-    overflow-wrap: anywhere;
+    word-break: break-all;
     font-family: 'Courier New', Courier, monospace;
 }

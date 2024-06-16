@@ -364,7 +364,7 @@ p.artist {
         font-weight: 500;
         margin: 1em 0px;
         padding: 0px;
-        overflow-wrap: anywhere;
+        word-break: break-all;
     }
 
     >.accordion-icon {
