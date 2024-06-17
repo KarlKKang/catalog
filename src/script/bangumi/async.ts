@@ -1,4 +1,4 @@
-import { appendText, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement, createTextNode } from '../module/dom/create_element';
+import { appendText, createBRElement, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement, createTextNode } from '../module/dom/create_element';
 import { addClass, appendChild, insertBefore, remove, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { getTitle, setTitle, w } from '../module/dom/document';
@@ -65,14 +65,12 @@ export default async function (
     updateEPSelector(response[BangumiInfoKey.SERIES_EP], epSelector);
     updateSeasonSelector(response[BangumiInfoKey.SEASONS], seasonSelector);
 
-    const ageRestricted = epInfo[EPInfoKey.AGE_RESTRICTED];
-
+    let ageRestricted = epInfo[EPInfoKey.AGE_RESTRICTED];
     if (ageRestricted !== undefined) {
-        let warningTitle = '年齢認証';
-        if (ageRestricted.toLowerCase() === 'r15+') {
-            warningTitle = '「R15+指定」<br>年齢認証';
-        } else if (ageRestricted.toLowerCase() === 'r18+') {
-            warningTitle = '「R18+指定」<br>年齢認証';
+        ageRestricted = ageRestricted.toUpperCase();
+        let warningTitle: Node[] | string = '年齢認証';
+        if (ageRestricted === 'R15+' || ageRestricted === 'R18+') {
+            warningTitle = [createTextNode('「' + ageRestricted + '指定」'), createBRElement(), createTextNode(warningTitle)];
         }
 
         const warningButtonGroup = createDivElement();
