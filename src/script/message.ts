@@ -55,9 +55,8 @@ function createMessageElements(title: string, titleColor: CSS_COLOR, message: st
     addClass(container, styles.container);
     appendChild(body, container);
 
-    const titleElem = createParagraphElement();
+    const titleElem = createParagraphElement(title);
     addClass(titleElem, styles.title);
-    titleElem.innerHTML = title;
     changeColor(titleElem, titleColor);
     const messageElem = message instanceof HTMLElement ? message : createParagraphElement(message);
     addClass(messageElem, styles.body);
