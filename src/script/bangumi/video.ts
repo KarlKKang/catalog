@@ -23,7 +23,7 @@ import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
-import { SharedElement, errorMessageElement, getSharedElement } from './shared_var';
+import { SharedElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
 import { addInterval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
@@ -299,7 +299,10 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         }
         showElement(mediaHolder);
         const errorMsgElem = errorMessageElement;
-        errorMsgElem && remove(errorMsgElem);
+        if (errorMsgElem !== null) {
+            remove(errorMsgElem);
+            setErrorMessageElement(null);
+        }
     };
     const afterLoad = (mediaInstance: PlayerType) => {
         mediaInstance[PlayerKey.MEDIA].title = getTitle();
