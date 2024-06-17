@@ -76,37 +76,31 @@ function unsupportRedirect() {
         return null;
     };
 
-    try {
-        const x = '__cookie_test__';
-        d.cookie = x + '=' + x + ';max-age=10;path=/;secure;samesite=strict';
-        if (getCookie(x) !== x) {
-            _unsupportRedirect();
-            return;
-        }
-        d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict';
-    } catch (e) {
+    const x = '__cookie_test__';
+    d.cookie = x + '=' + x + ';max-age=10;path=/;secure;samesite=strict';
+    if (getCookie(x) !== x) {
         _unsupportRedirect();
         return;
     }
+    d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict';
 
+    const storage = w.sessionStorage;
+    if (!storage) {
+        _unsupportRedirect();
+        return;
+    }
     try {
-        const storage = w.sessionStorage;
-        if (!storage) {
-            _unsupportRedirect();
-            return;
-        }
-        const x = '__storage_test__';
         storage.setItem(x, x);
-        if (storage.getItem(x) !== x) {
-            _unsupportRedirect();
-            return;
-        }
-        storage.removeItem(x);
     } catch (e) {
         // QuotaExceededError will be treated as unsupported browser. The storage should never reach the quota of a properly configured browser in normal operation.
         _unsupportRedirect();
         return;
     }
+    if (storage.getItem(x) !== x) {
+        _unsupportRedirect();
+        return;
+    }
+    storage.removeItem(x);
 
     w.addEventListener('load', () => {
         const body = d.body;
