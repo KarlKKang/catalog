@@ -1,6 +1,6 @@
 import { logout } from './module/server';
 import { clearSessionStorage, setTitle } from './module/dom/document';
-import { appendText, createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
+import { createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
 import { addClass, appendChild, appendChildren } from './module/dom/element';
 import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener';
@@ -19,13 +19,7 @@ export default function (showPage: ShowPageFunc) {
     if (messageParam === null) {
         if (DEVELOPMENT) {
             showPage();
-            const [container, titleElem, messageElem] = createElements(true);
-            changeColor(titleElem, CSS_COLOR.ORANGE);
-            appendText(titleElem, 'タイトルTitle');
-            appendText(messageElem, 'メッセージMessage'.repeat(10));
-            const button = createButtonElement('ボタンButton');
-            horizontalCenter(button);
-            appendChild(container, button);
+            createMessageElements('タイトルTitle', CSS_COLOR.ORANGE, 'メッセージMessage'.repeat(10), 'ボタンButton', TOP_URI);
         } else {
             redirect(TOP_URI, true);
         }
@@ -39,27 +33,13 @@ export default function (showPage: ShowPageFunc) {
         [MessageParamKey.URL]: url,
         [MessageParamKey.BUTTON_TEXT]: buttonText,
         [MessageParamKey.LOGOUT]: logoutParam,
-        [MessageParamKey.REPLACE_BODY]: replaceBody,
         [MessageParamInternalKey.DOCUMENT_TITLE]: documentTitle
     } = messageParam;
 
     const callback = () => {
         showPage();
-
-        const [container, titleElem, messageElem] = createElements(!replaceBody);
+        createMessageElements(title, color, message, buttonText, url);
         setTitle(documentTitle);
-        titleElem.innerHTML = title;
-        changeColor(titleElem, color);
-        messageElem.innerHTML = message;
-
-        if (buttonText !== null) {
-            const button = createButtonElement(buttonText);
-            horizontalCenter(button);
-            appendChild(container, button);
-            addEventListener(button, 'click', () => {
-                redirect(url, true);
-            });
-        }
     };
 
     if (logoutParam) {
@@ -70,14 +50,25 @@ export default function (showPage: ShowPageFunc) {
     callback();
 }
 
-function createElements(paragraphMessage: boolean) {
+function createMessageElements(title: string, titleColor: CSS_COLOR, message: string | HTMLElement, buttonText: string | null, url: string) {
     const container = createDivElement();
     addClass(container, styles.container);
+    appendChild(body, container);
+
     const titleElem = createParagraphElement();
     addClass(titleElem, styles.title);
-    const messageElem = paragraphMessage ? createParagraphElement() : createDivElement();
+    titleElem.innerHTML = title;
+    changeColor(titleElem, titleColor);
+    const messageElem = message instanceof HTMLElement ? message : createParagraphElement(message);
     addClass(messageElem, styles.body);
     appendChildren(container, titleElem, messageElem);
-    appendChild(body, container);
-    return [container, titleElem, messageElem] as const;
+
+    if (buttonText !== null) {
+        const button = createButtonElement(buttonText);
+        horizontalCenter(button);
+        appendChild(container, button);
+        addEventListener(button, 'click', () => {
+            redirect(url, true);
+        });
+    }
 }

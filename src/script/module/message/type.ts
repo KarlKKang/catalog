@@ -12,11 +12,10 @@ export const enum MessageParamKey {
 }
 
 export interface MessageParam {
-    [MessageParamKey.MESSAGE]?: string;
+    [MessageParamKey.MESSAGE]?: string | HTMLElement;
     [MessageParamKey.TITLE]?: string;
     [MessageParamKey.COLOR]?: CSS_COLOR;
     [MessageParamKey.URL]?: string;
     [MessageParamKey.BUTTON_TEXT]?: string | null;
     [MessageParamKey.LOGOUT]?: boolean;
-    [MessageParamKey.REPLACE_BODY]?: boolean;
 }

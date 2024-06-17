@@ -1,4 +1,4 @@
-import { appendListItems, appendText, createDivElement, createEmailLink, createLIElement, createParagraphElement, createUListElement } from '../../dom/create_element';
+import { appendListItems, appendText, createBRElement, createDivElement, createEmailLink, createLIElement, createParagraphElement, createUListElement } from '../../dom/create_element';
 import { appendChild, appendChildren } from '../../dom/element';
 import { TOP_DOMAIN } from '../../env/domain';
 import { getLocalTimeString } from '../../common/pure';
@@ -26,7 +26,7 @@ export const connectionError = function () {
     appendChild(list, listItem);
 
     appendChildren(container, text, list);
-    return container.innerHTML;
+    return container;
 }();
 
 export const status429 = 'リクエストを送信する頻度が高すぎる。数分待ってから、もう一度お試しください。';
@@ -42,6 +42,12 @@ export const status503 = (maintenanceInfo: MaintenanceInfo) => {
     }
     return message;
 };
-export const status400And500 = (responseText: string) => 'サーバーからの応答：' + responseText + `<br>${defaultErrorSuffix}`;
+export const status400And500 = (responseText: string) => {
+    const container = createParagraphElement();
+    appendText(container, 'サーバーからの応答：' + responseText);
+    appendChild(container, createBRElement());
+    appendText(container, defaultErrorSuffix);
+    return container;
+};
 export const notFound = 'URLが間違っているか、ページが存在しません。ご確認の上、再度お試しください。';
 export const insufficientPermissions = 'このページを閲覧する権限がありません。';

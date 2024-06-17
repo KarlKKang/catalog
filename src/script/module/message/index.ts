@@ -22,7 +22,6 @@ export function showMessage({
     [MessageParamKey.URL]: url,
     [MessageParamKey.BUTTON_TEXT]: buttonText,
     [MessageParamKey.LOGOUT]: logout,
-    [MessageParamKey.REPLACE_BODY]: replaceBody
 }: MessageParam) {
     if (buttonText !== null) {
         buttonText = buttonText ?? goBackButtonText;
@@ -34,7 +33,6 @@ export function showMessage({
         [MessageParamKey.URL]: url ?? getFullPath(),
         [MessageParamKey.BUTTON_TEXT]: buttonText,
         [MessageParamKey.LOGOUT]: logout ?? false,
-        [MessageParamKey.REPLACE_BODY]: replaceBody ?? false,
         [MessageParamInternalKey.DOCUMENT_TITLE]: getTitle(),
     };
     redirect(MESSAGE_URI, true);
