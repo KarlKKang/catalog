@@ -1,5 +1,5 @@
 import { getSearchParam, w } from '../module/dom/document';
-import { createDivElement, createParagraphElement } from '../module/dom/create_element';
+import { createDivElement, createParagraphElement, createTextNode } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren } from '../module/dom/element';
 import { changeColor } from '../module/style';
 import * as styles from '../../css/bangumi.module.scss';
@@ -68,7 +68,7 @@ export function getFormatIndex(): number {
     return formatIndex;
 }
 
-export function createMessageElem(title: string, body: Node[], titleColor: CSS_COLOR | null, additionalContent: HTMLElement | null = null) {
+export function createMessageElem(title: string, body: Node[] | string, titleColor: CSS_COLOR | null, additionalContent: HTMLElement | null = null) {
     const outerContainer = createDivElement();
     const innerContainer = createDivElement();
     addClass(outerContainer, styles.message);
@@ -79,11 +79,15 @@ export function createMessageElem(title: string, body: Node[], titleColor: CSS_C
     addClass(titleElem, styles.messageTitle);
     addClass(bodyElem, styles.messageBody);
     titleElem.innerHTML = title;
-    appendChildren(bodyElem, ...body);
+    isArray(body) ? appendChildren(bodyElem, ...body) : appendChild(bodyElem, createTextNode(body));
     titleColor !== null && changeColor(titleElem, titleColor);
     appendChild(innerContainer, titleElem);
     appendChild(innerContainer, bodyElem);
     additionalContent !== null && appendChild(innerContainer, additionalContent);
 
     return outerContainer;
+}
+
+export function isArray(arg: any): arg is any[] {
+    return Array.isArray(arg);
 }

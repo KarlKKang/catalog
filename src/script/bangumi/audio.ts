@@ -17,9 +17,7 @@ import {
 } from '../module/browser';
 import type { Player as PlayerType } from '../module/player/player';
 import { parseCharacters } from './helper';
-import {
-    showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError, showTextErrorMessage
-} from './media_helper';
+import { showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError, showErrorMessage } from './media_helper';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
@@ -142,7 +140,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         audioInstance[PlayerKey.LOAD](url, {
             onerror: function (errorCode: number | null) {
                 if (IS_FIREFOX && file[AudioFileKey.SAMPLERATE] !== undefined && parseInt(file[AudioFileKey.SAMPLERATE]) > 48000) { //Firefox has problem playing Hi-res audio
-                    showTextErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
+                    showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
                 } else {
                     showPlayerError(errorCode);
                 }

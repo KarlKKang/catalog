@@ -17,7 +17,7 @@ import {
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import { getFormatIndex, createQuery } from './helper';
-import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, showTextErrorMessage, type AccordionInstance } from './media_helper';
+import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, type AccordionInstance } from './media_helper';
 import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
@@ -356,7 +356,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 bufferStalledMessageShown = true;
                 showMediaMessage(
                     '再生中に問題が発生した可能性があります',
-                    [createTextNode('バッファリングに通常より時間がかかっています。遅いネットワークが原因かもしれません。または、デバイスのメモリが不足しています。このような場合、動画がスムーズに再生されるかどうかは保証できません。')],
+                    'バッファリングに通常より時間がかかっています。遅いネットワークが原因かもしれません。または、デバイスのメモリが不足しています。このような場合、動画がスムーズに再生されるかどうかは保証できません。',
                     CSS_COLOR.ORANGE
                 );
             }
@@ -446,7 +446,7 @@ function showDolbyVisionError() {
 }
 
 function show8chAudioError() {
-    showTextErrorMessage(incompatibleTitle, 'ChromiumベースのブラウザとFirefoxでは、7.1chオーディオを再生することはできません。' + incompatibleSuffix);
+    showErrorMessage(incompatibleTitle, 'ChromiumベースのブラウザとFirefoxでは、7.1chオーディオを再生することはできません。' + incompatibleSuffix);
 }
 
 async function canPlayHEVC(withFallback: boolean | undefined): Promise<boolean> {
