@@ -16,7 +16,7 @@ import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
 import { addManualMultiLanguageClass, createUsernameInput } from '../module/dom/create_element/multi_language';
 import { CSS_COLOR } from '../module/style/value';
-import { MessageParamProp } from '../module/message/type';
+import { MessageParamKey } from '../module/message/type';
 import { emailAlreadyRegistered } from './shared';
 import { INFO_URI, LOGIN_URI } from '../module/env/uri';
 
@@ -125,11 +125,11 @@ export default function (param: string) {
                     showMessage(emailAlreadyRegistered);
                 } else if (response === 'DONE') {
                     showMessage({
-                        [MessageParamProp.TITLE]: completed,
-                        [MessageParamProp.MESSAGE]: 'アカウントが登録されました。',
-                        [MessageParamProp.COLOR]: CSS_COLOR.GREEN,
-                        [MessageParamProp.URL]: LOGIN_URI,
-                        [MessageParamProp.BUTTON_TEXT]: nextButtonText
+                        [MessageParamKey.TITLE]: completed,
+                        [MessageParamKey.MESSAGE]: 'アカウントが登録されました。',
+                        [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
+                        [MessageParamKey.URL]: LOGIN_URI,
+                        [MessageParamKey.BUTTON_TEXT]: nextButtonText
                     });
                 } else {
                     showMessage(invalidResponse());

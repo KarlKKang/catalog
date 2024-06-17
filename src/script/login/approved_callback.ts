@@ -3,18 +3,18 @@ import { UNRECOMMENDED_BROWSER } from '../module/browser';
 import { redirect } from '../module/global';
 import { nextButtonText } from '../module/text/ui';
 import { CSS_COLOR } from '../module/style/value';
-import { MessageParamProp } from '../module/message/type';
+import { MessageParamKey } from '../module/message/type';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { getSearchParam } from '../module/dom/document';
 
 export default function () {
     if (UNRECOMMENDED_BROWSER) {
         showMessage({
-            [MessageParamProp.TITLE]: 'お使いのブラウザは推奨環境ではありません',
-            [MessageParamProp.MESSAGE]: '一部のコンテンツが正常に再生されない場合は、Safari 12またはChrome 63以降のブラウザをお使いください。',
-            [MessageParamProp.COLOR]: CSS_COLOR.ORANGE,
-            [MessageParamProp.URL]: getForwardURL(),
-            [MessageParamProp.BUTTON_TEXT]: nextButtonText
+            [MessageParamKey.TITLE]: 'お使いのブラウザは推奨環境ではありません',
+            [MessageParamKey.MESSAGE]: '一部のコンテンツが正常に再生されない場合は、Safari 12またはChrome 63以降のブラウザをお使いください。',
+            [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
+            [MessageParamKey.URL]: getForwardURL(),
+            [MessageParamKey.BUTTON_TEXT]: nextButtonText
         });
     } else {
         redirect(getForwardURL(), true);

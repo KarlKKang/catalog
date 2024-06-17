@@ -1,41 +1,47 @@
-import { getFullPath, getTitle, setSessionStorage } from '../dom/document';
+import { getFullPath, getTitle } from '../dom/document';
 import { defaultError } from '../text/message/title';
-import { MessageParamProp, type MessageParam } from './type';
+import { MessageParamKey, type MessageParam } from './type';
 import { redirect } from '../global';
 import { defaultErrorSuffix } from '../text/message/body';
 import { CSS_COLOR } from '../style/value';
 import { goBackButtonText } from '../text/ui';
 import { MESSAGE_URI } from '../env/uri';
 
+export const enum MessageParamInternalKey {
+    DOCUMENT_TITLE = MessageParamKey.__LENGTH,
+}
+interface MessageParamInternal extends Required<MessageParam> {
+    [MessageParamInternalKey.DOCUMENT_TITLE]: string;
+}
+let messageParam: MessageParamInternal | null = null;
+
 export function showMessage({
-    [MessageParamProp.MESSAGE]: message,
-    [MessageParamProp.TITLE]: title,
-    [MessageParamProp.COLOR]: color,
-    [MessageParamProp.URL]: url,
-    [MessageParamProp.BUTTON_TEXT]: buttonText,
-    [MessageParamProp.LOGOUT]: logout,
-    [MessageParamProp.REPLACE_BODY]: replaceBody
+    [MessageParamKey.MESSAGE]: message,
+    [MessageParamKey.TITLE]: title,
+    [MessageParamKey.COLOR]: color,
+    [MessageParamKey.URL]: url,
+    [MessageParamKey.BUTTON_TEXT]: buttonText,
+    [MessageParamKey.LOGOUT]: logout,
+    [MessageParamKey.REPLACE_BODY]: replaceBody
 }: MessageParam) {
-    setSessionStorage('message', message ?? ('不明なエラーが発生しました。' + defaultErrorSuffix));
-    setSessionStorage('title', title ?? defaultError);
-    setSessionStorage('color', (color ?? CSS_COLOR.RED).toString());
-    setSessionStorage('document-title', getTitle());
-
     if (buttonText !== null) {
-        setSessionStorage('button-text', buttonText ?? goBackButtonText);
-        if (url === undefined) {
-            setSessionStorage('url', getFullPath());
-        } else {
-            setSessionStorage('url', url);
-        }
+        buttonText = buttonText ?? goBackButtonText;
     }
-
-    if (logout) {
-        setSessionStorage('logout', '1');
-    }
-    if (replaceBody) {
-        setSessionStorage('replace-body', '1');
-    }
-
+    messageParam = {
+        [MessageParamKey.MESSAGE]: message ?? ('不明なエラーが発生しました。' + defaultErrorSuffix),
+        [MessageParamKey.TITLE]: title ?? defaultError,
+        [MessageParamKey.COLOR]: color ?? CSS_COLOR.RED,
+        [MessageParamKey.URL]: url ?? getFullPath(),
+        [MessageParamKey.BUTTON_TEXT]: buttonText,
+        [MessageParamKey.LOGOUT]: logout ?? false,
+        [MessageParamKey.REPLACE_BODY]: replaceBody ?? false,
+        [MessageParamInternalKey.DOCUMENT_TITLE]: getTitle(),
+    };
     redirect(MESSAGE_URI, true);
+}
+
+export function getMessageParam() {
+    const _messageParam = messageParam;
+    messageParam = null;
+    return _messageParam;
 }

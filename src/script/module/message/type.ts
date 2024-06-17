@@ -1,12 +1,6 @@
 import { CSS_COLOR } from '../style/value';
 
-export const MessageTitleColor = [
-    CSS_COLOR.RED,
-    CSS_COLOR.GREEN,
-    CSS_COLOR.ORANGE,
-] as const;
-
-export const enum MessageParamProp {
+export const enum MessageParamKey {
     MESSAGE,
     TITLE,
     COLOR,
@@ -14,14 +8,15 @@ export const enum MessageParamProp {
     BUTTON_TEXT,
     LOGOUT,
     REPLACE_BODY,
+    __LENGTH,
 }
 
 export interface MessageParam {
-    [MessageParamProp.MESSAGE]?: string;
-    [MessageParamProp.TITLE]?: string;
-    [MessageParamProp.COLOR]?: typeof MessageTitleColor[number];
-    [MessageParamProp.URL]?: string;
-    [MessageParamProp.BUTTON_TEXT]?: string | null;
-    [MessageParamProp.LOGOUT]?: boolean;
-    [MessageParamProp.REPLACE_BODY]?: boolean;
+    [MessageParamKey.MESSAGE]?: string;
+    [MessageParamKey.TITLE]?: string;
+    [MessageParamKey.COLOR]?: CSS_COLOR;
+    [MessageParamKey.URL]?: string;
+    [MessageParamKey.BUTTON_TEXT]?: string | null;
+    [MessageParamKey.LOGOUT]?: boolean;
+    [MessageParamKey.REPLACE_BODY]?: boolean;
 }

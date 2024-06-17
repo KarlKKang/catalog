@@ -2,58 +2,58 @@ import * as body from './body';
 import * as title from './title';
 import type { MaintenanceInfo } from '../../type/MaintenanceInfo';
 import { getURI } from '../../dom/document';
-import { MessageParamProp, type MessageParam } from '../../message/type';
+import { MessageParamKey, type MessageParam } from '../../message/type';
 import { CSS_COLOR } from '../../style/value';
 import { LOGIN_URI, TOP_URI } from '../../env/uri';
 
 const reloadButtonText = '再読み込み';
 export const invalidResponse = () => {
     const param: MessageParam = {
-        [MessageParamProp.MESSAGE]: body.invalidResponse,
+        [MessageParamKey.MESSAGE]: body.invalidResponse,
     };
     setRedirectUrl(param);
     return param;
 };
 export const sessionEnded = (url: string) => ({
-    [MessageParamProp.TITLE]: title.sessionEnded,
-    [MessageParamProp.MESSAGE]: body.sessionEnded,
-    [MessageParamProp.COLOR]: CSS_COLOR.ORANGE,
-    [MessageParamProp.URL]: url
+    [MessageParamKey.TITLE]: title.sessionEnded,
+    [MessageParamKey.MESSAGE]: body.sessionEnded,
+    [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
+    [MessageParamKey.URL]: url
 });
 export const mediaSessionEnded = {
-    [MessageParamProp.TITLE]: title.sessionEnded,
-    [MessageParamProp.MESSAGE]: body.mediaSessionEnded,
-    [MessageParamProp.COLOR]: CSS_COLOR.ORANGE,
-    [MessageParamProp.URL]: TOP_URI
+    [MessageParamKey.TITLE]: title.sessionEnded,
+    [MessageParamKey.MESSAGE]: body.mediaSessionEnded,
+    [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
+    [MessageParamKey.URL]: TOP_URI
 };
 export const connectionError = {
-    [MessageParamProp.TITLE]: title.connectionError,
-    [MessageParamProp.MESSAGE]: body.connectionError,
-    [MessageParamProp.REPLACE_BODY]: true,
-    [MessageParamProp.URL]: TOP_URI // In case of request containing malicious string, the page needs to be reset to the top page.
+    [MessageParamKey.TITLE]: title.connectionError,
+    [MessageParamKey.MESSAGE]: body.connectionError,
+    [MessageParamKey.REPLACE_BODY]: true,
+    [MessageParamKey.URL]: TOP_URI // In case of request containing malicious string, the page needs to be reset to the top page.
 };
 export const status429 = {
-    [MessageParamProp.TITLE]: title.status429,
-    [MessageParamProp.MESSAGE]: body.status429
+    [MessageParamKey.TITLE]: title.status429,
+    [MessageParamKey.MESSAGE]: body.status429
 };
 export const status503 = (maintenanceInfo: MaintenanceInfo) => ({
-    [MessageParamProp.TITLE]: title.status503,
-    [MessageParamProp.MESSAGE]: body.status503(maintenanceInfo),
-    [MessageParamProp.COLOR]: CSS_COLOR.ORANGE,
-    [MessageParamProp.BUTTON_TEXT]: reloadButtonText
+    [MessageParamKey.TITLE]: title.status503,
+    [MessageParamKey.MESSAGE]: body.status503(maintenanceInfo),
+    [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
+    [MessageParamKey.BUTTON_TEXT]: reloadButtonText
 });
 export const status400And500 = (responseText: string) => {
     const param = {
-        [MessageParamProp.MESSAGE]: body.status400And500(responseText),
-        [MessageParamProp.BUTTON_TEXT]: reloadButtonText
+        [MessageParamKey.MESSAGE]: body.status400And500(responseText),
+        [MessageParamKey.BUTTON_TEXT]: reloadButtonText
     };
     setRedirectUrl(param);
     return param;
 };
 export const notFound = {
-    [MessageParamProp.TITLE]: title.notFound,
-    [MessageParamProp.MESSAGE]: body.notFound,
-    [MessageParamProp.URL]: TOP_URI
+    [MessageParamKey.TITLE]: title.notFound,
+    [MessageParamKey.MESSAGE]: body.notFound,
+    [MessageParamKey.URL]: TOP_URI
 };
 export const unknownServerError = () => {
     const param: MessageParam = {};
@@ -61,20 +61,20 @@ export const unknownServerError = () => {
     return param;
 };
 export const insufficientPermissions = {
-    [MessageParamProp.TITLE]: title.insufficientPermissions,
-    [MessageParamProp.MESSAGE]: body.insufficientPermissions,
-    [MessageParamProp.COLOR]: CSS_COLOR.RED,
-    [MessageParamProp.URL]: TOP_URI
+    [MessageParamKey.TITLE]: title.insufficientPermissions,
+    [MessageParamKey.MESSAGE]: body.insufficientPermissions,
+    [MessageParamKey.COLOR]: CSS_COLOR.RED,
+    [MessageParamKey.URL]: TOP_URI
 };
 
 function setRedirectUrl(param: MessageParam) {
     const uri = getURI();
     if (uri === TOP_URI) {
-        param[MessageParamProp.URL] = LOGIN_URI;
-        param[MessageParamProp.LOGOUT] = true;
+        param[MessageParamKey.URL] = LOGIN_URI;
+        param[MessageParamKey.LOGOUT] = true;
     } else if (uri === LOGIN_URI) {
-        param[MessageParamProp.URL] = LOGIN_URI; // This will strip away any query string that might cause the problem.
+        param[MessageParamKey.URL] = LOGIN_URI; // This will strip away any query string that might cause the problem.
     } else {
-        param[MessageParamProp.URL] = TOP_URI;
+        param[MessageParamKey.URL] = TOP_URI;
     }
 }

@@ -15,7 +15,7 @@ import { emailChangePageTitle } from '../module/text/page_title';
 import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
 import { CSS_COLOR } from '../module/style/value';
-import { MessageParamProp } from '../module/message/type';
+import { MessageParamKey } from '../module/message/type';
 import { offloadPopupWindow } from '../module/popup_window/core';
 import { TOP_URI } from '../module/env/uri';
 
@@ -128,11 +128,11 @@ export default function (param: string) {
                         break;
                     case 'DONE':
                         showMessage({
-                            [MessageParamProp.TITLE]: completed,
-                            [MessageParamProp.MESSAGE]: 'メールアドレスが変更されました。',
-                            [MessageParamProp.COLOR]: CSS_COLOR.GREEN,
-                            [MessageParamProp.URL]: TOP_URI,
-                            [MessageParamProp.BUTTON_TEXT]: 'トップページへ'
+                            [MessageParamKey.TITLE]: completed,
+                            [MessageParamKey.MESSAGE]: 'メールアドレスが変更されました。',
+                            [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
+                            [MessageParamKey.URL]: TOP_URI,
+                            [MessageParamKey.BUTTON_TEXT]: 'トップページへ'
                         });
                         break;
                     default:

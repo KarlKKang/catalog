@@ -14,7 +14,7 @@ import { changeButtonText, nextButtonText, passwordRules } from '../module/text/
 import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
 import { CSS_COLOR } from '../module/style/value';
-import { MessageParamProp } from '../module/message/type';
+import { MessageParamKey } from '../module/message/type';
 import { LOGIN_URI } from '../module/env/uri';
 
 export default function (user: string, signature: string, expires: string) {
@@ -98,11 +98,11 @@ export default function (user: string, signature: string, expires: string) {
                     disableAllInputs(false);
                 } else if (response === 'DONE') {
                     showMessage({
-                        [MessageParamProp.TITLE]: completed,
-                        [MessageParamProp.MESSAGE]: passwordChanged,
-                        [MessageParamProp.COLOR]: CSS_COLOR.GREEN,
-                        [MessageParamProp.URL]: LOGIN_URI,
-                        [MessageParamProp.BUTTON_TEXT]: nextButtonText
+                        [MessageParamKey.TITLE]: completed,
+                        [MessageParamKey.MESSAGE]: passwordChanged,
+                        [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
+                        [MessageParamKey.URL]: LOGIN_URI,
+                        [MessageParamKey.BUTTON_TEXT]: nextButtonText
                     });
                 } else {
                     showMessage(invalidResponse());

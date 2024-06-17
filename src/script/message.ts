@@ -1,5 +1,5 @@
 import { logout } from './module/server';
-import { clearSessionStorage, getSessionStorage, setTitle } from './module/dom/document';
+import { clearSessionStorage, setTitle } from './module/dom/document';
 import { appendText, createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
 import { addClass, appendChild, appendChildren } from './module/dom/element';
 import { body } from './module/dom/body';
@@ -8,22 +8,15 @@ import { redirect, type ShowPageFunc } from './module/global';
 import * as styles from '../css/message.module.scss';
 import { changeColor, horizontalCenter } from './module/style';
 import { CSS_COLOR } from './module/style/value';
-import { MessageTitleColor } from './module/message/type';
+import { MessageParamKey } from './module/message/type';
 import { TOP_URI } from './module/env/uri';
+import { MessageParamInternalKey, getMessageParam } from './module/message';
 
 export default function (showPage: ShowPageFunc) {
-    const message = getSessionStorage('message');
-    const title = getSessionStorage('title');
-    const colorStr = getSessionStorage('color');
-    const documentTitle = getSessionStorage('document-title');
-    const buttonText = getSessionStorage('button-text');
-    const url = getSessionStorage('url');
-    const logoutParam = getSessionStorage('logout') === '1';
-    const replaceBody = getSessionStorage('replace-body') === '1';
-
     clearSessionStorage();
 
-    if (message === null || title === null || colorStr === null || documentTitle === null) {
+    const messageParam = getMessageParam();
+    if (messageParam === null) {
         if (DEVELOPMENT) {
             showPage();
             const [container, titleElem, messageElem] = createElements(true);
@@ -39,13 +32,16 @@ export default function (showPage: ShowPageFunc) {
         return;
     }
 
-    let color: CSS_COLOR;
-    for (const messageTitleColor of MessageTitleColor) {
-        if (messageTitleColor.toString() === colorStr) {
-            color = messageTitleColor;
-            break;
-        }
-    }
+    const {
+        [MessageParamKey.MESSAGE]: message,
+        [MessageParamKey.TITLE]: title,
+        [MessageParamKey.COLOR]: color,
+        [MessageParamKey.URL]: url,
+        [MessageParamKey.BUTTON_TEXT]: buttonText,
+        [MessageParamKey.LOGOUT]: logoutParam,
+        [MessageParamKey.REPLACE_BODY]: replaceBody,
+        [MessageParamInternalKey.DOCUMENT_TITLE]: documentTitle
+    } = messageParam;
 
     const callback = () => {
         showPage();
@@ -57,10 +53,6 @@ export default function (showPage: ShowPageFunc) {
         messageElem.innerHTML = message;
 
         if (buttonText !== null) {
-            if (url === null) {
-                redirect(TOP_URI, true);
-                return;
-            }
             const button = createButtonElement(buttonText);
             horizontalCenter(button);
             appendChild(container, button);
