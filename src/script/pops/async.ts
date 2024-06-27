@@ -84,15 +84,18 @@ function testNextPop(container: HTMLDivElement, head: PopInfoNode, locationPrefi
         appendChild(container, paragraphElem);
         appendChild(paragraphElem, spanElem);
         const popInfo = current[PopInfoNodeKey.INFO];
+        const fullCode = current[PopInfoNodeKey.FULL_CODE];
         if (popInfo !== null) {
-            const code = current[PopInfoNodeKey.FULL_CODE] ?? popInfo[PopInfoKey.CODE].toUpperCase();
+            let content = popInfo[PopInfoKey.LOCATION] + '（' + popInfo[PopInfoKey.COUNTRY];
+            if (fullCode !== null) {
+                content += '・' + fullCode;
+            }
             appendText(
                 spanElem,
-                popInfo[PopInfoKey.LOCATION] + '（' + code + '・' + popInfo[PopInfoKey.COUNTRY] + '）'
+                content + '）'
             );
         } else {
             appendText(spanElem, '自動');
-            const fullCode = current[PopInfoNodeKey.FULL_CODE];
             if (fullCode !== null) {
                 appendText(spanElem, '（' + fullCode + '）');
             }
@@ -127,12 +130,10 @@ function testNextPop(container: HTMLDivElement, head: PopInfoNode, locationPrefi
     if (testPopNodePrevious !== null) { // Remove the node from the linked list.
         testPopNodePrevious[PopInfoNodeKey.NEXT] = testPopNodeConst[PopInfoNodeKey.NEXT];
     }
-    let code = '';
     let locationPrefix = '';
     const popInfo = testPopNodeConst[PopInfoNodeKey.INFO];
     if (popInfo !== null) {
-        code = popInfo[PopInfoKey.CODE].toLowerCase();
-        locationPrefix = code + '.';
+        locationPrefix = popInfo[PopInfoKey.CODE].toLowerCase() + '.';
     }
     const sortResult = (latency: number | false) => {
         if (testPopNodePrevious !== null) {// Add the node back to the linked list, in sorted order.
@@ -163,7 +164,7 @@ function testNextPop(container: HTMLDivElement, head: PopInfoNode, locationPrefi
     testPop(locationPrefix, () => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
         const start = performance.now();
         testPop(locationPrefix, (fullCode) => {
-            if (fullCode === null || !fullCode.toLowerCase().startsWith(code)) {
+            if (fullCode === null) {
                 onErrorCallback();
                 return;
             }
