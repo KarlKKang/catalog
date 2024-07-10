@@ -7,4 +7,4 @@ export const registerPageTitle = '新規登録';
 export const loginPageTitle = 'ログイン';
 export const passwordResetPageTitle = 'パスワード再発行';
 export const newsPageTitle = 'お知らせ';
-export const popsPageTitle = 'Points of Presence遅延テスト';
+export const cnRoutesPageTitle = '中国のユーザー向け回線';

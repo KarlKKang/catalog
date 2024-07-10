@@ -2,7 +2,7 @@ import { clearSessionStorage } from '../module/dom/document';
 import { ShowPageFunc, pgid } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
-import { parsePopsList } from '../module/type/PopsList';
+import { parseRouteList } from '../module/type/RouteList';
 import { importModule } from '../module/import_module';
 
 export default function (showPage: ShowPageFunc) {
@@ -14,16 +14,16 @@ export default function (showPage: ShowPageFunc) {
         './async'
     );
 
-    sendServerRequest('list_pops', {
+    sendServerRequest('list_cn_routes', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
-            const popsList = parseResponse(response, parsePopsList);
+            const routeList = parseResponse(response, parseRouteList);
 
             const currentPgid = pgid;
             const asyncModule = await importModule(asyncModulePromise);
             if (pgid !== currentPgid) {
                 return;
             }
-            asyncModule.default(popsList);
+            asyncModule.default(routeList);
             showPage();
         },
         [ServerRequestOptionProp.METHOD]: 'GET',
