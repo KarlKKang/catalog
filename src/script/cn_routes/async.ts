@@ -9,7 +9,7 @@ import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/news.module.scss';
 import { body } from '../module/dom/body';
 import { cnRoutesPageTitle } from '../module/text/page_title';
-import { CN_ROUTES_URI, NEWS_ROOT_URI } from '../module/env/uri';
+import { NEWS_ROOT_URI } from '../module/env/uri';
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 import { redirect } from '../module/global';
 
@@ -151,7 +151,7 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode, locationP
             addEventListener(spanElem, 'click', () => {
                 const host = getHost().substring(locationPrefixLength);
                 const locationPrefix = routeInfo !== null ? routeInfo[RouteInfoKey.CODE].toLowerCase() + '.' : '';
-                windowLocation.href = getProtocol() + '//' + locationPrefix + host + CN_ROUTES_URI;
+                windowLocation.href = getProtocol() + '//' + locationPrefix + host;
             });
         }
         previous = current;
