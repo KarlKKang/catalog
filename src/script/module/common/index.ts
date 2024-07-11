@@ -1,7 +1,7 @@
 import { clearSessionStorage, getHash, getTitle, openWindow, setSessionStorage, w } from '../dom/document';
 import { getByIdNative } from '../dom/element';
 import { IMAGE_URI } from '../env/uri';
-import { addEventListener } from '../event_listener';
+import { addEventListener, removeAllEventListeners } from '../event_listener';
 import { addTimeout } from '../timer';
 
 export function scrollToTop() {
@@ -38,4 +38,30 @@ export function openImageWindow(baseURL: string, fileName: string, credential: s
     setSessionStorage('session-type', sessionType);
     openWindow(IMAGE_URI);
     clearSessionStorage();
+}
+
+export function newXHR(
+    url: string,
+    method: 'GET' | 'POST',
+    withCredentials: boolean,
+    callback: () => void,
+    onErrorCallback: () => void,
+    onAbortCallback?: () => void
+) {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url, true);
+    xhr.withCredentials = withCredentials;
+    addEventListener(xhr, 'error', () => {
+        removeAllEventListeners(xhr);
+        onErrorCallback();
+    });
+    addEventListener(xhr, 'abort', () => {
+        removeAllEventListeners(xhr);
+        onAbortCallback?.();
+    });
+    addEventListener(xhr, 'load', () => {
+        removeAllEventListeners(xhr);
+        callback();
+    });
+    return xhr;
 }

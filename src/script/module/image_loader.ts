@@ -1,5 +1,6 @@
 import type { WebpMachine } from 'webp-hero';
 import {
+    newXHR,
     removeRightClick,
 } from './common';
 import { appendChild } from './dom/element';
@@ -116,32 +117,24 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
     addEventListener(image, 'error', onImageError);
     addEventListener(image, 'load', onImageLoad);
 
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', src);
-    xhr.responseType = 'blob';
-    xhr.withCredentials = withCredentials;
-
     const _onNetworkError = onNetworkError ?? finalizeUnrecoverableError;
-    addEventListener(xhr, 'error', () => {
-        removeAllEventListeners(xhr);
-        _onNetworkError();
-    });
-    addEventListener(xhr, 'abort', () => {
-        removeAllEventListeners(xhr);
-    });
-    addEventListener(xhr, 'load', () => {
-        removeAllEventListeners(xhr);
-        if (xhr.status === 200) {
-            isWebp = xhr.getResponseHeader('Content-Type') === 'image/webp';
-            imageData = xhr.response as Blob;
-            image.src = URL.createObjectURL(imageData);
-            onDataLoad && onDataLoad(imageData);
-        } else {
-            _onNetworkError();
-        }
-    });
-
+    const xhr = newXHR(
+        src,
+        'GET',
+        withCredentials,
+        () => {
+            if (xhr.status === 200) {
+                isWebp = xhr.getResponseHeader('Content-Type') === 'image/webp';
+                imageData = xhr.response as Blob;
+                image.src = URL.createObjectURL(imageData);
+                onDataLoad && onDataLoad(imageData);
+            } else {
+                _onNetworkError();
+            }
+        },
+        _onNetworkError
+    );
+    xhr.responseType = 'blob';
     xhr.send();
     return xhr;
 }

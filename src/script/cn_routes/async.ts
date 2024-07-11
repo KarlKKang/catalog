@@ -2,7 +2,7 @@ import { appendText, createDivElement, createParagraphElement, createSpanElement
 import { getHost, getProtocol, windowLocation } from '../module/dom/document';
 import { addClass, appendChild, replaceChildren } from '../module/dom/element';
 import { getServerOrigin, splitHostname } from '../module/env/origin';
-import { addEventListener, removeAllEventListeners } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { createNewsTemplate } from '../module/news';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';
 import * as commonStyles from '../../css/common.module.scss';
@@ -12,6 +12,7 @@ import { cnRoutesPageTitle } from '../module/text/page_title';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 import { redirect } from '../module/global';
+import { newXHR } from '../module/common';
 
 const enum RouteInfoNodeKey {
     INFO,
@@ -216,28 +217,21 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode, locationP
 }
 
 function testRoute(uri: string, locationPrefix: string, callback: () => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', getServerOrigin(locationPrefix) + uri, true);
-    xhr.withCredentials = true;
-
-    addEventListener(xhr, 'error', () => {
-        removeAllEventListeners(xhr);
-        onErrorCallback();
-    });
-    addEventListener(xhr, 'abort', () => {
-        removeAllEventListeners(xhr);
-        onErrorCallback();
-    });
-    addEventListener(xhr, 'load', () => {
-        removeAllEventListeners(xhr);
-        if (xhr.status === 200) {
-            callback();
-        } else if (xhr.status === 403 && xhr.responseText === 'UNAUTHORIZED') {
-            onUnauthorizedCallback();
-        } else {
-            onErrorCallback();
-        }
-    });
-
+    const xhr = newXHR(
+        getServerOrigin(locationPrefix) + uri,
+        'POST',
+        true,
+        () => {
+            if (xhr.status === 200) {
+                callback();
+            } else if (xhr.status === 403 && xhr.responseText === 'UNAUTHORIZED') {
+                onUnauthorizedCallback();
+            } else {
+                onErrorCallback();
+            }
+        },
+        onErrorCallback,
+        onErrorCallback,
+    );
     xhr.send();
 }

@@ -3,12 +3,13 @@ import {
     removeRightClick,
     openImageWindow,
     SessionTypes,
+    newXHR,
 } from '../module/common';
 import { getTitle, setTitle } from '../module/dom/document';
 import { createDivElement, createParagraphElement } from '../module/dom/create_element';
 import { addClass, appendChild, getDataAttribute, getDescendantsByClass, removeClass } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { addEventListener, removeAllEventListeners } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { encodeCFURIComponent } from '../module/common/pure';
@@ -41,31 +42,26 @@ export default function (newsInfo: NewsInfo, newsID: string): void {
     appendChild(contentInnerContainer, contentContainer);
     appendChild(container, contentOuterContainer);
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', getCDNOrigin() + '/news/' + newsID + '.html');
-    xhr.withCredentials = true;
-
-    addEventListener(xhr, 'error', () => {
-        removeAllEventListeners(xhr);
-        showMessage(notFound);
-    });
-    addEventListener(xhr, 'abort', () => {
-        removeAllEventListeners(xhr);
-    });
-    addEventListener(xhr, 'load', () => {
-        removeAllEventListeners(xhr);
-        if (xhr.status === 200) {
-            contentContainer.innerHTML = xhr.responseText;
-            addManualMultiLanguageClass(contentContainer);
-            bindEventListners(contentContainer);
-            attachImage(contentContainer, newsID, newsInfo[NewsInfoKey.CREDENTIAL]);
-            parseNewsStyle(contentContainer);
-            scrollToHash();
-        } else {
+    const xhr = newXHR(
+        getCDNOrigin() + '/news/' + newsID + '.html',
+        'GET',
+        true,
+        () => {
+            if (xhr.status === 200) {
+                contentContainer.innerHTML = xhr.responseText;
+                addManualMultiLanguageClass(contentContainer);
+                bindEventListners(contentContainer);
+                attachImage(contentContainer, newsID, newsInfo[NewsInfoKey.CREDENTIAL]);
+                parseNewsStyle(contentContainer);
+                scrollToHash();
+            } else {
+                showMessage(notFound);
+            }
+        },
+        () => {
             showMessage(notFound);
         }
-    });
-
+    );
     xhr.send();
 }
 

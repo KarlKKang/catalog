@@ -1,11 +1,11 @@
 import { getServerOrigin } from '../env/origin';
 import { showMessage } from '../message';
 import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
-import { addEventListener, removeAllEventListeners } from '../event_listener';
 import { addTimeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 import { LOGIN_URI } from '../env/uri';
+import { newXHR } from '../common';
 
 export const enum ServerRequestOptionProp {
     CALLBACK,
@@ -86,27 +86,22 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRe
 }
 
 export function sendServerRequest(uri: string, options: ServerRequestOption): XMLHttpRequest {
-    const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open(options[ServerRequestOptionProp.METHOD] ?? 'POST', getServerOrigin() + '/' + uri, true);
-    xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xmlhttp.withCredentials = true;
-
-    addEventListener(xmlhttp, 'error', () => {
-        removeAllEventListeners(xmlhttp);
-        xhrOnErrorCallback(uri, options);
-    });
-    addEventListener(xmlhttp, 'abort', () => {
-        removeAllEventListeners(xmlhttp);
-    });
-    addEventListener(xmlhttp, 'load', () => {
-        removeAllEventListeners(xmlhttp);
-        if (checkXHRStatus(xmlhttp, uri, options)) {
-            options[ServerRequestOptionProp.CALLBACK] && options[ServerRequestOptionProp.CALLBACK](xmlhttp.responseText);
-        }
-    });
-
-    xmlhttp.send(options[ServerRequestOptionProp.CONTENT] ?? '');
-    return xmlhttp;
+    const xhr = newXHR(
+        getServerOrigin() + '/' + uri,
+        options[ServerRequestOptionProp.METHOD] ?? 'POST',
+        true,
+        () => {
+            if (checkXHRStatus(xhr, uri, options)) {
+                options[ServerRequestOptionProp.CALLBACK] && options[ServerRequestOptionProp.CALLBACK](xhr.responseText);
+            }
+        },
+        () => {
+            xhrOnErrorCallback(uri, options);
+        },
+    );
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send(options[ServerRequestOptionProp.CONTENT] ?? '');
+    return xhr;
 }
 
 export function logout(callback: () => void) {
