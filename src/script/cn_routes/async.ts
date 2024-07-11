@@ -141,6 +141,8 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode, locationP
             appendText(spanElem, '測定中…');
         } else if (current[RouteInfoNodeKey.LATENCY] === false) {
             appendText(spanElem, '測定失敗');
+        } else if (current[RouteInfoNodeKey.LATENCY] === -1) {
+            appendText(spanElem, '速度をテストする前にログインしてください');
         } else {
             appendText(spanElem, current[RouteInfoNodeKey.LATENCY] + 'ms');
         }
@@ -197,6 +199,11 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode, locationP
         sortResult(false);
         testNextRoute(container, head, locationPrefixLength);
     };
+    const onUnauthorizedCallback = () => {
+        testRouteNodeConst[RouteInfoNodeKey.LATENCY] = -1;
+        sortResult(false);
+        testNextRoute(container, head, locationPrefixLength);
+    };
     testRoute('/empty', locationPrefix, () => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
         const start = performance.now();
         testRoute('/512kB', locationPrefix, () => {
@@ -204,13 +211,14 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode, locationP
             testRouteNodeConst[RouteInfoNodeKey.LATENCY] = latency;
             sortResult(latency);
             testNextRoute(container, head, locationPrefixLength);
-        }, onErrorCallback);
-    }, onErrorCallback);
+        }, onErrorCallback, onUnauthorizedCallback);
+    }, onErrorCallback, onUnauthorizedCallback);
 }
 
-function testRoute(uri: string, locationPrefix: string, callback: () => void, onErrorCallback: () => void) {
+function testRoute(uri: string, locationPrefix: string, callback: () => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', getServerOrigin(locationPrefix) + uri, true);
+    xhr.withCredentials = true;
 
     addEventListener(xhr, 'error', () => {
         removeAllEventListeners(xhr);
@@ -224,6 +232,8 @@ function testRoute(uri: string, locationPrefix: string, callback: () => void, on
         removeAllEventListeners(xhr);
         if (xhr.status === 200) {
             callback();
+        } else if (xhr.status === 403 && xhr.responseText === 'UNAUTHORIZED') {
+            onUnauthorizedCallback();
         } else {
             onErrorCallback();
         }
