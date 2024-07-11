@@ -45,7 +45,7 @@ export function newXHR(
     method: 'GET' | 'POST',
     withCredentials: boolean,
     callback: () => void,
-    onErrorCallback: () => void,
+    onErrorCallback?: () => void,
     onAbortCallback?: () => void
 ) {
     const xhr = new XMLHttpRequest();
@@ -53,7 +53,7 @@ export function newXHR(
     xhr.withCredentials = withCredentials;
     addEventListener(xhr, 'error', () => {
         removeAllEventListeners(xhr);
-        onErrorCallback();
+        onErrorCallback?.();
     });
     addEventListener(xhr, 'abort', () => {
         removeAllEventListeners(xhr);

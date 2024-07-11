@@ -1,8 +1,9 @@
 import {
+    newXHR,
     scrollToTop,
 } from '../module/common';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
-import { createDivElement, createInputElement, createParagraphElement, createSVGElement, replaceText } from '../module/dom/create_element';
+import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { changeURL, getFullPath, getURI } from '../module/dom/document';
@@ -22,8 +23,8 @@ import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntr
 import { MaintenanceInfoKey } from '../module/type/MaintenanceInfo';
 import { attachLazyload, offload as offloadLazyload } from '../module/lazyload';
 import { getURLKeywords, setSearch } from './shared';
-import { getCDNOrigin } from '../module/env/origin';
-import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
+import { getCDNOrigin, getLocationPrefix, getServerOrigin } from '../module/env/origin';
+import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 
 let pivot: Pivot;
 let keywords: string;
@@ -87,17 +88,6 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
 
     const maintenanceInfo = seriesInfo[SeriesInfoKey.MAINTENANCE];
     if (maintenanceInfo !== undefined) {
-        const annoucementOuterContainer = createDivElement();
-        const announcementInnerContainer = createDivElement();
-        addClass(annoucementOuterContainer, styles.announcement);
-        appendChild(annoucementOuterContainer, announcementInnerContainer);
-        insertBefore(annoucementOuterContainer, containerElem);
-
-        const announcementTitle = createParagraphElement('メンテナンスのお知らせ');
-        addClass(announcementTitle, styles.announcementTitle);
-        changeColor(announcementTitle, CSS_COLOR.ORANGE);
-        appendChild(announcementInnerContainer, announcementTitle);
-
         let message = '';
         const maintenanceStart = maintenanceInfo[MaintenanceInfoKey.START];
         const maintenancePeriod = maintenanceInfo[MaintenanceInfoKey.PERIOD];
@@ -109,9 +99,7 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
             message = `メンテナンス開始は${startTime}を予定しております。`;
         }
         message += 'ご不便をおかけして申し訳ありません。';
-        const announcementBody = createParagraphElement(message);
-        addClass(announcementBody, styles.announcementBody);
-        appendChild(announcementInnerContainer, announcementBody);
+        showAnnouncement('メンテナンスのお知らせ', [createTextNode(message)], containerElem);
     }
     showSeries(
         seriesInfo,
@@ -148,6 +136,7 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
         }
         searchClosure(true);
     });
+    showASNAnnouncement(containerElem);
 }
 
 function showSeries(
@@ -279,6 +268,61 @@ function getSeries(callback: (seriesInfo: SeriesInfo, xhr?: XMLHttpRequest) => v
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
     currentRequest = request;
+}
+
+function showASNAnnouncement(containerElem: HTMLElement) {
+    const xhr = newXHR(
+        getServerOrigin('') + '/get_asn',
+        'POST',
+        false,
+        () => {
+            if (xhr.status !== 200) {
+                return;
+            }
+            if (xhr.responseText !== '4134') {
+                if (getLocationPrefix() === '') {
+                    return;
+                }
+                showAnnouncement(
+                    '特別回線のご利用について',
+                    [createTextNode('ISPが中国電信以外の場合は、特別回線のご利用はお控えください。')],
+                    containerElem
+                );
+            }
+            if (getLocationPrefix() !== '') {
+                return;
+            }
+            const message = [
+                createTextNode('ご利用のISPが中国電信であることが検出されました。ネットワーク速度を改善する方法については、'),
+                createSpanElement('こちら'),
+                createTextNode('をご覧ください。'),
+            ] as const;
+            addClass(message[1], commonStyles.link);
+            addEventListener(message[1], 'click', () => {
+                redirect(NEWS_ROOT_URI + '2ghJ5dHKW8T');
+            });
+            showAnnouncement('中国電信をご利用の方へ', message, containerElem);
+        }
+    );
+    xhr.send();
+}
+
+function showAnnouncement(title: string, message: readonly Node[], containerElem: HTMLElement) {
+    const annoucementOuterContainer = createDivElement();
+    const announcementInnerContainer = createDivElement();
+    addClass(annoucementOuterContainer, styles.announcement);
+    appendChild(annoucementOuterContainer, announcementInnerContainer);
+    insertBefore(annoucementOuterContainer, containerElem);
+
+    const announcementTitle = createParagraphElement(title);
+    addClass(announcementTitle, styles.announcementTitle);
+    changeColor(announcementTitle, CSS_COLOR.ORANGE);
+    appendChild(announcementInnerContainer, announcementTitle);
+
+    const announcementBody = createParagraphElement();
+    appendChildren(announcementBody, ...message);
+    addClass(announcementBody, styles.announcementBody);
+    appendChild(announcementInnerContainer, announcementBody);
 }
 
 export function offload() {
