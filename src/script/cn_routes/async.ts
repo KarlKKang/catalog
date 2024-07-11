@@ -1,7 +1,7 @@
 import { appendText, createDivElement, createParagraphElement, createSpanElement } from '../module/dom/create_element';
 import { getHost, getProtocol, windowLocation } from '../module/dom/document';
 import { addClass, appendChild, replaceChildren } from '../module/dom/element';
-import { getServerOrigin, splitHostname } from '../module/env/origin';
+import { getLocationPrefix, getServerOrigin } from '../module/env/origin';
 import { addEventListener } from '../module/event_listener';
 import { createNewsTemplate } from '../module/news';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';
@@ -95,7 +95,7 @@ export default function (routeList: RouteList) {
     routeListContainer.style.textAlign = 'center';
     appendChild(contentContainer, routeListContainer);
 
-    const currentLocation = splitHostname()[0].toLowerCase();
+    const currentLocation = getLocationPrefix().toLowerCase();
     const head = {
         [RouteInfoNodeKey.INFO]: null,
         [RouteInfoNodeKey.LATENCY]: null,
