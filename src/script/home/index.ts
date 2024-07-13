@@ -41,7 +41,7 @@ export default function (showPage: ShowPageFunc) {
     );
 
     const keywords = getURLKeywords();
-    const keywordsQuery = keywords === '' ? '' : '?keywords=' + keywords + '&';
+    const keywordsQuery = keywords === '' ? '' : 'keywords=' + keywords + '&';
     sendServerRequest('get_series?' + keywordsQuery + 'pivot=0', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
             const currentPgid = pgid;
