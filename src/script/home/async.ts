@@ -6,7 +6,7 @@ import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../mo
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { changeURL, getFullPath, getURI } from '../module/dom/document';
+import { changeURL, getFullPath, getHost, getProtocol, getURI, windowLocation } from '../module/dom/document';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/common/pure';
@@ -283,11 +283,17 @@ function showASNAnnouncement(containerElem: HTMLElement) {
                 if (getLocationPrefix() === '') {
                     return;
                 }
-                showAnnouncement(
-                    '特別回線のご利用について',
-                    [createTextNode('ISPが中国電信以外の場合は、特別回線のご利用はお控えください。')],
-                    containerElem
-                );
+                const message = [
+                    createTextNode('ご利用のISPが中国電信ではないことが検出されました。ISPが中国電信以外の場合は、特別回線のご利用はお控えください。通常回線に切り替えるには'),
+                    createSpanElement('こちら'),
+                    createTextNode('をクリックしてください。'),
+                ] as const;
+                addClass(message[1], commonStyles.link);
+                addEventListener(message[1], 'click', () => {
+                    const host = getHost().substring(getLocationPrefix().length);
+                    windowLocation.href = getProtocol() + '//' + host + getFullPath();
+                });
+                showAnnouncement('特別回線のご利用について', message, containerElem);
             }
             if (getLocationPrefix() !== '') {
                 return;
