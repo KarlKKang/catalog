@@ -1,7 +1,7 @@
 import { appendText, createDivElement, createParagraphElement, createSpanElement } from '../module/dom/create_element';
-import { getHost, getProtocol, windowLocation } from '../module/dom/document';
+import { getProtocol, windowLocation } from '../module/dom/document';
 import { addClass, appendChild, replaceChildren } from '../module/dom/element';
-import { getLocationPrefix, getServerOrigin } from '../module/env/origin';
+import { concatenateLocationPrefix, getBaseHost, getLocationPrefix, getServerOrigin } from '../module/env/origin';
 import { addEventListener } from '../module/event_listener';
 import { createNewsTemplate } from '../module/news';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';
@@ -113,10 +113,10 @@ export default function (routeList: RouteList) {
         current[RouteInfoNodeKey.NEXT] = next;
         current = next;
     }
-    testNextRoute(routeListContainer, head, currentLocation.length);
+    testNextRoute(routeListContainer, head);
 }
 
-function testNextRoute(container: HTMLDivElement, head: RouteInfoNode, locationPrefixLength: number) {
+function testNextRoute(container: HTMLDivElement, head: RouteInfoNode) {
     replaceChildren(container);
     let testRouteNodePrevious: RouteInfoNode | null = null;
     let testRouteNode: RouteInfoNode | null = null;
@@ -152,9 +152,9 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode, locationP
         } else if (current[RouteInfoNodeKey.LATENCY] !== null && current[RouteInfoNodeKey.LATENCY] !== false) {
             addClass(spanElem, commonStyles.link);
             addEventListener(spanElem, 'click', () => {
-                const host = getHost().substring(locationPrefixLength);
+                const baseHost = getBaseHost(); // Use host just in case there is a port number.
                 const locationPrefix = routeInfo !== null ? routeInfo[RouteInfoKey.CODE].toLowerCase() + '.' : '';
-                windowLocation.href = getProtocol() + '//' + locationPrefix + host;
+                windowLocation.href = getProtocol() + '//' + concatenateLocationPrefix(locationPrefix, baseHost);
             });
         }
         previous = current;
@@ -198,12 +198,12 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode, locationP
     const onErrorCallback = () => {
         testRouteNodeConst[RouteInfoNodeKey.LATENCY] = false;
         sortResult(false);
-        testNextRoute(container, head, locationPrefixLength);
+        testNextRoute(container, head);
     };
     const onUnauthorizedCallback = () => {
         testRouteNodeConst[RouteInfoNodeKey.LATENCY] = -1;
         sortResult(false);
-        testNextRoute(container, head, locationPrefixLength);
+        testNextRoute(container, head);
     };
     testRoute('/empty', locationPrefix, () => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
         const start = performance.now();
@@ -211,7 +211,7 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode, locationP
             const latency = Math.round(performance.now() - start);
             testRouteNodeConst[RouteInfoNodeKey.LATENCY] = latency;
             sortResult(latency);
-            testNextRoute(container, head, locationPrefixLength);
+            testNextRoute(container, head);
         }, onErrorCallback, onUnauthorizedCallback);
     }, onErrorCallback, onUnauthorizedCallback);
 }

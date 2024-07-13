@@ -1,4 +1,4 @@
-import { getHostname } from '../dom/document';
+import { getHost, getHostname } from '../dom/document';
 import { TOP_DOMAIN } from './domain';
 
 function splitHostname() {
@@ -12,11 +12,18 @@ function splitHostname() {
 export function getLocationPrefix() {
     return splitHostname()[0];
 }
+export function getBaseHost() {
+    const host = getHost();
+    return host.substring(getLocationPrefix().length);
+}
+export function concatenateLocationPrefix(locationPrefix: string, baseHost: string) {
+    return locationPrefix + baseHost;
+}
 export function getServerOrigin(locationPrefixOverride?: string) {
     const [locationPrefix, baseDomain] = splitHostname();
-    return 'https://' + (locationPrefixOverride ?? locationPrefix) + 'server.' + baseDomain;
+    return 'https://' + concatenateLocationPrefix(locationPrefixOverride ?? locationPrefix, 'server.' + baseDomain);
 }
 export function getCDNOrigin() {
     const [locationPrefix, baseDomain] = splitHostname();
-    return 'https://' + locationPrefix + 'cdn.' + baseDomain;
+    return 'https://' + concatenateLocationPrefix(locationPrefix, 'cdn.' + baseDomain);
 }

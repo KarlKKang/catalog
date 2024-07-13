@@ -6,7 +6,7 @@ import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../mo
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { changeURL, getFullPath, getHost, getProtocol, getURI, windowLocation } from '../module/dom/document';
+import { changeURL, getFullPath, getProtocol, getURI, windowLocation } from '../module/dom/document';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/common/pure';
@@ -23,7 +23,7 @@ import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntr
 import { MaintenanceInfoKey } from '../module/type/MaintenanceInfo';
 import { attachLazyload, offload as offloadLazyload } from '../module/lazyload';
 import { getURLKeywords, setSearch } from './shared';
-import { getCDNOrigin, getLocationPrefix, getServerOrigin } from '../module/env/origin';
+import { getBaseHost, getCDNOrigin, getLocationPrefix, getServerOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 
 let pivot: Pivot;
@@ -290,8 +290,7 @@ function showASNAnnouncement(containerElem: HTMLElement) {
                 ] as const;
                 addClass(message[1], commonStyles.link);
                 addEventListener(message[1], 'click', () => {
-                    const host = getHost().substring(getLocationPrefix().length);
-                    windowLocation.href = getProtocol() + '//' + host + getFullPath();
+                    windowLocation.href = getProtocol() + '//' + getBaseHost() + getFullPath();
                 });
                 showAnnouncement('特別回線のご利用について', message, containerElem);
             }
