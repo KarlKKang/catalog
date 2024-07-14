@@ -166,9 +166,6 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode) {
         return;
     }
 
-    if (testRouteNodePrevious !== null) { // Remove the node from the linked list.
-        testRouteNodePrevious[RouteInfoNodeKey.NEXT] = testRouteNodeConst[RouteInfoNodeKey.NEXT];
-    }
     let locationPrefix = '';
     const routeInfo = testRouteNodeConst[RouteInfoNodeKey.INFO];
     if (routeInfo !== null) {
@@ -176,6 +173,7 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode) {
     }
     const sortResult = (latency: number | false) => {
         if (testRouteNodePrevious !== null) {// Add the node back to the linked list, in sorted order.
+            testRouteNodePrevious[RouteInfoNodeKey.NEXT] = testRouteNodeConst[RouteInfoNodeKey.NEXT];
             let previous: RouteInfoNode | null = null;
             let current: RouteInfoNode | null = head;
             while (
@@ -201,8 +199,13 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode) {
         testNextRoute(container, head);
     };
     const onUnauthorizedCallback = () => {
-        testRouteNodeConst[RouteInfoNodeKey.LATENCY] = -1;
-        sortResult(false);
+        let current: RouteInfoNode | null = head;
+        while (current !== null) {
+            if (current[RouteInfoNodeKey.LATENCY] === null) {
+                current[RouteInfoNodeKey.LATENCY] = -1;
+            }
+            current = current[RouteInfoNodeKey.NEXT];
+        }
         testNextRoute(container, head);
     };
     testRoute('/empty', locationPrefix, () => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
