@@ -6,7 +6,7 @@ import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../mo
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { changeURL, getFullPath, getProtocol, getURI, windowLocation } from '../module/dom/document';
+import { changeURL, getFullPath, getHostname, getProtocol, getURI, windowLocation } from '../module/dom/document';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/common/pure';
@@ -23,8 +23,9 @@ import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntr
 import { MaintenanceInfoKey } from '../module/type/MaintenanceInfo';
 import { attachLazyload, offload as offloadLazyload } from '../module/lazyload';
 import { getURLKeywords, setSearch } from './shared';
-import { getBaseHost, getCDNOrigin, getLocationPrefix, getServerOrigin } from '../module/env/origin';
+import { getBaseHost, getCDNOrigin, getServerOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
+import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/CurrentRouteInfo';
 
 let pivot: Pivot;
 let keywords: string;
@@ -272,15 +273,16 @@ function getSeries(callback: (seriesInfo: SeriesInfo, xhr?: XMLHttpRequest) => v
 
 function showASNAnnouncement(containerElem: HTMLElement) {
     const xhr = newXHR(
-        getServerOrigin('') + '/get_asn',
-        'POST',
+        getServerOrigin('') + '/get_route_info?hostname=' + getHostname(),
+        'GET',
         false,
         () => {
             if (xhr.status !== 200) {
                 return;
             }
-            if (xhr.responseText !== '4134') {
-                if (getLocationPrefix() === '') {
+            const routeInfo = parseResponse(xhr.responseText, parseCurrentRouteInfo);
+            if (routeInfo[CurrentRouteInfoKey.ASN] !== '4134') {
+                if (routeInfo[CurrentRouteInfoKey.TYPE] !== 'cn') {
                     return;
                 }
                 const message = [
@@ -294,7 +296,7 @@ function showASNAnnouncement(containerElem: HTMLElement) {
                 });
                 showAnnouncement('特別回線のご利用について', message, containerElem);
             }
-            if (getLocationPrefix() !== '') {
+            if (routeInfo[CurrentRouteInfoKey.TYPE] === 'cn') {
                 return;
             }
             const message = [
