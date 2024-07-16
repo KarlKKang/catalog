@@ -131,9 +131,9 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
             } else {
                 _onNetworkError();
             }
-        },
-        _onNetworkError
+        }
     );
+    addEventListener(xhr, 'error', _onNetworkError);
     xhr.responseType = 'blob';
     xhr.send();
     return xhr;

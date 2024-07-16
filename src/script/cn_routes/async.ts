@@ -2,7 +2,7 @@ import { appendText, createDivElement, createParagraphElement, createSpanElement
 import { getProtocol, windowLocation } from '../module/dom/document';
 import { addClass, appendChild, replaceChildren } from '../module/dom/element';
 import { concatenateLocationPrefix, getBaseHost, getLocationPrefix, getServerOrigin } from '../module/env/origin';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener, addEventsListener } from '../module/event_listener';
 import { createNewsTemplate } from '../module/news';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';
 import * as commonStyles from '../../css/common.module.scss';
@@ -233,8 +233,8 @@ function testRoute(uri: string, locationPrefix: string, callback: () => void, on
                 onErrorCallback();
             }
         },
-        onErrorCallback,
-        onErrorCallback,
     );
+    xhr.timeout = 10000;
+    addEventsListener(xhr, ['error', 'timeout'], onErrorCallback);
     xhr.send();
 }

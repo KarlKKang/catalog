@@ -6,6 +6,7 @@ import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 import { LOGIN_URI } from '../env/uri';
 import { newXHR } from '../common';
+import { addEventListener } from '../event_listener';
 
 export const enum ServerRequestOptionProp {
     CALLBACK,
@@ -94,11 +95,11 @@ export function sendServerRequest(uri: string, options: ServerRequestOption): XM
             if (checkXHRStatus(xhr, uri, options)) {
                 options[ServerRequestOptionProp.CALLBACK] && options[ServerRequestOptionProp.CALLBACK](xhr.responseText);
             }
-        },
-        () => {
-            xhrOnErrorCallback(uri, options);
-        },
+        }
     );
+    addEventListener(xhr, 'error', () => {
+        xhrOnErrorCallback(uri, options);
+    });
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.send(options[ServerRequestOptionProp.CONTENT] ?? '');
     return xhr;

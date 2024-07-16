@@ -45,23 +45,15 @@ export function newXHR(
     method: 'GET' | 'POST',
     withCredentials: boolean,
     callback: () => void,
-    onErrorCallback?: () => void,
-    onAbortCallback?: () => void
 ) {
     const xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
     xhr.withCredentials = withCredentials;
-    addEventListener(xhr, 'error', () => {
-        removeAllEventListeners(xhr);
-        onErrorCallback?.();
-    });
-    addEventListener(xhr, 'abort', () => {
-        removeAllEventListeners(xhr);
-        onAbortCallback?.();
-    });
     addEventListener(xhr, 'load', () => {
-        removeAllEventListeners(xhr);
         callback();
+    });
+    addEventListener(xhr, 'loadend', () => {
+        removeAllEventListeners(xhr);
     });
     return xhr;
 }
