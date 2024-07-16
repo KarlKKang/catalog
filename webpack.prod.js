@@ -20,6 +20,9 @@ for (const config of configs) {
 }
 
 addPlugins(configs[0], false);
+const filenameTemplate = 'script/[contenthash:5].js';
+configs[0].output.filename = filenameTemplate;
+configs[0].output.chunkFilename = filenameTemplate;
 configs[1].entry = './temp/sw.js';
 
 export default configs;

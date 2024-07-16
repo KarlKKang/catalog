@@ -1,6 +1,5 @@
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CircularDependencyPlugin from 'circular-dependency-plugin';
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from 'path';
 import { htmlMinifyOptions, cssMinifyOptions } from './build_config.js';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
@@ -25,9 +24,6 @@ const configs = [
         target: 'browserslist',
         entry: './src/script/entry',
         plugins: [
-            new MiniCssExtractPlugin({
-                filename: 'style/[id].css',
-            }),
             new CircularDependencyPlugin({
                 exclude: /node_modules|hls\.js/,
                 failOnError: true,
@@ -59,7 +55,6 @@ const configs = [
             })
         ],
         output: {
-            filename: 'script/[id].js',
             publicPath: '/',
             clean: {
                 keep: (filename) => {

@@ -9,6 +9,16 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { readSync } from './file_system.js';
 
+function addMiniCssExtractPlugin(config, dev) {
+    const filenameTemplate = dev ? 'style/[id].css' : 'style/[contenthash:5].css';
+    config.plugins.push(
+        new MiniCssExtractPlugin({
+            filename: filenameTemplate,
+            chunkFilename: filenameTemplate,
+        }),
+    );
+}
+
 function addHTMLConfig(config, dev) {
     const pageTitle = DOMAIN + (dev ? ' (alpha)' : '');
 
@@ -230,6 +240,7 @@ function addCssLoader(config, dev) {
 }
 
 export function addPlugins(config, dev) {
+    addMiniCssExtractPlugin(config, dev);
     addDefinePlugin(config, dev);
     addHTMLConfig(config, dev);
     addFontLoader(config, dev);

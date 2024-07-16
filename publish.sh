@@ -5,6 +5,11 @@ if [[ "$#" -ne 2 || ("$1" != "featherine-website" && "$1" != "featherine-website
     exit 1
 fi
 
+opt='--no-overwrite ^(script|style|font)\/ --no-overwrite-exclude ^(script\/browser\.js|style\/unsupported_browser\.css)$'
+if [[ "$1" == "featherine-website-alpha" ]]; then
+    opt='--delete'
+fi
+
 node ./aws-s3-js/upload.js "$1" "/" "$2/" \
     --mime '\.css$' 'text/css' \
     --mime '\.html$' 'text/html' \
@@ -18,4 +23,4 @@ node ./aws-s3-js/upload.js "$1" "/" "$2/" \
     --mime '\.png$' 'image/png' \
     --mime '\.webmanifest$' 'application/manifest+json' \
     --mime '\.json$' 'application/json' \
-    --delete 2>>"publish.log"
+    $opt 2>>"publish.log"

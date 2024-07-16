@@ -29,6 +29,7 @@ for (const config of configs) {
 }
 
 addPlugins(configs[0], true);
+configs[0].output.filename = 'script/[id].js';
 configs[1].entry = './temp/sw_alpha.js';
 configs[1].module.rules.push(
     {
