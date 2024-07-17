@@ -392,7 +392,6 @@
     &.player-waiting {
         .player-loading-spinner {
             display: block;
-            -webkit-animation: player-spinner-show 0s linear 0.3s forwards;
             animation: player-spinner-show 0s linear 0.3s forwards;
 
             @keyframes player-spinner-show {
@@ -401,15 +400,8 @@
                 }
             }
 
-            @-webkit-keyframes player-spinner-show {
-                to {
-                    visibility: visible;
-                }
-            }
-
             &:before,
             &:after {
-                -webkit-animation: player-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite;
                 animation: player-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite;
 
                 @keyframes player-spinner-spin {
@@ -417,16 +409,9 @@
                         transform: rotate(360deg);
                     }
                 }
-
-                @-webkit-keyframes player-spinner-spin {
-                    100% {
-                        -webkit-transform: rotate(360deg);
-                    }
-                }
             }
 
             &:after {
-                -webkit-animation-delay: 0.44s;
                 animation-delay: 0.44s;
             }
         }
