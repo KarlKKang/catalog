@@ -3,7 +3,7 @@ import { clearSessionStorage, getSearchParam, getURI } from '../module/dom/docum
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { getLogoutParam } from './helper';
-import { importAll } from './import_promise';
+import { importAllPageModules } from './page_import_promise';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
 import { addTimeout } from '../module/timer';
@@ -11,6 +11,7 @@ import { type MediaSessionInfo, MediaSessionInfoKey, parseMediaSessionInfo } fro
 import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/BangumiInfo';
 import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
+import { importAllMediaModules } from './media_import_promise';
 
 let offloadModule: (() => void) | null = null;
 
@@ -45,7 +46,8 @@ export default function (showPage: ShowPageFunc) {
     //send requests
     let createMediaSessionPromise: Promise<MediaSessionInfo> | null = null;
     const createMediaSession = () => {
-        importAll();
+        importAllPageModules();
+        importAllMediaModules();
         return new Promise<MediaSessionInfo>((resolve) => {
             sendServerRequest('create_media_session', {
                 [ServerRequestOptionProp.CALLBACK]: function (response: string) {

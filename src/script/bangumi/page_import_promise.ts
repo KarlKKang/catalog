@@ -10,16 +10,7 @@ export let videoImportPromise: Promise<typeof import(
     /* webpackExports: ["default", "offload"] */
     './video'
 )>;
-export let nativePlayerImportPromise: Promise<typeof import(
-    /* webpackExports: ["Player"] */
-    '../module/player/player'
-)>;
-export let hlsPlayerImportPromise: Promise<typeof import(
-    /* webpackExports: ["HlsPlayer"] */
-    '../module/player/hls_player'
-)>;
-
-export function importAll() {
+export function importAllPageModules() {
     imageImportPromise = import(
         /* webpackExports: ["default", "offload"] */
         './image'
@@ -31,13 +22,5 @@ export function importAll() {
     videoImportPromise = import(
         /* webpackExports: ["default", "offload"] */
         './video'
-    );
-    nativePlayerImportPromise = import(
-        /* webpackExports: ["Player"] */
-        '../module/player/player'
-    );
-    hlsPlayerImportPromise = import(
-        /* webpackExports: ["HlsPlayer"] */
-        '../module/player/hls_player'
     );
 }

@@ -20,7 +20,7 @@ import { parseCharacters } from './helper';
 import { showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, incompatibleSuffix, buildDownloadAccordion, showPlayerError, showErrorMessage } from './media_helper';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid } from '../module/global';
-import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
+import { hlsPlayerImportPromise, nativePlayerImportPromise } from './media_import_promise';
 import { SharedElement, getSharedElement } from './shared_var';
 import * as styles from '../../css/bangumi.module.scss';
 import { importModule } from '../module/import_module';

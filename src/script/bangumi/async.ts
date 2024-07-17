@@ -8,7 +8,7 @@ import { encodeCFURIComponent } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
-import { audioImportPromise, imageImportPromise, videoImportPromise } from './import_promise';
+import { audioImportPromise, imageImportPromise, videoImportPromise } from './page_import_promise';
 import { SharedElement, dereferenceSharedVars, getSharedElement, initializeSharedVars, setErrorMessageElement } from './shared_var';
 import { hideElement, setMaxHeight, setMinHeight, setOpacity, setPaddingBottom, setVisibility, showElement } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';

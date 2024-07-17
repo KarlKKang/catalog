@@ -22,7 +22,7 @@ import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
 import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
-import { hlsPlayerImportPromise, nativePlayerImportPromise } from './import_promise';
+import { hlsPlayerImportPromise, nativePlayerImportPromise } from './media_import_promise';
 import { SharedElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
 import { addInterval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
