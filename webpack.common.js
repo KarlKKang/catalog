@@ -1,5 +1,4 @@
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import CircularDependencyPlugin from 'circular-dependency-plugin';
 import path from 'path';
 import { htmlMinifyOptions, cssMinifyOptions } from './build_config.js';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
@@ -24,12 +23,6 @@ const configs = [
         target: 'browserslist',
         entry: './src/script/entry',
         plugins: [
-            new CircularDependencyPlugin({
-                exclude: /node_modules|hls\.js/,
-                failOnError: true,
-                allowAsyncCycles: false,
-                cwd: process.cwd(),
-            }),
             new BundleAnalyzerPlugin({
                 analyzerMode: 'static',
                 reportFilename: '../webpack-bundle-analyzer-report.html'

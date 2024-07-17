@@ -1,0 +1,11 @@
+{
+    "baseDir": ".",
+    "tsConfig": "tsconfig.json",
+    "fileExtensions": [
+        "js",
+        "ts"
+    ],
+    "excludeRegExp": [
+        "^(?!src\/).*$"
+    ]
+}
