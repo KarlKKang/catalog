@@ -5,9 +5,10 @@ if [[ "$#" -ne 2 || ("$1" != "featherine-website" && "$1" != "featherine-website
     exit 1
 fi
 
-opt='--no-overwrite ^(script|style|font)\/ --no-overwrite-exclude ^(script\/browser\.js|style\/unsupported_browser\.css)$'
-if [[ "$1" == "featherine-website-alpha" ]]; then
-    opt='--delete'
+opt='--delete'
+if [[ "$1" == "featherine-website" ]]; then
+    opt='--no-overwrite ^(script|style|font)\/ --no-overwrite-exclude ^(script\/browser\.js|style\/unsupported_browser\.css)$'
+    node ./aws-s3-js/upload.js "$1" "/" "$2/" --dry-run $opt 2>>"publish.log" || exit 1
 fi
 
 node ./aws-s3-js/upload.js "$1" "/" "$2/" \
