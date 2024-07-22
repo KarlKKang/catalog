@@ -7,8 +7,8 @@
   "type": "module",
   "scripts": {
     "build:font": "python3 build_font.py",
-    "build": "npm run lint && npm run check-circular && node build_legacy.js && webpack --progress --config webpack.prod.js --config-name main && webpack --progress --config webpack.prod.js --config-name sw && node -c dist/**/*.js",
-    "build-dev": "npm run lint && npm run check-circular && node build_legacy.js dev && webpack --progress --config webpack.dev.js --config-name main && webpack --progress --config webpack.dev.js --config-name sw && node -c dev/**/*.js",
+    "build": "npm run lint && npm run check-circular && node build_legacy.js && webpack --progress --config webpack.prod.js --config-name main && webpack --progress --config webpack.prod.js --config-name sw && for i in dist/**/*.js; do node -c \"$i\" || exit 1; done;",
+    "build-dev": "npm run lint && npm run check-circular && node build_legacy.js dev && webpack --progress --config webpack.dev.js --config-name main && webpack --progress --config webpack.dev.js --config-name sw && for i in dev/**/*.js; do node -c \"$i\" || exit 1; done;",
     "build:hls.js": "cd hls.js && ALT_AUDIO=1 npm run build",
     "lint": "npx eslint src/script/ --ext .ts",
     "lint:fix": "npm run lint -- --fix",

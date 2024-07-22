@@ -10,7 +10,7 @@ import { dirname } from 'path';
 import { readSync } from './file_system.js';
 
 function addMiniCssExtractPlugin(config, dev) {
-    const filenameTemplate = dev ? 'style/[id].css' : 'style/[contenthash:5].css';
+    const filenameTemplate = dev ? 'style/[id].css' : 'style/[contenthash:6].css';
     config.plugins.push(
         new MiniCssExtractPlugin({
             filename: filenameTemplate,
