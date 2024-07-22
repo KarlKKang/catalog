@@ -6,7 +6,7 @@ import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../mo
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';
 import { body } from '../module/dom/body';
-import { changeURL, getFullPath, getHostname, getProtocol, getURI, windowLocation } from '../module/dom/document';
+import { changeURL, getFullPath, getHostname, getURI } from '../module/dom/document';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/common/pure';
@@ -23,7 +23,7 @@ import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntr
 import { MaintenanceInfoKey } from '../module/type/MaintenanceInfo';
 import { attachLazyload, offload as offloadLazyload } from '../module/lazyload';
 import { getURLKeywords, setSearch } from './shared';
-import { getBaseHost, getCDNOrigin, getServerOrigin } from '../module/env/origin';
+import { getCDNOrigin, getServerOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/CurrentRouteInfo';
 
@@ -281,26 +281,28 @@ function showASNAnnouncement(containerElem: HTMLElement) {
                 return;
             }
             const routeInfo = parseResponse(xhr.responseText, parseCurrentRouteInfo);
-            if (routeInfo[CurrentRouteInfoKey.ASN] !== '4134') {
+            const asn = routeInfo[CurrentRouteInfoKey.ASN];
+            if (asn !== '4134' && asn !== '9808' && asn !== '4837') {
                 if (routeInfo[CurrentRouteInfoKey.TYPE] !== 'cn') {
                     return;
                 }
                 const message = [
-                    createTextNode('ご利用のISPが中国電信ではないことが検出されました。ISPが中国電信以外の場合は、特別回線のご利用はお控えください。通常回線に切り替えるには'),
+                    createTextNode('ご利用のISPがすでに通常回線に最適化されている可能性が検出されました。その場合は、特別回線のご利用はお控えください。詳しくは'),
                     createSpanElement('こちら'),
-                    createTextNode('をクリックしてください。'),
+                    createTextNode('をご覧ください。'),
                 ] as const;
                 addClass(message[1], commonStyles.link);
                 addEventListener(message[1], 'click', () => {
-                    windowLocation.href = getProtocol() + '//' + getBaseHost() + getFullPath();
+                    redirect(NEWS_ROOT_URI + '2ghJ5dHKW8T');
                 });
                 showAnnouncement('特別回線のご利用について', message, containerElem);
+                return;
             }
             if (routeInfo[CurrentRouteInfoKey.TYPE] === 'cn') {
                 return;
             }
             const message = [
-                createTextNode('ご利用のISPが中国電信であることが検出されました。ネットワーク速度を改善する方法については、'),
+                createTextNode('ご利用のISPが通常回線に最適化されていない可能性が検出されました。ネットワーク速度を改善する方法については、'),
                 createSpanElement('こちら'),
                 createTextNode('をご覧ください。'),
             ] as const;
@@ -308,7 +310,7 @@ function showASNAnnouncement(containerElem: HTMLElement) {
             addEventListener(message[1], 'click', () => {
                 redirect(NEWS_ROOT_URI + '2ghJ5dHKW8T');
             });
-            showAnnouncement('中国電信をご利用の方へ', message, containerElem);
+            showAnnouncement('ネットワーク速度が低下している場合', message, containerElem);
         }
     );
     xhr.send();
