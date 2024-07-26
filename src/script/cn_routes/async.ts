@@ -294,7 +294,7 @@ function testRoute(size: number, locationPrefix: string, callback: (routeCode: s
             }
         },
     );
-    xhr.timeout = 10000;
+    xhr.timeout = 15000;
     addEventsListener(xhr, ['error', 'timeout'], onErrorCallback);
     xhr.send('size=' + size);
 }
