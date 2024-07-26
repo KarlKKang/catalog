@@ -98,7 +98,7 @@ export default function (routeList: RouteList) {
     routeListContainer.style.textAlign = 'center';
     appendChild(contentContainer, routeListContainer);
 
-    const currentLocation = getLocationPrefix().toLowerCase();
+    const currentLocation = getLocationPrefix();
     const head = {
         [RouteInfoNodeKey.INFO]: null,
         [RouteInfoNodeKey.LATENCY]: null,

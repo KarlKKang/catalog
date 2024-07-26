@@ -5,17 +5,9 @@ export const w = window;
 export const html = d.documentElement;
 export const windowLocation = w.location;
 
-function getHref() {
-    return windowLocation.href;
-}
-
-function getOrigin() {
-    return windowLocation.origin;
-}
-
 export function parseOrigin(url: string | URL) {
     try {
-        return new URL(url).origin;
+        return new URL(url).origin.toLowerCase();
     } catch (e) {
         return null;
     }
@@ -27,14 +19,14 @@ export function getURI() {
 
 export function parseURI(url: string | URL) {
     try {
-        return new URL(url, getOrigin()).pathname;
+        return new URL(url, windowLocation.origin).pathname;
     } catch (e) {
         return null;
     }
 }
 
 export function getHostname() {
-    return windowLocation.hostname;
+    return windowLocation.hostname.toLowerCase();
 }
 
 export function getFullPath() {
@@ -46,15 +38,15 @@ export function getHash() {
 }
 
 export function getProtocol() {
-    return windowLocation.protocol;
+    return windowLocation.protocol.toLowerCase();
 }
 
 export function getHost() {
-    return windowLocation.host;
+    return windowLocation.host.toLowerCase();
 }
 
 export function getSearchParam(name: string): string | null {
-    const urlObj = new URL(getHref());
+    const urlObj = new URL(windowLocation.href);
     return urlObj.searchParams.get(name);
 }
 
