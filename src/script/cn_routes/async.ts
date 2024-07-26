@@ -13,16 +13,19 @@ import { NEWS_ROOT_URI } from '../module/env/uri';
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 import { redirect } from '../module/global';
 import { newXHR } from '../module/common';
+import { TOP_DOMAIN } from '../module/env/domain';
 
 const enum RouteInfoNodeKey {
     INFO,
     LATENCY,
+    RESULT_OVERRIDE,
     IN_USE,
     NEXT,
 }
 type RouteInfoNode = {
     readonly [RouteInfoNodeKey.INFO]: RouteInfo | null;
     [RouteInfoNodeKey.LATENCY]: number | null | false;
+    [RouteInfoNodeKey.RESULT_OVERRIDE]: string | null;
     readonly [RouteInfoNodeKey.IN_USE]: boolean;
     [RouteInfoNodeKey.NEXT]: RouteInfoNode | null;
 };
@@ -99,6 +102,7 @@ export default function (routeList: RouteList) {
     const head = {
         [RouteInfoNodeKey.INFO]: null,
         [RouteInfoNodeKey.LATENCY]: null,
+        [RouteInfoNodeKey.RESULT_OVERRIDE]: null,
         [RouteInfoNodeKey.IN_USE]: currentLocation === '',
         [RouteInfoNodeKey.NEXT]: null,
     };
@@ -107,16 +111,17 @@ export default function (routeList: RouteList) {
         const next = {
             [RouteInfoNodeKey.INFO]: routeInfo,
             [RouteInfoNodeKey.LATENCY]: null,
+            [RouteInfoNodeKey.RESULT_OVERRIDE]: null,
             [RouteInfoNodeKey.IN_USE]: currentLocation === (routeInfo[RouteInfoKey.CODE].toLowerCase() + '.'),
             [RouteInfoNodeKey.NEXT]: null,
         };
         current[RouteInfoNodeKey.NEXT] = next;
         current = next;
     }
-    testNextRoute(routeListContainer, head);
+    testNextRoute(routeList, routeListContainer, head);
 }
 
-function testNextRoute(container: HTMLDivElement, head: RouteInfoNode) {
+function testNextRoute(routeList: RouteList, container: HTMLDivElement, head: RouteInfoNode) {
     replaceChildren(container);
     let testRouteNodePrevious: RouteInfoNode | null = null;
     let testRouteNode: RouteInfoNode | null = null;
@@ -138,15 +143,20 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode) {
             appendText(spanElem, 'CloudFront');
         }
         appendText(spanElem, '：');
+        let result: string;
         if (current[RouteInfoNodeKey.LATENCY] === null) {
-            appendText(spanElem, '測定中…');
+            result = '測定中…';
         } else if (current[RouteInfoNodeKey.LATENCY] === false) {
-            appendText(spanElem, '測定失敗');
+            result = '測定失敗';
         } else if (current[RouteInfoNodeKey.LATENCY] === -1) {
-            appendText(spanElem, '速度をテストする前にログインしてください');
+            result = '速度をテストする前にログインしてください';
         } else {
-            appendText(spanElem, current[RouteInfoNodeKey.LATENCY] + 'ms');
+            result = current[RouteInfoNodeKey.LATENCY] + 'ms';
         }
+        if (current[RouteInfoNodeKey.RESULT_OVERRIDE] !== null) {
+            result = current[RouteInfoNodeKey.RESULT_OVERRIDE];
+        }
+        appendText(spanElem, result);
         if (current[RouteInfoNodeKey.IN_USE]) {
             appendText(spanElem, '（現在使用中）');
         } else if (current[RouteInfoNodeKey.LATENCY] !== null && current[RouteInfoNodeKey.LATENCY] !== false) {
@@ -196,7 +206,7 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode) {
     const onErrorCallback = () => {
         testRouteNodeConst[RouteInfoNodeKey.LATENCY] = false;
         sortResult(false);
-        testNextRoute(container, head);
+        testNextRoute(routeList, container, head);
     };
     const onUnauthorizedCallback = () => {
         let current: RouteInfoNode | null = head;
@@ -206,27 +216,52 @@ function testNextRoute(container: HTMLDivElement, head: RouteInfoNode) {
             }
             current = current[RouteInfoNodeKey.NEXT];
         }
-        testNextRoute(container, head);
+        testNextRoute(routeList, container, head);
     };
-    testRoute('/empty', locationPrefix, () => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
-        const start = performance.now();
-        testRoute('/512kB', locationPrefix, () => {
-            const latency = Math.round(performance.now() - start);
-            testRouteNodeConst[RouteInfoNodeKey.LATENCY] = latency;
-            sortResult(latency);
-            testNextRoute(container, head);
-        }, onErrorCallback, onUnauthorizedCallback);
+    testRoute('/empty', locationPrefix, (xhr) => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
+        if (routeInfo !== null && routeInfo[RouteInfoKey.TYPE] === 'alias') {
+            const viaHeader = xhr.getResponseHeader('Via');
+            if (viaHeader === null) {
+                onErrorCallback();
+                return;
+            }
+            const viaHeaderList = viaHeader.split(',');
+            for (const viaHeaderValue of viaHeaderList) {
+                const viaHeaderValueList = viaHeaderValue.trim().split(' ');
+                if (viaHeaderValueList[2] !== '(' + TOP_DOMAIN + ')') {
+                    continue;
+                }
+                for (const routeInfo of routeList) {
+                    if (routeInfo[RouteInfoKey.CODE].toLowerCase() === viaHeaderValueList[1]?.toLowerCase()) {
+                        testRouteNodeConst[RouteInfoNodeKey.RESULT_OVERRIDE] = routeInfo[RouteInfoKey.NAME];
+                        testRouteNodeConst[RouteInfoNodeKey.LATENCY] = Number.POSITIVE_INFINITY;
+                        sortResult(testRouteNodeConst[RouteInfoNodeKey.LATENCY]);
+                        testNextRoute(routeList, container, head);
+                        return;
+                    }
+                }
+                onErrorCallback();
+            }
+        } else {
+            const start = performance.now();
+            testRoute('/512kB', locationPrefix, () => {
+                const latency = Math.round(performance.now() - start);
+                testRouteNodeConst[RouteInfoNodeKey.LATENCY] = latency;
+                sortResult(latency);
+                testNextRoute(routeList, container, head);
+            }, onErrorCallback, onUnauthorizedCallback);
+        }
     }, onErrorCallback, onUnauthorizedCallback);
 }
 
-function testRoute(uri: string, locationPrefix: string, callback: () => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
+function testRoute(uri: string, locationPrefix: string, callback: (xhr: XMLHttpRequest) => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
     const xhr = newXHR(
         getServerOrigin(locationPrefix) + uri,
         'POST',
         true,
         () => {
             if (xhr.status === 200) {
-                callback();
+                callback(xhr);
             } else if (xhr.status === 403 && xhr.responseText === 'UNAUTHORIZED') {
                 onUnauthorizedCallback();
             } else {

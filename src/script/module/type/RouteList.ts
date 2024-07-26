@@ -1,12 +1,14 @@
-import { parseObject, parseString, parseTypedArray } from './helper';
+import { parseObject, parseOptional, parseString, parseTypedArray } from './helper';
 
 export const enum RouteInfoKey {
     NAME,
     CODE,
+    TYPE,
 }
 export type RouteInfo = {
     readonly [RouteInfoKey.NAME]: string;
     readonly [RouteInfoKey.CODE]: string;
+    readonly [RouteInfoKey.TYPE]: string | undefined;
 };
 export type RouteList = RouteInfo[];
 
@@ -16,6 +18,7 @@ export function parseRouteList(routeList: unknown): RouteList {
         return {
             [RouteInfoKey.NAME]: parseString(routeInfoObj.name),
             [RouteInfoKey.CODE]: parseString(routeInfoObj.code),
+            [RouteInfoKey.TYPE]: parseOptional(routeInfoObj.test_mode, parseString),
         };
     });
 }
