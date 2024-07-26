@@ -18,7 +18,7 @@ export function parseRouteList(routeList: unknown): RouteList {
         return {
             [RouteInfoKey.NAME]: parseString(routeInfoObj.name),
             [RouteInfoKey.CODE]: parseString(routeInfoObj.code),
-            [RouteInfoKey.TYPE]: parseOptional(routeInfoObj.test_mode, parseString),
+            [RouteInfoKey.TYPE]: parseOptional(routeInfoObj.type, parseString),
         };
     });
 }
