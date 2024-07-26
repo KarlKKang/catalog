@@ -15,6 +15,7 @@ import { redirect } from '../module/global';
 import { newXHR } from '../module/common';
 import { TOP_DOMAIN } from '../module/env/domain';
 
+const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {
     INFO,
     LATENCY,
@@ -100,6 +101,7 @@ export default function (routeList: RouteList) {
 
     const currentLocation = getLocationPrefix();
     const codeToNameMap = new Map<string, string>();
+    codeToNameMap.set('', DEFAULT_ROUTE_NAME);
     const head = {
         [RouteInfoNodeKey.INFO]: null,
         [RouteInfoNodeKey.LATENCY]: null,
@@ -142,7 +144,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
         if (routeInfo !== null) {
             appendText(spanElem, routeInfo[RouteInfoKey.NAME]);
         } else {
-            appendText(spanElem, 'CloudFront');
+            appendText(spanElem, DEFAULT_ROUTE_NAME);
         }
         appendText(spanElem, '：');
         let result: string;
@@ -220,38 +222,29 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
         }
         testNextRoute(codeToNameMap, container, head);
     };
-    testRoute('/empty', locationPrefix, (xhr) => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
+    testRoute('/empty', locationPrefix, (routeCode: string) => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
         if (routeInfo !== null && routeInfo[RouteInfoKey.TYPE] === 'alias') {
-            const viaHeader = xhr.getResponseHeader('Via');
-            if (viaHeader === null) {
+            const routeName = codeToNameMap.get(routeCode);
+            if (routeName === undefined) {
                 onErrorCallback();
                 return;
             }
-            const viaHeaderList = viaHeader.split(',');
-            for (const viaHeaderValue of viaHeaderList) {
-                const viaHeaderValueList = viaHeaderValue.trim().split(' ');
-                if (viaHeaderValueList[2] !== '(' + TOP_DOMAIN + ')') {
-                    continue;
-                }
-                const routeCode = viaHeaderValueList[1];
-                if (routeCode === undefined) {
-                    onErrorCallback();
-                    return;
-                }
-                const routeName = codeToNameMap.get(routeCode);
-                if (routeName === undefined) {
-                    onErrorCallback();
-                    return;
-                }
-                testRouteNodeConst[RouteInfoNodeKey.RESULT_OVERRIDE] = routeName;
-                testRouteNodeConst[RouteInfoNodeKey.LATENCY] = Number.POSITIVE_INFINITY;
-                sortResult(testRouteNodeConst[RouteInfoNodeKey.LATENCY]);
-                testNextRoute(codeToNameMap, container, head);
-            }
+            testRouteNodeConst[RouteInfoNodeKey.RESULT_OVERRIDE] = routeName;
+            testRouteNodeConst[RouteInfoNodeKey.LATENCY] = Number.POSITIVE_INFINITY;
+            sortResult(testRouteNodeConst[RouteInfoNodeKey.LATENCY]);
+            testNextRoute(codeToNameMap, container, head);
         } else {
+            if (!checkRouteCode(routeCode, routeInfo)) {
+                onErrorCallback();
+                return;
+            }
             const start = performance.now();
             testRoute('/512kB', locationPrefix, () => {
                 const latency = Math.round(performance.now() - start);
+                if (!checkRouteCode(routeCode, routeInfo)) {
+                    onErrorCallback();
+                    return;
+                }
                 testRouteNodeConst[RouteInfoNodeKey.LATENCY] = latency;
                 sortResult(latency);
                 testNextRoute(codeToNameMap, container, head);
@@ -260,14 +253,40 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
     }, onErrorCallback, onUnauthorizedCallback);
 }
 
-function testRoute(uri: string, locationPrefix: string, callback: (xhr: XMLHttpRequest) => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
+function testRoute(uri: string, locationPrefix: string, callback: (routeCode: string) => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
     const xhr = newXHR(
         getServerOrigin(locationPrefix) + uri,
         'POST',
         true,
         () => {
             if (xhr.status === 200) {
-                callback(xhr);
+                const viaHeader = xhr.getResponseHeader('Via');
+                if (viaHeader === null) {
+                    // There must be at least one Via header that is sent by CloudFront.
+                    onErrorCallback();
+                    return;
+                }
+                let routeCode = null;
+                const viaHeaderList = viaHeader.split(',');
+                for (const viaHeaderValue of viaHeaderList) {
+                    const viaHeaderValueList = viaHeaderValue.trim().split(' ');
+                    const proxyCode = viaHeaderValueList[1];
+                    if (proxyCode === undefined) {
+                        // This is not a valid Via header, ignore it.
+                        continue;
+                    }
+                    const proxyProvider = viaHeaderValueList[2];
+                    if (proxyProvider === '(' + DEFAULT_ROUTE_NAME + ')') {
+                        routeCode = '';
+                    } else if (proxyProvider === '(' + TOP_DOMAIN + ')') {
+                        routeCode = proxyCode;
+                    }
+                }
+                if (routeCode === null) {
+                    onErrorCallback();
+                    return;
+                }
+                callback(routeCode);
             } else if (xhr.status === 403 && xhr.responseText === 'UNAUTHORIZED') {
                 onUnauthorizedCallback();
             } else {
@@ -278,4 +297,11 @@ function testRoute(uri: string, locationPrefix: string, callback: (xhr: XMLHttpR
     xhr.timeout = 10000;
     addEventsListener(xhr, ['error', 'timeout'], onErrorCallback);
     xhr.send();
+}
+
+function checkRouteCode(routeCode: string, routeInfo: RouteInfo | null) {
+    if (routeInfo === null) {
+        return routeCode === '';
+    }
+    return routeCode === routeInfo[RouteInfoKey.CODE];
 }
