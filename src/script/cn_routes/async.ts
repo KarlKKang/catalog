@@ -112,7 +112,7 @@ export default function (routeList: RouteList) {
             [RouteInfoNodeKey.INFO]: routeInfo,
             [RouteInfoNodeKey.LATENCY]: null,
             [RouteInfoNodeKey.RESULT_OVERRIDE]: null,
-            [RouteInfoNodeKey.IN_USE]: currentLocation === (routeInfo[RouteInfoKey.CODE].toLowerCase() + '.'),
+            [RouteInfoNodeKey.IN_USE]: currentLocation === (routeInfo[RouteInfoKey.CODE] + '.'),
             [RouteInfoNodeKey.NEXT]: null,
         };
         current[RouteInfoNodeKey.NEXT] = next;
@@ -163,7 +163,7 @@ function testNextRoute(routeList: RouteList, container: HTMLDivElement, head: Ro
             addClass(spanElem, commonStyles.link);
             addEventListener(spanElem, 'click', () => {
                 const baseHost = getBaseHost(); // Use host just in case there is a port number.
-                const locationPrefix = routeInfo !== null ? routeInfo[RouteInfoKey.CODE].toLowerCase() + '.' : '';
+                const locationPrefix = routeInfo !== null ? routeInfo[RouteInfoKey.CODE] + '.' : '';
                 windowLocation.href = getProtocol() + '//' + concatenateLocationPrefix(locationPrefix, baseHost);
             });
         }
@@ -179,7 +179,7 @@ function testNextRoute(routeList: RouteList, container: HTMLDivElement, head: Ro
     let locationPrefix = '';
     const routeInfo = testRouteNodeConst[RouteInfoNodeKey.INFO];
     if (routeInfo !== null) {
-        locationPrefix = routeInfo[RouteInfoKey.CODE].toLowerCase() + '.';
+        locationPrefix = routeInfo[RouteInfoKey.CODE] + '.';
     }
     const sortResult = (latency: number | false) => {
         if (testRouteNodePrevious !== null) {// Add the node back to the linked list, in sorted order.
@@ -232,7 +232,7 @@ function testNextRoute(routeList: RouteList, container: HTMLDivElement, head: Ro
                     continue;
                 }
                 for (const routeInfo of routeList) {
-                    if (routeInfo[RouteInfoKey.CODE].toLowerCase() === viaHeaderValueList[1]?.toLowerCase()) {
+                    if (routeInfo[RouteInfoKey.CODE] === viaHeaderValueList[1]) {
                         testRouteNodeConst[RouteInfoNodeKey.RESULT_OVERRIDE] = routeInfo[RouteInfoKey.NAME];
                         testRouteNodeConst[RouteInfoNodeKey.LATENCY] = Number.POSITIVE_INFINITY;
                         sortResult(testRouteNodeConst[RouteInfoNodeKey.LATENCY]);
