@@ -99,6 +99,7 @@ export default function (routeList: RouteList) {
     appendChild(contentContainer, routeListContainer);
 
     const currentLocation = getLocationPrefix();
+    const codeToNameMap = new Map<string, string>();
     const head = {
         [RouteInfoNodeKey.INFO]: null,
         [RouteInfoNodeKey.LATENCY]: null,
@@ -108,6 +109,7 @@ export default function (routeList: RouteList) {
     };
     let current: RouteInfoNode = head;
     for (const routeInfo of routeList) {
+        codeToNameMap.set(routeInfo[RouteInfoKey.CODE], routeInfo[RouteInfoKey.NAME]);
         const next = {
             [RouteInfoNodeKey.INFO]: routeInfo,
             [RouteInfoNodeKey.LATENCY]: null,
@@ -118,10 +120,10 @@ export default function (routeList: RouteList) {
         current[RouteInfoNodeKey.NEXT] = next;
         current = next;
     }
-    testNextRoute(routeList, routeListContainer, head);
+    testNextRoute(codeToNameMap, routeListContainer, head);
 }
 
-function testNextRoute(routeList: RouteList, container: HTMLDivElement, head: RouteInfoNode) {
+function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivElement, head: RouteInfoNode) {
     replaceChildren(container);
     let testRouteNodePrevious: RouteInfoNode | null = null;
     let testRouteNode: RouteInfoNode | null = null;
@@ -206,7 +208,7 @@ function testNextRoute(routeList: RouteList, container: HTMLDivElement, head: Ro
     const onErrorCallback = () => {
         testRouteNodeConst[RouteInfoNodeKey.LATENCY] = false;
         sortResult(false);
-        testNextRoute(routeList, container, head);
+        testNextRoute(codeToNameMap, container, head);
     };
     const onUnauthorizedCallback = () => {
         let current: RouteInfoNode | null = head;
@@ -216,7 +218,7 @@ function testNextRoute(routeList: RouteList, container: HTMLDivElement, head: Ro
             }
             current = current[RouteInfoNodeKey.NEXT];
         }
-        testNextRoute(routeList, container, head);
+        testNextRoute(codeToNameMap, container, head);
     };
     testRoute('/empty', locationPrefix, (xhr) => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
         if (routeInfo !== null && routeInfo[RouteInfoKey.TYPE] === 'alias') {
@@ -231,16 +233,20 @@ function testNextRoute(routeList: RouteList, container: HTMLDivElement, head: Ro
                 if (viaHeaderValueList[2] !== '(' + TOP_DOMAIN + ')') {
                     continue;
                 }
-                for (const routeInfo of routeList) {
-                    if (routeInfo[RouteInfoKey.CODE] === viaHeaderValueList[1]) {
-                        testRouteNodeConst[RouteInfoNodeKey.RESULT_OVERRIDE] = routeInfo[RouteInfoKey.NAME];
-                        testRouteNodeConst[RouteInfoNodeKey.LATENCY] = Number.POSITIVE_INFINITY;
-                        sortResult(testRouteNodeConst[RouteInfoNodeKey.LATENCY]);
-                        testNextRoute(routeList, container, head);
-                        return;
-                    }
+                const routeCode = viaHeaderValueList[1];
+                if (routeCode === undefined) {
+                    onErrorCallback();
+                    return;
                 }
-                onErrorCallback();
+                const routeName = codeToNameMap.get(routeCode);
+                if (routeName === undefined) {
+                    onErrorCallback();
+                    return;
+                }
+                testRouteNodeConst[RouteInfoNodeKey.RESULT_OVERRIDE] = routeName;
+                testRouteNodeConst[RouteInfoNodeKey.LATENCY] = Number.POSITIVE_INFINITY;
+                sortResult(testRouteNodeConst[RouteInfoNodeKey.LATENCY]);
+                testNextRoute(codeToNameMap, container, head);
             }
         } else {
             const start = performance.now();
@@ -248,7 +254,7 @@ function testNextRoute(routeList: RouteList, container: HTMLDivElement, head: Ro
                 const latency = Math.round(performance.now() - start);
                 testRouteNodeConst[RouteInfoNodeKey.LATENCY] = latency;
                 sortResult(latency);
-                testNextRoute(routeList, container, head);
+                testNextRoute(codeToNameMap, container, head);
             }, onErrorCallback, onUnauthorizedCallback);
         }
     }, onErrorCallback, onUnauthorizedCallback);
