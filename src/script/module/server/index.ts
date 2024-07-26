@@ -100,7 +100,6 @@ export function sendServerRequest(uri: string, options: ServerRequestOption): XM
     addEventListener(xhr, 'error', () => {
         xhrOnErrorCallback(uri, options);
     });
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.send(options[ServerRequestOptionProp.CONTENT] ?? '');
     return xhr;
 }

@@ -55,5 +55,8 @@ export function newXHR(
     addEventListener(xhr, 'loadend', () => {
         removeAllEventListeners(xhr);
     });
+    if (method === 'POST') {
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    }
     return xhr;
 }

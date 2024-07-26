@@ -222,7 +222,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
         }
         testNextRoute(codeToNameMap, container, head);
     };
-    testRoute('/empty', locationPrefix, (routeCode: string) => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
+    testRoute(0, locationPrefix, (routeCode: string) => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
         if (routeInfo !== null && routeInfo[RouteInfoKey.TYPE] === 'alias') {
             const routeName = codeToNameMap.get(routeCode);
             if (routeName === undefined) {
@@ -239,7 +239,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
                 return;
             }
             const start = performance.now();
-            testRoute('/512kB', locationPrefix, () => {
+            testRoute(512 * 1024, locationPrefix, () => {
                 const latency = Math.round(performance.now() - start);
                 if (!checkRouteCode(routeCode, routeInfo)) {
                     onErrorCallback();
@@ -253,9 +253,9 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
     }, onErrorCallback, onUnauthorizedCallback);
 }
 
-function testRoute(uri: string, locationPrefix: string, callback: (routeCode: string) => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
+function testRoute(size: number, locationPrefix: string, callback: (routeCode: string) => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
     const xhr = newXHR(
-        getServerOrigin(locationPrefix) + uri,
+        getServerOrigin(locationPrefix) + '/test_download',
         'POST',
         true,
         () => {
@@ -296,7 +296,7 @@ function testRoute(uri: string, locationPrefix: string, callback: (routeCode: st
     );
     xhr.timeout = 10000;
     addEventsListener(xhr, ['error', 'timeout'], onErrorCallback);
-    xhr.send();
+    xhr.send('size=' + size);
 }
 
 function checkRouteCode(routeCode: string, routeInfo: RouteInfo | null) {
