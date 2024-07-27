@@ -54,7 +54,7 @@ const configs = [
                     return filename === 'style/unsupported_browser.css' ||
                         filename === 'script/browser.js' ||
                         /^sw\.js(\.map)?$/.test(filename) ||
-                        /^workbox-.*\.js(\.map)?$/.test(filename) ||
+                        filename === 'health_check' ||
                         filename === 'icon' ||
                         filename === 'IndexNowb922f0d0-3cbe-42b9-b913-accbbf92100f.txt' ||
                         filename === 'robots.txt' ||
