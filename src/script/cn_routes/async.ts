@@ -1,4 +1,4 @@
-import { appendText, createDivElement, createParagraphElement, createSpanElement } from '../module/dom/create_element';
+import { appendText, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement } from '../module/dom/create_element';
 import { getProtocol, windowLocation } from '../module/dom/document';
 import { addClass, appendChild, replaceChildren } from '../module/dom/element';
 import { concatenateLocationPrefix, getBaseHost, getLocationPrefix, getServerOrigin } from '../module/env/origin';
@@ -14,6 +14,7 @@ import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_
 import { redirect } from '../module/global';
 import { newXHR } from '../module/common';
 import { TOP_DOMAIN } from '../module/env/domain';
+import { horizontalCenter } from '../module/style';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {
@@ -49,7 +50,7 @@ export default function (routeList: RouteList) {
         redirect(NEWS_URI);
     });
     appendChild(promptParagraphJa, linkJa);
-    appendText(promptParagraphJa, '）。測定後、クリックして切り替えることができます。512kBのファイルをダウンロードするのにかかる時間を計測しています。時間が短いほど良いです。2000ミリ秒以上かかる場合は、回線が混雑している可能性があります。1000ミリ秒前後かそれ以下であれば、大きな差はないので安心して利用できます。');
+    appendText(promptParagraphJa, '）。測定が完了したら、回線を切り替えることができます。512kBのファイルをダウンロードするのにかかる時間を計測しています。時間が短いほど良いです。2000ミリ秒以上かかる場合は、回線がお使いのISPに最適化されていないか、もしくは回線が混雑している可能性があります。1000ミリ秒前後かそれ以下であれば、大きな差はないので安心して利用できます。');
 
     const promptParagraphEn = createParagraphElement(
         'Below are the routes we have prepared for users in China (see details '
@@ -62,7 +63,7 @@ export default function (routeList: RouteList) {
         redirect(NEWS_URI + '#en');
     });
     appendChild(promptParagraphEn, linkEn);
-    appendText(promptParagraphEn, '). After measuring, you can click to switch between them. We are measuring the time it takes to download a 512kB file. The shorter the time, the better. If it takes more than 2000ms, the route may be congested. If it is around 1000 milliseconds or less, there is no significant difference and you can use it without worry.');
+    appendText(promptParagraphEn, '). Once the measurement is complete, you can to switch between the routes. We are measuring the time it takes to download a 512kB file. The shorter the time, the better. If it takes more than 2000ms, the route may not be optimized for your ISP or the route may be congested. If it is around 1000 milliseconds or less, there is no significant difference and you can use it without worry.');
 
     const promptParagraphHant = createParagraphElement(
         '以下是我們為中國用戶準備的線路（點擊'
@@ -75,7 +76,7 @@ export default function (routeList: RouteList) {
         redirect(NEWS_URI + '#zh-Hant');
     });
     appendChild(promptParagraphHant, linkHant);
-    appendText(promptParagraphHant, '了解詳情）。測量完成後，可以點擊切換線路。我們測量下載一個512kB文件所需的時間。時間越短越好。如果超過2000毫秒，則此線路可能擁擠。如果在1000毫秒左右或者更短的話，則區別不大，可放心使用。');
+    appendText(promptParagraphHant, '了解詳情）。測量完成後即可切換線路。我們測量下載一個512kB文件所需的時間。時間越短越好。如果超過2000毫秒，則此線路可能沒有針對您的ISP進行最佳化，或者此線路擁擠。如果在1000毫秒左右或者更短的話，則區別不大，可放心使用。');
 
     const promptParagraphHans = createParagraphElement(
         '以下是我们为中国用户准备的线路（点击'
@@ -88,20 +89,37 @@ export default function (routeList: RouteList) {
         redirect(NEWS_URI + '#zh-Hans');
     });
     appendChild(promptParagraphHans, linkHans);
-    appendText(promptParagraphHans, '了解详情）。测量完成后，可以点击切换线路。我们测量下载一个512kB文件所需的时间。时间越短越好。如果超过2000毫秒，则此线路可能拥挤。如果在1000毫秒左右或者更短的话，则区别不大，可放心使用。');
+    appendText(promptParagraphHans, '了解详情）。测量完成后即可切换线路。我们测量下载一个512kB文件所需的时间。时间越短越好。如果超过2000毫秒，则此线路可能没有针对您的ISP进行优化，或者此线路拥挤。如果在1000毫秒左右或者更短的话，则区别不大，可放心使用。');
 
     appendChild(contentContainer, promptParagraphJa);
     appendChild(contentContainer, promptParagraphEn);
     appendChild(contentContainer, promptParagraphHant);
     appendChild(contentContainer, promptParagraphHans);
+    appendChild(contentContainer, createHRElement());
 
     const routeListContainer = createDivElement();
     routeListContainer.style.textAlign = 'center';
     appendChild(contentContainer, routeListContainer);
 
-    const currentLocation = getLocationPrefix();
+    const retestButton = createButtonElement('再測定');
+    appendChild(contentContainer, retestButton);
+    horizontalCenter(retestButton);
+    retestButton.disabled = true;
+
     const codeToNameMap = new Map<string, string>();
     codeToNameMap.set('', DEFAULT_ROUTE_NAME);
+    for (const routeInfo of routeList) {
+        codeToNameMap.set(routeInfo[RouteInfoKey.CODE], routeInfo[RouteInfoKey.NAME]);
+    }
+    addEventListener(retestButton, 'click', () => {
+        retestButton.disabled = true;
+        testNextRoute(codeToNameMap, routeListContainer, initializeList(routeList), retestButton);
+    });
+    testNextRoute(codeToNameMap, routeListContainer, initializeList(routeList), retestButton);
+}
+
+function initializeList(routeList: RouteList) {
+    const currentLocation = getLocationPrefix();
     const head = {
         [RouteInfoNodeKey.INFO]: null,
         [RouteInfoNodeKey.LATENCY]: null,
@@ -111,7 +129,6 @@ export default function (routeList: RouteList) {
     };
     let current: RouteInfoNode = head;
     for (const routeInfo of routeList) {
-        codeToNameMap.set(routeInfo[RouteInfoKey.CODE], routeInfo[RouteInfoKey.NAME]);
         const next = {
             [RouteInfoNodeKey.INFO]: routeInfo,
             [RouteInfoNodeKey.LATENCY]: null,
@@ -122,10 +139,10 @@ export default function (routeList: RouteList) {
         current[RouteInfoNodeKey.NEXT] = next;
         current = next;
     }
-    testNextRoute(codeToNameMap, routeListContainer, head);
+    return head;
 }
 
-function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivElement, head: RouteInfoNode) {
+function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivElement, head: RouteInfoNode, retestButton: HTMLButtonElement) {
     replaceChildren(container);
     let testRouteNodePrevious: RouteInfoNode | null = null;
     let testRouteNode: RouteInfoNode | null = null;
@@ -177,6 +194,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
 
     const testRouteNodeConst = testRouteNode;
     if (testRouteNodeConst === null) {
+        retestButton.disabled = false;
         return;
     }
 
@@ -210,7 +228,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
     const onErrorCallback = () => {
         testRouteNodeConst[RouteInfoNodeKey.LATENCY] = false;
         sortResult(false);
-        testNextRoute(codeToNameMap, container, head);
+        testNextRoute(codeToNameMap, container, head, retestButton);
     };
     const onUnauthorizedCallback = () => {
         let current: RouteInfoNode | null = head;
@@ -220,7 +238,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
             }
             current = current[RouteInfoNodeKey.NEXT];
         }
-        testNextRoute(codeToNameMap, container, head);
+        testNextRoute(codeToNameMap, container, head, retestButton);
     };
     testRoute(0, locationPrefix, (routeCode: string) => { // The first request is to cache DNS to avoid the impact of DNS caching on the latency test.
         if (routeInfo !== null && routeInfo[RouteInfoKey.TYPE] === 'alias') {
@@ -232,7 +250,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
             testRouteNodeConst[RouteInfoNodeKey.RESULT_OVERRIDE] = routeName;
             testRouteNodeConst[RouteInfoNodeKey.LATENCY] = Number.POSITIVE_INFINITY;
             sortResult(testRouteNodeConst[RouteInfoNodeKey.LATENCY]);
-            testNextRoute(codeToNameMap, container, head);
+            testNextRoute(codeToNameMap, container, head, retestButton);
         } else {
             if (!checkRouteCode(routeCode, routeInfo)) {
                 onErrorCallback();
@@ -247,7 +265,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
                 }
                 testRouteNodeConst[RouteInfoNodeKey.LATENCY] = latency;
                 sortResult(latency);
-                testNextRoute(codeToNameMap, container, head);
+                testNextRoute(codeToNameMap, container, head, retestButton);
             }, onErrorCallback, onUnauthorizedCallback);
         }
     }, onErrorCallback, onUnauthorizedCallback);
