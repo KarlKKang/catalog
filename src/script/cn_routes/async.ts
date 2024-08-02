@@ -50,7 +50,7 @@ export default function (routeList: RouteList) {
         redirect(NEWS_URI);
     });
     appendChild(promptParagraphJa, linkJa);
-    appendText(promptParagraphJa, '）。測定が完了したら、回線を切り替えることができます。512kBのファイルをダウンロードするのにかかる時間を計測しています。時間が短いほど良いです。2000ミリ秒以上かかる場合は、回線がお使いのISPに最適化されていないか、もしくは回線が混雑している可能性があります。1000ミリ秒前後かそれ以下であれば、大きな差はないので安心して利用できます。');
+    appendText(promptParagraphJa, '）。測定が完了したら、回線を切り替えることができます。512kBのファイルをダウンロードするのにかかる時間を計測しています。時間が短いほど良いです。2000ミリ秒以上かかる場合は、回線がお使いのISPに最適化されていない、または回線が混雑している可能性があります。1000ミリ秒前後かそれ以下であれば、大きな差はないので安心して利用できます。');
 
     const promptParagraphEn = createParagraphElement(
         'Below are the routes we have prepared for users in China (see details '
