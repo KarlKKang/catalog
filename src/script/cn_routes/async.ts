@@ -1,5 +1,5 @@
-import { appendText, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement } from '../module/dom/create_element';
-import { getProtocol, windowLocation } from '../module/dom/document';
+import { appendText, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement, replaceText } from '../module/dom/create_element';
+import { getProtocol, w, windowLocation } from '../module/dom/document';
 import { addClass, appendChild, replaceChildren } from '../module/dom/element';
 import { concatenateLocationPrefix, getBaseHost, getLocationPrefix, getServerOrigin } from '../module/env/origin';
 import { addEventListener, addEventsListener } from '../module/event_listener';
@@ -39,63 +39,7 @@ export default function (routeList: RouteList) {
     addManualMultiLanguageClass(contentContainer);
     appendChild(innerContainer, contentContainer);
     appendChild(body, outerContainer);
-
-    const NEWS_URI = NEWS_ROOT_URI + '2ghJ5dHKW8T';
-
-    const promptParagraphJa = createParagraphElement('以下は、中国のユーザーのために用意した回線です（詳細は');
-    const linkJa = createSpanElement();
-    addClass(linkJa, commonStyles.link);
-    appendText(linkJa, 'こちら');
-    addEventListener(linkJa, 'click', () => {
-        redirect(NEWS_URI);
-    });
-    appendChild(promptParagraphJa, linkJa);
-    appendText(promptParagraphJa, '）。測定が完了したら、回線を切り替えることができます。512kBのファイルをダウンロードするのにかかる時間を計測しています。時間が短いほど良いです。2000ミリ秒以上かかる場合は、回線がお使いのISPに最適化されていない、または回線が混雑している可能性があります。1000ミリ秒前後かそれ以下であれば、大きな差はないので安心して利用できます。');
-
-    const promptParagraphEn = createParagraphElement(
-        'Below are the routes we have prepared for users in China (see details '
-    );
-    promptParagraphEn.lang = 'en';
-    const linkEn = createSpanElement();
-    addClass(linkEn, commonStyles.link);
-    appendText(linkEn, 'here');
-    addEventListener(linkEn, 'click', () => {
-        redirect(NEWS_URI + '#en');
-    });
-    appendChild(promptParagraphEn, linkEn);
-    appendText(promptParagraphEn, '). Once the measurement is complete, you can to switch between the routes. We are measuring the time it takes to download a 512kB file. The shorter the time, the better. If it takes more than 2000ms, the route may not be optimized for your ISP or the route may be congested. If it is around 1000 milliseconds or less, there is no significant difference and you can use it without worry.');
-
-    const promptParagraphHant = createParagraphElement(
-        '以下是我們為中國用戶準備的線路（點擊'
-    );
-    promptParagraphHant.lang = 'zh-Hant';
-    const linkHant = createSpanElement();
-    addClass(linkHant, commonStyles.link);
-    appendText(linkHant, '此處');
-    addEventListener(linkHant, 'click', () => {
-        redirect(NEWS_URI + '#zh-Hant');
-    });
-    appendChild(promptParagraphHant, linkHant);
-    appendText(promptParagraphHant, '了解詳情）。測量完成後即可切換線路。我們測量下載一個512kB文件所需的時間。時間越短越好。如果超過2000毫秒，則此線路可能沒有針對您的ISP進行最佳化，或者此線路擁擠。如果在1000毫秒左右或者更短的話，則區別不大，可放心使用。');
-
-    const promptParagraphHans = createParagraphElement(
-        '以下是我们为中国用户准备的线路（点击'
-    );
-    promptParagraphHans.lang = 'zh-Hans';
-    const linkHans = createSpanElement();
-    addClass(linkHans, commonStyles.link);
-    appendText(linkHans, '此处');
-    addEventListener(linkHans, 'click', () => {
-        redirect(NEWS_URI + '#zh-Hans');
-    });
-    appendChild(promptParagraphHans, linkHans);
-    appendText(promptParagraphHans, '了解详情）。测量完成后即可切换线路。我们测量下载一个512kB文件所需的时间。时间越短越好。如果超过2000毫秒，则此线路可能没有针对您的ISP进行优化，或者此线路拥挤。如果在1000毫秒左右或者更短的话，则区别不大，可放心使用。');
-
-    appendChild(contentContainer, promptParagraphJa);
-    appendChild(contentContainer, promptParagraphEn);
-    appendChild(contentContainer, promptParagraphHant);
-    appendChild(contentContainer, promptParagraphHans);
-    appendChild(contentContainer, createHRElement());
+    appendPromptText(contentContainer);
 
     const routeListContainer = createDivElement();
     routeListContainer.style.textAlign = 'center';
@@ -116,6 +60,19 @@ export default function (routeList: RouteList) {
         testNextRoute(codeToNameMap, routeListContainer, initializeList(routeList), retestButton);
     });
     testNextRoute(codeToNameMap, routeListContainer, initializeList(routeList), retestButton);
+
+    appendChild(contentContainer, createHRElement());
+    appendASNPromptText(contentContainer);
+    const asnResultContainer = createParagraphElement();
+    asnResultContainer.style.textAlign = 'center';
+    appendChild(contentContainer, asnResultContainer);
+    const asnRetestButton = createButtonElement('再測定');
+    appendChild(contentContainer, asnRetestButton);
+    horizontalCenter(asnRetestButton);
+    getASN(asnResultContainer, asnRetestButton);
+    addEventListener(asnRetestButton, 'click', () => {
+        getASN(asnResultContainer, asnRetestButton);
+    });
 }
 
 function initializeList(routeList: RouteList) {
@@ -322,4 +279,113 @@ function checkRouteCode(routeCode: string, routeInfo: RouteInfo | null) {
         return routeCode === '';
     }
     return routeCode === routeInfo[RouteInfoKey.CODE];
+}
+
+function getASN(asnResultContainer: HTMLElement, asnRetestButton: HTMLButtonElement) {
+    replaceText(asnResultContainer, 'ASNを取得中…');
+    asnRetestButton.disabled = true;
+    const failedCallback = () => {
+        replaceText(asnResultContainer, 'ASNの取得に失敗しました');
+        asnRetestButton.disabled = false;
+    };
+    const xhr = newXHR(
+        getServerOrigin('') + '/get_asn',
+        'GET',
+        false,
+        () => {
+            if (xhr.status !== 200) {
+                failedCallback();
+                return;
+            }
+            const asn = xhr.responseText;
+            if (asn === '0') {
+                failedCallback();
+                return;
+            }
+            const resultSpan = createSpanElement();
+            replaceText(resultSpan, 'AS' + asn);
+            addClass(resultSpan, commonStyles.link);
+            addEventListener(resultSpan, 'click', () => {
+                w.open('https://bgp.he.net/AS' + asn);
+            });
+            replaceChildren(asnResultContainer, resultSpan);
+            asnRetestButton.disabled = false;
+        }
+    );
+    addEventListener(xhr, 'error', failedCallback);
+    xhr.send();
+}
+
+function appendPromptText(contentContainer: HTMLElement) {
+    const NEWS_URI = NEWS_ROOT_URI + '2ghJ5dHKW8T';
+
+    const promptParagraphJa = createParagraphElement('以下は、中国のユーザーのために用意した回線です（詳細は');
+    const linkJa = createSpanElement();
+    addClass(linkJa, commonStyles.link);
+    appendText(linkJa, 'こちら');
+    addEventListener(linkJa, 'click', () => {
+        redirect(NEWS_URI);
+    });
+    appendChild(promptParagraphJa, linkJa);
+    appendText(promptParagraphJa, '）。測定が完了したら、回線を切り替えることができます。512kBのファイルをダウンロードするのにかかる時間を計測しています。時間が短いほど良いです。2000ミリ秒以上かかる場合は、回線がお使いのISPに最適化されていない、または回線が混雑している可能性があります。1000ミリ秒前後かそれ以下であれば、大きな差はないので安心して利用できます。');
+
+    const promptParagraphEn = createParagraphElement(
+        'Below are the routes we have prepared for users in China (see details '
+    );
+    promptParagraphEn.lang = 'en';
+    const linkEn = createSpanElement();
+    addClass(linkEn, commonStyles.link);
+    appendText(linkEn, 'here');
+    addEventListener(linkEn, 'click', () => {
+        redirect(NEWS_URI + '#en');
+    });
+    appendChild(promptParagraphEn, linkEn);
+    appendText(promptParagraphEn, '). Once the measurement is complete, you can to switch between the routes. We are measuring the time it takes to download a 512kB file. The shorter the time, the better. If it takes more than 2000ms, the route may not be optimized for your ISP or the route may be congested. If it is around 1000 milliseconds or less, there is no significant difference and you can use it without worry.');
+
+    const promptParagraphHant = createParagraphElement(
+        '以下是我們為中國用戶準備的線路（點擊'
+    );
+    promptParagraphHant.lang = 'zh-Hant';
+    const linkHant = createSpanElement();
+    addClass(linkHant, commonStyles.link);
+    appendText(linkHant, '此處');
+    addEventListener(linkHant, 'click', () => {
+        redirect(NEWS_URI + '#zh-Hant');
+    });
+    appendChild(promptParagraphHant, linkHant);
+    appendText(promptParagraphHant, '了解詳情）。測量完成後即可切換線路。我們測量下載一個512kB文件所需的時間。時間越短越好。如果超過2000毫秒，則此線路可能沒有針對您的ISP進行最佳化，或者此線路擁擠。如果在1000毫秒左右或者更短的話，則區別不大，可放心使用。');
+
+    const promptParagraphHans = createParagraphElement(
+        '以下是我们为中国用户准备的线路（点击'
+    );
+    promptParagraphHans.lang = 'zh-Hans';
+    const linkHans = createSpanElement();
+    addClass(linkHans, commonStyles.link);
+    appendText(linkHans, '此处');
+    addEventListener(linkHans, 'click', () => {
+        redirect(NEWS_URI + '#zh-Hans');
+    });
+    appendChild(promptParagraphHans, linkHans);
+    appendText(promptParagraphHans, '了解详情）。测量完成后即可切换线路。我们测量下载一个512kB文件所需的时间。时间越短越好。如果超过2000毫秒，则此线路可能没有针对您的ISP进行优化，或者此线路拥挤。如果在1000毫秒左右或者更短的话，则区别不大，可放心使用。');
+
+    appendChild(contentContainer, promptParagraphJa);
+    appendChild(contentContainer, promptParagraphEn);
+    appendChild(contentContainer, promptParagraphHant);
+    appendChild(contentContainer, promptParagraphHans);
+    appendChild(contentContainer, createHRElement());
+}
+
+function appendASNPromptText(contentContainer: HTMLElement) {
+    const promptParagraphJa = createParagraphElement('以下では、あなたのASN（自律システム番号）を取得します。この番号を使って、現在利用しているISPを確認することができます。例えば、AS4134は中国電信、AS9808は中国移動、AS4837は中国聯通です。1つのISPが複数のASNを所有することもありますのでご注意ください。');
+    const promptParagraphEn = createParagraphElement('Below you will get your ASN (Autonomous System Number). You can use this number to find out which ISP you are currently using. For example, AS4134 is China Telecom, AS9808 is China Mobile, and AS4837 is China Unicom. Please note that one ISP may own multiple ASNs.');
+    promptParagraphEn.lang = 'en';
+    const promptParagraphHant = createParagraphElement('您可以在下面獲得您的ASN（自治系統編號）。您可以使用此號碼來查詢您當前正在使用的ISP。例如AS4134是中國電信，AS9808是中國移動，AS4837是中國聯通。請注意，一個ISP可能擁有多個ASN。');
+    promptParagraphHant.lang = 'zh-Hant';
+    const promptParagraphHans = createParagraphElement('您可以在下面获得您的ASN（自治系统编号）。您可以使用此号码来查询您当前正在使用的ISP。例如AS4134是中国电信，AS9808是中国移动，AS4837是中国联通。请注意，一个ISP可能拥有多个ASN。');
+    promptParagraphHans.lang = 'zh-Hans';
+    appendChild(contentContainer, promptParagraphJa);
+    appendChild(contentContainer, promptParagraphEn);
+    appendChild(contentContainer, promptParagraphHant);
+    appendChild(contentContainer, promptParagraphHans);
+    appendChild(contentContainer, createHRElement());
 }
