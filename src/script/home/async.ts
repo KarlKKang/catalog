@@ -280,7 +280,7 @@ function showASNAnnouncement(containerElem: HTMLElement) {
             if (xhr.status !== 200) {
                 return;
             }
-            const routeInfo = parseResponse(xhr.responseText, parseCurrentRouteInfo);
+            const routeInfo = parseCurrentRouteInfo(JSON.parse(xhr.responseText));
             const asn = routeInfo[CurrentRouteInfoKey.ASN];
             if (asn !== '4134' && asn !== '9808' && asn !== '4837') {
                 if (routeInfo[CurrentRouteInfoKey.TYPE] !== 'cn') {
