@@ -288,7 +288,7 @@ function showASNAnnouncement(containerElem: HTMLElement) {
                 }
                 const message = [
                     createTextNode('ご利用のISPがすでに通常回線に最適化されている可能性が検出されました。その場合は、特別回線のご利用はお控えください。詳しくは'),
-                    createSpanElement('こちら'),
+                    createSpanElement('「中国のユーザーの皆様へのお知らせ」'),
                     createTextNode('をご覧ください。'),
                 ] as const;
                 addClass(message[1], commonStyles.link);
@@ -303,7 +303,7 @@ function showASNAnnouncement(containerElem: HTMLElement) {
             }
             const message = [
                 createTextNode('ご利用のISPが通常回線に最適化されていない可能性が検出されました。ネットワーク速度を改善する方法については、'),
-                createSpanElement('こちら'),
+                createSpanElement('「中国のユーザーの皆様へのお知らせ」'),
                 createTextNode('をご覧ください。'),
             ] as const;
             addClass(message[1], commonStyles.link);
