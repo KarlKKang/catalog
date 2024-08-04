@@ -18,7 +18,7 @@ function addAccount(button: Element) {
     const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
     const password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
 
-    let selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+    let selections = getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>;
     let user_group = '';
     for (const selection of selections) {
         if (selection.checked) {
@@ -51,7 +51,7 @@ function addAccount(button: Element) {
     const param = {
         command: 'insert',
         type: 'account',
-        ...parsedRecord
+        ...parsedRecord,
     };
 
     let confirm;
@@ -64,7 +64,7 @@ function addAccount(button: Element) {
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -74,7 +74,7 @@ function modifyAccount(button: Element, id: string) {
     const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
     const password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
 
-    let selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+    let selections = getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>;
     let user_group = '';
     for (const selection of selections) {
         if (selection.checked) {
@@ -103,7 +103,7 @@ function modifyAccount(button: Element, id: string) {
         command: 'modify',
         type: 'account',
         id: id,
-        ...parsedRecord
+        ...parsedRecord,
     };
 
     let confirm;
@@ -116,7 +116,7 @@ function modifyAccount(button: Element, id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -180,7 +180,7 @@ function parseAccountRecord(email: string, username: string, password: string, u
         password: password_parsed,
         user_group: user_group_parsed,
         status: status_parsed,
-        available_invite: available_invite_parsed
+        available_invite: available_invite_parsed,
     };
 }
 
@@ -196,12 +196,12 @@ function deleteAccount(id: string) {
     const param = {
         command: 'delete',
         type: 'account',
-        id: id
+        id: id,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 

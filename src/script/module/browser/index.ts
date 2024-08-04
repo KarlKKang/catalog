@@ -53,8 +53,6 @@ let MSE_BUFFER_SIZE = MIN_MSE_BUFFER_SIZE;
     UNRECOMMENDED_BROWSER = (!SUPPORTED_BLINK && !IS_SAFARI) || browserName.includes('wechat') || browserName === 'ucbrowser';
 })();
 
-
-
 const NATIVE_HLS_SUPPORTED = (function () {
     const audioElem = createAudioElement();
     const videoElem = createVideoElement();

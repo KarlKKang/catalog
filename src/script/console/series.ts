@@ -30,7 +30,7 @@ function modifySeries(button: Element) {
     const param = {
         command: 'modify',
         type: 'series',
-        ...parsedRecord
+        ...parsedRecord,
     };
 
     let confirm;
@@ -43,12 +43,11 @@ function modifySeries(button: Element) {
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
 function deleteSeries(id: string) {
-
     let confirm;
     do {
         confirm = prompt('Type "delete" to confirm.');
@@ -60,12 +59,12 @@ function deleteSeries(id: string) {
     const param = {
         command: 'delete',
         type: 'series',
-        id: id
+        id: id,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -86,7 +85,7 @@ function addSeries(button: Element) {
     const param = {
         command: 'insert',
         type: 'series',
-        ...parsedRecord
+        ...parsedRecord,
     };
 
     let confirm;
@@ -99,7 +98,7 @@ function addSeries(button: Element) {
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -176,7 +175,7 @@ function parseSeriesRecord(id: string, title: string, thumbnail: string, isPubli
         series_id: series_id_parsed,
         season_name: season_name_parsed,
         season_order: season_order_parsed,
-        keywords: keywords
+        keywords: keywords,
     };
 }
 
@@ -184,12 +183,12 @@ function updateSeriesTime(id: string) {
     const param = {
         command: 'updatetime',
         type: 'series',
-        id: id
+        id: id,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 

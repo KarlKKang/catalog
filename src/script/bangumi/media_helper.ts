@@ -86,7 +86,7 @@ export function buildDownloadAccordion(
         HTMLSelectElement,
         VideoFormats,
         VideoFormat,
-    ]
+    ],
 ): [HTMLDivElement, HTMLDivElement] {
     const [accordion, accordionPanel] = buildAccordion('ダウンロード', true);
 

@@ -4,5 +4,5 @@ import { emailAlreadyRegistered as emailAlreadyRegisteredBody } from '../module/
 export const emailAlreadyRegistered = {
     [MessageParamKey.TITLE]: '失敗しました',
     [MessageParamKey.MESSAGE]: emailAlreadyRegisteredBody,
-    [MessageParamKey.BUTTON_TEXT]: null
+    [MessageParamKey.BUTTON_TEXT]: null,
 };

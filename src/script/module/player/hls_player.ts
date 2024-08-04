@@ -1,6 +1,6 @@
 import { NonNativePlayer } from './non_native_player';
 import HlsLight from '../../../../hls.js/dist/hls.light.mjs';
-import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy, } from '../../../../hls.js';
+import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy } from '../../../../hls.js';
 import { CustomMediaError } from './media_error';
 import { PlayerKey } from './player_key';
 import { HlsPlayerKey } from './hls_player_key';
@@ -123,7 +123,7 @@ export class HlsPlayer extends NonNativePlayer {
             startTime?: number | undefined;
             onload?: (...args: any[]) => void;
             onerror?: (errorCode: number | null) => void;
-        }
+        },
     ): void {
         config = config ?? {};
         const play = config.play === true;

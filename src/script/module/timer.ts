@@ -8,7 +8,7 @@ export function addTimeout(callback: () => void, ms?: number) {
                 callback();
             }
         },
-        ms
+        ms,
     );
     timeoutTimers.add(timerID);
     return timerID;

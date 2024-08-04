@@ -1,4 +1,3 @@
-
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import { addEventListener } from '../module/event_listener';
 import { appendText, createAnchorElement, createButtonElement, createCanvasElement, createDivElement, createParagraphElement, createTotpInput, replaceText } from '../module/dom/create_element';
@@ -66,7 +65,7 @@ function enableMfa() {
             promptForTotpSetup(parseResponse(response, parseTotpInfo));
             return false;
         },
-        mfaWarning
+        mfaWarning,
     );
 }
 
@@ -92,7 +91,7 @@ function disableMfa() {
             disableAllInputs(false);
             return true;
         },
-        mfaWarning
+        mfaWarning,
     );
 }
 

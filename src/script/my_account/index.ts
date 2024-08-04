@@ -1,11 +1,11 @@
 import {
-    addNavBar
+    addNavBar,
 } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import {
     sendServerRequest,
     ServerRequestOptionProp,
-    parseResponse
+    parseResponse,
 } from '../module/server';
 import { clearSessionStorage } from '../module/dom/document';
 import { pgid, type ShowPageFunc } from '../module/global';
@@ -44,7 +44,7 @@ export default function (showPage: ShowPageFunc) {
                     return;
                 }
                 sessionsModule.default(parseResponse(response, parseSession));
-            }
+            },
         });
     };
     addTimeout(getSessions, 1000); // In case the network latency is high, we might as well start the request early

@@ -1,6 +1,6 @@
 import {
     sendServerRequest,
-    ServerRequestOptionProp
+    ServerRequestOptionProp,
 } from '../module/server';
 import { createButtonElement, createDivElement, createElement, createEmailInput, createInputElement, createParagraphElement, createPasswordInput, createSpanElement, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, disableInput, getParentElement, removeClass, replaceChildren } from '../module/dom/element';
@@ -25,7 +25,7 @@ export default function (
     approvedCallbackPromise: Promise<typeof import(
         /* webpackExports: ["default"] */
         './approved_callback'
-    )>
+    )>,
 ) {
     const container = createDivElement();
     addClass(container, formStyles.container);
@@ -123,7 +123,7 @@ export default function (
                             },
                             (totpPopupWindow: TotpPopupWindow) => {
                                 sendLoginRequest(content, totpPopupWindow);
-                            }
+                            },
                         );
                         break;
                     case AUTH_DEACTIVATED:

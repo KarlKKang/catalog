@@ -29,7 +29,7 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default();
             showPage();
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' }))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' })),
     });
 }
 

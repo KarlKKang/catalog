@@ -39,8 +39,6 @@ export function parseSeriesInfo(seriesInfo: unknown): SeriesInfo {
     return {
         [SeriesInfoKey.SERIES]: series,
         [SeriesInfoKey.PIVOT]: pivot === 'EOF' ? pivot : parseNumber(pivot),
-        [SeriesInfoKey.MAINTENANCE]: parseOptional(seriesInfoObj.maintenance, parseMaintenanceInfo)
+        [SeriesInfoKey.MAINTENANCE]: parseOptional(seriesInfoObj.maintenance, parseMaintenanceInfo),
     };
 }
-
-

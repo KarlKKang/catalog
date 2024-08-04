@@ -15,13 +15,13 @@ export function getManagedMediaSource(): typeof MediaSource | undefined {
 export function getMediaSource(
     preferManagedMediaSource = true,
 ): typeof MediaSource | undefined {
-    const mms =
-        (preferManagedMediaSource || !w.MediaSource) &&
-        getManagedMediaSource();
+    const mms
+        = (preferManagedMediaSource || !w.MediaSource)
+        && getManagedMediaSource();
     return (
-        mms ||
-        w.MediaSource ||
-        w.WebKitMediaSource
+        mms
+        || w.MediaSource
+        || w.WebKitMediaSource
     );
 }
 
@@ -39,10 +39,10 @@ function isMSESupported(): boolean {
     // Older browsers do not expose SourceBuffer globally so checking SourceBuffer.prototype is impossible
     const sourceBuffer = getSourceBuffer();
     return (
-        !sourceBuffer ||
-        (sourceBuffer.prototype &&
-            typeof sourceBuffer.prototype.appendBuffer === 'function' &&
-            typeof sourceBuffer.prototype.remove === 'function')
+        !sourceBuffer
+        || (sourceBuffer.prototype
+        && typeof sourceBuffer.prototype.appendBuffer === 'function'
+        && typeof sourceBuffer.prototype.remove === 'function')
     );
 }
 

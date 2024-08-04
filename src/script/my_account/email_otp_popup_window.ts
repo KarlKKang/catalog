@@ -2,7 +2,7 @@ import { createButtonElement, createDivElement, createParagraphElement, createTo
 import { addClass, appendChild, disableInput } from '../module/dom/element';
 import { addEventListener } from '../module/event_listener';
 import { failedTotp } from '../module/text/message/body';
-import { initializePopupWindow, styles, } from '../module/popup_window/core';
+import { initializePopupWindow, styles } from '../module/popup_window/core';
 import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';
 import { CSS_AUTO, CSS_COLOR, CSS_CURSOR } from '../module/style/value';
 import { addInterval, removeInterval } from '../module/timer';
@@ -97,7 +97,7 @@ export function promptForEmailOtp() {
                     returnPromiseReject = reject;
                 });
             },
-            [EmailOtpPopupWindowKey.CLOSE]: hidePopupWindow
+            [EmailOtpPopupWindowKey.CLOSE]: hidePopupWindow,
         });
     });
 
@@ -130,7 +130,7 @@ export function promptForEmailOtp() {
                     returnPromiseReject = reject;
                 });
             },
-            [EmailOtpPopupWindowKey.CLOSE]: hidePopupWindow
+            [EmailOtpPopupWindowKey.CLOSE]: hidePopupWindow,
         });
     };
     addEventListener(submitButton, 'click', submit);

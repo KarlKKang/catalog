@@ -104,7 +104,7 @@ export function promptForLogin(message?: string) {
                     returnPromiseReject = reject;
                 });
             },
-            [LoginPopupWindowKey.CLOSE]: hidePopupWindow
+            [LoginPopupWindowKey.CLOSE]: hidePopupWindow,
         });
     };
     const submitOnKeyDown = (event: Event) => {

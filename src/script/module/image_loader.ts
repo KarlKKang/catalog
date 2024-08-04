@@ -131,7 +131,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
             } else {
                 _onNetworkError();
             }
-        }
+        },
     );
     addEventListener(xhr, 'error', _onNetworkError);
     xhr.responseType = 'blob';
@@ -146,7 +146,7 @@ async function startWebpMachine() {
             import(
                 /* webpackExports: ["WebpMachine", "detectWebpSupport"] */
                 'webp-hero'
-            )
+            ),
         );
         webpMachine = new WebpMachine();
         webpSupported = await detectWebpSupport();

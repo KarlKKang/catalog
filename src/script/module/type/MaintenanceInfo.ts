@@ -16,5 +16,3 @@ export function parseMaintenanceInfo(maintenanceInfo: unknown): MaintenanceInfo 
         [MaintenanceInfoKey.PERIOD]: parseNumber(maintenanceInfoObj.period),
     };
 }
-
-

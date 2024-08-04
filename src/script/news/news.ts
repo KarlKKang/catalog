@@ -57,7 +57,7 @@ export default function (newsInfo: NewsInfo, newsID: string): void {
             } else {
                 showMessage(notFound);
             }
-        }
+        },
     );
     addEventListener(xhr, 'error', () => {
         showMessage(notFound);

@@ -20,14 +20,14 @@ export function scrollToHash() {
         if (elem !== null) {
             addTimeout(() => {
                 w.scrollBy(0, elem.getBoundingClientRect().top);
-            }, 500); //Give UI some time to load.
+            }, 500); // Give UI some time to load.
         }
     }
 }
 
 export const enum SessionTypes {
     MEDIA = 'media',
-    NEWS = 'news'
+    NEWS = 'news',
 }
 
 export function openImageWindow(baseURL: string, fileName: string, credential: string, sessionType: SessionTypes) {

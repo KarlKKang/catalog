@@ -95,10 +95,7 @@ export default async function (
         insertBefore(warningElem, contentContainer);
     }
 
-    /////////////////////////////////////////////authenticate media session/////////////////////////////////////////////
-
-
-    /////////////////////////////////////////////Add Media/////////////////////////////////////////////
+    // Add Media
     const type = epInfo[EPInfoKey.TYPE];
     const seriesOverride = epInfo[EPInfoKey.SERIES_OVERRIDE];
     const baseURL = getCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo[EPInfoKey.DIR]) + '/';
@@ -142,7 +139,9 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
 
         const targetEP = index + 1;
         appendChild(epButton, epText);
-        addEventListener(epButton, 'click', () => { goToEP(seriesID, targetEP); });
+        addEventListener(epButton, 'click', () => {
+            goToEP(seriesID, targetEP);
+        });
         appendChild(epButtonWrapper, epButton);
 
         if (index === 0) {
@@ -275,7 +274,9 @@ function updateSeasonSelector(seasons: Seasons, seasonSelector: HTMLElement) {
             const id = season[SeasonKey.ID];
             if (id !== seriesID) {
                 const targetSeries = id;
-                addEventListener(seasonButton, 'click', () => { goToEP(targetSeries, 1); });
+                addEventListener(seasonButton, 'click', () => {
+                    goToEP(targetSeries, 1);
+                });
             } else {
                 addClass(seasonButton, styles.currentSeason);
             }

@@ -6,7 +6,7 @@ import { CSS_COLOR } from '../style/value';
 export const expired = {
     [MessageParamKey.TITLE]: '期限が切れています',
     [MessageParamKey.MESSAGE]: 'もう一度最初からやり直してください。',
-    [MessageParamKey.BUTTON_TEXT]: null
+    [MessageParamKey.BUTTON_TEXT]: null,
 };
 export const emailSent = (goBackUrl?: string) => {
     const param: MessageParam = {

@@ -143,7 +143,7 @@ function passwordStyling(element: HTMLInputElement) {
         }
     }
 
-    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value'); //The object returned is mutable but mutating it has no effect on the original property's configuration.
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value'); // The object returned is mutable but mutating it has no effect on the original property's configuration.
     if (descriptor !== undefined && descriptor.configurable) { // 'undefined' in Chrome prior to Chrome 43 (https://developer.chrome.com/blog/DOM-attributes-now-on-the-prototype-chain/), not configurable in Safari 9.
         const originalSet = descriptor.set;
         if (originalSet !== undefined) {

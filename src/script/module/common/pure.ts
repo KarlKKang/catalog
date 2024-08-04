@@ -17,7 +17,7 @@ export function getLocalTime(unixTimestamp?: number) {
         dayOfWeek: getDayOfWeek(date),
         hour: date.getHours(),
         minute: date.getMinutes(),
-        second: date.getSeconds()
+        second: date.getSeconds(),
     };
 }
 
@@ -108,7 +108,7 @@ function parseSec(sec: number) {
     return {
         hour: hour,
         min: min,
-        sec: Math.floor(sec)
+        sec: Math.floor(sec),
     };
 }
 

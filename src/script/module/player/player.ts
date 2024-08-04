@@ -323,7 +323,7 @@ export class Player {
             startTime?: number | undefined;
             onload?: (...args: any[]) => void;
             onerror?: (errorCode: number | null) => void;
-        }
+        },
     ): void {
         config = config ?? {};
         const play = config.play === true;
@@ -463,11 +463,13 @@ export class Player {
     }
 
     private [PlayerKey.ATTACH_EVENT_LISTENERS](this: Player) {
-        //Fluid resize and duration
+        // Fluid resize and duration
         this[PlayerKey.ON_WINDOW_RESIZE] = this[PlayerKey.ON_WINDOW_RESIZE].bind(this);
         addEventListener(w, 'resize', this[PlayerKey.ON_WINDOW_RESIZE]);
 
-        addEventListener(this[PlayerKey.MEDIA], 'loadedmetadata', () => { this[PlayerKey.ON_LOADED_METADATA](); });
+        addEventListener(this[PlayerKey.MEDIA], 'loadedmetadata', () => {
+            this[PlayerKey.ON_LOADED_METADATA]();
+        });
 
         addEventListener(this[PlayerKey.MEDIA], 'durationchange', () => {
             DEVELOPMENT && this[PlayerKey.LOG]?.('Duration changed: ' + this[PlayerKey.MEDIA].duration);
@@ -475,16 +477,18 @@ export class Player {
             replaceText(this[PlayerKey.DURATION_DISPLAY_TEXT], secToTimestamp(this[PlayerKey.MEDIA].duration));
         });
 
-        //Play button
+        // Play button
         addEventListener(this[PlayerKey.PLAY_BUTTON], 'click', () => {
             this[PlayerKey.TOGGLE_PLAYBACK]();
             this[PlayerKey.FOCUS]();
         });
 
-        //Progress bar & frame drop monitor
-        this[PlayerKey.TIMER] = addInterval(() => { this[PlayerKey.INTERVAL_CALLBACK](); }, 250);
+        // Progress bar & frame drop monitor
+        this[PlayerKey.TIMER] = addInterval(() => {
+            this[PlayerKey.INTERVAL_CALLBACK]();
+        }, 250);
 
-        //Progress bar
+        // Progress bar
         addEventsListener(this[PlayerKey.PROGRESS_CONTROL], ['mousedown', 'touchstart'], (event) => {
             this[PlayerKey.DRAGGING] = true;
             this[PlayerKey.DRAGGING_PREVIEW_TIMEOUT] = 4;
@@ -501,13 +505,21 @@ export class Player {
             this[PlayerKey.PROGRESS_UPDATE](event as MouseEvent | TouchEvent);
         }, { passive: true });
 
-        //Activity on media
-        addEventListener(this[PlayerKey.MEDIA], 'play', () => { this[PlayerKey.ON_PLAY](); });
-        addEventListener(this[PlayerKey.MEDIA], 'pause', () => { this[PlayerKey.ON_PAUSE](); });
-        addEventListener(this[PlayerKey.MEDIA], 'ended', () => { this[PlayerKey.ON_ENDED](); });
+        // Activity on media
+        addEventListener(this[PlayerKey.MEDIA], 'play', () => {
+            this[PlayerKey.ON_PLAY]();
+        });
+        addEventListener(this[PlayerKey.MEDIA], 'pause', () => {
+            this[PlayerKey.ON_PAUSE]();
+        });
+        addEventListener(this[PlayerKey.MEDIA], 'ended', () => {
+            this[PlayerKey.ON_ENDED]();
+        });
 
-        //Redundent
-        addEventListener(this[PlayerKey.MEDIA], 'seeking', () => { this[PlayerKey.ON_SEEKING](); });
+        // Redundent
+        addEventListener(this[PlayerKey.MEDIA], 'seeking', () => {
+            this[PlayerKey.ON_SEEKING]();
+        });
         addEventListener(this[PlayerKey.MEDIA], 'seeked', () => {
             DEVELOPMENT && this[PlayerKey.LOG]?.('Seeked: ' + this[PlayerKey.MEDIA].currentTime);
         });
@@ -517,14 +529,14 @@ export class Player {
     }
 
     private [PlayerKey.ATTACH_VIDEO_EVENT_LISTENERS](this: Player) {
-        //Catch events on control bar, otherwise bubbling events on the parent (constrols) will be fired.
+        // Catch events on control bar, otherwise bubbling events on the parent (constrols) will be fired.
         addEventListener(this[PlayerKey.CONTROL_BAR], 'click', (event: Event) => {
             DEVELOPMENT && this[PlayerKey.LOG]?.('Click on controlBar.');
             this[PlayerKey.ACTIVE] = true; // There's no reset to active in listeners attached to specific buttons.
             event.stopPropagation();
         });
 
-        //UI activity
+        // UI activity
         addMouseTouchEventListener(
             this[PlayerKey.CONTROLS],
             (isMouseClick) => {
@@ -540,10 +552,10 @@ export class Player {
             },
             () => {
                 this[PlayerKey.ACTIVE] = true;
-            }
+            },
         );
 
-        //Big play button
+        // Big play button
         addEventListener(this[PlayerKey.BIG_PLAY_BUTTON], 'click', (event) => {
             event.stopPropagation();
             this[PlayerKey.PLAY]();
@@ -551,7 +563,7 @@ export class Player {
             this[PlayerKey.ACTIVE] = true;
         });
 
-        //Load progress
+        // Load progress
         const updateLoadProgress = () => {
             let bufferEnd = 0;
             const bufferedRange = this[PlayerKey.GET_BUFFERED_RANGE]();
@@ -575,15 +587,17 @@ export class Player {
             }
         });
 
-        //Loading
-        addEventListener(this[PlayerKey.MEDIA], 'canplaythrough', () => { this[PlayerKey.ON_CAN_PLAY_THROUGH](); });
+        // Loading
+        addEventListener(this[PlayerKey.MEDIA], 'canplaythrough', () => {
+            this[PlayerKey.ON_CAN_PLAY_THROUGH]();
+        });
         addEventListenerOnce(this[PlayerKey.MEDIA], 'canplay', () => {
             const videoMedia = this[PlayerKey.MEDIA] as HTMLVideoElement;
             setPaddingTop(this[PlayerKey.CONTROLS], videoMedia.videoHeight / videoMedia.videoWidth * 100, CSS_UNIT.PERCENT);
             DEVELOPMENT && this[PlayerKey.LOG]?.('Video size: ' + videoMedia.videoWidth + 'x' + videoMedia.videoHeight);
         });
 
-        //Fullscreen
+        // Fullscreen
         const webkitEnterFullscreen = (this[PlayerKey.MEDIA] as HTMLVideoElement).webkitEnterFullscreen;
         const IOS_FULLSCREEN = IS_IOS && webkitEnterFullscreen !== undefined;
 
@@ -624,7 +638,7 @@ export class Player {
             this[PlayerKey.FULLSCREEN_BUTTON].title = 'Fullscreen Unavailable';
         }
 
-        //Picture in picture
+        // Picture in picture
         const PIPButton = this[PlayerKey.PIP_BUTTON];
         if (PIPButton !== undefined) {
             addEventListener(PIPButton, 'click', () => {
@@ -648,7 +662,7 @@ export class Player {
             });
         }
 
-        //Hotkeys
+        // Hotkeys
         addEventListener(this[PlayerKey.CONTROLS], 'keydown', (event) => {
             const key = (event as KeyboardEvent).key;
             if (key === ' ' || key === 'Spacebar') {
@@ -730,7 +744,9 @@ export class Player {
         this[PlayerKey.ACTIVE] = true; // The timeout won't decrease when this[PlayerKey.DRAGGING] == true.
 
         const currentTime = this[PlayerKey.PROGRESS_UPDATE](event);
-        this[PlayerKey.SEEK](currentTime, () => { this[PlayerKey.MEDIA].playbackRate = 1; });
+        this[PlayerKey.SEEK](currentTime, () => {
+            this[PlayerKey.MEDIA].playbackRate = 1;
+        });
         this[PlayerKey.FOCUS]();
     }
 
@@ -768,7 +784,9 @@ export class Player {
         }
         if (this[PlayerKey.DRAGGING]) {
             if (this[PlayerKey.DRAGGING_PREVIEW_TIMEOUT] === 0) {
-                this[PlayerKey.SEEK](currentTime, () => { this[PlayerKey.DRAGGING_PREVIEW_TIMEOUT] = 4; });
+                this[PlayerKey.SEEK](currentTime, () => {
+                    this[PlayerKey.DRAGGING_PREVIEW_TIMEOUT] = 4;
+                });
             }
             replaceText(this[PlayerKey.CURRENT_TIME_DISPLAY_TEXT], currentTimestamp);
             setWidth(this[PlayerKey.PROGRESS_BAR], percentage * 100, CSS_UNIT.PERCENT);

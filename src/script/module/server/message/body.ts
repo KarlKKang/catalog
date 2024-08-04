@@ -8,7 +8,7 @@ import { defaultErrorSuffix } from '../../text/message/body';
 export const invalidResponse = `サーバーが無効な応答を返しました。${defaultErrorSuffix}`;
 export const sessionEnded = 'もう一度ログインしてください。';
 export const mediaSessionEnded = 'セッションがタイムアウトした、または別のソースからのアクティビティによって新しいセッションが開始された。';
-export const connectionError = function () {
+export const connectionError = (function () {
     const container = createDivElement();
     const text = createParagraphElement('これは次のような理由が考えられます：');
     const list = createUListElement();
@@ -27,7 +27,7 @@ export const connectionError = function () {
 
     appendChildren(container, text, list);
     return container;
-}();
+}());
 
 export const status429 = 'リクエストを送信する頻度が高すぎる。数分待ってから、もう一度お試しください。';
 export const status503 = (maintenanceInfo: MaintenanceInfo) => {

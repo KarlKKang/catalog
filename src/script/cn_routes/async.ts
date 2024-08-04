@@ -161,15 +161,15 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
         locationPrefix = routeInfo[RouteInfoKey.CODE] + '.';
     }
     const sortResult = (latency: number | false) => {
-        if (testRouteNodePrevious !== null) {// Add the node back to the linked list, in sorted order.
+        if (testRouteNodePrevious !== null) { // Add the node back to the linked list, in sorted order.
             testRouteNodePrevious[RouteInfoNodeKey.NEXT] = testRouteNodeConst[RouteInfoNodeKey.NEXT];
             let previous: RouteInfoNode | null = null;
             let current: RouteInfoNode | null = head;
             while (
-                current !== null &&
-                current[RouteInfoNodeKey.LATENCY] !== null &&
-                current[RouteInfoNodeKey.LATENCY] !== false &&
-                (latency === false || current[RouteInfoNodeKey.LATENCY] < latency)
+                current !== null
+                && current[RouteInfoNodeKey.LATENCY] !== null
+                && current[RouteInfoNodeKey.LATENCY] !== false
+                && (latency === false || current[RouteInfoNodeKey.LATENCY] < latency)
             ) {
                 previous = current;
                 current = current[RouteInfoNodeKey.NEXT];
@@ -310,7 +310,7 @@ function getASN(asnResultContainer: HTMLElement, asnRetestButton: HTMLButtonElem
             });
             replaceChildren(asnResultContainer, resultSpan);
             asnRetestButton.disabled = false;
-        }
+        },
     );
     addEventListener(xhr, 'error', failedCallback);
     xhr.send();
@@ -330,7 +330,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     appendText(promptParagraphJa, '）。測定が完了したら、回線を切り替えることができます。512kBのファイルをダウンロードするのにかかる時間を計測しています。時間が短いほど良いです。2000ミリ秒以上かかる場合は、回線がお使いのISPに最適化されていない、または回線が混雑している可能性があります。1000ミリ秒前後かそれ以下であれば、大きな差はないので安心して利用できます。');
 
     const promptParagraphEn = createParagraphElement(
-        'Below are the routes we have prepared for users in China (see details '
+        'Below are the routes we have prepared for users in China (see details ',
     );
     promptParagraphEn.lang = 'en';
     const linkEn = createSpanElement();
@@ -343,7 +343,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     appendText(promptParagraphEn, '). Once the measurement is complete, you can to switch between the routes. We are measuring the time it takes to download a 512kB file. The shorter the time, the better. If it takes more than 2000ms, the route may not be optimized for your ISP or the route may be congested. If it is around 1000 milliseconds or less, there is no significant difference and you can use it without worry.');
 
     const promptParagraphHant = createParagraphElement(
-        '以下是我們為中國用戶準備的線路（點擊'
+        '以下是我們為中國用戶準備的線路（點擊',
     );
     promptParagraphHant.lang = 'zh-Hant';
     const linkHant = createSpanElement();
@@ -356,7 +356,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     appendText(promptParagraphHant, '了解詳情）。測量完成後即可切換線路。我們測量下載一個512kB文件所需的時間。時間越短越好。如果超過2000毫秒，則此線路可能沒有針對您的ISP進行最佳化，或者此線路擁擠。如果在1000毫秒左右或者更短的話，則區別不大，可放心使用。');
 
     const promptParagraphHans = createParagraphElement(
-        '以下是我们为中国用户准备的线路（点击'
+        '以下是我们为中国用户准备的线路（点击',
     );
     promptParagraphHans.lang = 'zh-Hans';
     const linkHans = createSpanElement();

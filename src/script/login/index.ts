@@ -48,6 +48,6 @@ export default function (showPage: ShowPageFunc) {
             } else {
                 showMessage(invalidResponse());
             }
-        }
+        },
     });
 }

@@ -33,7 +33,7 @@ export default function (showPage: ShowPageFunc) {
         [MessageParamKey.URL]: url,
         [MessageParamKey.BUTTON_TEXT]: buttonText,
         [MessageParamKey.LOGOUT]: logoutParam,
-        [MessageParamInternalKey.DOCUMENT_TITLE]: documentTitle
+        [MessageParamInternalKey.DOCUMENT_TITLE]: documentTitle,
     } = messageParam;
 
     const callback = () => {

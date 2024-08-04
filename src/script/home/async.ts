@@ -82,7 +82,7 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
                 );
             });
         },
-        - 256 - 24
+        -256 - 24,
     );
 
     appendChildren(body, searchBar, containerElem, loadingTextContainer, positionDetector);
@@ -177,7 +177,9 @@ function showSeries(
         addClass(thumbnailNode, styles.thumbnail);
         addClass(titleNode, lineClampClass);
 
-        addEventListener(seriesNode, 'click', () => { goToSeries(seriesEntry[SeriesEntryKey.ID]); });
+        addEventListener(seriesNode, 'click', () => {
+            goToSeries(seriesEntry[SeriesEntryKey.ID]);
+        });
         eventTargetsTracker.add(seriesNode);
 
         appendChild(containerElem, seriesNode);
@@ -311,7 +313,7 @@ function showASNAnnouncement(containerElem: HTMLElement) {
                 redirect(NEWS_ROOT_URI + '2ghJ5dHKW8T');
             });
             showAnnouncement('ネットワーク速度が低下している場合', message, containerElem);
-        }
+        },
     );
     xhr.send();
 }

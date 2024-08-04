@@ -21,7 +21,7 @@ function modifyNews(button: Element) {
     const param = {
         command: 'modify',
         type: 'news',
-        ...record
+        ...record,
     };
 
     let confirm;
@@ -36,12 +36,11 @@ function modifyNews(button: Element) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
 function deleteNews(id: string) {
-
     let confirm;
     do {
         confirm = prompt('Type "delete" to confirm.');
@@ -53,12 +52,12 @@ function deleteNews(id: string) {
     const param = {
         command: 'delete',
         type: 'news',
-        id: id
+        id: id,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -75,7 +74,7 @@ function addNews(button: Element) {
     const param = {
         command: 'insert',
         type: 'news',
-        ...record
+        ...record,
     };
 
     let confirm;
@@ -90,7 +89,7 @@ function addNews(button: Element) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -113,7 +112,7 @@ function parseNewsRecord(id: string, title: string, isPublic: boolean) {
     return {
         id: id,
         title: title,
-        public: isPublic
+        public: isPublic,
     };
 }
 
@@ -121,12 +120,12 @@ function updateNewsTime(id: string) {
     const param = {
         command: 'updatetime',
         type: 'news',
-        id: id
+        id: id,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 

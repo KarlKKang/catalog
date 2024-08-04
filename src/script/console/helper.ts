@@ -13,7 +13,7 @@ export function setOutputElement(elem: HTMLDivElement | null) {
 export function getTable(type: string, callback?: () => void) {
     const param = {
         command: 'get',
-        type: type
+        type: type,
     };
     const paramString = JSON.stringify(param);
 
@@ -21,7 +21,7 @@ export function getTable(type: string, callback?: () => void) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             setOutput(response, callback);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(paramString)
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(paramString),
     });
 }
 

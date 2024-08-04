@@ -97,7 +97,7 @@ function promptForTotp() {
             [TotpPopupWindowKey.CLOSE]: () => {
                 removeInterval(timer);
                 hidePopupWindow();
-            }
+            },
         });
     };
     addEventListener(submitButton, 'click', submit);

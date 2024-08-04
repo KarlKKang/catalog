@@ -13,7 +13,7 @@ import { imageLoader, offload as offloadImageLoader } from './image_loader';
 const observer = new IntersectionObserver(observerCallback, {
     root: null,
     rootMargin: '50% 0px 50% 0px',
-    threshold: [0]
+    threshold: [0],
 });
 
 const enum Status {
@@ -45,7 +45,7 @@ const targets: Map<Element, TargetData> = new Map();
 let sessionCredentialPromise: Promise<void> | null = null;
 let credential: [
     string, // sessionCredential
-    SessionTypes // sessionType
+    SessionTypes, // sessionType
 ] | null = null;
 
 export function setLazyloadCredential(sessionCredential: string, sessionType: SessionTypes) {
@@ -73,7 +73,7 @@ export function attachLazyload(
         [TargetDataKey.ON_DATA_LOAD]: onDataLoad,
         [TargetDataKey.ON_IMAGE_DRAW]: onImageDraw,
         [TargetDataKey.STATUS]: Status.LISTENING,
-        [TargetDataKey.XHR]: null
+        [TargetDataKey.XHR]: null,
     });
 }
 

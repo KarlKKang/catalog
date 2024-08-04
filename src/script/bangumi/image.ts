@@ -20,7 +20,7 @@ import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } fro
 export default async function (
     epInfo: ImageEPInfo,
     baseURL: string,
-    createMediaSessionPromise: Promise<MediaSessionInfo>
+    createMediaSessionPromise: Promise<MediaSessionInfo>,
 ) {
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
 

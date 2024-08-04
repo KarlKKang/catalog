@@ -70,7 +70,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             newsModule.default(parsedResponse, newsID);
         },
         [ServerRequestOptionProp.CONTENT]: 'id=' + newsID,
-        [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam
+        [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
     });
 }
 

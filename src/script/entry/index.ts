@@ -103,7 +103,7 @@ const pages = {
     [CN_ROUTES_URI]: {
         [PageProp.SCRIPT]: () => import('../cn_routes'),
         [PageProp.TITLE]: cnRoutesPageTitle,
-    }
+    },
 };
 const directories = {
     [BANGUMI_ROOT_URI]: {
@@ -249,7 +249,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
                     setOpacity(loadingBar, 0);
                 }, 300);
             }
-        }
+        },
     );
 }
 

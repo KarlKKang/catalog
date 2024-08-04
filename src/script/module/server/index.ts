@@ -95,7 +95,7 @@ export function sendServerRequest(uri: string, options: ServerRequestOption): XM
             if (checkXHRStatus(xhr, uri, options)) {
                 options[ServerRequestOptionProp.CALLBACK] && options[ServerRequestOptionProp.CALLBACK](xhr.responseText);
             }
-        }
+        },
     );
     addEventListener(xhr, 'error', () => {
         xhrOnErrorCallback(uri, options);
@@ -115,7 +115,7 @@ export function logout(callback: () => void) {
             } else {
                 showMessage(invalidResponse());
             }
-        }
+        },
     });
 }
 

@@ -43,7 +43,7 @@ export default function (showPage: ShowPageFunc) {
         }
     }
 
-    //send requests
+    // send requests
     let createMediaSessionPromise: Promise<MediaSessionInfo> | null = null;
     const createMediaSession = () => {
         importAllPageModules();
@@ -56,7 +56,7 @@ export default function (showPage: ShowPageFunc) {
                     resolve(parsedResponse);
                 },
                 [ServerRequestOptionProp.CONTENT]: 'series=' + seriesID + '&ep=' + epIndex,
-                [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex)
+                [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
             });
         });
     };

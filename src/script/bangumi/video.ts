@@ -131,7 +131,9 @@ export default function (
         }
         const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], seriesID, epIndex, [selectMenu, formats, currentFormat]);
         appendChild(contentContainer, downloadAccordion);
-        addEventListener(selectMenu, 'change', () => { formatSwitch(selectMenu, formatDisplay, containerSelector); });
+        addEventListener(selectMenu, 'change', () => {
+            formatSwitch(selectMenu, formatDisplay, containerSelector);
+        });
     });
 
     addVideoNode(formatDisplay, play, startTime, false).then(() => {
@@ -199,7 +201,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             showErrorMessage(incompatibleTitle, [
                 createTextNode('お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは'),
                 createLinkElem('こちら', NEWS_ROOT_URI + 'UFzUoubmOzd'),
-                createTextNode('をご覧ください。')
+                createTextNode('をご覧ください。'),
             ]);
             return;
         }
@@ -208,7 +210,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         mediaMessageQueue.push(['HDR10について', [
             createTextNode('詳しくは'),
             createLinkElem('こちら', NEWS_ROOT_URI + '0p7hzGpxfMh'),
-            createTextNode('をご覧ください。')
+            createTextNode('をご覧ください。'),
         ], null]);
     } else if (currentFormat[VideoFormatKey.VIDEO] === 'hevc41') {
         const CAN_PLAY_HEVC = await canPlayHEVC(currentFormat[VideoFormatKey.AVC_FALLBACK]);
@@ -235,7 +237,6 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         }
     }
 
-
     let AAC_FALLBACK = false;
     let USE_AAC = false;
     let audioOffset = 0;
@@ -247,7 +248,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 mediaMessageQueue.push(['Dolby Atmos®について', [
                     createTextNode('Dolby® TrueHDコアトラックとAC-3ダウンミックストラックのみを提供しています。詳しくは'),
                     createLinkElem('こちら', NEWS_ROOT_URI + 'yMq2BLvq-8Yq'),
-                    createTextNode('をご覧ください。')
+                    createTextNode('をご覧ください。'),
                 ], null]);
             }
 
@@ -331,7 +332,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 destroyMediaInstance();
             },
             play: play,
-            startTime: startTime
+            startTime: startTime,
         });
         afterLoad(mediaInstance);
     } else {
@@ -360,7 +361,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 showMediaMessage(
                     '再生中に問題が発生した可能性があります',
                     'バッファリングに通常より時間がかかっています。遅いネットワークが原因かもしれません。または、デバイスのメモリが不足しています。このような場合、動画がスムーズに再生されるかどうかは保証できません。',
-                    CSS_COLOR.ORANGE
+                    CSS_COLOR.ORANGE,
                 );
             }
         };
@@ -380,7 +381,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 destroyMediaInstance();
             },
             play: play,
-            startTime: startTime
+            startTime: startTime,
         });
         afterLoad(mediaInstance);
     }
@@ -444,7 +445,7 @@ function showDolbyVisionError() {
     showErrorMessage('Dolby Vision®に対応していません', [
         createTextNode('Dolby Vision®を再生できるブラウザは、Safariのみです。詳しくは'),
         createLinkElem('こちら', NEWS_ROOT_URI + '0p7hzGpxfMh'),
-        createTextNode('をご覧ください。')
+        createTextNode('をご覧ください。'),
     ]);
 }
 

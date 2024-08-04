@@ -71,7 +71,7 @@ export default function (baseURL: string, fileName: string) {
         },
         () => {
             setActive();
-        }
+        },
     );
 }
 

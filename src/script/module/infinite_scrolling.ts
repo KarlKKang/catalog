@@ -33,6 +33,6 @@ export function initializeInfiniteScrolling(positionDetector: HTMLElement, liste
         [InfiniteScrollingProp.UPDATE_POSITION]: updatePosition,
         [InfiniteScrollingProp.SET_ENABLED]: function (enabled: boolean) {
             isEnabled = enabled;
-        }
+        },
     };
 }

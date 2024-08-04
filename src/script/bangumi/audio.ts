@@ -139,7 +139,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         const audioInstance = new HlsPlayer(playerContainer, configHls, false);
         audioInstance[PlayerKey.LOAD](url, {
             onerror: function (errorCode: number | null) {
-                if (IS_FIREFOX && file[AudioFileKey.SAMPLERATE] !== undefined && parseInt(file[AudioFileKey.SAMPLERATE]) > 48000) { //Firefox has problem playing Hi-res audio
+                if (IS_FIREFOX && file[AudioFileKey.SAMPLERATE] !== undefined && parseInt(file[AudioFileKey.SAMPLERATE]) > 48000) { // Firefox has problem playing Hi-res audio
                     showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + incompatibleSuffix);
                 } else {
                     showPlayerError(errorCode);
@@ -180,7 +180,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
     const subtitle = createParagraphElement();
     addClass(subtitle, styles.subTitle);
 
-    //subtitle
+    // subtitle
     if (file[AudioFileKey.TITLE] !== undefined) {
         appendText(subtitle, file[AudioFileKey.TITLE]);
         if (file[AudioFileKey.ARTIST] !== undefined) {
@@ -190,7 +190,7 @@ function getAudioSubtitleNode(file: AudioFile, FLAC_FALLBACK: boolean) {
         }
     }
 
-    //format
+    // format
     if (file[AudioFileKey.FORMAT] !== undefined) {
         if (file[AudioFileKey.TITLE] !== undefined) {
             appendChild(subtitle, createBRElement());

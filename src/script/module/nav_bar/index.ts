@@ -14,7 +14,7 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
         import(
             /* webpackExports: ["default"] */
             './nav_bar'
-        )
+        ),
     ));
     if (currentPgid === pgid) {
         navBarFunc(page, currentPageCallback);

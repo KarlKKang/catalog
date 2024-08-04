@@ -129,7 +129,7 @@ export default function (param: string) {
                         [MessageParamKey.MESSAGE]: 'アカウントが登録されました。',
                         [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
                         [MessageParamKey.URL]: LOGIN_URI,
-                        [MessageParamKey.BUTTON_TEXT]: nextButtonText
+                        [MessageParamKey.BUTTON_TEXT]: nextButtonText,
                     });
                 } else {
                     showMessage(invalidResponse());

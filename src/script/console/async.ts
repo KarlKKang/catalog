@@ -104,28 +104,28 @@ export default function () {
 function generate(type: string, idOutput: HTMLParagraphElement) {
     const param = {
         command: 'generate',
-        type: type
+        type: type,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             setOutput(response, undefined, idOutput);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
 function misc(command: string, type: string) {
     const param = {
         command: command,
-        type: type
+        type: type,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             setOutput(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -146,14 +146,14 @@ function clearCDNCache(dir: string) {
     const param = {
         command: 'clear',
         type: 'cdn_cache',
-        dir: dir
+        dir: dir,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -168,14 +168,14 @@ function clearKeyCache() {
 
     const param = {
         command: 'clear',
-        type: 'key_cache'
+        type: 'key_cache',
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -190,14 +190,14 @@ function rebuild(type: string) {
 
     const param = {
         command: 'rebuild',
-        type: type
+        type: type,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
@@ -217,14 +217,14 @@ function verify(id: string) {
 
     const param = {
         command: 'verify',
-        series: id
+        series: id,
     };
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param))
+        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
     });
 }
 
