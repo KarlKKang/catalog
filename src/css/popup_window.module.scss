@@ -12,23 +12,25 @@
         #{properties.get(popup-window-blurred-background-color)}: rgba(0, 0, 0, 0.1);
     }
 
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(properties.get(popup-window-background-color));
-    transition: opacity .3s ease-out;
-    z-index: 100;
-    box-sizing: border-box;
-    padding: var(properties.get(safe-area-inset-top)) var(properties.get(safe-area-inset-right)) var(properties.get(safe-area-inset-bottom)) var(properties.get(safe-area-inset-left));
+    & {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(properties.get(popup-window-background-color));
+        transition: opacity .3s ease-out;
+        z-index: 100;
+        box-sizing: border-box;
+        padding: var(properties.get(safe-area-inset-top)) var(properties.get(safe-area-inset-right)) var(properties.get(safe-area-inset-bottom)) var(properties.get(safe-area-inset-left));
 
-    @supports (backdrop-filter: blur(10px)) {
-        background-color: var(properties.get(popup-window-blurred-background-color));
-        backdrop-filter: blur(10px);
+        @supports (backdrop-filter: blur(10px)) {
+            background-color: var(properties.get(popup-window-blurred-background-color));
+            backdrop-filter: blur(10px);
+        }
     }
 
     >div {
