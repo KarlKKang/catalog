@@ -17,12 +17,12 @@ export const enum LoginPopupWindowKey {
     SHOW_WARNING,
     CLOSE,
 }
-export type LoginPopupWindow = {
+export interface LoginPopupWindow {
     [LoginPopupWindowKey.EMAIL]: string;
     [LoginPopupWindowKey.PASSWORD]: string;
     [LoginPopupWindowKey.SHOW_WARNING]: (message: string) => Promise<LoginPopupWindow>;
     [LoginPopupWindowKey.CLOSE]: () => void;
-};
+}
 
 const enum RejectReason {
     CLOSE,

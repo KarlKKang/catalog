@@ -4,10 +4,10 @@ export const enum MediaSessionInfoKey {
     TYPE,
     CREDENTIAL,
 }
-export type MediaSessionInfo = {
+export interface MediaSessionInfo {
     readonly [MediaSessionInfoKey.TYPE]: string;
     readonly [MediaSessionInfoKey.CREDENTIAL]: string;
-};
+}
 
 export function parseMediaSessionInfo(mediaSessionInfo: unknown): MediaSessionInfo {
     const mediaSessionInfoObj = parseObject(mediaSessionInfo);

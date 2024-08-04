@@ -4,7 +4,7 @@ export function throwError(message?: string): never {
 
 export function parseObject(obj: unknown) {
     if (obj instanceof Object) {
-        return obj as { [key: string | number]: unknown };
+        return obj as Record<string | number, unknown>;
     }
     throwError();
 }

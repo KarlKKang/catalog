@@ -19,13 +19,13 @@ const enum WebpMachineQueueItemProp {
     ON_LOAD,
     ON_ERROR,
 }
-type webpMachineQueueItem = {
+interface webpMachineQueueItem {
     [WebpMachineQueueItemProp.CONTAINER]: Element;
     [WebpMachineQueueItemProp.IMAGE]: HTMLImageElement;
     [WebpMachineQueueItemProp.WEBP_DATA]: Uint8Array;
     [WebpMachineQueueItemProp.ON_LOAD]: ((canvas: HTMLCanvasElement) => void) | undefined;
     [WebpMachineQueueItemProp.ON_ERROR]: () => void;
-};
+}
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 

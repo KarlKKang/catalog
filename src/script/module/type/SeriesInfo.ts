@@ -19,11 +19,11 @@ export const enum SeriesInfoKey {
     PIVOT,
     MAINTENANCE,
 }
-export type SeriesInfo = {
+export interface SeriesInfo {
     readonly [SeriesInfoKey.SERIES]: Series;
     readonly [SeriesInfoKey.PIVOT]: Pivot;
     readonly [SeriesInfoKey.MAINTENANCE]: MaintenanceInfo | undefined;
-};
+}
 
 export function parseSeriesInfo(seriesInfo: unknown): SeriesInfo {
     const seriesInfoObj = parseObject(seriesInfo);

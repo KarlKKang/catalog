@@ -9,7 +9,7 @@ export const enum AudioFileKey {
     FILE_NAME,
     FLAC_FALLBACK,
 }
-export type AudioFile = {
+export interface AudioFile {
     readonly [AudioFileKey.TITLE]: string | undefined;
     readonly [AudioFileKey.ARTIST]: string | undefined;
     readonly [AudioFileKey.FORMAT]: string | undefined;
@@ -17,17 +17,17 @@ export type AudioFile = {
     readonly [AudioFileKey.BITDEPTH]: string | undefined;
     readonly [AudioFileKey.FILE_NAME]: string;
     readonly [AudioFileKey.FLAC_FALLBACK]: boolean | undefined;
-};
+}
 
 export const enum ImageFileKey {
     FILE_NAME,
 }
-type ImageFile = {
+interface ImageFile {
     readonly [ImageFileKey.FILE_NAME]: string;
-};
+}
 
 type Chapter = [string, number];
-type Chapters = ReadonlyArray<Chapter>;
+type Chapters = readonly Chapter[];
 
 export const enum VideoFormatKey {
     VALUE,
@@ -38,7 +38,7 @@ export const enum VideoFormatKey {
     AAC_FALLBACK,
     DIRECT_DOWNLOAD,
 }
-export type VideoFormat = {
+export interface VideoFormat {
     readonly [VideoFormatKey.VALUE]: string;
     readonly [VideoFormatKey.TAG]: string | undefined;
     readonly [VideoFormatKey.VIDEO]: string | undefined;
@@ -46,7 +46,7 @@ export type VideoFormat = {
     readonly [VideoFormatKey.AVC_FALLBACK]: boolean | undefined;
     readonly [VideoFormatKey.AAC_FALLBACK]: boolean | undefined;
     readonly [VideoFormatKey.DIRECT_DOWNLOAD]: boolean | undefined;
-};
+}
 export type VideoFormats = readonly [VideoFormat, ...VideoFormat[]];
 
 export const enum EPInfoKey {
@@ -65,28 +65,28 @@ export const enum AlbumInfoKey {
     TITLE,
     ARTIST,
 }
-type EPInfoComm = {
+interface EPInfoComm {
     readonly [EPInfoKey.AGE_RESTRICTED]: string | undefined;
     readonly [EPInfoKey.DIR]: string;
     readonly [EPInfoKey.SERIES_OVERRIDE]: string | undefined;
-};
-type VideoEPInfoPartial = {
+}
+interface VideoEPInfoPartial {
     readonly [EPInfoKey.TITLE]: string | undefined;
     readonly [EPInfoKey.FORMATS]: VideoFormats;
     readonly [EPInfoKey.CHAPTERS]: Chapters;
     readonly [EPInfoKey.FILE_NAME]: string;
-};
-type AudioEPInfoPartial = {
+}
+interface AudioEPInfoPartial {
     readonly [EPInfoKey.ALBUM_INFO]: {
         readonly [AlbumInfoKey.TITLE]: string | undefined;
         readonly [AlbumInfoKey.ARTIST]: string | undefined;
     };
     readonly [EPInfoKey.FILES]: readonly [AudioFile, ...AudioFile[]];
-};
-type ImageEPInfoPartial = {
+}
+interface ImageEPInfoPartial {
     readonly [EPInfoKey.TITLE]: string | undefined;
     readonly [EPInfoKey.FILES]: readonly [ImageFile, ...ImageFile[]];
-};
+}
 export type VideoEPInfo = EPInfoComm & VideoEPInfoPartial & { readonly [EPInfoKey.TYPE]: 'video' };
 export type AudioEPInfo = EPInfoComm & AudioEPInfoPartial & { readonly [EPInfoKey.TYPE]: 'audio' };
 export type ImageEPInfo = EPInfoComm & ImageEPInfoPartial & { readonly [EPInfoKey.TYPE]: 'image' };
@@ -95,10 +95,10 @@ export const enum SeasonKey {
     ID,
     NAME,
 }
-type Season = {
+interface Season {
     readonly [SeasonKey.ID]: string;
     readonly [SeasonKey.NAME]: string;
-};
+}
 export type Seasons = readonly Season[];
 export type SeriesEP = readonly [string, ...string[]];
 
@@ -109,13 +109,13 @@ export const enum BangumiInfoKey {
     SERIES_EP,
     EP_INFO,
 }
-export type BangumiInfo = {
+export interface BangumiInfo {
     readonly [BangumiInfoKey.TITLE]: string;
     readonly [BangumiInfoKey.TITLE_OVERRIDE]: string | undefined;
     readonly [BangumiInfoKey.SEASONS]: Seasons;
     readonly [BangumiInfoKey.SERIES_EP]: SeriesEP;
     readonly [BangumiInfoKey.EP_INFO]: VideoEPInfo | AudioEPInfo | ImageEPInfo;
-};
+}
 
 function parseVideoFormatInfo(formats: unknown): VideoFormats {
     return parseNonEmptyTypedArray(formats, (format): VideoFormat => {

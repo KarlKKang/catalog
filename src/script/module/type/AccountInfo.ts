@@ -7,13 +7,13 @@ export const enum AccountInfoKey {
     RECOVERY_CODE_STATUS,
     LOGIN_NOTIFICATION,
 }
-export type AccountInfo = {
+export interface AccountInfo {
     [AccountInfoKey.USERNAME]: string;
     readonly [AccountInfoKey.INVITE_QUOTA]: number;
     readonly [AccountInfoKey.MFA_STATUS]: boolean;
     readonly [AccountInfoKey.RECOVERY_CODE_STATUS]: number;
     readonly [AccountInfoKey.LOGIN_NOTIFICATION]: boolean;
-};
+}
 
 export function parseAccountInfo(accountInfo: unknown): AccountInfo {
     const accountInfoObj = parseObject(accountInfo);

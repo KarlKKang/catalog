@@ -16,10 +16,10 @@ import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, CONFIRM_NEW_EMAIL_URI, CONSOLE_URI, IMAGE_URI, INFO_URI, LOGIN_URI, MESSAGE_URI, MY_ACCOUNT_URI, NEWS_ROOT_URI, NEW_EMAIL_URI, PASSWORD_RESET_URI, CN_ROUTES_URI, REGISTER_URI, REQUEST_PASSWORD_RESET_URI, SPECIAL_REGISTER_URI, TOP_URI } from '../module/env/uri';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
-type PageScript = {
+interface PageScript {
     default: PageInitCallback;
     offload?: () => void;
-};
+}
 type PageScriptImport = Promise<PageScript>;
 
 const enum PageProp {
@@ -29,11 +29,11 @@ const enum PageProp {
     NO_THEME,
     SCRIPT_CACHED,
 }
-type Page = {
+interface Page {
     [PageProp.SCRIPT]: () => PageScriptImport;
     [PageProp.TITLE]?: string;
     [PageProp.SCRIPT_CACHED]?: PageScript;
-};
+}
 
 let nativeBody: HTMLElement;
 const loadingBar = createDivElement();
@@ -43,7 +43,7 @@ let serviceWorkerModule: {
     default: () => void;
     offload: () => void;
 } | null = null;
-let loadingBarShown: boolean = false;
+let loadingBarShown = false;
 
 const page404 = {
     [PageProp.SCRIPT]: () => import('../404'),
@@ -164,7 +164,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     const newPgid = {};
     setPgid(newPgid);
 
-    let loadingBarWidth: number = 33;
+    let loadingBarWidth = 33;
     if (loadingBarShown) {
         setWidth(loadingBar, loadingBarWidth, CSS_UNIT.PERCENT);
     } else {

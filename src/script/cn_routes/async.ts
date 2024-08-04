@@ -24,13 +24,13 @@ const enum RouteInfoNodeKey {
     IN_USE,
     NEXT,
 }
-type RouteInfoNode = {
+interface RouteInfoNode {
     readonly [RouteInfoNodeKey.INFO]: RouteInfo | null;
     [RouteInfoNodeKey.LATENCY]: number | null | false;
     [RouteInfoNodeKey.RESULT_OVERRIDE]: string | null;
     readonly [RouteInfoNodeKey.IN_USE]: boolean;
     [RouteInfoNodeKey.NEXT]: RouteInfoNode | null;
-};
+}
 
 export default function (routeList: RouteList) {
     const [outerContainer, innerContainer] = createNewsTemplate(cnRoutesPageTitle, null, null);

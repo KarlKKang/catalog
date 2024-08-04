@@ -31,7 +31,7 @@ const enum TargetDataKey {
     STATUS,
     XHR,
 }
-type TargetData = {
+interface TargetData {
     [TargetDataKey.SRC]: string;
     [TargetDataKey.ALT]: string;
     [TargetDataKey.DELAY]: number;
@@ -39,9 +39,9 @@ type TargetData = {
     [TargetDataKey.ON_IMAGE_DRAW]: ((canvas: HTMLCanvasElement) => void) | undefined;
     [TargetDataKey.STATUS]: Status;
     [TargetDataKey.XHR]: XMLHttpRequest | null;
-};
+}
 
-const targets: Map<Element, TargetData> = new Map();
+const targets = new Map<Element, TargetData>();
 let sessionCredentialPromise: Promise<void> | null = null;
 let credential: [
     string, // sessionCredential

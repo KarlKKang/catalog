@@ -4,10 +4,10 @@ export const enum TOTPInfoKey {
     URI,
     P,
 }
-export type TOTPInfo = {
+export interface TOTPInfo {
     readonly [TOTPInfoKey.URI]: string;
     readonly [TOTPInfoKey.P]: string;
-};
+}
 
 export function parseTotpInfo(totpInfo: unknown): TOTPInfo {
     const totpInfoObj = parseObject(totpInfo);

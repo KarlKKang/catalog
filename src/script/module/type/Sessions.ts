@@ -8,14 +8,14 @@ export const enum SessionKey {
     LAST_ACTIVE_TIME,
     LOGIN_TIME,
 }
-type Session = {
+interface Session {
     readonly [SessionKey.ID]: string | undefined;
     readonly [SessionKey.UA]: string;
     readonly [SessionKey.IP]: string;
     readonly [SessionKey.COUNTRY]: string;
     readonly [SessionKey.LAST_ACTIVE_TIME]: number;
     readonly [SessionKey.LOGIN_TIME]: number;
-};
+}
 export type Sessions = readonly Session[];
 
 export function parseSession(sessions: unknown): Sessions {

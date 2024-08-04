@@ -4,10 +4,10 @@ export const enum InviteResultKey {
     SPECIAL,
     QUOTA,
 }
-export type InviteResult = {
+export interface InviteResult {
     readonly [InviteResultKey.SPECIAL]: boolean | undefined;
     readonly [InviteResultKey.QUOTA]: number;
-};
+}
 
 export function parseInviteResult(inviteResult: unknown): InviteResult {
     const inviteResultObj = parseObject(inviteResult);

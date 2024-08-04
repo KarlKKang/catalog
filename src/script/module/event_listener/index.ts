@@ -60,7 +60,7 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
     }
 }
 
-export function addEventsListener(elem: EventTarget, events: Array<string>, callback: EventListener, options?: boolean | AddEventListenerOptions) {
+export function addEventsListener(elem: EventTarget, events: string[], callback: EventListener, options?: boolean | AddEventListenerOptions) {
     for (const event of events) {
         addEventListener(elem, event, callback, options);
     }
@@ -117,7 +117,7 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
     }
 }
 
-export function removeEventsListener(elem: EventTarget, events: Array<string>, callback: EventListener, useCapture?: boolean) {
+export function removeEventsListener(elem: EventTarget, events: string[], callback: EventListener, useCapture?: boolean) {
     for (const event of events) {
         removeEventListener(elem, event, callback, useCapture);
     }

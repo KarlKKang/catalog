@@ -13,11 +13,11 @@ export const enum EmailOtpPopupWindowKey {
     SHOW_WARNING,
     CLOSE,
 }
-export type EmailOtpPopupWindow = {
+export interface EmailOtpPopupWindow {
     [EmailOtpPopupWindowKey.OTP]: string | undefined;
     [EmailOtpPopupWindowKey.SHOW_WARNING]: () => Promise<EmailOtpPopupWindow>;
     [EmailOtpPopupWindowKey.CLOSE]: () => void;
-};
+}
 
 const enum RejectReason {
     CLOSE,

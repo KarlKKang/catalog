@@ -5,11 +5,11 @@ export const enum RouteInfoKey {
     CODE,
     TYPE,
 }
-export type RouteInfo = {
+export interface RouteInfo {
     readonly [RouteInfoKey.NAME]: string;
     readonly [RouteInfoKey.CODE]: string;
     readonly [RouteInfoKey.TYPE]: string | undefined;
-};
+}
 export type RouteList = RouteInfo[];
 
 export function parseRouteList(routeList: unknown): RouteList {

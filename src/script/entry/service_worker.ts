@@ -5,9 +5,9 @@ import { addEventListener } from '../module/event_listener';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, offloadPopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
 
-let swUpdateLastPromptTime: number = 0;
+let swUpdateLastPromptTime = 0;
 let serviceWorker: Workbox | null = null;
-let serviceWorkerUpToDate: boolean = true;
+let serviceWorkerUpToDate = true;
 
 export default async function () { // This function should be called after setting the `pgid`.
     const showSkipWaitingPrompt = (wb: Workbox) => {

@@ -37,7 +37,7 @@ let createMediaSessionPromise: Promise<MediaSessionInfo>;
 
 let audioReadyCounter: number;
 let error: boolean;
-const mediaInstances: Array<PlayerType> = [];
+const mediaInstances: PlayerType[] = [];
 
 export default function (
     _seriesID: string,

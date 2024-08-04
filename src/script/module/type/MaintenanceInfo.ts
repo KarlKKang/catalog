@@ -4,10 +4,10 @@ export const enum MaintenanceInfoKey {
     START,
     PERIOD,
 }
-export type MaintenanceInfo = {
+export interface MaintenanceInfo {
     readonly [MaintenanceInfoKey.START]: number;
     readonly [MaintenanceInfoKey.PERIOD]: number;
-};
+}
 
 export function parseMaintenanceInfo(maintenanceInfo: unknown): MaintenanceInfo {
     const maintenanceInfoObj = parseObject(maintenanceInfo);

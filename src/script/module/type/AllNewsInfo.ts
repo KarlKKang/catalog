@@ -5,11 +5,11 @@ export const enum AllNewsInfoEntryKey {
     TITLE,
     UPDATE_TIME,
 }
-type AllNewsInfoEntry = {
+interface AllNewsInfoEntry {
     readonly [AllNewsInfoEntryKey.ID]: string;
     readonly [AllNewsInfoEntryKey.TITLE]: string;
     readonly [AllNewsInfoEntryKey.UPDATE_TIME]: number;
-};
+}
 
 export type AllNewsInfoEntries = readonly AllNewsInfoEntry[];
 export type Pivot = 'EOF' | number;
@@ -17,10 +17,10 @@ export const enum AllNewsInfoKey {
     NEWS,
     PIVOT,
 }
-export type AllNewsInfo = {
+export interface AllNewsInfo {
     readonly [AllNewsInfoKey.NEWS]: AllNewsInfoEntries;
     readonly [AllNewsInfoKey.PIVOT]: Pivot;
-};
+}
 
 export function parseAllNewsInfo(allNewsInfo: unknown): AllNewsInfo {
     const allNewsInfoObj = parseObject(allNewsInfo);

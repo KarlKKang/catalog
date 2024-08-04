@@ -4,10 +4,10 @@ export const enum CurrentRouteInfoKey {
     ASN,
     TYPE,
 }
-export type CurrentRouteInfo = {
+export interface CurrentRouteInfo {
     readonly [CurrentRouteInfoKey.ASN]: string;
     readonly [CurrentRouteInfoKey.TYPE]: string;
-};
+}
 
 export function parseCurrentRouteInfo(routeInfo: unknown): CurrentRouteInfo {
     const routeInfoObj = parseObject(routeInfo);

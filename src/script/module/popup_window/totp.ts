@@ -14,11 +14,11 @@ export const enum TotpPopupWindowKey {
     SHOW_WARNING,
     CLOSE,
 }
-export type TotpPopupWindow = {
+export interface TotpPopupWindow {
     [TotpPopupWindowKey.TOTP]: string;
     [TotpPopupWindowKey.SHOW_WARNING]: () => Promise<TotpPopupWindow>;
     [TotpPopupWindowKey.CLOSE]: () => void;
-};
+}
 
 const enum RejectReason {
     TIMEOUT,

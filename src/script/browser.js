@@ -64,7 +64,7 @@ function unsupportRedirect() {
     const getCookie = (name) => {
         name = name + '=';
         const cookies = d.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
+        for (let i = 0; i < cookies.length; i++) { // eslint-disable-line @typescript-eslint/prefer-for-of
             let cookie = cookies[i];
             while (cookie.charAt(0) === ' ') {
                 cookie = cookie.substring(1);
