@@ -1,4 +1,4 @@
-let dynamicImportTest = null; // eslint-disable-line @typescript-eslint/no-unused-vars, prefer-const
+let dynamicImportTest = null; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 function unsupportRedirect() {
     const URL = '/unsupported_browser';
@@ -91,7 +91,7 @@ function unsupportRedirect() {
     }
     try {
         storage.setItem(x, x);
-    } catch (e) {
+    } catch {
         // QuotaExceededError will be treated as unsupported browser. The storage should never reach the quota of a properly configured browser in normal operation.
         _unsupportRedirect();
         return;

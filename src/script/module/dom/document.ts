@@ -8,7 +8,7 @@ export const windowLocation = w.location;
 export function parseOrigin(url: string | URL) {
     try {
         return new URL(url).origin.toLowerCase();
-    } catch (e) {
+    } catch {
         return null;
     }
 }
@@ -20,7 +20,7 @@ export function getURI() {
 export function parseURI(url: string | URL) {
     try {
         return new URL(url, windowLocation.origin).pathname;
-    } catch (e) {
+    } catch {
         return null;
     }
 }

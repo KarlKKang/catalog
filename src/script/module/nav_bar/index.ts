@@ -1,6 +1,6 @@
 import { pgid } from '../global';
 import type { NavBarPage } from './enum';
-import { default as NavBarFunc } from './nav_bar';
+import type { default as NavBarFunc } from './nav_bar';
 import { importModule } from '../import_module';
 
 let navBarFunc: typeof NavBarFunc | null = null;

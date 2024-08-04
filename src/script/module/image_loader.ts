@@ -102,7 +102,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
         canvas.height = image.height;
         try {
             ctx.drawImage(image, 0, 0);
-        } catch (_) {
+        } catch {
             finalizeUnrecoverableError();
             return;
         } finally {
@@ -175,7 +175,7 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
     const canvas = createCanvasElement();
     try {
         await webpMachine.decodeToCanvas(canvas, queueItem[WebpMachineQueueItemProp.WEBP_DATA]);
-    } catch (_) {
+    } catch {
         if (currentPgid !== pgid) {
             return;
         }

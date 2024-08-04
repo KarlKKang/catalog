@@ -122,7 +122,7 @@ export async function handleFailedLogin(
     let newLoginPopupWindow: LoginPopupWindow;
     try {
         newLoginPopupWindow = await loginPopupWindowPromise;
-    } catch (e) {
+    } catch {
         if (currentPgid === pgid) {
             closeCallback();
         }

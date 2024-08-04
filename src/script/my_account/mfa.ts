@@ -219,7 +219,7 @@ async function handleFailedEmailOtp(
 
     try {
         currentEmailOtpPopupWindow = await emailOtpPopupWindowPromise;
-    } catch (e) {
+    } catch {
         if (currentPgid !== pgid) {
             return;
         }
