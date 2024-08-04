@@ -8,7 +8,7 @@ import { goBackButtonText } from '../text/ui';
 import { MESSAGE_URI } from '../env/uri';
 
 export const enum MessageParamInternalKey {
-    DOCUMENT_TITLE = MessageParamKey.__LENGTH,
+    DOCUMENT_TITLE = MessageParamKey.__LENGTH, // eslint-disable-line @typescript-eslint/prefer-literal-enum-member
 }
 interface MessageParamInternal extends Required<MessageParam> {
     [MessageParamInternalKey.DOCUMENT_TITLE]: string;

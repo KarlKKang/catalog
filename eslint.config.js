@@ -5,7 +5,7 @@ import globals from "globals";
 
 const config = tseslint.config(
     eslint.configs.recommended,
-    ...tseslint.configs.recommended,
+    ...tseslint.configs.strict,
     stylistic.configs.customize({
         semi: true,
         arrowParens: true,
