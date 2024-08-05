@@ -2,8 +2,8 @@ import {
     removeRightClick,
     openImageWindow,
     SessionTypes,
-    newXHR,
 } from '../module/common';
+import { newXHR } from '../module/xhr';
 import { scrollToHash } from '../module/dom/scroll';
 import { getTitle, setTitle } from '../module/dom/document';
 import { createDivElement, createParagraphElement } from '../module/dom/create_element';

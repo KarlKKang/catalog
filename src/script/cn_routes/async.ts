@@ -12,7 +12,7 @@ import { cnRoutesPageTitle } from '../module/text/page_title';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 import { redirect } from '../module/global';
-import { newXHR } from '../module/common';
+import { newXHR } from '../module/xhr';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style';
 import { buildURI, buildURLForm } from '../module/http_form';

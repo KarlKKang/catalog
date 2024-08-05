@@ -1,8 +1,8 @@
 import type { WebpMachine } from 'webp-hero';
 import {
-    newXHR,
     removeRightClick,
 } from './common';
+import { newXHR } from './xhr';
 import { appendChild } from './dom/element';
 import { addEventListener, addEventListenerOnce, removeAllEventListeners } from './event_listener';
 import { createCanvasElement } from './dom/create_element';

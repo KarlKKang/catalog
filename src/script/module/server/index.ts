@@ -5,7 +5,7 @@ import { addTimeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 import { LOGIN_URI } from '../env/uri';
-import { newXHR } from '../common';
+import { newXHR } from '../xhr';
 import { addEventListener } from '../event_listener';
 import { buildURI } from '../http_form';
 

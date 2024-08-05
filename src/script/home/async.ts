@@ -1,6 +1,4 @@
-import {
-    newXHR,
-} from '../module/common';
+import { newXHR } from '../module/xhr';
 import { scrollToTop } from '../module/dom/scroll';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
