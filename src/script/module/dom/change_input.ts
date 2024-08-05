@@ -1,6 +1,6 @@
 import * as styles from '../../../css/common.module.scss';
 import { addClass, removeClass } from './class';
-import { getParentElement } from './element';
+import { getParentElement } from './get_element';
 
 export function disableInput(inputElement: HTMLInputElement, disabled: boolean) {
     inputElement.disabled = disabled;

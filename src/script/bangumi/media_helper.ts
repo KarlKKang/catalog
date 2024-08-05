@@ -1,6 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { appendListItems, appendText, createButtonElement, createDivElement, createElement, createHRElement, createOptionElement, createSelectElement, createTextNode, createUListElement, replaceText } from '../module/dom/create_element';
-import { getDescendantsByClassAt } from '../module/dom/element';
+import { getDescendantsByClassAt } from '../module/dom/get_element';
 import { appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { getHostname, parseOrigin, parseURI, w } from '../module/dom/document';

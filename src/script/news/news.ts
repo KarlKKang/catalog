@@ -7,7 +7,7 @@ import { newXHR } from '../module/xhr';
 import { scrollToHash } from '../module/dom/scroll';
 import { getTitle, setTitle } from '../module/dom/document';
 import { createDivElement, createParagraphElement } from '../module/dom/create_element';
-import { getDescendantsByClass } from '../module/dom/element';
+import { getDescendantsByClass } from '../module/dom/get_element';
 import { appendChild } from '../module/dom/change_node';
 import { getDataAttribute } from '../module/dom/attr';
 import { addClass, removeClass } from '../module/dom/class';

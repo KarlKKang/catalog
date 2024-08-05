@@ -1,5 +1,5 @@
 import { getHash, w } from './document';
-import { getByIdNative } from './element';
+import { getByIdNative } from './get_element';
 import { addTimeout } from '../timer';
 
 export function scrollToTop() {

@@ -1,4 +1,4 @@
-import { getParentElement } from '../module/dom/element';
+import { getParentElement } from '../module/dom/get_element';
 import { appendChild, insertBefore, prependChild, remove, replaceChildren } from '../module/dom/change_node';
 import { addClass, removeClass, setClass } from '../module/dom/class';
 import { appendText, createDivElement, createOptionElement, createParagraphElement, createSelectElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';

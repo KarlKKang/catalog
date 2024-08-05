@@ -1,5 +1,5 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { getByClass, getParentElement } from '../module/dom/element';
+import { getByClass, getParentElement } from '../module/dom/get_element';
 import { addClass, containsClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';
 import { changed as changedClass } from '../../css/console.module.scss';
