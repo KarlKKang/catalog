@@ -17,6 +17,7 @@ import { hideElement, setWidth } from '../module/style';
 import { CSS_AUTO } from '../module/style/value';
 import * as styles from '../../css/bangumi.module.scss';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
+import { disableButton } from '../module/dom/change_input';
 
 export default async function (
     epInfo: ImageEPInfo,
@@ -70,7 +71,7 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
 
         addClass(downloadPanel, styles.accordionPanel);
         setWidth(showFullSizeButton, CSS_AUTO);
-        downloadButton.disabled = true;
+        disableButton(downloadButton, true);
         addClass(buttonFlexbox, styles.imageButtonFlexbox);
         appendChild(buttonFlexbox, showFullSizeButton);
         appendChild(buttonFlexbox, downloadButton);
@@ -97,18 +98,18 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
             250,
             (data: Blob) => {
                 addEventListener(downloadButton, 'click', () => {
-                    downloadButton.disabled = true;
+                    disableButton(downloadButton, true);
                     downloadAnchor.href = URL.createObjectURL(data);
                     addEventListener(downloadAnchor, 'click', () => {
                         addTimeout(() => {
                             URL.revokeObjectURL(downloadAnchor.href);
                             downloadAnchor.href = '';
-                            downloadButton.disabled = false;
+                            disableButton(downloadButton, false);
                         }, 100); // Should be triggered in the next event cycle otherwise the download will fail (at least in Chrome). iOS 14 and earlier need some delays.
                     });
                     downloadAnchor.click();
                 });
-                downloadButton.disabled = false;
+                disableButton(downloadButton, false);
             },
             (canvas) => {
                 const subtitle = createParagraphElement();

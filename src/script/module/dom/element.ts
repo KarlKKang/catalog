@@ -1,6 +1,4 @@
 import { d } from './document';
-import * as styles from '../../../css/common.module.scss';
-import { addClass, removeClass } from './class';
 
 export function getByIdNative(id: string) {
     return d.getElementById(id);
@@ -80,13 +78,4 @@ export function getParentNode(elem: Node) {
         throw new Error('Parent node not found.');
     }
     return parent;
-}
-
-export function disableInput(inputElement: HTMLInputElement, disabled: boolean) {
-    inputElement.disabled = disabled;
-    if (disabled) {
-        addClass(getParentElement(inputElement), styles.disabled);
-    } else {
-        removeClass(getParentElement(inputElement), styles.disabled);
-    }
 }

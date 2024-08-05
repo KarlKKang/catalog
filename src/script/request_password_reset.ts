@@ -1,7 +1,7 @@
 import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import { clearSessionStorage } from './module/dom/session_storage';
 import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, createSpanElement, replaceText } from './module/dom/create_element';
-import { disableInput } from './module/dom/element';
+import { disableButton, disableInput } from './module/dom/change_input';
 import { appendChild } from './module/dom/change_node';
 import { addClass } from './module/dom/class';
 import { body } from './module/dom/body';
@@ -100,7 +100,7 @@ function showPageCallback() {
     }
 
     function disableAllInputs(disabled: boolean) {
-        submitButton.disabled = disabled;
+        disableButton(submitButton, disabled);
         disableInput(emailInput, disabled);
     }
 }

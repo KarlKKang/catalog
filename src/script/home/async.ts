@@ -2,7 +2,7 @@ import { newXHR } from '../module/xhr';
 import { scrollToTop } from '../module/dom/scroll';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
-import { disableInput } from '../module/dom/element';
+import { disableInput } from '../module/dom/change_input';
 import { appendChild, appendChildren, insertBefore, replaceChildren } from '../module/dom/change_node';
 import { addClass, removeClass } from '../module/dom/class';
 import { body } from '../module/dom/body';

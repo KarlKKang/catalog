@@ -1,5 +1,5 @@
 import { appendText, createButtonElement, createDivElement, createEmailInput, createParagraphElement, createPasswordInput, createSpanElement, replaceText } from '../module/dom/create_element';
-import { disableInput } from '../module/dom/element';
+import { disableButton, disableInput } from '../module/dom/change_input';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { openWindow } from '../module/dom/document';
@@ -78,8 +78,8 @@ export function promptForLogin(message?: string) {
     const disableAllInputs = (disabled: boolean) => {
         disableInput(emailInput, disabled);
         disableInput(passwordInput, disabled);
-        submitButton.disabled = disabled;
-        cancelButton.disabled = disabled;
+        disableButton(submitButton, disabled);
+        disableButton(cancelButton, disabled);
     };
     const submit = () => {
         disableAllInputs(true);

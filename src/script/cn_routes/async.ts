@@ -18,6 +18,7 @@ import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style';
 import { buildURI, buildURLForm } from '../module/http_form';
 import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
+import { disableButton } from '../module/dom/change_input';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {
@@ -51,7 +52,7 @@ export default function (routeList: RouteList) {
     const retestButton = createButtonElement('再測定');
     appendChild(contentContainer, retestButton);
     horizontalCenter(retestButton);
-    retestButton.disabled = true;
+    disableButton(retestButton, true);
 
     const codeToNameMap = new Map<string, string>();
     codeToNameMap.set('', DEFAULT_ROUTE_NAME);
@@ -59,7 +60,7 @@ export default function (routeList: RouteList) {
         codeToNameMap.set(routeInfo[RouteInfoKey.CODE], routeInfo[RouteInfoKey.NAME]);
     }
     addEventListener(retestButton, 'click', () => {
-        retestButton.disabled = true;
+        disableButton(retestButton, true);
         testNextRoute(codeToNameMap, routeListContainer, initializeList(routeList), retestButton);
     });
     testNextRoute(codeToNameMap, routeListContainer, initializeList(routeList), retestButton);
@@ -154,7 +155,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
 
     const testRouteNodeConst = testRouteNode;
     if (testRouteNodeConst === null) {
-        retestButton.disabled = false;
+        disableButton(retestButton, false);
         return;
     }
 
@@ -286,10 +287,10 @@ function checkRouteCode(routeCode: string, routeInfo: RouteInfo | null) {
 
 function getASN(asnResultContainer: HTMLElement, asnRetestButton: HTMLButtonElement) {
     replaceText(asnResultContainer, 'ASNを取得中…');
-    asnRetestButton.disabled = true;
+    disableButton(asnRetestButton, true);
     const failedCallback = () => {
         replaceText(asnResultContainer, 'ASNの取得に失敗しました');
-        asnRetestButton.disabled = false;
+        disableButton(asnRetestButton, false);
     };
     const xhr = newXHR(
         getServerOrigin('') + '/get_asn',
@@ -312,7 +313,7 @@ function getASN(asnResultContainer: HTMLElement, asnRetestButton: HTMLButtonElem
                 w.open('https://bgp.he.net/AS' + asn);
             });
             replaceChildren(asnResultContainer, resultSpan);
-            asnRetestButton.disabled = false;
+            disableButton(asnRetestButton, false);
         },
     );
     addEventListener(xhr, 'error', failedCallback);

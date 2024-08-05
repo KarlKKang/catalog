@@ -1,7 +1,7 @@
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import { addEventListener } from '../module/event_listener';
 import { appendText, createAnchorElement, createButtonElement, createCanvasElement, createDivElement, createParagraphElement, createTotpInput, replaceText } from '../module/dom/create_element';
-import { disableInput } from '../module/dom/element';
+import { disableButton, disableInput } from '../module/dom/change_input';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { showMessage } from '../module/message';
@@ -281,8 +281,8 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
 
     const disableAllPopUpWindowInputs = (disabled: boolean) => {
         disableInput(totpInput, disabled);
-        submitButton.disabled = disabled;
-        cancelButton.disabled = disabled;
+        disableButton(submitButton, disabled);
+        disableButton(cancelButton, disabled);
     };
     const submit = () => {
         disableAllPopUpWindowInputs(true);
@@ -351,13 +351,13 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo, completedCallba
 
     const closeButton = createButtonElement(closeButtonText + '（15秒）');
     horizontalCenter(closeButton);
-    closeButton.disabled = true;
+    disableButton(closeButton, true);
     setCursor(closeButton, CSS_CURSOR.NOT_ALLOWED);
     let count = 15;
     const interval = addInterval(() => {
         count--;
         if (count <= 0) {
-            closeButton.disabled = false;
+            disableButton(closeButton, false);
             setCursor(closeButton, null);
             replaceText(closeButton, closeButtonText);
             removeInterval(interval);

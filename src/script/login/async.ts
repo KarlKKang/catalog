@@ -3,7 +3,8 @@ import {
     ServerRequestOptionProp,
 } from '../module/server';
 import { createButtonElement, createDivElement, createElement, createEmailInput, createInputElement, createParagraphElement, createPasswordInput, createSpanElement, replaceText } from '../module/dom/create_element';
-import { disableInput, getParentElement } from '../module/dom/element';
+import { getParentElement } from '../module/dom/element';
+import { disableButton, disableInput } from '../module/dom/change_input';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
 import { addClass, removeClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
@@ -170,7 +171,7 @@ export default function (
     }
 
     function disableAllInputs(disabled: boolean) {
-        submitButton.disabled = disabled;
+        disableButton(submitButton, disabled);
         disableInput(passwordInput, disabled);
         disableInput(emailInput, disabled);
         disableCheckbox(rememberMeInput, disabled);

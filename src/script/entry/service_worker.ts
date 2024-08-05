@@ -5,6 +5,7 @@ import { getHostname, windowLocation } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, offloadPopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
+import { disableButton } from '../module/dom/change_input';
 
 let swUpdateLastPromptTime = 0;
 let serviceWorker: Workbox | null = null;
@@ -28,8 +29,8 @@ export default async function () { // This function should be called after setti
         onPopupWindowClosed(() => {
             const hidePopupWindow = initializePopupWindow([titleText, promptText, buttonFlexbox]);
             const disableAllInputs = (disabled: boolean) => {
-                updateButton.disabled = disabled;
-                cancelButton.disabled = disabled;
+                disableButton(updateButton, disabled);
+                disableButton(cancelButton, disabled);
             };
             addEventListener(updateButton, 'click', () => {
                 disableAllInputs(true);

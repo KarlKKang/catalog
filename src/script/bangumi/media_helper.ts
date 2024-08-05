@@ -20,6 +20,7 @@ import { defaultErrorSuffix } from '../module/text/message/body';
 import * as styles from '../../css/bangumi.module.scss';
 import { getCDNOrigin } from '../module/env/origin';
 import { buildURLForm, joinURLForms } from '../module/http_form';
+import { disableButton } from '../module/dom/change_input';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -164,7 +165,7 @@ export function buildDownloadAccordion(
     iframe.width = '0';
 
     addEventListener(downloadButton, 'click', () => {
-        downloadButton.disabled = true;
+        disableButton(downloadButton, true);
         let requestContent = joinURLForms(mediaSessionCredential, buildURLForm({ os: osSelectMenu.value }));
         if (videoFormats !== null) {
             const formatIndex = videoFormats[0].selectedIndex;
@@ -185,7 +186,7 @@ export function buildDownloadAccordion(
                 const downloadURI = parseURI(response);
                 if (parseOrigin(response) === getCDNOrigin() && downloadURI?.startsWith('/download/')) {
                     iframe.src = response;
-                    downloadButton.disabled = false;
+                    disableButton(downloadButton, false);
                 } else {
                     showMessage(invalidResponse());
                 }

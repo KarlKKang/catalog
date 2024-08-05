@@ -1,5 +1,5 @@
 import { createButtonElement, createDivElement, createParagraphElement, createTotpInput } from '../dom/create_element';
-import { disableInput } from '../dom/element';
+import { disableButton, disableInput } from '../dom/change_input';
 import { appendChild } from '../dom/change_node';
 import { addClass } from '../dom/class';
 import { addEventListener } from '../event_listener';
@@ -69,8 +69,8 @@ function promptForTotp() {
 
     const disableAllInputs = (disabled: boolean) => {
         disableInput(totpInput, disabled);
-        submitButton.disabled = disabled;
-        cancelButton.disabled = disabled;
+        disableButton(submitButton, disabled);
+        disableButton(cancelButton, disabled);
     };
 
     const submit = () => {

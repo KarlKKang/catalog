@@ -1,5 +1,5 @@
 import { createButtonElement, createDivElement, createParagraphElement, createTotpInput, replaceText } from '../module/dom/create_element';
-import { disableInput } from '../module/dom/element';
+import { disableButton, disableInput } from '../module/dom/change_input';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';
@@ -57,7 +57,7 @@ export function promptForEmailOtp() {
         const interval = addInterval(() => {
             count--;
             if (count <= 0) {
-                resendButton.disabled = false;
+                disableButton(resendButton, false);
                 setCursor(resendButton, null);
                 setWidth(resendButton, null);
                 replaceText(resendButton, resendButtonText);
@@ -72,7 +72,7 @@ export function promptForEmailOtp() {
         }
         currentResendInterval = interval;
     };
-    resendButton.disabled = true;
+    disableButton(resendButton, true);
     resetResendTimer();
     appendChild(inputFlexbox, resendButton);
 
@@ -89,7 +89,7 @@ export function promptForEmailOtp() {
     );
 
     addEventListener(resendButton, 'click', () => {
-        resendButton.disabled = true;
+        disableButton(resendButton, true);
         returnPromiseResolve({
             [EmailOtpPopupWindowKey.OTP]: undefined,
             [EmailOtpPopupWindowKey.SHOW_WARNING]: () => {
@@ -106,10 +106,10 @@ export function promptForEmailOtp() {
     const disableAllInputs = (disabled: boolean) => {
         disableInput(otpInput, disabled);
         if (resendButton.textContent === resendButtonText) {
-            resendButton.disabled = disabled;
+            disableButton(resendButton, disabled);
         }
-        submitButton.disabled = disabled;
-        cancelButton.disabled = disabled;
+        disableButton(submitButton, disabled);
+        disableButton(cancelButton, disabled);
     };
     const submit = () => {
         disableAllInputs(true);
