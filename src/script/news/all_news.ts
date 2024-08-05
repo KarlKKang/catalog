@@ -5,7 +5,7 @@ import { addClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
-import { TimeInfoKey, getLocalTime } from '../module/time';
+import { TimeInfoKey, getLocalTime, padTime } from '../module/time';
 import { buildURLForm } from '../module/http_form';
 import { redirect } from '../module/global';
 import { allResultsShown, loading, noResult } from '../module/text/ui';
@@ -69,7 +69,7 @@ function showAllNews(allNewsInfo: AllNewsInfo, container: HTMLElement, loadingTe
         const updateTime = getLocalTime(entry[AllNewsInfoEntryKey.UPDATE_TIME]);
         appendText(dateContainer, updateTime[TimeInfoKey.YEAR] + '年');
         appendChild(dateContainer, createBRElement());
-        appendText(dateContainer, updateTime[TimeInfoKey.MONTH].toString().padStart(2, '0') + '月' + updateTime[TimeInfoKey.DATE].toString().padStart(2, '0') + '日');
+        appendText(dateContainer, padTime(updateTime[TimeInfoKey.MONTH]) + '月' + padTime(updateTime[TimeInfoKey.DATE]) + '日');
 
         const titleContainer = createDivElement();
         appendText(titleContainer, entry[AllNewsInfoEntryKey.TITLE]);

@@ -28,9 +28,9 @@ export function getLocalTime(unixTimestamp?: number) {
 
 export function getLocalTimeString(unixTimestamp: number, showSeconds?: boolean, showTimezone?: boolean) {
     const localTime = getLocalTime(unixTimestamp);
-    let result = localTime[TimeInfoKey.YEAR] + '年' + localTime[TimeInfoKey.MONTH] + '月' + localTime[TimeInfoKey.DATE] + '日（' + localTime[TimeInfoKey.DAY_OF_WEEK] + '）' + localTime[TimeInfoKey.HOUR].toString().padStart(2, '0') + '時' + localTime[TimeInfoKey.MINUTE].toString().padStart(2, '0') + '分';
+    let result = localTime[TimeInfoKey.YEAR] + '年' + localTime[TimeInfoKey.MONTH] + '月' + localTime[TimeInfoKey.DATE] + '日（' + localTime[TimeInfoKey.DAY_OF_WEEK] + '）' + padTime(localTime[TimeInfoKey.HOUR]) + '時' + padTime(localTime[TimeInfoKey.MINUTE]) + '分';
     if (showSeconds) {
-        result += localTime[TimeInfoKey.SECOND].toString().padStart(2, '0') + '秒';
+        result += padTime(localTime[TimeInfoKey.SECOND]) + '秒';
     }
     if (showTimezone) {
         result += '（' + new Date().toLocaleTimeString('ja-JP', { timeZoneName: 'long' }).split(' ').at(-1) + '）';
@@ -110,4 +110,8 @@ function parseSec(sec: number) {
         min: min,
         sec: Math.floor(sec),
     };
+}
+
+export function padTime(num: number) {
+    return num.toString().padStart(2, '0');
 }
