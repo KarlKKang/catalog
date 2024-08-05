@@ -9,7 +9,7 @@ import { addEventListener, addEventListenerOnce, addEventsListener, removeAllEve
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import * as icons from './icons';
-import { getLocalTime, secToTimestamp } from '../common/pure';
+import { getLocalTime, secToTimestamp } from '../time';
 import { addInterval, addTimeout, removeInterval } from '../timer';
 import { mediaErrorCodeLookup } from './media_error';
 import * as styles from '../../../css/player.module.scss';

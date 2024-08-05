@@ -9,7 +9,7 @@ import { body } from '../module/dom/body';
 import { changeURL, getFullPath, getHostname, getURI } from '../module/dom/document';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
-import { getLocalTimeString } from '../module/common/pure';
+import { getLocalTimeString } from '../module/time';
 import { buildURLForm, buildURI, joinURLForms } from '../module/http_form';
 import { addTimeout } from '../module/timer';
 import { redirect, setCustomPopStateHandler } from '../module/global';

@@ -4,7 +4,7 @@ import { addClass, appendChild } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
-import { getLocalTime } from '../module/common/pure';
+import { getLocalTime } from '../module/time';
 import { buildURLForm } from '../module/http_form';
 import { redirect } from '../module/global';
 import { allResultsShown, loading, noResult } from '../module/text/ui';

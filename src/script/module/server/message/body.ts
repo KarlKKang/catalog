@@ -1,7 +1,7 @@
 import { appendListItems, appendText, createBRElement, createDivElement, createEmailLink, createLIElement, createParagraphElement, createUListElement } from '../../dom/create_element';
 import { appendChild, appendChildren } from '../../dom/element';
 import { TOP_DOMAIN } from '../../env/domain';
-import { getLocalTimeString } from '../../common/pure';
+import { getLocalTimeString } from '../../time';
 import { type MaintenanceInfo, MaintenanceInfoKey } from '../../type/MaintenanceInfo';
 import { defaultErrorSuffix } from '../../text/message/body';
 
