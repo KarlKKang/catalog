@@ -1,10 +1,10 @@
 import {
-    scrollToHash,
     removeRightClick,
     openImageWindow,
     SessionTypes,
     newXHR,
 } from '../module/common';
+import { scrollToHash } from '../module/dom/scroll';
 import { getTitle, setTitle } from '../module/dom/document';
 import { createDivElement, createParagraphElement } from '../module/dom/create_element';
 import { addClass, appendChild, getDataAttribute, getDescendantsByClass, removeClass } from '../module/dom/element';

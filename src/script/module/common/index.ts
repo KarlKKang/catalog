@@ -1,29 +1,10 @@
-import { getHash, getTitle, openWindow, w } from '../dom/document';
+import { getTitle, openWindow } from '../dom/document';
 import { clearSessionStorage, setSessionStorage } from '../dom/session_storage';
-import { getByIdNative } from '../dom/element';
 import { IMAGE_URI } from '../env/uri';
 import { addEventListener, removeAllEventListeners } from '../event_listener';
-import { addTimeout } from '../timer';
-
-export function scrollToTop() {
-    w.scrollBy(0, -1 * w.scrollY);
-}
 
 export function removeRightClick(elem: Element) {
     addEventListener(elem, 'contextmenu', (event) => event.preventDefault());
-}
-
-export function scrollToHash() {
-    // Use this function only when the hash element is loaded after the DOM loads.
-    const scrollID = getHash();
-    if (scrollID !== '') {
-        const elem = getByIdNative(scrollID);
-        if (elem !== null) {
-            addTimeout(() => {
-                w.scrollBy(0, elem.getBoundingClientRect().top);
-            }, 500); // Give UI some time to load.
-        }
-    }
 }
 
 export const enum SessionTypes {

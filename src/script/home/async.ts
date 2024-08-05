@@ -1,7 +1,7 @@
 import {
     newXHR,
-    scrollToTop,
 } from '../module/common';
+import { scrollToTop } from '../module/dom/scroll';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
 import { addClass, appendChild, appendChildren, disableInput, insertBefore, removeClass, replaceChildren } from '../module/dom/element';

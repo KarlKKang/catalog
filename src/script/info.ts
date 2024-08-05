@@ -6,7 +6,7 @@ import { body } from './module/dom/body';
 import type { ShowPageFunc } from './module/global';
 import { addNavBar } from './module/nav_bar';
 import { NavBarPage } from './module/nav_bar/enum';
-import { scrollToHash } from './module/common';
+import { scrollToHash } from './module/dom/scroll';
 import html from '../html/info.html';
 import * as styles from '../css/news.module.scss';
 import { createNewsTemplate, parseNewsStyle } from './module/news';

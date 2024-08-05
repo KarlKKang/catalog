@@ -1,6 +1,4 @@
-import {
-    scrollToTop,
-} from '../module/common';
+import { scrollToTop } from '../module/dom/scroll';
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
