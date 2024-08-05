@@ -6,7 +6,7 @@ import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { invalidPasswordFormat, passwordChanged, passwordConfirmationMismatch } from '../module/text/message/body';
 import { expired } from '../module/message/param';
-import { PASSWORD_REGEX } from '../module/common/pure';
+import { PASSWORD_REGEX, buildURLForm } from '../module/common/pure';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
 import { passwordResetPageTitle } from '../module/text/page_title';
@@ -108,7 +108,7 @@ export default function (user: string, signature: string, expires: string) {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: 'user=' + user + '&signature=' + signature + '&expires=' + expires + '&new=' + encodeURIComponent(newPassword),
+            [ServerRequestOptionProp.CONTENT]: buildURLForm({ user: user, signature: signature, expires: expires, new: newPassword }),
         });
     }
 

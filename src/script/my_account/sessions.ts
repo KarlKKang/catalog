@@ -4,7 +4,7 @@ import { createButtonElement, createDivElement, createParagraphElement, replaceT
 import { addEventListener } from '../module/event_listener';
 import { SessionKey, type Sessions } from '../module/type/Sessions';
 import { SharedElement, getSharedElement, sessionLogoutButtons } from './shared_var';
-import { getLocalTimeString } from '../module/common/pure';
+import { buildURLForm, getLocalTimeString } from '../module/common/pure';
 import { changeColor, hideElement, showElement } from '../module/style';
 import * as styles from '../../css/my_account.module.scss';
 import { disableAllInputs } from './helper';
@@ -109,6 +109,6 @@ function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement
             return true;
         },
         sessionWarningElem,
-        'id=' + sessionID,
+        buildURLForm({ id: sessionID }),
     );
 }

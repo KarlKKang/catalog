@@ -18,7 +18,7 @@ import {
 import type { Player, Player as PlayerType } from '../module/player/player';
 import { getFormatIndex, createQuery } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, type AccordionInstance } from './media_helper';
-import { encodeCFURIComponent, secToTimestamp } from '../module/common/pure';
+import { encodeCFURIComponent, buildURI, secToTimestamp } from '../module/common/pure';
 import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
@@ -503,14 +503,10 @@ function disableDropdown(selectElement: HTMLSelectElement, disabled: boolean) {
 }
 
 function updateURLParam(seriesID: string, epIndex: number, formatIndex: number): void {
-    let url = BANGUMI_ROOT_URI + seriesID;
-
-    const query = createQuery(epIndex, formatIndex);
-    if (query !== '') {
-        url += '?' + query;
-    }
-
-    changeURL(url, true);
+    changeURL(buildURI(
+        BANGUMI_ROOT_URI + seriesID,
+        createQuery(epIndex, formatIndex),
+    ), true);
 }
 
 function cleanupEvents() {

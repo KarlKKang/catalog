@@ -4,7 +4,7 @@ import { addClass, appendChild } from '../module/dom/element';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
-import { getLocalTime } from '../module/common/pure';
+import { buildURLForm, getLocalTime } from '../module/common/pure';
 import { redirect } from '../module/global';
 import { allResultsShown, loading, noResult } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
@@ -34,10 +34,11 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement, i
     if (pivot === 'EOF') {
         return;
     }
-    sendServerRequest('get_all_news?pivot=' + pivot, {
+    sendServerRequest('get_all_news', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             showAllNews(parseResponse(response, parseAllNewsInfo), container, loadingTextContainer, infiniteScrolling);
         },
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ pivot: pivot }),
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
 }

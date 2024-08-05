@@ -9,6 +9,7 @@ import { addAutoMultiLanguageClass } from '../module/dom/create_element/multi_la
 import { getSeriesTable } from './series';
 import { getAccountTable } from './account';
 import { getNewsTable } from './news';
+import { buildURLForm } from '../module/common/pure';
 
 export default function () {
     const container = createDivElement();
@@ -111,7 +112,7 @@ function generate(type: string, idOutput: HTMLParagraphElement) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             setOutput(response, undefined, idOutput);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -125,7 +126,7 @@ function misc(command: string, type: string) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             setOutput(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -153,7 +154,7 @@ function clearCDNCache(dir: string) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -175,7 +176,7 @@ function clearKeyCache() {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -197,7 +198,7 @@ function rebuild(type: string) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -224,7 +225,7 @@ function verify(id: string) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 

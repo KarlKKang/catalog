@@ -6,7 +6,7 @@ import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { loginFailed, accountDeactivated, tooManyFailedLogin, sessionEnded } from '../module/text/message/body';
-import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, EMAIL_REGEX, PASSWORD_REGEX, buildURLForm, joinURLForms } from '../module/common/pure';
 import { TotpPopupWindowKey, handleFailedTotp, type TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
@@ -80,7 +80,9 @@ export default function (param: string) {
             return;
         }
 
-        sendChangeEmailRequest('p=' + param + '&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password));
+        sendChangeEmailRequest(
+            buildURLForm({ p: param, email: email, password: password }),
+        );
     }
 
     function sendChangeEmailRequest(content: string, totpPopupWindow?: TotpPopupWindow) {
@@ -139,7 +141,12 @@ export default function (param: string) {
                         showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: content + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[TotpPopupWindowKey.TOTP]),
+            [ServerRequestOptionProp.CONTENT]: joinURLForms(
+                content,
+                buildURLForm({
+                    totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
+                }),
+            ),
         });
     }
 

@@ -20,7 +20,7 @@ import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { promptForEmailOtp, type EmailOtpPopupWindow, EmailOtpPopupWindowKey } from './email_otp_popup_window';
 import { LoginPopupWindowKey, type LoginPopupWindow } from './login_popup_window';
-import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, buildURLForm, joinURLForms } from '../module/common/pure';
 import { changeColor, hideElement, horizontalCenter, setCursor, setHeight, showElement } from '../module/style';
 import { cancelButtonText, closeButtonText, submitButtonText } from '../module/text/ui';
 import * as commonStyles from '../../css/common.module.scss';
@@ -198,7 +198,14 @@ function modifyMfaReauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.EMAIL]) + '&password=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.PASSWORD]) + ((emailOtpPopupWindow === undefined || emailOtpPopupWindow[EmailOtpPopupWindowKey.OTP] === undefined) ? '' : ('&otp=' + emailOtpPopupWindow[EmailOtpPopupWindowKey.OTP])),
+        [ServerRequestOptionProp.CONTENT]: joinURLForms(
+            content,
+            buildURLForm({
+                email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
+                password: loginPopupWindow[LoginPopupWindowKey.PASSWORD],
+                otp: emailOtpPopupWindow?.[EmailOtpPopupWindowKey.OTP],
+            }),
+        ),
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
@@ -313,7 +320,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
                     });
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: 'p=' + totpInfo[TOTPInfoKey.P] + '&totp=' + totp,
+            [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: totpInfo[TOTPInfoKey.P], totp: totp }),
             [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     };

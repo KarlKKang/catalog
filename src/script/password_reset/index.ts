@@ -6,6 +6,7 @@ import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { invalidResponse } from '../module/server/message';
 import { importModule } from '../module/import_module';
 import { LOGIN_URI } from '../module/env/uri';
+import { buildURLForm } from '../module/common/pure';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -59,6 +60,6 @@ export default function (showPage: ShowPageFunc) {
             }
             runAsyncModule(asyncModulePromise, user, signature, expires);
         },
-        [ServerRequestOptionProp.CONTENT]: 'user=' + user + '&signature=' + signature + '&expires=' + expires,
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ user: user, signature: signature, expires: expires }),
     });
 }

@@ -4,7 +4,7 @@ import { body } from '../module/dom/body';
 import { getTitle, setTitle, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
-import { encodeCFURIComponent } from '../module/common/pure';
+import { encodeCFURIComponent, buildURLForm, buildURI } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
@@ -290,8 +290,12 @@ function updateSeasonSelector(seasons: Seasons, seasonSelector: HTMLElement) {
 }
 
 function goToEP(destSeries: string, destEp: number) {
-    const url = BANGUMI_ROOT_URI + destSeries + (destEp === 1 ? '' : ('?ep=' + destEp));
-    redirect(url);
+    redirect(
+        buildURI(
+            BANGUMI_ROOT_URI + destSeries,
+            destEp === 1 ? '' : buildURLForm({ ep: destEp }),
+        ),
+    );
 }
 
 export function offload() {

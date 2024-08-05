@@ -12,7 +12,7 @@ import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
-import { encodeCFURIComponent } from '../module/common/pure';
+import { buildURLForm, encodeCFURIComponent, buildURI } from '../module/common/pure';
 import { redirect } from '../module/global';
 import { loading } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
@@ -117,26 +117,19 @@ function getInternalLink(elem: Element): string | null {
     }
 
     if (page === 'bangumi') {
-        let separator: '?' | '&' = '?';
         const seriesID = getDataAttribute(elem, 'series-id');
-
         if (seriesID === null) {
             return null;
         }
-
-        let url = BANGUMI_ROOT_URI + seriesID;
-
         const epIndex = getDataAttribute(elem, 'ep-index');
-        if (epIndex !== null) {
-            url += separator + 'ep=' + epIndex;
-            separator = '&';
-        }
         const formatIndex = getDataAttribute(elem, 'format-index');
-        if (formatIndex !== null) {
-            url += separator + 'format=' + formatIndex;
-        }
-
-        return url;
+        return buildURI(
+            BANGUMI_ROOT_URI + seriesID,
+            buildURLForm({
+                ...epIndex !== '1' && { ep: epIndex },
+                ...formatIndex !== '1' && { format: formatIndex },
+            }),
+        );
     }
 
     return null;

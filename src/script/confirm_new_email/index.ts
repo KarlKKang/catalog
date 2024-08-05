@@ -6,6 +6,7 @@ import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { invalidResponse } from '../module/server/message';
 import { importModule } from '../module/import_module';
 import { LOGIN_URI } from '../module/env/uri';
+import { buildURLForm } from '../module/common/pure';
 
 let offloadModule: (() => void) | null = null;
 
@@ -49,7 +50,7 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
             }
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + param,
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: param }),
     });
 }
 

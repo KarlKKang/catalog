@@ -12,6 +12,7 @@ import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/Bang
 import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { importAllMediaModules } from './media_import_promise';
+import { buildURLForm } from '../module/common/pure';
 
 let offloadModule: (() => void) | null = null;
 
@@ -55,7 +56,7 @@ export default function (showPage: ShowPageFunc) {
                     setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);
                 },
-                [ServerRequestOptionProp.CONTENT]: 'series=' + seriesID + '&ep=' + epIndex,
+                [ServerRequestOptionProp.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
                 [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
             });
         });
@@ -70,7 +71,7 @@ export default function (showPage: ShowPageFunc) {
         /* webpackExports: ["default", "offload"] */
         './async'
     );
-    sendServerRequest('get_ep?series=' + seriesID + '&ep=' + epIndex, {
+    sendServerRequest('get_ep', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseBangumiInfo);
             const currentPgid = pgid;
@@ -99,6 +100,7 @@ export default function (showPage: ShowPageFunc) {
             );
             showPage();
         },
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
         [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
         [ServerRequestOptionProp.METHOD]: 'GET',
     });

@@ -7,6 +7,7 @@ import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 import { LOGIN_URI } from '../env/uri';
 import { newXHR } from '../common';
 import { addEventListener } from '../event_listener';
+import { buildURI } from '../common/pure';
 
 export const enum ServerRequestOptionProp {
     CALLBACK,
@@ -59,7 +60,7 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRe
             showMessage(insufficientPermissions);
         } else if (responseText === 'UNAUTHORIZED') {
             const logoutParam = options[ServerRequestOptionProp.LOGOUT_PARAM];
-            const url = LOGIN_URI + ((logoutParam === undefined || logoutParam === '') ? '' : ('?' + logoutParam));
+            const url = buildURI(LOGIN_URI, logoutParam);
             if (options[ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]) {
                 showMessage(sessionEnded(url));
             } else {
@@ -87,9 +88,15 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRe
 }
 
 export function sendServerRequest(uri: string, options: ServerRequestOption): XMLHttpRequest {
+    let content = options[ServerRequestOptionProp.CONTENT] ?? '';
+    const method = options[ServerRequestOptionProp.METHOD] ?? 'POST';
+    if (method === 'GET') {
+        uri = buildURI(uri, content);
+        content = '';
+    }
     const xhr = newXHR(
         getServerOrigin() + '/' + uri,
-        options[ServerRequestOptionProp.METHOD] ?? 'POST',
+        method,
         true,
         () => {
             if (checkXHRStatus(xhr, uri, options)) {
@@ -100,7 +107,7 @@ export function sendServerRequest(uri: string, options: ServerRequestOption): XM
     addEventListener(xhr, 'error', () => {
         xhrOnErrorCallback(uri, options);
     });
-    xhr.send(options[ServerRequestOptionProp.CONTENT] ?? '');
+    xhr.send(content);
     return xhr;
 }
 

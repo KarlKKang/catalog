@@ -21,7 +21,7 @@ import { emailSent as emailSendPrefix } from '../module/text/message/title';
 import { SharedBool, SharedButton, SharedElement, SharedInput, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
-import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
+import { EMAIL_REGEX, PASSWORD_REGEX, buildURLForm } from '../module/common/pure';
 import { AccountInfoKey, type AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/server/message';
 import { changeColor, hideElement, showElement } from '../module/style';
@@ -145,7 +145,7 @@ function changePassword() {
             return true;
         },
         warningElem,
-        'new=' + encodeURIComponent(newPassword),
+        buildURLForm({ new: newPassword }),
     );
 }
 
@@ -192,7 +192,7 @@ function changeUsername(userInfo: AccountInfo) {
             return true;
         },
         warningElem,
-        'new=' + encodeURIComponent(newUsername),
+        buildURLForm({ new: newUsername }),
     );
 }
 
@@ -241,7 +241,7 @@ function invite() {
             return true;
         },
         warningElem,
-        'receiver=' + encodeURIComponent(receiver),
+        buildURLForm({ receiver: receiver }),
     );
 }
 
@@ -275,7 +275,7 @@ function changeLoginNotification() {
             return true;
         },
         warningElem,
-        'p=' + (loginNotificationTargetStatus ? '1' : '0'),
+        buildURLForm({ p: loginNotificationTargetStatus ? 1 : 0 }),
         true,
     );
 }

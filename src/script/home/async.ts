@@ -9,7 +9,7 @@ import { body } from '../module/dom/body';
 import { changeURL, getFullPath, getHostname, getURI } from '../module/dom/document';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
-import { getLocalTimeString } from '../module/common/pure';
+import { buildURLForm, getLocalTimeString, buildURI, joinURLForms } from '../module/common/pure';
 import { addTimeout } from '../module/timer';
 import { redirect, setCustomPopStateHandler } from '../module/global';
 import { changeColor, setOpacity } from '../module/style';
@@ -208,11 +208,9 @@ function search(
         searchBarInput.value = keywords;
     } else {
         keywords = searchBarInput.value.substring(0, 50);
-        if (keywords === '') {
-            changeURL(TOP_URI);
-        } else {
-            changeURL(TOP_URI + '?' + 'keywords=' + encodeURIComponent(keywords));
-        }
+        changeURL(
+            buildURI(TOP_URI, buildURLForm({ keywords: keywords })),
+        );
     }
 
     setOpacity(containerElem, 0);
@@ -258,15 +256,16 @@ function getSeries(callback: (seriesInfo: SeriesInfo, xhr?: XMLHttpRequest) => v
     if (currentRequest !== null && currentRequest.readyState !== XMLHttpRequest.DONE) {
         currentRequest.abort();
     }
-    const keywordsQuery = keywords === '' ? '' : 'keywords=' + encodeURIComponent(keywords) + '&';
-    const request = sendServerRequest('get_series?' + keywordsQuery + 'pivot=' + pivot, {
+    const keywordsQuery = buildURLForm({ keywords: keywords });
+    const request = sendServerRequest('get_series', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             if (currentRequest !== request) {
                 return;
             }
             callback(parseResponse(response, parseSeriesInfo), request);
         },
-        [ServerRequestOptionProp.LOGOUT_PARAM]: keywordsQuery.slice(0, -1),
+        [ServerRequestOptionProp.CONTENT]: joinURLForms(keywordsQuery, buildURLForm({ pivot: pivot })),
+        [ServerRequestOptionProp.LOGOUT_PARAM]: keywordsQuery,
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
@@ -275,7 +274,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo, xhr?: XMLHttpRequest) => v
 
 function showASNAnnouncement(containerElem: HTMLElement) {
     const xhr = newXHR(
-        getServerOrigin('') + '/get_route_info?hostname=' + getHostname(),
+        getServerOrigin('') + buildURI('/get_route_info', buildURLForm({ hostname: getHostname() })),
         'GET',
         false,
         () => {

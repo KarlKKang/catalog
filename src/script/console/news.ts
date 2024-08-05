@@ -2,6 +2,7 @@ import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { addClass, containsClass, getByClass, getDataAttribute, getDescendantsByClassAt, getParentElement } from '../module/dom/element';
 import { addEventListener } from '../module/event_listener';
 import { completeCallback, getTable, initializedClass } from './helper';
+import { buildURLForm } from '../module/common/pure';
 
 export function getNewsTable() {
     getTable('news', updateEventHandlers);
@@ -36,7 +37,7 @@ function modifyNews(button: Element) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -57,7 +58,7 @@ function deleteNews(id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -89,7 +90,7 @@ function addNews(button: Element) {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -125,7 +126,7 @@ function updateNewsTime(id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 

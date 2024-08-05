@@ -7,7 +7,7 @@ import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from '../module/text/message/body';
-import { PASSWORD_REGEX } from '../module/common/pure';
+import { PASSWORD_REGEX, buildURLForm, buildURI } from '../module/common/pure';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
 import { nextButtonText, passwordRules, usernameRule } from '../module/text/ui';
@@ -135,7 +135,7 @@ export default function (param: string) {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: 'p=' + param + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password),
+            [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: param, username: username, password: password }),
         });
     }
 
@@ -169,8 +169,7 @@ function getInfoNote() {
         appendText(paragraph, text[2]);
         appendChild(container, paragraph);
         addEventListener(link, 'click', () => {
-            const uri = INFO_URI + '?nav-bar=no' + (lang === null ? '' : '#' + lang);
-            openWindow(uri);
+            openWindow(buildURI(INFO_URI, buildURLForm({ 'nav-bar': 'no' }), lang));
         });
     }
     return container;

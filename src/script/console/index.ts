@@ -4,6 +4,7 @@ import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { pgid, type ShowPageFunc } from '../module/global';
 import { importModule } from '../module/import_module';
+import { buildURLForm } from '../module/common/pure';
 
 let offloadModule: (() => void) | null = null;
 
@@ -29,7 +30,7 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default();
             showPage();
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify({ command: 'authenticate' })),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify({ command: 'authenticate' }) }),
     });
 }
 

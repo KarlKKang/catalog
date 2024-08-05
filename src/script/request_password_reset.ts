@@ -7,7 +7,7 @@ import { addEventListener } from './module/event_listener';
 import { showMessage } from './module/message';
 import { emailSent } from './module/message/param';
 import { invalidEmailFormat } from './module/text/message/body';
-import { EMAIL_REGEX } from './module/common/pure';
+import { EMAIL_REGEX, buildURLForm } from './module/common/pure';
 import { redirect, type ShowPageFunc } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
@@ -92,7 +92,7 @@ function showPageCallback() {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: 'email=' + encodeURIComponent(email),
+            [ServerRequestOptionProp.CONTENT]: buildURLForm({ email: email }),
         });
     }
 

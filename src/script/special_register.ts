@@ -7,7 +7,7 @@ import { addEventListener } from './module/event_listener';
 import { showMessage } from './module/message';
 import { emailSent } from './module/message/param';
 import { invalidEmailFormat, emailAlreadyRegistered, invitationClosed } from './module/text/message/body';
-import { EMAIL_REGEX } from './module/common/pure';
+import { EMAIL_REGEX, buildURLForm } from './module/common/pure';
 import type { ShowPageFunc } from './module/global';
 import { invalidResponse } from './module/server/message';
 import { hideElement, horizontalCenter, showElement } from './module/style';
@@ -85,7 +85,7 @@ function showPageCallback() {
                 showElement(warningElem);
                 disableAllInputs(false);
             },
-            [ServerRequestOptionProp.CONTENT]: 'special=1&receiver=' + encodeURIComponent(email),
+            [ServerRequestOptionProp.CONTENT]: buildURLForm({ special: 1, receiver: email }),
         });
     }
 

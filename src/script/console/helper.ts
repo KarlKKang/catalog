@@ -2,6 +2,7 @@ import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { addClass, containsClass, getByClass, getParentElement } from '../module/dom/element';
 import { addEventListener } from '../module/event_listener';
 import { changed as changedClass } from '../../css/console.module.scss';
+import { buildURLForm } from '../module/common/pure';
 
 let outputElement: HTMLDivElement | null = null;
 export const initializedClass = 'initialized';
@@ -15,13 +16,12 @@ export function getTable(type: string, callback?: () => void) {
         command: 'get',
         type: type,
     };
-    const paramString = JSON.stringify(param);
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {
             setOutput(response, callback);
         },
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(paramString),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 

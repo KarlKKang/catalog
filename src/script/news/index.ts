@@ -7,6 +7,7 @@ import { NavBarPage } from '../module/nav_bar/enum';
 import { NewsInfoKey, parseNewsInfo } from '../module/type/NewsInfo';
 import { importModule } from '../module/import_module';
 import { NEWS_ROOT_URI } from '../module/env/uri';
+import { buildURLForm } from '../module/common/pure';
 
 let offloadModule: (() => void) | null = null;
 
@@ -30,7 +31,7 @@ function getAllNews(showPage: ShowPageFunc): void {
         /* webpackExports: ["default", "offload"] */
         './all_news'
     );
-    sendServerRequest('get_all_news?pivot=0', {
+    sendServerRequest('get_all_news', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const currentPgid = pgid;
             const allNewsModule = await importModule(allNewsModulePromise);
@@ -40,6 +41,7 @@ function getAllNews(showPage: ShowPageFunc): void {
             showPage();
             allNewsModule.default(parseResponse(response, AllNewsInfo.parseAllNewsInfo));
         },
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ pivot: 0 }),
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
 }
@@ -54,8 +56,10 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         './news'
     );
 
-    const hash = getHash();
-    const logoutParam = 'news=' + newsID + (hash === '' ? '' : ('&hash=' + hash));
+    const logoutParam = buildURLForm({
+        news: newsID,
+        hash: getHash(),
+    });
     sendServerRequest('get_news', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);
@@ -69,7 +73,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], logoutParam);
             newsModule.default(parsedResponse, newsID);
         },
-        [ServerRequestOptionProp.CONTENT]: 'id=' + newsID,
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ id: newsID }),
         [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
     });
 }

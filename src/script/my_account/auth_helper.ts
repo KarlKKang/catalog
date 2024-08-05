@@ -1,5 +1,5 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, buildURLForm, joinURLForms } from '../module/common/pure';
 import { replaceChildren } from '../module/dom/element';
 import { replaceText } from '../module/dom/create_element';
 import { pgid } from '../module/global';
@@ -97,7 +97,14 @@ export function reauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionProp.CONTENT]: (content === undefined ? '' : content + '&') + 'email=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.EMAIL]) + '&password=' + encodeURIComponent(loginPopupWindow[LoginPopupWindowKey.PASSWORD]) + (totpPopupWindow === undefined ? '' : '&totp=' + totpPopupWindow[TotpPopupWindowKey.TOTP]),
+        [ServerRequestOptionProp.CONTENT]: joinURLForms(
+            content,
+            buildURLForm({
+                email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
+                password: loginPopupWindow[LoginPopupWindowKey.PASSWORD],
+                totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
+            }),
+        ),
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }

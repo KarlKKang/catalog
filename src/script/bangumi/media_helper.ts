@@ -17,6 +17,7 @@ import { defaultError } from '../module/text/message/title';
 import { defaultErrorSuffix } from '../module/text/message/body';
 import * as styles from '../../css/bangumi.module.scss';
 import { getCDNOrigin } from '../module/env/origin';
+import { buildURLForm, joinURLForms } from '../module/common/pure';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
@@ -162,17 +163,20 @@ export function buildDownloadAccordion(
 
     addEventListener(downloadButton, 'click', () => {
         downloadButton.disabled = true;
-        let requestContent = mediaSessionCredential + '&os=' + osSelectMenu.value;
+        let requestContent = joinURLForms(mediaSessionCredential, buildURLForm({ os: osSelectMenu.value }));
         if (videoFormats !== null) {
             const formatIndex = videoFormats[0].selectedIndex;
-            requestContent += '&format=' + formatIndex;
             const format = videoFormats[1][formatIndex];
             if (format === undefined) {
                 return;
             }
-            if (format[VideoFormatKey.DIRECT_DOWNLOAD] !== true) {
-                requestContent += '&container=' + containerSelectMenu.value;
-            }
+            requestContent = joinURLForms(
+                requestContent,
+                buildURLForm({
+                    format: formatIndex,
+                    ...format[VideoFormatKey.DIRECT_DOWNLOAD] !== true && { container: containerSelectMenu.value },
+                }),
+            );
         }
         sendServerRequest('start_download', {
             [ServerRequestOptionProp.CALLBACK]: function (response: string) {

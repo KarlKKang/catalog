@@ -2,7 +2,7 @@ import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { addClass, containsClass, getByClass, getDataAttribute, getDescendantsByClassAt, getDescendantsByTag, getParentElement } from '../module/dom/element';
 import { addEventListener } from '../module/event_listener';
 import { completeCallback, getTable, initializedClass } from './helper';
-import { PASSWORD_REGEX } from '../module/common/pure';
+import { PASSWORD_REGEX, buildURLForm } from '../module/common/pure';
 
 function accountCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
@@ -64,7 +64,7 @@ function addAccount(button: Element) {
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -116,7 +116,7 @@ function modifyAccount(button: Element, id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -201,7 +201,7 @@ function deleteAccount(id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: 'p=' + encodeURIComponent(JSON.stringify(param)),
+        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 

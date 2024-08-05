@@ -6,6 +6,7 @@ import { CSS_COLOR } from '../module/style/value';
 import { MessageParamKey } from '../module/message/type';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { getSearchParam } from '../module/dom/document';
+import { buildURLForm, buildURI } from '../module/common/pure';
 
 export default function () {
     if (UNRECOMMENDED_BROWSER) {
@@ -24,34 +25,21 @@ export default function () {
 function getForwardURL() {
     const series = getSearchParam('series');
     if (series !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
-        let url: string;
-        let separator: '?' | '&' = '?';
-        url = BANGUMI_ROOT_URI + series;
-
         const ep = getSearchParam('ep');
-        if (ep !== null && ep !== '1') {
-            url += separator + 'ep=' + ep;
-            separator = '&';
-        }
-
         const format = getSearchParam('format');
-        if (format !== null && format !== '1') {
-            url += separator + 'format=' + format;
-        }
-        return url;
+        return buildURI(
+            BANGUMI_ROOT_URI + series,
+            buildURLForm({
+                ...ep !== '1' && { ep: ep },
+                ...format !== '1' && { format: format },
+            }),
+        );
     }
 
     const news = getSearchParam('news');
     if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
-        const hash = getSearchParam('hash');
-        const hashString = (hash === null) ? '' : ('#' + hash);
-        return NEWS_ROOT_URI + news + hashString;
+        return buildURI(NEWS_ROOT_URI + news, '', getSearchParam('hash'));
     }
 
-    const keywords = getSearchParam('keywords');
-    if (keywords !== null) {
-        return TOP_URI + '?keywords=' + keywords;
-    }
-
-    return TOP_URI;
+    return buildURI(TOP_URI, buildURLForm({ keywords: getSearchParam('keywords') }));
 }

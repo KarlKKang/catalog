@@ -15,6 +15,7 @@ import { redirect } from '../module/global';
 import { newXHR } from '../module/common';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style';
+import { buildURI, buildURLForm } from '../module/common/pure';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {
@@ -271,7 +272,7 @@ function testRoute(size: number, locationPrefix: string, callback: (routeCode: s
     );
     xhr.timeout = 15000;
     addEventsListener(xhr, ['error', 'timeout'], onErrorCallback);
-    xhr.send('size=' + size);
+    xhr.send(buildURLForm({ size: size }));
 }
 
 function checkRouteCode(routeCode: string, routeInfo: RouteInfo | null) {
@@ -337,7 +338,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     addClass(linkEn, commonStyles.link);
     appendText(linkEn, 'here');
     addEventListener(linkEn, 'click', () => {
-        redirect(NEWS_URI + '#en');
+        redirect(buildURI(NEWS_URI, '', 'en'));
     });
     appendChild(promptParagraphEn, linkEn);
     appendText(promptParagraphEn, '). Once the measurement is complete, you can to switch between the routes. We are measuring the time it takes to download a 512kB file. The shorter the time, the better. If it takes more than 2000ms, the route may not be optimized for your ISP or the route may be congested. If it is around 1000 milliseconds or less, there is no significant difference and you can use it without worry.');
@@ -350,7 +351,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     addClass(linkHant, commonStyles.link);
     appendText(linkHant, '此處');
     addEventListener(linkHant, 'click', () => {
-        redirect(NEWS_URI + '#zh-Hant');
+        redirect(buildURI(NEWS_URI, '', 'zh-Hant'));
     });
     appendChild(promptParagraphHant, linkHant);
     appendText(promptParagraphHant, '了解詳情）。測量完成後即可切換線路。我們測量下載一個512kB文件所需的時間。時間越短越好。如果超過2000毫秒，則此線路可能沒有針對您的ISP進行最佳化，或者此線路擁擠。如果在1000毫秒左右或者更短的話，則區別不大，可放心使用。');
@@ -363,7 +364,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     addClass(linkHans, commonStyles.link);
     appendText(linkHans, '此处');
     addEventListener(linkHans, 'click', () => {
-        redirect(NEWS_URI + '#zh-Hans');
+        redirect(buildURI(NEWS_URI, '', 'zh-Hans'));
     });
     appendChild(promptParagraphHans, linkHans);
     appendText(promptParagraphHans, '了解详情）。测量完成后即可切换线路。我们测量下载一个512kB文件所需的时间。时间越短越好。如果超过2000毫秒，则此线路可能没有针对您的ISP进行优化，或者此线路拥挤。如果在1000毫秒左右或者更短的话，则区别不大，可放心使用。');

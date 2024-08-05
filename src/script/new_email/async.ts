@@ -6,7 +6,7 @@ import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from '../module/text/message/body';
 import { expired, emailSent } from '../module/message/param';
-import { EMAIL_REGEX } from '../module/common/pure';
+import { EMAIL_REGEX, buildURLForm } from '../module/common/pure';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
 import { submitButtonText } from '../module/text/ui';
@@ -75,7 +75,7 @@ export default function (param: string) {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: 'p=' + param + '&new=' + newEmail,
+            [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: param, new: newEmail }),
         });
     }
 

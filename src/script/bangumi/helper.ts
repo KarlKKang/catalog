@@ -4,6 +4,7 @@ import { addClass, appendChild, appendChildren } from '../module/dom/element';
 import { changeColor } from '../module/style';
 import * as styles from '../../css/bangumi.module.scss';
 import { type CSS_COLOR } from '../module/style/value';
+import { buildURLForm, joinURLForms } from '../module/common/pure';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
     let height = elem.scrollHeight;
@@ -21,28 +22,17 @@ export function getContentBoxHeight(elem: HTMLElement): number {
 }
 
 export function getLogoutParam(seriesID: string, epIndex: number): string {
-    const query = 'series=' + seriesID;
-    const additionalQuery = createQuery(epIndex, getFormatIndex());
-    if (additionalQuery === '') {
-        return query;
-    }
-    return query + '&' + additionalQuery;
+    return joinURLForms(
+        buildURLForm({ series: seriesID }),
+        createQuery(epIndex, getFormatIndex()),
+    );
 }
 
 export function createQuery(epIndex: number, formatIndex: number): string {
-    let query = '';
-    let separator: '' | '&' = '';
-
-    if (epIndex !== 0) {
-        query += 'ep=' + (epIndex + 1);
-        separator = '&';
-    }
-
-    if (formatIndex !== 0) {
-        query += separator + 'format=' + (formatIndex + 1);
-    }
-
-    return query;
+    return buildURLForm({
+        ...epIndex !== 0 && { ep: epIndex + 1 },
+        ...formatIndex !== 0 && { format: formatIndex + 1 },
+    });
 }
 
 export function parseCharacters(txt: string) {

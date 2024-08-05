@@ -11,6 +11,7 @@ import { parseSeriesInfo } from '../module/type/SeriesInfo';
 import { getURLKeywords, search, setSearch } from './shared';
 import { importModule } from '../module/import_module';
 import { TOP_URI } from '../module/env/uri';
+import { buildURLForm, joinURLForms } from '../module/common/pure';
 
 let offloadModule: (() => void) | null = null;
 
@@ -41,8 +42,8 @@ export default function (showPage: ShowPageFunc) {
     );
 
     const keywords = getURLKeywords();
-    const keywordsQuery = keywords === '' ? '' : 'keywords=' + keywords + '&';
-    sendServerRequest('get_series?' + keywordsQuery + 'pivot=0', {
+    const keywordsQuery = buildURLForm({ keywords: keywords });
+    sendServerRequest('get_series', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
             const currentPgid = pgid;
             const asyncModule = await importModule(asyncModulePromise);
@@ -53,7 +54,11 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default(parseResponse(response, parseSeriesInfo), keywords);
             showPage();
         },
-        [ServerRequestOptionProp.LOGOUT_PARAM]: keywordsQuery.slice(0, -1),
+        [ServerRequestOptionProp.CONTENT]: joinURLForms(
+            keywordsQuery,
+            buildURLForm({ pivot: 0 }),
+        ),
+        [ServerRequestOptionProp.LOGOUT_PARAM]: keywordsQuery,
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
 }
