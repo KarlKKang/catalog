@@ -1,6 +1,6 @@
 import { ServerRequestOptionProp, logout, parseResponse, sendServerRequest } from '../module/server';
 import { addEventListener } from '../module/event_listener';
-import { appendChild } from '../module/dom/element';
+import { appendChild } from '../module/dom/change_node';
 import { body } from '../module/dom/body';
 import { appendText, replaceText } from '../module/dom/create_element';
 import { showMessage } from '../module/message';

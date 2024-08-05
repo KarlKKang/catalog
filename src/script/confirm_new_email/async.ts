@@ -1,6 +1,8 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, createPasswordInput, replaceText } from '../module/dom/create_element';
-import { addClass, appendChild, disableInput, replaceChildren } from '../module/dom/element';
+import { disableInput } from '../module/dom/element';
+import { appendChild, replaceChildren } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';

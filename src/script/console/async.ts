@@ -1,6 +1,7 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { appendText, createBRElement, createDivElement, createElement, createParagraphElement, createTextAreaElement } from '../module/dom/create_element';
-import { addClass, appendChild, appendChildren } from '../module/dom/element';
+import { appendChild, appendChildren } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { getTable, setOutput, setOutputElement } from './helper';

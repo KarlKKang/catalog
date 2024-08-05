@@ -2,7 +2,9 @@ import * as commonStyles from '../../../css/common.module.scss';
 import * as styles from '../../../css/news.module.scss';
 import { getLocalTimeString } from '../time';
 import { createDivElement, createHRElement, createParagraphElement } from '../dom/create_element';
-import { addClass, appendChild, getDescendantsByClass, removeClass } from '../dom/element';
+import { getDescendantsByClass } from '../dom/element';
+import { appendChild } from '../dom/change_node';
+import { addClass, removeClass } from '../dom/class';
 
 const classMap = {
     'sub-title': styles.subTitle,

@@ -1,5 +1,6 @@
 import { UAParser } from 'ua-parser-js';
-import { addClass, appendChild, prependChild, remove, replaceChildren } from '../module/dom/element';
+import { appendChild, prependChild, remove, replaceChildren } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { createButtonElement, createDivElement, createParagraphElement, replaceText } from '../module/dom/create_element';
 import { addEventListener } from '../module/event_listener';
 import { SessionKey, type Sessions } from '../module/type/Sessions';

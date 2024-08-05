@@ -1,6 +1,6 @@
 import { Player } from './player';
 import { addEventsListener, removeEventsListener } from '../event_listener';
-import { addClass, removeClass } from '../dom/element';
+import { addClass, removeClass } from '../dom/class';
 import { addTimeout } from '../timer';
 import { playerSeeking } from '../../../css/player.module.scss';
 import { PlayerKey } from './player_key';

@@ -1,7 +1,8 @@
 import { getSearchParam } from './module/dom/document';
 import { clearSessionStorage } from './module/dom/session_storage';
 import { createDivElement } from './module/dom/create_element';
-import { addClass, appendChild } from './module/dom/element';
+import { appendChild } from './module/dom/change_node';
+import { addClass } from './module/dom/class';
 import { body } from './module/dom/body';
 import type { ShowPageFunc } from './module/global';
 import { addNavBar } from './module/nav_bar';

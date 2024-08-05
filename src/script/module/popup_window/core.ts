@@ -1,5 +1,6 @@
 import { w } from '../dom/document';
-import { addClass, appendChild, replaceChildren } from '../dom/element';
+import { appendChild, replaceChildren } from '../dom/change_node';
+import { addClass } from '../dom/class';
 import { createDivElement } from '../dom/create_element';
 import { body } from '../dom/body';
 import { addTimeout } from '../timer';

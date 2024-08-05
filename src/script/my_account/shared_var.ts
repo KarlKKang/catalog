@@ -1,5 +1,6 @@
 import { appendListItems, createButtonElement, createDivElement, createEmailInput, createHRElement, createParagraphElement, createPasswordInput, createSpanElement, createUListElement } from '../module/dom/create_element';
-import { addClass, appendChild, appendChildren } from '../module/dom/element';
+import { appendChild, appendChildren } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { hideElement } from '../module/style';
 import { myAccountPageTitle } from '../module/text/page_title';
 import { changeButtonText, loading, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';

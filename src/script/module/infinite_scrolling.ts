@@ -1,5 +1,5 @@
 import { d, html, w } from './dom/document';
-import { addClass } from './dom/element';
+import { addClass } from './dom/class';
 import { addEventListener } from './event_listener';
 import { positionDetector as positionDetectorClass } from '../../css/position_detector.module.scss';
 

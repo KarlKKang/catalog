@@ -1,6 +1,7 @@
 import { clearSessionStorage } from './module/dom/session_storage';
 import { createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
-import { addClass, appendChild } from './module/dom/element';
+import { appendChild } from './module/dom/change_node';
+import { addClass } from './module/dom/class';
 import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener';
 import { notFound as notFoundTitle } from './module/server/message/title';

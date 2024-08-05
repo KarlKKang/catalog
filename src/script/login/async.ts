@@ -3,7 +3,9 @@ import {
     ServerRequestOptionProp,
 } from '../module/server';
 import { createButtonElement, createDivElement, createElement, createEmailInput, createInputElement, createParagraphElement, createPasswordInput, createSpanElement, replaceText } from '../module/dom/create_element';
-import { addClass, appendChild, disableInput, getParentElement, removeClass, replaceChildren } from '../module/dom/element';
+import { disableInput, getParentElement } from '../module/dom/element';
+import { appendChild, replaceChildren } from '../module/dom/change_node';
+import { addClass, removeClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';

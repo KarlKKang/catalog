@@ -1,5 +1,6 @@
 import { appendText, createBRElement, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement, createTextNode } from '../module/dom/create_element';
-import { addClass, appendChild, insertBefore, remove, replaceChildren } from '../module/dom/element';
+import { appendChild, insertBefore, remove, replaceChildren } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
 import { getTitle, setTitle, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';

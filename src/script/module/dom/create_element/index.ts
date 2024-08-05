@@ -1,5 +1,6 @@
 import { d } from '../document';
-import { addClass, appendChild, replaceChildren } from '../element';
+import { appendChild, replaceChildren } from '../change_node';
+import { addClass } from '../class';
 import { addEventListener } from '../../event_listener';
 import * as styles from '../../../../css/common.module.scss';
 

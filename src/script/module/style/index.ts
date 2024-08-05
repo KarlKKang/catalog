@@ -1,4 +1,4 @@
-import { addClass, removeClass } from '../dom/element';
+import { addClass, removeClass } from '../dom/class';
 import { type CSS_AUTO, type CSS_UNIT, type CSS_CURSOR, CSS_COLOR } from './value';
 import * as styles from '../../../css/common.module.scss';
 

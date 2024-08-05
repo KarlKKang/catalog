@@ -1,5 +1,6 @@
 import { createButtonElement, createDivElement, createParagraphElement } from '../module/dom/create_element';
-import { addClass, appendChild } from '../module/dom/element';
+import { appendChild } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { getHostname, windowLocation } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { Workbox } from 'workbox-window';

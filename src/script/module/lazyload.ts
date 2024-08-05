@@ -2,7 +2,8 @@ import {
     ImageSessionTypes,
 } from './media_helper';
 import { ServerRequestOptionProp, sendServerRequest } from './server';
-import { addClass, appendChild } from './dom/element';
+import { appendChild } from './dom/change_node';
+import { addClass } from './dom/class';
 import { createDivElement } from './dom/create_element';
 import { showMessage } from './message';
 import { invalidResponse } from './server/message';

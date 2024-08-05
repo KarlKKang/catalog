@@ -1,5 +1,7 @@
 import { createButtonElement, createDivElement, createParagraphElement, createTotpInput } from '../dom/create_element';
-import { addClass, appendChild, disableInput } from '../dom/element';
+import { disableInput } from '../dom/element';
+import { appendChild } from '../dom/change_node';
+import { addClass } from '../dom/class';
 import { addEventListener } from '../event_listener';
 import { failedTotp } from '../text/message/body';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../style';

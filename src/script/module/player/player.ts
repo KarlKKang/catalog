@@ -1,7 +1,8 @@
 import {
     removeRightClick,
 } from '../media_helper';
-import { addClass, appendChild, containsClass, remove, removeClass } from '../dom/element';
+import { appendChild, remove } from '../dom/change_node';
+import { addClass, containsClass, removeClass } from '../dom/class';
 import { appendText, createAudioElement, createDivElement, createElement, createSpanElement, createTextAreaElement, createVideoElement, replaceText } from '../dom/create_element';
 import { body } from '../dom/body';
 import { d, w } from '../dom/document';

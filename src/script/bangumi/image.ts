@@ -4,7 +4,8 @@ import {
     removeRightClick,
 } from '../module/media_helper';
 import { appendText, createAnchorElement, createButtonElement, createDivElement, createLIElement, createParagraphElement, createSpanElement, createUListElement } from '../module/dom/create_element';
-import { addClass, appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/element';
+import { appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';
 import { EPInfoKey, ImageFileKey, type ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';

@@ -1,5 +1,7 @@
 import { createButtonElement, createDivElement, createParagraphElement, createTotpInput, replaceText } from '../module/dom/create_element';
-import { addClass, appendChild, disableInput } from '../module/dom/element';
+import { disableInput } from '../module/dom/element';
+import { appendChild } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';
 import { failedTotp } from '../module/text/message/body';
 import { initializePopupWindow, styles } from '../module/popup_window/core';

@@ -1,6 +1,7 @@
 import { appendText, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement, replaceText } from '../module/dom/create_element';
 import { getProtocol, w, windowLocation } from '../module/dom/document';
-import { addClass, appendChild, replaceChildren } from '../module/dom/element';
+import { appendChild, replaceChildren } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { concatenateLocationPrefix, getBaseHost, getLocationPrefix, getServerOrigin } from '../module/env/origin';
 import { addEventListener, addEventsListener } from '../module/event_listener';
 import { createNewsTemplate } from '../module/news';

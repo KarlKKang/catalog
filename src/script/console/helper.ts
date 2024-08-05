@@ -1,5 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { addClass, containsClass, getByClass, getParentElement } from '../module/dom/element';
+import { getByClass, getParentElement } from '../module/dom/element';
+import { addClass, containsClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';
 import { changed as changedClass } from '../../css/console.module.scss';
 import { buildURLForm } from '../module/http_form';

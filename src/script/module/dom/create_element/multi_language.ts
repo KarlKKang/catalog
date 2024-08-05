@@ -1,4 +1,5 @@
-import { addClass, appendChild } from '../element';
+import { appendChild } from '../change_node';
+import { addClass } from '../class';
 import { createDivElement, createInputElement } from '.';
 import { container as autoContainerClass } from '../../../../css/multi_language/auto.module.scss';
 import { container as manualContainerClass } from '../../../../css/multi_language/manual.module.scss';

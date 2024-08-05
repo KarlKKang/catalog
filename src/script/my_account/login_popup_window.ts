@@ -1,5 +1,7 @@
 import { appendText, createButtonElement, createDivElement, createEmailInput, createParagraphElement, createPasswordInput, createSpanElement, replaceText } from '../module/dom/create_element';
-import { addClass, appendChild, disableInput } from '../module/dom/element';
+import { disableInput } from '../module/dom/element';
+import { appendChild } from '../module/dom/change_node';
+import { addClass } from '../module/dom/class';
 import { openWindow } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
