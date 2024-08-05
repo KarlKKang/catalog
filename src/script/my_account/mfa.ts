@@ -20,7 +20,7 @@ import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { promptForEmailOtp, type EmailOtpPopupWindow, EmailOtpPopupWindowKey } from './email_otp_popup_window';
 import { LoginPopupWindowKey, type LoginPopupWindow } from './login_popup_window';
-import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
 import { buildURLForm, joinURLForms } from '../module/http_form';
 import { changeColor, hideElement, horizontalCenter, setCursor, setHeight, showElement } from '../module/style';
 import { cancelButtonText, closeButtonText, submitButtonText } from '../module/text/ui';
