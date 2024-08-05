@@ -1,8 +1,8 @@
 import {
     removeRightClick,
     openImageWindow,
-    SessionTypes,
-} from '../module/common';
+    ImageSessionTypes,
+} from '../module/media_helper';
 import { newXHR } from '../module/xhr';
 import { scrollToHash } from '../module/dom/scroll';
 import { getTitle, setTitle } from '../module/dom/document';
@@ -66,7 +66,7 @@ export default function (newsInfo: NewsInfo, newsID: string): void {
 }
 
 async function attachImage(contentContainer: HTMLElement, newsID: string, credential: string): Promise<void> {
-    setLazyloadCredential(credential, SessionTypes.NEWS);
+    setLazyloadCredential(credential, ImageSessionTypes.NEWS);
 
     const baseURL = getCDNOrigin() + '/news/' + newsID + '/';
     const INTERNAL_IMAGE_CLASS = 'image-internal';
@@ -81,7 +81,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
         }
         attachLazyload(elem, baseURL + encodeCFURIComponent(src), src, 250);
         addEventListener(elem, 'click', () => {
-            openImageWindow(baseURL, src, credential, SessionTypes.NEWS);
+            openImageWindow(baseURL, src, credential, ImageSessionTypes.NEWS);
         });
         removeRightClick(elem);
         elem = elems[0];

@@ -1,6 +1,6 @@
 import {
-    SessionTypes,
-} from '../module/common';
+    ImageSessionTypes,
+} from '../module/media_helper';
 import { ServerRequestOptionProp, sendServerRequest, setUpSessionAuthentication } from '../module/server';
 import { setTitle } from '../module/dom/document';
 import { clearSessionStorage, getSessionStorage } from '../module/dom/session_storage';
@@ -26,7 +26,7 @@ export default function (showPage: ShowPageFunc) {
         return;
     }
 
-    const uri = sessionType === SessionTypes.MEDIA ? 'get_image' : 'get_news_image';
+    const uri = sessionType === ImageSessionTypes.MEDIA ? 'get_image' : 'get_news_image';
     setUpSessionAuthentication(sessionCredential);
     setTitle(title);
 

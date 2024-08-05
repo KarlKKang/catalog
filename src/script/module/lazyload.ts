@@ -1,6 +1,6 @@
 import {
-    SessionTypes,
-} from './common';
+    ImageSessionTypes,
+} from './media_helper';
 import { ServerRequestOptionProp, sendServerRequest } from './server';
 import { addClass, appendChild } from './dom/element';
 import { createDivElement } from './dom/create_element';
@@ -45,10 +45,10 @@ const targets = new Map<Element, TargetData>();
 let sessionCredentialPromise: Promise<void> | null = null;
 let credential: [
     string, // sessionCredential
-    SessionTypes, // sessionType
+    ImageSessionTypes, // sessionType
 ] | null = null;
 
-export function setLazyloadCredential(sessionCredential: string, sessionType: SessionTypes) {
+export function setLazyloadCredential(sessionCredential: string, sessionType: ImageSessionTypes) {
     credential = [sessionCredential, sessionType];
 }
 
@@ -135,7 +135,7 @@ function loadImage(target: Element, targetData: TargetData) {
 
     if (credential !== null) {
         const sessionCredential = credential[0];
-        const uri = credential[1] === SessionTypes.MEDIA ? 'get_image' : 'get_news_image';
+        const uri = credential[1] === ImageSessionTypes.MEDIA ? 'get_image' : 'get_news_image';
 
         if (sessionCredentialPromise === null) {
             sessionCredentialPromise = new Promise((resolve) => {

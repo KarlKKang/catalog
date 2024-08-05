@@ -1,6 +1,6 @@
 import {
     removeRightClick,
-} from '../module/common';
+} from '../module/media_helper';
 import { createButtonElement, createDivElement } from '../module/dom/create_element';
 import { addClass, appendChild, removeClass } from '../module/dom/element';
 import { body } from '../module/dom/body';

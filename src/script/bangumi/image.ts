@@ -1,8 +1,8 @@
 import {
-    SessionTypes,
+    ImageSessionTypes,
     openImageWindow,
     removeRightClick,
-} from '../module/common';
+} from '../module/media_helper';
 import { appendText, createAnchorElement, createButtonElement, createDivElement, createLIElement, createParagraphElement, createSpanElement, createUListElement } from '../module/dom/create_element';
 import { addClass, appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/element';
 import { addEventListener } from '../module/event_listener';
@@ -47,7 +47,7 @@ export default async function (
 
     const mediaSessionCredential = await createMediaSessionPromise;
     const credential = mediaSessionCredential[MediaSessionInfoKey.CREDENTIAL];
-    setLazyloadCredential(credential, SessionTypes.MEDIA);
+    setLazyloadCredential(credential, ImageSessionTypes.MEDIA);
     showImages(epInfo[EPInfoKey.FILES], baseURL, credential);
 }
 
@@ -87,7 +87,7 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
         appendChild(mediaHolder, imageNode);
 
         addEventListener(showFullSizeButton, 'click', () => {
-            openImageWindow(baseURL, fileName, credential, SessionTypes.MEDIA);
+            openImageWindow(baseURL, fileName, credential, ImageSessionTypes.MEDIA);
         });
         attachLazyload(
             lazyloadNode,
