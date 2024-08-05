@@ -19,6 +19,7 @@ import { horizontalCenter } from '../module/style';
 import { buildURI, buildURLForm } from '../module/http_form';
 import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
 import { disableButton } from '../module/dom/change_input';
+import { round } from '../module/math';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {
@@ -219,7 +220,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
             }
             const start = performance.now();
             testRoute(512 * 1024, locationPrefix, () => {
-                const latency = Math.round(performance.now() - start);
+                const latency = round(performance.now() - start);
                 if (!checkRouteCode(routeCode, routeInfo)) {
                     onErrorCallback();
                     return;

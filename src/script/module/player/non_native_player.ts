@@ -5,6 +5,7 @@ import { addTimeout } from '../timer';
 import { playerSeeking } from '../../../css/player.module.scss';
 import { PlayerKey } from './player_key';
 import { NonNativePlayerKey } from './non_native_player_key';
+import { min } from '../math';
 
 export abstract class NonNativePlayer extends Player {
     private [NonNativePlayerKey.BUFFERING] = false;
@@ -58,7 +59,7 @@ export abstract class NonNativePlayer extends Player {
         for (const buffer of bufferedRange) {
             if (this[PlayerKey.MEDIA].currentTime < buffer.end) {
                 DEVELOPMENT && this[PlayerKey.LOG]?.('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this[PlayerKey.MEDIA].currentTime);
-                if (buffer.start <= this[PlayerKey.MEDIA].currentTime + this[PlayerKey.MAX_BUFFER_HOLE] && buffer.end >= Math.min(this[PlayerKey.MEDIA].currentTime + 15, this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE])) {
+                if (buffer.start <= this[PlayerKey.MEDIA].currentTime + this[PlayerKey.MAX_BUFFER_HOLE] && buffer.end >= min(this[PlayerKey.MEDIA].currentTime + 15, this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE])) {
                     endBuffer();
                     DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer complete!');
                     if (!this[PlayerKey.DRAGGING]) {

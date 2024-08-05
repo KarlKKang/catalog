@@ -20,6 +20,7 @@ import { onScreenConsole as onScreenConsoleClass } from '../../../css/on_screen_
 import { PlayerKey } from './player_key';
 import { addMouseTouchEventListener } from '../event_listener/mouse_touch_event';
 import { EN_LANG_CODE } from '../lang';
+import { max, min, round } from '../math';
 
 declare global {
     interface HTMLVideoElement {
@@ -575,7 +576,7 @@ export class Player {
                 }
                 bufferEnd = buffer.end;
             }
-            setWidth(this[PlayerKey.LOAD_PROGRESS], Math.min(Math.round(bufferEnd / this[PlayerKey.MEDIA].duration * 100), 100), CSS_UNIT.PERCENT);
+            setWidth(this[PlayerKey.LOAD_PROGRESS], min(round(bufferEnd / this[PlayerKey.MEDIA].duration * 100), 100), CSS_UNIT.PERCENT);
         };
         addEventListener(this[PlayerKey.MEDIA], 'progress', () => {
             updateLoadProgress();
@@ -705,7 +706,7 @@ export class Player {
         if (this[PlayerKey.CURRENT_TIME_DISPLAY_TEXT].textContent !== currentTimestamp) {
             replaceText(this[PlayerKey.CURRENT_TIME_DISPLAY_TEXT], currentTimestamp);
         }
-        setWidth(this[PlayerKey.PROGRESS_BAR], Math.min(this[PlayerKey.MEDIA].currentTime / duration * 100, 100), CSS_UNIT.PERCENT);
+        setWidth(this[PlayerKey.PROGRESS_BAR], min(this[PlayerKey.MEDIA].currentTime / duration * 100, 100), CSS_UNIT.PERCENT);
 
         if (!this[PlayerKey.IS_VIDEO]) {
             return;
@@ -766,7 +767,7 @@ export class Player {
         }
         const position = this[PlayerKey.PROGRESS_HOLDER].getBoundingClientRect();
         const totalLength = position.right - position.left;
-        const leftPadding = Math.min(Math.max(mouseX - position.left, 0), totalLength);
+        const leftPadding = min(max(mouseX - position.left, 0), totalLength);
         const percentage = leftPadding / totalLength;
         const duration = this[PlayerKey.MEDIA].duration;
         const currentTime = duration * percentage;

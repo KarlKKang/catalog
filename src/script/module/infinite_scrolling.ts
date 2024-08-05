@@ -2,6 +2,7 @@ import { d, html, w } from './dom/document';
 import { addClass } from './dom/class';
 import { addEventListener } from './event_listener';
 import { positionDetector as positionDetectorClass } from '../../css/position_detector.module.scss';
+import { max } from './math';
 
 export const enum InfiniteScrollingProp {
     UPDATE_POSITION,
@@ -18,7 +19,7 @@ export function initializeInfiniteScrolling(positionDetector: HTMLElement, liste
         }
 
         const boundingRect = positionDetector.getBoundingClientRect();
-        const viewportHeight = Math.max(html.clientHeight || 0, w.innerHeight || 0);
+        const viewportHeight = max(html.clientHeight || 0, w.innerHeight || 0);
 
         if (boundingRect.top + (offset ?? 0) <= viewportHeight * 1.5) {
             isEnabled = false;

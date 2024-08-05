@@ -1,3 +1,5 @@
+import { floor } from './math';
+
 export const enum TimeInfoKey {
     YEAR,
     MONTH,
@@ -100,15 +102,15 @@ export function secToTimestamp(sec: number, templateSec?: number) {
 }
 
 function parseSec(sec: number) {
-    const hour = Math.floor(sec / 60 / 60);
+    const hour = floor(sec / 60 / 60);
     sec = sec - hour * 60 * 60;
-    const min = Math.floor(sec / 60);
+    const min = floor(sec / 60);
     sec = sec - min * 60;
-    sec = Math.floor(sec);
+    sec = floor(sec);
     return {
         hour: hour,
         min: min,
-        sec: Math.floor(sec),
+        sec: floor(sec),
     };
 }
 
