@@ -10,7 +10,7 @@ import { addEventListener, addEventListenerOnce, addEventsListener, removeAllEve
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import * as icons from './icons';
-import { getLocalTime, secToTimestamp } from '../time';
+import { TimeInfoKey, getLocalTime, secToTimestamp } from '../time';
 import { addInterval, addTimeout, removeInterval } from '../timer';
 import { mediaErrorCodeLookup } from './media_error';
 import * as styles from '../../../css/player.module.scss';
@@ -137,7 +137,7 @@ export class Player {
             appendChild(body, onScreenConsole);
             this[PlayerKey.LOG] = (message: string) => {
                 const date = getLocalTime();
-                const newline = (date.hour < 10 ? '0' + date.hour : date.hour) + ':' + (date.minute < 10 ? '0' + date.minute : date.minute) + ':' + (date.second < 10 ? '0' + date.second : date.second) + '   ' + message + '\r\n';
+                const newline = (date[TimeInfoKey.HOUR] < 10 ? '0' + date[TimeInfoKey.HOUR] : date[TimeInfoKey.HOUR]) + ':' + (date[TimeInfoKey.MINUTE] < 10 ? '0' + date[TimeInfoKey.MINUTE] : date[TimeInfoKey.MINUTE]) + ':' + (date[TimeInfoKey.SECOND] < 10 ? '0' + date[TimeInfoKey.SECOND] : date[TimeInfoKey.SECOND]) + '   ' + message + '\r\n';
                 console.log(newline);
                 onScreenConsole.value += newline;
             };

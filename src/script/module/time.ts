@@ -1,3 +1,13 @@
+export const enum TimeInfoKey {
+    YEAR,
+    MONTH,
+    DATE,
+    DAY_OF_WEEK,
+    HOUR,
+    MINUTE,
+    SECOND,
+}
+
 export function getLocalTime(unixTimestamp?: number) {
     let date: Date;
     if (unixTimestamp === undefined) {
@@ -6,21 +16,21 @@ export function getLocalTime(unixTimestamp?: number) {
         date = new Date(unixTimestamp * 1000);
     }
     return {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1,
-        date: date.getDate(),
-        dayOfWeek: getDayOfWeek(date),
-        hour: date.getHours(),
-        minute: date.getMinutes(),
-        second: date.getSeconds(),
+        [TimeInfoKey.YEAR]: date.getFullYear(),
+        [TimeInfoKey.MONTH]: date.getMonth() + 1,
+        [TimeInfoKey.DATE]: date.getDate(),
+        [TimeInfoKey.DAY_OF_WEEK]: getDayOfWeek(date),
+        [TimeInfoKey.HOUR]: date.getHours(),
+        [TimeInfoKey.MINUTE]: date.getMinutes(),
+        [TimeInfoKey.SECOND]: date.getSeconds(),
     };
 }
 
 export function getLocalTimeString(unixTimestamp: number, showSeconds?: boolean, showTimezone?: boolean) {
     const localTime = getLocalTime(unixTimestamp);
-    let result = localTime.year + '年' + localTime.month + '月' + localTime.date + '日（' + localTime.dayOfWeek + '）' + localTime.hour.toString().padStart(2, '0') + '時' + localTime.minute.toString().padStart(2, '0') + '分';
+    let result = localTime[TimeInfoKey.YEAR] + '年' + localTime[TimeInfoKey.MONTH] + '月' + localTime[TimeInfoKey.DATE] + '日（' + localTime[TimeInfoKey.DAY_OF_WEEK] + '）' + localTime[TimeInfoKey.HOUR].toString().padStart(2, '0') + '時' + localTime[TimeInfoKey.MINUTE].toString().padStart(2, '0') + '分';
     if (showSeconds) {
-        result += localTime.second.toString().padStart(2, '0') + '秒';
+        result += localTime[TimeInfoKey.SECOND].toString().padStart(2, '0') + '秒';
     }
     if (showTimezone) {
         result += '（' + new Date().toLocaleTimeString('ja-JP', { timeZoneName: 'long' }).split(' ').at(-1) + '）';
