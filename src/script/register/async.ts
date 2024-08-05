@@ -20,6 +20,7 @@ import { CSS_COLOR } from '../module/style/value';
 import { MessageParamKey } from '../module/message/type';
 import { emailAlreadyRegistered } from './shared';
 import { INFO_URI, LOGIN_URI } from '../module/env/uri';
+import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
 
 export default function (param: string) {
     const container = createDivElement();
@@ -151,9 +152,9 @@ export default function (param: string) {
 function getInfoNote() {
     const texts = [
         [null, '登録する前に、', 'ご利用ガイド', 'をお読みください。'],
-        ['en', 'Before you register, please read the ', 'User Guide', '.'],
-        ['zh-Hant', '請在註冊前閱讀', '規範與指南', '。'],
-        ['zh-Hans', '请在注册前阅读', '规则与指南', '。'],
+        [EN_LANG_CODE, 'Before you register, please read the ', 'User Guide', '.'],
+        [ZH_HANT_LANG_CODE, '請在註冊前閱讀', '規範與指南', '。'],
+        [ZH_HANS_LANG_CODE, '请在注册前阅读', '规则与指南', '。'],
     ] as const;
 
     const container = createDivElement();

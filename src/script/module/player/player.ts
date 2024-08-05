@@ -18,6 +18,7 @@ import { CSS_UNIT } from '../style/value';
 import { onScreenConsole as onScreenConsoleClass } from '../../../css/on_screen_console.module.scss';
 import { PlayerKey } from './player_key';
 import { addMouseTouchEventListener } from '../event_listener/mouse_touch_event';
+import { EN_LANG_CODE } from '../lang';
 
 declare global {
     interface HTMLVideoElement {
@@ -145,7 +146,7 @@ export class Player {
         const controls = container;
         this[PlayerKey.CONTROLS] = controls;
         addClass(controls, styles.player);
-        controls.lang = 'en';
+        controls.lang = EN_LANG_CODE;
         controls.tabIndex = -1;
         controls.translate = false;
         this[PlayerKey.IS_VIDEO] || addClass(controls, styles.playerAudio);

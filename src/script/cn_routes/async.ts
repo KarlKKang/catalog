@@ -16,6 +16,7 @@ import { newXHR } from '../module/common';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style';
 import { buildURI, buildURLForm } from '../module/http_form';
+import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {
@@ -333,12 +334,12 @@ function appendPromptText(contentContainer: HTMLElement) {
     const promptParagraphEn = createParagraphElement(
         'Below are the routes we have prepared for users in China (see details ',
     );
-    promptParagraphEn.lang = 'en';
+    promptParagraphEn.lang = EN_LANG_CODE;
     const linkEn = createSpanElement();
     addClass(linkEn, commonStyles.link);
     appendText(linkEn, 'here');
     addEventListener(linkEn, 'click', () => {
-        redirect(buildURI(NEWS_URI, '', 'en'));
+        redirect(buildURI(NEWS_URI, '', EN_LANG_CODE));
     });
     appendChild(promptParagraphEn, linkEn);
     appendText(promptParagraphEn, '). Once the measurement is complete, you can to switch between the routes. We are measuring the time it takes to download a 512kB file. The shorter the time, the better. If it takes more than 2000ms, the route may not be optimized for your ISP or the route may be congested. If it is around 1000 milliseconds or less, there is no significant difference and you can use it without worry.');
@@ -346,12 +347,12 @@ function appendPromptText(contentContainer: HTMLElement) {
     const promptParagraphHant = createParagraphElement(
         '以下是我們為中國用戶準備的線路（點擊',
     );
-    promptParagraphHant.lang = 'zh-Hant';
+    promptParagraphHant.lang = ZH_HANT_LANG_CODE;
     const linkHant = createSpanElement();
     addClass(linkHant, commonStyles.link);
     appendText(linkHant, '此處');
     addEventListener(linkHant, 'click', () => {
-        redirect(buildURI(NEWS_URI, '', 'zh-Hant'));
+        redirect(buildURI(NEWS_URI, '', ZH_HANT_LANG_CODE));
     });
     appendChild(promptParagraphHant, linkHant);
     appendText(promptParagraphHant, '了解詳情）。測量完成後即可切換線路。我們測量下載一個512kB文件所需的時間。時間越短越好。如果超過2000毫秒，則此線路可能沒有針對您的ISP進行最佳化，或者此線路擁擠。如果在1000毫秒左右或者更短的話，則區別不大，可放心使用。');
@@ -359,12 +360,12 @@ function appendPromptText(contentContainer: HTMLElement) {
     const promptParagraphHans = createParagraphElement(
         '以下是我们为中国用户准备的线路（点击',
     );
-    promptParagraphHans.lang = 'zh-Hans';
+    promptParagraphHans.lang = ZH_HANS_LANG_CODE;
     const linkHans = createSpanElement();
     addClass(linkHans, commonStyles.link);
     appendText(linkHans, '此处');
     addEventListener(linkHans, 'click', () => {
-        redirect(buildURI(NEWS_URI, '', 'zh-Hans'));
+        redirect(buildURI(NEWS_URI, '', ZH_HANS_LANG_CODE));
     });
     appendChild(promptParagraphHans, linkHans);
     appendText(promptParagraphHans, '了解详情）。测量完成后即可切换线路。我们测量下载一个512kB文件所需的时间。时间越短越好。如果超过2000毫秒，则此线路可能没有针对您的ISP进行优化，或者此线路拥挤。如果在1000毫秒左右或者更短的话，则区别不大，可放心使用。');
@@ -379,11 +380,11 @@ function appendPromptText(contentContainer: HTMLElement) {
 function appendASNPromptText(contentContainer: HTMLElement) {
     const promptParagraphJa = createParagraphElement('以下では、あなたのASN（自律システム番号）を取得します。この番号を使って、現在利用しているISPを確認することができます。例えば、AS4134は中国電信、AS9808は中国移動、AS4837は中国聯通です。1つのISPが複数のASNを所有することもありますのでご注意ください。');
     const promptParagraphEn = createParagraphElement('Below you will get your ASN (Autonomous System Number). You can use this number to find out which ISP you are currently using. For example, AS4134 is China Telecom, AS9808 is China Mobile, and AS4837 is China Unicom. Please note that one ISP may own multiple ASNs.');
-    promptParagraphEn.lang = 'en';
+    promptParagraphEn.lang = EN_LANG_CODE;
     const promptParagraphHant = createParagraphElement('您可以在下面獲得您的ASN（自治系統編號）。您可以使用此號碼來查詢您當前正在使用的ISP。例如AS4134是中國電信，AS9808是中國移動，AS4837是中國聯通。請注意，一個ISP可能擁有多個ASN。');
-    promptParagraphHant.lang = 'zh-Hant';
+    promptParagraphHant.lang = ZH_HANT_LANG_CODE;
     const promptParagraphHans = createParagraphElement('您可以在下面获得您的ASN（自治系统编号）。您可以使用此号码来查询您当前正在使用的ISP。例如AS4134是中国电信，AS9808是中国移动，AS4837是中国联通。请注意，一个ISP可能拥有多个ASN。');
-    promptParagraphHans.lang = 'zh-Hans';
+    promptParagraphHans.lang = ZH_HANS_LANG_CODE;
     appendChild(contentContainer, promptParagraphJa);
     appendChild(contentContainer, promptParagraphEn);
     appendChild(contentContainer, promptParagraphHant);
