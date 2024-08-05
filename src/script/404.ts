@@ -1,4 +1,4 @@
-import { clearSessionStorage } from './module/dom/document';
+import { clearSessionStorage } from './module/dom/session_storage';
 import { createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
 import { addClass, appendChild } from './module/dom/element';
 import { body } from './module/dom/body';

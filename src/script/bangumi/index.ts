@@ -1,5 +1,6 @@
 import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
-import { clearSessionStorage, getSearchParam, getURI } from '../module/dom/document';
+import { getSearchParam, getURI } from '../module/dom/document';
+import { clearSessionStorage } from '../module/dom/session_storage';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
 import { getLogoutParam } from './helper';

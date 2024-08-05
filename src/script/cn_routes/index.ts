@@ -1,4 +1,4 @@
-import { clearSessionStorage } from '../module/dom/document';
+import { clearSessionStorage } from '../module/dom/session_storage';
 import { ShowPageFunc, pgid } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';

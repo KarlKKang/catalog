@@ -2,7 +2,8 @@ import {
     SessionTypes,
 } from '../module/common';
 import { ServerRequestOptionProp, sendServerRequest, setUpSessionAuthentication } from '../module/server';
-import { clearSessionStorage, getSessionStorage, setTitle } from '../module/dom/document';
+import { setTitle } from '../module/dom/document';
+import { clearSessionStorage, getSessionStorage } from '../module/dom/session_storage';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';

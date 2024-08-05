@@ -1,5 +1,5 @@
 import { ServerRequestOptionProp, sendServerRequest } from './module/server';
-import { clearSessionStorage } from './module/dom/document';
+import { clearSessionStorage } from './module/dom/session_storage';
 import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, replaceText } from './module/dom/create_element';
 import { addClass, appendChild, disableInput } from './module/dom/element';
 import { body } from './module/dom/body';

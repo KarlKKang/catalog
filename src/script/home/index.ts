@@ -4,7 +4,8 @@ import {
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
-import { changeURL, clearSessionStorage, w } from '../module/dom/document';
+import { changeURL, w } from '../module/dom/document';
+import { clearSessionStorage } from '../module/dom/session_storage';
 import { isbot } from 'isbot';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { parseSeriesInfo } from '../module/type/SeriesInfo';

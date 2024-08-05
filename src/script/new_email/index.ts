@@ -1,5 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { clearSessionStorage, getSearchParam } from '../module/dom/document';
+import { getSearchParam } from '../module/dom/document';
+import { clearSessionStorage } from '../module/dom/session_storage';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';

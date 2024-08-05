@@ -1,4 +1,5 @@
-import { clearSessionStorage, getHash, getTitle, openWindow, setSessionStorage, w } from '../dom/document';
+import { getHash, getTitle, openWindow, w } from '../dom/document';
+import { clearSessionStorage, setSessionStorage } from '../dom/session_storage';
 import { getByIdNative } from '../dom/element';
 import { IMAGE_URI } from '../env/uri';
 import { addEventListener, removeAllEventListeners } from '../event_listener';

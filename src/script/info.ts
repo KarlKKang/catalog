@@ -1,4 +1,5 @@
-import { clearSessionStorage, getSearchParam } from './module/dom/document';
+import { getSearchParam } from './module/dom/document';
+import { clearSessionStorage } from './module/dom/session_storage';
 import { createDivElement } from './module/dom/create_element';
 import { addClass, appendChild } from './module/dom/element';
 import { body } from './module/dom/body';
