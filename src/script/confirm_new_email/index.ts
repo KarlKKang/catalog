@@ -6,7 +6,7 @@ import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { invalidResponse } from '../module/server/message';
 import { importModule } from '../module/import_module';
 import { LOGIN_URI } from '../module/env/uri';
-import { buildURLForm } from '../module/common/pure';
+import { buildURLForm } from '../module/http_form';
 
 let offloadModule: (() => void) | null = null;
 

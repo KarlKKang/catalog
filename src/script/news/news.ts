@@ -12,7 +12,7 @@ import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
-import { buildURLForm, encodeCFURIComponent, buildURI } from '../module/common/pure';
+import { buildURLForm, encodeCFURIComponent, buildURI } from '../module/http_form';
 import { redirect } from '../module/global';
 import { loading } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';

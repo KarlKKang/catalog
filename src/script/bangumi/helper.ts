@@ -4,7 +4,7 @@ import { addClass, appendChild, appendChildren } from '../module/dom/element';
 import { changeColor } from '../module/style';
 import * as styles from '../../css/bangumi.module.scss';
 import { type CSS_COLOR } from '../module/style/value';
-import { buildURLForm, joinURLForms } from '../module/common/pure';
+import { buildURLForm, joinURLForms } from '../module/http_form';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
     let height = elem.scrollHeight;

@@ -8,7 +8,7 @@ import { d, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';
-import { encodeCFURIComponent } from '../module/common/pure';
+import { encodeCFURIComponent } from '../module/http_form';
 import { setWidth } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
 import * as styles from '../../css/image.module.scss';

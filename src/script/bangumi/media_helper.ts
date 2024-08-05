@@ -17,7 +17,7 @@ import { defaultError } from '../module/text/message/title';
 import { defaultErrorSuffix } from '../module/text/message/body';
 import * as styles from '../../css/bangumi.module.scss';
 import { getCDNOrigin } from '../module/env/origin';
-import { buildURLForm, joinURLForms } from '../module/common/pure';
+import { buildURLForm, joinURLForms } from '../module/http_form';
 
 export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';

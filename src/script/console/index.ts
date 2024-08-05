@@ -4,7 +4,7 @@ import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { pgid, type ShowPageFunc } from '../module/global';
 import { importModule } from '../module/import_module';
-import { buildURLForm } from '../module/common/pure';
+import { buildURLForm } from '../module/http_form';
 
 let offloadModule: (() => void) | null = null;
 

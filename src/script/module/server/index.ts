@@ -7,7 +7,7 @@ import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 import { LOGIN_URI } from '../env/uri';
 import { newXHR } from '../common';
 import { addEventListener } from '../event_listener';
-import { buildURI } from '../common/pure';
+import { buildURI } from '../http_form';
 
 export const enum ServerRequestOptionProp {
     CALLBACK,

@@ -18,7 +18,8 @@ import {
 import type { Player, Player as PlayerType } from '../module/player/player';
 import { getFormatIndex, createQuery } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, type AccordionInstance } from './media_helper';
-import { encodeCFURIComponent, buildURI, secToTimestamp } from '../module/common/pure';
+import { secToTimestamp } from '../module/common/pure';
+import { encodeCFURIComponent, buildURI } from '../module/http_form';
 import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';

@@ -12,7 +12,7 @@ import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/Bang
 import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { importAllMediaModules } from './media_import_promise';
-import { buildURLForm } from '../module/common/pure';
+import { buildURLForm } from '../module/http_form';
 
 let offloadModule: (() => void) | null = null;
 

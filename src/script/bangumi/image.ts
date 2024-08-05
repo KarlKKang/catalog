@@ -8,7 +8,7 @@ import { addClass, appendChild, insertBefore, prependChild, replaceChildren } fr
 import { addEventListener } from '../module/event_listener';
 import { EPInfoKey, ImageFileKey, type ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
-import { encodeCFURIComponent } from '../module/common/pure';
+import { encodeCFURIComponent } from '../module/http_form';
 import { addTimeout } from '../module/timer';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { SharedElement, getSharedElement } from './shared_var';

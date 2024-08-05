@@ -15,7 +15,7 @@ import { redirect } from '../module/global';
 import { newXHR } from '../module/common';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style';
-import { buildURI, buildURLForm } from '../module/common/pure';
+import { buildURI, buildURLForm } from '../module/http_form';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {

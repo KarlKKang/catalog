@@ -2,7 +2,7 @@ import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { addClass, containsClass, getByClass, getDataAttribute, getDescendantsByClassAt, getParentElement } from '../module/dom/element';
 import { addEventListener } from '../module/event_listener';
 import { completeCallback, getTable, initializedClass } from './helper';
-import { buildURLForm } from '../module/common/pure';
+import { buildURLForm } from '../module/http_form';
 
 function seriesCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);

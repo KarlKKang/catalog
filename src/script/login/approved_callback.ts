@@ -6,7 +6,7 @@ import { CSS_COLOR } from '../module/style/value';
 import { MessageParamKey } from '../module/message/type';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { getSearchParam } from '../module/dom/document';
-import { buildURLForm, buildURI } from '../module/common/pure';
+import { buildURLForm, buildURI } from '../module/http_form';
 
 export default function () {
     if (UNRECOMMENDED_BROWSER) {

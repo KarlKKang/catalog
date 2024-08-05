@@ -2,7 +2,7 @@ import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { addClass, containsClass, getByClass, getParentElement } from '../module/dom/element';
 import { addEventListener } from '../module/event_listener';
 import { changed as changedClass } from '../../css/console.module.scss';
-import { buildURLForm } from '../module/common/pure';
+import { buildURLForm } from '../module/http_form';
 
 let outputElement: HTMLDivElement | null = null;
 export const initializedClass = 'initialized';

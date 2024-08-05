@@ -1,5 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS, buildURLForm, joinURLForms } from '../module/common/pure';
+import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/common/pure';
+import { buildURLForm, joinURLForms } from '../module/http_form';
 import { replaceChildren } from '../module/dom/element';
 import { replaceText } from '../module/dom/create_element';
 import { pgid } from '../module/global';

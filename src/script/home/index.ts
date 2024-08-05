@@ -11,7 +11,7 @@ import { parseSeriesInfo } from '../module/type/SeriesInfo';
 import { getURLKeywords, search, setSearch } from './shared';
 import { importModule } from '../module/import_module';
 import { TOP_URI } from '../module/env/uri';
-import { buildURLForm, joinURLForms } from '../module/common/pure';
+import { buildURLForm, joinURLForms } from '../module/http_form';
 
 let offloadModule: (() => void) | null = null;
 

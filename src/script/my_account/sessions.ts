@@ -4,7 +4,8 @@ import { createButtonElement, createDivElement, createParagraphElement, replaceT
 import { addEventListener } from '../module/event_listener';
 import { SessionKey, type Sessions } from '../module/type/Sessions';
 import { SharedElement, getSharedElement, sessionLogoutButtons } from './shared_var';
-import { buildURLForm, getLocalTimeString } from '../module/common/pure';
+import { getLocalTimeString } from '../module/common/pure';
+import { buildURLForm } from '../module/http_form';
 import { changeColor, hideElement, showElement } from '../module/style';
 import * as styles from '../../css/my_account.module.scss';
 import { disableAllInputs } from './helper';

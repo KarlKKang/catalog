@@ -7,7 +7,7 @@ import { NavBarPage } from '../module/nav_bar/enum';
 import { NewsInfoKey, parseNewsInfo } from '../module/type/NewsInfo';
 import { importModule } from '../module/import_module';
 import { NEWS_ROOT_URI } from '../module/env/uri';
-import { buildURLForm } from '../module/common/pure';
+import { buildURLForm } from '../module/http_form';
 
 let offloadModule: (() => void) | null = null;
 

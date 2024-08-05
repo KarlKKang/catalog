@@ -9,7 +9,7 @@ import { addAutoMultiLanguageClass } from '../module/dom/create_element/multi_la
 import { getSeriesTable } from './series';
 import { getAccountTable } from './account';
 import { getNewsTable } from './news';
-import { buildURLForm } from '../module/common/pure';
+import { buildURLForm } from '../module/http_form';
 
 export default function () {
     const container = createDivElement();
