@@ -77,12 +77,13 @@ function unsupportRedirect() {
     };
 
     const x = '__cookie_test__';
-    d.cookie = x + '=' + x + ';max-age=10;path=/;secure;samesite=strict';
+    const cookieSuffix = ';path=/;secure;samesite=strict';
+    d.cookie = x + '=' + x + ';max-age=10' + cookieSuffix;
     if (getCookie(x) !== x) {
         _unsupportRedirect();
         return;
     }
-    d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict';
+    d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC' + cookieSuffix;
 
     const storage = w.sessionStorage;
     if (!storage) {
