@@ -2,7 +2,7 @@ import { appendText, createButtonElement, createDivElement, createHRElement, cre
 import { getProtocol, w, windowLocation } from '../module/dom/document';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
-import { concatenateLocationPrefix, getBaseHost, getLocationPrefix, getServerOrigin } from '../module/env/origin';
+import { concatenateLocationPrefix, getBaseHost, getLocationPrefix, getServerOrigin, locationCodeToPrefix } from '../module/env/origin';
 import { addEventListener, addEventsListener } from '../module/event_listener';
 import { createNewsTemplate } from '../module/news';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';
@@ -81,12 +81,12 @@ export default function (routeList: RouteList) {
 }
 
 function initializeList(routeList: RouteList) {
-    const currentLocation = getLocationPrefix();
+    const currentLocationPrefix = getLocationPrefix();
     const head = {
         [RouteInfoNodeKey.INFO]: null,
         [RouteInfoNodeKey.LATENCY]: null,
         [RouteInfoNodeKey.RESULT_OVERRIDE]: null,
-        [RouteInfoNodeKey.IN_USE]: currentLocation === '',
+        [RouteInfoNodeKey.IN_USE]: currentLocationPrefix === locationCodeToPrefix(''),
         [RouteInfoNodeKey.NEXT]: null,
     };
     let current: RouteInfoNode = head;
@@ -95,7 +95,7 @@ function initializeList(routeList: RouteList) {
             [RouteInfoNodeKey.INFO]: routeInfo,
             [RouteInfoNodeKey.LATENCY]: null,
             [RouteInfoNodeKey.RESULT_OVERRIDE]: null,
-            [RouteInfoNodeKey.IN_USE]: currentLocation === (routeInfo[RouteInfoKey.CODE] + '.'),
+            [RouteInfoNodeKey.IN_USE]: currentLocationPrefix === locationCodeToPrefix(routeInfo[RouteInfoKey.CODE]),
             [RouteInfoNodeKey.NEXT]: null,
         };
         current[RouteInfoNodeKey.NEXT] = next;
@@ -146,8 +146,8 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
             addClass(spanElem, commonStyles.link);
             addEventListener(spanElem, 'click', () => {
                 const baseHost = getBaseHost(); // Use host just in case there is a port number.
-                const locationPrefix = routeInfo !== null ? routeInfo[RouteInfoKey.CODE] + '.' : '';
-                windowLocation.href = getProtocol() + '//' + concatenateLocationPrefix(locationPrefix, baseHost);
+                const locationCode = routeInfo !== null ? routeInfo[RouteInfoKey.CODE] : '';
+                windowLocation.href = getProtocol() + '//' + concatenateLocationPrefix(locationCodeToPrefix(locationCode), baseHost);
             });
         }
         previous = current;
@@ -160,11 +160,8 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
         return;
     }
 
-    let locationPrefix = '';
     const routeInfo = testRouteNodeConst[RouteInfoNodeKey.INFO];
-    if (routeInfo !== null) {
-        locationPrefix = routeInfo[RouteInfoKey.CODE] + '.';
-    }
+    const locationPrefix = locationCodeToPrefix(routeInfo !== null ? routeInfo[RouteInfoKey.CODE] : '');
     const sortResult = (latency: number | false) => {
         if (testRouteNodePrevious !== null) { // Add the node back to the linked list, in sorted order.
             testRouteNodePrevious[RouteInfoNodeKey.NEXT] = testRouteNodeConst[RouteInfoNodeKey.NEXT];

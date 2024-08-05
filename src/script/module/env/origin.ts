@@ -19,6 +19,12 @@ export function getBaseHost() {
 export function concatenateLocationPrefix(locationPrefix: string, baseHost: string) {
     return locationPrefix + baseHost;
 }
+export function locationCodeToPrefix(locationCode: string) {
+    if (locationCode === '') {
+        return '';
+    }
+    return locationCode + '.';
+}
 export function getServerOrigin(locationPrefixOverride?: string) {
     const [locationPrefix, baseDomain] = splitHostname();
     return 'https://' + concatenateLocationPrefix(locationPrefixOverride ?? locationPrefix, 'server.' + baseDomain);
