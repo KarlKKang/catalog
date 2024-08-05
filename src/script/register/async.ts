@@ -7,7 +7,7 @@ import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
 import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, usernameInvalid, usernameTaken } from '../module/text/message/body';
-import { PASSWORD_REGEX } from '../module/common/pure';
+import { PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm, buildURI } from '../module/http_form';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';

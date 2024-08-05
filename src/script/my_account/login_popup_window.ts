@@ -2,7 +2,7 @@ import { appendText, createButtonElement, createDivElement, createEmailInput, cr
 import { addClass, appendChild, disableInput } from '../module/dom/element';
 import { openWindow } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
-import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
+import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
 import { loginFailed } from '../module/text/message/body';
 import { changeColor, hideElement, horizontalCenter, showElement } from '../module/style';
 import { cancelButtonText, forgetPasswordText, submitButtonText } from '../module/text/ui';

@@ -21,7 +21,7 @@ import { emailSent as emailSendPrefix } from '../module/text/message/title';
 import { SharedBool, SharedButton, SharedElement, SharedInput, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
-import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/common/pure';
+import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm } from '../module/http_form';
 import { AccountInfoKey, type AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/server/message';

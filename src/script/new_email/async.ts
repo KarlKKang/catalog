@@ -6,7 +6,7 @@ import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { invalidEmailFormat, emailAlreadyRegistered } from '../module/text/message/body';
 import { expired, emailSent } from '../module/message/param';
-import { EMAIL_REGEX } from '../module/common/pure';
+import { EMAIL_REGEX } from '../module/regex';
 import { buildURLForm } from '../module/http_form';
 import { invalidResponse } from '../module/server/message';
 import { hideElement, horizontalCenter, showElement } from '../module/style';
