@@ -19,13 +19,13 @@ export const enum ServerRequestOptionProp {
     SHOW_SESSION_ENDED_MESSAGE,
 }
 interface ServerRequestOption {
-    [ServerRequestOptionProp.CALLBACK]?: (response: string) => void | Promise<void>;
-    [ServerRequestOptionProp.CONTENT]?: string;
-    [ServerRequestOptionProp.METHOD]?: 'POST' | 'GET';
-    [ServerRequestOptionProp.LOGOUT_PARAM]?: string | undefined;
+    readonly [ServerRequestOptionProp.CALLBACK]?: (response: string) => void | Promise<void>;
+    readonly [ServerRequestOptionProp.CONTENT]?: string;
+    readonly [ServerRequestOptionProp.METHOD]?: 'POST' | 'GET';
+    readonly [ServerRequestOptionProp.LOGOUT_PARAM]?: string | undefined;
     [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]?: number | undefined;
     [ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
-    [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]?: boolean;
+    readonly [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]?: boolean;
 }
 function xhrOnErrorCallback(uri: string, options: ServerRequestOption) {
     if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] === undefined) {
