@@ -273,13 +273,23 @@ function getSeries(callback: (seriesInfo: SeriesInfo, xhr?: XMLHttpRequest) => v
     currentRequest = request;
 }
 
-function showASNAnnouncement(containerElem: HTMLElement) {
+function showASNAnnouncement(containerElem: HTMLElement, retryCount = 3, retryTimeout = 500) {
+    const retry = () => {
+        retryCount--;
+        if (retryCount < 0) {
+            return;
+        }
+        addTimeout(() => {
+            showASNAnnouncement(containerElem, retryCount, retryTimeout * 2);
+        }, retryTimeout);
+    };
     const xhr = newXHR(
         getServerOrigin('') + buildURI('/get_route_info', buildURLForm({ hostname: getHostname() })),
         'GET',
         false,
         () => {
             if (xhr.status !== 200) {
+                retry();
                 return;
             }
             const routeInfo = parseCurrentRouteInfo(JSON.parse(xhr.responseText));
@@ -315,6 +325,7 @@ function showASNAnnouncement(containerElem: HTMLElement) {
             showAnnouncement('ネットワーク速度が低下している場合', message, containerElem);
         },
     );
+    addEventListener(xhr, 'error', retry);
     xhr.send();
 }
 
