@@ -90,12 +90,13 @@ function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRe
 export function sendServerRequest(uri: string, options: ServerRequestOption): XMLHttpRequest {
     let content = options[ServerRequestOptionProp.CONTENT] ?? '';
     const method = options[ServerRequestOptionProp.METHOD] ?? 'POST';
+    let realUri = uri;
     if (method === 'GET') {
-        uri = buildURI(uri, content);
+        realUri = buildURI(uri, content);
         content = '';
     }
     const xhr = newXHR(
-        getServerOrigin() + '/' + uri,
+        getServerOrigin() + '/' + realUri,
         method,
         true,
         () => {
