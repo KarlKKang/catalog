@@ -14,7 +14,7 @@ import { addClass, removeClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
-import { notFound } from '../module/server/message';
+import { connectionError, notFound } from '../module/server/message';
 import { buildURLForm, encodeCFURIComponent, buildURI } from '../module/http_form';
 import { redirect } from '../module/global';
 import { loading } from '../module/text/ui';
@@ -26,6 +26,7 @@ import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } fro
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
+import { addTimeout } from '../module/timer';
 
 export default function (newsInfo: NewsInfo, newsID: string): void {
     const title = newsInfo[NewsInfoKey.TITLE];
@@ -45,6 +46,20 @@ export default function (newsInfo: NewsInfo, newsID: string): void {
     appendChild(contentInnerContainer, contentContainer);
     appendChild(container, contentOuterContainer);
 
+    getNewsContent(newsInfo, newsID, contentContainer);
+}
+
+function getNewsContent(newsInfo: NewsInfo, newsID: string, contentContainer: HTMLElement, retryCount = 3, retryTimeout = 500): void {
+    const retry = () => {
+        retryCount--;
+        if (retryCount < 0) {
+            showMessage(connectionError);
+            return;
+        }
+        addTimeout(() => {
+            getNewsContent(newsInfo, newsID, contentContainer, retryCount, retryTimeout * 2);
+        }, retryTimeout);
+    };
     const xhr = newXHR(
         getCDNOrigin() + '/news/' + newsID + '.html',
         'GET',
@@ -57,14 +72,14 @@ export default function (newsInfo: NewsInfo, newsID: string): void {
                 attachImage(contentContainer, newsID, newsInfo[NewsInfoKey.CREDENTIAL]);
                 parseNewsStyle(contentContainer);
                 scrollToHash();
-            } else {
+            } else if (xhr.status === 403) {
                 showMessage(notFound);
+            } else {
+                retry();
             }
         },
     );
-    addEventListener(xhr, 'error', () => {
-        showMessage(notFound);
-    });
+    addEventListener(xhr, 'error', retry);
     xhr.send();
 }
 
