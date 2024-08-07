@@ -27,6 +27,7 @@ import { getURLKeywords, setSearch } from './shared';
 import { getCDNOrigin, getServerOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/CurrentRouteInfo';
+import { min } from '../module/math';
 
 let pivot: Pivot;
 let keywords: string;
@@ -273,14 +274,10 @@ function getSeries(callback: (seriesInfo: SeriesInfo, xhr?: XMLHttpRequest) => v
     currentRequest = request;
 }
 
-function showASNAnnouncement(containerElem: HTMLElement, retryCount = 3, retryTimeout = 500) {
+function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
     const retry = () => {
-        retryCount--;
-        if (retryCount < 0) {
-            return;
-        }
         addTimeout(() => {
-            showASNAnnouncement(containerElem, retryCount, retryTimeout * 2);
+            showASNAnnouncement(containerElem, min(retryTimeout * 2, 5000));
         }, retryTimeout);
     };
     const xhr = newXHR(
