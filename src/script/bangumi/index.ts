@@ -2,12 +2,12 @@ import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSession
 import { getSearchParam, getURI } from '../module/dom/document';
 import { clearSessionStorage } from '../module/dom/session_storage';
 import { showMessage } from '../module/message';
-import { notFound } from '../module/server/message';
+import { connectionError, notFound } from '../module/server/message';
 import { getLogoutParam } from './helper';
 import { importAllPageModules } from './page_import_promise';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
-import { addTimeout } from '../module/timer';
+import { addTimeout, removeTimeout } from '../module/timer';
 import { type MediaSessionInfo, MediaSessionInfoKey, parseMediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/BangumiInfo';
 import { importModule } from '../module/import_module';
@@ -52,9 +52,13 @@ export default function (showPage: ShowPageFunc) {
         importAllPageModules();
         importAllMediaModules();
         return new Promise<MediaSessionInfo>((resolve) => {
+            const requestTimeout = addTimeout(() => {
+                showMessage(connectionError);
+            }, 60000);
             const startTime = getHighResTimestamp();
             sendServerRequest('create_media_session', {
                 [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+                    removeTimeout(requestTimeout);
                     const parsedResponse = parseResponse(response, parseMediaSessionInfo);
                     setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], startTime, getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);

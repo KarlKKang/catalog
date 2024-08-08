@@ -1,7 +1,7 @@
 import { getServerOrigin } from '../env/origin';
 import { showMessage } from '../message';
 import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
-import { addTimeout } from '../timer';
+import { addTimeout, removeTimeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 import { LOGIN_URI } from '../env/uri';
@@ -132,9 +132,13 @@ export function logout(callback: () => void) {
 export function setUpSessionAuthentication(credential: string, startTime: HighResTimestamp, logoutParam?: string) {
     addTimeout(() => {
         const newStartTime = getHighResTimestamp();
+        const requestTimeout = addTimeout(() => {
+            showMessage(connectionError);
+        }, max(60000 - (newStartTime - startTime), 0));
         sendServerRequest('authenticate_media_session', {
             [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 if (response === 'APPROVED') {
+                    removeTimeout(requestTimeout);
                     setUpSessionAuthentication(credential, newStartTime, logoutParam);
                     return;
                 }
