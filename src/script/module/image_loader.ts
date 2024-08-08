@@ -31,7 +31,7 @@ let webpSupported: boolean;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
-export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw: (canvas: HTMLCanvasElement) => void, onDataLoad?: (data: Blob) => void, onNetworkError?: () => void, onUnrecoverableError?: () => void): XMLHttpRequest {
+export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw: (canvas: HTMLCanvasElement) => void, onDataLoad: ((data: Blob) => void) | undefined, onNetworkError: () => void, onUnrecoverableError: () => void): XMLHttpRequest {
     let imageData: Blob;
     let isWebp: boolean;
 
@@ -46,7 +46,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
         errorImage.src = '//:0';
         errorImage.alt = alt;
         appendChild(container, errorImage);
-        onUnrecoverableError && onUnrecoverableError();
+        onUnrecoverableError();
     }
 
     function onImageError() {
@@ -117,7 +117,6 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
     addEventListener(image, 'error', onImageError);
     addEventListener(image, 'load', onImageLoad);
 
-    const _onNetworkError = onNetworkError ?? finalizeUnrecoverableError;
     const xhr = newXHR(
         src,
         'GET',
@@ -129,11 +128,11 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
                 image.src = URL.createObjectURL(imageData);
                 onDataLoad && onDataLoad(imageData);
             } else {
-                _onNetworkError();
+                onNetworkError();
             }
         },
     );
-    addEventListener(xhr, 'error', _onNetworkError);
+    addEventListener(xhr, 'error', onNetworkError);
     xhr.responseType = 'blob';
     xhr.send();
     return xhr;
