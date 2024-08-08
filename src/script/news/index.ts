@@ -9,6 +9,9 @@ import { NewsInfoKey, parseNewsInfo } from '../module/type/NewsInfo';
 import { importModule } from '../module/import_module';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { buildURLForm } from '../module/http_form';
+import { addTimeout } from '../module/timer';
+import { showMessage } from '../module/message';
+import { connectionError } from '../module/server/message';
 
 let offloadModule: (() => void) | null = null;
 
@@ -57,6 +60,9 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         './news'
     );
 
+    const requestTimeout = addTimeout(() => {
+        showMessage(connectionError);
+    }, 30000);
     const logoutParam = buildURLForm({
         news: newsID,
         hash: getHash(),
@@ -72,7 +78,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             offloadModule = newsModule.offload;
             showPage();
             setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], logoutParam);
-            newsModule.default(parsedResponse, newsID);
+            newsModule.default(parsedResponse, newsID, requestTimeout);
         },
         [ServerRequestOptionProp.CONTENT]: buildURLForm({ id: newsID }),
         [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,

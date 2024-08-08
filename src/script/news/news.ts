@@ -26,9 +26,9 @@ import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } fro
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
-import { addTimeout } from '../module/timer';
+import { addTimeout, removeTimeout, type Timeout } from '../module/timer';
 
-export default function (newsInfo: NewsInfo, newsID: string): void {
+export default function (newsInfo: NewsInfo, newsID: string, requestTimeout: Timeout): void {
     const title = newsInfo[NewsInfoKey.TITLE];
     setTitle(title + ' | ' + getTitle());
 
@@ -46,10 +46,10 @@ export default function (newsInfo: NewsInfo, newsID: string): void {
     appendChild(contentInnerContainer, contentContainer);
     appendChild(container, contentOuterContainer);
 
-    getNewsContent(newsInfo, newsID, contentContainer);
+    getNewsContent(newsInfo, newsID, requestTimeout, contentContainer);
 }
 
-function getNewsContent(newsInfo: NewsInfo, newsID: string, contentContainer: HTMLElement, retryCount = 3, retryTimeout = 500): void {
+function getNewsContent(newsInfo: NewsInfo, newsID: string, requestTimeout: Timeout, contentContainer: HTMLElement, retryCount = 3, retryTimeout = 500): void {
     const retry = () => {
         retryCount--;
         if (retryCount < 0) {
@@ -57,7 +57,7 @@ function getNewsContent(newsInfo: NewsInfo, newsID: string, contentContainer: HT
             return;
         }
         addTimeout(() => {
-            getNewsContent(newsInfo, newsID, contentContainer, retryCount, retryTimeout * 2);
+            getNewsContent(newsInfo, newsID, requestTimeout, contentContainer, retryCount, retryTimeout * 2);
         }, retryTimeout);
     };
     const xhr = newXHR(
@@ -66,6 +66,7 @@ function getNewsContent(newsInfo: NewsInfo, newsID: string, contentContainer: HT
         true,
         () => {
             if (xhr.status === 200) {
+                removeTimeout(requestTimeout);
                 contentContainer.innerHTML = xhr.responseText;
                 addManualMultiLanguageClass(contentContainer);
                 bindEventListners(contentContainer);
