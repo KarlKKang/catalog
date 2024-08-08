@@ -9,6 +9,7 @@ import { invalidResponse } from '../module/server/message';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { importModule } from '../module/import_module';
 import { TOP_URI } from '../module/env/uri';
+import { getHighResTimestamp } from '../module/hi_res_timestamp';
 
 let offloadAsyncModule: (() => void) | null = null;
 
@@ -27,7 +28,7 @@ export default function (showPage: ShowPageFunc) {
     }
 
     const uri = sessionType === ImageSessionTypes.MEDIA ? 'get_image' : 'get_news_image';
-    setUpSessionAuthentication(sessionCredential, performance.now());
+    setUpSessionAuthentication(sessionCredential, getHighResTimestamp());
     setTitle(title);
 
     const asyncModulePromise = import(

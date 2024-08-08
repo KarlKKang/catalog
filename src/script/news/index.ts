@@ -12,6 +12,7 @@ import { buildURLForm } from '../module/http_form';
 import { addTimeout } from '../module/timer';
 import { showMessage } from '../module/message';
 import { connectionError } from '../module/server/message';
+import { getHighResTimestamp } from '../module/hi_res_timestamp';
 
 let offloadModule: (() => void) | null = null;
 
@@ -67,7 +68,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         news: newsID,
         hash: getHash(),
     });
-    const startTime = performance.now();
+    const startTime = getHighResTimestamp();
     sendServerRequest('get_news', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);

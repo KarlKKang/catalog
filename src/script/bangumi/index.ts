@@ -14,6 +14,7 @@ import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { importAllMediaModules } from './media_import_promise';
 import { buildURLForm } from '../module/http_form';
+import { getHighResTimestamp } from '../module/hi_res_timestamp';
 
 let offloadModule: (() => void) | null = null;
 
@@ -51,7 +52,7 @@ export default function (showPage: ShowPageFunc) {
         importAllPageModules();
         importAllMediaModules();
         return new Promise<MediaSessionInfo>((resolve) => {
-            const startTime = performance.now();
+            const startTime = getHighResTimestamp();
             sendServerRequest('create_media_session', {
                 [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                     const parsedResponse = parseResponse(response, parseMediaSessionInfo);
