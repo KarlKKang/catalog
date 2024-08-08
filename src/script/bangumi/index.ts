@@ -51,10 +51,11 @@ export default function (showPage: ShowPageFunc) {
         importAllPageModules();
         importAllMediaModules();
         return new Promise<MediaSessionInfo>((resolve) => {
+            const startTime = performance.now();
             sendServerRequest('create_media_session', {
                 [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                     const parsedResponse = parseResponse(response, parseMediaSessionInfo);
-                    setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], getLogoutParam(seriesID, epIndex));
+                    setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], startTime, getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);
                 },
                 [ServerRequestOptionProp.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),

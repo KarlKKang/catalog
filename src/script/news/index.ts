@@ -67,6 +67,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         news: newsID,
         hash: getHash(),
     });
+    const startTime = performance.now();
     sendServerRequest('get_news', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);
@@ -77,7 +78,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             }
             offloadModule = newsModule.offload;
             showPage();
-            setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], logoutParam);
+            setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], startTime, logoutParam);
             newsModule.default(parsedResponse, newsID, requestTimeout);
         },
         [ServerRequestOptionProp.CONTENT]: buildURLForm({ id: newsID }),

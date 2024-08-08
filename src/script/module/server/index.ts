@@ -8,6 +8,7 @@ import { LOGIN_URI } from '../env/uri';
 import { newXHR } from '../xhr';
 import { addEventListener } from '../event_listener';
 import { buildURI } from '../http_form';
+import { max } from '../math';
 
 export const enum ServerRequestOptionProp {
     CALLBACK,
@@ -127,12 +128,13 @@ export function logout(callback: () => void) {
     });
 }
 
-export function setUpSessionAuthentication(credential: string, logoutParam?: string) {
+export function setUpSessionAuthentication(credential: string, startTime: ReturnType<typeof performance.now>, logoutParam?: string) {
     addTimeout(() => {
+        const newStartTime = performance.now();
         sendServerRequest('authenticate_media_session', {
             [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 if (response === 'APPROVED') {
-                    setUpSessionAuthentication(credential, logoutParam);
+                    setUpSessionAuthentication(credential, newStartTime, logoutParam);
                     return;
                 }
                 showMessage(invalidResponse());
@@ -142,7 +144,7 @@ export function setUpSessionAuthentication(credential: string, logoutParam?: str
             [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]: 5,
             [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
-    }, 40 * 1000); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
+    }, max(40000 - (performance.now() - startTime), 0)); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
 }
 
 export function parseResponse<T>(response: string, parser: (response: unknown) => T): T {

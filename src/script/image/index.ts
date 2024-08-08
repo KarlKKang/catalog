@@ -27,7 +27,7 @@ export default function (showPage: ShowPageFunc) {
     }
 
     const uri = sessionType === ImageSessionTypes.MEDIA ? 'get_image' : 'get_news_image';
-    setUpSessionAuthentication(sessionCredential);
+    setUpSessionAuthentication(sessionCredential, performance.now());
     setTitle(title);
 
     const asyncModulePromise = import(
