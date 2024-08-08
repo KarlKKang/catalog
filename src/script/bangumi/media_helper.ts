@@ -3,7 +3,7 @@ import { appendListItems, appendText, createButtonElement, createDivElement, cre
 import { getDescendantsByClassAt } from '../module/dom/get_element';
 import { appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
-import { getHostname, parseOrigin, parseURI, w } from '../module/dom/document';
+import { parseOrigin, parseURI, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
@@ -16,7 +16,7 @@ import { SharedElement, errorMessageElement, getSharedElement, setErrorMessageEl
 import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import { defaultError } from '../module/text/message/title';
-import { defaultErrorSuffix } from '../module/text/message/body';
+import { defaultErrorSuffix, mediaLoadError } from '../module/text/message/body';
 import * as styles from '../../css/bangumi.module.scss';
 import { getCDNOrigin } from '../module/env/origin';
 import { buildURLForm, joinURLForms } from '../module/http_form';
@@ -26,7 +26,7 @@ export const incompatibleTitle = '再生できません';
 export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
 function showNetworkError() {
-    showErrorMessage(defaultError, 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。または、' + getHostname() + 'の他のタブでの操作が、現在のタブに干渉している可能性があります。この場合、ページを再読み込みしてみてください。');
+    showErrorMessage(defaultError, mediaLoadError);
 }
 
 function showUnknownPlaybackError() {

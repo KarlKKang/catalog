@@ -1,4 +1,4 @@
-import { emailSentSuffix } from '../text/message/body';
+import { emailSentSuffix, mediaLoadError as mediaLoadErrorBody } from '../text/message/body';
 import { emailSent as emailSentTitle } from '../text/message/title';
 import { MessageParam, MessageParamKey } from './type';
 import { CSS_COLOR } from '../style/value';
@@ -21,3 +21,7 @@ export const emailSent = (goBackUrl?: string) => {
     }
     return param;
 };
+export const mediaLoadError = (url: string) => ({
+    [MessageParamKey.MESSAGE]: mediaLoadErrorBody,
+    [MessageParamKey.URL]: url,
+});

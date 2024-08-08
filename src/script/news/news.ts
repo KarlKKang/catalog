@@ -14,7 +14,6 @@ import { addClass, removeClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
-import { connectionError, notFound } from '../module/server/message';
 import { buildURLForm, encodeCFURIComponent, buildURI } from '../module/http_form';
 import { redirect } from '../module/global';
 import { loading } from '../module/text/ui';
@@ -28,6 +27,7 @@ import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { addTimeout } from '../module/timer';
 import { getHighResTimestamp, type HighResTimestamp } from '../module/hi_res_timestamp';
+import { mediaLoadError } from '../module/message/param';
 
 export default function (newsInfo: NewsInfo, newsID: string, startTime: HighResTimestamp): void {
     const title = newsInfo[NewsInfoKey.TITLE];
@@ -51,14 +51,15 @@ export default function (newsInfo: NewsInfo, newsID: string, startTime: HighResT
 }
 
 function getNewsContent(newsInfo: NewsInfo, newsID: string, startTime: HighResTimestamp, contentContainer: HTMLElement, retryCount = 3, retryTimeout = 500): void {
+    const errorMessage = mediaLoadError(NEWS_ROOT_URI);
     if (getHighResTimestamp() - startTime >= 30000) {
-        showMessage(connectionError);
+        showMessage(errorMessage);
         return;
     }
     const retry = () => {
         retryCount--;
         if (retryCount < 0) {
-            showMessage(connectionError);
+            showMessage(errorMessage);
             return;
         }
         addTimeout(() => {
@@ -77,8 +78,6 @@ function getNewsContent(newsInfo: NewsInfo, newsID: string, startTime: HighResTi
                 attachImage(contentContainer, newsID, newsInfo[NewsInfoKey.CREDENTIAL]);
                 parseNewsStyle(contentContainer);
                 scrollToHash();
-            } else if (xhr.status === 403) {
-                showMessage(notFound);
             } else {
                 retry();
             }

@@ -8,7 +8,6 @@ import { body } from '../module/dom/body';
 import { d, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
-import { connectionError } from '../module/server/message';
 import { encodeCFURIComponent } from '../module/http_form';
 import { setWidth } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
@@ -18,6 +17,8 @@ import { closeButtonText } from '../module/text/ui';
 import { addTimeout, type Timeout } from '../module/timer';
 import { addMouseTouchEventListener } from '../module/event_listener/mouse_touch_event';
 import { getHighResTimestamp, type HighResTimestamp } from '../module/hi_res_timestamp';
+import { mediaLoadError } from '../module/message/param';
+import { TOP_URI } from '../module/env/uri';
 
 export default function (baseURL: string, fileName: string, startTime: HighResTimestamp) {
     const container = createDivElement();
@@ -72,8 +73,9 @@ export default function (baseURL: string, fileName: string, startTime: HighResTi
 }
 
 function loadImage(container: HTMLElement, baseURL: string, fileName: string, startTime: HighResTimestamp, retryCount = 3, retryTimeout = 500) {
+    const errorMessage = mediaLoadError(TOP_URI);
     if (getHighResTimestamp() - startTime >= 30000) {
-        showMessage(connectionError);
+        showMessage(errorMessage);
         return;
     }
     imageLoader(
@@ -90,7 +92,7 @@ function loadImage(container: HTMLElement, baseURL: string, fileName: string, st
         () => {
             retryCount--;
             if (retryCount < 0) {
-                showMessage(connectionError);
+                showMessage(errorMessage);
                 return;
             }
             addTimeout(() => {

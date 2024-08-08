@@ -1,4 +1,5 @@
 import { createEmailLink, createTextNode } from '../../dom/create_element';
+import { getHostname } from '../../dom/document';
 import { TOP_DOMAIN } from '../../env/domain';
 
 export const defaultErrorSuffix = 'このエラーが続く場合は、管理者にお問い合わせください。';
@@ -30,3 +31,5 @@ export const accountDeactivated = () => {
     return message;
 };
 export const sessionEnded = 'セッションは終了した。もう一度お試しください。';
+
+export const mediaLoadError = 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。または、' + getHostname() + 'の他のタブでの操作が、現在のタブに干渉している可能性があります。この場合、ページを再読み込みしてみてください。';
