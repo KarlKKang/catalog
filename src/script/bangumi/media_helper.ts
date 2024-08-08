@@ -16,14 +16,13 @@ import { SharedElement, errorMessageElement, getSharedElement, setErrorMessageEl
 import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import { defaultError } from '../module/text/message/title';
-import { defaultErrorSuffix, mediaLoadError } from '../module/text/message/body';
+import { defaultErrorSuffix, mediaIncompatibleSuffix, mediaLoadError } from '../module/text/message/body';
 import * as styles from '../../css/bangumi.module.scss';
 import { getCDNOrigin } from '../module/env/origin';
 import { buildURLForm, joinURLForms } from '../module/http_form';
 import { disableButton } from '../module/dom/change_input';
 
 export const incompatibleTitle = '再生できません';
-export const incompatibleSuffix = '他のブラウザをご利用いただくか、パソコンでファイルをダウンロードして再生してください。';
 
 function showNetworkError() {
     showErrorMessage(defaultError, mediaLoadError);
@@ -34,15 +33,15 @@ function showUnknownPlaybackError() {
 }
 
 function showDecodeError() {
-    showErrorMessage(defaultError, 'お使いのブラウザは、このデータ形式をデコードすることができません。コーデックに対応していない、またはデコードのためのメモリが不足している可能性があります。' + incompatibleSuffix);
+    showErrorMessage(defaultError, 'お使いのブラウザは、このデータ形式をデコードすることができません。コーデックに対応していない、またはデコードのためのメモリが不足している可能性があります。' + mediaIncompatibleSuffix);
 }
 
 export function showHLSCompatibilityError() {
-    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + incompatibleSuffix);
+    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に最低限必要なMedia Source Extensions（MSE）およびHTTP Live Streaming（HLS）に対応していません。' + mediaIncompatibleSuffix);
 }
 
 export function showCodecCompatibilityError() {
-    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。' + incompatibleSuffix);
+    showErrorMessage(incompatibleTitle, 'お使いのブラウザは、再生に必要なコーデックに対応していません。' + mediaIncompatibleSuffix);
 }
 
 function showPlayPromiseError() {

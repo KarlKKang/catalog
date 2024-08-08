@@ -19,6 +19,8 @@ import { addMouseTouchEventListener } from '../module/event_listener/mouse_touch
 import { getHighResTimestamp, type HighResTimestamp } from '../module/hi_res_timestamp';
 import { mediaLoadError } from '../module/message/param';
 import { TOP_URI } from '../module/env/uri';
+import { MessageParamKey } from '../module/message/type';
+import { mediaIncompatibleSuffix } from '../module/text/message/body';
 
 export default function (baseURL: string, fileName: string, startTime: HighResTimestamp) {
     const container = createDivElement();
@@ -98,6 +100,13 @@ function loadImage(container: HTMLElement, baseURL: string, fileName: string, st
             addTimeout(() => {
                 loadImage(container, baseURL, fileName, startTime, retryCount, retryTimeout * 2);
             }, retryTimeout);
+        },
+        () => {
+            showMessage({
+                [MessageParamKey.TITLE]: '画像を表示できません',
+                [MessageParamKey.MESSAGE]: mediaIncompatibleSuffix,
+                [MessageParamKey.URL]: TOP_URI,
+            });
         },
     );
 }

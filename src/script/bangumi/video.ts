@@ -19,7 +19,7 @@ import {
 } from '../module/browser';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import { getFormatIndex, createQuery } from './helper';
-import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, incompatibleSuffix, showPlayerError, buildAccordion, type AccordionInstance } from './media_helper';
+import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayerError, buildAccordion, type AccordionInstance } from './media_helper';
 import { secToTimestamp } from '../module/time';
 import { encodeCFURIComponent, buildURI } from '../module/http_form';
 import { CustomMediaError } from '../module/player/media_error';
@@ -36,6 +36,7 @@ import { importModule } from '../module/import_module';
 import { PlayerKey } from '../module/player/player_key';
 import { NonNativePlayerKey } from '../module/player/non_native_player_key';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
+import { mediaIncompatibleSuffix } from '../module/text/message/body';
 
 let currentPgid: unknown;
 
@@ -453,7 +454,7 @@ function showDolbyVisionError() {
 }
 
 function show8chAudioError() {
-    showErrorMessage(incompatibleTitle, 'ChromiumベースのブラウザとFirefoxでは、7.1chオーディオを再生することはできません。' + incompatibleSuffix);
+    showErrorMessage(incompatibleTitle, 'ChromiumベースのブラウザとFirefoxでは、7.1chオーディオを再生することはできません。' + mediaIncompatibleSuffix);
 }
 
 async function canPlayHEVC(withFallback: boolean | undefined): Promise<boolean> {
