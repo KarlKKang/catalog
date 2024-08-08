@@ -26,9 +26,10 @@ import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } fro
 import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
 import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
-import { addTimeout, removeTimeout, type Timeout } from '../module/timer';
+import { addTimeout } from '../module/timer';
+import { getHighResTimestamp, type HighResTimestamp } from '../module/hi_res_timestamp';
 
-export default function (newsInfo: NewsInfo, newsID: string, requestTimeout: Timeout): void {
+export default function (newsInfo: NewsInfo, newsID: string, startTime: HighResTimestamp): void {
     const title = newsInfo[NewsInfoKey.TITLE];
     setTitle(title + ' | ' + getTitle());
 
@@ -46,10 +47,14 @@ export default function (newsInfo: NewsInfo, newsID: string, requestTimeout: Tim
     appendChild(contentInnerContainer, contentContainer);
     appendChild(container, contentOuterContainer);
 
-    getNewsContent(newsInfo, newsID, requestTimeout, contentContainer);
+    getNewsContent(newsInfo, newsID, startTime, contentContainer);
 }
 
-function getNewsContent(newsInfo: NewsInfo, newsID: string, requestTimeout: Timeout, contentContainer: HTMLElement, retryCount = 3, retryTimeout = 500): void {
+function getNewsContent(newsInfo: NewsInfo, newsID: string, startTime: HighResTimestamp, contentContainer: HTMLElement, retryCount = 3, retryTimeout = 500): void {
+    if (getHighResTimestamp() - startTime >= 30000) {
+        showMessage(connectionError);
+        return;
+    }
     const retry = () => {
         retryCount--;
         if (retryCount < 0) {
@@ -57,7 +62,7 @@ function getNewsContent(newsInfo: NewsInfo, newsID: string, requestTimeout: Time
             return;
         }
         addTimeout(() => {
-            getNewsContent(newsInfo, newsID, requestTimeout, contentContainer, retryCount, retryTimeout * 2);
+            getNewsContent(newsInfo, newsID, startTime, contentContainer, retryCount, retryTimeout * 2);
         }, retryTimeout);
     };
     const xhr = newXHR(
@@ -66,7 +71,6 @@ function getNewsContent(newsInfo: NewsInfo, newsID: string, requestTimeout: Time
         true,
         () => {
             if (xhr.status === 200) {
-                removeTimeout(requestTimeout);
                 contentContainer.innerHTML = xhr.responseText;
                 addManualMultiLanguageClass(contentContainer);
                 bindEventListners(contentContainer);
