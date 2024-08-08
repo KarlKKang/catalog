@@ -8,7 +8,7 @@ import { body } from '../module/dom/body';
 import { d, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
-import { notFound } from '../module/server/message';
+import { connectionError } from '../module/server/message';
 import { encodeCFURIComponent } from '../module/http_form';
 import { setWidth } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
@@ -17,8 +17,9 @@ import { imageLoader, offload as offloadImageLoader } from '../module/image_load
 import { closeButtonText } from '../module/text/ui';
 import { addTimeout, type Timeout } from '../module/timer';
 import { addMouseTouchEventListener } from '../module/event_listener/mouse_touch_event';
+import { getHighResTimestamp, type HighResTimestamp } from '../module/hi_res_timestamp';
 
-export default function (baseURL: string, fileName: string) {
+export default function (baseURL: string, fileName: string, startTime: HighResTimestamp) {
     const container = createDivElement();
     addClass(container, styles.imageContainer);
     const overlay = createDivElement();
@@ -27,13 +28,7 @@ export default function (baseURL: string, fileName: string) {
     appendChild(body, container);
     removeRightClick(container);
 
-    imageLoader(container, baseURL + encodeCFURIComponent(fileName), fileName, true, (canvas) => {
-        setWidth(canvas, canvas.width / w.devicePixelRatio, CSS_UNIT.PX);
-        // We won't listen to DPI change since we want to allow the user to zoom in and out.
-        // This has the side effect of not updating the image size when the screen DPI actually changes.
-    }, undefined, () => {
-        showMessage(notFound);
-    });
+    loadImage(container, baseURL, fileName, startTime);
 
     const closeButton = createButtonElement(closeButtonText);
     addClass(closeButton, styles.backButton);
@@ -72,6 +67,35 @@ export default function (baseURL: string, fileName: string) {
         },
         () => {
             setActive();
+        },
+    );
+}
+
+function loadImage(container: HTMLElement, baseURL: string, fileName: string, startTime: HighResTimestamp, retryCount = 3, retryTimeout = 500) {
+    if (getHighResTimestamp() - startTime >= 30000) {
+        showMessage(connectionError);
+        return;
+    }
+    imageLoader(
+        container,
+        baseURL + encodeCFURIComponent(fileName),
+        fileName,
+        true,
+        (canvas) => {
+            setWidth(canvas, canvas.width / w.devicePixelRatio, CSS_UNIT.PX);
+            // We won't listen to DPI change since we want to allow the user to zoom in and out.
+            // This has the side effect of not updating the image size when the screen DPI actually changes.
+        },
+        undefined,
+        () => {
+            retryCount--;
+            if (retryCount < 0) {
+                showMessage(connectionError);
+                return;
+            }
+            addTimeout(() => {
+                loadImage(container, baseURL, fileName, startTime, retryCount, retryTimeout * 2);
+            }, retryTimeout);
         },
     );
 }

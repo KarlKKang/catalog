@@ -36,6 +36,7 @@ export default function (showPage: ShowPageFunc) {
         './async'
     );
 
+    let startTime = getHighResTimestamp();
     sendServerRequest(uri, {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
             if (response !== 'APPROVED') {
@@ -49,11 +50,14 @@ export default function (showPage: ShowPageFunc) {
                 return;
             }
             offloadAsyncModule = asyncModule.offload;
-            asyncModule.default(baseURL, fileName);
+            asyncModule.default(baseURL, fileName, startTime);
             showPage();
         },
         [ServerRequestOptionProp.CONTENT]: sessionCredential,
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionProp.ON_RETRY]: () => {
+            startTime = getHighResTimestamp();
+        },
     });
 }
 
