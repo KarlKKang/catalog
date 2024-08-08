@@ -20,18 +20,18 @@ const enum WebpMachineQueueItemProp {
     ON_ERROR,
 }
 interface webpMachineQueueItem {
-    [WebpMachineQueueItemProp.CONTAINER]: Element;
-    [WebpMachineQueueItemProp.IMAGE]: HTMLImageElement;
-    [WebpMachineQueueItemProp.WEBP_DATA]: Uint8Array;
-    [WebpMachineQueueItemProp.ON_LOAD]: ((canvas: HTMLCanvasElement) => void) | undefined;
-    [WebpMachineQueueItemProp.ON_ERROR]: () => void;
+    readonly [WebpMachineQueueItemProp.CONTAINER]: Element;
+    readonly [WebpMachineQueueItemProp.IMAGE]: HTMLImageElement;
+    readonly [WebpMachineQueueItemProp.WEBP_DATA]: Uint8Array;
+    readonly [WebpMachineQueueItemProp.ON_LOAD]: (canvas: HTMLCanvasElement) => void;
+    readonly [WebpMachineQueueItemProp.ON_ERROR]: () => void;
 }
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
-export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw?: (canvas: HTMLCanvasElement) => void, onDataLoad?: (data: Blob) => void, onNetworkError?: () => void, onUnrecoverableError?: () => void): XMLHttpRequest {
+export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw: (canvas: HTMLCanvasElement) => void, onDataLoad?: (data: Blob) => void, onNetworkError?: () => void, onUnrecoverableError?: () => void): XMLHttpRequest {
     let imageData: Blob;
     let isWebp: boolean;
 
@@ -111,7 +111,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
 
         imageProtection(canvas);
         appendChild(container, canvas);
-        onImageDraw && onImageDraw(canvas);
+        onImageDraw(canvas);
     }
 
     addEventListener(image, 'error', onImageError);
@@ -194,8 +194,7 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
     setHeight(canvas, null);
     imageProtection(canvas);
     appendChild(queueItem[WebpMachineQueueItemProp.CONTAINER], canvas);
-    const onLoad = queueItem[WebpMachineQueueItemProp.ON_LOAD];
-    onLoad && onLoad(canvas);
+    queueItem[WebpMachineQueueItemProp.ON_LOAD](canvas);
 }
 
 function imageProtection(elem: HTMLElement) {
