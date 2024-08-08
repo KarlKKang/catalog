@@ -31,14 +31,14 @@ let webpSupported: boolean;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
-export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw: (canvas: HTMLCanvasElement) => void, onDataLoad: ((data: Blob) => void) | undefined, onNetworkError: () => void, onUnrecoverableError: () => void): XMLHttpRequest {
+export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw: (canvas: HTMLCanvasElement) => void, onDataLoad: ((data: Blob) => void) | undefined, onNetworkError: () => void, onImageDrawError: () => void): XMLHttpRequest {
     let imageData: Blob;
     let isWebp: boolean;
 
     const image = new Image();
     image.alt = alt;
 
-    function finalizeUnrecoverableError() {
+    function finalizeImageDrawError() {
         if (DEVELOPMENT) {
             console.error('Unrecoverable error occured when loading the image.');
         }
@@ -46,14 +46,14 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
         errorImage.src = '//:0';
         errorImage.alt = alt;
         appendChild(container, errorImage);
-        onUnrecoverableError();
+        onImageDrawError();
     }
 
     function onImageError() {
         removeAllEventListeners(image);
 
         if (!isWebp) {
-            finalizeUnrecoverableError();
+            finalizeImageDrawError();
             return;
         }
 
@@ -62,7 +62,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
         addEventListenerOnce(reader, 'load', () => {
             const base64URL = reader.result;
             if (!(base64URL instanceof ArrayBuffer)) {
-                finalizeUnrecoverableError();
+                finalizeImageDrawError();
                 return;
             }
 
@@ -72,7 +72,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
                 [WebpMachineQueueItemProp.IMAGE]: image,
                 [WebpMachineQueueItemProp.WEBP_DATA]: webpData,
                 [WebpMachineQueueItemProp.ON_LOAD]: onImageDraw,
-                [WebpMachineQueueItemProp.ON_ERROR]: finalizeUnrecoverableError,
+                [WebpMachineQueueItemProp.ON_ERROR]: finalizeImageDrawError,
             });
             if (webpMachineActive) {
                 if (DEVELOPMENT) {
@@ -94,7 +94,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
         const canvas = createCanvasElement();
         const ctx = canvas.getContext('2d');
         if (ctx === null) {
-            finalizeUnrecoverableError();
+            finalizeImageDrawError();
             return;
         }
 
@@ -103,7 +103,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
         try {
             ctx.drawImage(image, 0, 0);
         } catch {
-            finalizeUnrecoverableError();
+            finalizeImageDrawError();
             return;
         } finally {
             URL.revokeObjectURL(image.src);
