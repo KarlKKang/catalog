@@ -7,7 +7,7 @@ import { getLogoutParam } from './helper';
 import { importAllPageModules } from './page_import_promise';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
-import { addTimeout, removeTimeout } from '../module/timer';
+import { addTimeout } from '../module/timer';
 import { type MediaSessionInfo, MediaSessionInfoKey, parseMediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/BangumiInfo';
 import { importModule } from '../module/import_module';
@@ -52,19 +52,22 @@ export default function (showPage: ShowPageFunc) {
         importAllPageModules();
         importAllMediaModules();
         return new Promise<MediaSessionInfo>((resolve) => {
-            const requestTimeout = addTimeout(() => {
-                showMessage(connectionError);
-            }, 60000);
-            const startTime = getHighResTimestamp();
+            let startTime = getHighResTimestamp();
             sendServerRequest('create_media_session', {
                 [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                    removeTimeout(requestTimeout);
+                    if (getHighResTimestamp() - startTime >= 60000) {
+                        showMessage(connectionError);
+                        return;
+                    }
                     const parsedResponse = parseResponse(response, parseMediaSessionInfo);
                     setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], startTime, getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);
                 },
                 [ServerRequestOptionProp.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
                 [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
+                [ServerRequestOptionProp.ON_RETRY]: () => {
+                    startTime = getHighResTimestamp();
+                },
             });
         });
     };

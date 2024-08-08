@@ -62,7 +62,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         news: newsID,
         hash: getHash(),
     });
-    const startTime = getHighResTimestamp();
+    let startTime = getHighResTimestamp();
     sendServerRequest('get_news', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);
@@ -78,6 +78,9 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         },
         [ServerRequestOptionProp.CONTENT]: buildURLForm({ id: newsID }),
         [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
+        [ServerRequestOptionProp.ON_RETRY]: () => {
+            startTime = getHighResTimestamp();
+        },
     });
 }
 

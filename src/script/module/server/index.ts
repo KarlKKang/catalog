@@ -19,6 +19,7 @@ export const enum ServerRequestOptionProp {
     CONNECTION_ERROR_RETRY,
     CONNECTION_ERROR_RETRY_TIMEOUT,
     SHOW_SESSION_ENDED_MESSAGE,
+    ON_RETRY,
 }
 interface ServerRequestOption {
     readonly [ServerRequestOptionProp.CALLBACK]?: (response: string) => void | Promise<void>;
@@ -28,6 +29,7 @@ interface ServerRequestOption {
     [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]?: number | undefined;
     [ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
     readonly [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]?: boolean;
+    readonly [ServerRequestOptionProp.ON_RETRY]?: () => void;
 }
 function xhrOnErrorCallback(uri: string, options: ServerRequestOption) {
     if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] === undefined) {
@@ -46,6 +48,7 @@ function xhrOnErrorCallback(uri: string, options: ServerRequestOption) {
         showMessage(connectionError);
     } else {
         addTimeout(() => {
+            options[ServerRequestOptionProp.ON_RETRY] && options[ServerRequestOptionProp.ON_RETRY]();
             sendServerRequest(uri, options);
         }, options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]);
     }
@@ -131,7 +134,7 @@ export function logout(callback: () => void) {
 
 export function setUpSessionAuthentication(credential: string, startTime: HighResTimestamp, logoutParam?: string) {
     addTimeout(() => {
-        const newStartTime = getHighResTimestamp();
+        let newStartTime = getHighResTimestamp();
         const requestTimeout = addTimeout(() => {
             showMessage(connectionError);
         }, max(60000 - (newStartTime - startTime), 0));
@@ -148,6 +151,9 @@ export function setUpSessionAuthentication(credential: string, startTime: HighRe
             [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
             [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]: 5,
             [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
+            [ServerRequestOptionProp.ON_RETRY]: () => {
+                newStartTime = getHighResTimestamp();
+            },
         });
     }, max(40000 - (getHighResTimestamp() - startTime), 0)); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
 }
