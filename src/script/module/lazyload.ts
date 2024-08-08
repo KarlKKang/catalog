@@ -7,9 +7,11 @@ import { addClass } from './dom/class';
 import { createDivElement } from './dom/create_element';
 import { showMessage } from './message';
 import { invalidResponse } from './server/message';
-import { addTimeout } from './timer';
+import { addTimeout, removeTimeout, type Timeout } from './timer';
 import * as styles from '../../css/lazyload.module.scss';
 import { imageLoader, offload as offloadImageLoader } from './image_loader';
+import { getHighResTimestamp } from './hi_res_timestamp';
+import { max } from './math';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,
@@ -17,20 +19,15 @@ const observer = new IntersectionObserver(observerCallback, {
     threshold: [0],
 });
 
-const enum Status {
-    LISTENING,
-    WAITING,
-    LOADING,
-}
-
 const enum TargetDataKey {
     SRC,
     ALT,
     DELAY,
     ON_DATA_LOAD,
     ON_IMAGE_DRAW,
-    STATUS,
+    JOB_ID,
     XHR,
+    WAIT_TIMEOUT,
 }
 interface TargetData {
     [TargetDataKey.SRC]: string;
@@ -38,8 +35,9 @@ interface TargetData {
     [TargetDataKey.DELAY]: number;
     [TargetDataKey.ON_DATA_LOAD]: ((data: Blob) => void) | undefined;
     [TargetDataKey.ON_IMAGE_DRAW]: ((canvas: HTMLCanvasElement) => void) | undefined;
-    [TargetDataKey.STATUS]: Status;
+    [TargetDataKey.JOB_ID]: any;
     [TargetDataKey.XHR]: XMLHttpRequest | null;
+    [TargetDataKey.WAIT_TIMEOUT]: Timeout | null;
 }
 
 const targets = new Map<Element, TargetData>();
@@ -73,8 +71,9 @@ export function attachLazyload(
         [TargetDataKey.DELAY]: delay || 0,
         [TargetDataKey.ON_DATA_LOAD]: onDataLoad,
         [TargetDataKey.ON_IMAGE_DRAW]: onImageDraw,
-        [TargetDataKey.STATUS]: Status.LISTENING,
+        [TargetDataKey.JOB_ID]: null,
         [TargetDataKey.XHR]: null,
+        [TargetDataKey.WAIT_TIMEOUT]: null,
     });
 }
 
@@ -87,35 +86,36 @@ function observerCallback(entries: IntersectionObserverEntry[]) {
         }
 
         if (entry['isIntersecting']) {
-            if (targetData[TargetDataKey.STATUS] === Status.LISTENING) {
-                targetData[TargetDataKey.STATUS] = Status.WAITING;
-                addTimeout(() => {
-                    if (!targets.has(target) || targetData[TargetDataKey.STATUS] !== Status.WAITING) {
-                        return;
-                    }
-                    targetData[TargetDataKey.STATUS] = Status.LOADING;
+            if (targetData[TargetDataKey.JOB_ID] === null) {
+                targetData[TargetDataKey.JOB_ID] = {};
+                targetData[TargetDataKey.WAIT_TIMEOUT] = addTimeout(() => {
+                    targetData[TargetDataKey.WAIT_TIMEOUT] = null;
                     loadImage(target, targetData);
                 }, targetData[TargetDataKey.DELAY]);
             }
         } else {
-            if (targetData[TargetDataKey.STATUS] === Status.WAITING) {
-                targetData[TargetDataKey.STATUS] = Status.LISTENING;
-            } else if (targetData[TargetDataKey.STATUS] === Status.LOADING) {
-                if (targetData[TargetDataKey.XHR] !== null) {
-                    if (targetData[TargetDataKey.XHR].readyState === XMLHttpRequest.DONE) { // onImageDraw for the imageLoader may be called after decoding webp.
+            if (targetData[TargetDataKey.JOB_ID] !== null) {
+                const waitTimeout = targetData[TargetDataKey.WAIT_TIMEOUT];
+                const xhr = targetData[TargetDataKey.XHR];
+                if (waitTimeout !== null) {
+                    removeTimeout(waitTimeout);
+                    targetData[TargetDataKey.WAIT_TIMEOUT] = null;
+                } else if (xhr !== null) {
+                    if (xhr.readyState === XMLHttpRequest.DONE) { // onImageDraw for the imageLoader may be called after decoding webp.
                         continue;
                     } else {
-                        targetData[TargetDataKey.XHR].abort();
+                        xhr.abort();
                         targetData[TargetDataKey.XHR] = null;
                     }
                 }
-                targetData[TargetDataKey.STATUS] = Status.LISTENING;
+                targetData[TargetDataKey.JOB_ID] = null;
             }
         }
     }
 }
 
 function loadImage(target: Element, targetData: TargetData) {
+    const jobId = targetData[TargetDataKey.JOB_ID];
     const onImageDraw = (canvas: HTMLCanvasElement) => {
         observer.unobserve(target);
         targets.delete(target);
@@ -127,10 +127,9 @@ function loadImage(target: Element, targetData: TargetData) {
         targets.delete(target);
     };
     const onNetworkError = () => {
-        addTimeout(() => {
-            if (targets.has(target) && targetData[TargetDataKey.STATUS] === Status.LOADING) {
-                loadImage(target, targetData);
-            }
+        targetData[TargetDataKey.WAIT_TIMEOUT] = addTimeout(() => {
+            targetData[TargetDataKey.WAIT_TIMEOUT] = null;
+            loadImage(target, targetData);
         }, 5000);
     };
 
@@ -139,7 +138,8 @@ function loadImage(target: Element, targetData: TargetData) {
         const uri = credential[1] === ImageSessionTypes.MEDIA ? 'get_image' : 'get_news_image';
 
         if (sessionCredentialPromise === null) {
-            sessionCredentialPromise = new Promise((resolve) => {
+            const currentSessionCredentialPromise = new Promise<void>((resolve) => {
+                let startTime = getHighResTimestamp();
                 sendServerRequest(uri, {
                     [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                         if (response !== 'APPROVED') {
@@ -147,17 +147,24 @@ function loadImage(target: Element, targetData: TargetData) {
                             return;
                         }
                         addTimeout(() => {
-                            sessionCredentialPromise = null;
-                        }, 15 * 1000);
+                            if (sessionCredentialPromise === currentSessionCredentialPromise) {
+                                sessionCredentialPromise = null;
+                            }
+                        }, max(30000 - (getHighResTimestamp() - startTime), 0));
                         resolve();
                     },
                     [ServerRequestOptionProp.CONTENT]: sessionCredential,
                     [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
+                    [ServerRequestOptionProp.ON_RETRY]: () => {
+                        startTime = getHighResTimestamp();
+                    },
+                    [ServerRequestOptionProp.TIMEOUT]: 30000,
                 });
             });
+            sessionCredentialPromise = currentSessionCredentialPromise;
         }
         sessionCredentialPromise.then(() => {
-            if (targets.has(target) && targetData[TargetDataKey.STATUS] === Status.LOADING) {
+            if (targetData[TargetDataKey.JOB_ID] === jobId) {
                 targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], true, onImageDraw, targetData[TargetDataKey.ON_DATA_LOAD], onNetworkError, onUnrecoverableError);
             }
         });
@@ -168,6 +175,14 @@ function loadImage(target: Element, targetData: TargetData) {
 
 export function offload() {
     observer.disconnect();
+    for (const targetData of targets.values()) {
+        targetData[TargetDataKey.JOB_ID] = null;
+        targetData[TargetDataKey.WAIT_TIMEOUT] && removeTimeout(targetData[TargetDataKey.WAIT_TIMEOUT]);
+        const xhr = targetData[TargetDataKey.XHR];
+        if (xhr !== null && xhr.readyState !== XMLHttpRequest.DONE) {
+            xhr.abort();
+        }
+    }
     targets.clear();
     sessionCredentialPromise = null;
     credential = null;
