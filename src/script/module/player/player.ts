@@ -11,7 +11,7 @@ import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import * as icons from './icons';
 import { TimeInfoKey, getLocalTime, padTime, secToTimestamp } from '../time';
-import { addInterval, addTimeout, removeInterval } from '../timer';
+import { addInterval, addTimeout, type Interval, removeInterval } from '../timer';
 import { mediaErrorCodeLookup } from './media_error';
 import * as styles from '../../../css/player.module.scss';
 import { hideElement, setLeft, setPaddingTop, setRight, setWidth, showElement } from '../style';
@@ -69,7 +69,7 @@ export class Player {
     private readonly [PlayerKey.PIP_BUTTON]: HTMLButtonElement | undefined;
     private readonly [PlayerKey.FULLSCREEN_BUTTON]: HTMLButtonElement;
 
-    protected [PlayerKey.TIMER]: ReturnType<typeof setInterval> | undefined;
+    protected [PlayerKey.TIMER]: Interval | undefined;
     private [PlayerKey.ON_FULLSCREEN_CHANGE]: undefined | (() => void) = undefined;
     private [PlayerKey.INACTIVE_TIMEOUT] = 12; // 3000 / 250
     private [PlayerKey.DRAGGING_PREVIEW_TIMEOUT] = 4; // 1000 / 250

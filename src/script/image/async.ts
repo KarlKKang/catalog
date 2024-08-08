@@ -15,7 +15,7 @@ import { CSS_UNIT } from '../module/style/value';
 import * as styles from '../../css/image.module.scss';
 import { imageLoader, offload as offloadImageLoader } from '../module/image_loader';
 import { closeButtonText } from '../module/text/ui';
-import { addTimeout } from '../module/timer';
+import { addTimeout, type Timeout } from '../module/timer';
 import { addMouseTouchEventListener } from '../module/event_listener/mouse_touch_event';
 
 export default function (baseURL: string, fileName: string) {
@@ -42,7 +42,7 @@ export default function (baseURL: string, fileName: string) {
     });
     appendChild(body, closeButton);
 
-    let inactiveTimeout: ReturnType<typeof addTimeout> | null = null;
+    let inactiveTimeout: Timeout | null = null;
     const setInactive = () => {
         inactiveTimeout = null;
         addClass(closeButton, styles.inactive);

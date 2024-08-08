@@ -27,7 +27,7 @@ import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/Media
 import { pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './media_import_promise';
 import { SharedElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
-import { addInterval, removeInterval } from '../module/timer';
+import { addInterval, type Interval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import * as commonStyles from '../../css/common.module.scss';
@@ -50,7 +50,7 @@ let currentMediaInstance: PlayerType | null = null;
 let chaptersAccordionInstance: AccordionInstance | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
-const timersTracker = new Set<ReturnType<typeof setInterval>>();
+const timersTracker = new Set<Interval>();
 
 export default function (
     _seriesID: string,

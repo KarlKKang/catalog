@@ -1,5 +1,8 @@
-const timeoutTimers = new Set<ReturnType<typeof setTimeout>>();
-const intervalTimers = new Set<ReturnType<typeof setInterval>>();
+export type Timeout = ReturnType<typeof setTimeout>;
+export type Interval = ReturnType<typeof setInterval>;
+
+const timeoutTimers = new Set<Timeout>();
+const intervalTimers = new Set<Interval>();
 
 export function addTimeout(callback: () => void, ms?: number) {
     const timerID = setTimeout(
@@ -24,12 +27,12 @@ export function addInterval(callback: () => void, ms?: number) {
     return timerID;
 }
 
-export function removeTimeout(timerID: ReturnType<typeof setTimeout>) {
+export function removeTimeout(timerID: Timeout) {
     clearTimeout(timerID);
     timeoutTimers.delete(timerID);
 }
 
-export function removeInterval(timerID: ReturnType<typeof setInterval>) {
+export function removeInterval(timerID: Interval) {
     clearInterval(timerID);
     intervalTimers.delete(timerID);
 }

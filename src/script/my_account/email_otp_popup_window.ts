@@ -7,7 +7,7 @@ import { failedTotp } from '../module/text/message/body';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
 import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';
 import { CSS_AUTO, CSS_COLOR, CSS_CURSOR } from '../module/style/value';
-import { addInterval, removeInterval } from '../module/timer';
+import { addInterval, type Interval, removeInterval } from '../module/timer';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
 
 export const enum EmailOtpPopupWindowKey {
@@ -48,7 +48,7 @@ export function promptForEmailOtp() {
 
     const resendButton = createButtonElement();
     const resendButtonText = '再送信する';
-    let currentResendInterval: ReturnType<typeof setInterval> | null = null;
+    let currentResendInterval: Interval | null = null;
     const resetResendTimer = () => {
         setCursor(resendButton, CSS_CURSOR.NOT_ALLOWED);
         setWidth(resendButton, CSS_AUTO);
