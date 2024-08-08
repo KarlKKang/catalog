@@ -4,7 +4,7 @@ import {
 } from './media_helper';
 import { newXHR } from './xhr';
 import { appendChild } from './dom/change_node';
-import { addEventListener, addEventListenerOnce, removeAllEventListeners } from './event_listener';
+import { addEventListener, removeAllEventListeners } from './event_listener';
 import { createCanvasElement } from './dom/create_element';
 import { setHeight, setWidth } from './style';
 import { importModule } from './import_module';
@@ -64,7 +64,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
 
         // Convert Blob to Uint8Array
         const reader = new FileReader();
-        addEventListenerOnce(reader, 'load', () => {
+        addEventListener(reader, 'load', () => {
             if (currentJobId !== jobId) {
                 return;
             }
@@ -94,6 +94,15 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
                     console.log('Webp Machine NOT active. Pushed ' + image.alt + ' to queue. Webp Machine started.');
                 }
             }
+        });
+        addEventListener(reader, 'error', () => {
+            if (currentJobId !== jobId) {
+                return;
+            }
+            finalizeImageDrawError();
+        });
+        addEventListener(reader, 'loadend', () => {
+            removeAllEventListeners(reader);
         });
         reader.readAsArrayBuffer(imageData);
     }
