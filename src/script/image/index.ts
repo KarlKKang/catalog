@@ -58,6 +58,7 @@ export default function (showPage: ShowPageFunc) {
         [ServerRequestOptionProp.ON_RETRY]: () => {
             startTime = getHighResTimestamp();
         },
+        [ServerRequestOptionProp.TIMEOUT]: 30000,
     });
 }
 

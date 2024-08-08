@@ -2,7 +2,7 @@ import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSession
 import { getSearchParam, getURI } from '../module/dom/document';
 import { clearSessionStorage } from '../module/dom/session_storage';
 import { showMessage } from '../module/message';
-import { connectionError, notFound } from '../module/server/message';
+import { notFound } from '../module/server/message';
 import { getLogoutParam } from './helper';
 import { importAllPageModules } from './page_import_promise';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
@@ -55,10 +55,6 @@ export default function (showPage: ShowPageFunc) {
             let startTime = getHighResTimestamp();
             sendServerRequest('create_media_session', {
                 [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                    if (getHighResTimestamp() - startTime >= 60000) {
-                        showMessage(connectionError);
-                        return;
-                    }
                     const parsedResponse = parseResponse(response, parseMediaSessionInfo);
                     setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], startTime, getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);
@@ -68,6 +64,7 @@ export default function (showPage: ShowPageFunc) {
                 [ServerRequestOptionProp.ON_RETRY]: () => {
                     startTime = getHighResTimestamp();
                 },
+                [ServerRequestOptionProp.TIMEOUT]: 60000,
             });
         });
     };

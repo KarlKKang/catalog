@@ -20,6 +20,7 @@ export const enum ServerRequestOptionProp {
     CONNECTION_ERROR_RETRY_TIMEOUT,
     SHOW_SESSION_ENDED_MESSAGE,
     ON_RETRY,
+    TIMEOUT,
 }
 interface ServerRequestOption {
     readonly [ServerRequestOptionProp.CALLBACK]?: (response: string) => void | Promise<void>;
@@ -30,6 +31,7 @@ interface ServerRequestOption {
     [ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
     readonly [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]?: boolean;
     readonly [ServerRequestOptionProp.ON_RETRY]?: () => void;
+    readonly [ServerRequestOptionProp.TIMEOUT]?: number;
 }
 function xhrOnErrorCallback(uri: string, options: ServerRequestOption) {
     if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] === undefined) {
@@ -113,6 +115,13 @@ export function sendServerRequest(uri: string, options: ServerRequestOption): XM
     addEventListener(xhr, 'error', () => {
         xhrOnErrorCallback(uri, options);
     });
+    const timeout = options[ServerRequestOptionProp.TIMEOUT];
+    if (timeout !== undefined) {
+        xhr.timeout = timeout;
+        addEventListener(xhr, 'timeout', () => {
+            xhrOnErrorCallback(uri, options);
+        });
+    }
     xhr.send(content);
     return xhr;
 }

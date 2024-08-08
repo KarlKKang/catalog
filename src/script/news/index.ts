@@ -81,6 +81,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         [ServerRequestOptionProp.ON_RETRY]: () => {
             startTime = getHighResTimestamp();
         },
+        [ServerRequestOptionProp.TIMEOUT]: 30000,
     });
 }
 
