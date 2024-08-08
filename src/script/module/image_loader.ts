@@ -6,7 +6,6 @@ import { newXHR } from './xhr';
 import { appendChild } from './dom/change_node';
 import { addEventListener, addEventListenerOnce, removeAllEventListeners } from './event_listener';
 import { createCanvasElement } from './dom/create_element';
-import { pgid } from './global';
 import { setHeight, setWidth } from './style';
 import { importModule } from './import_module';
 
@@ -29,9 +28,11 @@ interface webpMachineQueueItem {
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 
+let jobId = {};
 const eventTargetsTracker = new Set<EventTarget>();
 
 export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw: (canvas: HTMLCanvasElement) => void, onDataLoad: ((data: Blob) => void) | undefined, onNetworkError: () => void, onImageDrawError: () => void): XMLHttpRequest {
+    const currentJobId = jobId;
     let imageData: Blob;
     let isWebp: boolean;
 
@@ -52,6 +53,10 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
     function onImageError() {
         removeAllEventListeners(image);
 
+        if (currentJobId !== jobId) {
+            return;
+        }
+
         if (!isWebp) {
             finalizeImageDrawError();
             return;
@@ -60,6 +65,10 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
         // Convert Blob to Uint8Array
         const reader = new FileReader();
         addEventListenerOnce(reader, 'load', () => {
+            if (currentJobId !== jobId) {
+                return;
+            }
+
             const base64URL = reader.result;
             if (!(base64URL instanceof ArrayBuffer)) {
                 finalizeImageDrawError();
@@ -91,6 +100,11 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
 
     function onImageLoad() {
         removeAllEventListeners(image);
+
+        if (currentJobId !== jobId) {
+            return;
+        }
+
         const canvas = createCanvasElement();
         const ctx = canvas.getContext('2d');
         if (ctx === null) {
@@ -122,6 +136,9 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
         'GET',
         withCredentials,
         () => {
+            if (currentJobId !== jobId) {
+                return;
+            }
             if (xhr.status === 200) {
                 isWebp = xhr.getResponseHeader('Content-Type') === 'image/webp';
                 imageData = xhr.response as Blob;
@@ -132,14 +149,19 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
             }
         },
     );
-    addEventListener(xhr, 'error', onNetworkError);
+    addEventListener(xhr, 'error', () => {
+        if (currentJobId !== jobId) {
+            return;
+        }
+        onNetworkError();
+    });
     xhr.responseType = 'blob';
     xhr.send();
     return xhr;
 }
 
 async function startWebpMachine() {
-    const currentPgid = pgid;
+    const currentJobId = jobId;
     if (webpMachine === null) {
         const { WebpMachine, detectWebpSupport } = await importModule(
             import(
@@ -149,7 +171,7 @@ async function startWebpMachine() {
         );
         webpMachine = new WebpMachine();
         webpSupported = await detectWebpSupport();
-        if (currentPgid !== pgid) {
+        if (currentJobId !== jobId) {
             return;
         }
     }
@@ -160,7 +182,7 @@ async function startWebpMachine() {
             queueNext[WebpMachineQueueItemProp.ON_ERROR]();
         } else {
             await drawWebp(webpMachine, queueNext);
-            if (currentPgid !== pgid) {
+            if (currentJobId !== jobId) {
                 return;
             }
         }
@@ -170,12 +192,12 @@ async function startWebpMachine() {
 }
 
 async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueItem) {
-    const currentPgid = pgid;
+    const currentJobId = jobId;
     const canvas = createCanvasElement();
     try {
         await webpMachine.decodeToCanvas(canvas, queueItem[WebpMachineQueueItemProp.WEBP_DATA]);
     } catch {
-        if (currentPgid !== pgid) {
+        if (currentJobId !== jobId) {
             return;
         }
         if (DEVELOPMENT) {
@@ -185,7 +207,7 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
         webpMachine.clearCache();
         return;
     }
-    if (currentPgid !== pgid) {
+    if (currentJobId !== jobId) {
         return;
     }
     webpMachine.clearCache();
@@ -205,6 +227,7 @@ function imageProtection(elem: HTMLElement) {
 }
 
 export function offload() {
+    jobId = {};
     webpMachineQueue.length = 0;
     webpMachineActive = false;
     webpMachine?.clearCache();
