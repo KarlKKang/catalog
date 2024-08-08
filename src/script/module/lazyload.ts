@@ -12,6 +12,7 @@ import * as styles from '../../css/lazyload.module.scss';
 import { imageLoader, offload as offloadImageLoader } from './image_loader';
 import { getHighResTimestamp } from './hi_res_timestamp';
 import { max } from './math';
+import { abortXhr } from './xhr';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,
@@ -100,13 +101,10 @@ function observerCallback(entries: IntersectionObserverEntry[]) {
                 if (waitTimeout !== null) {
                     removeTimeout(waitTimeout);
                     targetData[TargetDataKey.WAIT_TIMEOUT] = null;
-                } else if (xhr !== null) {
-                    if (xhr.readyState === XMLHttpRequest.DONE) { // onImageDraw for the imageLoader may be called after decoding webp.
-                        continue;
-                    } else {
-                        xhr.abort();
-                        targetData[TargetDataKey.XHR] = null;
-                    }
+                }
+                if (xhr !== null) {
+                    abortXhr(xhr);
+                    targetData[TargetDataKey.XHR] = null;
                 }
                 targetData[TargetDataKey.JOB_ID] = null;
             }
@@ -127,10 +125,15 @@ function loadImage(target: Element, targetData: TargetData) {
         targets.delete(target);
     };
     const onNetworkError = () => {
+        targetData[TargetDataKey.XHR] = null;
         targetData[TargetDataKey.WAIT_TIMEOUT] = addTimeout(() => {
             targetData[TargetDataKey.WAIT_TIMEOUT] = null;
             loadImage(target, targetData);
         }, 5000);
+    };
+    const onDataLoad = (data: Blob) => {
+        targetData[TargetDataKey.XHR] = null;
+        targetData[TargetDataKey.ON_DATA_LOAD] && targetData[TargetDataKey.ON_DATA_LOAD](data);
     };
 
     if (credential !== null) {
@@ -165,11 +168,11 @@ function loadImage(target: Element, targetData: TargetData) {
         }
         sessionCredentialPromise.then(() => {
             if (targetData[TargetDataKey.JOB_ID] === jobId) {
-                targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], true, onImageDraw, targetData[TargetDataKey.ON_DATA_LOAD], onNetworkError, onUnrecoverableError);
+                targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], true, onImageDraw, onDataLoad, onNetworkError, onUnrecoverableError);
             }
         });
     } else {
-        targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], false, onImageDraw, targetData[TargetDataKey.ON_DATA_LOAD], onNetworkError, onUnrecoverableError);
+        targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], false, onImageDraw, onDataLoad, onNetworkError, onUnrecoverableError);
     }
 }
 
@@ -178,10 +181,7 @@ export function offload() {
     for (const targetData of targets.values()) {
         targetData[TargetDataKey.JOB_ID] = null;
         targetData[TargetDataKey.WAIT_TIMEOUT] && removeTimeout(targetData[TargetDataKey.WAIT_TIMEOUT]);
-        const xhr = targetData[TargetDataKey.XHR];
-        if (xhr !== null && xhr.readyState !== XMLHttpRequest.DONE) {
-            xhr.abort();
-        }
+        targetData[TargetDataKey.XHR] && abortXhr(targetData[TargetDataKey.XHR]);
     }
     targets.clear();
     sessionCredentialPromise = null;

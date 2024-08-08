@@ -32,3 +32,9 @@ export function abortAllXhr() {
     }
     allRequests.clear();
 }
+
+export function abortXhr(xhr: XMLHttpRequest) {
+    removeAllEventListeners(xhr);
+    xhr.abort();
+    allRequests.delete(xhr);
+}
