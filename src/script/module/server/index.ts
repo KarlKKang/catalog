@@ -19,7 +19,6 @@ export const enum ServerRequestOptionProp {
     CONNECTION_ERROR_RETRY,
     CONNECTION_ERROR_RETRY_TIMEOUT,
     SHOW_SESSION_ENDED_MESSAGE,
-    ON_RETRY,
     TIMEOUT,
 }
 interface ServerRequestOption {
@@ -30,7 +29,6 @@ interface ServerRequestOption {
     [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]?: number | undefined;
     [ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
     readonly [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]?: boolean;
-    readonly [ServerRequestOptionProp.ON_RETRY]?: () => void;
     readonly [ServerRequestOptionProp.TIMEOUT]?: number;
 }
 
@@ -39,6 +37,8 @@ export const enum ServerRequestKey {
     OPTIONS,
     XHR,
     RETRY_TIMEOUT,
+    _REQUEST_START_TIME,
+    REQUEST_START_TIME,
     ABORT,
     SEND_REQUEST,
     ON_ERROR_CALLBACK,
@@ -49,10 +49,15 @@ class ServerRequest {
     private readonly [ServerRequestKey.OPTIONS]: ServerRequestOption;
     private [ServerRequestKey.XHR]: XMLHttpRequest;
     private [ServerRequestKey.RETRY_TIMEOUT]: Timeout | null = null;
+    private [ServerRequestKey._REQUEST_START_TIME]: HighResTimestamp;
+    public get [ServerRequestKey.REQUEST_START_TIME](): HighResTimestamp {
+        return this[ServerRequestKey._REQUEST_START_TIME];
+    }
 
     constructor(uri: string, options: ServerRequestOption) {
         this[ServerRequestKey.URI] = uri;
         this[ServerRequestKey.OPTIONS] = options;
+        this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
         this[ServerRequestKey.XHR] = this[ServerRequestKey.SEND_REQUEST]();
     }
 
@@ -117,7 +122,7 @@ class ServerRequest {
         } else {
             this[ServerRequestKey.RETRY_TIMEOUT] = addTimeout(() => {
                 this[ServerRequestKey.RETRY_TIMEOUT] = null;
-                options[ServerRequestOptionProp.ON_RETRY] && options[ServerRequestOptionProp.ON_RETRY]();
+                this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
                 this[ServerRequestKey.XHR] = this[ServerRequestKey.SEND_REQUEST]();
             }, options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]);
         }
@@ -187,15 +192,14 @@ export function logout(callback: () => void) {
 
 export function setUpSessionAuthentication(credential: string, startTime: HighResTimestamp, logoutParam?: string) {
     addTimeout(() => {
-        let newStartTime = getHighResTimestamp();
         const requestTimeout = addTimeout(() => {
             showMessage(connectionError);
-        }, max(60000 - (newStartTime - startTime), 0));
-        sendServerRequest('authenticate_media_session', {
+        }, max(60000 - (getHighResTimestamp() - startTime), 0));
+        const serverRequest = sendServerRequest('authenticate_media_session', {
             [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                 if (response === 'APPROVED') {
                     removeTimeout(requestTimeout);
-                    setUpSessionAuthentication(credential, newStartTime, logoutParam);
+                    setUpSessionAuthentication(credential, serverRequest[ServerRequestKey.REQUEST_START_TIME], logoutParam);
                     return;
                 }
                 showMessage(invalidResponse());
@@ -204,9 +208,6 @@ export function setUpSessionAuthentication(credential: string, startTime: HighRe
             [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
             [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]: 5,
             [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
-            [ServerRequestOptionProp.ON_RETRY]: () => {
-                newStartTime = getHighResTimestamp();
-            },
         });
     }, max(40000 - (getHighResTimestamp() - startTime), 0)); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
 }

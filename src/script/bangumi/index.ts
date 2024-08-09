@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
+import { ServerRequestKey, ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
 import { getSearchParam, getURI } from '../module/dom/document';
 import { clearSessionStorage } from '../module/dom/session_storage';
 import { showMessage } from '../module/message';
@@ -14,7 +14,6 @@ import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { importAllMediaModules } from './media_import_promise';
 import { buildURLForm } from '../module/http_form';
-import { getHighResTimestamp } from '../module/hi_res_timestamp';
 
 let offloadModule: (() => void) | null = null;
 
@@ -52,18 +51,14 @@ export default function (showPage: ShowPageFunc) {
         importAllPageModules();
         importAllMediaModules();
         return new Promise<MediaSessionInfo>((resolve) => {
-            let startTime = getHighResTimestamp();
-            sendServerRequest('create_media_session', {
+            const serverRequest = sendServerRequest('create_media_session', {
                 [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                     const parsedResponse = parseResponse(response, parseMediaSessionInfo);
-                    setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], startTime, getLogoutParam(seriesID, epIndex));
+                    setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], serverRequest[ServerRequestKey.REQUEST_START_TIME], getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);
                 },
                 [ServerRequestOptionProp.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
                 [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
-                [ServerRequestOptionProp.ON_RETRY]: () => {
-                    startTime = getHighResTimestamp();
-                },
                 [ServerRequestOptionProp.TIMEOUT]: 60000,
             });
         });

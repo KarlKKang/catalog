@@ -1,7 +1,7 @@
 import {
     ImageSessionTypes,
 } from './media_helper';
-import { ServerRequestOptionProp, sendServerRequest } from './server';
+import { ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from './server';
 import { appendChild } from './dom/change_node';
 import { addClass } from './dom/class';
 import { createDivElement } from './dom/create_element';
@@ -142,8 +142,7 @@ function loadImage(target: Element, targetData: TargetData) {
 
         if (sessionCredentialPromise === null) {
             const currentSessionCredentialPromise = new Promise<void>((resolve) => {
-                let startTime = getHighResTimestamp();
-                sendServerRequest(uri, {
+                const serverRequest = sendServerRequest(uri, {
                     [ServerRequestOptionProp.CALLBACK]: function (response: string) {
                         if (response !== 'APPROVED') {
                             showMessage(invalidResponse());
@@ -153,14 +152,11 @@ function loadImage(target: Element, targetData: TargetData) {
                             if (sessionCredentialPromise === currentSessionCredentialPromise) {
                                 sessionCredentialPromise = null;
                             }
-                        }, max(30000 - (getHighResTimestamp() - startTime), 0));
+                        }, max(30000 - (getHighResTimestamp() - serverRequest[ServerRequestKey.REQUEST_START_TIME]), 0));
                         resolve();
                     },
                     [ServerRequestOptionProp.CONTENT]: sessionCredential,
                     [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
-                    [ServerRequestOptionProp.ON_RETRY]: () => {
-                        startTime = getHighResTimestamp();
-                    },
                     [ServerRequestOptionProp.TIMEOUT]: 30000,
                 });
             });

@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
+import { ServerRequestKey, ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
 import { changeURL, getHash, getURI } from '../module/dom/document';
 import { clearSessionStorage } from '../module/dom/session_storage';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
@@ -9,7 +9,6 @@ import { NewsInfoKey, parseNewsInfo } from '../module/type/NewsInfo';
 import { importModule } from '../module/import_module';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { buildURLForm } from '../module/http_form';
-import { getHighResTimestamp } from '../module/hi_res_timestamp';
 
 let offloadModule: (() => void) | null = null;
 
@@ -62,8 +61,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         news: newsID,
         hash: getHash(),
     });
-    let startTime = getHighResTimestamp();
-    sendServerRequest('get_news', {
+    const serverRequest = sendServerRequest('get_news', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);
             const currentPgid = pgid;
@@ -73,14 +71,12 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             }
             offloadModule = newsModule.offload;
             showPage();
+            const startTime = serverRequest[ServerRequestKey.REQUEST_START_TIME];
             setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], startTime, logoutParam);
             newsModule.default(parsedResponse, newsID, startTime);
         },
         [ServerRequestOptionProp.CONTENT]: buildURLForm({ id: newsID }),
         [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
-        [ServerRequestOptionProp.ON_RETRY]: () => {
-            startTime = getHighResTimestamp();
-        },
         [ServerRequestOptionProp.TIMEOUT]: 30000,
     });
 }
