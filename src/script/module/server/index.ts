@@ -47,7 +47,7 @@ export const enum ServerRequestKey {
 class ServerRequest {
     private readonly [ServerRequestKey.URI]: string;
     private readonly [ServerRequestKey.OPTIONS]: ServerRequestOption;
-    private [ServerRequestKey.XHR]: XMLHttpRequest;
+    private [ServerRequestKey.XHR]: XMLHttpRequest | null = null;
     private [ServerRequestKey.RETRY_TIMEOUT]: Timeout | null = null;
     private [ServerRequestKey._REQUEST_START_TIME]: HighResTimestamp;
     public get [ServerRequestKey.REQUEST_START_TIME](): HighResTimestamp {
@@ -58,15 +58,19 @@ class ServerRequest {
         this[ServerRequestKey.URI] = uri;
         this[ServerRequestKey.OPTIONS] = options;
         this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
-        this[ServerRequestKey.XHR] = this[ServerRequestKey.SEND_REQUEST]();
+        this[ServerRequestKey.SEND_REQUEST]();
     }
 
     public [ServerRequestKey.ABORT]() {
         const retryTimeout = this[ServerRequestKey.RETRY_TIMEOUT];
-        if (retryTimeout === null) {
-            abortXhr(this[ServerRequestKey.XHR]);
-        } else {
+        if (retryTimeout !== null) {
             removeTimeout(retryTimeout);
+            this[ServerRequestKey.RETRY_TIMEOUT] = null;
+        }
+        const xhr = this[ServerRequestKey.XHR];
+        if (xhr !== null) {
+            abortXhr(xhr);
+            this[ServerRequestKey.XHR] = null;
         }
     }
 
@@ -84,23 +88,26 @@ class ServerRequest {
             method,
             true,
             () => {
-                if (this[ServerRequestKey.CHECK_STATUS]()) {
+                this[ServerRequestKey.XHR] = null;
+                if (this[ServerRequestKey.CHECK_STATUS](xhr)) {
                     options[ServerRequestOptionProp.CALLBACK] && options[ServerRequestOptionProp.CALLBACK](xhr.responseText);
                 }
             },
         );
         addEventListener(xhr, 'error', () => {
+            this[ServerRequestKey.XHR] = null;
             this[ServerRequestKey.ON_ERROR_CALLBACK]();
         });
         const timeout = options[ServerRequestOptionProp.TIMEOUT];
         if (timeout !== undefined) {
             xhr.timeout = timeout;
             addEventListener(xhr, 'timeout', () => {
+                this[ServerRequestKey.XHR] = null;
                 this[ServerRequestKey.ON_ERROR_CALLBACK]();
             });
         }
         xhr.send(content);
-        return xhr;
+        this[ServerRequestKey.XHR] = xhr;
     }
 
     private [ServerRequestKey.ON_ERROR_CALLBACK](this: ServerRequest) {
@@ -123,16 +130,15 @@ class ServerRequest {
             this[ServerRequestKey.RETRY_TIMEOUT] = addTimeout(() => {
                 this[ServerRequestKey.RETRY_TIMEOUT] = null;
                 this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
-                this[ServerRequestKey.XHR] = this[ServerRequestKey.SEND_REQUEST]();
+                this[ServerRequestKey.SEND_REQUEST]();
             }, options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]);
         }
     }
 
-    private [ServerRequestKey.CHECK_STATUS](this: ServerRequest) {
-        const response = this[ServerRequestKey.XHR];
+    private [ServerRequestKey.CHECK_STATUS](this: ServerRequest, xhr: XMLHttpRequest) {
         const options = this[ServerRequestKey.OPTIONS];
-        const status = response.status;
-        const responseText = response.responseText;
+        const status = xhr.status;
+        const responseText = xhr.responseText;
         if (status === 200) {
             return true;
         } else if (status === 403) {
@@ -161,7 +167,7 @@ class ServerRequest {
             } else {
                 showMessage(unknownServerError());
             }
-        } else if (status === 404 && response.responseText === 'REJECTED') {
+        } else if (status === 404 && responseText === 'REJECTED') {
             showMessage(notFound);
         } else {
             this[ServerRequestKey.ON_ERROR_CALLBACK]();
