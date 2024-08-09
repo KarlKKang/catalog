@@ -28,7 +28,7 @@ interface webpMachineQueueItem {
 const webpMachineQueue: webpMachineQueueItem[] = [];
 let webpSupported: boolean;
 
-let jobId = {};
+let jobId: object = {};
 const eventTargetsTracker = new Set<EventTarget>();
 
 export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw: (canvas: HTMLCanvasElement) => void, onDataLoad: ((data: Blob) => void) | undefined, onNetworkError: () => void, onImageDrawError: () => void): XMLHttpRequest {

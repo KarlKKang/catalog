@@ -36,7 +36,7 @@ interface TargetData {
     [TargetDataKey.DELAY]: number;
     [TargetDataKey.ON_DATA_LOAD]: ((data: Blob) => void) | undefined;
     [TargetDataKey.ON_IMAGE_DRAW]: ((canvas: HTMLCanvasElement) => void) | undefined;
-    [TargetDataKey.JOB_ID]: {} | null;
+    [TargetDataKey.JOB_ID]: object | null;
     [TargetDataKey.XHR]: XMLHttpRequest | null;
     [TargetDataKey.WAIT_TIMEOUT]: Timeout | null;
 }
