@@ -121,7 +121,7 @@ function loadImage(target: Element, targetData: TargetData) {
         addClass(target, styles.complete);
         targetData[TargetDataKey.ON_IMAGE_DRAW] && targetData[TargetDataKey.ON_IMAGE_DRAW](canvas);
     };
-    const onUnrecoverableError = () => {
+    const onImageDrawError = () => {
         observer.unobserve(target);
         targets.delete(target);
     };
@@ -167,11 +167,11 @@ function loadImage(target: Element, targetData: TargetData) {
         }
         sessionCredentialPromise.then(() => {
             if (targetData[TargetDataKey.JOB_ID] === jobId) {
-                targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], true, onImageDraw, onDataLoad, onNetworkError, onUnrecoverableError);
+                targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], true, onImageDraw, onDataLoad, onNetworkError, onImageDrawError);
             }
         });
     } else {
-        targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], false, onImageDraw, onDataLoad, onNetworkError, onUnrecoverableError);
+        targetData[TargetDataKey.XHR] = imageLoader(target, targetData[TargetDataKey.SRC], targetData[TargetDataKey.ALT], false, onImageDraw, onDataLoad, onNetworkError, onImageDrawError);
     }
 }
 
