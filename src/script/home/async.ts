@@ -1,6 +1,6 @@
 import { newXHR } from '../module/xhr';
 import { scrollToTop } from '../module/dom/scroll';
-import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
+import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
 import { disableInput } from '../module/dom/change_input';
 import { appendChild, appendChildren, insertBefore, replaceChildren } from '../module/dom/change_node';
@@ -31,7 +31,7 @@ import { min } from '../module/math';
 
 let pivot: Pivot;
 let keywords: string;
-let currentRequest: XMLHttpRequest | null = null;
+let currentRequest: ServerRequest | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
@@ -229,9 +229,9 @@ function search(
         }, 400);
     });
 
-    getSeries((seriesInfo, xhr) => {
+    getSeries((seriesInfo, request) => {
         animationTimeout.then(() => {
-            if (currentRequest !== xhr) {
+            if (currentRequest !== request) {
                 return;
             }
             showSeries(
@@ -251,13 +251,11 @@ function goToSeries(id: string) {
     redirect(BANGUMI_ROOT_URI + id);
 }
 
-function getSeries(callback: (seriesInfo: SeriesInfo, xhr?: XMLHttpRequest) => void) {
+function getSeries(callback: (seriesInfo: SeriesInfo, request: ServerRequest) => void) {
     if (pivot === 'EOF') {
         return;
     }
-    if (currentRequest !== null && currentRequest.readyState !== XMLHttpRequest.DONE) {
-        currentRequest.abort();
-    }
+    currentRequest?.[ServerRequestKey.ABORT]();
     const keywordsQuery = buildURLForm({ keywords: keywords });
     const request = sendServerRequest('get_series', {
         [ServerRequestOptionProp.CALLBACK]: function (response: string) {

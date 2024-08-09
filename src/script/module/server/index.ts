@@ -1,11 +1,11 @@
 import { getServerOrigin } from '../env/origin';
 import { showMessage } from '../message';
 import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
-import { addTimeout, removeTimeout } from '../timer';
+import { addTimeout, removeTimeout, type Timeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 import { LOGIN_URI } from '../env/uri';
-import { newXHR } from '../xhr';
+import { abortXhr, newXHR } from '../xhr';
 import { addEventListener } from '../event_listener';
 import { buildURI } from '../http_form';
 import { max } from '../math';
@@ -33,97 +33,141 @@ interface ServerRequestOption {
     readonly [ServerRequestOptionProp.ON_RETRY]?: () => void;
     readonly [ServerRequestOptionProp.TIMEOUT]?: number;
 }
-function xhrOnErrorCallback(uri: string, options: ServerRequestOption) {
-    if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] === undefined) {
-        options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] = 2;
-    } else {
-        options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] -= 1;
-    }
 
-    if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] === undefined) {
-        options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] = 500;
-    } else {
-        options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] *= 2;
-    }
-
-    if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] < 0) {
-        showMessage(connectionError);
-    } else {
-        addTimeout(() => {
-            options[ServerRequestOptionProp.ON_RETRY] && options[ServerRequestOptionProp.ON_RETRY]();
-            sendServerRequest(uri, options);
-        }, options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]);
-    }
+export const enum ServerRequestKey {
+    URI,
+    OPTIONS,
+    XHR,
+    RETRY_TIMEOUT,
+    ABORT,
+    SEND_REQUEST,
+    ON_ERROR_CALLBACK,
+    CHECK_STATUS,
 }
-function checkXHRStatus(response: XMLHttpRequest, uri: string, options: ServerRequestOption): boolean {
-    const status = response.status;
-    const responseText = response.responseText;
-    if (status === 200) {
-        return true;
-    } else if (status === 403) {
-        if (responseText === 'SESSION ENDED') {
-            showMessage(mediaSessionEnded);
-        } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
-            showMessage(insufficientPermissions);
-        } else if (responseText === 'UNAUTHORIZED') {
-            const logoutParam = options[ServerRequestOptionProp.LOGOUT_PARAM];
-            const url = buildURI(LOGIN_URI, logoutParam);
-            if (options[ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]) {
-                showMessage(sessionEnded(url));
-            } else {
-                redirect(url, true);
-            }
-        } else {
-            xhrOnErrorCallback(uri, options);
-        }
-    } else if (status === 429) {
-        showMessage(status429);
-    } else if (status === 503) {
-        showMessage(status503(parseResponse(responseText, parseMaintenanceInfo)));
-    } else if (status === 500 || status === 400) {
-        if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
-            showMessage(status400And500(responseText));
-        } else {
-            showMessage(unknownServerError());
-        }
-    } else if (status === 404 && response.responseText === 'REJECTED') {
-        showMessage(notFound);
-    } else {
-        xhrOnErrorCallback(uri, options);
-    }
-    return false;
-}
+class ServerRequest {
+    private readonly [ServerRequestKey.URI]: string;
+    private readonly [ServerRequestKey.OPTIONS]: ServerRequestOption;
+    private [ServerRequestKey.XHR]: XMLHttpRequest;
+    private [ServerRequestKey.RETRY_TIMEOUT]: Timeout | null = null;
 
-export function sendServerRequest(uri: string, options: ServerRequestOption): XMLHttpRequest {
-    let content = options[ServerRequestOptionProp.CONTENT] ?? '';
-    const method = options[ServerRequestOptionProp.METHOD] ?? 'POST';
-    let realUri = uri;
-    if (method === 'GET') {
-        realUri = buildURI(uri, content);
-        content = '';
+    constructor(uri: string, options: ServerRequestOption) {
+        this[ServerRequestKey.URI] = uri;
+        this[ServerRequestKey.OPTIONS] = options;
+        this[ServerRequestKey.XHR] = this[ServerRequestKey.SEND_REQUEST]();
     }
-    const xhr = newXHR(
-        getServerOrigin() + '/' + realUri,
-        method,
-        true,
-        () => {
-            if (checkXHRStatus(xhr, uri, options)) {
-                options[ServerRequestOptionProp.CALLBACK] && options[ServerRequestOptionProp.CALLBACK](xhr.responseText);
-            }
-        },
-    );
-    addEventListener(xhr, 'error', () => {
-        xhrOnErrorCallback(uri, options);
-    });
-    const timeout = options[ServerRequestOptionProp.TIMEOUT];
-    if (timeout !== undefined) {
-        xhr.timeout = timeout;
-        addEventListener(xhr, 'timeout', () => {
-            xhrOnErrorCallback(uri, options);
+
+    public [ServerRequestKey.ABORT]() {
+        const retryTimeout = this[ServerRequestKey.RETRY_TIMEOUT];
+        if (retryTimeout === null) {
+            abortXhr(this[ServerRequestKey.XHR]);
+        } else {
+            removeTimeout(retryTimeout);
+        }
+    }
+
+    private [ServerRequestKey.SEND_REQUEST](this: ServerRequest) {
+        let uri = this[ServerRequestKey.URI];
+        const options = this[ServerRequestKey.OPTIONS];
+        let content = options[ServerRequestOptionProp.CONTENT] ?? '';
+        const method = options[ServerRequestOptionProp.METHOD] ?? 'POST';
+        if (method === 'GET') {
+            uri = buildURI(uri, content);
+            content = '';
+        }
+        const xhr = newXHR(
+            getServerOrigin() + '/' + uri,
+            method,
+            true,
+            () => {
+                if (this[ServerRequestKey.CHECK_STATUS]()) {
+                    options[ServerRequestOptionProp.CALLBACK] && options[ServerRequestOptionProp.CALLBACK](xhr.responseText);
+                }
+            },
+        );
+        addEventListener(xhr, 'error', () => {
+            this[ServerRequestKey.ON_ERROR_CALLBACK]();
         });
+        const timeout = options[ServerRequestOptionProp.TIMEOUT];
+        if (timeout !== undefined) {
+            xhr.timeout = timeout;
+            addEventListener(xhr, 'timeout', () => {
+                this[ServerRequestKey.ON_ERROR_CALLBACK]();
+            });
+        }
+        xhr.send(content);
+        return xhr;
     }
-    xhr.send(content);
-    return xhr;
+
+    private [ServerRequestKey.ON_ERROR_CALLBACK](this: ServerRequest) {
+        const options = this[ServerRequestKey.OPTIONS];
+        if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] === undefined) {
+            options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] = 2;
+        } else {
+            options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] -= 1;
+        }
+
+        if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] === undefined) {
+            options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] = 500;
+        } else {
+            options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] *= 2;
+        }
+
+        if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] < 0) {
+            showMessage(connectionError);
+        } else {
+            this[ServerRequestKey.RETRY_TIMEOUT] = addTimeout(() => {
+                this[ServerRequestKey.RETRY_TIMEOUT] = null;
+                options[ServerRequestOptionProp.ON_RETRY] && options[ServerRequestOptionProp.ON_RETRY]();
+                this[ServerRequestKey.XHR] = this[ServerRequestKey.SEND_REQUEST]();
+            }, options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]);
+        }
+    }
+
+    private [ServerRequestKey.CHECK_STATUS](this: ServerRequest) {
+        const response = this[ServerRequestKey.XHR];
+        const options = this[ServerRequestKey.OPTIONS];
+        const status = response.status;
+        const responseText = response.responseText;
+        if (status === 200) {
+            return true;
+        } else if (status === 403) {
+            if (responseText === 'SESSION ENDED') {
+                showMessage(mediaSessionEnded);
+            } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
+                showMessage(insufficientPermissions);
+            } else if (responseText === 'UNAUTHORIZED') {
+                const logoutParam = options[ServerRequestOptionProp.LOGOUT_PARAM];
+                const url = buildURI(LOGIN_URI, logoutParam);
+                if (options[ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]) {
+                    showMessage(sessionEnded(url));
+                } else {
+                    redirect(url, true);
+                }
+            } else {
+                this[ServerRequestKey.ON_ERROR_CALLBACK]();
+            }
+        } else if (status === 429) {
+            showMessage(status429);
+        } else if (status === 503) {
+            showMessage(status503(parseResponse(responseText, parseMaintenanceInfo)));
+        } else if (status === 500 || status === 400) {
+            if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
+                showMessage(status400And500(responseText));
+            } else {
+                showMessage(unknownServerError());
+            }
+        } else if (status === 404 && response.responseText === 'REJECTED') {
+            showMessage(notFound);
+        } else {
+            this[ServerRequestKey.ON_ERROR_CALLBACK]();
+        }
+        return false;
+    }
+}
+export type { ServerRequest };
+
+export function sendServerRequest(uri: string, options: ServerRequestOption) {
+    return new ServerRequest(uri, options);
 }
 
 export function logout(callback: () => void) {
