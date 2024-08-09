@@ -1,7 +1,7 @@
 import {
     ImageSessionTypes,
 } from './media_helper';
-import { ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from './server';
+import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from './server';
 import { appendChild } from './dom/change_node';
 import { addClass } from './dom/class';
 import { createDivElement } from './dom/create_element';
@@ -43,6 +43,7 @@ interface TargetData {
 
 const targets = new Map<Element, TargetData>();
 let sessionCredentialPromise: Promise<void> | null = null;
+let sessionCredentialServerRequest: ServerRequest | null = null;
 let credential: [
     string, // sessionCredential
     ImageSessionTypes, // sessionType
@@ -144,6 +145,7 @@ function loadImage(target: Element, targetData: TargetData) {
             const currentSessionCredentialPromise = new Promise<void>((resolve) => {
                 const serverRequest = sendServerRequest(uri, {
                     [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+                        sessionCredentialServerRequest = null;
                         if (response !== 'APPROVED') {
                             showMessage(invalidResponse());
                             return;
@@ -159,6 +161,7 @@ function loadImage(target: Element, targetData: TargetData) {
                     [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
                     [ServerRequestOptionProp.TIMEOUT]: 30000,
                 });
+                sessionCredentialServerRequest = serverRequest;
             });
             sessionCredentialPromise = currentSessionCredentialPromise;
         }
@@ -181,6 +184,10 @@ export function offload() {
     }
     targets.clear();
     sessionCredentialPromise = null;
+    if (sessionCredentialServerRequest !== null) {
+        sessionCredentialServerRequest[ServerRequestKey.ABORT]();
+        sessionCredentialServerRequest = null;
+    }
     credential = null;
     offloadImageLoader();
 }
