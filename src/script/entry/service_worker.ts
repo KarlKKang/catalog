@@ -59,8 +59,8 @@ export default async function () { // This function should be called after setti
             }
             serviceWorkerUpToDate = false;
         });
-        serviceWorker.addEventListener('controlling', (event) => {
-            if (event.isUpdate) {
+        serviceWorker.addEventListener('controlling', () => {
+            if (!serviceWorkerUpToDate) {
                 if (DEVELOPMENT) {
                     console.log('Service worker updated.');
                 }
