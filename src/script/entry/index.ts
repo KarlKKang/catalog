@@ -262,7 +262,7 @@ function importFont(delay: number) {
         try {
             await import('./font');
         } catch (e) {
-            importFont(min(60 * 1000, max(1000, delay * 2)));
+            importFont(min(5000, max(500, delay * 2)));
             throw e;
         }
     }, delay);
