@@ -34,16 +34,6 @@ export default async function () { // This function should be called after setti
             };
             addEventListener(updateButton, 'click', () => {
                 disableAllInputs(true);
-                if (serviceWorkerUpToDate) {
-                    if (DEVELOPMENT) {
-                        console.log('Service worker already up to date.');
-                    }
-                    windowLocation.reload();
-                    return;
-                }
-                addEventListener(wb as unknown as EventTarget, 'controlling', () => {
-                    windowLocation.reload();
-                });
                 wb.messageSkipWaiting();
             });
             addEventListener(cancelButton, 'click', () => {
@@ -69,11 +59,13 @@ export default async function () { // This function should be called after setti
             }
             serviceWorkerUpToDate = false;
         });
-        serviceWorker.addEventListener('controlling', () => {
-            if (DEVELOPMENT) {
-                console.log('Service worker controlling.');
+        serviceWorker.addEventListener('controlling', (event) => {
+            if (event.isUpdate) {
+                if (DEVELOPMENT) {
+                    console.log('Service worker updated.');
+                }
+                windowLocation.reload();
             }
-            serviceWorkerUpToDate = true;
         });
 
         addWaitingListener(serviceWorker);
