@@ -54,7 +54,7 @@ export default async function () { // This function should be called after setti
     };
 
     const addWaitingListener = (wb: Workbox) => {
-        addEventListener(serviceWorker as unknown as EventTarget, 'waiting', () => {
+        addEventListener(wb as unknown as EventTarget, 'waiting', () => {
             showSkipWaitingPrompt(wb);
         });
     };
