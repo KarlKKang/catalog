@@ -69,17 +69,23 @@ export default async function () { // This function should be called after setti
         });
 
         addWaitingListener(serviceWorker);
-        serviceWorker.register();
+        registerOrUpdate(serviceWorker);
     } else {
         if (swUpdateLastPromptTime < Date.now() - 24 * 60 * 60 * 1000) {
             if (serviceWorkerUpToDate) {
                 addWaitingListener(serviceWorker);
-                serviceWorker.update();
+                registerOrUpdate(serviceWorker);
             } else {
                 showSkipWaitingPrompt(serviceWorker);
             }
         }
     }
+}
+
+function registerOrUpdate(wb: Workbox) {
+    wb.register().then(() => {
+        wb.update();
+    });
 }
 
 export function offload() {
