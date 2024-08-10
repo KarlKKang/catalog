@@ -28,8 +28,6 @@ type PageScriptImport = Promise<PageScript>;
 const enum PageProp {
     SCRIPT,
     TITLE,
-    NATIVE_VIEWPORT,
-    NO_THEME,
     SCRIPT_CACHED,
 }
 interface Page {
