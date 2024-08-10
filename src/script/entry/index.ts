@@ -39,10 +39,12 @@ interface Page {
 const loadingBar = createDivElement();
 addClass(loadingBar, styles.loadingBar);
 let currentPageScript: PageScript | null = null;
-let serviceWorkerModule: {
+interface ServiceWorkerModule {
     default: () => void;
     offload: () => void;
-} | null = null;
+}
+let serviceWorkerModule: ServiceWorkerModule | null = null;
+let serviceWorkerModulePromise: Promise<ServiceWorkerModule> | null = null;
 let loadingBarShown = false;
 
 const page404 = {
@@ -225,19 +227,19 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
             setMinHeight(html, null);
 
             if ('serviceWorker' in navigator) {
-                if (serviceWorkerModule === null) {
-                    import(
-                        /* webpackExports: ["default", "offload"] */
-                        './service_worker'
-                    ).then((module) => {
+                if (serviceWorkerModule !== null) {
+                    serviceWorkerModule.default();
+                } else {
+                    if (serviceWorkerModulePromise === null) {
+                        serviceWorkerModulePromise = getServiceWorkerModulePromise();
+                    }
+                    serviceWorkerModulePromise.then((module) => {
+                        serviceWorkerModule = module;
                         if (pgid !== newPgid) {
                             return;
                         }
-                        serviceWorkerModule = module;
                         serviceWorkerModule.default();
                     }); // No need to catch error since this module is not critical.
-                } else {
-                    serviceWorkerModule.default();
                 }
             }
 
@@ -263,6 +265,22 @@ function importFont(delay: number) {
             throw e;
         }
     }, delay);
+}
+
+async function getServiceWorkerModulePromise(retryTimeout = 500): Promise<ServiceWorkerModule> {
+    try {
+        return await import(
+            /* webpackExports: ["default", "offload"] */
+            './service_worker'
+        );
+    } catch (e) {
+        console.error(e);
+        return new Promise<ServiceWorkerModule>((resolve) => {
+            setTimeout(() => {
+                resolve(getServiceWorkerModulePromise(min(retryTimeout * 2, 5000)));
+            }, retryTimeout);
+        });
+    }
 }
 
 function objectKeyExists<T extends object>(key: PropertyKey, obj: T): key is keyof T {
