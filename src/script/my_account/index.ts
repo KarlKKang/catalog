@@ -32,13 +32,15 @@ export default function (showPage: ShowPageFunc) {
             return;
         }
         getSessionsStarted = true;
-        const sessionsModuleImport = import(
-            /* webpackExports: ["default"] */
-            './sessions'
+        const sessionsModuleImport = importModule(
+            () => import(
+                /* webpackExports: ["default"] */
+                './sessions'
+            ),
         );
         sendServerRequest('get_sessions', {
             [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
-                const sessionsModule = await importModule(sessionsModuleImport);
+                const sessionsModule = await sessionsModuleImport;
                 await uiInitPromise;
                 if (currentPgid !== pgid) {
                     return;
@@ -49,15 +51,17 @@ export default function (showPage: ShowPageFunc) {
     };
     addTimeout(getSessions, 1000); // In case the network latency is high, we might as well start the request early
 
-    const asyncModulePromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './async'
+    const asyncModulePromise = importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './async'
+        ),
     );
 
     sendServerRequest('get_account', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
             const userInfo = parseResponse(response, parseAccountInfo);
-            const asyncModule = await importModule(asyncModulePromise);
+            const asyncModule = await asyncModulePromise;
             if (currentPgid !== pgid) {
                 return;
             }

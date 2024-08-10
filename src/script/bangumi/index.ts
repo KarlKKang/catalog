@@ -69,9 +69,11 @@ export default function (showPage: ShowPageFunc) {
         }
     }, 1000);
 
-    const asyncModulePromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './async'
+    const asyncModulePromise = importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './async'
+        ),
     );
     sendServerRequest('get_ep', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
@@ -89,7 +91,7 @@ export default function (showPage: ShowPageFunc) {
                 }
             });
 
-            const asyncModule = await importModule(asyncModulePromise);
+            const asyncModule = await asyncModulePromise;
             if (currentPgid !== pgid) {
                 return;
             }

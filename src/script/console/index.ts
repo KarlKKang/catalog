@@ -11,9 +11,11 @@ let offloadModule: (() => void) | null = null;
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
-    const asyncModulePromise = import(
-        /* webpackExports: ["default"] */
-        './async'
+    const asyncModulePromise = importModule(
+        () => import(
+            /* webpackExports: ["default"] */
+            './async'
+        ),
     );
     sendServerRequest('console', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
@@ -22,7 +24,7 @@ export default function (showPage: ShowPageFunc) {
                 return;
             }
             const currentPgid = pgid;
-            const asyncModule = await importModule(asyncModulePromise);
+            const asyncModule = await asyncModulePromise;
             if (pgid !== currentPgid) {
                 return;
             }

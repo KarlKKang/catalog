@@ -1,3 +1,5 @@
+import { importModule } from '../module/import_module';
+
 export let nativePlayerImportPromise: Promise<typeof import(
     /* webpackExports: ["Player"] */
     '../module/player/player'
@@ -8,12 +10,16 @@ export let hlsPlayerImportPromise: Promise<typeof import(
 )>;
 
 export function importAllMediaModules() {
-    nativePlayerImportPromise = import(
-        /* webpackExports: ["Player"] */
-        '../module/player/player'
+    nativePlayerImportPromise = importModule(
+        () => import(
+            /* webpackExports: ["Player"] */
+            '../module/player/player'
+        ),
     );
-    hlsPlayerImportPromise = import(
-        /* webpackExports: ["HlsPlayer"] */
-        '../module/player/hls_player'
+    hlsPlayerImportPromise = importModule(
+        () => import(
+            /* webpackExports: ["HlsPlayer"] */
+            '../module/player/hls_player'
+        ),
     );
 }

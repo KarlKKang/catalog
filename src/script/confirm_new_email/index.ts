@@ -14,14 +14,16 @@ let offloadModule: (() => void) | null = null;
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
-    const getAsyncModulePromise = () => import(
-        /* webpackExports: ["default", "offload"] */
-        './async'
+    const getAsyncModulePromise = () => importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './async'
+        ),
     );
 
     const runAsyncModule = async (asyncModulePromise: ReturnType<typeof getAsyncModulePromise>, param: string) => {
         const currentPgid = pgid;
-        const asyncModule = await importModule(asyncModulePromise);
+        const asyncModule = await asyncModulePromise;
         if (pgid !== currentPgid) {
             return;
         }

@@ -23,7 +23,6 @@ import * as commonStyles from '../../css/common.module.scss';
 import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
 import { offloadPopupWindow } from '../module/popup_window/core';
-import { importModule } from '../module/import_module';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 
 export default function (
@@ -151,7 +150,7 @@ export default function (
                         break;
                     case 'APPROVED': {
                         const currentPgid = pgid;
-                        const approvedCallback = await importModule(approvedCallbackPromise);
+                        const approvedCallback = await approvedCallbackPromise;
                         if (currentPgid === pgid) {
                             approvedCallback.default();
                         }

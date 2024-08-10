@@ -1,3 +1,5 @@
+import { importModule } from '../module/import_module';
+
 export let imageImportPromise: Promise<typeof import(
     /* webpackExports: ["default", "offload"] */
     './image'
@@ -11,16 +13,22 @@ export let videoImportPromise: Promise<typeof import(
     './video'
 )>;
 export function importAllPageModules() {
-    imageImportPromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './image'
+    imageImportPromise = importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './image'
+        ),
     );
-    audioImportPromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './audio'
+    audioImportPromise = importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './audio'
+        ),
     );
-    videoImportPromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './video'
+    videoImportPromise = importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './video'
+        ),
     );
 }

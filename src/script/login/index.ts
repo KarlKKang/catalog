@@ -21,17 +21,21 @@ export default function (showPage: ShowPageFunc) {
         if (approvedCallbackPromise !== null) {
             return approvedCallbackPromise;
         }
-        approvedCallbackPromise = import(
-            /* webpackExports: ["default"] */
-            './approved_callback'
+        approvedCallbackPromise = importModule(
+            () => import(
+                /* webpackExports: ["default"] */
+                './approved_callback'
+            ),
         );
         return approvedCallbackPromise;
     };
     addTimeout(importApprovedCallback, 1000);
 
-    const asyncModulePromise = import(
-        /* webpackExports: ["default"] */
-        './async'
+    const asyncModulePromise = importModule(
+        () => import(
+            /* webpackExports: ["default"] */
+            './async'
+        ),
     );
     sendServerRequest('get_authentication_state', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
@@ -39,7 +43,7 @@ export default function (showPage: ShowPageFunc) {
                 redirect(TOP_URI, true);
             } else if (response === 'FAILED') {
                 const currentPgid = pgid;
-                const asyncModule = await importModule(asyncModulePromise);
+                const asyncModule = await asyncModulePromise;
                 if (currentPgid !== pgid) {
                     return;
                 }

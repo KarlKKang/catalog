@@ -22,7 +22,6 @@ import { pgid } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './media_import_promise';
 import { SharedElement, getSharedElement } from './shared_var';
 import * as styles from '../../css/bangumi.module.scss';
-import { importModule } from '../module/import_module';
 import { PlayerKey } from '../module/player/player_key';
 import { mediaIncompatibleSuffix } from '../module/text/message/body';
 
@@ -109,7 +108,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
     const url = baseURL + encodeCFURIComponent('_MASTER_' + file[AudioFileKey.FILE_NAME] + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
     if (!MSE_SUPPORTED) {
-        const Player = (await importModule(nativePlayerImportPromise)).Player;
+        const Player = (await nativePlayerImportPromise).Player;
         await createMediaSessionPromise;
         if (currentPgid !== pgid) {
             return;
@@ -129,7 +128,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
             audioReady();
         }
     } else {
-        const HlsPlayer = (await importModule(hlsPlayerImportPromise)).HlsPlayer;
+        const HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
         await createMediaSessionPromise;
         if (currentPgid !== pgid) {
             return;

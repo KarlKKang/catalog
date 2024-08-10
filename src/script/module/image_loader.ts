@@ -173,7 +173,7 @@ async function startWebpMachine() {
     const currentJobId = jobId;
     if (webpMachine === null) {
         const { WebpMachine, detectWebpSupport } = await importModule(
-            import(
+            () => import(
                 /* webpackExports: ["WebpMachine", "detectWebpSupport"] */
                 'webp-hero'
             ),

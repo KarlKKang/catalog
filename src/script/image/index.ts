@@ -31,9 +31,11 @@ export default function (showPage: ShowPageFunc) {
     setUpSessionAuthentication(sessionCredential, getHighResTimestamp());
     setTitle(title);
 
-    const asyncModulePromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './async'
+    const asyncModulePromise = importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './async'
+        ),
     );
 
     const serverRequest = sendServerRequest(uri, {
@@ -44,7 +46,7 @@ export default function (showPage: ShowPageFunc) {
             }
 
             const currentPgid = pgid;
-            const asyncModule = await importModule(asyncModulePromise);
+            const asyncModule = await asyncModulePromise;
             if (pgid !== currentPgid) {
                 return;
             }

@@ -32,7 +32,6 @@ import { hideElement, setPaddingTop, showElement } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/bangumi.module.scss';
-import { importModule } from '../module/import_module';
 import { PlayerKey } from '../module/player/player_key';
 import { NonNativePlayerKey } from '../module/player/non_native_player_key';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
@@ -321,7 +320,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
 
     const url = baseURL + encodeCFURIComponent('_MASTER_' + epInfo[EPInfoKey.FILE_NAME] + '[' + currentFormat[VideoFormatKey.VALUE] + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
     if (!MSE_SUPPORTED) {
-        const Player = (await importModule(nativePlayerImportPromise)).Player;
+        const Player = (await nativePlayerImportPromise).Player;
         await createMediaSessionPromise;
         if (currentPgid !== pgid) {
             return;
@@ -340,7 +339,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         });
         afterLoad(mediaInstance);
     } else {
-        const HlsPlayer = (await importModule(hlsPlayerImportPromise)).HlsPlayer;
+        const HlsPlayer = (await hlsPlayerImportPromise).HlsPlayer;
         await createMediaSessionPromise;
         if (currentPgid !== pgid) {
             return;

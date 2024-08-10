@@ -12,13 +12,15 @@ import { buildURLForm } from '../module/http_form';
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
-    const getAsyncModulePromise = () => import(
-        /* webpackExports: ["default"] */
-        './async'
+    const getAsyncModulePromise = () => importModule(
+        () => import(
+            /* webpackExports: ["default"] */
+            './async'
+        ),
     );
     const runAsyncModule = async (asyncModulePromise: ReturnType<typeof getAsyncModulePromise>, param: string) => {
         const currentPgid = pgid;
-        const asyncModule = await importModule(asyncModulePromise);
+        const asyncModule = await asyncModulePromise;
         if (pgid !== currentPgid) {
             return;
         }

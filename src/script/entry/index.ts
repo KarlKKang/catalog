@@ -206,7 +206,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         if (DEVELOPMENT) {
             console.log('First time loading page: ' + url);
         }
-        page[PageProp.SCRIPT_CACHED] = await importModule(page[PageProp.SCRIPT]());
+        page[PageProp.SCRIPT_CACHED] = await importModule(page[PageProp.SCRIPT]);
         if (pgid !== newPgid) {
             return;
         }

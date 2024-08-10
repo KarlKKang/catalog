@@ -15,7 +15,6 @@ import { hideElement, setMaxHeight, setMinHeight, setOpacity, setPaddingBottom, 
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import * as styles from '../../css/bangumi.module.scss';
 import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoEPInfo, AudioEPInfo, ImageEPInfo } from '../module/type/BangumiInfo';
-import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { getCDNOrigin } from '../module/env/origin';
 
@@ -103,20 +102,20 @@ export default async function (
 
     const currentPgid = pgid;
     if (type === 'video') {
-        currentPage = await importModule(videoImportPromise);
+        currentPage = await videoImportPromise;
         if (currentPgid !== pgid) {
             return;
         }
         currentPage.default(seriesID, epIndex, epInfo as VideoEPInfo, baseURL, createMediaSessionPromise);
     } else {
         if (type === 'audio') {
-            currentPage = await importModule(audioImportPromise);
+            currentPage = await audioImportPromise;
             if (currentPgid !== pgid) {
                 return;
             }
             currentPage.default(seriesID, epIndex, epInfo as AudioEPInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
         } else {
-            currentPage = await importModule(imageImportPromise);
+            currentPage = await imageImportPromise;
             if (currentPgid !== pgid) {
                 return;
             }

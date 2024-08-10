@@ -28,14 +28,16 @@ export default function (showPage: ShowPageFunc) {
 
 function getAllNews(showPage: ShowPageFunc): void {
     addNavBar(NavBarPage.NEWS);
-    const allNewsModulePromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './all_news'
+    const allNewsModulePromise = importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './all_news'
+        ),
     );
     sendServerRequest('get_all_news', {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const currentPgid = pgid;
-            const allNewsModule = await importModule(allNewsModulePromise);
+            const allNewsModule = await allNewsModulePromise;
             if (pgid !== currentPgid) {
                 return;
             }
@@ -52,9 +54,11 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         redirect(NEWS_ROOT_URI);
     });
 
-    const newsModulePromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './news'
+    const newsModulePromise = importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './news'
+        ),
     );
 
     const logoutParam = buildURLForm({
@@ -65,7 +69,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);
             const currentPgid = pgid;
-            const newsModule = await importModule(newsModulePromise);
+            const newsModule = await newsModulePromise;
             if (pgid !== currentPgid) {
                 return;
             }

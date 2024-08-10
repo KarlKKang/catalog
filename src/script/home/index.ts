@@ -35,9 +35,11 @@ export default function (showPage: ShowPageFunc) {
         search(true);
     });
 
-    const asyncModulePromise = import(
-        /* webpackExports: ["default", "offload"] */
-        './async'
+    const asyncModulePromise = importModule(
+        () => import(
+            /* webpackExports: ["default", "offload"] */
+            './async'
+        ),
     );
 
     const keywords = getURLKeywords();
@@ -45,7 +47,7 @@ export default function (showPage: ShowPageFunc) {
     sendServerRequest('get_series', {
         [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
             const currentPgid = pgid;
-            const asyncModule = await importModule(asyncModulePromise);
+            const asyncModule = await asyncModulePromise;
             if (pgid !== currentPgid) {
                 return;
             }

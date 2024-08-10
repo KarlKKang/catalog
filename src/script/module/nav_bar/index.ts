@@ -11,7 +11,7 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
     }
     const currentPgid = pgid;
     ({ default: navBarFunc } = await importModule(
-        import(
+        () => import(
             /* webpackExports: ["default"] */
             './nav_bar'
         ),
