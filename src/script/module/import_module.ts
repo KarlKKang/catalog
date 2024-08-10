@@ -10,9 +10,8 @@ export async function importModule<T>(importPromiseGenerator: () => Promise<T>) 
 
 async function importModuleHelper<T>(importPromiseGenerator: () => Promise<T>, retryCount = 5, retryTimeout = 500) {
     const currentPgid = pgid;
-    let module: T;
     try {
-        module = await importPromiseGenerator();
+        return await importPromiseGenerator();
     } catch (e) {
         if (currentPgid === pgid) {
             retryCount--;
@@ -30,5 +29,4 @@ async function importModuleHelper<T>(importPromiseGenerator: () => Promise<T>, r
         }
         throw e;
     }
-    return module;
 }
