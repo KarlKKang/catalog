@@ -6,10 +6,14 @@ import { addEventListener } from '../module/event_listener';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, offloadPopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
 import { disableButton } from '../module/dom/change_input';
+import { min } from '../module/math';
+import { pgid } from '../module/global';
+import { addTimeout } from '../module/timer';
 
 let swUpdateLastPromptTime = 0;
 let serviceWorker: Workbox | null = null;
 let serviceWorkerUpToDate = true;
+let registering = false;
 
 export default async function () { // This function should be called after setting the `pgid`.
     const showSkipWaitingPrompt = (wb: Workbox) => {
@@ -43,9 +47,17 @@ export default async function () { // This function should be called after setti
         });
     };
 
-    const addWaitingListener = (wb: Workbox) => {
+    const attachEvents = (wb: Workbox) => {
         addEventListener(wb as unknown as EventTarget, 'waiting', () => {
             showSkipWaitingPrompt(wb);
+        });
+        addEventListener(wb as unknown as EventTarget, 'redundant', () => {
+            if (serviceWorkerUpToDate && !registering) { // Checking for `registering` is necessary to prevent double retry when there's no service worker installed.
+                if (DEVELOPMENT) {
+                    console.log('New service worker failed to install, retrying.');
+                }
+                registerOrUpdate(wb);
+            }
         });
     };
 
@@ -68,12 +80,12 @@ export default async function () { // This function should be called after setti
             }
         });
 
-        addWaitingListener(serviceWorker);
+        attachEvents(serviceWorker);
         registerOrUpdate(serviceWorker);
     } else {
         if (swUpdateLastPromptTime < Date.now() - 24 * 60 * 60 * 1000) {
             if (serviceWorkerUpToDate) {
-                addWaitingListener(serviceWorker);
+                attachEvents(serviceWorker);
                 registerOrUpdate(serviceWorker);
             } else {
                 showSkipWaitingPrompt(serviceWorker);
@@ -82,12 +94,37 @@ export default async function () { // This function should be called after setti
     }
 }
 
-function registerOrUpdate(wb: Workbox) {
-    wb.register().then(() => {
-        wb.update();
-    });
+async function registerOrUpdate(wb: Workbox, retryTimeout = 500) {
+    registering = true;
+    const currentPgid = pgid;
+    try {
+        await wb.register();
+        if (currentPgid !== pgid) {
+            return;
+        }
+        if (DEVELOPMENT) {
+            console.log('Service worker registered, triggering update.');
+        }
+        await wb.update();
+        if (DEVELOPMENT) {
+            console.log('Service worker update triggered.');
+        }
+    } catch (e) {
+        if (currentPgid !== pgid) {
+            return;
+        }
+        if (DEVELOPMENT) {
+            console.log('Service worker register or update failed, retrying in ' + retryTimeout + 'ms.');
+        }
+        addTimeout(() => {
+            registerOrUpdate(wb, min(retryTimeout * 2, 5000));
+        }, retryTimeout);
+        throw e;
+    }
+    registering = false;
 }
 
 export function offload() {
+    registering = false;
     offloadPopupWindow();
 }
