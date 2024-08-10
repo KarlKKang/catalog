@@ -36,7 +36,6 @@ interface Page {
     [PageProp.SCRIPT_CACHED]?: PageScript;
 }
 
-let nativeBody: HTMLElement;
 const loadingBar = createDivElement();
 addClass(loadingBar, styles.loadingBar);
 let currentPageScript: PageScript | null = null;
@@ -276,7 +275,7 @@ if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
 addEventListenerOnce(w, 'load', () => {
-    nativeBody = d.body;
+    const nativeBody = d.body;
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
     setRedirect(load);
