@@ -1,17 +1,17 @@
-import { createParagraphElement } from '../dom/element/paragraph/create';
-import { createDivElement } from '../dom/element/div/create';
-import { appendChild, prependChild } from '../dom/change_node';
-import { addClass } from '../dom/class';
-import { body } from '../dom/body';
-import { addEventListener } from '../event_listener';
-import { w } from '../dom/document';
-import { redirect } from '../global';
-import { scrollToTop } from '../dom/scroll';
-import { NavBarPage } from './enum';
+import { createParagraphElement } from '../../dom/element/paragraph/create';
+import { createDivElement } from '../../dom/element/div/create';
+import { appendChild, prependChild } from '../../dom/change_node';
+import { addClass } from '../../dom/class';
+import { body } from '../../dom/body';
+import { addEventListener } from '../../event_listener';
+import { w } from '../../dom/document';
+import { redirect } from '../../global';
+import { scrollToTop } from '../../dom/scroll';
+import { NavBarPage } from '../enum';
 import * as icons from './icons';
-import { infoPageTitle, myAccountPageTitle, newsPageTitle } from '../text/page_title';
+import { infoPageTitle, myAccountPageTitle, newsPageTitle } from '../../text/page_title';
 import * as styles from '../../../css/nav_bar.module.scss';
-import { INFO_URI, MY_ACCOUNT_URI, NEWS_ROOT_URI, TOP_URI } from '../env/uri';
+import { INFO_URI, MY_ACCOUNT_URI, NEWS_ROOT_URI, TOP_URI } from '../../env/uri';
 
 export default function (page?: NavBarPage, currentPageCallback?: () => void) {
     const getNavButton = (name: string): [HTMLDivElement, HTMLDivElement] => {

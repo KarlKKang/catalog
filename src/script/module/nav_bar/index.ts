@@ -1,6 +1,6 @@
 import { pgid } from '../global';
 import type { NavBarPage } from './enum';
-import type { default as NavBarFunc } from './nav_bar';
+import type { default as NavBarFunc } from './internal/nav_bar';
 import { importModule } from '../import_module';
 
 let navBarFunc: typeof NavBarFunc | null = null;
@@ -13,7 +13,7 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
     ({ default: navBarFunc } = await importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './nav_bar'
+            './internal/nav_bar'
         ),
     ));
     if (currentPgid === pgid) {
