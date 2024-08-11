@@ -1,5 +1,5 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getByClass, getParentElement } from '../module/dom/get_element';
+import { getDescendantsByClass, getParentElement } from '../module/dom/get_element';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
@@ -19,7 +19,7 @@ function dereferenceOutputElement() {
     outputElement = null;
 }
 
-export function getTable(type: string, callback?: () => void) {
+export function getTable(type: string, callback?: (outputElem: HTMLElement) => void) {
     const param = {
         command: 'get',
         type: type,
@@ -33,13 +33,13 @@ export function getTable(type: string, callback?: () => void) {
     });
 }
 
-export function completeCallback(response: string, callback: () => void) {
+export function completeCallback(response: string, callback: (outputElem: HTMLElement) => void) {
     if (setOutput(response, callback)) {
         alert('Operation completed');
     }
 }
 
-export function setOutput(response: string, callback?: () => void, outputElementOverride?: HTMLElement) {
+export function setOutput(response: string, callback?: (outputElem: HTMLElement) => void, outputElementOverride?: HTMLElement) {
     const error = response.startsWith('ERROR:');
     if (error) {
         alert(response);
@@ -50,10 +50,10 @@ export function setOutput(response: string, callback?: () => void, outputElement
         }
         outputTarget.innerHTML = response;
         if (callback !== undefined) {
-            callback();
+            callback(outputTarget);
         }
 
-        let elems = getByClass('onchange');
+        let elems = getDescendantsByClass(outputTarget, 'onchange');
         for (const elem of elems) {
             if (!containsClass(elem, initializedClass)) {
                 addClass(elem, initializedClass);
@@ -63,7 +63,7 @@ export function setOutput(response: string, callback?: () => void, outputElement
             }
         }
 
-        elems = getByClass('oninput');
+        elems = getDescendantsByClass(outputTarget, 'oninput');
         for (const elem of elems) {
             if (!containsClass(elem, initializedClass)) {
                 addClass(elem, initializedClass);

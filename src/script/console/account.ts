@@ -1,5 +1,5 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getByClass, getDescendantsByClassAt, getDescendantsByTag, getParentElement } from '../module/dom/get_element';
+import { getDescendantsByClass, getDescendantsByClassAt, getDescendantsByTag, getParentElement } from '../module/dom/get_element';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
@@ -209,8 +209,8 @@ function deleteAccount(id: string) {
     });
 }
 
-function updateEventHandlers() {
-    let buttons = getByClass('add-account');
+function updateEventHandlers(outputElem: HTMLElement) {
+    let buttons = getDescendantsByClass(outputElem, 'add-account');
     for (const button of buttons) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -220,7 +220,7 @@ function updateEventHandlers() {
         }
     }
 
-    buttons = getByClass('modify-account');
+    buttons = getDescendantsByClass(outputElem, 'modify-account');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -235,7 +235,7 @@ function updateEventHandlers() {
         }
     }
 
-    buttons = getByClass('delete-account');
+    buttons = getDescendantsByClass(outputElem, 'delete-account');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);

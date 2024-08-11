@@ -1,5 +1,5 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getByClass, getDescendantsByClassAt, getParentElement } from '../module/dom/get_element';
+import { getDescendantsByClass, getDescendantsByClassAt, getParentElement } from '../module/dom/get_element';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
@@ -196,8 +196,8 @@ function updateSeriesTime(id: string) {
     });
 }
 
-function updateEventHandlers() {
-    let buttons = getByClass('add-series');
+function updateEventHandlers(outputElem: HTMLElement) {
+    let buttons = getDescendantsByClass(outputElem, 'add-series');
     for (const button of buttons) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -207,7 +207,7 @@ function updateEventHandlers() {
         }
     }
 
-    buttons = getByClass('modify-series');
+    buttons = getDescendantsByClass(outputElem, 'modify-series');
     for (const button of buttons) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -217,7 +217,7 @@ function updateEventHandlers() {
         }
     }
 
-    buttons = getByClass('update-series-time');
+    buttons = getDescendantsByClass(outputElem, 'update-series-time');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -232,7 +232,7 @@ function updateEventHandlers() {
         }
     }
 
-    buttons = getByClass('delete-series');
+    buttons = getDescendantsByClass(outputElem, 'delete-series');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
