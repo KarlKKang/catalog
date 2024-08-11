@@ -10,7 +10,7 @@ import { scrollToTop } from '../../dom/scroll';
 import { NavBarPage } from '../enum';
 import * as icons from './icons';
 import { infoPageTitle, myAccountPageTitle, newsPageTitle } from '../../text/page_title';
-import * as styles from '../../../css/nav_bar.module.scss';
+import * as styles from '../../../../css/nav_bar.module.scss';
 import { INFO_URI, MY_ACCOUNT_URI, NEWS_ROOT_URI, TOP_URI } from '../../env/uri';
 
 export default function (page?: NavBarPage, currentPageCallback?: () => void) {
