@@ -24,11 +24,15 @@ import { promptForEmailOtp, type EmailOtpPopupWindow, EmailOtpPopupWindowKey } f
 import { LoginPopupWindowKey, type LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
 import { buildURLForm, joinURLForms } from '../module/http_form';
-import { changeColor, hideElement, horizontalCenter, setCursor, setHeight, showElement } from '../module/style';
+import { horizontalCenter } from '../module/style/horizontal_center';
+import { showElement } from '../module/style/show_element';
+import { hideElement } from '../module/style/hide_element';
+import { setCursor, CSS_CURSOR } from '../module/style/cursor';
+import { setHeight } from '../module/style/height';
+import { changeColor, CSS_COLOR } from '../module/style/color';
 import { cancelButtonText, closeButtonText, submitButtonText } from '../module/text/ui';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/my_account.module.scss';
-import { CSS_COLOR, CSS_CURSOR } from '../module/style/value';
 import { type RecoveryCodeInfo, parseRecoveryCodeInfo } from '../module/type/RecoveryCodeInfo';
 import { initializePopupWindow, styles as popupWindowStyles } from '../module/popup_window/core';
 

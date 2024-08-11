@@ -15,7 +15,7 @@ import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_
 import { redirect } from '../module/global';
 import { newXHR } from '../module/xhr';
 import { TOP_DOMAIN } from '../module/env/domain';
-import { horizontalCenter } from '../module/style';
+import { horizontalCenter } from '../module/style/horizontal_center';
 import { buildURI, buildURLForm } from '../module/http_form';
 import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
 import { disableButton } from '../module/dom/change_input';

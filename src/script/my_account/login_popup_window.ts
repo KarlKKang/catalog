@@ -6,10 +6,12 @@ import { openWindow } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
 import { loginFailed } from '../module/text/message/body';
-import { changeColor, hideElement, horizontalCenter, showElement } from '../module/style';
+import { horizontalCenter } from '../module/style/horizontal_center';
+import { showElement } from '../module/style/show_element';
+import { hideElement } from '../module/style/hide_element';
+import { changeColor, CSS_COLOR } from '../module/style/color';
 import { cancelButtonText, forgetPasswordText, submitButtonText } from '../module/text/ui';
 import * as commonStyles from '../../css/common.module.scss';
-import { CSS_COLOR } from '../module/style/value';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 

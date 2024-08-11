@@ -4,10 +4,12 @@ import { appendChild } from '../dom/change_node';
 import { addClass } from '../dom/class';
 import { addEventListener } from '../event_listener';
 import { failedTotp } from '../text/message/body';
-import { changeColor, hideElement, horizontalCenter, showElement } from '../style';
+import { horizontalCenter } from '../style/horizontal_center';
+import { showElement } from '../style/show_element';
+import { hideElement } from '../style/hide_element';
+import { changeColor, CSS_COLOR } from '../style/color';
 import { addInterval, removeInterval } from '../timer';
 import { cancelButtonText, submitButtonText } from '../text/ui';
-import { CSS_COLOR } from '../style/value';
 import { initializePopupWindow, styles } from './core';
 import { pgid } from '../global';
 

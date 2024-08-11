@@ -5,7 +5,8 @@ import { createDivElement } from '../dom/create_element';
 import { body } from '../dom/body';
 import { addTimeout } from '../timer';
 import * as styles from '../../../css/popup_window.module.scss';
-import { setOpacity, setVisibility } from '../style';
+import { setVisibility } from '../style/visibility';
+import { setOpacity } from '../style/opacity';
 import { addOffloadCallback } from '../global';
 
 let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;

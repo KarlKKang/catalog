@@ -7,8 +7,10 @@ import { addEventListener } from './module/event_listener';
 import { notFound as notFoundTitle } from './module/server/message/title';
 import { notFound as notFoundBody } from './module/server/message/body';
 import { redirect, type ShowPageFunc } from './module/global';
-import { changeColor, horizontalCenter, setWidth } from './module/style';
-import { CSS_AUTO, CSS_COLOR } from './module/style/value';
+import { horizontalCenter } from './module/style/horizontal_center';
+import { setWidth } from './module/style/width';
+import { changeColor, CSS_COLOR } from './module/style/color';
+import { CSS_AUTO } from './module/style/value/auto';
 import * as styles from '../css/message.module.scss';
 import { TOP_URI } from './module/env/uri';
 

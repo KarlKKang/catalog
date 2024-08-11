@@ -12,13 +12,15 @@ import { invalidPasswordFormat, passwordConfirmationMismatch, usernameEmpty, use
 import { PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm, buildURI } from '../module/http_form';
 import { invalidResponse } from '../module/server/message';
-import { hideElement, horizontalCenter, showElement } from '../module/style';
+import { horizontalCenter } from '../module/style/horizontal_center';
+import { showElement } from '../module/style/show_element';
+import { hideElement } from '../module/style/hide_element';
 import { nextButtonText, passwordRules, usernameRule } from '../module/text/ui';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
 import { addManualMultiLanguageClass, createUsernameInput } from '../module/dom/create_element/multi_language';
-import { CSS_COLOR } from '../module/style/value';
+import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { emailAlreadyRegistered } from './shared';
 import { INFO_URI, LOGIN_URI } from '../module/env/uri';

@@ -3,7 +3,7 @@ import * as title from './title';
 import type { MaintenanceInfo } from '../../type/MaintenanceInfo';
 import { getURI } from '../../dom/document';
 import { MessageParamKey, type MessageParam } from '../../message/type';
-import { CSS_COLOR } from '../../style/value';
+import { CSS_COLOR } from '../../style/color';
 import { LOGIN_URI, TOP_URI } from '../../env/uri';
 
 const reloadButtonText = '再読み込み';

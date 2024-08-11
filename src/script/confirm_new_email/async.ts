@@ -13,12 +13,14 @@ import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm, joinURLForms } from '../module/http_form';
 import { TotpPopupWindowKey, handleFailedTotp, type TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/server/message';
-import { hideElement, horizontalCenter, showElement } from '../module/style';
+import { horizontalCenter } from '../module/style/horizontal_center';
+import { showElement } from '../module/style/show_element';
+import { hideElement } from '../module/style/hide_element';
 import { submitButtonText } from '../module/text/ui';
 import { emailChangePageTitle } from '../module/text/page_title';
 import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
-import { CSS_COLOR } from '../module/style/value';
+import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { TOP_URI } from '../module/env/uri';
 

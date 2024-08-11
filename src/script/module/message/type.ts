@@ -1,4 +1,4 @@
-import { CSS_COLOR } from '../style/value';
+import { type CSS_COLOR } from '../style/color';
 
 export const enum MessageParamKey {
     MESSAGE,

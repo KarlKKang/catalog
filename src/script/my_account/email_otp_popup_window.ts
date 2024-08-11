@@ -5,8 +5,12 @@ import { addClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';
 import { failedTotp } from '../module/text/message/body';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
-import { changeColor, hideElement, setCursor, setWidth, showElement } from '../module/style';
-import { CSS_AUTO, CSS_COLOR, CSS_CURSOR } from '../module/style/value';
+import { changeColor, CSS_COLOR } from '../module/style/color';
+import { showElement } from '../module/style/show_element';
+import { hideElement } from '../module/style/hide_element';
+import { setCursor, CSS_CURSOR } from '../module/style/cursor';
+import { setWidth } from '../module/style/width';
+import { CSS_AUTO } from '../module/style/value/auto';
 import { addInterval, type Interval, removeInterval } from '../module/timer';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
 

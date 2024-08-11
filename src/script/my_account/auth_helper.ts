@@ -6,7 +6,7 @@ import { replaceText } from '../module/dom/create_element';
 import { pgid } from '../module/global';
 import { accountDeactivated, loginFailed, sessionEnded, tooManyFailedLogin } from '../module/text/message/body';
 import { TotpPopupWindowKey, handleFailedTotp, type TotpPopupWindow } from '../module/popup_window/totp';
-import { showElement } from '../module/style';
+import { showElement } from '../module/style/show_element';
 import { disableAllInputs } from './helper';
 import { promptForLogin, type LoginPopupWindow, LoginPopupWindowKey } from './login_popup_window';
 

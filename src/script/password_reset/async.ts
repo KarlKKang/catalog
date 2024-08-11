@@ -11,12 +11,14 @@ import { expired } from '../module/message/param';
 import { PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm } from '../module/http_form';
 import { invalidResponse } from '../module/server/message';
-import { hideElement, horizontalCenter, showElement } from '../module/style';
+import { horizontalCenter } from '../module/style/horizontal_center';
+import { showElement } from '../module/style/show_element';
+import { hideElement } from '../module/style/hide_element';
 import { passwordResetPageTitle } from '../module/text/page_title';
 import { changeButtonText, nextButtonText, passwordRules } from '../module/text/ui';
 import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
-import { CSS_COLOR } from '../module/style/value';
+import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { LOGIN_URI } from '../module/env/uri';
 

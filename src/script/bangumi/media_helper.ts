@@ -13,8 +13,11 @@ import { VideoFormat, VideoFormatKey, VideoFormats } from '../module/type/Bangum
 import { addTimeout } from '../module/timer';
 import { CustomMediaError } from '../module/player/media_error';
 import { SharedElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
-import { hideElement, horizontalCenter, setMaxHeight } from '../module/style';
-import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
+import { horizontalCenter } from '../module/style/horizontal_center';
+import { hideElement } from '../module/style/hide_element';
+import { setMaxHeight } from '../module/style/max_height';
+import { CSS_COLOR } from '../module/style/color';
+import { CSS_UNIT } from '../module/style/value/unit';
 import { defaultError } from '../module/text/message/title';
 import { defaultErrorSuffix, mediaIncompatibleSuffix, mediaLoadError } from '../module/text/message/body';
 import * as styles from '../../css/bangumi.module.scss';

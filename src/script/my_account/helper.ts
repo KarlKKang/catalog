@@ -1,7 +1,9 @@
 import { replaceText } from '../module/dom/create_element';
 import { disableButton, disableInput } from '../module/dom/change_input';
-import { changeColor, hideElement, setCursor, showElement } from '../module/style';
-import { CSS_CURSOR } from '../module/style/value';
+import { changeColor } from '../module/style/color';
+import { showElement } from '../module/style/show_element';
+import { hideElement } from '../module/style/hide_element';
+import { setCursor, CSS_CURSOR } from '../module/style/cursor';
 import { SharedBool, SharedButton, SharedInput, SharedElement, getSharedBool, getSharedButton, getSharedElement, getSharedInput, sessionLogoutButtons, setSharedBool } from './shared_var';
 
 export const mfaNotSet = '二要素認証が設定されていません。';

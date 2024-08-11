@@ -1,7 +1,7 @@
 import { emailSentSuffix, mediaLoadError as mediaLoadErrorBody } from '../text/message/body';
 import { emailSent as emailSentTitle } from '../text/message/title';
 import { MessageParam, MessageParamKey } from './type';
-import { CSS_COLOR } from '../style/value';
+import { CSS_COLOR } from '../style/color';
 
 export const expired = {
     [MessageParamKey.TITLE]: '期限が切れています',

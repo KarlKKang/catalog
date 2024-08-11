@@ -2,9 +2,8 @@ import { getSearchParam, w } from '../module/dom/document';
 import { createDivElement, createParagraphElement, createTextNode } from '../module/dom/create_element';
 import { appendChild, appendChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
-import { changeColor } from '../module/style';
+import { changeColor, type CSS_COLOR } from '../module/style/color';
 import * as styles from '../../css/bangumi.module.scss';
-import { type CSS_COLOR } from '../module/style/value';
 import { buildURLForm, joinURLForms } from '../module/http_form';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
