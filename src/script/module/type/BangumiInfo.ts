@@ -1,4 +1,12 @@
-import { parseArray, parseBoolean, parseNonEmptyTypedArray, parseNumber, parseObject, parseOptional, parseString, parseTypedArray, throwError } from './helper';
+import { throwError } from './internal/throw_error';
+import { parseObject } from './internal/parse_object';
+import { parseNumber } from './internal/parse_number';
+import { parseArray } from './internal/parse_array';
+import { parseTypedArray } from './internal/parse_array/typed';
+import { parseNonEmptyTypedArray } from './internal/parse_array/typed/non_empty';
+import { parseBoolean } from './internal/parse_boolean';
+import { parseString } from './internal/parse_string';
+import { parseOptional } from './internal/parse_optional';
 
 export const enum AudioFileKey {
     TITLE,

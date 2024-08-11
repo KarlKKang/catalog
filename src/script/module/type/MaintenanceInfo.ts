@@ -1,4 +1,5 @@
-import { parseNumber, parseObject } from './helper';
+import { parseObject } from './internal/parse_object';
+import { parseNumber } from './internal/parse_number';
 
 export const enum MaintenanceInfoKey {
     START,

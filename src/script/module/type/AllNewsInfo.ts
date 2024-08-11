@@ -1,4 +1,7 @@
-import { parseNumber, parseObject, parseString, parseTypedArray } from './helper';
+import { parseObject } from './internal/parse_object';
+import { parseNumber } from './internal/parse_number';
+import { parseTypedArray } from './internal/parse_array/typed';
+import { parseString } from './internal/parse_string';
 
 export const enum AllNewsInfoEntryKey {
     ID,

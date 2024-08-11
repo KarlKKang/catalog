@@ -1,4 +1,5 @@
-import { parseObject, parseString } from './helper';
+import { parseObject } from './internal/parse_object';
+import { parseString } from './internal/parse_string';
 
 export const enum MediaSessionInfoKey {
     TYPE,

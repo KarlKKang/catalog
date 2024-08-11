@@ -1,4 +1,5 @@
-import { parseString, parseTypedArray } from './helper';
+import { parseTypedArray } from './internal/parse_array/typed';
+import { parseString } from './internal/parse_string';
 
 export type RecoveryCodeInfo = readonly string[];
 

@@ -1,4 +1,7 @@
-import { parseBoolean, parseNumber, parseObject, parseString } from './helper';
+import { parseObject } from './internal/parse_object';
+import { parseNumber } from './internal/parse_number';
+import { parseBoolean } from './internal/parse_boolean';
+import { parseString } from './internal/parse_string';
 
 export const enum AccountInfoKey {
     USERNAME,
