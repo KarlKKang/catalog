@@ -22,7 +22,8 @@ import { addOffloadCallback, redirect } from '../module/global';
 import { loading } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
 import { link as linkClass } from '../../css/common.module.scss';
-import { createNewsTemplate, parseNewsStyle } from '../module/news';
+import { parseNewsStyle } from '../module/news/parse_style';
+import { createNewsContainer } from '../module/news/create_container';
 import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
@@ -46,7 +47,7 @@ export default function (newsInfo: NewsInfo, newsID: string, startTime: HighResT
     addClass(container, styles.container);
     appendChild(body, container);
 
-    const [contentOuterContainer, contentInnerContainer] = createNewsTemplate(title, newsInfo[NewsInfoKey.CREATE_TIME], newsInfo[NewsInfoKey.UPDATE_TIME] ?? null);
+    const [contentOuterContainer, contentInnerContainer] = createNewsContainer(title, newsInfo[NewsInfoKey.CREATE_TIME], newsInfo[NewsInfoKey.UPDATE_TIME] ?? null);
     appendChild(contentInnerContainer, contentContainer);
     appendChild(container, contentOuterContainer);
 

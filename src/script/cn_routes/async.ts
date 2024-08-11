@@ -12,7 +12,7 @@ import { appendChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class/add';
 import { concatenateLocationPrefix, getBaseHost, getLocationPrefix, getServerOrigin, locationCodeToPrefix } from '../module/env/origin';
 import { addEventListener, addEventsListener } from '../module/event_listener';
-import { createNewsTemplate } from '../module/news';
+import { createNewsContainer } from '../module/news/create_container';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/news.module.scss';
@@ -47,7 +47,7 @@ interface RouteInfoNode {
 }
 
 export default function (routeList: RouteList) {
-    const [outerContainer, innerContainer] = createNewsTemplate(cnRoutesPageTitle, null, null);
+    const [outerContainer, innerContainer] = createNewsContainer(cnRoutesPageTitle, null, null);
     const contentContainer = createDivElement();
     addClass(contentContainer, styles.content);
     addManualMultiLanguageClass(contentContainer);

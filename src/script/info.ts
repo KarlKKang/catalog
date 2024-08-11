@@ -10,7 +10,8 @@ import { NavBarPage } from './module/nav_bar/enum';
 import { scrollToHash } from './module/dom/scroll/to_hash';
 import html from '../html/info.html';
 import * as styles from '../css/news.module.scss';
-import { createNewsTemplate, parseNewsStyle } from './module/news';
+import { parseNewsStyle } from './module/news/parse_style';
+import { createNewsContainer } from './module/news/create_container';
 import { infoPageTitle } from './module/text/page_title';
 import { addManualMultiLanguageClass } from './module/style/multi_language/manual';
 
@@ -21,7 +22,7 @@ export default function (showPage: ShowPageFunc) {
         addNavBar(NavBarPage.INFO);
     }
     showPage();
-    const [outerContainer, innerContainer] = createNewsTemplate(infoPageTitle, null, 1699333200);
+    const [outerContainer, innerContainer] = createNewsContainer(infoPageTitle, null, 1699333200);
     const contentContainer = createDivElement();
     addClass(contentContainer, styles.content);
     addManualMultiLanguageClass(contentContainer);

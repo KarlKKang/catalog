@@ -1,40 +1,12 @@
-import * as commonStyles from '../../../css/common.module.scss';
 import * as styles from '../../../css/news.module.scss';
 import { getLocalTimeString } from '../time';
 import { createHRElement } from '../dom/element/hr/create';
 import { createParagraphElement } from '../dom/element/paragraph/create';
 import { createDivElement } from '../dom/element/div/create';
-import { getDescendantsByClass } from '../dom/get_element';
 import { appendChild } from '../dom/change_node';
 import { addClass } from '../dom/class/add';
-import { removeClass } from '../dom/class/remove';
 
-const classMap = {
-    'sub-title': styles.subTitle,
-    'bolder': styles.bolder,
-    'bold': styles.bold,
-    'line-break': styles.lineBreak,
-    'code-inline': styles.codeInline,
-    'color-red': commonStyles.colorRed,
-    'color-green': commonStyles.colorGreen,
-    'color-orange': commonStyles.colorOrange,
-    'link': commonStyles.link,
-};
-
-export function parseNewsStyle(container: HTMLElement) {
-    for (const [key, value] of Object.entries(classMap)) {
-        const elements = getDescendantsByClass(container, key);
-        // The loop has to be done this way because the `elements` array is a live collection.
-        let elem = elements[0];
-        while (elem !== undefined) {
-            addClass(elem, value);
-            removeClass(elem, key);
-            elem = elements[0];
-        }
-    }
-}
-
-export function createNewsTemplate(title: string, createTimestamp: number | null, updateTimestamp: number | null) {
+export function createNewsContainer(title: string, createTimestamp: number | null, updateTimestamp: number | null) {
     const outerContainer = createDivElement();
     addClass(outerContainer, styles.contentContainer);
     const innerContainer = createDivElement();
