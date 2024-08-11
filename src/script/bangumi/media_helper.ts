@@ -9,7 +9,7 @@ import { createHRElement } from '../module/dom/element/hr/create';
 import { createOptionElement } from '../module/dom/element/option/create';
 import { createSelectElement } from '../module/dom/element/select/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { getByClass } from '../module/dom/get_element';
+import { getByClass } from '../module/dom/element/get/by_class';
 import { prependChild } from '../module/dom/node/prepend_child';
 import { insertBefore } from '../module/dom/node/insert_before';
 import { replaceChildren } from '../module/dom/node/replace_children';

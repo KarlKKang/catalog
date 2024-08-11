@@ -9,7 +9,7 @@ import { getTitle } from '../module/dom/document/title/get';
 import { setTitle } from '../module/dom/document/title/set';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { getByClass } from '../module/dom/get_element';
+import { getByClass } from '../module/dom/element/get/by_class';
 import { appendChild } from '../module/dom/node/append_child';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
