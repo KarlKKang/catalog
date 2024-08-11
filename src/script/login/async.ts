@@ -10,7 +10,6 @@ import { createInputElement } from '../module/dom/element/input/native/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { getParentElement } from '../module/dom/get_element';
 import { disableStyledInput } from '../module/dom/element/input/disable_styled';
 import { disableButton } from '../module/dom/element/button/disable';
 import { replaceChildren } from '../module/dom/node/replace_children';
@@ -73,7 +72,7 @@ export default function (
     horizontalCenter(passwordContainer);
     appendChild(container, passwordContainer);
 
-    const [rememberMeContainer, rememberMeInput] = getRememberMeCheckbox();
+    const [rememberMeContainer, rememberMeLabel, rememberMeInput] = getRememberMeCheckbox();
     appendChild(container, rememberMeContainer);
 
     const submitButton = createStyledButtonElement('ログイン');
@@ -194,7 +193,7 @@ export default function (
         disableButton(submitButton, disabled);
         disableStyledInput(passwordStyledInput, disabled);
         disableStyledInput(emailStyledInput, disabled);
-        disableCheckbox(rememberMeInput, disabled);
+        disableCheckbox(rememberMeLabel, rememberMeInput, disabled);
     }
 }
 
@@ -215,14 +214,14 @@ function getRememberMeCheckbox() {
     appendChild(label, checkmark);
 
     appendChild(container, label);
-    return [container, input] as const;
+    return [container, label, input] as const;
 }
 
-function disableCheckbox(checkbox: HTMLInputElement, disabled: boolean) {
+function disableCheckbox(parent: HTMLLabelElement, checkbox: HTMLInputElement, disabled: boolean) {
     checkbox.disabled = disabled;
     if (disabled) {
-        addClass(getParentElement(checkbox), styles.disabled);
+        addClass(parent, styles.disabled);
     } else {
-        removeClass(getParentElement(checkbox), styles.disabled);
+        removeClass(parent, styles.disabled);
     }
 }

@@ -1,10 +1,10 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getByClass, getByTag, getParentElement } from '../module/dom/get_element';
+import { getByClass, getByTag } from '../module/dom/get_element';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
-import { completeCallback, getByClassAt, getTable, initializedClass } from './helper';
+import { completeCallback, getByClassAt, getParentElement, getTable, initializedClass } from './helper';
 import { PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm } from '../module/http_form';
 

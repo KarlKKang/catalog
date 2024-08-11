@@ -11,11 +11,3 @@ export function getByClass(parent: Element | Document, className: string) {
 export function getByTag(parent: Element | Document, tagName: string) {
     return parent.getElementsByTagName(tagName);
 }
-
-export function getParentElement(elem: Node) {
-    const parent = elem.parentElement;
-    if (parent === null) {
-        throw new Error('Parent element not found.');
-    }
-    return parent;
-}

@@ -1,4 +1,3 @@
-import { getParentElement } from '../module/dom/get_element';
 import { prependChild } from '../module/dom/node/prepend_child';
 import { insertBefore } from '../module/dom/node/insert_before';
 import { remove } from '../module/dom/node/remove';
@@ -136,7 +135,7 @@ export default function (
     });
 
     appendChild(formatSelector, selectMenu);
-    disableDropdown(selectMenu, true);
+    disableDropdown(formatSelector, selectMenu, true);
     appendChild(formatContainer, formatSelector);
 
     const formatDisplay = createDivElement();
@@ -153,18 +152,18 @@ export default function (
         const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], seriesID, epIndex, [selectMenu, formats, currentFormat]);
         appendChild(contentContainer, downloadAccordion);
         addEventListener(selectMenu, 'change', () => {
-            formatSwitch(selectMenu, formatDisplay, containerSelector);
+            formatSwitch(formatSelector, selectMenu, formatDisplay, containerSelector);
         });
     });
 
     addOffloadCallback(destroyMediaInstance);
     addVideoNode(formatDisplay, play, startTime, false).then(() => {
-        disableDropdown(selectMenu, false);
+        disableDropdown(formatSelector, selectMenu, false);
     });
 }
 
-function formatSwitch(formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDivElement, containerSelector: HTMLElement) {
-    disableDropdown(formatSelectMenu, true);
+function formatSwitch(formatSelectMenuParent: HTMLDivElement, formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDivElement, containerSelector: HTMLElement) {
+    disableDropdown(formatSelectMenuParent, formatSelectMenu, true);
     const formatIndex = formatSelectMenu.selectedIndex;
 
     const format = epInfo[EPInfoKey.FORMATS][formatIndex];
@@ -195,7 +194,7 @@ function formatSwitch(formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDi
         if (currentMediaInstance === null) {
             hideElement(formatDisplay);
         }
-        disableDropdown(formatSelectMenu, false);
+        disableDropdown(formatSelectMenuParent, formatSelectMenu, false);
     });
 }
 
@@ -515,12 +514,12 @@ function createLinkElem(text: string, link: string) {
     return linkElem;
 }
 
-function disableDropdown(selectElement: HTMLSelectElement, disabled: boolean) {
+function disableDropdown(parent: HTMLDivElement, selectElement: HTMLSelectElement, disabled: boolean) {
     selectElement.disabled = disabled;
     if (disabled) {
-        addClass(getParentElement(selectElement), styles.disabled);
+        addClass(parent, styles.disabled);
     } else {
-        removeClass(getParentElement(selectElement), styles.disabled);
+        removeClass(parent, styles.disabled);
     }
 }
 

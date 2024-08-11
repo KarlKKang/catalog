@@ -1,5 +1,5 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getByClass, getParentElement } from '../module/dom/get_element';
+import { getByClass } from '../module/dom/get_element';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
@@ -89,4 +89,14 @@ export function getByClassAt(parent: Element | Document, className: string, inde
         throw new Error(msg);
     }
     return elem;
+}
+
+export function getParentElement(elem: Node) {
+    const parent = elem.parentElement;
+    if (parent === null) {
+        const msg = 'Parent element not found.';
+        alert(msg);
+        throw new Error(msg);
+    }
+    return parent;
 }
