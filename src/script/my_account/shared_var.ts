@@ -15,6 +15,7 @@ import { changeButtonText, loading, passwordRules, submitButtonText, usernameRul
 import { createUsernameInput } from '../module/dom/element/input/username/create';
 import * as styles from '../../css/my_account.module.scss';
 import { addOffloadCallback } from '../module/global';
+import { type StyledInputElement, StyledInputElementKey } from '../module/dom/element/input/type';
 
 export const enum SharedBool {
     currentMfaStatus,
@@ -55,7 +56,7 @@ export const enum SharedElement {
 }
 
 let sharedBools: { [key in SharedBool]: boolean } | null = null;
-let sharedInputs: { [key in SharedInput]: HTMLInputElement } | null = null;
+let sharedInputs: { [key in SharedInput]: StyledInputElement } | null = null;
 let sharedButtons: { [key in SharedButton]: HTMLButtonElement } | null = null;
 let sharedElements: { [key in SharedElement]: HTMLElement } | null = null;
 export const sessionLogoutButtons = new Set<HTMLButtonElement>();
@@ -71,12 +72,12 @@ export function initializeSharedVars() {
 
     const changeEmailSubsec = appendSubsection(container, 'メールアドレス', [], createParagraphElement(), [], createStyledButtonElement(changeButtonText), []);
 
-    const [usernameContainer, usernameInput] = createUsernameInput();
-    const usernameSubsec = appendSubsection(container, 'ユーザー名', [], createParagraphElement(), [usernameContainer], createStyledButtonElement(changeButtonText), [usernameRule]);
+    const usernameStyledInput = createUsernameInput();
+    const usernameSubsec = appendSubsection(container, 'ユーザー名', [], createParagraphElement(), [usernameStyledInput[StyledInputElementKey.CONTAINER]], createStyledButtonElement(changeButtonText), [usernameRule]);
 
-    const [passwordContainer, passwordInput] = createPasswordInput(true, '新しいパスワード');
-    const [passwordConfirmContainer, passwordConfirmInput] = createPasswordInput(true, '確認再入力');
-    const passwordSubsec = appendSubsection(container, 'パスワード', [], createParagraphElement(), [passwordContainer, passwordConfirmContainer], createStyledButtonElement(changeButtonText), passwordRules);
+    const passwordStyledInput = createPasswordInput(true, '新しいパスワード');
+    const passwordConfirmStyledInput = createPasswordInput(true, '確認再入力');
+    const passwordSubsec = appendSubsection(container, 'パスワード', [], createParagraphElement(), [passwordStyledInput[StyledInputElementKey.CONTAINER], passwordConfirmStyledInput[StyledInputElementKey.CONTAINER]], createStyledButtonElement(changeButtonText), passwordRules);
 
     const mfaInfo = createParagraphElement();
     const mfaSubsec = appendSubsection(container, '二要素認証', [mfaInfo], createParagraphElement(), [], createStyledButtonElement(), []);
@@ -96,9 +97,9 @@ export function initializeSharedVars() {
     const inviteCountInfo = createParagraphElement('保有している招待券の枚数：');
     const inviteCount = createSpanElement();
     appendChild(inviteCountInfo, inviteCount);
-    const [inviteReceiverEmailContainer, inviteReceiverEmailInput] = createEmailInput();
-    inviteReceiverEmailInput.autocomplete = 'off';
-    const inviteSubsec = appendSubsection(container, 'ご招待', [inviteCountInfo], createParagraphElement(), [inviteReceiverEmailContainer], createStyledButtonElement(submitButtonText), []);
+    const inviteReceiverEmailStyledInput = createEmailInput();
+    inviteReceiverEmailStyledInput[StyledInputElementKey.INPUT].autocomplete = 'off';
+    const inviteSubsec = appendSubsection(container, 'ご招待', [inviteCountInfo], createParagraphElement(), [inviteReceiverEmailStyledInput[StyledInputElementKey.CONTAINER]], createStyledButtonElement(submitButtonText), []);
 
     const logoutButton = createStyledButtonElement('ログアウ');
     appendChild(container, logoutButton);
@@ -108,10 +109,10 @@ export function initializeSharedVars() {
         [SharedBool.currentLoginNotificationStatus]: false,
     };
     sharedInputs = {
-        [SharedInput.newUsernameInput]: usernameInput,
-        [SharedInput.newPasswordInput]: passwordInput,
-        [SharedInput.newPasswordComfirmInput]: passwordConfirmInput,
-        [SharedInput.inviteReceiverEmailInput]: inviteReceiverEmailInput,
+        [SharedInput.newUsernameInput]: usernameStyledInput,
+        [SharedInput.newPasswordInput]: passwordStyledInput,
+        [SharedInput.newPasswordComfirmInput]: passwordConfirmStyledInput,
+        [SharedInput.inviteReceiverEmailInput]: inviteReceiverEmailStyledInput,
     };
     sharedButtons = {
         [SharedButton.emailChangeButton]: changeEmailSubsec[1],
@@ -159,11 +160,18 @@ export function getSharedBool(idx: SharedBool) {
     return sharedBools[idx];
 }
 
-export function getSharedInput(idx: SharedInput) {
+export function getSharedStyledInput(idx: SharedInput) {
     if (sharedInputs === null) {
         triggerSharedVarAccessError();
     }
     return sharedInputs[idx];
+}
+
+export function getSharedInput(idx: SharedInput) {
+    if (sharedInputs === null) {
+        triggerSharedVarAccessError();
+    }
+    return sharedInputs[idx][StyledInputElementKey.INPUT];
 }
 
 export function getSharedButton(idx: SharedButton) {

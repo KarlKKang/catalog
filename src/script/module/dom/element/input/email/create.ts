@@ -3,8 +3,9 @@ import { addClass } from '../../../class';
 import * as styles from '../../../../../../css/common.module.scss';
 import { createDivElement } from '../../div/create';
 import { createInputElement } from '../native/create';
+import { StyledInputElementKey, type StyledInputElement } from '../type';
 
-export function createEmailInput(placeholder = 'メールアドレス') {
+export function createEmailInput(placeholder = 'メールアドレス'): StyledInputElement {
     const container = createDivElement();
     addClass(container, styles.inputField);
     const input = createInputElement('email');
@@ -13,5 +14,8 @@ export function createEmailInput(placeholder = 'メールアドレス') {
     input.autocapitalize = 'off';
     input.maxLength = 254;
     appendChild(container, input);
-    return [container, input] as const;
+    return {
+        [StyledInputElementKey.CONTAINER]: container,
+        [StyledInputElementKey.INPUT]: input,
+    };
 }

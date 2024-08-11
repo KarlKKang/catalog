@@ -2,7 +2,7 @@ import { createStyledButtonElement } from '../dom/element/button/styled/create';
 import { createTotpInput } from '../dom/element/input/totp/create';
 import { createParagraphElement } from '../dom/element/paragraph/create';
 import { createDivElement } from '../dom/element/div/create';
-import { disableInput } from '../dom/change_input';
+import { disableStyledInput } from '../dom/element/input/disable_styled';
 import { disableButton } from '../dom/element/button/disable';
 import { appendChild } from '../dom/change_node';
 import { addClass } from '../dom/class';
@@ -16,6 +16,7 @@ import { addInterval, removeInterval } from '../timer';
 import { cancelButtonText, submitButtonText } from '../text/ui';
 import { initializePopupWindow, styles } from './core';
 import { pgid } from '../global';
+import { StyledInputElementKey } from '../dom/element/input/type';
 
 export const enum TotpPopupWindowKey {
     TOTP,
@@ -48,7 +49,11 @@ function promptForTotp() {
     changeColor(warningText, CSS_COLOR.RED);
     hideElement(warningText);
 
-    const [totpInputContainer, totpInput] = createTotpInput(true);
+    const totpStyledInput = createTotpInput(true);
+    const {
+        [StyledInputElementKey.CONTAINER]: totpInputContainer,
+        [StyledInputElementKey.INPUT]: totpInput,
+    } = totpStyledInput;
     horizontalCenter(totpInputContainer);
 
     const submitButton = createStyledButtonElement(submitButtonText);
@@ -74,7 +79,7 @@ function promptForTotp() {
     }, 1000);
 
     const disableAllInputs = (disabled: boolean) => {
-        disableInput(totpInput, disabled);
+        disableStyledInput(totpStyledInput, disabled);
         disableButton(submitButton, disabled);
         disableButton(cancelButton, disabled);
     };

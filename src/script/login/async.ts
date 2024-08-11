@@ -11,7 +11,7 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { getParentElement } from '../module/dom/get_element';
-import { disableInput } from '../module/dom/change_input';
+import { disableStyledInput } from '../module/dom/element/input/disable_styled';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
 import { addClass, removeClass } from '../module/dom/class';
@@ -34,6 +34,7 @@ import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 import { createLabelElement } from '../module/dom/element/label/create';
+import { StyledInputElementKey } from '../module/dom/element/input/type';
 
 export default function (
     approvedCallbackPromise: Promise<typeof import(
@@ -54,11 +55,19 @@ export default function (
     hideElement(warningElem);
     appendChild(container, warningElem);
 
-    const [emailContainer, emailInput] = createEmailInput();
+    const emailStyledInput = createEmailInput();
+    const {
+        [StyledInputElementKey.CONTAINER]: emailContainer,
+        [StyledInputElementKey.INPUT]: emailInput,
+    } = emailStyledInput;
     horizontalCenter(emailContainer);
     appendChild(container, emailContainer);
 
-    const [passwordContainer, passwordInput] = createPasswordInput(false);
+    const passwordStyledInput = createPasswordInput(false);
+    const {
+        [StyledInputElementKey.CONTAINER]: passwordContainer,
+        [StyledInputElementKey.INPUT]: passwordInput,
+    } = passwordStyledInput;
     horizontalCenter(passwordContainer);
     appendChild(container, passwordContainer);
 
@@ -181,8 +190,8 @@ export default function (
 
     function disableAllInputs(disabled: boolean) {
         disableButton(submitButton, disabled);
-        disableInput(passwordInput, disabled);
-        disableInput(emailInput, disabled);
+        disableStyledInput(passwordStyledInput, disabled);
+        disableStyledInput(emailStyledInput, disabled);
         disableCheckbox(rememberMeInput, disabled);
     }
 }

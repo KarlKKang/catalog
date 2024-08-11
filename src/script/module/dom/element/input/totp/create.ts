@@ -3,8 +3,9 @@ import { addClass } from '../../../class';
 import * as styles from '../../../../../../css/common.module.scss';
 import { createDivElement } from '../../div/create';
 import { createInputElement } from '../native/create';
+import { StyledInputElementKey, type StyledInputElement } from '../type';
 
-export function createTotpInput(allowRecoveryCode: boolean) {
+export function createTotpInput(allowRecoveryCode: boolean): StyledInputElement {
     const container = createDivElement();
     addClass(container, styles.inputField);
     const input = createInputElement('text');
@@ -12,5 +13,8 @@ export function createTotpInput(allowRecoveryCode: boolean) {
     input.placeholder = '認証コード';
     input.maxLength = allowRecoveryCode ? 32 : 6;
     appendChild(container, input);
-    return [container, input] as const;
+    return {
+        [StyledInputElementKey.CONTAINER]: container,
+        [StyledInputElementKey.INPUT]: input,
+    };
 }

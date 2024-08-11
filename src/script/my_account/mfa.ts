@@ -8,7 +8,7 @@ import { createAnchorElement } from '../module/dom/element/anchor/create';
 import { createCanvasElement } from '../module/dom/element/canvas/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableInput } from '../module/dom/change_input';
+import { disableStyledInput } from '../module/dom/element/input/disable_styled';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
@@ -43,6 +43,7 @@ import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/my_account.module.scss';
 import { type RecoveryCodeInfo, parseRecoveryCodeInfo } from '../module/type/RecoveryCodeInfo';
 import { initializePopupWindow, styles as popupWindowStyles } from '../module/popup_window/core';
+import { StyledInputElementKey } from '../module/dom/element/input/type';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
@@ -276,7 +277,11 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
     changeColor(warningText, CSS_COLOR.RED);
     hideElement(warningText);
 
-    const [totpInputContainer, totpInput] = createTotpInput(false);
+    const totpStyledInput = createTotpInput(false);
+    const {
+        [StyledInputElementKey.CONTAINER]: totpInputContainer,
+        [StyledInputElementKey.INPUT]: totpInput,
+    } = totpStyledInput;
     horizontalCenter(totpInputContainer);
 
     const submitButton = createStyledButtonElement(submitButtonText);
@@ -292,7 +297,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
     );
 
     const disableAllPopUpWindowInputs = (disabled: boolean) => {
-        disableInput(totpInput, disabled);
+        disableStyledInput(totpStyledInput, disabled);
         disableButton(submitButton, disabled);
         disableButton(cancelButton, disabled);
     };

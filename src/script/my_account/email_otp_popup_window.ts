@@ -3,7 +3,7 @@ import { createTotpInput } from '../module/dom/element/input/totp/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableInput } from '../module/dom/change_input';
+import { disableStyledInput } from '../module/dom/element/input/disable_styled';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
@@ -18,6 +18,7 @@ import { setWidth } from '../module/style/width';
 import { CSS_AUTO } from '../module/style/value/auto';
 import { addInterval, type Interval, removeInterval } from '../module/timer';
 import { cancelButtonText, submitButtonText } from '../module/text/ui';
+import { StyledInputElementKey } from '../module/dom/element/input/type';
 
 export const enum EmailOtpPopupWindowKey {
     OTP,
@@ -52,7 +53,11 @@ export function promptForEmailOtp() {
     const inputFlexbox = createDivElement();
     addClass(inputFlexbox, styles.inputFlexbox);
 
-    const [otpInputContainer, otpInput] = createTotpInput(false);
+    const otpStyledInput = createTotpInput(false);
+    const {
+        [StyledInputElementKey.CONTAINER]: otpInputContainer,
+        [StyledInputElementKey.INPUT]: otpInput,
+    } = otpStyledInput;
     appendChild(inputFlexbox, otpInputContainer);
 
     const resendButton = createStyledButtonElement();
@@ -113,7 +118,7 @@ export function promptForEmailOtp() {
     });
 
     const disableAllInputs = (disabled: boolean) => {
-        disableInput(otpInput, disabled);
+        disableStyledInput(otpStyledInput, disabled);
         if (resendButton.textContent === resendButtonText) {
             disableButton(resendButton, disabled);
         }

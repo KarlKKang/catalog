@@ -4,8 +4,9 @@ import { addEventListener } from '../../../../event_listener';
 import * as styles from '../../../../../../css/common.module.scss';
 import { createDivElement } from '../../div/create';
 import { createInputElement } from '../native/create';
+import { StyledInputElementKey, type StyledInputElement } from '../type';
 
-export function createPasswordInput(newPassword: boolean, placeholder = 'パスワード') {
+export function createPasswordInput(newPassword: boolean, placeholder = 'パスワード'): StyledInputElement {
     const container = createDivElement();
     addClass(container, styles.inputField);
     const input = createInputElement('password');
@@ -13,7 +14,10 @@ export function createPasswordInput(newPassword: boolean, placeholder = 'パス�
     input.placeholder = placeholder;
     passwordStyling(input);
     appendChild(container, input);
-    return [container, input] as const;
+    return {
+        [StyledInputElementKey.CONTAINER]: container,
+        [StyledInputElementKey.INPUT]: input,
+    };
 }
 
 function passwordStyling(element: HTMLInputElement) {

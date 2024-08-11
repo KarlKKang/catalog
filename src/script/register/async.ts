@@ -8,7 +8,7 @@ import { createUListElement } from '../module/dom/element/list/ul/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableInput } from '../module/dom/change_input';
+import { disableStyledInput } from '../module/dom/element/input/disable_styled';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
@@ -35,6 +35,7 @@ import { MessageParamKey } from '../module/message/type';
 import { emailAlreadyRegistered } from './shared';
 import { INFO_URI, LOGIN_URI } from '../module/env/uri';
 import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
+import { StyledInputElementKey } from '../module/dom/element/input/type';
 
 export default function (param: string) {
     const container = createDivElement();
@@ -52,15 +53,27 @@ export default function (param: string) {
     hideElement(warningElem);
     appendChild(container, warningElem);
 
-    const [usernameContainer, usernameInput] = createUsernameInput();
+    const usernameStyledInput = createUsernameInput();
+    const {
+        [StyledInputElementKey.CONTAINER]: usernameContainer,
+        [StyledInputElementKey.INPUT]: usernameInput,
+    } = usernameStyledInput;
     horizontalCenter(usernameContainer);
     appendChild(container, usernameContainer);
 
-    const [passwordContainer, passwordInput] = createPasswordInput(true);
+    const passwordStyledInput = createPasswordInput(true);
+    const {
+        [StyledInputElementKey.CONTAINER]: passwordContainer,
+        [StyledInputElementKey.INPUT]: passwordInput,
+    } = passwordStyledInput;
     horizontalCenter(passwordContainer);
     appendChild(container, passwordContainer);
 
-    const [passwordConfirmContainer, passwordConfirmInput] = createPasswordInput(true, 'パスワード（確認）');
+    const passwordConfirmStyledInput = createPasswordInput(true, 'パスワード（確認）');
+    const {
+        [StyledInputElementKey.CONTAINER]: passwordConfirmContainer,
+        [StyledInputElementKey.INPUT]: passwordConfirmInput,
+    } = passwordConfirmStyledInput;
     horizontalCenter(passwordConfirmContainer);
     appendChild(container, passwordConfirmContainer);
 
@@ -157,9 +170,9 @@ export default function (param: string) {
 
     function disableAllInputs(disabled: boolean) {
         disableButton(submitButton, disabled);
-        disableInput(usernameInput, disabled);
-        disableInput(passwordInput, disabled);
-        disableInput(passwordConfirmInput, disabled);
+        disableStyledInput(usernameStyledInput, disabled);
+        disableStyledInput(passwordStyledInput, disabled);
+        disableStyledInput(passwordConfirmStyledInput, disabled);
     }
 }
 

@@ -5,7 +5,7 @@ import { createEmailInput } from './module/dom/element/input/email/create';
 import { replaceText } from './module/dom/element/text/replace';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
-import { disableInput } from './module/dom/change_input';
+import { disableStyledInput } from './module/dom/element/input/disable_styled';
 import { disableButton } from './module/dom/element/button/disable';
 import { appendChild } from './module/dom/change_node';
 import { addClass } from './module/dom/class';
@@ -24,6 +24,7 @@ import { hideElement } from './module/style/hide_element';
 import { submitButtonText } from './module/text/ui';
 import { registerPageTitle } from './module/text/page_title';
 import * as styles from '../css/portal_form.module.scss';
+import { StyledInputElementKey } from './module/dom/element/input/type';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -45,7 +46,11 @@ function showPageCallback() {
     hideElement(warningElem);
     appendChild(container, warningElem);
 
-    const [emailContainer, emailInput] = createEmailInput();
+    const emailStyledInput = createEmailInput();
+    const {
+        [StyledInputElementKey.CONTAINER]: emailContainer,
+        [StyledInputElementKey.INPUT]: emailInput,
+    } = emailStyledInput;
     horizontalCenter(emailContainer);
     appendChild(container, emailContainer);
 
@@ -101,6 +106,6 @@ function showPageCallback() {
 
     function disableAllInputs(disabled: boolean) {
         disableButton(submitButton, disabled);
-        disableInput(emailInput, disabled);
+        disableStyledInput(emailStyledInput, disabled);
     }
 }

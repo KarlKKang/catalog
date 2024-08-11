@@ -8,7 +8,6 @@ import { createInputElement } from '../module/dom/element/input/native/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableInput } from '../module/dom/change_input';
 import { appendChild, appendChildren, insertBefore, replaceChildren } from '../module/dom/change_node';
 import { addClass, removeClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
@@ -65,7 +64,7 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
     appendChild(searchBar, searchBarInput);
 
     const disableSearchBarInput = (disabled: boolean) => {
-        disableInput(searchBarInput, disabled);
+        searchBarInput.disabled = disabled;
         if (disabled) {
             addClass(searchBar, styles.disabled);
         } else {

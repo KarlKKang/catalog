@@ -6,7 +6,7 @@ import { appendText } from '../module/dom/element/text/append';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableInput } from '../module/dom/change_input';
+import { disableStyledInput } from '../module/dom/element/input/disable_styled';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
@@ -22,6 +22,7 @@ import { cancelButtonText, forgetPasswordText, submitButtonText } from '../modul
 import * as commonStyles from '../../css/common.module.scss';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
+import { StyledInputElementKey } from '../module/dom/element/input/type';
 
 export const enum LoginPopupWindowKey {
     EMAIL,
@@ -59,10 +60,18 @@ export function promptForLogin(message?: string) {
         hideElement(warningText);
     }
 
-    const [emailInputContainer, emailInput] = createEmailInput();
+    const emailStyledInput = createEmailInput();
+    const {
+        [StyledInputElementKey.CONTAINER]: emailInputContainer,
+        [StyledInputElementKey.INPUT]: emailInput,
+    } = emailStyledInput;
     horizontalCenter(emailInputContainer);
 
-    const [passwordInputContainer, passwordInput] = createPasswordInput(false);
+    const passwordStyledInput = createPasswordInput(false);
+    const {
+        [StyledInputElementKey.CONTAINER]: passwordInputContainer,
+        [StyledInputElementKey.INPUT]: passwordInput,
+    } = passwordStyledInput;
     horizontalCenter(passwordInputContainer);
 
     const submitButton = createStyledButtonElement(submitButtonText);
@@ -86,8 +95,8 @@ export function promptForLogin(message?: string) {
     );
 
     const disableAllInputs = (disabled: boolean) => {
-        disableInput(emailInput, disabled);
-        disableInput(passwordInput, disabled);
+        disableStyledInput(emailStyledInput, disabled);
+        disableStyledInput(passwordStyledInput, disabled);
         disableButton(submitButton, disabled);
         disableButton(cancelButton, disabled);
     };
