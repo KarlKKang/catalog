@@ -1,6 +1,6 @@
 import { ServerRequestKey, ServerRequestOptionProp, parseResponse, sendServerRequest, setUpSessionAuthentication } from '../module/server';
 import { changeURL, getHash, getURI } from '../module/dom/document';
-import { clearSessionStorage } from '../module/dom/session_storage';
+import { clearSessionStorage } from '../module/session_storage/clear';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';
 import { addNavBar } from '../module/nav_bar';

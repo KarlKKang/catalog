@@ -3,7 +3,8 @@ import {
 } from '../module/media_helper';
 import { ServerRequestKey, ServerRequestOptionProp, sendServerRequest, setUpSessionAuthentication } from '../module/server';
 import { setTitle } from '../module/dom/document';
-import { clearSessionStorage, getSessionStorage } from '../module/dom/session_storage';
+import { getSessionStorage } from '../module/session_storage/get';
+import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';

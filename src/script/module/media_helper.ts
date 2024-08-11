@@ -1,5 +1,6 @@
 import { getTitle, openWindow } from './dom/document';
-import { clearSessionStorage, setSessionStorage } from './dom/session_storage';
+import { setSessionStorage } from './session_storage/set';
+import { clearSessionStorage } from './session_storage/clear';
 import { IMAGE_URI } from './env/uri';
 import { addEventListener } from './event_listener';
 

@@ -1,4 +1,4 @@
-import { w, windowLocation } from './document';
+import { w, windowLocation } from '../dom/document';
 
 export function setSessionStorage(key: string, value: string) {
     try {
@@ -7,12 +7,4 @@ export function setSessionStorage(key: string, value: string) {
         windowLocation.replace('/unsupported_browser');
         throw e;
     }
-}
-
-export function getSessionStorage(key: string) {
-    return w.sessionStorage.getItem(key);
-}
-
-export function clearSessionStorage() {
-    w.sessionStorage.clear();
 }

@@ -1,6 +1,6 @@
 import { logout } from './module/server';
 import { setTitle } from './module/dom/document';
-import { clearSessionStorage } from './module/dom/session_storage';
+import { clearSessionStorage } from './module/session_storage/clear';
 import { createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
 import { appendChild, appendChildren } from './module/dom/change_node';
 import { addClass } from './module/dom/class';

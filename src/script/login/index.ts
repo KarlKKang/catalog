@@ -2,7 +2,7 @@ import {
     ServerRequestOptionProp,
     sendServerRequest,
 } from '../module/server';
-import { clearSessionStorage } from '../module/dom/session_storage';
+import { clearSessionStorage } from '../module/session_storage/clear';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addTimeout } from '../module/timer';
 import { importModule } from '../module/import_module';
