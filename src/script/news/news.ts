@@ -23,7 +23,7 @@ import { link as linkClass } from '../../css/common.module.scss';
 import { createNewsTemplate, parseNewsStyle } from '../module/news';
 import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
-import { addManualMultiLanguageClass } from '../module/dom/element/multi_language';
+import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
 import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { addTimeout } from '../module/timer';

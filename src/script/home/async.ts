@@ -22,7 +22,7 @@ import { addOffloadCallback, redirect, setCustomPopStateHandler } from '../modul
 import { changeColor, CSS_COLOR } from '../module/style/color';
 import { setOpacity } from '../module/style/opacity';
 import { allResultsShown, loading, noResult } from '../module/text/ui';
-import { addAutoMultiLanguageClass } from '../module/dom/element/multi_language';
+import { addAutoMultiLanguageClass } from '../module/style/multi_language/auto';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/index.module.scss';
 import { lineClamp as lineClampClass } from '../../css/line_clamp.module.scss';

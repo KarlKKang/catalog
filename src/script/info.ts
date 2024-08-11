@@ -12,7 +12,7 @@ import html from '../html/info.html';
 import * as styles from '../css/news.module.scss';
 import { createNewsTemplate, parseNewsStyle } from './module/news';
 import { infoPageTitle } from './module/text/page_title';
-import { addManualMultiLanguageClass } from './module/dom/element/multi_language';
+import { addManualMultiLanguageClass } from './module/style/multi_language/manual';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

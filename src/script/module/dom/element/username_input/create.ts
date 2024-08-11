@@ -3,7 +3,7 @@ import { addClass } from '../../class';
 import { createInputElement } from '../input/create';
 import { createDivElement } from '../div/create';
 import * as styles from '../../../../../css/common.module.scss';
-import { addAutoMultiLanguageClass } from '../multi_language';
+import { addAutoMultiLanguageClass } from '../../../style/multi_language/auto';
 
 export function createUsernameInput() {
     const container = createDivElement();

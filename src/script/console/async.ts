@@ -9,7 +9,7 @@ import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { getTable, setOutput, setOutputElement } from './helper';
 import * as styles from '../../css/console.module.scss';
-import { addAutoMultiLanguageClass } from '../module/dom/element/multi_language';
+import { addAutoMultiLanguageClass } from '../module/style/multi_language/auto';
 import { getSeriesTable } from './series';
 import { getAccountTable } from './account';
 import { getNewsTable } from './news';

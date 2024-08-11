@@ -27,7 +27,7 @@ import { nextButtonText, passwordRules, usernameRule } from '../module/text/ui';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
-import { addManualMultiLanguageClass } from '../module/dom/element/multi_language';
+import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
 import { createUsernameInput } from '../module/dom/element/username_input/create';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
