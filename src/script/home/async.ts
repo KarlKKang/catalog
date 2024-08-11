@@ -1,6 +1,7 @@
 import { newXHR } from '../module/xhr';
 import { scrollToTop } from '../module/dom/scroll';
-import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
+import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { parseResponse } from '../module/server/parse_response';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createTextNode } from '../module/dom/element/text/create';
 import { createSVGElement } from '../module/dom/element/svg/create';

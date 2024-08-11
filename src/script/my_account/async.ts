@@ -1,4 +1,6 @@
-import { ServerRequestOptionProp, logout, parseResponse, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { logout } from '../module/server/logout';
+import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener';
 import { appendChild } from '../module/dom/change_node';
 import { body } from '../module/dom/body';

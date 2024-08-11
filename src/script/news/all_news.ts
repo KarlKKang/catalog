@@ -1,4 +1,5 @@
-import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { parseResponse } from '../module/server/parse_response';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { createBRElement } from '../module/dom/element/br/create';

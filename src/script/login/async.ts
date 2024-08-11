@@ -1,7 +1,7 @@
 import {
     sendServerRequest,
     ServerRequestOptionProp,
-} from '../module/server';
+} from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInput } from '../module/dom/element/input/password/create';
 import { createEmailInput } from '../module/dom/element/input/email/create';

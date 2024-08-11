@@ -5,8 +5,8 @@ import { NavBarPage } from '../module/nav_bar/enum';
 import {
     sendServerRequest,
     ServerRequestOptionProp,
-    parseResponse,
-} from '../module/server';
+} from '../module/server/request';
+import { parseResponse } from '../module/server/parse_response';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { pgid, type ShowPageFunc } from '../module/global';
 import { addTimeout } from '../module/timer';

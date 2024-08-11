@@ -1,7 +1,7 @@
 import {
     ImageSessionTypes,
 } from './media_helper';
-import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from './server';
+import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from './server/request';
 import { appendChild } from './dom/change_node';
 import { addClass } from './dom/class';
 import { createDivElement } from './dom/element/div/create';

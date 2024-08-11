@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from './module/server';
+import { ServerRequestOptionProp, sendServerRequest } from './module/server/request';
 import { clearSessionStorage } from './module/session_storage/clear';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createEmailInput } from './module/dom/element/input/email/create';

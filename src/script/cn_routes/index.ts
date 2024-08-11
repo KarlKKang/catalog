@@ -1,7 +1,8 @@
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { ShowPageFunc, pgid } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
-import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { parseResponse } from '../module/server/parse_response';
 import { parseRouteList } from '../module/type/RouteList';
 import { importModule } from '../module/import_module';
 

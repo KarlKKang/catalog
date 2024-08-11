@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
 import { createTextAreaElement } from '../module/dom/element/text_area/create';
 import { createBRElement } from '../module/dom/element/br/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';

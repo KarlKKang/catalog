@@ -1,7 +1,7 @@
 import {
     ServerRequestOptionProp,
     sendServerRequest,
-} from '../module/server';
+} from '../module/server/request';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addTimeout } from '../module/timer';

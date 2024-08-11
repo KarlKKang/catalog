@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
 import { getByClass, getParentElement } from '../module/dom/get_element';
 import { addClass, containsClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';

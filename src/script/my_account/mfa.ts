@@ -1,4 +1,5 @@
-import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createTotpInput } from '../module/dom/element/input/totp/create';

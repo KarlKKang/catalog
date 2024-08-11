@@ -1,6 +1,6 @@
 import { getServerOrigin } from '../env/origin';
 import { showMessage } from '../message';
-import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, invalidResponse, sessionEnded, unknownServerError, insufficientPermissions } from './message';
+import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, sessionEnded, unknownServerError, insufficientPermissions } from './message';
 import { addTimeout, removeTimeout, type Timeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
@@ -8,8 +8,8 @@ import { LOGIN_URI } from '../env/uri';
 import { abortXhr, newXHR } from '../xhr';
 import { addEventListener } from '../event_listener';
 import { buildURI } from '../http_form';
-import { max } from '../math';
 import { getHighResTimestamp, type HighResTimestamp } from '../hi_res_timestamp';
+import { parseResponse } from './parse_response';
 
 export const enum ServerRequestOptionProp {
     CALLBACK,
@@ -179,50 +179,4 @@ export type { ServerRequest };
 
 export function sendServerRequest(uri: string, options: ServerRequestOption) {
     return new ServerRequest(uri, options);
-}
-
-export function logout(callback: () => void) {
-    sendServerRequest('logout', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-            if (response === 'PARTIAL' || response === 'DONE') {
-                if (DEVELOPMENT) {
-                    console.log(response);
-                }
-                callback();
-            } else {
-                showMessage(invalidResponse());
-            }
-        },
-    });
-}
-
-export function setUpSessionAuthentication(credential: string, startTime: HighResTimestamp, logoutParam?: string) {
-    addTimeout(() => {
-        const requestTimeout = addTimeout(() => {
-            showMessage(connectionError);
-        }, max(60000 - (getHighResTimestamp() - startTime), 0));
-        const serverRequest = sendServerRequest('authenticate_media_session', {
-            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
-                if (response === 'APPROVED') {
-                    removeTimeout(requestTimeout);
-                    setUpSessionAuthentication(credential, serverRequest[ServerRequestKey.REQUEST_START_TIME], logoutParam);
-                    return;
-                }
-                showMessage(invalidResponse());
-            },
-            [ServerRequestOptionProp.CONTENT]: credential,
-            [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
-            [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]: 5,
-            [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
-        });
-    }, max(40000 - (getHighResTimestamp() - startTime), 0)); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
-}
-
-export function parseResponse<T>(response: string, parser: (response: unknown) => T): T {
-    try {
-        return parser(JSON.parse(response));
-    } catch (e) {
-        showMessage(invalidResponse());
-        throw e;
-    }
 }

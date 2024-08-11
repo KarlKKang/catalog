@@ -1,7 +1,8 @@
 import { scrollToTop } from '../module/dom/scroll';
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
-import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
+import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { parseResponse } from '../module/server/parse_response';
 import { changeURL, w } from '../module/dom/document';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { isbot } from 'isbot';

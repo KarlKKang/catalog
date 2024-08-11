@@ -1,7 +1,8 @@
 import {
     ImageSessionTypes,
 } from '../module/media_helper';
-import { ServerRequestKey, ServerRequestOptionProp, sendServerRequest, setUpSessionAuthentication } from '../module/server';
+import { ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { setTitle } from '../module/dom/document';
 import { getSessionStorage } from '../module/session_storage/get';
 import { clearSessionStorage } from '../module/session_storage/clear';
