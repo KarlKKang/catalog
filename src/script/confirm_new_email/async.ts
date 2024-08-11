@@ -1,5 +1,10 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { createButtonElement, createDivElement, createEmailInput, createParagraphElement, createPasswordInput, replaceText } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { createPasswordInput } from '../module/dom/element/password_input/create';
+import { createEmailInput } from '../module/dom/element/email_input/create';
+import { replaceText } from '../module/dom/element/text/replace';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { disableButton, disableInput } from '../module/dom/change_input';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';

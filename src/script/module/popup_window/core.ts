@@ -1,7 +1,7 @@
 import { w } from '../dom/document';
 import { appendChild, replaceChildren } from '../dom/change_node';
 import { addClass } from '../dom/class';
-import { createDivElement } from '../dom/create_element';
+import { createDivElement } from '../dom/element/div/create';
 import { body } from '../dom/body';
 import { addTimeout } from '../timer';
 import * as styles from '../../../css/popup_window.module.scss';

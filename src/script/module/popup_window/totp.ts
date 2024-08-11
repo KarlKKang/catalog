@@ -1,4 +1,7 @@
-import { createButtonElement, createDivElement, createParagraphElement, createTotpInput } from '../dom/create_element';
+import { createButtonElement } from '../dom/element/button/create';
+import { createTotpInput } from '../dom/element/totp_input/create';
+import { createParagraphElement } from '../dom/element/paragraph/create';
+import { createDivElement } from '../dom/element/div/create';
 import { disableButton, disableInput } from '../dom/change_input';
 import { appendChild } from '../dom/change_node';
 import { addClass } from '../dom/class';

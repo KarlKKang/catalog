@@ -1,6 +1,7 @@
 import { appendChild } from '../change_node';
 import { addClass } from '../class';
-import { createDivElement, createInputElement } from '.';
+import { createInputElement } from './input/create';
+import { createDivElement } from './div/create';
 import { container as autoContainerClass } from '../../../../css/multi_language/auto.module.scss';
 import { container as manualContainerClass } from '../../../../css/multi_language/manual.module.scss';
 import * as styles from '../../../../css/common.module.scss';

@@ -1,16 +1,20 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { appendText, createBRElement, createDivElement, createElement, createParagraphElement, createTextAreaElement } from '../module/dom/create_element';
+import { createTextAreaElement } from '../module/dom/element/text_area/create';
+import { createBRElement } from '../module/dom/element/br/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, appendChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { getTable, setOutput, setOutputElement } from './helper';
 import * as styles from '../../css/console.module.scss';
-import { addAutoMultiLanguageClass } from '../module/dom/create_element/multi_language';
+import { addAutoMultiLanguageClass } from '../module/dom/element/multi_language';
 import { getSeriesTable } from './series';
 import { getAccountTable } from './account';
 import { getNewsTable } from './news';
 import { buildURLForm } from '../module/http_form';
+import { createNativeButtonElement } from '../module/dom/element/button/native/create';
 
 export default function () {
     const container = createDivElement();
@@ -231,8 +235,7 @@ function verify(id: string) {
 }
 
 function appendButton(container: HTMLDivElement, text: string, onclick: () => void) {
-    const button = createElement('button') as HTMLButtonElement;
-    appendText(button, text);
+    const button = createNativeButtonElement(text);
     appendChild(container, button);
     addEventListener(button, 'click', onclick);
 }

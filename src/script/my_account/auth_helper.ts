@@ -2,7 +2,7 @@ import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
 import { buildURLForm, joinURLForms } from '../module/http_form';
 import { replaceChildren } from '../module/dom/change_node';
-import { replaceText } from '../module/dom/create_element';
+import { replaceText } from '../module/dom/element/text/replace';
 import { pgid } from '../module/global';
 import { accountDeactivated, loginFailed, sessionEnded, tooManyFailedLogin } from '../module/text/message/body';
 import { TotpPopupWindowKey, handleFailedTotp, type TotpPopupWindow } from '../module/popup_window/totp';

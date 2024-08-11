@@ -3,7 +3,14 @@ import {
     openImageWindow,
     removeRightClick,
 } from '../module/media_helper';
-import { appendText, createAnchorElement, createButtonElement, createDivElement, createLIElement, createParagraphElement, createSpanElement, createUListElement } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { appendText } from '../module/dom/element/text/append';
+import { createAnchorElement } from '../module/dom/element/anchor/create';
+import { createLIElement } from '../module/dom/element/list/li/create';
+import { createUListElement } from '../module/dom/element/list/ul/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createSpanElement } from '../module/dom/element/span/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';

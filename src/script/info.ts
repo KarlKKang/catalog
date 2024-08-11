@@ -1,6 +1,6 @@
 import { getSearchParam } from './module/dom/document';
 import { clearSessionStorage } from './module/session_storage/clear';
-import { createDivElement } from './module/dom/create_element';
+import { createDivElement } from './module/dom/element/div/create';
 import { appendChild } from './module/dom/change_node';
 import { addClass } from './module/dom/class';
 import { body } from './module/dom/body';
@@ -12,7 +12,7 @@ import html from '../html/info.html';
 import * as styles from '../css/news.module.scss';
 import { createNewsTemplate, parseNewsStyle } from './module/news';
 import { infoPageTitle } from './module/text/page_title';
-import { addManualMultiLanguageClass } from './module/dom/create_element/multi_language';
+import { addManualMultiLanguageClass } from './module/dom/element/multi_language';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();

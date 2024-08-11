@@ -1,7 +1,11 @@
 import { encodeCFURIComponent } from '../module/http_form';
 import { appendChild, prependChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
-import { appendText, createBRElement, createDivElement, createParagraphElement, createSpanElement } from '../module/dom/create_element';
+import { appendText } from '../module/dom/element/text/append';
+import { createBRElement } from '../module/dom/element/br/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createSpanElement } from '../module/dom/element/span/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { addEventListener } from '../module/event_listener';
 import { getTitle } from '../module/dom/document';
 import { EPInfoKey, type AudioEPInfo, type AudioFile, AudioFileKey, AlbumInfoKey } from '../module/type/BangumiInfo';

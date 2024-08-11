@@ -1,4 +1,5 @@
-import { createDivElement, createParagraphElement } from '../dom/create_element';
+import { createParagraphElement } from '../dom/element/paragraph/create';
+import { createDivElement } from '../dom/element/div/create';
 import { appendChild, prependChild } from '../dom/change_node';
 import { addClass } from '../dom/class';
 import { body } from '../dom/body';

@@ -1,7 +1,13 @@
 import { newXHR } from '../module/xhr';
 import { scrollToTop } from '../module/dom/scroll';
 import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
-import { createDivElement, createInputElement, createParagraphElement, createSVGElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
+import { replaceText } from '../module/dom/element/text/replace';
+import { createTextNode } from '../module/dom/element/text/create';
+import { createSVGElement } from '../module/dom/element/svg/create';
+import { createInputElement } from '../module/dom/element/input/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createSpanElement } from '../module/dom/element/span/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { disableInput } from '../module/dom/change_input';
 import { appendChild, appendChildren, insertBefore, replaceChildren } from '../module/dom/change_node';
 import { addClass, removeClass } from '../module/dom/class';
@@ -16,7 +22,7 @@ import { addOffloadCallback, redirect, setCustomPopStateHandler } from '../modul
 import { changeColor, CSS_COLOR } from '../module/style/color';
 import { setOpacity } from '../module/style/opacity';
 import { allResultsShown, loading, noResult } from '../module/text/ui';
-import { addAutoMultiLanguageClass } from '../module/dom/create_element/multi_language';
+import { addAutoMultiLanguageClass } from '../module/dom/element/multi_language';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/index.module.scss';
 import { lineClamp as lineClampClass } from '../../css/line_clamp.module.scss';

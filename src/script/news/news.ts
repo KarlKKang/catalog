@@ -6,7 +6,8 @@ import {
 import { newXHR } from '../module/xhr';
 import { scrollToHash } from '../module/dom/scroll';
 import { getTitle, setTitle } from '../module/dom/document';
-import { createDivElement, createParagraphElement } from '../module/dom/create_element';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { getDescendantsByClass } from '../module/dom/get_element';
 import { appendChild } from '../module/dom/change_node';
 import { getDataAttribute } from '../module/dom/attr';
@@ -22,7 +23,7 @@ import { link as linkClass } from '../../css/common.module.scss';
 import { createNewsTemplate, parseNewsStyle } from '../module/news';
 import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
-import { addManualMultiLanguageClass } from '../module/dom/create_element/multi_language';
+import { addManualMultiLanguageClass } from '../module/dom/element/multi_language';
 import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { addTimeout } from '../module/timer';

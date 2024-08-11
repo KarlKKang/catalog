@@ -1,7 +1,8 @@
 import {
     removeRightClick,
 } from '../module/media_helper';
-import { createButtonElement, createDivElement } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild } from '../module/dom/change_node';
 import { addClass, removeClass } from '../module/dom/class';
 import { body } from '../module/dom/body';

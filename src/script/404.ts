@@ -1,5 +1,7 @@
 import { clearSessionStorage } from './module/session_storage/clear';
-import { createButtonElement, createDivElement, createParagraphElement } from './module/dom/create_element';
+import { createButtonElement } from './module/dom/element/button/create';
+import { createParagraphElement } from './module/dom/element/paragraph/create';
+import { createDivElement } from './module/dom/element/div/create';
 import { appendChild } from './module/dom/change_node';
 import { addClass } from './module/dom/class';
 import { body } from './module/dom/body';

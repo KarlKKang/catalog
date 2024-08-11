@@ -1,6 +1,13 @@
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import { addEventListener } from '../module/event_listener';
-import { appendText, createAnchorElement, createButtonElement, createCanvasElement, createDivElement, createParagraphElement, createTotpInput, replaceText } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { createTotpInput } from '../module/dom/element/totp_input/create';
+import { replaceText } from '../module/dom/element/text/replace';
+import { appendText } from '../module/dom/element/text/append';
+import { createAnchorElement } from '../module/dom/element/anchor/create';
+import { createCanvasElement } from '../module/dom/element/canvas/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { disableButton, disableInput } from '../module/dom/change_input';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';

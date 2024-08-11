@@ -1,7 +1,10 @@
 import { UAParser } from 'ua-parser-js';
 import { appendChild, prependChild, remove, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
-import { createButtonElement, createDivElement, createParagraphElement, replaceText } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { replaceText } from '../module/dom/element/text/replace';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { addEventListener } from '../module/event_listener';
 import { SessionKey, type Sessions } from '../module/type/Sessions';
 import { SharedElement, getSharedElement, sessionLogoutButtons } from './shared_var';

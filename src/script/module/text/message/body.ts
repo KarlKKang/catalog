@@ -1,4 +1,5 @@
-import { createEmailLink, createTextNode } from '../../dom/create_element';
+import { createEmailLink } from '../../dom/element/email_link/create';
+import { createTextNode } from '../../dom/element/text/create';
 import { getHostname } from '../../dom/document';
 import { TOP_DOMAIN } from '../../env/domain';
 

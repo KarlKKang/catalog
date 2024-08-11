@@ -1,4 +1,4 @@
-import { replaceText } from '../module/dom/create_element';
+import { replaceText } from '../module/dom/element/text/replace';
 import { disableButton, disableInput } from '../module/dom/change_input';
 import { changeColor } from '../module/style/color';
 import { showElement } from '../module/style/show_element';

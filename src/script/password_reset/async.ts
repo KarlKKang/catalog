@@ -1,5 +1,11 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { appendListItems, createButtonElement, createDivElement, createParagraphElement, createPasswordInput, createUListElement, replaceText } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { createPasswordInput } from '../module/dom/element/password_input/create';
+import { appendListItems } from '../module/dom/element/list/append_item';
+import { replaceText } from '../module/dom/element/text/replace';
+import { createUListElement } from '../module/dom/element/list/ul/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { disableButton, disableInput } from '../module/dom/change_input';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';

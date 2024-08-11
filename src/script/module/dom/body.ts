@@ -1,3 +1,3 @@
-import { createDivElement } from './create_element';
+import { createDivElement } from './element/div/create';
 
 export const body = createDivElement();

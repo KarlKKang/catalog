@@ -5,7 +5,7 @@ import {
 import { newXHR } from './xhr';
 import { appendChild } from './dom/change_node';
 import { addEventListener, removeAllEventListeners } from './event_listener';
-import { createCanvasElement } from './dom/create_element';
+import { createCanvasElement } from './dom/element/canvas/create';
 import { setHeight } from './style/height';
 import { setWidth } from './style/width';
 import { importModule } from './import_module';

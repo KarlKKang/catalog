@@ -3,7 +3,13 @@ import {
 } from '../media_helper';
 import { appendChild, remove } from '../dom/change_node';
 import { addClass, containsClass, removeClass } from '../dom/class';
-import { appendText, createAudioElement, createDivElement, createElement, createSpanElement, createTextAreaElement, createVideoElement, replaceText } from '../dom/create_element';
+import { createTextAreaElement } from '../dom/element/text_area/create';
+import { replaceText } from '../dom/element/text/replace';
+import { appendText } from '../dom/element/text/append';
+import { createAudioElement } from '../dom/element/audio/create';
+import { createVideoElement } from '../dom/element/video/create';
+import { createSpanElement } from '../dom/element/span/create';
+import { createDivElement } from '../dom/element/div/create';
 import { body } from '../dom/body';
 import { d, w } from '../dom/document';
 import { addEventListener, addEventListenerOnce, addEventsListener, removeAllEventListeners, removeEventListener, removeEventsListener } from '../event_listener';
@@ -26,6 +32,7 @@ import { PlayerKey } from './player_key';
 import { addMouseTouchEventListener } from '../event_listener/mouse_touch_event';
 import { EN_LANG_CODE } from '../lang';
 import { max, min, round } from '../math';
+import { createNativeButtonElement } from '../dom/element/button/native/create';
 
 declare global {
     interface HTMLVideoElement {
@@ -885,7 +892,7 @@ function addPlayerPlaceholder(elem: HTMLElement) {
 }
 
 function createPlayerButton(title: string) {
-    const elem = createElement('button') as HTMLButtonElement;
+    const elem = createNativeButtonElement();
     elem.type = 'button';
     elem.title = title;
     return elem;

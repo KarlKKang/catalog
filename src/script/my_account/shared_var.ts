@@ -1,10 +1,18 @@
-import { appendListItems, createButtonElement, createDivElement, createEmailInput, createHRElement, createParagraphElement, createPasswordInput, createSpanElement, createUListElement } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { createPasswordInput } from '../module/dom/element/password_input/create';
+import { createEmailInput } from '../module/dom/element/email_input/create';
+import { appendListItems } from '../module/dom/element/list/append_item';
+import { createUListElement } from '../module/dom/element/list/ul/create';
+import { createHRElement } from '../module/dom/element/hr/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createSpanElement } from '../module/dom/element/span/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, appendChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { hideElement } from '../module/style/hide_element';
 import { myAccountPageTitle } from '../module/text/page_title';
 import { changeButtonText, loading, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
-import { createUsernameInput } from '../module/dom/create_element/multi_language';
+import { createUsernameInput } from '../module/dom/element/multi_language';
 import * as styles from '../../css/my_account.module.scss';
 import { addOffloadCallback } from '../module/global';
 

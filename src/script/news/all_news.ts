@@ -1,5 +1,9 @@
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
-import { appendText, createBRElement, createDivElement, createParagraphElement, replaceText } from '../module/dom/create_element';
+import { replaceText } from '../module/dom/element/text/replace';
+import { appendText } from '../module/dom/element/text/append';
+import { createBRElement } from '../module/dom/element/br/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { body } from '../module/dom/body';

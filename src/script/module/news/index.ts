@@ -1,7 +1,9 @@
 import * as commonStyles from '../../../css/common.module.scss';
 import * as styles from '../../../css/news.module.scss';
 import { getLocalTimeString } from '../time';
-import { createDivElement, createHRElement, createParagraphElement } from '../dom/create_element';
+import { createHRElement } from '../dom/element/hr/create';
+import { createParagraphElement } from '../dom/element/paragraph/create';
+import { createDivElement } from '../dom/element/div/create';
 import { getDescendantsByClass } from '../dom/get_element';
 import { appendChild } from '../dom/change_node';
 import { addClass, removeClass } from '../dom/class';

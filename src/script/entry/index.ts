@@ -1,5 +1,5 @@
 import 'core-js';
-import { createDivElement } from '../module/dom/create_element';
+import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
 import { addClass, setClass } from '../module/dom/class';
 import { changeURL, d, getFullPath, html, parseURI, setTitle, w } from '../module/dom/document';

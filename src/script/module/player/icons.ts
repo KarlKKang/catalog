@@ -1,4 +1,4 @@
-import { createSVGElement } from '../dom/create_element';
+import { createSVGElement } from '../dom/element/svg/create';
 import { addClass } from '../dom/class';
 import { playerFullscreenEnterIcon, playerFullscreenExitIcon, playerPauseIcon, playerPictureInPictureEnterIcon, playerPictureInPictureExitIcon, playerPlayIcon, playerReplayIcon } from '../../../css/player.module.scss';
 

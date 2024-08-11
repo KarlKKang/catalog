@@ -1,4 +1,11 @@
-import { appendText, createBRElement, createButtonElement, createDivElement, createHRElement, createParagraphElement, createSpanElement, createTextNode } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { appendText } from '../module/dom/element/text/append';
+import { createTextNode } from '../module/dom/element/text/create';
+import { createBRElement } from '../module/dom/element/br/create';
+import { createHRElement } from '../module/dom/element/hr/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createSpanElement } from '../module/dom/element/span/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, insertBefore, remove, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { body } from '../module/dom/body';

@@ -2,7 +2,14 @@ import {
     sendServerRequest,
     ServerRequestOptionProp,
 } from '../module/server';
-import { createButtonElement, createDivElement, createElement, createEmailInput, createInputElement, createParagraphElement, createPasswordInput, createSpanElement, replaceText } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { createPasswordInput } from '../module/dom/element/password_input/create';
+import { createEmailInput } from '../module/dom/element/email_input/create';
+import { replaceText } from '../module/dom/element/text/replace';
+import { createInputElement } from '../module/dom/element/input/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createSpanElement } from '../module/dom/element/span/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { getParentElement } from '../module/dom/get_element';
 import { disableButton, disableInput } from '../module/dom/change_input';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
@@ -25,6 +32,7 @@ import * as commonStyles from '../../css/common.module.scss';
 import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
+import { createLabelElement } from '../module/dom/element/label/create';
 
 export default function (
     approvedCallbackPromise: Promise<typeof import(
@@ -182,7 +190,7 @@ function getRememberMeCheckbox() {
     const container = createDivElement();
     addClass(container, styles.rememberMe);
 
-    const label = createElement('label') as HTMLLabelElement;
+    const label = createLabelElement();
     addClass(label, styles.checkboxContainer);
 
     appendChild(label, createParagraphElement('ログインしたままにする'));

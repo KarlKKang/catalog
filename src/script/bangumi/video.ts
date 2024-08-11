@@ -1,7 +1,14 @@
 import { getParentElement } from '../module/dom/get_element';
 import { appendChild, insertBefore, prependChild, remove, replaceChildren } from '../module/dom/change_node';
 import { addClass, removeClass, setClass } from '../module/dom/class';
-import { appendText, createDivElement, createOptionElement, createParagraphElement, createSelectElement, createSpanElement, createTextNode, replaceText } from '../module/dom/create_element';
+import { replaceText } from '../module/dom/element/text/replace';
+import { appendText } from '../module/dom/element/text/append';
+import { createTextNode } from '../module/dom/element/text/create';
+import { createOptionElement } from '../module/dom/element/option/create';
+import { createSelectElement } from '../module/dom/element/select/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createSpanElement } from '../module/dom/element/span/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { changeURL, getSearchParam, getTitle } from '../module/dom/document';
 import { addEventListener, addEventsListener, removeAllEventListeners } from '../module/event_listener';
 import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';

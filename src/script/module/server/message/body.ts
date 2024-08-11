@@ -1,4 +1,11 @@
-import { appendListItems, appendText, createBRElement, createDivElement, createEmailLink, createLIElement, createParagraphElement, createUListElement } from '../../dom/create_element';
+import { createEmailLink } from '../../dom/element/email_link/create';
+import { appendListItems } from '../../dom/element/list/append_item';
+import { appendText } from '../../dom/element/text/append';
+import { createLIElement } from '../../dom/element/list/li/create';
+import { createUListElement } from '../../dom/element/list/ul/create';
+import { createBRElement } from '../../dom/element/br/create';
+import { createParagraphElement } from '../../dom/element/paragraph/create';
+import { createDivElement } from '../../dom/element/div/create';
 import { appendChild, appendChildren } from '../../dom/change_node';
 import { TOP_DOMAIN } from '../../env/domain';
 import { getLocalTimeString } from '../../time';

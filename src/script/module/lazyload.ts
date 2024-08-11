@@ -4,7 +4,7 @@ import {
 import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from './server';
 import { appendChild } from './dom/change_node';
 import { addClass } from './dom/class';
-import { createDivElement } from './dom/create_element';
+import { createDivElement } from './dom/element/div/create';
 import { showMessage } from './message';
 import { invalidResponse } from './server/message';
 import { addTimeout, removeTimeout, type Timeout } from './timer';

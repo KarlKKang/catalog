@@ -1,5 +1,14 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { appendListItems, appendText, createButtonElement, createDivElement, createElement, createHRElement, createOptionElement, createSelectElement, createTextNode, createUListElement, replaceText } from '../module/dom/create_element';
+import { createButtonElement } from '../module/dom/element/button/create';
+import { appendListItems } from '../module/dom/element/list/append_item';
+import { replaceText } from '../module/dom/element/text/replace';
+import { appendText } from '../module/dom/element/text/append';
+import { createTextNode } from '../module/dom/element/text/create';
+import { createUListElement } from '../module/dom/element/list/ul/create';
+import { createHRElement } from '../module/dom/element/hr/create';
+import { createOptionElement } from '../module/dom/element/option/create';
+import { createSelectElement } from '../module/dom/element/select/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { getDescendantsByClassAt } from '../module/dom/get_element';
 import { appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
@@ -24,6 +33,7 @@ import * as styles from '../../css/bangumi.module.scss';
 import { getCDNOrigin } from '../module/env/origin';
 import { buildURLForm, joinURLForms } from '../module/http_form';
 import { disableButton } from '../module/dom/change_input';
+import { createIframeElement } from '../module/dom/element/iframe/create';
 
 export const incompatibleTitle = '再生できません';
 
@@ -161,7 +171,7 @@ export function buildDownloadAccordion(
     const downloadButton = createButtonElement('ダウンロード');
     horizontalCenter(downloadButton);
 
-    const iframe = createElement('iframe') as HTMLIFrameElement;
+    const iframe = createIframeElement();
     hideElement(iframe);
     iframe.height = '0';
     iframe.width = '0';

@@ -1,5 +1,7 @@
 import { getSearchParam, w } from '../module/dom/document';
-import { createDivElement, createParagraphElement, createTextNode } from '../module/dom/create_element';
+import { createTextNode } from '../module/dom/element/text/create';
+import { createParagraphElement } from '../module/dom/element/paragraph/create';
+import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, appendChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { changeColor, type CSS_COLOR } from '../module/style/color';
