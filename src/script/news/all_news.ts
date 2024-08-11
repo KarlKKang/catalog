@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
@@ -42,11 +42,11 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement, i
         return;
     }
     sendServerRequest('get_all_news', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             showAllNews(parseResponse(response, parseAllNewsInfo), container, loadingTextContainer, infiniteScrolling);
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ pivot: pivot }),
-        [ServerRequestOptionProp.METHOD]: 'GET',
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ pivot: pivot }),
+        [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }
 

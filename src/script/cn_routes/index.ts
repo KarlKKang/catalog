@@ -1,7 +1,7 @@
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { ShowPageFunc, pgid } from '../module/global';
 import { addNavBar } from '../module/nav_bar';
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { parseRouteList } from '../module/type/RouteList';
 import { importModule } from '../module/import_module';
@@ -18,7 +18,7 @@ export default function (showPage: ShowPageFunc) {
     );
 
     sendServerRequest('list_cn_routes', {
-        [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
+        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
             const routeList = parseResponse(response, parseRouteList);
 
             const currentPgid = pgid;
@@ -29,6 +29,6 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default(routeList);
             showPage();
         },
-        [ServerRequestOptionProp.METHOD]: 'GET',
+        [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }

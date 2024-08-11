@@ -1,4 +1,4 @@
-import { sendServerRequest, ServerRequestOptionProp, ServerRequestKey } from './request';
+import { sendServerRequest, ServerRequestOptionKey, ServerRequestKey } from './request';
 import { type HighResTimestamp, getHighResTimestamp } from '../hi_res_timestamp';
 import { max } from '../math';
 import { showMessage } from '../message';
@@ -11,7 +11,7 @@ export function setUpSessionAuthentication(credential: string, startTime: HighRe
             showMessage(connectionError);
         }, max(60000 - (getHighResTimestamp() - startTime), 0));
         const serverRequest = sendServerRequest('authenticate_media_session', {
-            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                 if (response === 'APPROVED') {
                     removeTimeout(requestTimeout);
                     setUpSessionAuthentication(credential, serverRequest[ServerRequestKey.REQUEST_START_TIME], logoutParam);
@@ -19,10 +19,10 @@ export function setUpSessionAuthentication(credential: string, startTime: HighRe
                 }
                 showMessage(invalidResponse());
             },
-            [ServerRequestOptionProp.CONTENT]: credential,
-            [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
-            [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]: 5,
-            [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
+            [ServerRequestOptionKey.CONTENT]: credential,
+            [ServerRequestOptionKey.LOGOUT_PARAM]: logoutParam,
+            [ServerRequestOptionKey.CONNECTION_ERROR_RETRY]: 5,
+            [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     }, max(40000 - (getHighResTimestamp() - startTime), 0)); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
 }

@@ -1,4 +1,4 @@
-import { ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { parseResponse } from '../module/server/parse_response';
 import { changeURL, getHash, getURI } from '../module/dom/document';
@@ -35,7 +35,7 @@ function getAllNews(showPage: ShowPageFunc): void {
         ),
     );
     sendServerRequest('get_all_news', {
-        [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
             const currentPgid = pgid;
             const allNewsModule = await allNewsModulePromise;
             if (pgid !== currentPgid) {
@@ -44,8 +44,8 @@ function getAllNews(showPage: ShowPageFunc): void {
             showPage();
             allNewsModule.default(parseResponse(response, AllNewsInfo.parseAllNewsInfo));
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ pivot: 0 }),
-        [ServerRequestOptionProp.METHOD]: 'GET',
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ pivot: 0 }),
+        [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }
 
@@ -66,7 +66,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         hash: getHash(),
     });
     const serverRequest = sendServerRequest('get_news', {
-        [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);
             const currentPgid = pgid;
             const newsModule = await newsModulePromise;
@@ -78,9 +78,9 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], startTime, logoutParam);
             newsModule.default(parsedResponse, newsID, startTime);
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ id: newsID }),
-        [ServerRequestOptionProp.LOGOUT_PARAM]: logoutParam,
-        [ServerRequestOptionProp.TIMEOUT]: 30000,
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ id: newsID }),
+        [ServerRequestOptionKey.LOGOUT_PARAM]: logoutParam,
+        [ServerRequestOptionKey.TIMEOUT]: 30000,
     });
 }
 

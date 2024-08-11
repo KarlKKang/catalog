@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { logout } from '../module/server/logout';
 import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener';
@@ -89,7 +89,7 @@ function changeEmail() {
     changeColor(warningElem, CSS_COLOR.RED);
 
     sendServerRequest('send_email_change', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             if (response === 'WAIT') {
                 replaceText(warningElem, '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。');
             } else if (response === 'DONE') {
@@ -102,7 +102,7 @@ function changeEmail() {
             showElement(warningElem);
             disableAllInputs(false);
         },
-        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
 

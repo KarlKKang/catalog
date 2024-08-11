@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from './module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from './module/server/request';
 import { clearSessionStorage } from './module/session_storage/clear';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createEmailInput } from './module/dom/element/input/email/create';
@@ -97,7 +97,7 @@ function showPageCallback() {
         }
 
         sendServerRequest('send_password_reset', {
-            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                 if (response === 'INVALID FORMAT') {
                     replaceText(warningElem, invalidEmailFormat);
                     showElement(warningElem);
@@ -108,7 +108,7 @@ function showPageCallback() {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: buildURLForm({ email: email }),
+            [ServerRequestOptionKey.CONTENT]: buildURLForm({ email: email }),
         });
     }
 

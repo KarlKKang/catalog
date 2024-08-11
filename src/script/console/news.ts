@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { getByClass, getDescendantsByClassAt, getParentElement } from '../module/dom/get_element';
 import { getDataAttribute } from '../module/dom/attr';
 import { addClass, containsClass } from '../module/dom/class';
@@ -36,10 +36,10 @@ function modifyNews(button: Element) {
     } while (confirm !== 'modify');
 
     sendServerRequest('console', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -59,8 +59,8 @@ function deleteNews(id: string) {
     };
 
     sendServerRequest('console', {
-        [ServerRequestOptionProp.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -89,10 +89,10 @@ function addNews(button: Element) {
     } while (confirm !== 'insert');
 
     sendServerRequest('console', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -127,8 +127,8 @@ function updateNewsTime(id: string) {
     };
 
     sendServerRequest('console', {
-        [ServerRequestOptionProp.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 

@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { getSearchParam } from '../module/dom/document';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
@@ -41,7 +41,7 @@ export default function (showPage: ShowPageFunc) {
 
     const asyncModulePromise = getAsyncModulePromise();
     sendServerRequest('change_email', {
-        [ServerRequestOptionProp.CALLBACK]: (response: string) => {
+        [ServerRequestOptionKey.CALLBACK]: (response: string) => {
             if (response === 'EXPIRED') {
                 showMessage(expired);
             } else if (response === 'APPROVED') {
@@ -50,6 +50,6 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
             }
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: param }),
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: param }),
     });
 }

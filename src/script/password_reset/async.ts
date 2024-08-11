@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInput } from '../module/dom/element/input/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
@@ -106,7 +106,7 @@ export default function (user: string, signature: string, expires: string) {
         }
 
         sendServerRequest('reset_password', {
-            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                 if (response === 'EXPIRED') {
                     showMessage(expired);
                 } else if (response === 'SAME') {
@@ -129,7 +129,7 @@ export default function (user: string, signature: string, expires: string) {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: buildURLForm({ user: user, signature: signature, expires: expires, new: newPassword }),
+            [ServerRequestOptionKey.CONTENT]: buildURLForm({ user: user, signature: signature, expires: expires, new: newPassword }),
         });
     }
 

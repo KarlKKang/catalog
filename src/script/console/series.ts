@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { getByClass, getDescendantsByClassAt, getParentElement } from '../module/dom/get_element';
 import { getDataAttribute } from '../module/dom/attr';
 import { addClass, containsClass } from '../module/dom/class';
@@ -45,8 +45,8 @@ function modifySeries(button: Element) {
     } while (confirm !== 'modify');
 
     sendServerRequest('console', {
-        [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -66,8 +66,8 @@ function deleteSeries(id: string) {
     };
 
     sendServerRequest('console', {
-        [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -100,8 +100,8 @@ function addSeries(button: Element) {
     } while (confirm !== 'insert');
 
     sendServerRequest('console', {
-        [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -190,8 +190,8 @@ function updateSeriesTime(id: string) {
     };
 
     sendServerRequest('console', {
-        [ServerRequestOptionProp.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 

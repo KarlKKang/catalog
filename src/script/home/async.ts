@@ -1,6 +1,6 @@
 import { newXHR } from '../module/xhr';
 import { scrollToTop } from '../module/dom/scroll';
-import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { type ServerRequest, ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createTextNode } from '../module/dom/element/text/create';
@@ -265,16 +265,16 @@ function getSeries(callback: (seriesInfo: SeriesInfo, request: ServerRequest) =>
     currentRequest?.[ServerRequestKey.ABORT]();
     const keywordsQuery = buildURLForm({ keywords: keywords });
     const request = sendServerRequest('get_series', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             if (currentRequest !== request) {
                 return;
             }
             callback(parseResponse(response, parseSeriesInfo), request);
         },
-        [ServerRequestOptionProp.CONTENT]: joinURLForms(keywordsQuery, buildURLForm({ pivot: pivot })),
-        [ServerRequestOptionProp.LOGOUT_PARAM]: keywordsQuery,
-        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
-        [ServerRequestOptionProp.METHOD]: 'GET',
+        [ServerRequestOptionKey.CONTENT]: joinURLForms(keywordsQuery, buildURLForm({ pivot: pivot })),
+        [ServerRequestOptionKey.LOGOUT_PARAM]: keywordsQuery,
+        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.METHOD]: 'GET',
     });
     currentRequest = request;
 }

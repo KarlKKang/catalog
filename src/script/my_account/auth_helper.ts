@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
 import { buildURLForm, joinURLForms } from '../module/http_form';
 import { replaceChildren } from '../module/dom/change_node';
@@ -59,7 +59,7 @@ export function reauthenticationPrompt(
         return;
     }
     sendServerRequest(uri, {
-        [ServerRequestOptionProp.CALLBACK]: (response: string) => {
+        [ServerRequestOptionKey.CALLBACK]: (response: string) => {
             const closeAll = () => {
                 totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
                 loginPopupWindow[LoginPopupWindowKey.CLOSE]();
@@ -98,7 +98,7 @@ export function reauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionProp.CONTENT]: joinURLForms(
+        [ServerRequestOptionKey.CONTENT]: joinURLForms(
             content,
             buildURLForm({
                 email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
@@ -106,7 +106,7 @@ export function reauthenticationPrompt(
                 totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
             }),
         ),
-        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
 

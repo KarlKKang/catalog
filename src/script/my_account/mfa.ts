@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
@@ -167,7 +167,7 @@ function modifyMfaReauthenticationPrompt(
         return;
     }
     sendServerRequest(uri, {
-        [ServerRequestOptionProp.CALLBACK]: (response: string) => {
+        [ServerRequestOptionKey.CALLBACK]: (response: string) => {
             const closeAll = () => {
                 emailOtpPopupWindow?.[EmailOtpPopupWindowKey.CLOSE]();
                 loginPopupWindow[LoginPopupWindowKey.CLOSE]();
@@ -215,7 +215,7 @@ function modifyMfaReauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionProp.CONTENT]: joinURLForms(
+        [ServerRequestOptionKey.CONTENT]: joinURLForms(
             content,
             buildURLForm({
                 email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
@@ -223,7 +223,7 @@ function modifyMfaReauthenticationPrompt(
                 otp: emailOtpPopupWindow?.[EmailOtpPopupWindowKey.OTP],
             }),
         ),
-        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
     });
 }
 
@@ -314,7 +314,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
         }
 
         sendServerRequest('set_totp', {
-            [ServerRequestOptionProp.CALLBACK]: (response: string) => {
+            [ServerRequestOptionKey.CALLBACK]: (response: string) => {
                 const mfaWarning = getSharedElement(SharedElement.mfaWarning);
                 if (response === 'EXPIRED') {
                     hidePopupWindow();
@@ -341,8 +341,8 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
                     });
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: totpInfo[TOTPInfoKey.P], totp: totp }),
-            [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
+            [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: totpInfo[TOTPInfoKey.P], totp: totp }),
+            [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     };
     addEventListener(submitButton, 'click', submit);

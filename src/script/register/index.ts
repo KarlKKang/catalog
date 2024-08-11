@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { getSearchParam } from '../module/dom/document';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
@@ -41,7 +41,7 @@ export default function (showPage: ShowPageFunc) {
 
     const asyncModulePromise = getAsyncModulePromise();
     sendServerRequest('register', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
             } else if (response === 'ALREADY REGISTERED') {
@@ -52,6 +52,6 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
             }
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: param }),
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: param }),
     });
 }

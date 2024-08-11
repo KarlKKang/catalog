@@ -1,7 +1,7 @@
 import { scrollToTop } from '../module/dom/scroll';
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { changeURL, w } from '../module/dom/document';
 import { clearSessionStorage } from '../module/session_storage/clear';
@@ -44,7 +44,7 @@ export default function (showPage: ShowPageFunc) {
     const keywords = getURLKeywords();
     const keywordsQuery = buildURLForm({ keywords: keywords });
     sendServerRequest('get_series', {
-        [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
+        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
             const currentPgid = pgid;
             const asyncModule = await asyncModulePromise;
             if (pgid !== currentPgid) {
@@ -53,11 +53,11 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default(parseResponse(response, parseSeriesInfo), keywords);
             showPage();
         },
-        [ServerRequestOptionProp.CONTENT]: joinURLForms(
+        [ServerRequestOptionKey.CONTENT]: joinURLForms(
             keywordsQuery,
             buildURLForm({ pivot: 0 }),
         ),
-        [ServerRequestOptionProp.LOGOUT_PARAM]: keywordsQuery,
-        [ServerRequestOptionProp.METHOD]: 'GET',
+        [ServerRequestOptionKey.LOGOUT_PARAM]: keywordsQuery,
+        [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }

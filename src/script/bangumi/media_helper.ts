@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
@@ -194,7 +194,7 @@ export function buildDownloadAccordion(
             );
         }
         sendServerRequest('start_download', {
-            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                 const downloadURI = parseURI(response);
                 if (parseOrigin(response) === getCDNOrigin() && downloadURI?.startsWith('/download/')) {
                     iframe.src = response;
@@ -203,9 +203,9 @@ export function buildDownloadAccordion(
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: requestContent,
-            [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
-            [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
+            [ServerRequestOptionKey.CONTENT]: requestContent,
+            [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
+            [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     });
     appendChild(accordionPanel, downloadButton);

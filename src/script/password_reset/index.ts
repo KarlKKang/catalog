@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { getSearchParam } from '../module/dom/document';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
@@ -53,7 +53,7 @@ export default function (showPage: ShowPageFunc) {
 
     const asyncModulePromise = getAsyncModulePromise();
     sendServerRequest('reset_password', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
                 return;
@@ -63,6 +63,6 @@ export default function (showPage: ShowPageFunc) {
             }
             runAsyncModule(asyncModulePromise, user, signature, expires);
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ user: user, signature: signature, expires: expires }),
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ user: user, signature: signature, expires: expires }),
     });
 }

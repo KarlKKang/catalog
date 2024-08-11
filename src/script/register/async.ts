@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInput } from '../module/dom/element/input/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
@@ -134,7 +134,7 @@ export default function (param: string) {
         }
 
         sendServerRequest('register', {
-            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                 const showInlineMessage = (message: string) => {
                     replaceText(warningElem, message);
                     showElement(warningElem);
@@ -164,7 +164,7 @@ export default function (param: string) {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: param, username: username, password: password }),
+            [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: param, username: username, password: password }),
         });
     }
 

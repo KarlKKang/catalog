@@ -1,5 +1,5 @@
 import {
-    ServerRequestOptionProp,
+    ServerRequestOptionKey,
     sendServerRequest,
 } from '../module/server/request';
 import { clearSessionStorage } from '../module/session_storage/clear';
@@ -38,7 +38,7 @@ export default function (showPage: ShowPageFunc) {
         ),
     );
     sendServerRequest('get_authentication_state', {
-        [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
+        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
             if (response === 'APPROVED') {
                 redirect(TOP_URI, true);
             } else if (response === 'FAILED') {

@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { getByClass, getParentElement } from '../module/dom/get_element';
 import { addClass, containsClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';
@@ -25,10 +25,10 @@ export function getTable(type: string, callback?: () => void) {
     };
 
     sendServerRequest('console', {
-        [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response, callback);
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
     });
 }
 

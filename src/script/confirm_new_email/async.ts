@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInput } from '../module/dom/element/input/password/create';
 import { createEmailInput } from '../module/dom/element/input/email/create';
@@ -107,7 +107,7 @@ export default function (param: string) {
 
     function sendChangeEmailRequest(content: string, totpPopupWindow?: TotpPopupWindow) {
         sendServerRequest('change_email', {
-            [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
+            [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
                 switch (response) {
                     case AUTH_FAILED:
                         totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
@@ -161,7 +161,7 @@ export default function (param: string) {
                         showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: joinURLForms(
+            [ServerRequestOptionKey.CONTENT]: joinURLForms(
                 content,
                 buildURLForm({
                     totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],

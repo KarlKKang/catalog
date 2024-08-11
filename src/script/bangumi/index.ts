@@ -1,4 +1,4 @@
-import { ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { parseResponse } from '../module/server/parse_response';
 import { getSearchParam, getURI } from '../module/dom/document';
@@ -52,14 +52,14 @@ export default function (showPage: ShowPageFunc) {
         importAllMediaModules();
         return new Promise<MediaSessionInfo>((resolve) => {
             const serverRequest = sendServerRequest('create_media_session', {
-                [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+                [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                     const parsedResponse = parseResponse(response, parseMediaSessionInfo);
                     setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], serverRequest[ServerRequestKey.REQUEST_START_TIME], getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);
                 },
-                [ServerRequestOptionProp.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
-                [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
-                [ServerRequestOptionProp.TIMEOUT]: 60000,
+                [ServerRequestOptionKey.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
+                [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
+                [ServerRequestOptionKey.TIMEOUT]: 60000,
             });
         });
     };
@@ -76,7 +76,7 @@ export default function (showPage: ShowPageFunc) {
         ),
     );
     sendServerRequest('get_ep', {
-        [ServerRequestOptionProp.CALLBACK]: async function (response: string) {
+        [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseBangumiInfo);
             const currentPgid = pgid;
             if (createMediaSessionPromise === null) {
@@ -103,9 +103,9 @@ export default function (showPage: ShowPageFunc) {
             );
             showPage();
         },
-        [ServerRequestOptionProp.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
-        [ServerRequestOptionProp.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
-        [ServerRequestOptionProp.METHOD]: 'GET',
+        [ServerRequestOptionKey.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
+        [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
+        [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }
 

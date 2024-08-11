@@ -1,7 +1,7 @@
 import {
     ImageSessionTypes,
 } from '../module/media_helper';
-import { ServerRequestKey, ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { setTitle } from '../module/dom/document';
 import { getSessionStorage } from '../module/session_storage/get';
@@ -39,7 +39,7 @@ export default function (showPage: ShowPageFunc) {
     );
 
     const serverRequest = sendServerRequest(uri, {
-        [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
+        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
             if (response !== 'APPROVED') {
                 showMessage(invalidResponse());
                 return;
@@ -53,8 +53,8 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default(baseURL, fileName, serverRequest[ServerRequestKey.REQUEST_START_TIME]);
             showPage();
         },
-        [ServerRequestOptionProp.CONTENT]: sessionCredential,
-        [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
-        [ServerRequestOptionProp.TIMEOUT]: 30000,
+        [ServerRequestOptionKey.CONTENT]: sessionCredential,
+        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.TIMEOUT]: 30000,
     });
 }

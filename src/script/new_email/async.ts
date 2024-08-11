@@ -1,4 +1,4 @@
-import { ServerRequestOptionProp, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createEmailInput } from '../module/dom/element/input/email/create';
 import { replaceText } from '../module/dom/element/text/replace';
@@ -73,7 +73,7 @@ export default function (param: string) {
         }
 
         sendServerRequest('verify_email_change', {
-            [ServerRequestOptionProp.CALLBACK]: function (response: string) {
+            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                 if (response === 'EXPIRED') {
                     showMessage(expired);
                 } else if (response === 'DUPLICATED') {
@@ -90,7 +90,7 @@ export default function (param: string) {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: param, new: newEmail }),
+            [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: param, new: newEmail }),
         });
     }
 

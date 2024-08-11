@@ -11,7 +11,7 @@ import { buildURI } from '../http_form';
 import { getHighResTimestamp, type HighResTimestamp } from '../hi_res_timestamp';
 import { parseResponse } from './parse_response';
 
-export const enum ServerRequestOptionProp {
+export const enum ServerRequestOptionKey {
     CALLBACK,
     CONTENT,
     METHOD,
@@ -22,14 +22,14 @@ export const enum ServerRequestOptionProp {
     TIMEOUT,
 }
 interface ServerRequestOption {
-    readonly [ServerRequestOptionProp.CALLBACK]?: (response: string) => void | Promise<void>;
-    readonly [ServerRequestOptionProp.CONTENT]?: string;
-    readonly [ServerRequestOptionProp.METHOD]?: 'POST' | 'GET';
-    readonly [ServerRequestOptionProp.LOGOUT_PARAM]?: string | undefined;
-    [ServerRequestOptionProp.CONNECTION_ERROR_RETRY]?: number | undefined;
-    [ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
-    readonly [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]?: boolean;
-    readonly [ServerRequestOptionProp.TIMEOUT]?: number;
+    readonly [ServerRequestOptionKey.CALLBACK]?: (response: string) => void | Promise<void>;
+    readonly [ServerRequestOptionKey.CONTENT]?: string;
+    readonly [ServerRequestOptionKey.METHOD]?: 'POST' | 'GET';
+    readonly [ServerRequestOptionKey.LOGOUT_PARAM]?: string | undefined;
+    [ServerRequestOptionKey.CONNECTION_ERROR_RETRY]?: number | undefined;
+    [ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
+    readonly [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]?: boolean;
+    readonly [ServerRequestOptionKey.TIMEOUT]?: number;
 }
 
 export const enum ServerRequestKey {
@@ -77,8 +77,8 @@ class ServerRequest {
     private [ServerRequestKey.SEND_REQUEST](this: ServerRequest) {
         let uri = this[ServerRequestKey.URI];
         const options = this[ServerRequestKey.OPTIONS];
-        let content = options[ServerRequestOptionProp.CONTENT] ?? '';
-        const method = options[ServerRequestOptionProp.METHOD] ?? 'POST';
+        let content = options[ServerRequestOptionKey.CONTENT] ?? '';
+        const method = options[ServerRequestOptionKey.METHOD] ?? 'POST';
         if (method === 'GET') {
             uri = buildURI(uri, content);
             content = '';
@@ -90,7 +90,7 @@ class ServerRequest {
             () => {
                 this[ServerRequestKey.XHR] = null;
                 if (this[ServerRequestKey.CHECK_STATUS](xhr)) {
-                    options[ServerRequestOptionProp.CALLBACK] && options[ServerRequestOptionProp.CALLBACK](xhr.responseText);
+                    options[ServerRequestOptionKey.CALLBACK] && options[ServerRequestOptionKey.CALLBACK](xhr.responseText);
                 }
             },
         );
@@ -98,7 +98,7 @@ class ServerRequest {
             this[ServerRequestKey.XHR] = null;
             this[ServerRequestKey.ON_ERROR_CALLBACK]();
         });
-        const timeout = options[ServerRequestOptionProp.TIMEOUT];
+        const timeout = options[ServerRequestOptionKey.TIMEOUT];
         if (timeout !== undefined) {
             xhr.timeout = timeout;
             addEventListener(xhr, 'timeout', () => {
@@ -112,26 +112,26 @@ class ServerRequest {
 
     private [ServerRequestKey.ON_ERROR_CALLBACK](this: ServerRequest) {
         const options = this[ServerRequestKey.OPTIONS];
-        if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] === undefined) {
-            options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] = 2;
+        if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] === undefined) {
+            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] = 2;
         } else {
-            options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] -= 1;
+            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] -= 1;
         }
 
-        if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] === undefined) {
-            options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] = 500;
+        if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] === undefined) {
+            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] = 500;
         } else {
-            options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT] *= 2;
+            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] *= 2;
         }
 
-        if (options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY] < 0) {
+        if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] < 0) {
             showMessage(connectionError);
         } else {
             this[ServerRequestKey.RETRY_TIMEOUT] = addTimeout(() => {
                 this[ServerRequestKey.RETRY_TIMEOUT] = null;
                 this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
                 this[ServerRequestKey.SEND_REQUEST]();
-            }, options[ServerRequestOptionProp.CONNECTION_ERROR_RETRY_TIMEOUT]);
+            }, options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT]);
         }
     }
 
@@ -147,9 +147,9 @@ class ServerRequest {
             } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
                 showMessage(insufficientPermissions);
             } else if (responseText === 'UNAUTHORIZED') {
-                const logoutParam = options[ServerRequestOptionProp.LOGOUT_PARAM];
+                const logoutParam = options[ServerRequestOptionKey.LOGOUT_PARAM];
                 const url = buildURI(LOGIN_URI, logoutParam);
-                if (options[ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]) {
+                if (options[ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]) {
                     showMessage(sessionEnded(url));
                 } else {
                     redirect(url, true);

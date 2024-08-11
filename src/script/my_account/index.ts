@@ -4,7 +4,7 @@ import {
 import { NavBarPage } from '../module/nav_bar/enum';
 import {
     sendServerRequest,
-    ServerRequestOptionProp,
+    ServerRequestOptionKey,
 } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { clearSessionStorage } from '../module/session_storage/clear';
@@ -37,7 +37,7 @@ export default function (showPage: ShowPageFunc) {
             ),
         );
         sendServerRequest('get_sessions', {
-            [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
+            [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
                 const sessionsModule = await sessionsModuleImport;
                 await uiInitPromise;
                 if (currentPgid !== pgid) {
@@ -57,7 +57,7 @@ export default function (showPage: ShowPageFunc) {
     );
 
     sendServerRequest('get_account', {
-        [ServerRequestOptionProp.CALLBACK]: async (response: string) => {
+        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
             const userInfo = parseResponse(response, parseAccountInfo);
             const asyncModule = await asyncModulePromise;
             if (currentPgid !== pgid) {
@@ -68,6 +68,6 @@ export default function (showPage: ShowPageFunc) {
             showPage();
             getSessions();
         },
-        [ServerRequestOptionProp.METHOD]: 'GET',
+        [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }
