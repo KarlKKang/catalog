@@ -1,6 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInput } from '../module/dom/element/password_input/create';
+import { createPasswordInput } from '../module/dom/element/input/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createUListElement } from '../module/dom/element/list/ul/create';

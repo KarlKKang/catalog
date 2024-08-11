@@ -1,6 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createEmailInput } from '../module/dom/element/email_input/create';
+import { createEmailInput } from '../module/dom/element/input/email/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';

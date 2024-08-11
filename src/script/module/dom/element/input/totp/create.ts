@@ -1,8 +1,8 @@
-import { appendChild } from '../../change_node';
-import { addClass } from '../../class';
-import * as styles from '../../../../../css/common.module.scss';
-import { createDivElement } from '../div/create';
-import { createInputElement } from '../input/create';
+import { appendChild } from '../../../change_node';
+import { addClass } from '../../../class';
+import * as styles from '../../../../../../css/common.module.scss';
+import { createDivElement } from '../../div/create';
+import { createInputElement } from '../native/create';
 
 export function createTotpInput(allowRecoveryCode: boolean) {
     const container = createDivElement();

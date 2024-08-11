@@ -1,5 +1,5 @@
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createTotpInput } from '../module/dom/element/totp_input/create';
+import { createTotpInput } from '../module/dom/element/input/totp/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';

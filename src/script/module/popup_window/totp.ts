@@ -1,5 +1,5 @@
 import { createStyledButtonElement } from '../dom/element/button/styled/create';
-import { createTotpInput } from '../dom/element/totp_input/create';
+import { createTotpInput } from '../dom/element/input/totp/create';
 import { createParagraphElement } from '../dom/element/paragraph/create';
 import { createDivElement } from '../dom/element/div/create';
 import { disableInput } from '../dom/change_input';

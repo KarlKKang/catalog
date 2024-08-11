@@ -1,9 +1,9 @@
-import { appendChild } from '../../change_node';
-import { addClass } from '../../class';
-import { createInputElement } from '../input/create';
-import { createDivElement } from '../div/create';
-import * as styles from '../../../../../css/common.module.scss';
-import { addAutoMultiLanguageClass } from '../../../style/multi_language/auto';
+import { appendChild } from '../../../change_node';
+import { addClass } from '../../../class';
+import { createInputElement } from '../native/create';
+import { createDivElement } from '../../div/create';
+import * as styles from '../../../../../../css/common.module.scss';
+import { addAutoMultiLanguageClass } from '../../../../style/multi_language/auto';
 
 export function createUsernameInput() {
     const container = createDivElement();

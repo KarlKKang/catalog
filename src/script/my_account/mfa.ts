@@ -1,7 +1,7 @@
 import { ServerRequestOptionProp, parseResponse, sendServerRequest } from '../module/server';
 import { addEventListener } from '../module/event_listener';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createTotpInput } from '../module/dom/element/totp_input/create';
+import { createTotpInput } from '../module/dom/element/input/totp/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { createAnchorElement } from '../module/dom/element/anchor/create';

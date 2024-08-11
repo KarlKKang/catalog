@@ -1,9 +1,9 @@
-import { appendChild } from '../../change_node';
-import { addClass } from '../../class';
-import { addEventListener } from '../../../event_listener';
-import * as styles from '../../../../../css/common.module.scss';
-import { createDivElement } from '../div/create';
-import { createInputElement } from '../input/create';
+import { appendChild } from '../../../change_node';
+import { addClass } from '../../../class';
+import { addEventListener } from '../../../../event_listener';
+import * as styles from '../../../../../../css/common.module.scss';
+import { createDivElement } from '../../div/create';
+import { createInputElement } from '../native/create';
 
 export function createPasswordInput(newPassword: boolean, placeholder = 'パスワード') {
     const container = createDivElement();

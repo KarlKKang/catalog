@@ -1,6 +1,6 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInput } from '../module/dom/element/password_input/create';
+import { createPasswordInput } from '../module/dom/element/input/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
@@ -29,7 +29,7 @@ import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
-import { createUsernameInput } from '../module/dom/element/username_input/create';
+import { createUsernameInput } from '../module/dom/element/input/username/create';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { emailAlreadyRegistered } from './shared';

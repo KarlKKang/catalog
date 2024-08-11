@@ -1,6 +1,6 @@
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInput } from '../module/dom/element/password_input/create';
-import { createEmailInput } from '../module/dom/element/email_input/create';
+import { createPasswordInput } from '../module/dom/element/input/password/create';
+import { createEmailInput } from '../module/dom/element/input/email/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { createUListElement } from '../module/dom/element/list/ul/create';
 import { createHRElement } from '../module/dom/element/hr/create';
@@ -12,7 +12,7 @@ import { addClass } from '../module/dom/class';
 import { hideElement } from '../module/style/hide_element';
 import { myAccountPageTitle } from '../module/text/page_title';
 import { changeButtonText, loading, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
-import { createUsernameInput } from '../module/dom/element/username_input/create';
+import { createUsernameInput } from '../module/dom/element/input/username/create';
 import * as styles from '../../css/my_account.module.scss';
 import { addOffloadCallback } from '../module/global';
 

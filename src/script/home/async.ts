@@ -4,7 +4,7 @@ import { type ServerRequest, ServerRequestKey, ServerRequestOptionProp, parseRes
 import { replaceText } from '../module/dom/element/text/replace';
 import { createTextNode } from '../module/dom/element/text/create';
 import { createSVGElement } from '../module/dom/element/svg/create';
-import { createInputElement } from '../module/dom/element/input/create';
+import { createInputElement } from '../module/dom/element/input/native/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
