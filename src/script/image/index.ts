@@ -3,7 +3,7 @@ import {
 } from '../module/media_helper';
 import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
-import { setTitle } from '../module/dom/document';
+import { setTitle } from '../module/dom/document/title/set';
 import { getSessionStorage } from '../module/session_storage/get';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';

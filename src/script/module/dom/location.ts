@@ -1,7 +1,6 @@
 import { STATE_TRACKER } from '../global';
 import { w } from './window';
 
-export const d = document;
 export const windowLocation = w.location;
 
 export function parseOrigin(url: string | URL) {
@@ -55,12 +54,4 @@ export function changeURL(url: string, withoutHistory?: boolean) {
     } else {
         history.pushState(STATE_TRACKER, '', url);
     }
-}
-
-export function getTitle() {
-    return d.title;
-}
-
-export function setTitle(title: string) {
-    d.title = title;
 }

@@ -1,5 +1,5 @@
 import { addTimeout } from '../../timer';
-import { getHash } from '../document';
+import { getHash } from '../location';
 import { w } from '../window';
 import { getByIdNative } from '../get_element';
 

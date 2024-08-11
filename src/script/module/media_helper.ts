@@ -1,4 +1,4 @@
-import { getTitle } from './dom/document';
+import { getTitle } from './dom/document/title/get';
 import { openWindow } from './dom/window/open';
 import { setSessionStorage } from './session_storage/set';
 import { clearSessionStorage } from './session_storage/clear';

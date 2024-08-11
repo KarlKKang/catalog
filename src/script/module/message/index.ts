@@ -1,4 +1,5 @@
-import { getFullPath, getTitle } from '../dom/document';
+import { getTitle } from '../dom/document/title/get';
+import { getFullPath } from '../dom/location';
 import { defaultError } from '../text/message/title';
 import { MessageParamKey, type MessageParam } from './type';
 import { redirect } from '../global';

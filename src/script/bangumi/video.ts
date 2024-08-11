@@ -11,7 +11,8 @@ import { createSelectElement } from '../module/dom/element/select/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { changeURL, getSearchParam, getTitle } from '../module/dom/document';
+import { getTitle } from '../module/dom/document/title/get';
+import { changeURL, getSearchParam } from '../module/dom/location';
 import { addEventListener, addEventsListener, removeAllEventListeners } from '../module/event_listener';
 import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';
 import {

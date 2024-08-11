@@ -1,7 +1,7 @@
 import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { parseResponse } from '../module/server/parse_response';
-import { getSearchParam, getURI } from '../module/dom/document';
+import { getSearchParam, getURI } from '../module/dom/location';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/server/message';

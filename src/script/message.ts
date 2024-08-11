@@ -1,5 +1,5 @@
 import { logout } from './module/server/logout';
-import { setTitle } from './module/dom/document';
+import { setTitle } from './module/dom/document/title/set';
 import { clearSessionStorage } from './module/session_storage/clear';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createParagraphElement } from './module/dom/element/paragraph/create';

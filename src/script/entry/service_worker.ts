@@ -3,7 +3,7 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class/add';
-import { getHostname, windowLocation } from '../module/dom/document';
+import { getHostname, windowLocation } from '../module/dom/location';
 import { addEventListener } from '../module/event_listener';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';

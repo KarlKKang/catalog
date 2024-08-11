@@ -7,7 +7,7 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { addEventListener } from '../module/event_listener';
-import { getTitle } from '../module/dom/document';
+import { getTitle } from '../module/dom/document/title/get';
 import { EPInfoKey, type AudioEPInfo, type AudioFile, AudioFileKey, AlbumInfoKey } from '../module/type/BangumiInfo';
 import {
     IS_FIREFOX,

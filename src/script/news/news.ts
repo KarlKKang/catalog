@@ -5,7 +5,8 @@ import {
 } from '../module/media_helper';
 import { newXHR } from '../module/xhr';
 import { scrollToHash } from '../module/dom/scroll/to_hash';
-import { getTitle, setTitle } from '../module/dom/document';
+import { getTitle } from '../module/dom/document/title/get';
+import { setTitle } from '../module/dom/document/title/set';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { getDescendantsByClass } from '../module/dom/get_element';

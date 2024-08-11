@@ -13,7 +13,7 @@ import { appendChild, appendChildren, insertBefore, replaceChildren } from '../m
 import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
-import { changeURL, getFullPath, getHostname, getURI } from '../module/dom/document';
+import { changeURL, getFullPath, getHostname, getURI } from '../module/dom/location';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/time';

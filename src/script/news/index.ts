@@ -1,7 +1,7 @@
 import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { parseResponse } from '../module/server/parse_response';
-import { changeURL, getHash, getURI } from '../module/dom/document';
+import { changeURL, getHash, getURI } from '../module/dom/location';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';

@@ -3,7 +3,7 @@ import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
-import { changeURL } from '../module/dom/document';
+import { changeURL } from '../module/dom/location';
 import { w } from '../module/dom/window';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { isbot } from 'isbot';
