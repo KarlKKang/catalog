@@ -14,7 +14,7 @@ export default function (showPage: ShowPageFunc) {
 
     const getAsyncModulePromise = () => importModule(
         () => import(
-            /* webpackExports: ["default", "offload"] */
+            /* webpackExports: ["default"] */
             './async'
         ),
     );

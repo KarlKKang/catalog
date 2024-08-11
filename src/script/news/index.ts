@@ -28,7 +28,7 @@ function getAllNews(showPage: ShowPageFunc): void {
     addNavBar(NavBarPage.NEWS);
     const allNewsModulePromise = importModule(
         () => import(
-            /* webpackExports: ["default", "offload"] */
+            /* webpackExports: ["default"] */
             './all_news'
         ),
     );
@@ -54,7 +54,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
 
     const newsModulePromise = importModule(
         () => import(
-            /* webpackExports: ["default", "offload"] */
+            /* webpackExports: ["default"] */
             './news'
         ),
     );

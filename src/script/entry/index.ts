@@ -258,7 +258,7 @@ function importFont(delay: number) {
 async function getServiceWorkerModulePromise(retryTimeout = 500): Promise<ServiceWorkerModule> {
     try {
         return await import(
-            /* webpackExports: ["default", "offload"] */
+            /* webpackExports: ["default"] */
             './service_worker'
         );
     } catch (e) {
