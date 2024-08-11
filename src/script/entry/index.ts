@@ -1,6 +1,7 @@
 import 'core-js';
 import { createDivElement } from '../module/dom/element/div/create';
-import { appendChild, replaceChildren } from '../module/dom/change_node';
+import { replaceChildren } from '../module/dom/node/replace_children';
+import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { setClass } from '../module/dom/class/set';
 import { setTitle } from '../module/dom/document/title/set';

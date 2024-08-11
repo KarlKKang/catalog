@@ -1,5 +1,8 @@
 import { UAParser } from 'ua-parser-js';
-import { appendChild, prependChild, remove, replaceChildren } from '../module/dom/change_node';
+import { prependChild } from '../module/dom/node/prepend_child';
+import { remove } from '../module/dom/node/remove';
+import { replaceChildren } from '../module/dom/node/replace_children';
+import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { replaceText } from '../module/dom/element/text/replace';

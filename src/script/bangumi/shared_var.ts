@@ -1,7 +1,7 @@
 import { body } from '../module/dom/body';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { appendChild } from '../module/dom/change_node';
+import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import * as styles from '../../css/bangumi.module.scss';
 import { loading } from '../module/text/ui';

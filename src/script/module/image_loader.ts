@@ -3,7 +3,7 @@ import {
     removeRightClick,
 } from './media_helper';
 import { newXHR } from './xhr';
-import { appendChild } from './dom/change_node';
+import { appendChild } from './dom/node/append_child';
 import { addEventListener, removeAllEventListeners } from './event_listener';
 import { createCanvasElement } from './dom/element/canvas/create';
 import { setHeight } from './style/height';

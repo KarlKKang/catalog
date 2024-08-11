@@ -4,7 +4,7 @@ import { createParagraphElement } from '../dom/element/paragraph/create';
 import { createDivElement } from '../dom/element/div/create';
 import { disableStyledInput } from '../dom/element/input/disable_styled';
 import { disableButton } from '../dom/element/button/disable';
-import { appendChild } from '../dom/change_node';
+import { appendChild } from '../dom/node/append_child';
 import { addClass } from '../dom/class/add';
 import { addEventListener } from '../event_listener';
 import { failedTotp } from '../text/message/body';

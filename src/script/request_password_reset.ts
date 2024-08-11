@@ -8,7 +8,7 @@ import { createSpanElement } from './module/dom/element/span/create';
 import { createDivElement } from './module/dom/element/div/create';
 import { disableStyledInput } from './module/dom/element/input/disable_styled';
 import { disableButton } from './module/dom/element/button/disable';
-import { appendChild } from './module/dom/change_node';
+import { appendChild } from './module/dom/node/append_child';
 import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener';

@@ -1,4 +1,4 @@
-import { appendChild } from '../../change_node';
+import { appendChild } from '../../node/append_child';
 import { d } from '../../document';
 
 export function createSVGElement(viewBox: string, path: string) {

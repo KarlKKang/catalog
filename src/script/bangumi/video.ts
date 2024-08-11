@@ -1,5 +1,9 @@
 import { getParentElement } from '../module/dom/get_element';
-import { appendChild, insertBefore, prependChild, remove, replaceChildren } from '../module/dom/change_node';
+import { prependChild } from '../module/dom/node/prepend_child';
+import { insertBefore } from '../module/dom/node/insert_before';
+import { remove } from '../module/dom/node/remove';
+import { replaceChildren } from '../module/dom/node/replace_children';
+import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { setClass } from '../module/dom/class/set';

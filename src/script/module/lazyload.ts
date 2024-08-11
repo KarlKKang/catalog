@@ -2,7 +2,7 @@ import {
     ImageSessionTypes,
 } from './media_helper';
 import { type ServerRequest, ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from './server/request';
-import { appendChild } from './dom/change_node';
+import { appendChild } from './dom/node/append_child';
 import { addClass } from './dom/class/add';
 import { createDivElement } from './dom/element/div/create';
 import { showMessage } from './message';

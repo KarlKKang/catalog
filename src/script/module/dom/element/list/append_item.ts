@@ -1,4 +1,4 @@
-import { appendChild } from '../../change_node';
+import { appendChild } from '../../node/append_child';
 import { createLIElement } from './li/create';
 import { appendText } from '../text/append';
 

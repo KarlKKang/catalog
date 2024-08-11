@@ -1,4 +1,4 @@
-import { replaceChildren } from '../../change_node';
+import { replaceChildren } from '../../node/replace_children';
 import { createTextNode } from './create';
 
 export function replaceText(parent: Node, content: string) {

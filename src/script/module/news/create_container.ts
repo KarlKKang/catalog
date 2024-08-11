@@ -3,7 +3,7 @@ import { getLocalTimeString } from '../time';
 import { createHRElement } from '../dom/element/hr/create';
 import { createParagraphElement } from '../dom/element/paragraph/create';
 import { createDivElement } from '../dom/element/div/create';
-import { appendChild } from '../dom/change_node';
+import { appendChild } from '../dom/node/append_child';
 import { addClass } from '../dom/class/add';
 
 export function createNewsContainer(title: string, createTimestamp: number | null, updateTimestamp: number | null) {

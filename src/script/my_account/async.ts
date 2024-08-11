@@ -2,7 +2,7 @@ import { ServerRequestOptionKey, sendServerRequest } from '../module/server/requ
 import { logout } from '../module/server/logout';
 import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener';
-import { appendChild } from '../module/dom/change_node';
+import { appendChild } from '../module/dom/node/append_child';
 import { body } from '../module/dom/body';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';

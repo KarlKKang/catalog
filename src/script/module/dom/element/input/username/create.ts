@@ -1,4 +1,4 @@
-import { appendChild } from '../../../change_node';
+import { appendChild } from '../../../node/append_child';
 import { addClass } from '../../../class/add';
 import { createInputElement } from '../native/create';
 import { createDivElement } from '../../div/create';

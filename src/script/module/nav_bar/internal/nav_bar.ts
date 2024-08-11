@@ -1,6 +1,7 @@
 import { createParagraphElement } from '../../dom/element/paragraph/create';
 import { createDivElement } from '../../dom/element/div/create';
-import { appendChild, prependChild } from '../../dom/change_node';
+import { prependChild } from '../../dom/node/prepend_child';
+import { appendChild } from '../../dom/node/append_child';
 import { addClass } from '../../dom/class/add';
 import { body } from '../../dom/body';
 import { addEventListener } from '../../event_listener';

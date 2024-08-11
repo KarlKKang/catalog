@@ -3,7 +3,7 @@ import {
 } from '../module/media_helper';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { appendChild } from '../module/dom/change_node';
+import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
