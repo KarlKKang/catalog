@@ -79,3 +79,14 @@ export function setOutput(response: string, callback?: (outputElem: HTMLElement)
 function changed(elem: Element) {
     addClass(getParentElement(elem), changedClass);
 }
+
+export function getByClassAt(parent: Element | Document, className: string, index: number) {
+    const elems = getByClass(parent, className);
+    const elem = elems[index];
+    if (elem === undefined) {
+        const msg = `Element with class '${className}' at index ${index} not found.`;
+        alert(msg);
+        throw new Error(msg);
+    }
+    return elem;
+}

@@ -1,10 +1,10 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getByClass, getByClassAt, getParentElement } from '../module/dom/get_element';
+import { getByClass, getParentElement } from '../module/dom/get_element';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
-import { completeCallback, getTable, initializedClass } from './helper';
+import { completeCallback, getByClassAt, getTable, initializedClass } from './helper';
 import { buildURLForm } from '../module/http_form';
 
 function seriesCompleteCallback(response: string) {
