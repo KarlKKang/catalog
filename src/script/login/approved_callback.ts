@@ -5,7 +5,7 @@ import { nextButtonText } from '../module/text/ui';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
-import { getSearchParam } from '../module/dom/location';
+import { getSearchParam } from '../module/dom/location/get/search_param';
 import { buildURLForm, buildURI } from '../module/http_form';
 
 export default function () {

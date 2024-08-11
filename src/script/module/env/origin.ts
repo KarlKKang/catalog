@@ -1,4 +1,5 @@
-import { getHost, getHostname } from '../dom/location';
+import { getHostname } from '../dom/location/get/hostname';
+import { getHost } from '../dom/location/get/host';
 import { TOP_DOMAIN } from './domain';
 
 function splitHostname() {

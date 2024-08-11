@@ -1,4 +1,4 @@
-import { getSearchParam } from '../module/dom/location';
+import { getSearchParam } from '../module/dom/location/get/search_param';
 import { w } from '../module/dom/window';
 import { createTextNode } from '../module/dom/element/text/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';

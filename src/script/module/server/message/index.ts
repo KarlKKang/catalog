@@ -1,7 +1,7 @@
 import * as body from './body';
 import * as title from './title';
 import type { MaintenanceInfo } from '../../type/MaintenanceInfo';
-import { getURI } from '../../dom/location';
+import { getURI } from '../../dom/location/get/uri';
 import { MessageParamKey, type MessageParam } from '../../message/type';
 import { CSS_COLOR } from '../../style/color';
 import { LOGIN_URI, TOP_URI } from '../../env/uri';

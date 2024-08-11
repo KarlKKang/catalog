@@ -12,7 +12,8 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { getTitle } from '../module/dom/document/title/get';
-import { changeURL, getSearchParam } from '../module/dom/location';
+import { getSearchParam } from '../module/dom/location/get/search_param';
+import { changeURL } from '../module/dom/location/change';
 import { addEventListener, addEventsListener, removeAllEventListeners } from '../module/event_listener';
 import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';
 import {

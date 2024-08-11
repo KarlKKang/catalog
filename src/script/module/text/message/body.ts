@@ -1,6 +1,6 @@
 import { createEmailLink } from '../../dom/element/email_link/create';
 import { createTextNode } from '../../dom/element/text/create';
-import { getHostname } from '../../dom/location';
+import { getHostname } from '../../dom/location/get/hostname';
 import { TOP_DOMAIN } from '../../env/domain';
 
 export const defaultErrorSuffix = 'このエラーが続く場合は、管理者にお問い合わせください。';

@@ -13,7 +13,10 @@ import { appendChild, appendChildren, insertBefore, replaceChildren } from '../m
 import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
-import { changeURL, getFullPath, getHostname, getURI } from '../module/dom/location';
+import { getURI } from '../module/dom/location/get/uri';
+import { getHostname } from '../module/dom/location/get/hostname';
+import { getFullPath } from '../module/dom/location/get/full_path';
+import { changeURL } from '../module/dom/location/change';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/time';

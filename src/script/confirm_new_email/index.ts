@@ -1,5 +1,5 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getSearchParam } from '../module/dom/location';
+import { getSearchParam } from '../module/dom/location/get/search_param';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';

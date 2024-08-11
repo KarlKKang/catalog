@@ -1,4 +1,4 @@
-import { getSearchParam } from '../module/dom/location';
+import { getSearchParam } from '../module/dom/location/get/search_param';
 import { addOffloadCallback } from '../module/global';
 
 export let search: ((useURLKeywords: boolean) => void) | null = null;

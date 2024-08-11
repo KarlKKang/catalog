@@ -1,4 +1,4 @@
-import { getSearchParam } from './module/dom/location';
+import { getSearchParam } from './module/dom/location/get/search_param';
 import { clearSessionStorage } from './module/session_storage/clear';
 import { createDivElement } from './module/dom/element/div/create';
 import { appendChild } from './module/dom/change_node';
