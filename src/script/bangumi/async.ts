@@ -7,7 +7,7 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, insertBefore, remove, replaceChildren } from '../module/dom/change_node';
-import { addClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
 import { body } from '../module/dom/body';
 import { getTitle, setTitle, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';

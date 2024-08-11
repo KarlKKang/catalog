@@ -3,7 +3,7 @@ import {
 } from './media_helper';
 import { type ServerRequest, ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from './server/request';
 import { appendChild } from './dom/change_node';
-import { addClass } from './dom/class';
+import { addClass } from './dom/class/add';
 import { createDivElement } from './dom/element/div/create';
 import { showMessage } from './message';
 import { invalidResponse } from './server/message';

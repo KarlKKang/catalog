@@ -4,7 +4,8 @@ import {
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild } from '../module/dom/change_node';
-import { addClass, removeClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
+import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
 import { d, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';

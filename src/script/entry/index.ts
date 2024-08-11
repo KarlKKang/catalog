@@ -1,7 +1,8 @@
 import 'core-js';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
-import { addClass, setClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
+import { setClass } from '../module/dom/class/set';
 import { changeURL, d, getFullPath, html, parseURI, setTitle, w } from '../module/dom/document';
 import { addEventListenerOnce, deregisterAllEventTargets } from '../module/event_listener';
 import { body } from '../module/dom/body';

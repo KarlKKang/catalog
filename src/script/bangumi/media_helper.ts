@@ -11,7 +11,7 @@ import { createSelectElement } from '../module/dom/element/select/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { getDescendantsByClassAt } from '../module/dom/get_element';
 import { appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/change_node';
-import { addClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
 import { parseOrigin, parseURI, w } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';

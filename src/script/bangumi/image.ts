@@ -12,7 +12,7 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, insertBefore, prependChild, replaceChildren } from '../module/dom/change_node';
-import { addClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
 import { addEventListener } from '../module/event_listener';
 import { EPInfoKey, ImageFileKey, type ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';

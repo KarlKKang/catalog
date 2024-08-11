@@ -6,7 +6,8 @@ import { createParagraphElement } from '../dom/element/paragraph/create';
 import { createDivElement } from '../dom/element/div/create';
 import { getDescendantsByClass } from '../dom/get_element';
 import { appendChild } from '../dom/change_node';
-import { addClass, removeClass } from '../dom/class';
+import { addClass } from '../dom/class/add';
+import { removeClass } from '../dom/class/remove';
 
 const classMap = {
     'sub-title': styles.subTitle,

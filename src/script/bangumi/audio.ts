@@ -1,6 +1,6 @@
 import { encodeCFURIComponent } from '../module/http_form';
 import { appendChild, prependChild, replaceChildren } from '../module/dom/change_node';
-import { addClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
 import { appendText } from '../module/dom/element/text/append';
 import { createBRElement } from '../module/dom/element/br/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';

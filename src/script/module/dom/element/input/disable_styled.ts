@@ -1,5 +1,6 @@
 import * as styles from '../../../../../css/common.module.scss';
-import { addClass, removeClass } from '../../class';
+import { addClass } from '../../class/add';
+import { removeClass } from '../../class/remove';
 import { StyledInputElementKey, type StyledInputElement } from './type';
 
 export function disableStyledInput(inputElement: StyledInputElement, disabled: boolean) {

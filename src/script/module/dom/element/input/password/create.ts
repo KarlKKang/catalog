@@ -1,5 +1,5 @@
 import { appendChild } from '../../../change_node';
-import { addClass } from '../../../class';
+import { addClass } from '../../../class/add';
 import { addEventListener } from '../../../../event_listener';
 import * as styles from '../../../../../../css/common.module.scss';
 import { createDivElement } from '../../div/create';

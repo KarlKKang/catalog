@@ -2,7 +2,9 @@ import {
     removeRightClick,
 } from '../media_helper';
 import { appendChild, remove } from '../dom/change_node';
-import { addClass, containsClass, removeClass } from '../dom/class';
+import { addClass } from '../dom/class/add';
+import { removeClass } from '../dom/class/remove';
+import { containsClass } from '../dom/class/contains';
 import { createTextAreaElement } from '../dom/element/text_area/create';
 import { replaceText } from '../dom/element/text/replace';
 import { appendText } from '../dom/element/text/append';

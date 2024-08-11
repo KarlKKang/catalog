@@ -8,7 +8,7 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, appendChildren } from '../module/dom/change_node';
-import { addClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
 import { hideElement } from '../module/style/hide_element';
 import { myAccountPageTitle } from '../module/text/page_title';
 import { changeButtonText, loading, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';

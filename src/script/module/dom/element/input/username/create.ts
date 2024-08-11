@@ -1,5 +1,5 @@
 import { appendChild } from '../../../change_node';
-import { addClass } from '../../../class';
+import { addClass } from '../../../class/add';
 import { createInputElement } from '../native/create';
 import { createDivElement } from '../../div/create';
 import * as styles from '../../../../../../css/common.module.scss';

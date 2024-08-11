@@ -1,6 +1,7 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { getByClass, getParentElement } from '../module/dom/get_element';
-import { addClass, containsClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
+import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
 import { changed as changedClass } from '../../css/console.module.scss';
 import { buildURLForm } from '../module/http_form';

@@ -1,6 +1,8 @@
 import { getParentElement } from '../module/dom/get_element';
 import { appendChild, insertBefore, prependChild, remove, replaceChildren } from '../module/dom/change_node';
-import { addClass, removeClass, setClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
+import { removeClass } from '../module/dom/class/remove';
+import { setClass } from '../module/dom/class/set';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { createTextNode } from '../module/dom/element/text/create';

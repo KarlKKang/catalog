@@ -2,7 +2,7 @@ import { getSearchParam } from './module/dom/document';
 import { clearSessionStorage } from './module/session_storage/clear';
 import { createDivElement } from './module/dom/element/div/create';
 import { appendChild } from './module/dom/change_node';
-import { addClass } from './module/dom/class';
+import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
 import type { ShowPageFunc } from './module/global';
 import { addNavBar } from './module/nav_bar';

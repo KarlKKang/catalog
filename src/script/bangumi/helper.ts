@@ -3,7 +3,7 @@ import { createTextNode } from '../module/dom/element/text/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild, appendChildren } from '../module/dom/change_node';
-import { addClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
 import { changeColor, type CSS_COLOR } from '../module/style/color';
 import * as styles from '../../css/bangumi.module.scss';
 import { buildURLForm, joinURLForms } from '../module/http_form';

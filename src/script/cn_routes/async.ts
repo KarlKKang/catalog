@@ -7,7 +7,7 @@ import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { getProtocol, w, windowLocation } from '../module/dom/document';
 import { appendChild, replaceChildren } from '../module/dom/change_node';
-import { addClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
 import { concatenateLocationPrefix, getBaseHost, getLocationPrefix, getServerOrigin, locationCodeToPrefix } from '../module/env/origin';
 import { addEventListener, addEventsListener } from '../module/event_listener';
 import { createNewsTemplate } from '../module/news';

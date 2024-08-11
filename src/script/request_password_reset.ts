@@ -9,7 +9,7 @@ import { createDivElement } from './module/dom/element/div/create';
 import { disableStyledInput } from './module/dom/element/input/disable_styled';
 import { disableButton } from './module/dom/element/button/disable';
 import { appendChild } from './module/dom/change_node';
-import { addClass } from './module/dom/class';
+import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener';
 import { showMessage } from './module/message';

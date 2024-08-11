@@ -1,4 +1,5 @@
-import { addClass, removeClass } from '../dom/class';
+import { addClass } from '../dom/class/add';
+import { removeClass } from '../dom/class/remove';
 import * as styles from '../../../css/common.module.scss';
 
 export const enum CSS_COLOR {

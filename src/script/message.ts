@@ -5,7 +5,7 @@ import { createStyledButtonElement } from './module/dom/element/button/styled/cr
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
 import { appendChild, appendChildren } from './module/dom/change_node';
-import { addClass } from './module/dom/class';
+import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener';
 import { redirect, type ShowPageFunc } from './module/global';

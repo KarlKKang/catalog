@@ -1,4 +1,4 @@
-import { addClass } from '../../class';
+import { addClass } from '../../class/add';
 import * as styles from '../../../../../css/common.module.scss';
 import { createAnchorElement } from '../anchor/create';
 import { appendText } from '../text/append';

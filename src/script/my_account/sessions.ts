@@ -1,6 +1,6 @@
 import { UAParser } from 'ua-parser-js';
 import { appendChild, prependChild, remove, replaceChildren } from '../module/dom/change_node';
-import { addClass } from '../module/dom/class';
+import { addClass } from '../module/dom/class/add';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';

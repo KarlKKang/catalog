@@ -5,7 +5,7 @@ import { createDivElement } from '../dom/element/div/create';
 import { disableStyledInput } from '../dom/element/input/disable_styled';
 import { disableButton } from '../dom/element/button/disable';
 import { appendChild } from '../dom/change_node';
-import { addClass } from '../dom/class';
+import { addClass } from '../dom/class/add';
 import { addEventListener } from '../event_listener';
 import { failedTotp } from '../text/message/body';
 import { horizontalCenter } from '../style/horizontal_center';
