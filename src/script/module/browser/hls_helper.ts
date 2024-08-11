@@ -1,4 +1,4 @@
-import { w } from '../dom/document';
+import { w } from '../dom/window';
 
 declare global {
     interface Window {

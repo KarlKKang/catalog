@@ -4,7 +4,7 @@ import { appendChild, prependChild } from '../../dom/change_node';
 import { addClass } from '../../dom/class/add';
 import { body } from '../../dom/body';
 import { addEventListener } from '../../event_listener';
-import { w } from '../../dom/document';
+import { w } from '../../dom/window';
 import { redirect } from '../../global';
 import { scrollToTop } from '../../dom/scroll/to_top';
 import { NavBarPage } from '../enum';

@@ -1,4 +1,5 @@
-import { w, windowLocation } from '../dom/document';
+import { windowLocation } from '../dom/document';
+import { w } from '../dom/window';
 
 export function setSessionStorage(key: string, value: string) {
     try {

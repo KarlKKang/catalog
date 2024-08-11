@@ -1,4 +1,5 @@
-import { d, html, w } from './dom/document';
+import { d, html } from './dom/document';
+import { w } from './dom/window';
 import { addClass } from './dom/class/add';
 import { addEventListener } from './event_listener';
 import { positionDetector as positionDetectorClass } from '../../css/position_detector.module.scss';

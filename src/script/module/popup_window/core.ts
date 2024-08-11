@@ -1,4 +1,4 @@
-import { w } from '../dom/document';
+import { w } from '../dom/window';
 import { appendChild, replaceChildren } from '../dom/change_node';
 import { addClass } from '../dom/class/add';
 import { createDivElement } from '../dom/element/div/create';

@@ -1,7 +1,7 @@
 import { STATE_TRACKER } from '../global';
+import { w } from './window';
 
 export const d = document;
-export const w = window;
 export const html = d.documentElement;
 export const windowLocation = w.location;
 
@@ -56,10 +56,6 @@ export function changeURL(url: string, withoutHistory?: boolean) {
     } else {
         history.pushState(STATE_TRACKER, '', url);
     }
-}
-
-export function openWindow(url: string) {
-    w.open(url);
 }
 
 export function getTitle() {

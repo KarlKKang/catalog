@@ -1,4 +1,5 @@
-import { getTitle, openWindow } from './dom/document';
+import { getTitle } from './dom/document';
+import { openWindow } from './dom/window/open';
 import { setSessionStorage } from './session_storage/set';
 import { clearSessionStorage } from './session_storage/clear';
 import { IMAGE_URI } from './env/uri';

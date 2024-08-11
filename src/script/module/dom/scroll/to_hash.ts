@@ -1,5 +1,6 @@
 import { addTimeout } from '../../timer';
-import { getHash, w } from '../document';
+import { getHash } from '../document';
+import { w } from '../window';
 import { getByIdNative } from '../get_element';
 
 export function scrollToHash() {

@@ -13,7 +13,7 @@ import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class/add';
 import { body } from '../module/dom/body';
-import { openWindow } from '../module/dom/document';
+import { openWindow } from '../module/dom/window/open';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
