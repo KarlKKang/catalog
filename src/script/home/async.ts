@@ -1,5 +1,5 @@
 import { newXHR } from '../module/xhr';
-import { scrollToTop } from '../module/dom/scroll';
+import { scrollToTop } from '../module/dom/scroll/to_top';
 import { type ServerRequest, ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { replaceText } from '../module/dom/element/text/replace';

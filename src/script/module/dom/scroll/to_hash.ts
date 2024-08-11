@@ -1,10 +1,6 @@
-import { getHash, w } from './document';
-import { getByIdNative } from './get_element';
-import { addTimeout } from '../timer';
-
-export function scrollToTop() {
-    w.scrollBy(0, -1 * w.scrollY);
-}
+import { addTimeout } from '../../timer';
+import { getHash, w } from '../document';
+import { getByIdNative } from '../get_element';
 
 export function scrollToHash() {
     // Use this function only when the hash element is loaded after the DOM loads.

@@ -4,7 +4,7 @@ import {
     ImageSessionTypes,
 } from '../module/media_helper';
 import { newXHR } from '../module/xhr';
-import { scrollToHash } from '../module/dom/scroll';
+import { scrollToHash } from '../module/dom/scroll/to_hash';
 import { getTitle, setTitle } from '../module/dom/document';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';

@@ -1,4 +1,4 @@
-import { scrollToTop } from '../module/dom/scroll';
+import { scrollToTop } from '../module/dom/scroll/to_top';
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';

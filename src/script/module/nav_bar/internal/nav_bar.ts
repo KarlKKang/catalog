@@ -6,7 +6,7 @@ import { body } from '../../dom/body';
 import { addEventListener } from '../../event_listener';
 import { w } from '../../dom/document';
 import { redirect } from '../../global';
-import { scrollToTop } from '../../dom/scroll';
+import { scrollToTop } from '../../dom/scroll/to_top';
 import { NavBarPage } from '../enum';
 import * as icons from './icons';
 import { infoPageTitle, myAccountPageTitle, newsPageTitle } from '../../text/page_title';
