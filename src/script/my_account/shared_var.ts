@@ -12,7 +12,7 @@ import { addClass } from '../module/dom/class';
 import { hideElement } from '../module/style/hide_element';
 import { myAccountPageTitle } from '../module/text/page_title';
 import { changeButtonText, loading, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
-import { createUsernameInput } from '../module/dom/element/multi_language';
+import { createUsernameInput } from '../module/dom/element/username_input/create';
 import * as styles from '../../css/my_account.module.scss';
 import { addOffloadCallback } from '../module/global';
 
