@@ -9,7 +9,7 @@ import { createHRElement } from '../module/dom/element/hr/create';
 import { createOptionElement } from '../module/dom/element/option/create';
 import { createSelectElement } from '../module/dom/element/select/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { getDescendantsByClassAt } from '../module/dom/get_element';
+import { getByClassAt } from '../module/dom/get_element';
 import { prependChild } from '../module/dom/node/prepend_child';
 import { insertBefore } from '../module/dom/node/insert_before';
 import { replaceChildren } from '../module/dom/node/replace_children';
@@ -86,8 +86,8 @@ export function showErrorMessage(title: string, body: Node[] | string) {
         setErrorMessageElement(messageElem);
         insertBefore(messageElem, mediaHolder);
     } else {
-        const titleElem = getDescendantsByClassAt(messageElem, styles.messageTitle, 0);
-        const bodyElem = getDescendantsByClassAt(messageElem, styles.messageBody, 0);
+        const titleElem = getByClassAt(messageElem, styles.messageTitle, 0);
+        const bodyElem = getByClassAt(messageElem, styles.messageBody, 0);
         titleElem.innerHTML = title;
         isArray(body) ? replaceChildren(bodyElem, ...body) : replaceChildren(bodyElem, createTextNode(body));
     }

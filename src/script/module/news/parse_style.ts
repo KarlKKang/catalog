@@ -1,6 +1,6 @@
 import * as commonStyles from '../../../css/common.module.scss';
 import * as styles from '../../../css/news.module.scss';
-import { getDescendantsByClass } from '../dom/get_element';
+import { getByClass } from '../dom/get_element';
 import { addClass } from '../dom/class/add';
 import { removeClass } from '../dom/class/remove';
 
@@ -18,7 +18,7 @@ const classMap = {
 
 export function parseNewsStyle(container: HTMLElement) {
     for (const [key, value] of Object.entries(classMap)) {
-        const elements = getDescendantsByClass(container, key);
+        const elements = getByClass(container, key);
         // The loop has to be done this way because the `elements` array is a live collection.
         let elem = elements[0];
         while (elem !== undefined) {

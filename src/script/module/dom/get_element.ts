@@ -12,12 +12,12 @@ export function getById(id: string) {
     return elem;
 }
 
-export function getDescendantsByClass(parent: Element | Document, className: string) {
+export function getByClass(parent: Element | Document, className: string) {
     return parent.getElementsByClassName(className);
 }
 
-export function getDescendantsByClassAt(parent: Element | Document, className: string, index: number) {
-    const elems = getDescendantsByClass(parent, className);
+export function getByClassAt(parent: Element | Document, className: string, index: number) {
+    const elems = getByClass(parent, className);
     const elem = elems[index];
     if (elem === undefined) {
         throw new Error(`Element with class '${className}' at index ${index} not found.`);
@@ -25,12 +25,12 @@ export function getDescendantsByClassAt(parent: Element | Document, className: s
     return elem;
 }
 
-export function getDescendantsByTag(parent: Element | Document, tagName: string) {
+export function getByTag(parent: Element | Document, tagName: string) {
     return parent.getElementsByTagName(tagName);
 }
 
-export function getDescendantsByTagAt(parent: Element | Document, tagName: string, index: number) {
-    const elems = getDescendantsByTag(parent, tagName);
+export function getByTagAt(parent: Element | Document, tagName: string, index: number) {
+    const elems = getByTag(parent, tagName);
     const elem = elems[index];
     if (elem === undefined) {
         throw new Error(`Element with tag '${tagName}' at index ${index} not found.`);

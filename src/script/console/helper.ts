@@ -1,5 +1,5 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getDescendantsByClass, getParentElement } from '../module/dom/get_element';
+import { getByClass, getParentElement } from '../module/dom/get_element';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
@@ -53,7 +53,7 @@ export function setOutput(response: string, callback?: (outputElem: HTMLElement)
             callback(outputTarget);
         }
 
-        let elems = getDescendantsByClass(outputTarget, 'onchange');
+        let elems = getByClass(outputTarget, 'onchange');
         for (const elem of elems) {
             if (!containsClass(elem, initializedClass)) {
                 addClass(elem, initializedClass);
@@ -63,7 +63,7 @@ export function setOutput(response: string, callback?: (outputElem: HTMLElement)
             }
         }
 
-        elems = getDescendantsByClass(outputTarget, 'oninput');
+        elems = getByClass(outputTarget, 'oninput');
         for (const elem of elems) {
             if (!containsClass(elem, initializedClass)) {
                 addClass(elem, initializedClass);

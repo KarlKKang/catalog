@@ -9,7 +9,7 @@ import { getTitle } from '../module/dom/document/title/get';
 import { setTitle } from '../module/dom/document/title/set';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { getDescendantsByClass } from '../module/dom/get_element';
+import { getByClass } from '../module/dom/get_element';
 import { appendChild } from '../module/dom/node/append_child';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
@@ -97,7 +97,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
 
     const baseURL = getCDNOrigin() + '/news/' + newsID + '/';
     const INTERNAL_IMAGE_CLASS = 'image-internal';
-    const elems = getDescendantsByClass(contentContainer, INTERNAL_IMAGE_CLASS);
+    const elems = getByClass(contentContainer, INTERNAL_IMAGE_CLASS);
     let elem = elems[0];
     while (elem !== undefined) {
         removeClass(elem, INTERNAL_IMAGE_CLASS);
@@ -117,7 +117,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
 
 function bindEventListners(contentContainer: HTMLElement): void {
     const INTERNAL_LINK_CLASS = 'link-internal';
-    const elems = getDescendantsByClass(contentContainer, INTERNAL_LINK_CLASS);
+    const elems = getByClass(contentContainer, INTERNAL_LINK_CLASS);
     let elem = elems[0];
     while (elem !== undefined) {
         removeClass(elem, INTERNAL_LINK_CLASS);

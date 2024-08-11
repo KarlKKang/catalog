@@ -1,5 +1,5 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getDescendantsByClass, getDescendantsByClassAt, getParentElement } from '../module/dom/get_element';
+import { getByClass, getByClassAt, getParentElement } from '../module/dom/get_element';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
@@ -13,9 +13,9 @@ export function getNewsTable() {
 
 function modifyNews(button: Element) {
     const recordElem = getParentElement(getParentElement(button));
-    const id = getDescendantsByClassAt(recordElem, 'id', 0).innerHTML;
-    const title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
-    const isPublic = (getDescendantsByClassAt(recordElem, 'public', 0) as HTMLInputElement).checked;
+    const id = getByClassAt(recordElem, 'id', 0).innerHTML;
+    const title = (getByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
+    const isPublic = (getByClassAt(recordElem, 'public', 0) as HTMLInputElement).checked;
 
     const record = parseNewsRecord(id, title, isPublic);
     if (!record) {
@@ -67,8 +67,8 @@ function deleteNews(id: string) {
 
 function addNews(button: Element) {
     const recordElem = getParentElement(getParentElement(button));
-    const id = (getDescendantsByClassAt(recordElem, 'id', 0) as HTMLTextAreaElement).value;
-    const title = (getDescendantsByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
+    const id = (getByClassAt(recordElem, 'id', 0) as HTMLTextAreaElement).value;
+    const title = (getByClassAt(recordElem, 'title', 0) as HTMLTextAreaElement).value;
 
     const record = parseNewsRecord(id, title, false);
     if (!record) {
@@ -134,7 +134,7 @@ function updateNewsTime(id: string) {
 }
 
 function updateEventHandlers(outputElem: HTMLElement) {
-    let buttons = getDescendantsByClass(outputElem, 'add-news');
+    let buttons = getByClass(outputElem, 'add-news');
     for (const button of buttons) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -144,7 +144,7 @@ function updateEventHandlers(outputElem: HTMLElement) {
         }
     }
 
-    buttons = getDescendantsByClass(outputElem, 'modify-news');
+    buttons = getByClass(outputElem, 'modify-news');
     for (const button of buttons) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -154,7 +154,7 @@ function updateEventHandlers(outputElem: HTMLElement) {
         }
     }
 
-    buttons = getDescendantsByClass(outputElem, 'update-news-time');
+    buttons = getByClass(outputElem, 'update-news-time');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -169,7 +169,7 @@ function updateEventHandlers(outputElem: HTMLElement) {
         }
     }
 
-    buttons = getDescendantsByClass(outputElem, 'delete-news');
+    buttons = getByClass(outputElem, 'delete-news');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);

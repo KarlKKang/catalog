@@ -1,5 +1,5 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { getDescendantsByClass, getDescendantsByClassAt, getDescendantsByTag, getParentElement } from '../module/dom/get_element';
+import { getByClass, getByClassAt, getByTag, getParentElement } from '../module/dom/get_element';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
@@ -18,11 +18,11 @@ export function getAccountTable() {
 
 function addAccount(button: Element) {
     const record = getParentElement(getParentElement(button));
-    const email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
-    const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
-    const password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
+    const email = (getByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
+    const username = (getByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
+    const password = (getByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
 
-    let selections = getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>;
+    let selections = getByTag(getByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>;
     let user_group = '';
     for (const selection of selections) {
         if (selection.checked) {
@@ -31,7 +31,7 @@ function addAccount(button: Element) {
         }
     }
 
-    selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+    selections = (getByTag(getByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
     let status = '';
     for (const selection of selections) {
         if (selection.checked) {
@@ -40,7 +40,7 @@ function addAccount(button: Element) {
         }
     }
 
-    const available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
+    const available_invite = (getByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
 
     const parsedRecord = parseAccountRecord(email, username, password, user_group, status, available_invite);
     if (!parsedRecord) {
@@ -74,11 +74,11 @@ function addAccount(button: Element) {
 
 function modifyAccount(button: Element, id: string) {
     const record = getParentElement(getParentElement(button));
-    const email = (getDescendantsByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
-    const username = (getDescendantsByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
-    const password = (getDescendantsByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
+    const email = (getByClassAt(record, 'email', 0) as HTMLTextAreaElement).value;
+    const username = (getByClassAt(record, 'username', 0) as HTMLTextAreaElement).value;
+    const password = (getByClassAt(record, 'password', 0) as HTMLTextAreaElement).value;
 
-    let selections = getDescendantsByTag(getDescendantsByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>;
+    let selections = getByTag(getByClassAt(record, 'user-group', 0), 'input') as HTMLCollectionOf<HTMLInputElement>;
     let user_group = '';
     for (const selection of selections) {
         if (selection.checked) {
@@ -87,7 +87,7 @@ function modifyAccount(button: Element, id: string) {
         }
     }
 
-    selections = (getDescendantsByTag(getDescendantsByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
+    selections = (getByTag(getByClassAt(record, 'status', 0), 'input') as HTMLCollectionOf<HTMLInputElement>);
     let status = '';
     for (const selection of selections) {
         if (selection.checked) {
@@ -96,7 +96,7 @@ function modifyAccount(button: Element, id: string) {
         }
     }
 
-    const available_invite = (getDescendantsByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
+    const available_invite = (getByClassAt(record, 'available-invite', 0) as HTMLTextAreaElement).value;
 
     const parsedRecord = parseAccountRecord(email, username, password, user_group, status, available_invite);
     if (!parsedRecord) {
@@ -210,7 +210,7 @@ function deleteAccount(id: string) {
 }
 
 function updateEventHandlers(outputElem: HTMLElement) {
-    let buttons = getDescendantsByClass(outputElem, 'add-account');
+    let buttons = getByClass(outputElem, 'add-account');
     for (const button of buttons) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -220,7 +220,7 @@ function updateEventHandlers(outputElem: HTMLElement) {
         }
     }
 
-    buttons = getDescendantsByClass(outputElem, 'modify-account');
+    buttons = getByClass(outputElem, 'modify-account');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
@@ -235,7 +235,7 @@ function updateEventHandlers(outputElem: HTMLElement) {
         }
     }
 
-    buttons = getDescendantsByClass(outputElem, 'delete-account');
+    buttons = getByClass(outputElem, 'delete-account');
     for (const button of (buttons as HTMLCollectionOf<HTMLElement>)) {
         if (!containsClass(button, initializedClass)) {
             addClass(button, initializedClass);
