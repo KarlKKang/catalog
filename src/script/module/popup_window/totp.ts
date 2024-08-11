@@ -1,8 +1,9 @@
-import { createButtonElement } from '../dom/element/button/create';
+import { createStyledButtonElement } from '../dom/element/button/styled/create';
 import { createTotpInput } from '../dom/element/totp_input/create';
 import { createParagraphElement } from '../dom/element/paragraph/create';
 import { createDivElement } from '../dom/element/div/create';
-import { disableButton, disableInput } from '../dom/change_input';
+import { disableInput } from '../dom/change_input';
+import { disableButton } from '../dom/element/button/disable';
 import { appendChild } from '../dom/change_node';
 import { addClass } from '../dom/class';
 import { addEventListener } from '../event_listener';
@@ -50,8 +51,8 @@ function promptForTotp() {
     const [totpInputContainer, totpInput] = createTotpInput(true);
     horizontalCenter(totpInputContainer);
 
-    const submitButton = createButtonElement(submitButtonText);
-    const cancelButton = createButtonElement(cancelButtonText);
+    const submitButton = createStyledButtonElement(submitButtonText);
+    const cancelButton = createStyledButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, styles.inputFlexbox);
     appendChild(buttonFlexbox, submitButton);

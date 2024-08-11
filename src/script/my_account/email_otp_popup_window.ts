@@ -1,9 +1,10 @@
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createTotpInput } from '../module/dom/element/totp_input/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableButton, disableInput } from '../module/dom/change_input';
+import { disableInput } from '../module/dom/change_input';
+import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';
@@ -54,7 +55,7 @@ export function promptForEmailOtp() {
     const [otpInputContainer, otpInput] = createTotpInput(false);
     appendChild(inputFlexbox, otpInputContainer);
 
-    const resendButton = createButtonElement();
+    const resendButton = createStyledButtonElement();
     const resendButtonText = '再送信する';
     let currentResendInterval: Interval | null = null;
     const resetResendTimer = () => {
@@ -84,8 +85,8 @@ export function promptForEmailOtp() {
     resetResendTimer();
     appendChild(inputFlexbox, resendButton);
 
-    const submitButton = createButtonElement(submitButtonText);
-    const cancelButton = createButtonElement(cancelButtonText);
+    const submitButton = createStyledButtonElement(submitButtonText);
+    const cancelButton = createStyledButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, styles.inputFlexbox);
     appendChild(buttonFlexbox, submitButton);

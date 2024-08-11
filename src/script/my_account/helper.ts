@@ -1,5 +1,6 @@
 import { replaceText } from '../module/dom/element/text/replace';
-import { disableButton, disableInput } from '../module/dom/change_input';
+import { disableInput } from '../module/dom/change_input';
+import { disableButton } from '../module/dom/element/button/disable';
 import { changeColor } from '../module/style/color';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';

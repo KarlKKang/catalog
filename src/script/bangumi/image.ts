@@ -3,7 +3,7 @@ import {
     openImageWindow,
     removeRightClick,
 } from '../module/media_helper';
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { appendText } from '../module/dom/element/text/append';
 import { createAnchorElement } from '../module/dom/element/anchor/create';
 import { createLIElement } from '../module/dom/element/list/li/create';
@@ -25,7 +25,7 @@ import { setWidth } from '../module/style/width';
 import { CSS_AUTO } from '../module/style/value/auto';
 import * as styles from '../../css/bangumi.module.scss';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
-import { disableButton } from '../module/dom/change_input';
+import { disableButton } from '../module/dom/element/button/disable';
 import { addOffloadCallback } from '../module/global';
 
 export default async function (
@@ -71,8 +71,8 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
         const imageNode = createDivElement();
         const lazyloadNode = createDivElement();
         const downloadPanel = createDivElement();
-        const showFullSizeButton = createButtonElement('フルサイズで表示');
-        const downloadButton = createButtonElement('ダウンロード');
+        const showFullSizeButton = createStyledButtonElement('フルサイズで表示');
+        const downloadButton = createStyledButtonElement('ダウンロード');
         const buttonFlexbox = createDivElement();
         const downloadAnchor = createAnchorElement();
 

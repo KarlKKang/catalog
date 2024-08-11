@@ -10,7 +10,3 @@ export function disableInput(inputElement: HTMLInputElement, disabled: boolean) 
         removeClass(getParentElement(inputElement), styles.disabled);
     }
 }
-
-export function disableButton(buttonElement: HTMLButtonElement, disabled: boolean) {
-    buttonElement.disabled = disabled;
-}

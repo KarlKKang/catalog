@@ -1,4 +1,4 @@
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { createHRElement } from '../module/dom/element/hr/create';
@@ -24,7 +24,7 @@ import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { buildURI, buildURLForm } from '../module/http_form';
 import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
-import { disableButton } from '../module/dom/change_input';
+import { disableButton } from '../module/dom/element/button/disable';
 import { round } from '../module/math';
 import { getHighResTimestamp } from '../module/hi_res_timestamp';
 
@@ -57,7 +57,7 @@ export default function (routeList: RouteList) {
     routeListContainer.style.textAlign = 'center';
     appendChild(contentContainer, routeListContainer);
 
-    const retestButton = createButtonElement('再測定');
+    const retestButton = createStyledButtonElement('再測定');
     appendChild(contentContainer, retestButton);
     horizontalCenter(retestButton);
     disableButton(retestButton, true);
@@ -78,7 +78,7 @@ export default function (routeList: RouteList) {
     const asnResultContainer = createParagraphElement();
     asnResultContainer.style.textAlign = 'center';
     appendChild(contentContainer, asnResultContainer);
-    const asnRetestButton = createButtonElement('再測定');
+    const asnRetestButton = createStyledButtonElement('再測定');
     appendChild(contentContainer, asnRetestButton);
     horizontalCenter(asnRetestButton);
     getASN(asnResultContainer, asnRetestButton);

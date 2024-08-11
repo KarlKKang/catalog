@@ -1,4 +1,4 @@
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild } from '../module/dom/change_node';
@@ -7,7 +7,7 @@ import { getHostname, windowLocation } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
-import { disableButton } from '../module/dom/change_input';
+import { disableButton } from '../module/dom/element/button/disable';
 import { min } from '../module/math';
 import { addOffloadCallback, pgid } from '../module/global';
 import { addTimeout } from '../module/timer';
@@ -27,8 +27,8 @@ export default async function () { // This function should be called after setti
         const domain = getHostname();
         const promptText = createParagraphElement('今すぐインストールすると、ページが再読み込みされます。' + domain + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + domain + 'のすべてのタブを閉じてから再読み込みしてください。');
 
-        const updateButton = createButtonElement('インストール');
-        const cancelButton = createButtonElement('後で');
+        const updateButton = createStyledButtonElement('インストール');
+        const cancelButton = createStyledButtonElement('後で');
         const buttonFlexbox = createDivElement();
         addClass(buttonFlexbox, styles.inputFlexbox);
         appendChild(buttonFlexbox, updateButton);

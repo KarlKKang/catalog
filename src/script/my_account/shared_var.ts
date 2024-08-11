@@ -1,4 +1,4 @@
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInput } from '../module/dom/element/password_input/create';
 import { createEmailInput } from '../module/dom/element/email_input/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
@@ -69,23 +69,23 @@ export function initializeSharedVars() {
     addClass(titleElem, styles.title);
     appendChild(container, titleElem);
 
-    const changeEmailSubsec = appendSubsection(container, 'メールアドレス', [], createParagraphElement(), [], createButtonElement(changeButtonText), []);
+    const changeEmailSubsec = appendSubsection(container, 'メールアドレス', [], createParagraphElement(), [], createStyledButtonElement(changeButtonText), []);
 
     const [usernameContainer, usernameInput] = createUsernameInput();
-    const usernameSubsec = appendSubsection(container, 'ユーザー名', [], createParagraphElement(), [usernameContainer], createButtonElement(changeButtonText), [usernameRule]);
+    const usernameSubsec = appendSubsection(container, 'ユーザー名', [], createParagraphElement(), [usernameContainer], createStyledButtonElement(changeButtonText), [usernameRule]);
 
     const [passwordContainer, passwordInput] = createPasswordInput(true, '新しいパスワード');
     const [passwordConfirmContainer, passwordConfirmInput] = createPasswordInput(true, '確認再入力');
-    const passwordSubsec = appendSubsection(container, 'パスワード', [], createParagraphElement(), [passwordContainer, passwordConfirmContainer], createButtonElement(changeButtonText), passwordRules);
+    const passwordSubsec = appendSubsection(container, 'パスワード', [], createParagraphElement(), [passwordContainer, passwordConfirmContainer], createStyledButtonElement(changeButtonText), passwordRules);
 
     const mfaInfo = createParagraphElement();
-    const mfaSubsec = appendSubsection(container, '二要素認証', [mfaInfo], createParagraphElement(), [], createButtonElement(), []);
+    const mfaSubsec = appendSubsection(container, '二要素認証', [mfaInfo], createParagraphElement(), [], createStyledButtonElement(), []);
 
     const recoveryCodeInfo = createParagraphElement();
-    const recoveryCodeSubsec = appendSubsection(container, 'リカバリーコード', [recoveryCodeInfo], createParagraphElement(), [], createButtonElement('生成する'), ['新しいコードを生成すると、既存のコードは無効になります。']);
+    const recoveryCodeSubsec = appendSubsection(container, 'リカバリーコード', [recoveryCodeInfo], createParagraphElement(), [], createStyledButtonElement('生成する'), ['新しいコードを生成すると、既存のコードは無効になります。']);
 
     const loginNotificationInfo = createParagraphElement();
-    const loginNotificationSubsec = appendSubsection(container, 'ログイン通知メール', [loginNotificationInfo], createParagraphElement(), [], createButtonElement(), []);
+    const loginNotificationSubsec = appendSubsection(container, 'ログイン通知メール', [loginNotificationInfo], createParagraphElement(), [], createStyledButtonElement(), []);
 
     const sessionsContainer = createDivElement();
     addClass(sessionsContainer, styles.sessions);
@@ -98,9 +98,9 @@ export function initializeSharedVars() {
     appendChild(inviteCountInfo, inviteCount);
     const [inviteReceiverEmailContainer, inviteReceiverEmailInput] = createEmailInput();
     inviteReceiverEmailInput.autocomplete = 'off';
-    const inviteSubsec = appendSubsection(container, 'ご招待', [inviteCountInfo], createParagraphElement(), [inviteReceiverEmailContainer], createButtonElement(submitButtonText), []);
+    const inviteSubsec = appendSubsection(container, 'ご招待', [inviteCountInfo], createParagraphElement(), [inviteReceiverEmailContainer], createStyledButtonElement(submitButtonText), []);
 
-    const logoutButton = createButtonElement('ログアウ');
+    const logoutButton = createStyledButtonElement('ログアウ');
     appendChild(container, logoutButton);
 
     sharedBools = {

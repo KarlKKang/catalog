@@ -1,4 +1,4 @@
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { appendText } from '../module/dom/element/text/append';
 import { createTextNode } from '../module/dom/element/text/create';
 import { createBRElement } from '../module/dom/element/br/create';
@@ -87,8 +87,8 @@ export default async function (
 
         const warningButtonGroup = createDivElement();
         addClass(warningButtonGroup, styles.warningButtonGroup);
-        const warningButtonYes = createButtonElement('はい');
-        const warningButtonNo = createButtonElement('いいえ');
+        const warningButtonYes = createStyledButtonElement('はい');
+        const warningButtonNo = createStyledButtonElement('いいえ');
         appendChild(warningButtonGroup, warningButtonYes);
         appendChild(warningButtonGroup, warningButtonNo);
 

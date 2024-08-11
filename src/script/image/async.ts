@@ -1,7 +1,7 @@
 import {
     removeRightClick,
 } from '../module/media_helper';
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild } from '../module/dom/change_node';
 import { addClass, removeClass } from '../module/dom/class';
@@ -36,7 +36,7 @@ export default function (baseURL: string, fileName: string, startTime: HighResTi
     addOffloadCallback(offloadImageLoader);
     loadImage(container, baseURL, fileName, startTime);
 
-    const closeButton = createButtonElement(closeButtonText);
+    const closeButton = createStyledButtonElement(closeButtonText);
     addClass(closeButton, styles.backButton);
     addEventListener(closeButton, 'click', () => {
         w.close();

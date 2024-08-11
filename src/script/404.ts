@@ -1,5 +1,5 @@
 import { clearSessionStorage } from './module/session_storage/clear';
-import { createButtonElement } from './module/dom/element/button/create';
+import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
 import { appendChild } from './module/dom/change_node';
@@ -32,7 +32,7 @@ export default function (showPage: ShowPageFunc) {
     addClass(messageBody, styles.body);
     appendChild(container, messageBody);
 
-    const button = createButtonElement('トップページへ戻る');
+    const button = createStyledButtonElement('トップページへ戻る');
     horizontalCenter(button);
     setWidth(button, CSS_AUTO);
     addEventListener(button, 'click', () => {

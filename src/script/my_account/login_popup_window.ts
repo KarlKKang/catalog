@@ -1,4 +1,4 @@
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInput } from '../module/dom/element/password_input/create';
 import { createEmailInput } from '../module/dom/element/email_input/create';
 import { replaceText } from '../module/dom/element/text/replace';
@@ -6,7 +6,8 @@ import { appendText } from '../module/dom/element/text/append';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableButton, disableInput } from '../module/dom/change_input';
+import { disableInput } from '../module/dom/change_input';
+import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { openWindow } from '../module/dom/document';
@@ -64,8 +65,8 @@ export function promptForLogin(message?: string) {
     const [passwordInputContainer, passwordInput] = createPasswordInput(false);
     horizontalCenter(passwordInputContainer);
 
-    const submitButton = createButtonElement(submitButtonText);
-    const cancelButton = createButtonElement(cancelButtonText);
+    const submitButton = createStyledButtonElement(submitButtonText);
+    const cancelButton = createStyledButtonElement(cancelButtonText);
     const buttonFlexbox = createDivElement();
     addClass(buttonFlexbox, styles.inputFlexbox);
     appendChild(buttonFlexbox, submitButton);

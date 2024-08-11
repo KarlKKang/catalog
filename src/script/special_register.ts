@@ -1,11 +1,12 @@
 import { ServerRequestOptionProp, sendServerRequest } from './module/server';
 import { clearSessionStorage } from './module/session_storage/clear';
-import { createButtonElement } from './module/dom/element/button/create';
+import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createEmailInput } from './module/dom/element/email_input/create';
 import { replaceText } from './module/dom/element/text/replace';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
-import { disableButton, disableInput } from './module/dom/change_input';
+import { disableInput } from './module/dom/change_input';
+import { disableButton } from './module/dom/element/button/disable';
 import { appendChild } from './module/dom/change_node';
 import { addClass } from './module/dom/class';
 import { body } from './module/dom/body';
@@ -48,7 +49,7 @@ function showPageCallback() {
     horizontalCenter(emailContainer);
     appendChild(container, emailContainer);
 
-    const submitButton = createButtonElement(submitButtonText);
+    const submitButton = createStyledButtonElement(submitButtonText);
     horizontalCenter(submitButton);
     appendChild(container, submitButton);
 

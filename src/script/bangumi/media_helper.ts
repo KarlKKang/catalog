@@ -1,5 +1,5 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
@@ -32,7 +32,7 @@ import { defaultErrorSuffix, mediaIncompatibleSuffix, mediaLoadError } from '../
 import * as styles from '../../css/bangumi.module.scss';
 import { getCDNOrigin } from '../module/env/origin';
 import { buildURLForm, joinURLForms } from '../module/http_form';
-import { disableButton } from '../module/dom/change_input';
+import { disableButton } from '../module/dom/element/button/disable';
 import { createIframeElement } from '../module/dom/element/iframe/create';
 
 export const incompatibleTitle = '再生できません';
@@ -168,7 +168,7 @@ export function buildDownloadAccordion(
 
     appendChild(accordionPanel, downloadOptionsContainer);
 
-    const downloadButton = createButtonElement('ダウンロード');
+    const downloadButton = createStyledButtonElement('ダウンロード');
     horizontalCenter(downloadButton);
 
     const iframe = createIframeElement();

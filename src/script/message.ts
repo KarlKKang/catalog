@@ -1,7 +1,7 @@
 import { logout } from './module/server';
 import { setTitle } from './module/dom/document';
 import { clearSessionStorage } from './module/session_storage/clear';
-import { createButtonElement } from './module/dom/element/button/create';
+import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
 import { appendChild, appendChildren } from './module/dom/change_node';
@@ -67,7 +67,7 @@ function createMessageElements(title: string, titleColor: CSS_COLOR, message: st
     appendChildren(container, titleElem, messageElem);
 
     if (buttonText !== null) {
-        const button = createButtonElement(buttonText);
+        const button = createStyledButtonElement(buttonText);
         horizontalCenter(button);
         appendChild(container, button);
         addEventListener(button, 'click', () => {

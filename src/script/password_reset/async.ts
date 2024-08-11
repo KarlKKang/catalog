@@ -1,12 +1,13 @@
 import { ServerRequestOptionProp, sendServerRequest } from '../module/server';
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInput } from '../module/dom/element/password_input/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createUListElement } from '../module/dom/element/list/ul/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableButton, disableInput } from '../module/dom/change_input';
+import { disableInput } from '../module/dom/change_input';
+import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import { body } from '../module/dom/body';
@@ -50,7 +51,7 @@ export default function (user: string, signature: string, expires: string) {
     horizontalCenter(newPasswordConfirmContainer);
     appendChild(container, newPasswordConfirmContainer);
 
-    const submitButton = createButtonElement(changeButtonText);
+    const submitButton = createStyledButtonElement(changeButtonText);
     horizontalCenter(submitButton);
     appendChild(container, submitButton);
 

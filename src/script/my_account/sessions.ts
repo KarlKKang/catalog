@@ -1,7 +1,7 @@
 import { UAParser } from 'ua-parser-js';
 import { appendChild, prependChild, remove, replaceChildren } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
-import { createButtonElement } from '../module/dom/element/button/create';
+import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
@@ -52,7 +52,7 @@ export default function (sessions: Sessions) {
             hideElement(sessionWarningElem);
             appendChild(innerContainer, sessionWarningElem);
 
-            const sessionLogoutButton = createButtonElement('ログアウト');
+            const sessionLogoutButton = createStyledButtonElement('ログアウト');
             appendChild(innerContainer, sessionLogoutButton);
             sessionLogoutButtons.add(sessionLogoutButton);
 
