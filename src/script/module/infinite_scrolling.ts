@@ -1,4 +1,5 @@
-import { d, html } from './dom/document';
+import { d } from './dom/document';
+import { html } from './dom/html';
 import { w } from './dom/window';
 import { addClass } from './dom/class/add';
 import { addEventListener } from './event_listener';

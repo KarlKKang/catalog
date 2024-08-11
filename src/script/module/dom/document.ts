@@ -2,7 +2,6 @@ import { STATE_TRACKER } from '../global';
 import { w } from './window';
 
 export const d = document;
-export const html = d.documentElement;
 export const windowLocation = w.location;
 
 export function parseOrigin(url: string | URL) {
