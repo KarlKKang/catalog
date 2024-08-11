@@ -1,5 +1,4 @@
 import { addEventListener, removeAllEventListeners } from './event_listener';
-import { addOffloadCallback } from './global';
 
 const allRequests = new Set<XMLHttpRequest>();
 
@@ -9,7 +8,6 @@ export function newXHR(
     withCredentials: boolean,
     callback: () => void,
 ) {
-    addOffloadCallback(abortAllXhr);
     const xhr = new XMLHttpRequest();
     allRequests.add(xhr);
     xhr.open(method, url, true);
@@ -27,7 +25,7 @@ export function newXHR(
     return xhr;
 }
 
-function abortAllXhr() {
+export function abortAllXhr() {
     for (const xhr of allRequests) {
         removeAllEventListeners(xhr);
         xhr.abort();
