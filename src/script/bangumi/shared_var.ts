@@ -4,6 +4,7 @@ import { appendChild } from '../module/dom/change_node';
 import { addClass } from '../module/dom/class';
 import * as styles from '../../css/bangumi.module.scss';
 import { loading } from '../module/text/ui';
+import { addOffloadCallback } from '../module/global';
 
 export const enum SharedElement {
     CONTENT_CONTAINER,
@@ -13,6 +14,7 @@ let sharedElements: { [key in SharedElement]: HTMLElement } | null = null;
 export let errorMessageElement: HTMLElement | null = null;
 
 export function initializeSharedVars() {
+    addOffloadCallback(dereferenceSharedVars);
     const content = createDivElement();
     addClass(content, styles.content);
     appendChild(body, content);
@@ -28,7 +30,7 @@ export function initializeSharedVars() {
     };
 }
 
-export function dereferenceSharedVars() {
+function dereferenceSharedVars() {
     sharedElements = null;
 }
 
@@ -40,6 +42,11 @@ export function getSharedElement(idx: SharedElement): HTMLElement {
     return value;
 }
 
-export function setErrorMessageElement(elem: HTMLElement | null) {
+export function setErrorMessageElement(elem: HTMLElement) {
+    addOffloadCallback(dereferenceErrorMessageElement);
     errorMessageElement = elem;
+}
+
+export function dereferenceErrorMessageElement() {
+    errorMessageElement = null;
 }

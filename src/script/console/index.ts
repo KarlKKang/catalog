@@ -6,8 +6,6 @@ import { pgid, type ShowPageFunc } from '../module/global';
 import { importModule } from '../module/import_module';
 import { buildURLForm } from '../module/http_form';
 
-let offloadModule: (() => void) | null = null;
-
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
@@ -28,17 +26,9 @@ export default function (showPage: ShowPageFunc) {
             if (pgid !== currentPgid) {
                 return;
             }
-            offloadModule = asyncModule.offload;
             asyncModule.default();
             showPage();
         },
         [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: JSON.stringify({ command: 'authenticate' }) }),
     });
-}
-
-export function offload() {
-    if (offloadModule !== null) {
-        offloadModule();
-        offloadModule = null;
-    }
 }

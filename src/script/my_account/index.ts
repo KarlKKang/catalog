@@ -14,8 +14,6 @@ import { parseAccountInfo } from '../module/type/AccountInfo';
 import { parseSession } from '../module/type/Sessions';
 import { importModule } from '../module/import_module';
 
-let offloadModule: (() => void) | null = null;
-
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
@@ -65,7 +63,6 @@ export default function (showPage: ShowPageFunc) {
             if (currentPgid !== pgid) {
                 return;
             }
-            offloadModule = asyncModule.offload;
             asyncModule.default(userInfo);
             resolveUIInit();
             showPage();
@@ -73,11 +70,4 @@ export default function (showPage: ShowPageFunc) {
         },
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
-}
-
-export function offload() {
-    if (offloadModule !== null) {
-        offloadModule();
-        offloadModule = null;
-    }
 }

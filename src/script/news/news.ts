@@ -15,7 +15,7 @@ import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { buildURLForm, encodeCFURIComponent, buildURI } from '../module/http_form';
-import { redirect } from '../module/global';
+import { addOffloadCallback, redirect } from '../module/global';
 import { loading } from '../module/text/ui';
 import * as styles from '../../css/news.module.scss';
 import { link as linkClass } from '../../css/common.module.scss';
@@ -88,6 +88,7 @@ function getNewsContent(newsInfo: NewsInfo, newsID: string, startTime: HighResTi
 }
 
 async function attachImage(contentContainer: HTMLElement, newsID: string, credential: string): Promise<void> {
+    addOffloadCallback(offloadLazyload);
     setLazyloadCredential(credential, ImageSessionTypes.NEWS);
 
     const baseURL = getCDNOrigin() + '/news/' + newsID + '/';
@@ -155,8 +156,4 @@ function getInternalLink(elem: Element): string | null {
     }
 
     return null;
-}
-
-export function offload() {
-    offloadLazyload();
 }

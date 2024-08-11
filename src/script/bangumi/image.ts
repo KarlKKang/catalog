@@ -18,6 +18,7 @@ import { CSS_AUTO } from '../module/style/value';
 import * as styles from '../../css/bangumi.module.scss';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
 import { disableButton } from '../module/dom/change_input';
+import { addOffloadCallback } from '../module/global';
 
 export default async function (
     epInfo: ImageEPInfo,
@@ -49,6 +50,7 @@ export default async function (
 
     const mediaSessionCredential = await createMediaSessionPromise;
     const credential = mediaSessionCredential[MediaSessionInfoKey.CREDENTIAL];
+    addOffloadCallback(offloadLazyload);
     setLazyloadCredential(credential, ImageSessionTypes.MEDIA);
     showImages(epInfo[EPInfoKey.FILES], baseURL, credential);
 }
@@ -125,8 +127,4 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
             },
         );
     }
-}
-
-export function offload() {
-    offloadLazyload();
 }

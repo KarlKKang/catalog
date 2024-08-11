@@ -10,8 +10,6 @@ import { importModule } from '../module/import_module';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { buildURLForm } from '../module/http_form';
 
-let offloadModule: (() => void) | null = null;
-
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
@@ -73,7 +71,6 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             if (pgid !== currentPgid) {
                 return;
             }
-            offloadModule = newsModule.offload;
             showPage();
             const startTime = serverRequest[ServerRequestKey.REQUEST_START_TIME];
             setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], startTime, logoutParam);
@@ -87,11 +84,4 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
 
 function getNewsID(): string | null {
     return getURI().substring(NEWS_ROOT_URI.length);
-}
-
-export function offload() {
-    if (offloadModule !== null) {
-        offloadModule();
-        offloadModule = null;
-    }
 }

@@ -4,10 +4,10 @@ import { addClass } from '../module/dom/class';
 import { getHostname, windowLocation } from '../module/dom/document';
 import { addEventListener } from '../module/event_listener';
 import { Workbox } from 'workbox-window';
-import { initializePopupWindow, offloadPopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
+import { initializePopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
 import { disableButton } from '../module/dom/change_input';
 import { min } from '../module/math';
-import { pgid } from '../module/global';
+import { addOffloadCallback, pgid } from '../module/global';
 import { addTimeout } from '../module/timer';
 
 let swUpdateLastPromptTime = 0;
@@ -16,6 +16,8 @@ let serviceWorkerUpToDate = true;
 let registering = false;
 
 export default async function () { // This function should be called after setting the `pgid`.
+    addOffloadCallback(offload);
+
     const showSkipWaitingPrompt = (wb: Workbox) => {
         const titleText = createParagraphElement('アップデートが利用可能です');
         addClass(titleText, styles.title);
@@ -124,7 +126,6 @@ async function registerOrUpdate(wb: Workbox, retryTimeout = 500) {
     registering = false;
 }
 
-export function offload() {
+function offload() {
     registering = false;
-    offloadPopupWindow();
 }

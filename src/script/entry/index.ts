@@ -8,7 +8,7 @@ import { body } from '../module/dom/body';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { addTimeout, removeAllTimers } from '../module/timer';
 import * as messagePageScript from '../message';
-import { STATE_TRACKER, customPopStateHandler, pgid, setCustomPopStateHandler, setPgid, setRedirect, type ShowPageFunc } from '../module/global';
+import { STATE_TRACKER, customPopStateHandler, offload, pgid, setCustomPopStateHandler, setPgid, setRedirect, type ShowPageFunc } from '../module/global';
 import * as styles from '../../css/common.module.scss';
 import { enableTransition, setMinHeight, setOpacity, setVisibility, setWidth } from '../module/style';
 import { CSS_UNIT } from '../module/style/value';
@@ -21,7 +21,6 @@ import { abortAllXhr } from '../module/xhr';
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
     default: PageInitCallback;
-    offload?: () => void;
 }
 type PageScriptImport = Promise<PageScript>;
 
@@ -38,10 +37,8 @@ interface Page {
 
 const loadingBar = createDivElement();
 addClass(loadingBar, styles.loadingBar);
-let currentPageScript: PageScript | null = null;
 interface ServiceWorkerModule {
     default: () => void;
-    offload: () => void;
 }
 let serviceWorkerModule: ServiceWorkerModule | null = null;
 let serviceWorkerModulePromise: Promise<ServiceWorkerModule> | null = null;
@@ -140,16 +137,10 @@ function load(url: string, withoutHistory: boolean | null = false) {
 }
 
 function offloadCurrentPage() {
-    if (currentPageScript === null) {
-        return;
-    }
-    currentPageScript.offload?.();
+    offload();
     abortAllXhr();
     deregisterAllEventTargets();
     removeAllTimers();
-    if (serviceWorkerModule !== null) {
-        serviceWorkerModule.offload();
-    }
     replaceChildren(body);
     setClass(body, '');
     setCustomPopStateHandler(null);
@@ -217,7 +208,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         loadingBarWidth = 67;
     }
 
-    currentPageScript = page[PageProp.SCRIPT_CACHED];
     page[PageProp.SCRIPT_CACHED].default(
         () => {
             if (pgid !== newPgid) {

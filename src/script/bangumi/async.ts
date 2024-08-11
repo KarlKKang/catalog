@@ -10,7 +10,7 @@ import { addTimeout } from '../module/timer';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './page_import_promise';
-import { SharedElement, dereferenceSharedVars, getSharedElement, initializeSharedVars, setErrorMessageElement } from './shared_var';
+import { SharedElement, getSharedElement, initializeSharedVars } from './shared_var';
 import { hideElement, setMaxHeight, setMinHeight, setOpacity, setPaddingBottom, setVisibility, showElement } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
 import * as styles from '../../css/bangumi.module.scss';
@@ -20,8 +20,6 @@ import { getCDNOrigin } from '../module/env/origin';
 
 let seriesID: string;
 let epIndex: number;
-
-let currentPage: Awaited<typeof videoImportPromise> | Awaited<typeof audioImportPromise> | Awaited<typeof imageImportPromise> | null = null;
 
 export default async function (
     response: BangumiInfo,
@@ -102,24 +100,24 @@ export default async function (
 
     const currentPgid = pgid;
     if (type === 'video') {
-        currentPage = await videoImportPromise;
+        const videoModule = await videoImportPromise;
         if (currentPgid !== pgid) {
             return;
         }
-        currentPage.default(seriesID, epIndex, epInfo as VideoEPInfo, baseURL, createMediaSessionPromise);
+        videoModule.default(seriesID, epIndex, epInfo as VideoEPInfo, baseURL, createMediaSessionPromise);
     } else {
         if (type === 'audio') {
-            currentPage = await audioImportPromise;
+            const audioModule = await audioImportPromise;
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(seriesID, epIndex, epInfo as AudioEPInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
+            audioModule.default(seriesID, epIndex, epInfo as AudioEPInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
         } else {
-            currentPage = await imageImportPromise;
+            const imageModule = await imageImportPromise;
             if (currentPgid !== pgid) {
                 return;
             }
-            currentPage.default(epInfo as ImageEPInfo, baseURL, createMediaSessionPromise);
+            imageModule.default(epInfo as ImageEPInfo, baseURL, createMediaSessionPromise);
         }
     }
 }
@@ -296,10 +294,4 @@ function goToEP(destSeries: string, destEp: number) {
             destEp === 1 ? '' : buildURLForm({ ep: destEp }),
         ),
     );
-}
-
-export function offload() {
-    currentPage?.offload();
-    dereferenceSharedVars();
-    setErrorMessageElement(null);
 }

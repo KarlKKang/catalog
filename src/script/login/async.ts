@@ -22,7 +22,6 @@ import { forgetPasswordText } from '../module/text/ui';
 import * as commonStyles from '../../css/common.module.scss';
 import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
-import { offloadPopupWindow } from '../module/popup_window/core';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 
 export default function (
@@ -204,8 +203,4 @@ function disableCheckbox(checkbox: HTMLInputElement, disabled: boolean) {
     } else {
         removeClass(getParentElement(checkbox), styles.disabled);
     }
-}
-
-export function offload() {
-    offloadPopupWindow();
 }

@@ -236,7 +236,3 @@ function appendButton(container: HTMLDivElement, text: string, onclick: () => vo
     appendChild(container, button);
     addEventListener(button, 'click', onclick);
 }
-
-export function offload() {
-    setOutputElement(null);
-}

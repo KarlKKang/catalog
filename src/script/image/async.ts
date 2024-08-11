@@ -21,6 +21,7 @@ import { mediaLoadError } from '../module/message/param';
 import { TOP_URI } from '../module/env/uri';
 import { MessageParamKey } from '../module/message/type';
 import { mediaIncompatibleSuffix } from '../module/text/message/body';
+import { addOffloadCallback } from '../module/global';
 
 export default function (baseURL: string, fileName: string, startTime: HighResTimestamp) {
     const container = createDivElement();
@@ -31,6 +32,7 @@ export default function (baseURL: string, fileName: string, startTime: HighResTi
     appendChild(body, container);
     removeRightClick(container);
 
+    addOffloadCallback(offloadImageLoader);
     loadImage(container, baseURL, fileName, startTime);
 
     const closeButton = createButtonElement(closeButtonText);
@@ -109,8 +111,4 @@ function loadImage(container: HTMLElement, baseURL: string, fileName: string, st
             });
         },
     );
-}
-
-export function offload() {
-    offloadImageLoader();
 }

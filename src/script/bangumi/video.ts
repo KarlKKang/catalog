@@ -24,9 +24,9 @@ import { secToTimestamp } from '../module/time';
 import { encodeCFURIComponent, buildURI } from '../module/http_form';
 import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
-import { pgid, redirect } from '../module/global';
+import { addOffloadCallback, pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './media_import_promise';
-import { SharedElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
+import { SharedElement, dereferenceErrorMessageElement, errorMessageElement, getSharedElement } from './shared_var';
 import { addInterval, type Interval, removeInterval } from '../module/timer';
 import { hideElement, setPaddingTop, showElement } from '../module/style';
 import { CSS_COLOR, CSS_UNIT } from '../module/style/value';
@@ -139,6 +139,7 @@ export default function (
         });
     });
 
+    addOffloadCallback(destroyMediaInstance);
     addVideoNode(formatDisplay, play, startTime, false).then(() => {
         disableDropdown(selectMenu, false);
     });
@@ -305,7 +306,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         const errorMsgElem = errorMessageElement;
         if (errorMsgElem !== null) {
             remove(errorMsgElem);
-            setErrorMessageElement(null);
+            dereferenceErrorMessageElement();
         }
     };
     const afterLoad = (mediaInstance: PlayerType) => {
@@ -528,8 +529,4 @@ function destroyMediaInstance() {
     currentMediaInstance = null;
     cleanupEvents();
     chaptersAccordionInstance = null;
-}
-
-export function offload() {
-    destroyMediaInstance();
 }

@@ -20,7 +20,6 @@ import * as styles from '../../css/portal_form.module.scss';
 import { completed } from '../module/text/message/title';
 import { CSS_COLOR } from '../module/style/value';
 import { MessageParamKey } from '../module/message/type';
-import { offloadPopupWindow } from '../module/popup_window/core';
 import { TOP_URI } from '../module/env/uri';
 
 export default function (param: string) {
@@ -159,8 +158,4 @@ export default function (param: string) {
         disableInput(emailInput, disabled);
         disableInput(passwordInput, disabled);
     }
-}
-
-export function offload() {
-    offloadPopupWindow();
 }

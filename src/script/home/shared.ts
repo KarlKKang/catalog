@@ -1,8 +1,13 @@
 import { getSearchParam } from '../module/dom/document';
+import { addOffloadCallback } from '../module/global';
 
 export let search: ((useURLKeywords: boolean) => void) | null = null;
-export function setSearch(func: ((useURLKeywords: boolean) => void) | null) {
+export function setSearch(func: ((useURLKeywords: boolean) => void)) {
+    addOffloadCallback(dereferenceSearch);
     search = func;
+}
+function dereferenceSearch() {
+    search = null;
 }
 
 export function getURLKeywords() {

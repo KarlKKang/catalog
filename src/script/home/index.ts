@@ -7,12 +7,10 @@ import { clearSessionStorage } from '../module/dom/session_storage';
 import { isbot } from 'isbot';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { parseSeriesInfo } from '../module/type/SeriesInfo';
-import { getURLKeywords, search, setSearch } from './shared';
+import { getURLKeywords, search } from './shared';
 import { importModule } from '../module/import_module';
 import { TOP_URI } from '../module/env/uri';
 import { buildURLForm, joinURLForms } from '../module/http_form';
-
-let offloadModule: (() => void) | null = null;
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -51,7 +49,6 @@ export default function (showPage: ShowPageFunc) {
             if (pgid !== currentPgid) {
                 return;
             }
-            offloadModule = asyncModule.offload;
             asyncModule.default(parseResponse(response, parseSeriesInfo), keywords);
             showPage();
         },
@@ -62,12 +59,4 @@ export default function (showPage: ShowPageFunc) {
         [ServerRequestOptionProp.LOGOUT_PARAM]: keywordsQuery,
         [ServerRequestOptionProp.METHOD]: 'GET',
     });
-}
-
-export function offload() {
-    setSearch(null);
-    if (offloadModule !== null) {
-        offloadModule();
-        offloadModule = null;
-    }
 }

@@ -9,8 +9,6 @@ import { importModule } from '../module/import_module';
 import { LOGIN_URI } from '../module/env/uri';
 import { buildURLForm } from '../module/http_form';
 
-let offloadModule: (() => void) | null = null;
-
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
@@ -27,7 +25,6 @@ export default function (showPage: ShowPageFunc) {
         if (pgid !== currentPgid) {
             return;
         }
-        offloadModule = asyncModule.offload;
         asyncModule.default(param);
         showPage();
     };
@@ -55,11 +52,4 @@ export default function (showPage: ShowPageFunc) {
         },
         [ServerRequestOptionProp.CONTENT]: buildURLForm({ p: param }),
     });
-}
-
-export function offload() {
-    if (offloadModule !== null) {
-        offloadModule();
-        offloadModule = null;
-    }
 }

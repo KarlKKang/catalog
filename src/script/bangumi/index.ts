@@ -15,8 +15,6 @@ import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { importAllMediaModules } from './media_import_promise';
 import { buildURLForm } from '../module/http_form';
 
-let offloadModule: (() => void) | null = null;
-
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
 
@@ -95,7 +93,6 @@ export default function (showPage: ShowPageFunc) {
             if (currentPgid !== pgid) {
                 return;
             }
-            offloadModule = asyncModule.offload;
             asyncModule.default(
                 parsedResponse,
                 seriesID,
@@ -112,11 +109,4 @@ export default function (showPage: ShowPageFunc) {
 
 function getSeriesID(): string | null {
     return getURI().substring(BANGUMI_ROOT_URI.length);
-}
-
-export function offload() {
-    if (offloadModule !== null) {
-        offloadModule();
-        offloadModule = null;
-    }
 }

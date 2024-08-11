@@ -11,8 +11,6 @@ import { importModule } from '../module/import_module';
 import { TOP_URI } from '../module/env/uri';
 import { getHighResTimestamp } from '../module/hi_res_timestamp';
 
-let offloadAsyncModule: (() => void) | null = null;
-
 export default function (showPage: ShowPageFunc) {
     const baseURL = getSessionStorage('base-url');
     const fileName = getSessionStorage('file-name');
@@ -50,7 +48,6 @@ export default function (showPage: ShowPageFunc) {
             if (pgid !== currentPgid) {
                 return;
             }
-            offloadAsyncModule = asyncModule.offload;
             asyncModule.default(baseURL, fileName, serverRequest[ServerRequestKey.REQUEST_START_TIME]);
             showPage();
         },
@@ -58,11 +55,4 @@ export default function (showPage: ShowPageFunc) {
         [ServerRequestOptionProp.SHOW_SESSION_ENDED_MESSAGE]: true,
         [ServerRequestOptionProp.TIMEOUT]: 30000,
     });
-}
-
-export function offload() {
-    if (offloadAsyncModule !== null) {
-        offloadAsyncModule();
-        offloadAsyncModule = null;
-    }
 }

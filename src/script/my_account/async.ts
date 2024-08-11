@@ -18,7 +18,7 @@ import {
     emailSentSuffix,
 } from '../module/text/message/body';
 import { emailSent as emailSendPrefix } from '../module/text/message/title';
-import { SharedBool, SharedButton, SharedElement, SharedInput, dereferenceSharedVars, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
+import { SharedBool, SharedButton, SharedElement, SharedInput, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
@@ -30,7 +30,6 @@ import { CSS_COLOR } from '../module/style/value';
 import { InviteResultKey, parseInviteResult } from '../module/type/InviteResult';
 import { redirect } from '../module/global';
 import { default as initializeMFAModule } from './mfa';
-import { offloadPopupWindow } from '../module/popup_window/core';
 import { LOGIN_URI } from '../module/env/uri';
 
 const emailSent = emailSendPrefix + '。' + emailSentSuffix;
@@ -279,9 +278,4 @@ function changeLoginNotification() {
         buildURLForm({ p: loginNotificationTargetStatus ? 1 : 0 }),
         true,
     );
-}
-
-export function offload() {
-    dereferenceSharedVars();
-    offloadPopupWindow();
 }

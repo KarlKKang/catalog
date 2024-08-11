@@ -6,6 +6,7 @@ import { body } from '../dom/body';
 import { addTimeout } from '../timer';
 import * as styles from '../../../css/popup_window.module.scss';
 import { setOpacity, setVisibility } from '../style';
+import { addOffloadCallback } from '../global';
 
 let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
 let wid: any;
@@ -15,6 +16,7 @@ const waitingQueue: (() => void)[] = [];
 export { styles };
 
 export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void) {
+    addOffloadCallback(offloadPopupWindow);
     const currentWid = {};
     wid = currentWid;
     windowOpen = true;
@@ -88,12 +90,16 @@ export function onPopupWindowClosed(callback: () => void) {
         callback();
         return;
     }
+    addOffloadCallback(clearWaitingQueue);
     waitingQueue.push(callback);
 }
 
-export function offloadPopupWindow() {
+function offloadPopupWindow() {
     wid = {};
     popupWindow = null;
     windowOpen = false;
+}
+
+function clearWaitingQueue() {
     waitingQueue.length = 0;
 }

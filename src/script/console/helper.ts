@@ -4,12 +4,18 @@ import { addClass, containsClass } from '../module/dom/class';
 import { addEventListener } from '../module/event_listener';
 import { changed as changedClass } from '../../css/console.module.scss';
 import { buildURLForm } from '../module/http_form';
+import { addOffloadCallback } from '../module/global';
 
 let outputElement: HTMLDivElement | null = null;
 export const initializedClass = 'initialized';
 
-export function setOutputElement(elem: HTMLDivElement | null) {
+export function setOutputElement(elem: HTMLDivElement) {
+    addOffloadCallback(dereferenceOutputElement);
     outputElement = elem;
+}
+
+function dereferenceOutputElement() {
+    outputElement = null;
 }
 
 export function getTable(type: string, callback?: () => void) {

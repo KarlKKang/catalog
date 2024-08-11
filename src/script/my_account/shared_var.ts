@@ -6,6 +6,7 @@ import { myAccountPageTitle } from '../module/text/page_title';
 import { changeButtonText, loading, passwordRules, submitButtonText, usernameRule } from '../module/text/ui';
 import { createUsernameInput } from '../module/dom/create_element/multi_language';
 import * as styles from '../../css/my_account.module.scss';
+import { addOffloadCallback } from '../module/global';
 
 export const enum SharedBool {
     currentMfaStatus,
@@ -52,6 +53,8 @@ let sharedElements: { [key in SharedElement]: HTMLElement } | null = null;
 export const sessionLogoutButtons = new Set<HTMLButtonElement>();
 
 export function initializeSharedVars() {
+    addOffloadCallback(dereferenceSharedVars);
+
     const container = createDivElement();
     addClass(container, styles.container);
     const titleElem = createParagraphElement(myAccountPageTitle);
@@ -169,7 +172,7 @@ export function getSharedElement(idx: SharedElement) {
     return sharedElements[idx];
 }
 
-export function dereferenceSharedVars() {
+function dereferenceSharedVars() {
     sharedBools = null;
     sharedInputs = null;
     sharedButtons = null;

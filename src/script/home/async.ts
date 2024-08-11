@@ -12,7 +12,7 @@ import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/in
 import { getLocalTimeString } from '../module/time';
 import { buildURLForm, buildURI, joinURLForms } from '../module/http_form';
 import { addTimeout } from '../module/timer';
-import { redirect, setCustomPopStateHandler } from '../module/global';
+import { addOffloadCallback, redirect, setCustomPopStateHandler } from '../module/global';
 import { changeColor, setOpacity } from '../module/style';
 import { allResultsShown, loading, noResult } from '../module/text/ui';
 import { addAutoMultiLanguageClass } from '../module/dom/create_element/multi_language';
@@ -36,6 +36,7 @@ let currentRequest: ServerRequest | null = null;
 const eventTargetsTracker = new Set<EventTarget>();
 
 export default function (seriesInfo: SeriesInfo, _keywords: string) {
+    addOffloadCallback(offload);
     pivot = 0;
     keywords = _keywords;
 
@@ -342,7 +343,7 @@ function showAnnouncement(title: string, message: readonly Node[], containerElem
     appendChild(announcementInnerContainer, announcementBody);
 }
 
-export function offload() {
+function offload() {
     offloadLazyload();
     eventTargetsTracker.clear();
     currentRequest = null;

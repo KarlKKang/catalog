@@ -18,7 +18,7 @@ import type { Player as PlayerType } from '../module/player/player';
 import { parseCharacters } from './helper';
 import { showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, buildDownloadAccordion, showPlayerError, showErrorMessage } from './media_helper';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
-import { pgid } from '../module/global';
+import { addOffloadCallback, pgid } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './media_import_promise';
 import { SharedElement, getSharedElement } from './shared_var';
 import * as styles from '../../css/bangumi.module.scss';
@@ -70,6 +70,7 @@ export default function (
         return;
     }
 
+    addOffloadCallback(destroyAll);
     const container = createDivElement();
     const addAudioNodePromises = [];
     for (const file of epInfo[EPInfoKey.FILES]) {
@@ -270,8 +271,4 @@ function destroyAll() {
         mediaInstance[PlayerKey.DESTROY]();
         mediaInstance = mediaInstances.pop();
     }
-}
-
-export function offload() {
-    destroyAll();
 }
