@@ -12,7 +12,8 @@ import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { openWindow } from '../module/dom/window/open';
 import { addEventListener } from '../module/event_listener';
-import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
+import { testPassword } from '../module/regex/password';
+import { testEmail } from '../module/regex/email';
 import { loginFailed } from '../module/text/auth/failed';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
@@ -108,7 +109,7 @@ export function promptForLogin(message?: string) {
 
         const email = emailInput.value;
         const password = passwordInput.value;
-        if (!EMAIL_REGEX.test(email) || !PASSWORD_REGEX.test(password)) {
+        if (!testEmail(email) || !testPassword(password)) {
             replaceText(warningText, loginFailed);
             showElement(warningText);
             disableAllInputs(false);

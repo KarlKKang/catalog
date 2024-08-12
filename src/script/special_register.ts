@@ -16,7 +16,7 @@ import { emailSent } from './module/message/param/email_sent';
 import { invitationClosed } from './module/text/invitation/closed';
 import { emailAlreadyRegistered } from './module/text/email/already_registered';
 import { invalidEmailFormat } from './module/text/email/invalid';
-import { EMAIL_REGEX } from './module/regex';
+import { testEmail } from './module/regex/email';
 import { buildHttpForm } from './module/string/http_form/build';
 import type { ShowPageFunc } from './module/global';
 import { invalidResponse } from './module/message/param/invalid_response';
@@ -75,7 +75,7 @@ function showPageCallback() {
 
         const email = emailInput.value;
 
-        if (!EMAIL_REGEX.test(email)) {
+        if (!testEmail(email)) {
             replaceText(warningElem, invalidEmailFormat);
             showElement(warningElem);
             disableAllInputs(false);

@@ -19,7 +19,8 @@ import { accountDeactivated } from '../module/text/auth/deactivated';
 import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
 import { loginFailed } from '../module/text/auth/failed';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
-import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
+import { testPassword } from '../module/regex/password';
+import { testEmail } from '../module/regex/email';
 import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { TotpPopupWindowKey, handleFailedTotp, type TotpPopupWindow } from '../module/popup_window/totp';
@@ -91,14 +92,14 @@ export default function (param: string) {
         const email = emailInput.value;
         const password = passwordInput.value;
 
-        if (!EMAIL_REGEX.test(email)) {
+        if (!testEmail(email)) {
             replaceText(warningElem, loginFailed);
             showElement(warningElem);
             disableAllInputs(false);
             return;
         }
 
-        if (!PASSWORD_REGEX.test(password)) {
+        if (!testPassword(password)) {
             replaceText(warningElem, loginFailed);
             showElement(warningElem);
             disableAllInputs(false);

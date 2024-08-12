@@ -6,7 +6,7 @@ import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
 import { completeCallback, getByClassAt, getParentElement, getTable, initializedClass } from './helper';
-import { PASSWORD_REGEX } from '../module/regex';
+import { testPassword } from '../module/regex/password';
 import { buildHttpForm } from '../module/string/http_form/build';
 
 function accountCompleteCallback(response: string) {
@@ -139,7 +139,7 @@ function parseAccountRecord(email: string, username: string, password: string, u
     let password_parsed: string | null = password;
     if (password_parsed === '') {
         password_parsed = null;
-    } else if (!PASSWORD_REGEX.test(password_parsed)) {
+    } else if (!testPassword(password_parsed)) {
         alert('ERROR: password requirements not met');
         return false;
     }

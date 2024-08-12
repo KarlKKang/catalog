@@ -15,7 +15,7 @@ import { addEventListener } from './module/event_listener';
 import { showMessage } from './module/message';
 import { emailSent } from './module/message/param/email_sent';
 import { invalidEmailFormat } from './module/text/email/invalid';
-import { EMAIL_REGEX } from './module/regex';
+import { testEmail } from './module/regex/email';
 import { buildHttpForm } from './module/string/http_form/build';
 import { redirect, type ShowPageFunc } from './module/global';
 import { invalidResponse } from './module/message/param/invalid_response';
@@ -90,7 +90,7 @@ function showPageCallback() {
         disableAllInputs(true);
 
         const email = emailInput.value;
-        if (!EMAIL_REGEX.test(email)) {
+        if (!testEmail(email)) {
             replaceText(warningElem, invalidEmailFormat);
             showElement(warningElem);
             disableAllInputs(false);

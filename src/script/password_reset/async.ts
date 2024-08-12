@@ -17,7 +17,7 @@ import { passwordChanged } from '../module/text/password/changed';
 import { passwordConfirmationMismatch } from '../module/text/password/mismatch';
 import { invalidPasswordFormat } from '../module/text/password/invalid';
 import { expired } from '../module/message/param/expired';
-import { PASSWORD_REGEX } from '../module/regex';
+import { testPassword } from '../module/regex/password';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
@@ -97,7 +97,7 @@ export default function (user: string, signature: string, expires: string) {
         const newPassword = newPasswordInput.value;
         const newPasswordConfirm = newPasswordConfirmInput.value;
 
-        if (!PASSWORD_REGEX.test(newPassword)) {
+        if (!testPassword(newPassword)) {
             replaceText(warningElem, invalidPasswordFormat);
             showElement(warningElem);
             disableAllInputs(false);

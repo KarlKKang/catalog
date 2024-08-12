@@ -15,7 +15,7 @@ import { emailAlreadyRegistered } from '../module/text/email/already_registered'
 import { invalidEmailFormat } from '../module/text/email/invalid';
 import { emailSent } from '../module/message/param/email_sent';
 import { expired } from '../module/message/param/expired';
-import { EMAIL_REGEX } from '../module/regex';
+import { testEmail } from '../module/regex/email';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
@@ -67,7 +67,7 @@ export default function (param: string) {
 
         const newEmail = newEmailInput.value;
 
-        if (!EMAIL_REGEX.test(newEmail)) {
+        if (!testEmail(newEmail)) {
             replaceText(warningElem, invalidEmailFormat);
             showElement(warningElem);
             disableAllInputs(false);

@@ -22,7 +22,7 @@ import { invalidPasswordFormat } from '../module/text/password/invalid';
 import { usernameTaken } from '../module/text/username/taken';
 import { usernameInvalid } from '../module/text/username/invalid';
 import { usernameEmpty } from '../module/text/username/empty';
-import { PASSWORD_REGEX } from '../module/regex';
+import { testPassword } from '../module/regex/password';
 import { buildURI } from '../module/string/uri/build';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { invalidResponse } from '../module/message/param/invalid_response';
@@ -128,7 +128,7 @@ export default function (param: string) {
             return;
         }
 
-        if (!PASSWORD_REGEX.test(password)) {
+        if (!testPassword(password)) {
             replaceText(warningElem, invalidPasswordFormat);
             showElement(warningElem);
             disableAllInputs(false);

@@ -22,7 +22,8 @@ import { emailSentTitle as emailSendPrefix } from '../module/text/send_mail/titl
 import { SharedBool, SharedButton, SharedElement, SharedInput, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
-import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
+import { testPassword } from '../module/regex/password';
+import { testEmail } from '../module/regex/email';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { AccountInfoKey, type AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/message/param/invalid_response';
@@ -116,7 +117,7 @@ function changePassword() {
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
 
-    if (!PASSWORD_REGEX.test(newPassword)) {
+    if (!testPassword(newPassword)) {
         replaceText(warningElem, invalidPasswordFormat);
         showElement(warningElem);
         disableAllInputs(false);
@@ -209,7 +210,7 @@ function invite() {
 
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
-    if (!EMAIL_REGEX.test(receiver)) {
+    if (!testEmail(receiver)) {
         replaceText(warningElem, invalidEmailFormat);
         showElement(warningElem);
         disableAllInputs(false);
