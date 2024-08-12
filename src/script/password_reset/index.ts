@@ -2,7 +2,7 @@ import { ServerRequestOptionKey, sendServerRequest } from '../module/server/requ
 import { getSearchParam } from '../module/dom/location/get/search_param';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
-import { expired } from '../module/message/param';
+import { expired } from '../module/message/param/expired';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { invalidResponse } from '../module/server/message';
 import { importModule } from '../module/import_module';

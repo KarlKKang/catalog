@@ -20,7 +20,7 @@ import { closeButtonText } from '../module/text/button/close';
 import { addTimeout, type Timeout } from '../module/timer';
 import { addMouseTouchEventListener } from '../module/event_listener/mouse_touch_event';
 import { getHighResTimestamp, type HighResTimestamp } from '../module/hi_res_timestamp';
-import { mediaLoadError } from '../module/message/param';
+import { mediaLoadError } from '../module/message/param/media_load_error';
 import { TOP_URI } from '../module/env/uri';
 import { MessageParamKey } from '../module/message/type';
 import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';

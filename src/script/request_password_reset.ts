@@ -13,7 +13,7 @@ import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener';
 import { showMessage } from './module/message';
-import { emailSent } from './module/message/param';
+import { emailSent } from './module/message/param/email_sent';
 import { invalidEmailFormat } from './module/text/email/invalid';
 import { EMAIL_REGEX } from './module/regex';
 import { buildURLForm } from './module/http_form';

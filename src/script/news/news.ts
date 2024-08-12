@@ -31,7 +31,7 @@ import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { addTimeout } from '../module/timer';
 import { getHighResTimestamp, type HighResTimestamp } from '../module/hi_res_timestamp';
-import { mediaLoadError } from '../module/message/param';
+import { mediaLoadError } from '../module/message/param/media_load_error';
 
 export default function (newsInfo: NewsInfo, newsID: string, startTime: HighResTimestamp): void {
     const title = newsInfo[NewsInfoKey.TITLE];

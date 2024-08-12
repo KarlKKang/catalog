@@ -16,7 +16,7 @@ import { showMessage } from '../module/message';
 import { passwordChanged } from '../module/text/password/changed';
 import { passwordConfirmationMismatch } from '../module/text/password/mismatch';
 import { invalidPasswordFormat } from '../module/text/password/invalid';
-import { expired } from '../module/message/param';
+import { expired } from '../module/message/param/expired';
 import { PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm } from '../module/http_form';
 import { invalidResponse } from '../module/server/message';

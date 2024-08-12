@@ -13,7 +13,7 @@ import { addClass } from '../module/dom/class/add';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
-import { expired } from '../module/message/param';
+import { expired } from '../module/message/param/expired';
 import { sessionEnded } from '../module/text/misc/session_ended';
 import { accountDeactivated } from '../module/text/auth/deactivated';
 import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
