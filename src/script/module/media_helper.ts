@@ -3,11 +3,6 @@ import { openWindow } from './dom/window/open';
 import { setSessionStorage } from './session_storage/set';
 import { clearSessionStorage } from './session_storage/clear';
 import { IMAGE_URI } from './env/uri';
-import { addEventListener } from './event_listener';
-
-export function removeRightClick(elem: Element) {
-    addEventListener(elem, 'contextmenu', (event) => event.preventDefault());
-}
 
 export const enum ImageSessionTypes {
     MEDIA = 'media',

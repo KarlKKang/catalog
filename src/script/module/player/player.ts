@@ -1,6 +1,4 @@
-import {
-    removeRightClick,
-} from '../media_helper';
+import { removeRightClick } from '../dom/element/remove_right_click';
 import { remove } from '../dom/node/remove';
 import { appendChild } from '../dom/node/append_child';
 import { addClass } from '../dom/class/add';

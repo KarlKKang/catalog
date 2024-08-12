@@ -1,8 +1,8 @@
 import {
-    removeRightClick,
     openImageWindow,
     ImageSessionTypes,
 } from '../module/media_helper';
+import { removeRightClick } from '../module/dom/element/remove_right_click';
 import { newXHR } from '../module/xhr';
 import { scrollToHash } from '../module/dom/scroll/to_hash';
 import { getTitle } from '../module/dom/document/title/get';

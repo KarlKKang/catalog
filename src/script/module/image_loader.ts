@@ -1,7 +1,5 @@
 import type { WebpMachine } from 'webp-hero';
-import {
-    removeRightClick,
-} from './media_helper';
+import { removeRightClick } from './dom/element/remove_right_click';
 import { newXHR } from './xhr';
 import { appendChild } from './dom/node/append_child';
 import { addEventListener, removeAllEventListeners } from './event_listener';

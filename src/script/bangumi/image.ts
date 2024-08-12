@@ -1,8 +1,8 @@
 import {
     ImageSessionTypes,
     openImageWindow,
-    removeRightClick,
 } from '../module/media_helper';
+import { removeRightClick } from '../module/dom/element/remove_right_click';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { appendText } from '../module/dom/element/text/append';
 import { createAnchorElement } from '../module/dom/element/anchor/create';

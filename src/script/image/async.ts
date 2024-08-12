@@ -1,6 +1,4 @@
-import {
-    removeRightClick,
-} from '../module/media_helper';
+import { removeRightClick } from '../module/dom/element/remove_right_click';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild } from '../module/dom/node/append_child';
