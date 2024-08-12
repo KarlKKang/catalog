@@ -6,8 +6,6 @@ type ElementMap = Map<EventTarget, EventMap>;
 const elementMap: ElementMap = new Map();
 let elementCount = 0;
 
-const LOG_ELEMENT_MAP = false;
-
 export function addEventListener(elem: EventTarget, event: string, callback: EventListener, options?: boolean | AddEventListenerOptions) {
     if (options !== undefined && typeof options !== 'boolean' && options.once === true) {
         delete options.once;
@@ -56,7 +54,6 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
     elem.addEventListener(event, _callback, options);
     if (DEVELOPMENT) {
         console.log('Event listener added. Total elements listening: ' + elementCount + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
-        LOG_ELEMENT_MAP && console.log(elementMap);
     }
 }
 
@@ -113,7 +110,6 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
     }
     if (DEVELOPMENT) {
         console.log('Event listener removed. Total elements listening: ' + elementCount + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
-        LOG_ELEMENT_MAP && console.log(elementMap);
     }
 }
 
@@ -178,7 +174,6 @@ function removeAllEventListenersHelper(elem: EventTarget, eventMap: EventMap) {
     }
     if (DEVELOPMENT) {
         console.log('All event listeners removed. Total elements listening: ' + elementCount + '.');
-        LOG_ELEMENT_MAP && console.log(elementMap);
     }
 }
 
