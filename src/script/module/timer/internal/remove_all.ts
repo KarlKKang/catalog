@@ -1,5 +1,5 @@
-import { intervalTimers } from '../internal/interval_timers';
-import { timeoutTimers } from '../internal/timeout_timers';
+import { intervalTimers } from './interval_timers';
+import { timeoutTimers } from './timeout_timers';
 
 export function removeAllTimers() {
     for (const timerID of timeoutTimers) {

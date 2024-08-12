@@ -15,7 +15,6 @@ import { deregisterAllEventTargets } from '../module/event_listener/remove/all_t
 import { addEventListenerOnce } from '../module/event_listener/add/once';
 import { body } from '../module/dom/body';
 import { TOP_DOMAIN } from '../module/env/domain';
-import { removeAllTimers } from '../module/timer/remove/all';
 import { addTimeout } from '../module/timer/add/timeout';
 import * as messagePageScript from '../message';
 import { STATE_TRACKER, customPopStateHandler, offload, pgid, setCustomPopStateHandler, setPgid, setRedirect, type ShowPageFunc } from '../module/global';
@@ -152,7 +151,6 @@ function load(url: string, withoutHistory: boolean | null = false) {
 function offloadCurrentPage() {
     offload();
     deregisterAllEventTargets();
-    removeAllTimers();
     replaceChildren(body);
     setClass(body, '');
     setCustomPopStateHandler(null);
