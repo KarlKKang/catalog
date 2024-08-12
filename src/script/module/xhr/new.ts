@@ -2,7 +2,6 @@ import { removeAllEventListeners } from '../event_listener/remove/all_listeners'
 import { addEventListener } from '../event_listener/add';
 import { allRequests } from './internal/all_requests';
 import { addOffloadCallback } from '../global';
-import { abortAllXhr } from './internal/abort_all';
 
 export function newXhr(
     url: string,
@@ -10,7 +9,7 @@ export function newXhr(
     withCredentials: boolean,
     callback: () => void,
 ) {
-    addOffloadCallback(abortAllXhr);
+    addOffloadCallback(offload);
     const xhr = new XMLHttpRequest();
     allRequests.add(xhr);
     xhr.open(method, url, true);
@@ -26,4 +25,12 @@ export function newXhr(
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     }
     return xhr;
+}
+
+function offload() {
+    for (const xhr of allRequests) {
+        removeAllEventListeners(xhr);
+        xhr.abort();
+    }
+    allRequests.clear();
 }
