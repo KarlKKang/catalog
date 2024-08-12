@@ -11,7 +11,6 @@ import { getFullPath } from '../module/dom/location/get/full_path';
 import { changeURL } from '../module/dom/location/change';
 import { html } from '../module/dom/html';
 import { w } from '../module/dom/window';
-import { addEventListenerOnce } from '../module/event_listener/add/once';
 import { body } from '../module/dom/body';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { addTimeout } from '../module/timer/add/timeout';
@@ -295,7 +294,8 @@ changeURL(fullPath, true);
 if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
-addEventListenerOnce(w, 'load', () => {
+const onload = () => {
+    w.removeEventListener('load', onload);
     const nativeBody = d.body;
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
@@ -321,4 +321,5 @@ addEventListenerOnce(w, 'load', () => {
             }
         }
     });
-});
+};
+w.addEventListener('load', onload);
