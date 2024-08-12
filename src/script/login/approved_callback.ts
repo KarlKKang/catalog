@@ -1,7 +1,7 @@
 import { showMessage } from '../module/message';
 import { UNRECOMMENDED_BROWSER } from '../module/browser';
 import { redirect } from '../module/global';
-import { nextButtonText } from '../module/text/ui';
+import { nextButtonText } from '../module/text/button/next';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';

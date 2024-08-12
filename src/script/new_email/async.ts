@@ -19,7 +19,7 @@ import { invalidResponse } from '../module/server/message';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
-import { submitButtonText } from '../module/text/ui';
+import { submitButtonText } from '../module/text/button/submit';
 import { emailChangePageTitle } from '../module/text/page_title';
 import * as styles from '../../css/portal_form.module.scss';
 import { StyledInputElementKey } from '../module/dom/element/input/type';

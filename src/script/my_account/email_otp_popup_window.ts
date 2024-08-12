@@ -17,7 +17,8 @@ import { setCursor, CSS_CURSOR } from '../module/style/cursor';
 import { setWidth } from '../module/style/width';
 import { CSS_AUTO } from '../module/style/value/auto';
 import { addInterval, type Interval, removeInterval } from '../module/timer';
-import { cancelButtonText, submitButtonText } from '../module/text/ui';
+import { cancelButtonText } from '../module/text/button/cancel';
+import { submitButtonText } from '../module/text/button/submit';
 import { StyledInputElementKey } from '../module/dom/element/input/type';
 
 export const enum EmailOtpPopupWindowKey {

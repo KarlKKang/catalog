@@ -5,7 +5,7 @@ import { MessageParamKey, type MessageParam } from './type';
 import { redirect } from '../global';
 import { defaultErrorSuffix } from '../text/message/body';
 import { CSS_COLOR } from '../style/color';
-import { goBackButtonText } from '../text/ui';
+import { goBackButtonText } from '../text/button/go_back';
 import { MESSAGE_URI } from '../env/uri';
 
 export const enum MessageParamInternalKey {
