@@ -26,7 +26,7 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
         listenerMap.set(callback, listenerConfig);
     } else if (listenerConfig[listenerConfigIdx] !== null) {
         if (DEVELOPMENT) {
-            console.warn('Listener already added.', elem, event, callback, useCapture);
+            console.error('Listener already added.', elem, event, callback, useCapture);
         }
         return;
     }

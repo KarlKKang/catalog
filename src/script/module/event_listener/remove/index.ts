@@ -4,21 +4,21 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
     const eventMap = elementMap.get(elem);
     if (eventMap === undefined) {
         if (DEVELOPMENT) {
-            console.warn('Event map not found.', elem);
+            console.error('Event map not found.', elem);
         }
         return;
     }
     const listenerMap = eventMap.get(event);
     if (listenerMap === undefined) {
         if (DEVELOPMENT) {
-            console.warn('Listener map not found.', elem, event);
+            console.error('Listener map not found.', elem, event);
         }
         return;
     }
     const listenerConfig = listenerMap.get(callback);
     if (listenerConfig === undefined) {
         if (DEVELOPMENT) {
-            console.warn('Listener config not found.', elem, event, callback);
+            console.error('Listener config not found.', elem, event, callback);
         }
         return;
     }
@@ -26,7 +26,7 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
     const eventListenerAndOptions = listenerConfig[listenerConfigIdx];
     if (eventListenerAndOptions === null) {
         if (DEVELOPMENT) {
-            console.warn('Listener config not set.', elem, event, callback, useCapture);
+            console.error('Listener config not set.', elem, event, callback, useCapture);
         }
         return;
     }

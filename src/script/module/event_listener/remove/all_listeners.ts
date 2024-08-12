@@ -5,7 +5,7 @@ export function removeAllEventListeners(elem: EventTarget) {
     const eventMap = elementMap.get(elem);
     if (eventMap === undefined) {
         if (DEVELOPMENT) {
-            console.warn('Event map not found.', elem);
+            console.error('Event map not found.', elem);
         }
         return;
     }
