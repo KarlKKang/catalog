@@ -18,7 +18,7 @@ import { w } from '../module/dom/window';
 import { addEventListener } from '../module/event_listener';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import { encodeCFURIComponent, buildURLForm, buildURI } from '../module/http_form';
-import { addTimeout } from '../module/timer';
+import { addTimeout } from '../module/timer/add/timeout';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './page_import_promise';

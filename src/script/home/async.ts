@@ -24,7 +24,7 @@ import { addEventListener, removeAllEventListeners } from '../module/event_liste
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { getLocalTimeString } from '../module/time';
 import { buildURLForm, buildURI, joinURLForms } from '../module/http_form';
-import { addTimeout } from '../module/timer';
+import { addTimeout } from '../module/timer/add/timeout';
 import { addOffloadCallback, redirect, setCustomPopStateHandler } from '../module/global';
 import { changeColor, CSS_COLOR } from '../module/style/color';
 import { setOpacity } from '../module/style/opacity';

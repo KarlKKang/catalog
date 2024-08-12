@@ -1,4 +1,4 @@
-import { addTimeout } from '../../timer';
+import { addTimeout } from '../../timer/add/timeout';
 import { getHash } from '../location/get/hash';
 import { w } from '../window';
 import { getById } from '../element/get/by_id';

@@ -4,7 +4,7 @@ import {
 } from '../module/server/request';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
-import { addTimeout } from '../module/timer';
+import { addTimeout } from '../module/timer/add/timeout';
 import { importModule } from '../module/import_module';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';

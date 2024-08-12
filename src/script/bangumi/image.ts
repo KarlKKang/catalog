@@ -20,7 +20,7 @@ import { addEventListener } from '../module/event_listener';
 import { EPInfoKey, ImageFileKey, type ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCFURIComponent } from '../module/http_form';
-import { addTimeout } from '../module/timer';
+import { addTimeout } from '../module/timer/add/timeout';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { SharedElement, getSharedElement } from './shared_var';
 import { hideElement } from '../module/style/hide_element';

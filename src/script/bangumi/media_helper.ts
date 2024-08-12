@@ -24,7 +24,7 @@ import { invalidResponse } from '../module/message/param/invalid_response';
 import { createMessageElem, getContentBoxHeight, getLogoutParam, isArray } from './helper';
 import { IS_IOS, IS_MACOS, IS_WINDOWS } from '../module/browser';
 import { VideoFormat, VideoFormatKey, VideoFormats } from '../module/type/BangumiInfo';
-import { addTimeout } from '../module/timer';
+import { addTimeout } from '../module/timer/add/timeout';
 import { CustomMediaError } from '../module/player/media_error';
 import { SharedElement, dereferenceErrorMessageElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
 import { horizontalCenter } from '../module/style/horizontal_center';

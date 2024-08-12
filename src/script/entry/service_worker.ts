@@ -11,7 +11,7 @@ import { initializePopupWindow, onPopupWindowClosed, styles } from '../module/po
 import { disableButton } from '../module/dom/element/button/disable';
 import { min } from '../module/math';
 import { addOffloadCallback, pgid } from '../module/global';
-import { addTimeout } from '../module/timer';
+import { addTimeout } from '../module/timer/add/timeout';
 
 let swUpdateLastPromptTime = 0;
 let serviceWorker: Workbox | null = null;

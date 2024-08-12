@@ -2,7 +2,8 @@ import { sendServerRequest, ServerRequestOptionKey, ServerRequestKey } from './r
 import { type HighResTimestamp, getHighResTimestamp } from '../hi_res_timestamp';
 import { max } from '../math';
 import { showMessage } from '../message';
-import { addTimeout, removeTimeout } from '../timer';
+import { removeTimeout } from '../timer/remove/timeout';
+import { addTimeout } from '../timer/add/timeout';
 import { connectionError } from './internal/message/connection_error';
 import { invalidResponse } from '../message/param/invalid_response';
 

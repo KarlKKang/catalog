@@ -4,7 +4,7 @@ import { appendChild } from '../dom/node/append_child';
 import { addClass } from '../dom/class/add';
 import { createDivElement } from '../dom/element/div/create';
 import { body } from '../dom/body';
-import { addTimeout } from '../timer';
+import { addTimeout } from '../timer/add/timeout';
 import * as styles from '../../../css/popup_window.module.scss';
 import { setVisibility } from '../style/visibility';
 import { setOpacity } from '../style/opacity';

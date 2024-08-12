@@ -2,7 +2,7 @@ import { pgid } from './global';
 import { showMessage } from './message';
 import { MessageParamKey } from './message/type';
 import { defaultErrorSuffix } from './text/default_error/suffix';
-import { addTimeout } from './timer';
+import { addTimeout } from './timer/add/timeout';
 
 export async function importModule<T>(importPromiseGenerator: () => Promise<T>) {
     return importModuleHelper(importPromiseGenerator);

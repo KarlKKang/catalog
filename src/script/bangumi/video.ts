@@ -41,7 +41,9 @@ import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/Media
 import { addOffloadCallback, pgid, redirect } from '../module/global';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './media_import_promise';
 import { SharedElement, dereferenceErrorMessageElement, errorMessageElement, getSharedElement } from './shared_var';
-import { addInterval, type Interval, removeInterval } from '../module/timer';
+import { type Interval } from '../module/timer/type';
+import { removeInterval } from '../module/timer/remove/interval';
+import { addInterval } from '../module/timer/add/interval';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
 import { setPaddingTop } from '../module/style/padding_top';

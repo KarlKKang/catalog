@@ -2,7 +2,7 @@ import { Player } from './player';
 import { addEventsListener, removeEventsListener } from '../event_listener';
 import { addClass } from '../dom/class/add';
 import { removeClass } from '../dom/class/remove';
-import { addTimeout } from '../timer';
+import { addTimeout } from '../timer/add/timeout';
 import { playerSeeking } from '../../../css/player.module.scss';
 import { PlayerKey } from './player_key';
 import { NonNativePlayerKey } from './non_native_player_key';
