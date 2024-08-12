@@ -1,4 +1,6 @@
-import { removeStyle, CSS_PROPERTY, addStyle } from './internal';
+import { CSS_PROPERTY } from './internal/property';
+import { addStyle } from './internal/add_style';
+import { removeStyle } from './internal/remove_style';
 
 export function enableTransition(element: HTMLElement, enable: boolean) {
     if (enable) {

@@ -1,4 +1,5 @@
-import { setStyle, CSS_PROPERTY } from './internal';
+import { CSS_PROPERTY } from './internal/property';
+import { setStyle } from './internal/set_style';
 import type { CSS_UNIT } from './value/unit';
 
 export function setPaddingTop(element: HTMLElement, value: number, unit: CSS_UNIT): void;
