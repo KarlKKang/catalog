@@ -1,4 +1,4 @@
-import { createElement } from '../../internal';
+import { createElement } from '../../internal/create_element';
 import { appendText } from '../../text/append';
 
 export function createNativeButtonElement(text?: string) {
