@@ -41,7 +41,7 @@ import { setWidth } from '../style/width';
 import { CSS_UNIT } from '../style/value/unit';
 import { onScreenConsole as onScreenConsoleClass } from '../../../css/on_screen_console.module.scss';
 import { PlayerKey } from './player_key';
-import { addMouseTouchEventListener } from '../event_listener/mouse_touch_event';
+import { addMouseTouchEventListener } from '../event_listener/add/mouse_touch_event';
 import { EN_LANG_CODE } from '../lang';
 import { max, min, round } from '../math';
 import { createNativeButtonElement } from '../dom/element/button/native/create';

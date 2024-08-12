@@ -17,7 +17,7 @@ import { imageLoader, offload as offloadImageLoader } from '../module/image/load
 import { closeButtonText } from '../module/text/button/close';
 import { type Timeout } from '../module/timer/type';
 import { addTimeout } from '../module/timer/add/timeout';
-import { addMouseTouchEventListener } from '../module/event_listener/mouse_touch_event';
+import { addMouseTouchEventListener } from '../module/event_listener/add/mouse_touch_event';
 import { getHighResTimestamp, type HighResTimestamp } from '../module/time/hi_res';
 import { mediaLoadError } from '../module/message/param/media_load_error';
 import { TOP_URI } from '../module/env/uri';
