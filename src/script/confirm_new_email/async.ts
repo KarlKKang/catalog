@@ -14,7 +14,7 @@ import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param';
-import { sessionEnded } from '../module/text/message/body';
+import { sessionEnded } from '../module/text/misc/session_ended';
 import { accountDeactivated } from '../module/text/auth/deactivated';
 import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
 import { loginFailed } from '../module/text/auth/failed';
@@ -29,7 +29,7 @@ import { hideElement } from '../module/style/hide_element';
 import { submitButtonText } from '../module/text/button/submit';
 import { emailChangePageTitle } from '../module/text/page_title';
 import * as styles from '../../css/portal_form.module.scss';
-import { completed } from '../module/text/message/title';
+import { completedTitle } from '../module/text/misc/completed_title';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { TOP_URI } from '../module/env/uri';
@@ -154,7 +154,7 @@ export default function (param: string) {
                         break;
                     case 'DONE':
                         showMessage({
-                            [MessageParamKey.TITLE]: completed,
+                            [MessageParamKey.TITLE]: completedTitle,
                             [MessageParamKey.MESSAGE]: 'メールアドレスが変更されました。',
                             [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
                             [MessageParamKey.URL]: TOP_URI,

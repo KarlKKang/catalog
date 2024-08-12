@@ -13,7 +13,9 @@ import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/in
 import { TimeInfoKey, getLocalTime, padTime } from '../module/time';
 import { buildURLForm } from '../module/http_form';
 import { redirect } from '../module/global';
-import { allResultsShown, loading, noResult } from '../module/text/ui';
+import { noResult } from '../module/text/search/no_result';
+import { allResultsShown } from '../module/text/search/all_results_shown';
+import { loading } from '../module/text/search/loading';
 import * as styles from '../../css/news.module.scss';
 import { lineClamp as lineClampClass } from '../../css/line_clamp.module.scss';
 import { type AllNewsInfo, parseAllNewsInfo, type Pivot, AllNewsInfoKey, AllNewsInfoEntryKey } from '../module/type/AllNewsInfo';

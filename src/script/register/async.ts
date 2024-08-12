@@ -33,7 +33,7 @@ import { usernameRule } from '../module/text/username/rule';
 import { nextButtonText } from '../module/text/button/next';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/portal_form.module.scss';
-import { completed } from '../module/text/message/title';
+import { completedTitle } from '../module/text/misc/completed_title';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
 import { createUsernameInput } from '../module/dom/element/input/username/create';
 import { CSS_COLOR } from '../module/style/color';
@@ -160,7 +160,7 @@ export default function (param: string) {
                     showMessage(emailAlreadyRegistered);
                 } else if (response === 'DONE') {
                     showMessage({
-                        [MessageParamKey.TITLE]: completed,
+                        [MessageParamKey.TITLE]: completedTitle,
                         [MessageParamKey.MESSAGE]: 'アカウントが登録されました。',
                         [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
                         [MessageParamKey.URL]: LOGIN_URI,

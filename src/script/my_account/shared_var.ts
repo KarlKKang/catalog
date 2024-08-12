@@ -12,7 +12,7 @@ import { appendChildren } from '../module/dom/node/append_children';
 import { addClass } from '../module/dom/class/add';
 import { hideElement } from '../module/style/hide_element';
 import { myAccountPageTitle } from '../module/text/page_title';
-import { loading } from '../module/text/ui';
+import { loading } from '../module/text/search/loading';
 import { passwordRule } from '../module/text/password/rule';
 import { usernameRule } from '../module/text/username/rule';
 import { changeButtonText } from '../module/text/button/change';

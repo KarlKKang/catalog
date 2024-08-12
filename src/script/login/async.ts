@@ -19,7 +19,7 @@ import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
-import { sessionEnded } from '../module/text/message/body';
+import { sessionEnded } from '../module/text/misc/session_ended';
 import { accountDeactivated } from '../module/text/auth/deactivated';
 import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
 import { loginFailed } from '../module/text/auth/failed';

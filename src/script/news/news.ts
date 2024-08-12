@@ -19,7 +19,7 @@ import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
 import { buildURLForm, encodeCFURIComponent, buildURI } from '../module/http_form';
 import { addOffloadCallback, redirect } from '../module/global';
-import { loading } from '../module/text/ui';
+import { loading } from '../module/text/search/loading';
 import * as styles from '../../css/news.module.scss';
 import { link as linkClass } from '../../css/common.module.scss';
 import { parseNewsStyle } from '../module/news/parse_style';

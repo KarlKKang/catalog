@@ -4,7 +4,7 @@ import { buildURLForm, joinURLForms } from '../module/http_form';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { replaceText } from '../module/dom/element/text/replace';
 import { pgid } from '../module/global';
-import { sessionEnded } from '../module/text/message/body';
+import { sessionEnded } from '../module/text/misc/session_ended';
 import { accountDeactivated } from '../module/text/auth/deactivated';
 import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
 import { loginFailed } from '../module/text/auth/failed';

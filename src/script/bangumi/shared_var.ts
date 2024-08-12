@@ -4,7 +4,7 @@ import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import * as styles from '../../css/bangumi.module.scss';
-import { loading } from '../module/text/ui';
+import { loading } from '../module/text/search/loading';
 import { addOffloadCallback } from '../module/global';
 
 export const enum SharedElement {

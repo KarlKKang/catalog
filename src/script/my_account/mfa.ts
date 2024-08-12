@@ -18,7 +18,7 @@ import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import {
     sessionEnded,
-} from '../module/text/message/body';
+} from '../module/text/misc/session_ended';
 import { accountDeactivated } from '../module/text/auth/deactivated';
 import { failedTotp } from '../module/text/auth/failed_totp';
 import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
