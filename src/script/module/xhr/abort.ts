@@ -5,5 +5,7 @@ export function abortXhr(xhr: XMLHttpRequest) {
     if (allRequests.delete(xhr)) {
         removeAllEventListeners(xhr);
         xhr.abort();
+    } else if (DEVELOPMENT) {
+        console.error('XHR not found.', xhr);
     }
 }
