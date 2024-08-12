@@ -1,4 +1,5 @@
-import { addEventListener, removeAllEventListeners } from '../event_listener';
+import { removeAllEventListeners } from '../event_listener/remove/all_listeners';
+import { addEventListener } from '../event_listener/add';
 import { allRequests } from './internal/all_requests';
 
 export function newXhr(

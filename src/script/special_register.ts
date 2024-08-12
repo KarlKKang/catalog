@@ -10,7 +10,7 @@ import { disableButton } from './module/dom/element/button/disable';
 import { appendChild } from './module/dom/node/append_child';
 import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
-import { addEventListener } from './module/event_listener';
+import { addEventListener } from './module/event_listener/add';
 import { showMessage } from './module/message';
 import { emailSent } from './module/message/param/email_sent';
 import { invitationClosed } from './module/text/invitation/closed';

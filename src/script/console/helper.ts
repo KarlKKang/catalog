@@ -2,7 +2,7 @@ import { ServerRequestOptionKey, sendServerRequest } from '../module/server/requ
 import { getByClass } from '../module/dom/element/get/by_class';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { changed as changedClass } from '../../css/console.module.scss';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { addOffloadCallback } from '../module/global';

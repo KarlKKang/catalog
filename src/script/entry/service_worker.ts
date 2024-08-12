@@ -5,7 +5,7 @@ import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { getHostname } from '../module/dom/location/get/hostname';
 import { windowLocation } from '../module/dom/location';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
 import { disableButton } from '../module/dom/element/button/disable';

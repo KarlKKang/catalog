@@ -8,7 +8,7 @@ import { createStyledButtonElement } from '../module/dom/element/button/styled/c
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { SessionKey, type Sessions } from '../module/type/Sessions';
 import { SharedElement, getSharedElement, sessionLogoutButtons } from './shared_var';
 import { toLocalTimeString } from '../module/string/local_time';

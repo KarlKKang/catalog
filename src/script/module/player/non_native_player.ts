@@ -1,5 +1,6 @@
 import { Player } from './player';
-import { addEventsListener, removeEventsListener } from '../event_listener';
+import { removeEventsListener } from '../event_listener/remove/multiple_events';
+import { addEventsListener } from '../event_listener/add/multiple_events';
 import { addClass } from '../dom/class/add';
 import { removeClass } from '../dom/class/remove';
 import { addTimeout } from '../timer/add/timeout';

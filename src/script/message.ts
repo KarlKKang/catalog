@@ -8,7 +8,7 @@ import { appendChild } from './module/dom/node/append_child';
 import { appendChildren } from './module/dom/node/append_children';
 import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
-import { addEventListener } from './module/event_listener';
+import { addEventListener } from './module/event_listener/add';
 import { redirect, type ShowPageFunc } from './module/global';
 import * as styles from '../css/message.module.scss';
 import { horizontalCenter } from './module/style/horizontal_center';

@@ -3,7 +3,7 @@ import { getByClass } from '../module/dom/element/get/by_class';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { completeCallback, getByClassAt, getParentElement, getTable, initializedClass } from './helper';
 import { buildHttpForm } from '../module/string/http_form/build';
 

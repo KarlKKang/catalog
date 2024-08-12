@@ -7,7 +7,7 @@ import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
 import { d } from '../module/dom/document';
 import { w } from '../module/dom/window';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { showMessage } from '../module/message';
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
 import { setWidth } from '../module/style/width';

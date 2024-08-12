@@ -7,7 +7,7 @@ import { disableStyledInput } from '../module/dom/element/input/disable_styled';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { failedTotp } from '../module/text/auth/failed_totp';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
 import { changeColor, CSS_COLOR } from '../module/style/color';

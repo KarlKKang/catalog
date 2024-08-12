@@ -16,7 +16,7 @@ import { insertBefore } from '../module/dom/node/insert_before';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { EPInfoKey, ImageFileKey, type ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';

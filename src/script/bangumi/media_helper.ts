@@ -18,7 +18,7 @@ import { addClass } from '../module/dom/class/add';
 import { parseOrigin } from '../module/dom/location/parse/origin';
 import { parseURI } from '../module/dom/location/parse/uri';
 import { w } from '../module/dom/window';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { createMessageElem, getContentBoxHeight, getLogoutParam, isArray } from './helper';

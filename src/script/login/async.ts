@@ -17,7 +17,7 @@ import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { showMessage } from '../module/message';
 import { sessionEnded } from '../module/text/misc/session_ended';
 import { accountDeactivated } from '../module/text/auth/deactivated';

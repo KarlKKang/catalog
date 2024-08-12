@@ -15,7 +15,7 @@ import { body } from '../module/dom/body';
 import { getTitle } from '../module/dom/document/title/get';
 import { setTitle } from '../module/dom/document/title/set';
 import { w } from '../module/dom/window';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
 import { buildURI } from '../module/string/uri/build';
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';

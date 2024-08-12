@@ -1,6 +1,6 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createTotpInput } from '../module/dom/element/input/totp/create';
 import { replaceText } from '../module/dom/element/text/replace';

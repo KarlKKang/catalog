@@ -5,7 +5,7 @@ import { createDivElement } from './module/dom/element/div/create';
 import { appendChild } from './module/dom/node/append_child';
 import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
-import { addEventListener } from './module/event_listener';
+import { addEventListener } from './module/event_listener/add';
 import { redirect, type ShowPageFunc } from './module/global';
 import { horizontalCenter } from './module/style/horizontal_center';
 import { setWidth } from './module/style/width';

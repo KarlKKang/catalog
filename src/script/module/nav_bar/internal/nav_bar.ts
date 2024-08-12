@@ -4,7 +4,7 @@ import { prependChild } from '../../dom/node/prepend_child';
 import { appendChild } from '../../dom/node/append_child';
 import { addClass } from '../../dom/class/add';
 import { body } from '../../dom/body';
-import { addEventListener } from '../../event_listener';
+import { addEventListener } from '../../event_listener/add';
 import { w } from '../../dom/window';
 import { redirect } from '../../global';
 import { scrollToTop } from '../../dom/scroll/to_top';

@@ -1,6 +1,6 @@
 import { appendChild } from '../../../node/append_child';
 import { addClass } from '../../../class/add';
-import { addEventListener } from '../../../../event_listener';
+import { addEventListener } from '../../../../event_listener/add';
 import * as styles from '../../../../../../css/common.module.scss';
 import { createDivElement } from '../../div/create';
 import { createInputElement } from '../native/create';

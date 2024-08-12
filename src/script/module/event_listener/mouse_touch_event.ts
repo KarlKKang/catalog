@@ -1,4 +1,4 @@
-import { addEventListener } from '.';
+import { addEventListener } from './add';
 import { addTimeout } from '../timer/add/timeout';
 
 export function addMouseTouchEventListener(elem: EventTarget, onClickCallback: (isMouseClick: boolean) => void, onMouseMoveCallback: () => void) {

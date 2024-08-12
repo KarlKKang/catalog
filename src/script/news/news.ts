@@ -15,7 +15,7 @@ import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { showMessage } from '../module/message';
 import { buildURI } from '../module/string/uri/build';
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';

@@ -6,7 +6,7 @@ import { disableStyledInput } from '../dom/element/input/disable_styled';
 import { disableButton } from '../dom/element/button/disable';
 import { appendChild } from '../dom/node/append_child';
 import { addClass } from '../dom/class/add';
-import { addEventListener } from '../event_listener';
+import { addEventListener } from '../event_listener/add';
 import { failedTotp } from '../text/auth/failed_totp';
 import { horizontalCenter } from '../style/horizontal_center';
 import { showElement } from '../style/show_element';

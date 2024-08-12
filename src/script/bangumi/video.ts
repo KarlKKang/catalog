@@ -17,7 +17,9 @@ import { createDivElement } from '../module/dom/element/div/create';
 import { getTitle } from '../module/dom/document/title/get';
 import { getSearchParam } from '../module/dom/location/get/search_param';
 import { changeURL } from '../module/dom/location/change';
-import { addEventListener, addEventsListener, removeAllEventListeners } from '../module/event_listener';
+import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
+import { addEventsListener } from '../module/event_listener/add/multiple_events';
+import { addEventListener } from '../module/event_listener/add';
 import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';
 import {
     MSE_SUPPORTED,

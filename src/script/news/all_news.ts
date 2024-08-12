@@ -8,7 +8,7 @@ import { createDivElement } from '../module/dom/element/div/create';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { body } from '../module/dom/body';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { padNumberLeft } from '../module/string/pad_number_left';
 import { TimeInfoKey, getLocalTime } from '../module/time/local';

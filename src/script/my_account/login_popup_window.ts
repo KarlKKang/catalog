@@ -11,7 +11,7 @@ import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { openWindow } from '../module/dom/window/open';
-import { addEventListener } from '../module/event_listener';
+import { addEventListener } from '../module/event_listener/add';
 import { testPassword } from '../module/regex/password';
 import { testEmail } from '../module/regex/email';
 import { loginFailed } from '../module/text/auth/failed';
