@@ -11,7 +11,7 @@ import { createDivElement } from '../module/dom/element/div/create';
 import { addEventListener } from '../module/event_listener';
 import { SessionKey, type Sessions } from '../module/type/Sessions';
 import { SharedElement, getSharedElement, sessionLogoutButtons } from './shared_var';
-import { getLocalTimeString } from '../module/time';
+import { toLocalTimeString } from '../module/string/local_time';
 import { buildURLForm } from '../module/http_form';
 import { changeColor, CSS_COLOR } from '../module/style/color';
 import { showElement } from '../module/style/show_element';
@@ -40,8 +40,8 @@ export default function (sessions: Sessions) {
         appendParagraph('ブラウザ：' + browser, innerContainer);
         appendParagraph('OS：' + os, innerContainer);
 
-        appendParagraph('最初のログイン：' + getLocalTimeString(session[SessionKey.LOGIN_TIME], true, true), innerContainer);
-        appendParagraph('最近のアクティビティ：' + getLocalTimeString(session[SessionKey.LAST_ACTIVE_TIME], true, true), innerContainer);
+        appendParagraph('最初のログイン：' + toLocalTimeString(session[SessionKey.LOGIN_TIME], true, true), innerContainer);
+        appendParagraph('最近のアクティビティ：' + toLocalTimeString(session[SessionKey.LAST_ACTIVE_TIME], true, true), innerContainer);
 
         const sessionID = session[SessionKey.ID];
         if (sessionID === undefined) {

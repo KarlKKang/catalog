@@ -29,7 +29,7 @@ import { buildURI, buildURLForm } from '../module/http_form';
 import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
 import { disableButton } from '../module/dom/element/button/disable';
 import { round } from '../module/math';
-import { getHighResTimestamp } from '../module/hi_res_timestamp';
+import { getHighResTimestamp } from '../module/time/hi_res';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {

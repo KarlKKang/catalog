@@ -9,7 +9,7 @@ import { invalidResponse } from '../module/message/param/invalid_response';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { importModule } from '../module/import_module';
 import { TOP_URI } from '../module/env/uri';
-import { getHighResTimestamp } from '../module/hi_res_timestamp';
+import { getHighResTimestamp } from '../module/time/hi_res';
 
 export default function (showPage: ShowPageFunc) {
     const baseURL = getSessionStorage('base-url');

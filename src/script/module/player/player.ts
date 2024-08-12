@@ -18,7 +18,9 @@ import { addEventListener, addEventListenerOnce, addEventsListener, removeAllEve
 import { IS_IOS } from '../browser';
 import screenfull from 'screenfull';
 import * as icons from './icons';
-import { TimeInfoKey, getLocalTime, padTime, secToTimestamp } from '../time';
+import { padNumberLeft } from '../string/pad_number_left';
+import { toTimestampString } from '../string/timestamp';
+import { TimeInfoKey, getLocalTime } from '../time/local';
 import { type Interval } from '../timer/type';
 import { removeInterval } from '../timer/remove/interval';
 import { addInterval } from '../timer/add/interval';
@@ -155,7 +157,7 @@ export class Player {
             appendChild(body, onScreenConsole);
             this[PlayerKey.LOG] = (message: string) => {
                 const date = getLocalTime();
-                const newline = padTime(date[TimeInfoKey.HOUR]) + ':' + padTime(date[TimeInfoKey.MINUTE]) + ':' + padTime(date[TimeInfoKey.SECOND]) + '   ' + message + '\r\n';
+                const newline = padNumberLeft(date[TimeInfoKey.HOUR], 2) + ':' + padNumberLeft(date[TimeInfoKey.MINUTE], 2) + ':' + padNumberLeft(date[TimeInfoKey.SECOND], 2) + '   ' + message + '\r\n';
                 console.log(newline);
                 onScreenConsole.value += newline;
             };
@@ -494,7 +496,7 @@ export class Player {
         addEventListener(this[PlayerKey.MEDIA], 'durationchange', () => {
             DEVELOPMENT && this[PlayerKey.LOG]?.('Duration changed: ' + this[PlayerKey.MEDIA].duration);
             this[PlayerKey.END_CHECK](this[PlayerKey.MEDIA].currentTime);
-            replaceText(this[PlayerKey.DURATION_DISPLAY_TEXT], secToTimestamp(this[PlayerKey.MEDIA].duration));
+            replaceText(this[PlayerKey.DURATION_DISPLAY_TEXT], toTimestampString(this[PlayerKey.MEDIA].duration));
         });
 
         // Play button
@@ -719,7 +721,7 @@ export class Player {
             return;
         }
 
-        const currentTimestamp = secToTimestamp(this[PlayerKey.MEDIA].currentTime, duration);
+        const currentTimestamp = toTimestampString(this[PlayerKey.MEDIA].currentTime, duration);
         if (this[PlayerKey.CURRENT_TIME_DISPLAY_TEXT].textContent !== currentTimestamp) {
             replaceText(this[PlayerKey.CURRENT_TIME_DISPLAY_TEXT], currentTimestamp);
         }
@@ -753,7 +755,7 @@ export class Player {
 
     protected [PlayerKey.ON_LOADED_METADATA](this: Player): void {
         DEVELOPMENT && this[PlayerKey.LOG]?.('Loaded metadata.');
-        replaceText(this[PlayerKey.DURATION_DISPLAY_TEXT], secToTimestamp(this[PlayerKey.MEDIA].duration));
+        replaceText(this[PlayerKey.DURATION_DISPLAY_TEXT], toTimestampString(this[PlayerKey.MEDIA].duration));
         this[PlayerKey.ENDED] = false;
     }
 
@@ -788,7 +790,7 @@ export class Player {
         const percentage = leftPadding / totalLength;
         const duration = this[PlayerKey.MEDIA].duration;
         const currentTime = duration * percentage;
-        const currentTimestamp = secToTimestamp(currentTime, duration);
+        const currentTimestamp = toTimestampString(currentTime, duration);
 
         if (!w.matchMedia('not screen and (hover: hover) and (pointer: fine)').matches) {
             setLeft(this[PlayerKey.PROGRESS_MOUSE_DISPLAY], leftPadding, CSS_UNIT.PX);

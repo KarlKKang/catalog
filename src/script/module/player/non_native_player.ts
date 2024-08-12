@@ -7,10 +7,11 @@ import { playerSeeking } from '../../../css/player.module.scss';
 import { PlayerKey } from './player_key';
 import { NonNativePlayerKey } from './non_native_player_key';
 import { min } from '../math';
+import { getEpochMs } from '../time/epoch_ms';
 
 export abstract class NonNativePlayer extends Player {
     private [NonNativePlayerKey.BUFFERING] = false;
-    private [NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = new Date().getTime();
+    private [NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = getEpochMs();
     public [NonNativePlayerKey.ON_BUFFER_STALLED]: (() => void) | undefined = undefined;
 
     constructor(container: HTMLDivElement, isVideo: boolean) {
@@ -73,8 +74,8 @@ export abstract class NonNativePlayer extends Player {
         }
 
         if (event !== undefined) {
-            this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = new Date().getTime();
-        } else if (this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] + 16000 <= new Date().getTime()) {
+            this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = getEpochMs();
+        } else if (this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] + 16000 <= getEpochMs()) {
             DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer stalled.');
             this[NonNativePlayerKey.ON_BUFFER_STALLED]?.();
         }
@@ -90,7 +91,7 @@ export abstract class NonNativePlayer extends Player {
         }
 
         this[NonNativePlayerKey.BUFFERING] = true;
-        this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = new Date().getTime();
+        this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = getEpochMs();
         addEventsListener(this[PlayerKey.MEDIA], ['progress', 'playing', 'timeupdate'], this[NonNativePlayerKey.CHECK_BUFFER]);
         this[NonNativePlayerKey.CHECK_BUFFER]();
     }

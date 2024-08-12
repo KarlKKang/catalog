@@ -1,5 +1,5 @@
 import { sendServerRequest, ServerRequestOptionKey, ServerRequestKey } from './request';
-import { type HighResTimestamp, getHighResTimestamp } from '../hi_res_timestamp';
+import { type HighResTimestamp, getHighResTimestamp } from '../time/hi_res';
 import { max } from '../math';
 import { showMessage } from '../message';
 import { removeTimeout } from '../timer/remove/timeout';

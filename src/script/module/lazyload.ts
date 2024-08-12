@@ -10,7 +10,7 @@ import { removeTimeout } from './timer/remove/timeout';
 import { addTimeout } from './timer/add/timeout';
 import * as styles from '../../css/lazyload.module.scss';
 import { imageLoader, offload as offloadImageLoader } from './image/loader';
-import { getHighResTimestamp } from './hi_res_timestamp';
+import { getHighResTimestamp } from './time/hi_res';
 import { max } from './math';
 import { abortXhr } from './xhr/abort';
 

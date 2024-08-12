@@ -22,7 +22,7 @@ import { getFullPath } from '../module/dom/location/get/full_path';
 import { changeURL } from '../module/dom/location/change';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
-import { getLocalTimeString } from '../module/time';
+import { toLocalTimeString } from '../module/string/local_time';
 import { buildURLForm, buildURI, joinURLForms } from '../module/http_form';
 import { addTimeout } from '../module/timer/add/timeout';
 import { addOffloadCallback, redirect, setCustomPopStateHandler } from '../module/global';
@@ -110,9 +110,9 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
         let message = '';
         const maintenanceStart = maintenanceInfo[MaintenanceInfoKey.START];
         const maintenancePeriod = maintenanceInfo[MaintenanceInfoKey.PERIOD];
-        const startTime = getLocalTimeString(maintenanceStart, false, false);
+        const startTime = toLocalTimeString(maintenanceStart, false, false);
         if (maintenancePeriod > 0) {
-            const endTime = getLocalTimeString(maintenanceStart + maintenancePeriod, false, false);
+            const endTime = toLocalTimeString(maintenanceStart + maintenancePeriod, false, false);
             message = `${startTime}～${endTime}の間、メンテナンスを実施する予定です。`;
         } else {
             message = `メンテナンス開始は${startTime}を予定しております。`;

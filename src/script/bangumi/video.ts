@@ -34,7 +34,7 @@ import {
 import type { Player, Player as PlayerType } from '../module/player/player';
 import { getFormatIndex, createQuery } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayerError, buildAccordion, type AccordionInstance } from './media_helper';
-import { secToTimestamp } from '../module/time';
+import { toTimestampString } from '../module/string/timestamp';
 import { encodeCFURIComponent, buildURI } from '../module/http_form';
 import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
@@ -421,7 +421,7 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
         const chapterNode = createParagraphElement();
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
         const startTime = (chapter[1] + offset) / 1000;
-        const timestamp = createSpanElement(secToTimestamp(startTime));
+        const timestamp = createSpanElement(toTimestampString(startTime));
         addEventListener(timestamp, 'click', () => {
             mediaInstance[PlayerKey.SEEK](startTime);
             mediaInstance[PlayerKey.FOCUS]();

@@ -19,7 +19,7 @@ import { newXhr } from '../xhr/new';
 import { abortXhr } from '../xhr/abort';
 import { addEventListener } from '../event_listener';
 import { buildURI } from '../http_form';
-import { getHighResTimestamp, type HighResTimestamp } from '../hi_res_timestamp';
+import { getHighResTimestamp, type HighResTimestamp } from '../time/hi_res';
 import { parseResponse } from './parse_response';
 
 export const enum ServerRequestOptionKey {

@@ -30,7 +30,7 @@ import { addManualMultiLanguageClass } from '../module/style/multi_language/manu
 import { getCDNOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { addTimeout } from '../module/timer/add/timeout';
-import { getHighResTimestamp, type HighResTimestamp } from '../module/hi_res_timestamp';
+import { getHighResTimestamp, type HighResTimestamp } from '../module/time/hi_res';
 import { mediaLoadError } from '../module/message/param/media_load_error';
 
 export default function (newsInfo: NewsInfo, newsID: string, startTime: HighResTimestamp): void {

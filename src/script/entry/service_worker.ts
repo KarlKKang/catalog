@@ -12,6 +12,7 @@ import { disableButton } from '../module/dom/element/button/disable';
 import { min } from '../module/math';
 import { addOffloadCallback, pgid } from '../module/global';
 import { addTimeout } from '../module/timer/add/timeout';
+import { getEpochMs } from '../module/time/epoch_ms';
 
 let swUpdateLastPromptTime = 0;
 let serviceWorker: Workbox | null = null;
@@ -46,7 +47,7 @@ export default async function () { // This function should be called after setti
                 wb.messageSkipWaiting();
             });
             addEventListener(cancelButton, 'click', () => {
-                swUpdateLastPromptTime = new Date().getTime();
+                swUpdateLastPromptTime = getEpochMs();
                 hidePopupWindow();
             });
         });
