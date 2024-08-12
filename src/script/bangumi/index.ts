@@ -16,7 +16,7 @@ import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/Bang
 import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { importAllMediaModules } from './media_import_promise';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -58,7 +58,7 @@ export default function (showPage: ShowPageFunc) {
                     setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], serverRequest[ServerRequestKey.REQUEST_START_TIME], getLogoutParam(seriesID, epIndex));
                     resolve(parsedResponse);
                 },
-                [ServerRequestOptionKey.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
+                [ServerRequestOptionKey.CONTENT]: buildHttpForm({ series: seriesID, ep: epIndex }),
                 [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
                 [ServerRequestOptionKey.TIMEOUT]: 60000,
             });
@@ -104,7 +104,7 @@ export default function (showPage: ShowPageFunc) {
             );
             showPage();
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ series: seriesID, ep: epIndex }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ series: seriesID, ep: epIndex }),
         [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
         [ServerRequestOptionKey.METHOD]: 'GET',
     });

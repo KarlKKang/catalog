@@ -7,7 +7,7 @@ import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { importModule } from '../module/import_module';
 import { LOGIN_URI } from '../module/env/uri';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -50,6 +50,6 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse());
             }
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: param }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: param }),
     });
 }

@@ -25,7 +25,8 @@ import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
 import { loginFailed } from '../module/text/auth/failed';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
-import { buildURLForm, joinURLForms } from '../module/http_form';
+import { joinHttpForms } from '../module/string/http_form/join';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { pgid, redirect } from '../module/global';
 import { handleFailedTotp, TotpPopupWindowKey, type TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/message/param/invalid_response';
@@ -123,7 +124,7 @@ export default function (
         }
 
         sendLoginRequest(
-            buildURLForm({
+            buildHttpForm({
                 email: email,
                 password: password,
                 remember_me: rememberMeInput.checked ? 1 : 0,
@@ -183,9 +184,9 @@ export default function (
                         showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: joinURLForms(
+            [ServerRequestOptionKey.CONTENT]: joinHttpForms(
                 content,
-                buildURLForm({
+                buildHttpForm({
                     totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
                 }),
             ),

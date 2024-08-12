@@ -14,7 +14,7 @@ import { addAutoMultiLanguageClass } from '../module/style/multi_language/auto';
 import { getSeriesTable } from './series';
 import { getAccountTable } from './account';
 import { getNewsTable } from './news';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { createNativeButtonElement } from '../module/dom/element/button/native/create';
 
 export default function () {
@@ -118,7 +118,7 @@ function generate(type: string, idOutput: HTMLParagraphElement) {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response, undefined, idOutput);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -132,7 +132,7 @@ function misc(command: string, type: string) {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -160,7 +160,7 @@ function clearCDNCache(dir: string) {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -182,7 +182,7 @@ function clearKeyCache() {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -204,7 +204,7 @@ function rebuild(type: string) {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -231,7 +231,7 @@ function verify(id: string) {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

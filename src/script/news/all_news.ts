@@ -12,7 +12,7 @@ import { addEventListener } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { padNumberLeft } from '../module/string/pad_number_left';
 import { TimeInfoKey, getLocalTime } from '../module/time/local';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { redirect } from '../module/global';
 import { noResult } from '../module/text/search/no_result';
 import { allResultsShown } from '../module/text/search/all_results_shown';
@@ -48,7 +48,7 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement, i
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             showAllNews(parseResponse(response, parseAllNewsInfo), container, loadingTextContainer, infiniteScrolling);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ pivot: pivot }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ pivot: pivot }),
         [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }

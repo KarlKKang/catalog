@@ -5,7 +5,7 @@ import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
 import { completeCallback, getByClassAt, getParentElement, getTable, initializedClass } from './helper';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 
 export function getNewsTable() {
     getTable('news', updateEventHandlers);
@@ -40,7 +40,7 @@ function modifyNews(button: Element) {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -61,7 +61,7 @@ function deleteNews(id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -93,7 +93,7 @@ function addNews(button: Element) {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -129,7 +129,7 @@ function updateNewsTime(id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

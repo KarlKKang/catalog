@@ -18,7 +18,7 @@ import { LOGIN_URI } from '../env/uri';
 import { newXhr } from '../xhr/new';
 import { abortXhr } from '../xhr/abort';
 import { addEventListener } from '../event_listener';
-import { buildURI } from '../http_form';
+import { buildURI } from '../string/uri/build';
 import { getHighResTimestamp, type HighResTimestamp } from '../time/hi_res';
 import { parseResponse } from './parse_response';
 

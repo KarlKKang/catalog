@@ -8,7 +8,8 @@ import { appendChildren } from '../module/dom/node/append_children';
 import { addClass } from '../module/dom/class/add';
 import { changeColor, type CSS_COLOR } from '../module/style/color';
 import * as styles from '../../css/bangumi.module.scss';
-import { buildURLForm, joinURLForms } from '../module/http_form';
+import { joinHttpForms } from '../module/string/http_form/join';
+import { buildHttpForm } from '../module/string/http_form/build';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
     let height = elem.scrollHeight;
@@ -26,14 +27,14 @@ export function getContentBoxHeight(elem: HTMLElement): number {
 }
 
 export function getLogoutParam(seriesID: string, epIndex: number): string {
-    return joinURLForms(
-        buildURLForm({ series: seriesID }),
+    return joinHttpForms(
+        buildHttpForm({ series: seriesID }),
         createQuery(epIndex, getFormatIndex()),
     );
 }
 
 export function createQuery(epIndex: number, formatIndex: number): string {
-    return buildURLForm({
+    return buildHttpForm({
         ...epIndex !== 0 && { ep: epIndex + 1 },
         ...formatIndex !== 0 && { format: formatIndex + 1 },
     });

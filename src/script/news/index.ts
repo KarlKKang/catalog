@@ -12,7 +12,7 @@ import { NavBarPage } from '../module/nav_bar/enum';
 import { NewsInfoKey, parseNewsInfo } from '../module/type/NewsInfo';
 import { importModule } from '../module/import_module';
 import { NEWS_ROOT_URI } from '../module/env/uri';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -46,7 +46,7 @@ function getAllNews(showPage: ShowPageFunc): void {
             showPage();
             allNewsModule.default(parseResponse(response, AllNewsInfo.parseAllNewsInfo));
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ pivot: 0 }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ pivot: 0 }),
         [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }
@@ -63,7 +63,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         ),
     );
 
-    const logoutParam = buildURLForm({
+    const logoutParam = buildHttpForm({
         news: newsID,
         hash: getHash(),
     });
@@ -80,7 +80,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], startTime, logoutParam);
             newsModule.default(parsedResponse, newsID, startTime);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ id: newsID }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: newsID }),
         [ServerRequestOptionKey.LOGOUT_PARAM]: logoutParam,
         [ServerRequestOptionKey.TIMEOUT]: 30000,
     });

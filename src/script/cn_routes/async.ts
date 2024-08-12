@@ -25,7 +25,8 @@ import { redirect } from '../module/global';
 import { newXhr } from '../module/xhr/new';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style/horizontal_center';
-import { buildURI, buildURLForm } from '../module/http_form';
+import { buildURI } from '../module/string/uri/build';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
 import { disableButton } from '../module/dom/element/button/disable';
 import { round } from '../module/math';
@@ -283,7 +284,7 @@ function testRoute(size: number, locationPrefix: string, callback: (routeCode: s
     );
     xhr.timeout = 15000;
     addEventsListener(xhr, ['error', 'timeout'], onErrorCallback);
-    xhr.send(buildURLForm({ size: size }));
+    xhr.send(buildHttpForm({ size: size }));
 }
 
 function checkRouteCode(routeCode: string, routeInfo: RouteInfo | null) {

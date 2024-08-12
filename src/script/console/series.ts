@@ -5,7 +5,7 @@ import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
 import { completeCallback, getByClassAt, getParentElement, getTable, initializedClass } from './helper';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 
 function seriesCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
@@ -47,7 +47,7 @@ function modifySeries(button: Element) {
 
     sendServerRequest('console', {
         [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -68,7 +68,7 @@ function deleteSeries(id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -102,7 +102,7 @@ function addSeries(button: Element) {
 
     sendServerRequest('console', {
         [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -192,7 +192,7 @@ function updateSeriesTime(id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

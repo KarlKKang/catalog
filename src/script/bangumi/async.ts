@@ -17,7 +17,9 @@ import { setTitle } from '../module/dom/document/title/set';
 import { w } from '../module/dom/window';
 import { addEventListener } from '../module/event_listener';
 import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
-import { encodeCFURIComponent, buildURLForm, buildURI } from '../module/http_form';
+import { buildURI } from '../module/string/uri/build';
+import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { addTimeout } from '../module/timer/add/timeout';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { pgid, redirect } from '../module/global';
@@ -115,7 +117,7 @@ export default async function (
     // Add Media
     const type = epInfo[EPInfoKey.TYPE];
     const seriesOverride = epInfo[EPInfoKey.SERIES_OVERRIDE];
-    const baseURL = getCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCFURIComponent(epInfo[EPInfoKey.DIR]) + '/';
+    const baseURL = getCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCloudfrontURIComponent(epInfo[EPInfoKey.DIR]) + '/';
 
     const currentPgid = pgid;
     if (type === 'video') {
@@ -310,7 +312,7 @@ function goToEP(destSeries: string, destEp: number) {
     redirect(
         buildURI(
             BANGUMI_ROOT_URI + destSeries,
-            destEp === 1 ? '' : buildURLForm({ ep: destEp }),
+            destEp === 1 ? '' : buildHttpForm({ ep: destEp }),
         ),
     );
 }

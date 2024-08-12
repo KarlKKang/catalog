@@ -7,7 +7,7 @@ import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
 import { completeCallback, getByClassAt, getParentElement, getTable, initializedClass } from './helper';
 import { PASSWORD_REGEX } from '../module/regex';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 
 function accountCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
@@ -69,7 +69,7 @@ function addAccount(button: Element) {
 
     sendServerRequest('console', {
         [ServerRequestOptionKey.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -121,7 +121,7 @@ function modifyAccount(button: Element, id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionKey.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -206,7 +206,7 @@ function deleteAccount(id: string) {
 
     sendServerRequest('console', {
         [ServerRequestOptionKey.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

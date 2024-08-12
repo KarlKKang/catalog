@@ -17,7 +17,7 @@ import { invitationClosed } from './module/text/invitation/closed';
 import { emailAlreadyRegistered } from './module/text/email/already_registered';
 import { invalidEmailFormat } from './module/text/email/invalid';
 import { EMAIL_REGEX } from './module/regex';
-import { buildURLForm } from './module/http_form';
+import { buildHttpForm } from './module/string/http_form/build';
 import type { ShowPageFunc } from './module/global';
 import { invalidResponse } from './module/message/param/invalid_response';
 import { horizontalCenter } from './module/style/horizontal_center';
@@ -102,7 +102,7 @@ function showPageCallback() {
                 showElement(warningElem);
                 disableAllInputs(false);
             },
-            [ServerRequestOptionKey.CONTENT]: buildURLForm({ special: 1, receiver: email }),
+            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ special: 1, receiver: email }),
         });
     }
 

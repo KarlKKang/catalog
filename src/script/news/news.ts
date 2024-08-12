@@ -17,7 +17,9 @@ import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
-import { buildURLForm, encodeCFURIComponent, buildURI } from '../module/http_form';
+import { buildURI } from '../module/string/uri/build';
+import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { addOffloadCallback, redirect } from '../module/global';
 import { loading } from '../module/text/search/loading';
 import * as styles from '../../css/news.module.scss';
@@ -106,7 +108,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
         if (src === null) {
             continue;
         }
-        attachLazyload(elem, baseURL + encodeCFURIComponent(src), src, 250);
+        attachLazyload(elem, baseURL + encodeCloudfrontURIComponent(src), src, 250);
         addEventListener(elem, 'click', () => {
             openImageWindow(baseURL, src, credential, ImageSessionTypes.NEWS);
         });
@@ -152,7 +154,7 @@ function getInternalLink(elem: Element): string | null {
         const formatIndex = getDataAttribute(elem, 'format-index');
         return buildURI(
             BANGUMI_ROOT_URI + seriesID,
-            buildURLForm({
+            buildHttpForm({
                 ...epIndex !== '1' && { ep: epIndex },
                 ...formatIndex !== '1' && { format: formatIndex },
             }),

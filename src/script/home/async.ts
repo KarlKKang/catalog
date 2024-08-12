@@ -23,7 +23,9 @@ import { changeURL } from '../module/dom/location/change';
 import { addEventListener, removeAllEventListeners } from '../module/event_listener';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { toLocalTimeString } from '../module/string/local_time';
-import { buildURLForm, buildURI, joinURLForms } from '../module/http_form';
+import { buildURI } from '../module/string/uri/build';
+import { joinHttpForms } from '../module/string/http_form/join';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { addTimeout } from '../module/timer/add/timeout';
 import { addOffloadCallback, redirect, setCustomPopStateHandler } from '../module/global';
 import { changeColor, CSS_COLOR } from '../module/style/color';
@@ -227,7 +229,7 @@ function search(
     } else {
         keywords = searchBarInput.value.substring(0, 50);
         changeURL(
-            buildURI(TOP_URI, buildURLForm({ keywords: keywords })),
+            buildURI(TOP_URI, buildHttpForm({ keywords: keywords })),
         );
     }
 
@@ -272,7 +274,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo, request: ServerRequest) =>
         return;
     }
     currentRequest?.[ServerRequestKey.ABORT]();
-    const keywordsQuery = buildURLForm({ keywords: keywords });
+    const keywordsQuery = buildHttpForm({ keywords: keywords });
     const request = sendServerRequest('get_series', {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             if (currentRequest !== request) {
@@ -280,7 +282,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo, request: ServerRequest) =>
             }
             callback(parseResponse(response, parseSeriesInfo), request);
         },
-        [ServerRequestOptionKey.CONTENT]: joinURLForms(keywordsQuery, buildURLForm({ pivot: pivot })),
+        [ServerRequestOptionKey.CONTENT]: joinHttpForms(keywordsQuery, buildHttpForm({ pivot: pivot })),
         [ServerRequestOptionKey.LOGOUT_PARAM]: keywordsQuery,
         [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
         [ServerRequestOptionKey.METHOD]: 'GET',
@@ -295,7 +297,7 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
         }, retryTimeout);
     };
     const xhr = newXhr(
-        getServerOrigin('') + buildURI('/get_route_info', buildURLForm({ hostname: getHostname() })),
+        getServerOrigin('') + buildURI('/get_route_info', buildHttpForm({ hostname: getHostname() })),
         'GET',
         false,
         () => {

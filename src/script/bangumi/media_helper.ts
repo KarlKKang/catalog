@@ -38,7 +38,8 @@ import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffi
 import { mediaLoadError } from '../module/text/media/load_error';
 import * as styles from '../../css/bangumi.module.scss';
 import { getCDNOrigin } from '../module/env/origin';
-import { buildURLForm, joinURLForms } from '../module/http_form';
+import { joinHttpForms } from '../module/string/http_form/join';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { disableButton } from '../module/dom/element/button/disable';
 import { createIframeElement } from '../module/dom/element/iframe/create';
 import { remove } from '../module/dom/node/remove';
@@ -192,16 +193,16 @@ export function buildDownloadAccordion(
 
     addEventListener(downloadButton, 'click', () => {
         disableButton(downloadButton, true);
-        let requestContent = joinURLForms(mediaSessionCredential, buildURLForm({ os: osSelectMenu.value }));
+        let requestContent = joinHttpForms(mediaSessionCredential, buildHttpForm({ os: osSelectMenu.value }));
         if (videoFormats !== null) {
             const formatIndex = videoFormats[0].selectedIndex;
             const format = videoFormats[1][formatIndex];
             if (format === undefined) {
                 return;
             }
-            requestContent = joinURLForms(
+            requestContent = joinHttpForms(
                 requestContent,
-                buildURLForm({
+                buildHttpForm({
                     format: formatIndex,
                     ...format[VideoFormatKey.DIRECT_DOWNLOAD] !== true && { container: containerSelectMenu.value },
                 }),

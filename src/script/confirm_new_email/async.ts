@@ -20,7 +20,8 @@ import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
 import { loginFailed } from '../module/text/auth/failed';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
-import { buildURLForm, joinURLForms } from '../module/http_form';
+import { joinHttpForms } from '../module/string/http_form/join';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { TotpPopupWindowKey, handleFailedTotp, type TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
@@ -105,7 +106,7 @@ export default function (param: string) {
         }
 
         sendChangeEmailRequest(
-            buildURLForm({ p: param, email: email, password: password }),
+            buildHttpForm({ p: param, email: email, password: password }),
         );
     }
 
@@ -165,9 +166,9 @@ export default function (param: string) {
                         showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: joinURLForms(
+            [ServerRequestOptionKey.CONTENT]: joinHttpForms(
                 content,
-                buildURLForm({
+                buildHttpForm({
                     totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
                 }),
             ),

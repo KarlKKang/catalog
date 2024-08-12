@@ -6,7 +6,8 @@ import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { getSearchParam } from '../module/dom/location/get/search_param';
-import { buildURLForm, buildURI } from '../module/http_form';
+import { buildURI } from '../module/string/uri/build';
+import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function () {
     if (UNRECOMMENDED_BROWSER) {
@@ -29,7 +30,7 @@ function getForwardURL() {
         const format = getSearchParam('format');
         return buildURI(
             BANGUMI_ROOT_URI + series,
-            buildURLForm({
+            buildHttpForm({
                 ...ep !== '1' && { ep: ep },
                 ...format !== '1' && { format: format },
             }),
@@ -41,5 +42,5 @@ function getForwardURL() {
         return buildURI(NEWS_ROOT_URI + news, '', getSearchParam('hash'));
     }
 
-    return buildURI(TOP_URI, buildURLForm({ keywords: getSearchParam('keywords') }));
+    return buildURI(TOP_URI, buildHttpForm({ keywords: getSearchParam('keywords') }));
 }

@@ -16,7 +16,7 @@ import { invalidEmailFormat } from '../module/text/email/invalid';
 import { emailSent } from '../module/message/param/email_sent';
 import { expired } from '../module/message/param/expired';
 import { EMAIL_REGEX } from '../module/regex';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
@@ -92,7 +92,7 @@ export default function (param: string) {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: param, new: newEmail }),
+            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: param, new: newEmail }),
         });
     }
 

@@ -34,7 +34,8 @@ import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { promptForEmailOtp, type EmailOtpPopupWindow, EmailOtpPopupWindowKey } from './email_otp_popup_window';
 import { LoginPopupWindowKey, type LoginPopupWindow } from './login_popup_window';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
-import { buildURLForm, joinURLForms } from '../module/http_form';
+import { joinHttpForms } from '../module/string/http_form/join';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
@@ -219,9 +220,9 @@ function modifyMfaReauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionKey.CONTENT]: joinURLForms(
+        [ServerRequestOptionKey.CONTENT]: joinHttpForms(
             content,
-            buildURLForm({
+            buildHttpForm({
                 email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
                 password: loginPopupWindow[LoginPopupWindowKey.PASSWORD],
                 otp: emailOtpPopupWindow?.[EmailOtpPopupWindowKey.OTP],
@@ -345,7 +346,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
                     });
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: totpInfo[TOTPInfoKey.P], totp: totp }),
+            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: totpInfo[TOTPInfoKey.P], totp: totp }),
             [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
         });
     };

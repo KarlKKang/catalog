@@ -9,7 +9,7 @@ import { d } from '../module/dom/document';
 import { w } from '../module/dom/window';
 import { addEventListener } from '../module/event_listener';
 import { showMessage } from '../module/message';
-import { encodeCFURIComponent } from '../module/http_form';
+import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
 import { setWidth } from '../module/style/width';
 import { CSS_UNIT } from '../module/style/value/unit';
 import * as styles from '../../css/image.module.scss';
@@ -86,7 +86,7 @@ function loadImage(container: HTMLElement, baseURL: string, fileName: string, st
     }
     imageLoader(
         container,
-        baseURL + encodeCFURIComponent(fileName),
+        baseURL + encodeCloudfrontURIComponent(fileName),
         fileName,
         true,
         (canvas) => {

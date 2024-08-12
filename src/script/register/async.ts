@@ -23,7 +23,8 @@ import { usernameTaken } from '../module/text/username/taken';
 import { usernameInvalid } from '../module/text/username/invalid';
 import { usernameEmpty } from '../module/text/username/empty';
 import { PASSWORD_REGEX } from '../module/regex';
-import { buildURLForm, buildURI } from '../module/http_form';
+import { buildURI } from '../module/string/uri/build';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
@@ -170,7 +171,7 @@ export default function (param: string) {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: param, username: username, password: password }),
+            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: param, username: username, password: password }),
         });
     }
 
@@ -204,7 +205,7 @@ function getInfoNote() {
         appendText(paragraph, text[2]);
         appendChild(container, paragraph);
         addEventListener(link, 'click', () => {
-            openWindow(buildURI(INFO_URI, buildURLForm({ 'nav-bar': 'no' }), lang));
+            openWindow(buildURI(INFO_URI, buildHttpForm({ 'nav-bar': 'no' }), lang));
         });
     }
     return container;

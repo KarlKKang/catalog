@@ -16,7 +16,7 @@ import { showMessage } from './module/message';
 import { emailSent } from './module/message/param/email_sent';
 import { invalidEmailFormat } from './module/text/email/invalid';
 import { EMAIL_REGEX } from './module/regex';
-import { buildURLForm } from './module/http_form';
+import { buildHttpForm } from './module/string/http_form/build';
 import { redirect, type ShowPageFunc } from './module/global';
 import { invalidResponse } from './module/message/param/invalid_response';
 import { horizontalCenter } from './module/style/horizontal_center';
@@ -109,7 +109,7 @@ function showPageCallback() {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildURLForm({ email: email }),
+            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ email: email }),
         });
     }
 

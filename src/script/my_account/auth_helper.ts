@@ -1,6 +1,7 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
-import { buildURLForm, joinURLForms } from '../module/http_form';
+import { joinHttpForms } from '../module/string/http_form/join';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { replaceText } from '../module/dom/element/text/replace';
 import { pgid } from '../module/global';
@@ -101,9 +102,9 @@ export function reauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionKey.CONTENT]: joinURLForms(
+        [ServerRequestOptionKey.CONTENT]: joinHttpForms(
             content,
-            buildURLForm({
+            buildHttpForm({
                 email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
                 password: loginPopupWindow[LoginPopupWindowKey.PASSWORD],
                 totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],

@@ -12,7 +12,8 @@ import { parseSeriesInfo } from '../module/type/SeriesInfo';
 import { getURLKeywords, search } from './shared';
 import { importModule } from '../module/import_module';
 import { TOP_URI } from '../module/env/uri';
-import { buildURLForm, joinURLForms } from '../module/http_form';
+import { joinHttpForms } from '../module/string/http_form/join';
+import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -43,7 +44,7 @@ export default function (showPage: ShowPageFunc) {
     );
 
     const keywords = getURLKeywords();
-    const keywordsQuery = buildURLForm({ keywords: keywords });
+    const keywordsQuery = buildHttpForm({ keywords: keywords });
     sendServerRequest('get_series', {
         [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
             const currentPgid = pgid;
@@ -54,9 +55,9 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default(parseResponse(response, parseSeriesInfo), keywords);
             showPage();
         },
-        [ServerRequestOptionKey.CONTENT]: joinURLForms(
+        [ServerRequestOptionKey.CONTENT]: joinHttpForms(
             keywordsQuery,
-            buildURLForm({ pivot: 0 }),
+            buildHttpForm({ pivot: 0 }),
         ),
         [ServerRequestOptionKey.LOGOUT_PARAM]: keywordsQuery,
         [ServerRequestOptionKey.METHOD]: 'GET',

@@ -4,7 +4,7 @@ import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener';
 import { changed as changedClass } from '../../css/console.module.scss';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { addOffloadCallback } from '../module/global';
 
 let outputElement: HTMLDivElement | null = null;
@@ -29,7 +29,7 @@ export function getTable(type: string, callback?: (outputElem: HTMLElement) => v
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response, callback);
         },
-        [ServerRequestOptionKey.CONTENT]: buildURLForm({ p: JSON.stringify(param) }),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

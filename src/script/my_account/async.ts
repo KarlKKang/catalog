@@ -23,7 +23,7 @@ import { SharedBool, SharedButton, SharedElement, SharedInput, getSharedBool, ge
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { AccountInfoKey, type AccountInfo } from '../module/type/AccountInfo';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { changeColor, CSS_COLOR } from '../module/style/color';
@@ -147,7 +147,7 @@ function changePassword() {
             return true;
         },
         warningElem,
-        buildURLForm({ new: newPassword }),
+        buildHttpForm({ new: newPassword }),
     );
 }
 
@@ -194,7 +194,7 @@ function changeUsername(userInfo: AccountInfo) {
             return true;
         },
         warningElem,
-        buildURLForm({ new: newUsername }),
+        buildHttpForm({ new: newUsername }),
     );
 }
 
@@ -243,7 +243,7 @@ function invite() {
             return true;
         },
         warningElem,
-        buildURLForm({ receiver: receiver }),
+        buildHttpForm({ receiver: receiver }),
     );
 }
 
@@ -277,7 +277,7 @@ function changeLoginNotification() {
             return true;
         },
         warningElem,
-        buildURLForm({ p: loginNotificationTargetStatus ? 1 : 0 }),
+        buildHttpForm({ p: loginNotificationTargetStatus ? 1 : 0 }),
         true,
     );
 }

@@ -12,7 +12,7 @@ import { addEventListener } from '../module/event_listener';
 import { SessionKey, type Sessions } from '../module/type/Sessions';
 import { SharedElement, getSharedElement, sessionLogoutButtons } from './shared_var';
 import { toLocalTimeString } from '../module/string/local_time';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { changeColor, CSS_COLOR } from '../module/style/color';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
@@ -118,6 +118,6 @@ function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement
             return true;
         },
         sessionWarningElem,
-        buildURLForm({ id: sessionID }),
+        buildHttpForm({ id: sessionID }),
     );
 }

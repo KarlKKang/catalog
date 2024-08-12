@@ -18,7 +18,7 @@ import { passwordConfirmationMismatch } from '../module/text/password/mismatch';
 import { invalidPasswordFormat } from '../module/text/password/invalid';
 import { expired } from '../module/message/param/expired';
 import { PASSWORD_REGEX } from '../module/regex';
-import { buildURLForm } from '../module/http_form';
+import { buildHttpForm } from '../module/string/http_form/build';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
@@ -133,7 +133,7 @@ export default function (user: string, signature: string, expires: string) {
                     showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildURLForm({ user: user, signature: signature, expires: expires, new: newPassword }),
+            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ user: user, signature: signature, expires: expires, new: newPassword }),
         });
     }
 
