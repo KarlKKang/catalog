@@ -1,4 +1,3 @@
-import { logout } from './module/server/logout';
 import { setTitle } from './module/dom/document/title/set';
 import { clearSessionStorage } from './module/session_storage/clear';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
@@ -9,13 +8,14 @@ import { appendChildren } from './module/dom/node/append_children';
 import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener/add';
-import { redirect, type ShowPageFunc } from './module/global';
+import { pgid, redirect, type ShowPageFunc } from './module/global';
 import * as styles from '../css/message.module.scss';
 import { horizontalCenter } from './module/style/horizontal_center';
 import { changeColor, CSS_COLOR } from './module/style/color';
 import { MessageParamKey } from './module/message/type';
 import { TOP_URI } from './module/env/uri';
 import { MessageParamInternalKey, getMessageParam } from './module/message';
+import { importModule } from './module/import_module';
 
 export default function (showPage: ShowPageFunc) {
     clearSessionStorage();
@@ -48,7 +48,17 @@ export default function (showPage: ShowPageFunc) {
     };
 
     if (logoutParam) {
-        logout(callback);
+        const currentPgid = pgid;
+        importModule(
+            () => import(
+                /* webpackExports: ["logout"] */
+                './module/server/logout'
+            ),
+        ).then(({ logout }) => {
+            if (currentPgid === pgid) {
+                logout(callback);
+            }
+        });
         return;
     }
 
