@@ -1,7 +1,7 @@
 import {
     openImageWindow,
-    ImageSessionTypes,
-} from '../module/media_helper';
+} from '../module/image/open_window';
+import { ImageSessionTypes } from '../module/image/session_type';
 import { removeRightClick } from '../module/dom/element/remove_right_click';
 import { newXHR } from '../module/xhr';
 import { scrollToHash } from '../module/dom/scroll/to_hash';

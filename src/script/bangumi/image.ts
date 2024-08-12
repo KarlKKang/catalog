@@ -1,7 +1,7 @@
 import {
-    ImageSessionTypes,
     openImageWindow,
-} from '../module/media_helper';
+} from '../module/image/open_window';
+import { ImageSessionTypes } from '../module/image/session_type';
 import { removeRightClick } from '../module/dom/element/remove_right_click';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { appendText } from '../module/dom/element/text/append';

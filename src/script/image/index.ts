@@ -1,6 +1,4 @@
-import {
-    ImageSessionTypes,
-} from '../module/media_helper';
+import { ImageSessionTypes } from '../module/image/session_type';
 import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { setTitle } from '../module/dom/document/title/set';

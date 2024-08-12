@@ -13,7 +13,7 @@ import { encodeCFURIComponent } from '../module/http_form';
 import { setWidth } from '../module/style/width';
 import { CSS_UNIT } from '../module/style/value/unit';
 import * as styles from '../../css/image.module.scss';
-import { imageLoader, offload as offloadImageLoader } from '../module/image_loader';
+import { imageLoader, offload as offloadImageLoader } from '../module/image/loader';
 import { closeButtonText } from '../module/text/button/close';
 import { addTimeout, type Timeout } from '../module/timer';
 import { addMouseTouchEventListener } from '../module/event_listener/mouse_touch_event';

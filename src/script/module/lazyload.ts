@@ -1,6 +1,4 @@
-import {
-    ImageSessionTypes,
-} from './media_helper';
+import { ImageSessionTypes } from './image/session_type';
 import { type ServerRequest, ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from './server/request';
 import { appendChild } from './dom/node/append_child';
 import { addClass } from './dom/class/add';
@@ -9,7 +7,7 @@ import { showMessage } from './message';
 import { invalidResponse } from './message/param/invalid_response';
 import { addTimeout, removeTimeout, type Timeout } from './timer';
 import * as styles from '../../css/lazyload.module.scss';
-import { imageLoader, offload as offloadImageLoader } from './image_loader';
+import { imageLoader, offload as offloadImageLoader } from './image/loader';
 import { getHighResTimestamp } from './hi_res_timestamp';
 import { max } from './math';
 import { abortXhr } from './xhr';

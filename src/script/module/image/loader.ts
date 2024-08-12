@@ -1,12 +1,12 @@
 import type { WebpMachine } from 'webp-hero';
-import { removeRightClick } from './dom/element/remove_right_click';
-import { newXHR } from './xhr';
-import { appendChild } from './dom/node/append_child';
-import { addEventListener, removeAllEventListeners } from './event_listener';
-import { createCanvasElement } from './dom/element/canvas/create';
-import { setHeight } from './style/height';
-import { setWidth } from './style/width';
-import { importModule } from './import_module';
+import { removeRightClick } from '../dom/element/remove_right_click';
+import { newXHR } from '../xhr';
+import { appendChild } from '../dom/node/append_child';
+import { addEventListener, removeAllEventListeners } from '../event_listener';
+import { createCanvasElement } from '../dom/element/canvas/create';
+import { setHeight } from '../style/height';
+import { setWidth } from '../style/width';
+import { importModule } from '../import_module';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
