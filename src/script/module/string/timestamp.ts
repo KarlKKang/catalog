@@ -1,4 +1,5 @@
 import { floor } from '../math';
+import { padNumberLeft } from './pad_number_left';
 
 export function toTimestampString(sec: number, templateSec?: number) {
     if (isNaN(sec) || !isFinite(sec)) {
@@ -13,24 +14,15 @@ export function toTimestampString(sec: number, templateSec?: number) {
     const templateSecParsed = templateSec === sec ? secParsed : parseSec(templateSec);
 
     let result = '';
-    let minText = secParsed.min.toString();
 
     if (templateSecParsed.hour > 0) {
-        const hourText = secParsed.hour.toString();
-        result += '0'.repeat(templateSecParsed.hour.toString().length - hourText.length) + hourText + ':';
-        if (secParsed.min < 10) {
-            minText = '0' + minText;
-        }
+        result += padNumberLeft(secParsed.hour, getNumberLength(templateSecParsed.hour)) + ':';
+        result += padNumberLeft(secParsed.min, 2);
     } else {
-        minText = '0'.repeat(templateSecParsed.min.toString().length - minText.length) + minText;
+        result += padNumberLeft(secParsed.min, getNumberLength(templateSecParsed.min));
     }
 
-    let secText = secParsed.sec.toString();
-    if (secParsed.sec < 10) {
-        secText = '0' + secText;
-    }
-
-    return result + minText + ':' + secText;
+    return result + ':' + padNumberLeft(secParsed.sec, 2);
 }
 
 function parseSec(sec: number) {
@@ -44,4 +36,8 @@ function parseSec(sec: number) {
         min: min,
         sec: floor(sec),
     };
+}
+
+function getNumberLength(num: number) {
+    return num.toString().length;
 }
