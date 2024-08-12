@@ -4,7 +4,6 @@ type EventMap = Map<string, ListenerMap>;
 type ElementMap = Map<EventTarget, EventMap>;
 
 const elementMap: ElementMap = new Map();
-let elementCount = 0;
 
 export function addEventListener(elem: EventTarget, event: string, callback: EventListener, options?: boolean | AddEventListenerOptions) {
     if (options !== undefined && typeof options !== 'boolean' && options.once === true) {
@@ -16,9 +15,6 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
     if (eventMap === undefined) {
         eventMap = new Map();
         elementMap.set(elem, eventMap);
-        if (DEVELOPMENT) {
-            elementCount++;
-        }
     }
     let listenerMap = eventMap.get(event);
     if (listenerMap === undefined) {
@@ -53,7 +49,7 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
     listenerConfig[listenerConfigIdx] = [_callback, options];
     elem.addEventListener(event, _callback, options);
     if (DEVELOPMENT) {
-        console.log('Event listener added. Total elements listening: ' + elementCount + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
+        console.log('Event listener added. Total elements listening: ' + elementMap.size + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
     }
 }
 
@@ -104,12 +100,9 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
     }
     if (eventMap.size === 0) {
         elementMap.delete(elem);
-        if (DEVELOPMENT) {
-            elementCount--;
-        }
     }
     if (DEVELOPMENT) {
-        console.log('Event listener removed. Total elements listening: ' + elementCount + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
+        console.log('Event listener removed. Total elements listening: ' + elementMap.size + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
     }
 }
 
@@ -170,10 +163,7 @@ function removeAllEventListenersHelper(elem: EventTarget, eventMap: EventMap) {
     }
     elementMap.delete(elem);
     if (DEVELOPMENT) {
-        elementCount--;
-    }
-    if (DEVELOPMENT) {
-        console.log('All event listeners removed. Total elements listening: ' + elementCount + '.');
+        console.log('All event listeners removed. Total elements listening: ' + elementMap.size + '.');
     }
 }
 
