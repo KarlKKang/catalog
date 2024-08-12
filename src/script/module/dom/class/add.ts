@@ -1,4 +1,4 @@
-import { getClassList } from './internal';
+import { getClassList } from './internal/get_class_list';
 
 export function addClass(elem: Element, className: string, ...classNames: string[]) {
     const classList = getClassList(elem);
