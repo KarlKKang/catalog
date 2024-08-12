@@ -1,4 +1,0 @@
-export const AUTH_FAILED = 'FAILED';
-export const AUTH_FAILED_TOTP = 'FAILED TOTP';
-export const AUTH_DEACTIVATED = 'DEACTIVATED';
-export const AUTH_TOO_MANY_REQUESTS = 'TOO MANY REQUESTS';

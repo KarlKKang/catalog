@@ -1,4 +1,4 @@
-import { floor } from '../math';
+import { floor } from '../math/floor';
 import { padNumberLeft } from './pad_number_left';
 
 export function toTimestampString(sec: number, templateSec?: number) {

@@ -28,9 +28,11 @@ import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { buildURI } from '../module/string/uri/build';
 import { buildHttpForm } from '../module/string/http_form/build';
-import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
+import { EN_LANG_CODE } from '../module/lang/en';
+import { ZH_HANT_LANG_CODE } from '../module/lang/zh_hant';
+import { ZH_HANS_LANG_CODE } from '../module/lang/zh_hans';
 import { disableButton } from '../module/dom/element/button/disable';
-import { round } from '../module/math';
+import { round } from '../module/math/round';
 import { getHighResTimestamp } from '../module/time/hi_res';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';

@@ -41,7 +41,9 @@ import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { emailAlreadyRegistered } from './shared';
 import { INFO_URI, LOGIN_URI } from '../module/env/uri';
-import { EN_LANG_CODE, ZH_HANS_LANG_CODE, ZH_HANT_LANG_CODE } from '../module/lang';
+import { EN_LANG_CODE } from '../module/lang/en';
+import { ZH_HANT_LANG_CODE } from '../module/lang/zh_hant';
+import { ZH_HANS_LANG_CODE } from '../module/lang/zh_hans';
 import { StyledInputElementKey } from '../module/dom/element/input/type';
 
 export default function (param: string) {

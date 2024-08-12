@@ -47,7 +47,7 @@ import { getURLKeywords, setSearch } from './shared';
 import { getCDNOrigin, getServerOrigin } from '../module/env/origin';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/CurrentRouteInfo';
-import { min } from '../module/math';
+import { min } from '../module/math/min';
 
 let pivot: Pivot;
 let keywords: string;

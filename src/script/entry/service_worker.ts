@@ -9,7 +9,7 @@ import { addEventListener } from '../module/event_listener/add';
 import { Workbox } from 'workbox-window';
 import { initializePopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
 import { disableButton } from '../module/dom/element/button/disable';
-import { min } from '../module/math';
+import { min } from '../module/math/min';
 import { addOffloadCallback } from '../module/global/offload';
 import { pgid } from '../module/global/pgid';
 import { addTimeout } from '../module/timer/add/timeout';

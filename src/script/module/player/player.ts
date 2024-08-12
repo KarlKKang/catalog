@@ -42,8 +42,10 @@ import { CSS_UNIT } from '../style/value/unit';
 import { onScreenConsole as onScreenConsoleClass } from '../../../css/on_screen_console.module.scss';
 import { PlayerKey } from './player_key';
 import { addMouseTouchEventListener } from '../event_listener/add/mouse_touch_event';
-import { EN_LANG_CODE } from '../lang';
-import { max, min, round } from '../math';
+import { EN_LANG_CODE } from '../lang/en';
+import { min } from '../math/min';
+import { max } from '../math/max';
+import { round } from '../math/round';
 import { createNativeButtonElement } from '../dom/element/button/native/create';
 
 declare global {

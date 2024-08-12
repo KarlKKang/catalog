@@ -1,0 +1,1 @@
+export const AUTH_TOO_MANY_REQUESTS = 'TOO MANY REQUESTS';

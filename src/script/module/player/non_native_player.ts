@@ -7,7 +7,7 @@ import { addTimeout } from '../timer/add/timeout';
 import { playerSeeking } from '../../../css/player.module.scss';
 import { PlayerKey } from './player_key';
 import { NonNativePlayerKey } from './non_native_player_key';
-import { min } from '../math';
+import { min } from '../math/min';
 import { getEpochMs } from '../time/epoch_ms';
 
 export abstract class NonNativePlayer extends Player {

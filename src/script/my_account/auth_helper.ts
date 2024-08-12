@@ -1,5 +1,8 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
-import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS } from '../module/auth_results';
+import { AUTH_TOO_MANY_REQUESTS } from '../module/auth_result/too_many_requests';
+import { AUTH_DEACTIVATED } from '../module/auth_result/deactivated';
+import { AUTH_FAILED_TOTP } from '../module/auth_result/failed_totp';
+import { AUTH_FAILED } from '../module/auth_result/failed';
 import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { replaceChildren } from '../module/dom/node/replace_children';
