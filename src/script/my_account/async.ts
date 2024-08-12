@@ -11,15 +11,15 @@ import {
     invalidPasswordFormat,
     passwordConfirmationMismatch,
     passwordChanged,
-    usernameChanged,
-    usernameTaken,
-    usernameEmpty,
     invalidEmailFormat,
     emailAlreadyRegistered,
     invitationClosed,
-    usernameInvalid,
     emailSentSuffix,
 } from '../module/text/message/body';
+import { usernameTaken } from '../module/text/username/taken';
+import { usernameChanged } from '../module/text/username/changed';
+import { usernameInvalid } from '../module/text/username/invalid';
+import { usernameEmpty } from '../module/text/username/empty';
 import { emailSent as emailSendPrefix } from '../module/text/message/title';
 import { SharedBool, SharedButton, SharedElement, SharedInput, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';

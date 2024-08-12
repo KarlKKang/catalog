@@ -15,11 +15,6 @@ export const invalidPasswordFormat = 'パスワードが要件を満たしてい
 export const passwordConfirmationMismatch = 'パスワードの確認再入力が一致しません。';
 export const passwordChanged = 'パスワードを変更しました。';
 
-export const usernameEmpty = 'ユーザー名を空欄にすることはできません。';
-export const usernameInvalid = 'ユーザー名に無効な文字が含まれています。';
-export const usernameChanged = 'ユーザー名を変更しました。';
-export const usernameTaken = 'このユーザーネームはすでに使われています。別のユーザー名を入力してください。';
-
 export const loginFailed = 'メールアドレスまたはパスワードが正しくありません。';
 export const tooManyFailedLogin = 'ログイン試行の回数が上限を超えました。ユーザー保護のため、現在ログインすることはできません。しばらくしてからもう一度お試しください。';
 export const failedTotp = '入力されたコードが正しくありません。';
