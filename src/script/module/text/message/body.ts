@@ -7,10 +7,6 @@ export const defaultErrorSuffix = 'このエラーが続く場合は、管理者
 
 export const invitationClosed = '現在、新規登録は受け付けておりません。';
 
-export const invalidPasswordFormat = 'パスワードが要件を満たしていません。';
-export const passwordConfirmationMismatch = 'パスワードの確認再入力が一致しません。';
-export const passwordChanged = 'パスワードを変更しました。';
-
 export const loginFailed = 'メールアドレスまたはパスワードが正しくありません。';
 export const tooManyFailedLogin = 'ログイン試行の回数が上限を超えました。ユーザー保護のため、現在ログインすることはできません。しばらくしてからもう一度お試しください。';
 export const failedTotp = '入力されたコードが正しくありません。';

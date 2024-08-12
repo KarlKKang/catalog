@@ -8,11 +8,11 @@ import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { showMessage } from '../module/message';
 import {
-    invalidPasswordFormat,
-    passwordConfirmationMismatch,
-    passwordChanged,
     invitationClosed,
 } from '../module/text/message/body';
+import { passwordChanged } from '../module/text/password/changed';
+import { passwordConfirmationMismatch } from '../module/text/password/mismatch';
+import { invalidPasswordFormat } from '../module/text/password/invalid';
 import { emailSentSuffix } from '../module/text/send_mail/suffix';
 import { emailAlreadyRegistered } from '../module/text/email/already_registered';
 import { invalidEmailFormat } from '../module/text/email/invalid';
