@@ -13,7 +13,8 @@ import { addTimeout, removeTimeout, type Timeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 import { LOGIN_URI } from '../env/uri';
-import { abortXhr, newXHR } from '../xhr';
+import { newXhr } from '../xhr/new';
+import { abortXhr } from '../xhr/abort';
 import { addEventListener } from '../event_listener';
 import { buildURI } from '../http_form';
 import { getHighResTimestamp, type HighResTimestamp } from '../hi_res_timestamp';
@@ -91,7 +92,7 @@ class ServerRequest {
             uri = buildURI(uri, content);
             content = '';
         }
-        const xhr = newXHR(
+        const xhr = newXhr(
             getServerOrigin() + '/' + uri,
             method,
             true,

@@ -1,8 +1,7 @@
-import { addEventListener, removeAllEventListeners } from './event_listener';
+import { addEventListener, removeAllEventListeners } from '../event_listener';
+import { allRequests } from './internal/all_requests';
 
-const allRequests = new Set<XMLHttpRequest>();
-
-export function newXHR(
+export function newXhr(
     url: string,
     method: 'GET' | 'POST',
     withCredentials: boolean,
@@ -23,18 +22,4 @@ export function newXHR(
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     }
     return xhr;
-}
-
-export function abortAllXhr() {
-    for (const xhr of allRequests) {
-        removeAllEventListeners(xhr);
-        xhr.abort();
-    }
-    allRequests.clear();
-}
-
-export function abortXhr(xhr: XMLHttpRequest) {
-    removeAllEventListeners(xhr);
-    xhr.abort();
-    allRequests.delete(xhr);
 }

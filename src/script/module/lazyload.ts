@@ -10,7 +10,7 @@ import * as styles from '../../css/lazyload.module.scss';
 import { imageLoader, offload as offloadImageLoader } from './image/loader';
 import { getHighResTimestamp } from './hi_res_timestamp';
 import { max } from './math';
-import { abortXhr } from './xhr';
+import { abortXhr } from './xhr/abort';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,

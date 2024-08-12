@@ -3,7 +3,7 @@ import {
 } from '../module/image/open_window';
 import { ImageSessionTypes } from '../module/image/session_type';
 import { removeRightClick } from '../module/dom/element/remove_right_click';
-import { newXHR } from '../module/xhr';
+import { newXhr } from '../module/xhr/new';
 import { scrollToHash } from '../module/dom/scroll/to_hash';
 import { getTitle } from '../module/dom/document/title/get';
 import { setTitle } from '../module/dom/document/title/set';
@@ -70,7 +70,7 @@ function getNewsContent(newsInfo: NewsInfo, newsID: string, startTime: HighResTi
             getNewsContent(newsInfo, newsID, startTime, contentContainer, retryCount, retryTimeout * 2);
         }, retryTimeout);
     };
-    const xhr = newXHR(
+    const xhr = newXhr(
         getCDNOrigin() + '/news/' + newsID + '.html',
         'GET',
         true,

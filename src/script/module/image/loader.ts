@@ -1,6 +1,6 @@
 import type { WebpMachine } from 'webp-hero';
 import { removeRightClick } from '../dom/element/remove_right_click';
-import { newXHR } from '../xhr';
+import { newXhr } from '../xhr/new';
 import { appendChild } from '../dom/node/append_child';
 import { addEventListener, removeAllEventListeners } from '../event_listener';
 import { createCanvasElement } from '../dom/element/canvas/create';
@@ -139,7 +139,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
     addEventListener(image, 'error', onImageError);
     addEventListener(image, 'load', onImageLoad);
 
-    const xhr = newXHR(
+    const xhr = newXhr(
         src,
         'GET',
         withCredentials,

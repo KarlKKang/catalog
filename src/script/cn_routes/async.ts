@@ -22,7 +22,7 @@ import { cnRoutesPageTitle } from '../module/text/page_title';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
 import { redirect } from '../module/global';
-import { newXHR } from '../module/xhr';
+import { newXhr } from '../module/xhr/new';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { buildURI, buildURLForm } from '../module/http_form';
@@ -241,7 +241,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
 }
 
 function testRoute(size: number, locationPrefix: string, callback: (routeCode: string) => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
-    const xhr = newXHR(
+    const xhr = newXhr(
         getServerOrigin(locationPrefix) + '/test_download',
         'POST',
         true,
@@ -300,7 +300,7 @@ function getASN(asnResultContainer: HTMLElement, asnRetestButton: HTMLButtonElem
         replaceText(asnResultContainer, 'ASNの取得に失敗しました');
         disableButton(asnRetestButton, false);
     };
-    const xhr = newXHR(
+    const xhr = newXhr(
         getServerOrigin('') + '/get_asn',
         'GET',
         false,

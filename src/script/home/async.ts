@@ -1,4 +1,4 @@
-import { newXHR } from '../module/xhr';
+import { newXhr } from '../module/xhr/new';
 import { scrollToTop } from '../module/dom/scroll/to_top';
 import { type ServerRequest, ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
@@ -294,7 +294,7 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
             showASNAnnouncement(containerElem, min(retryTimeout * 2, 5000));
         }, retryTimeout);
     };
-    const xhr = newXHR(
+    const xhr = newXhr(
         getServerOrigin('') + buildURI('/get_route_info', buildURLForm({ hostname: getHostname() })),
         'GET',
         false,
