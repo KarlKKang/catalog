@@ -7,9 +7,7 @@ import { body } from '../module/dom/body';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { showMessage } from '../module/message';
-import {
-    invitationClosed,
-} from '../module/text/message/body';
+import { invitationClosed } from '../module/text/invitation/closed';
 import { passwordChanged } from '../module/text/password/changed';
 import { passwordConfirmationMismatch } from '../module/text/password/mismatch';
 import { invalidPasswordFormat } from '../module/text/password/invalid';

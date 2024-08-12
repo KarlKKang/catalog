@@ -29,7 +29,7 @@ import { hlsPlayerImportPromise, nativePlayerImportPromise } from './media_impor
 import { SharedElement, getSharedElement } from './shared_var';
 import * as styles from '../../css/bangumi.module.scss';
 import { PlayerKey } from '../module/player/player_key';
-import { mediaIncompatibleSuffix } from '../module/text/message/body';
+import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
 
 let currentPgid: unknown;
 

@@ -52,7 +52,7 @@ import * as styles from '../../css/bangumi.module.scss';
 import { PlayerKey } from '../module/player/player_key';
 import { NonNativePlayerKey } from '../module/player/non_native_player_key';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
-import { mediaIncompatibleSuffix } from '../module/text/message/body';
+import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
 
 let currentPgid: unknown;
 

@@ -1,4 +1,4 @@
-import { mediaLoadError as mediaLoadErrorBody } from '../text/message/body';
+import { mediaLoadError as mediaLoadErrorBody } from '../text/media/load_error';
 import { emailSentSuffix } from '../text/send_mail/suffix';
 import { emailSentTitle as emailSentTitle } from '../text/send_mail/title';
 import { MessageParam, MessageParamKey } from './type';

@@ -23,7 +23,7 @@ import { getHighResTimestamp, type HighResTimestamp } from '../module/hi_res_tim
 import { mediaLoadError } from '../module/message/param';
 import { TOP_URI } from '../module/env/uri';
 import { MessageParamKey } from '../module/message/type';
-import { mediaIncompatibleSuffix } from '../module/text/message/body';
+import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
 import { addOffloadCallback } from '../module/global';
 
 export default function (baseURL: string, fileName: string, startTime: HighResTimestamp) {
