@@ -24,7 +24,7 @@ import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
 import { passwordResetPageTitle } from '../module/text/page_title';
-import { passwordRule } from "../module/text/password/rule";
+import { passwordRule } from '../module/text/password/rule';
 import { changeButtonText } from '../module/text/button/change';
 import { nextButtonText } from '../module/text/button/next';
 import * as styles from '../../css/portal_form.module.scss';

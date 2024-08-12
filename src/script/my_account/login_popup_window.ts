@@ -18,7 +18,7 @@ import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
 import { changeColor, CSS_COLOR } from '../module/style/color';
-import { forgetPasswordText } from "../module/text/password/forget";
+import { forgetPasswordText } from '../module/text/password/forget';
 import { cancelButtonText } from '../module/text/button/cancel';
 import { submitButtonText } from '../module/text/button/submit';
 import * as commonStyles from '../../css/common.module.scss';
