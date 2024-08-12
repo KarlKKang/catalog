@@ -1,5 +1,5 @@
-import type { CSS_UNIT } from "../value/unit";
-import type { CSS_PROPERTY } from "./property";
+import type { CSS_UNIT } from '../value/unit';
+import type { CSS_PROPERTY } from './property';
 import { addStyle } from './add_style';
 import { removeStyle } from './remove_style';
 

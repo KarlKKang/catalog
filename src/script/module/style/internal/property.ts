@@ -1,4 +1,3 @@
-
 export const enum CSS_PROPERTY {
     WIDTH = 'width',
     HEIGHT = 'height',
@@ -14,4 +13,3 @@ export const enum CSS_PROPERTY {
     CURSOR = 'cursor',
     DISPLAY = 'display',
 }
-
