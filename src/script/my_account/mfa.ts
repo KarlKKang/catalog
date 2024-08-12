@@ -27,7 +27,7 @@ import { type TOTPInfo, TOTPInfoKey, parseTotpInfo } from '../module/type/TOTPIn
 import { toCanvas } from 'qrcode';
 import { removeInterval } from '../module/timer/remove/interval';
 import { addInterval } from '../module/timer/add/interval';
-import { pgid } from '../module/global';
+import { pgid } from '../module/global/pgid';
 import { SharedBool, SharedButton, SharedElement, getSharedBool, getSharedButton, getSharedElement } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';

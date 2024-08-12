@@ -29,7 +29,7 @@ import { CSS_AUTO } from '../module/style/value/auto';
 import * as styles from '../../css/bangumi.module.scss';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
 import { disableButton } from '../module/dom/element/button/disable';
-import { addOffloadCallback } from '../module/global';
+import { addOffloadCallback } from '../module/global/offload';
 
 export default async function (
     epInfo: ImageEPInfo,

@@ -22,7 +22,8 @@ import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/en
 import { buildHttpForm } from '../module/string/http_form/build';
 import { addTimeout } from '../module/timer/add/timeout';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
-import { pgid, redirect } from '../module/global';
+import { redirect } from '../module/global/redirect';
+import { pgid } from '../module/global/pgid';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './page_import_promise';
 import { SharedElement, getSharedElement, initializeSharedVars } from './shared_var';
 import { showElement } from '../module/style/show_element';

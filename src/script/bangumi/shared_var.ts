@@ -5,7 +5,7 @@ import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import * as styles from '../../css/bangumi.module.scss';
 import { loading } from '../module/text/search/loading';
-import { addOffloadCallback } from '../module/global';
+import { addOffloadCallback } from '../module/global/offload';
 
 export const enum SharedElement {
     CONTENT_CONTAINER,

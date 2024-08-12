@@ -1,4 +1,4 @@
-import { STATE_TRACKER } from '../../global';
+import { STATE_TRACKER } from '../../global/pop_state/tracker';
 
 export function changeURL(url: string, withoutHistory?: boolean) {
     if (withoutHistory === true) {

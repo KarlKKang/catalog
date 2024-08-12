@@ -17,7 +17,7 @@ import { addInterval } from '../timer/add/interval';
 import { cancelButtonText } from '../text/button/cancel';
 import { submitButtonText } from '../text/button/submit';
 import { initializePopupWindow, styles } from './core';
-import { pgid } from '../global';
+import { pgid } from '../global/pgid';
 import { StyledInputElementKey } from '../dom/element/input/type';
 
 export const enum TotpPopupWindowKey {

@@ -31,7 +31,7 @@ import { changeColor, CSS_COLOR } from '../module/style/color';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
 import { InviteResultKey, parseInviteResult } from '../module/type/InviteResult';
-import { redirect } from '../module/global';
+import { redirect } from '../module/global/redirect';
 import { default as initializeMFAModule } from './mfa';
 import { LOGIN_URI } from '../module/env/uri';
 

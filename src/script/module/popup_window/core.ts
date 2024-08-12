@@ -8,7 +8,7 @@ import { addTimeout } from '../timer/add/timeout';
 import * as styles from '../../../css/popup_window.module.scss';
 import { setVisibility } from '../style/visibility';
 import { setOpacity } from '../style/opacity';
-import { addOffloadCallback } from '../global';
+import { addOffloadCallback } from '../global/offload';
 
 let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
 let wid: any;

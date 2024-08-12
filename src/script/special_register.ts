@@ -18,7 +18,7 @@ import { emailAlreadyRegistered } from './module/text/email/already_registered';
 import { invalidEmailFormat } from './module/text/email/invalid';
 import { testEmail } from './module/regex/email';
 import { buildHttpForm } from './module/string/http_form/build';
-import type { ShowPageFunc } from './module/global';
+import type { ShowPageFunc } from './module/global/type';
 import { invalidResponse } from './module/message/param/invalid_response';
 import { horizontalCenter } from './module/style/horizontal_center';
 import { showElement } from './module/style/show_element';

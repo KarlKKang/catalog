@@ -2,7 +2,8 @@ import { ServerRequestOptionKey, sendServerRequest } from '../module/server/requ
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
-import { pgid, type ShowPageFunc } from '../module/global';
+import { type ShowPageFunc } from '../module/global/type';
+import { pgid } from '../module/global/pgid';
 import { importModule } from '../module/import_module';
 import { buildHttpForm } from '../module/string/http_form/build';
 

@@ -6,7 +6,7 @@ import { addClass } from '../../dom/class/add';
 import { body } from '../../dom/body';
 import { addEventListener } from '../../event_listener/add';
 import { w } from '../../dom/window';
-import { redirect } from '../../global';
+import { redirect } from '../../global/redirect';
 import { scrollToTop } from '../../dom/scroll/to_top';
 import { NavBarPage } from '../enum';
 import * as icons from './icons';

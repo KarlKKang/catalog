@@ -19,7 +19,7 @@ import { changeButtonText } from '../module/text/button/change';
 import { submitButtonText } from '../module/text/button/submit';
 import { createUsernameInput } from '../module/dom/element/input/username/create';
 import * as styles from '../../css/my_account.module.scss';
-import { addOffloadCallback } from '../module/global';
+import { addOffloadCallback } from '../module/global/offload';
 import { type StyledInputElement, StyledInputElementKey } from '../module/dom/element/input/type';
 
 export const enum SharedBool {

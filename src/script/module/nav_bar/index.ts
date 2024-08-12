@@ -1,4 +1,4 @@
-import { pgid } from '../global';
+import { pgid } from '../global/pgid';
 import type { NavBarPage } from './enum';
 import type { default as NavBarFunc } from './internal/nav_bar';
 import { importModule } from '../import_module';

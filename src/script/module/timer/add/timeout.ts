@@ -1,4 +1,4 @@
-import { addOffloadCallback } from '../../global';
+import { addOffloadCallback } from '../../global/offload';
 import { timeoutTimers } from '../internal/timeout_timers';
 
 export function addTimeout(callback: () => void, ms?: number) {

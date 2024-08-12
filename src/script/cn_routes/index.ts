@@ -1,5 +1,6 @@
 import { clearSessionStorage } from '../module/session_storage/clear';
-import { ShowPageFunc, pgid } from '../module/global';
+import { ShowPageFunc } from '../module/global/type';
+import { pgid } from '../module/global/pgid';
 import { addNavBar } from '../module/nav_bar';
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';

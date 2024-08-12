@@ -5,7 +5,7 @@ import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener/add';
 import { changed as changedClass } from '../../css/console.module.scss';
 import { buildHttpForm } from '../module/string/http_form/build';
-import { addOffloadCallback } from '../module/global';
+import { addOffloadCallback } from '../module/global/offload';
 
 let outputElement: HTMLDivElement | null = null;
 export const initializedClass = 'initialized';

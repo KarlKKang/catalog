@@ -16,7 +16,12 @@ import { body } from '../module/dom/body';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { addTimeout } from '../module/timer/add/timeout';
 import * as messagePageScript from '../message';
-import { STATE_TRACKER, customPopStateHandler, offload, pgid, setCustomPopStateHandler, setPgid, setRedirect, type ShowPageFunc } from '../module/global';
+import { offload } from '../module/global/offload';
+import { type ShowPageFunc } from '../module/global/type';
+import { customPopStateHandler } from '../module/global/pop_state/custom_handler';
+import { STATE_TRACKER } from '../module/global/pop_state/tracker';
+import { setRedirect } from '../module/global/redirect';
+import { pgid, setPgid } from '../module/global/pgid';
 import * as styles from '../../css/common.module.scss';
 import { enableTransition } from '../module/style/transition';
 import { setVisibility } from '../module/style/visibility';
@@ -151,7 +156,6 @@ function offloadCurrentPage() {
     offload();
     replaceChildren(body);
     setClass(body, '');
-    setCustomPopStateHandler(null);
 }
 
 async function loadPage(url: string, withoutHistory: boolean | null, page: Page) {

@@ -1,4 +1,4 @@
-import { pgid } from './global';
+import { pgid } from './global/pgid';
 import { showMessage } from './message';
 import { MessageParamKey } from './message/type';
 import { defaultErrorSuffix } from './text/default_error/suffix';

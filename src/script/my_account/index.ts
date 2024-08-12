@@ -8,7 +8,8 @@ import {
 } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { clearSessionStorage } from '../module/session_storage/clear';
-import { pgid, type ShowPageFunc } from '../module/global';
+import { type ShowPageFunc } from '../module/global/type';
+import { pgid } from '../module/global/pgid';
 import { addTimeout } from '../module/timer/add/timeout';
 import { parseAccountInfo } from '../module/type/AccountInfo';
 import { parseSession } from '../module/type/Sessions';

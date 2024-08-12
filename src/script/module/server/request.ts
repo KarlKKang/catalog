@@ -12,7 +12,7 @@ import { insufficientPermissions } from './internal/message/insufficient_permiss
 import { type Timeout } from '../timer/type';
 import { removeTimeout } from '../timer/remove/timeout';
 import { addTimeout } from '../timer/add/timeout';
-import { redirect } from '../global';
+import { redirect } from '../global/redirect';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
 import { LOGIN_URI } from '../env/uri';
 import { newXhr } from '../xhr/new';

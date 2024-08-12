@@ -3,7 +3,9 @@ import {
     sendServerRequest,
 } from '../module/server/request';
 import { clearSessionStorage } from '../module/session_storage/clear';
-import { pgid, redirect, type ShowPageFunc } from '../module/global';
+import { type ShowPageFunc } from '../module/global/type';
+import { redirect } from '../module/global/redirect';
+import { pgid } from '../module/global/pgid';
 import { addTimeout } from '../module/timer/add/timeout';
 import { importModule } from '../module/import_module';
 import { showMessage } from '../module/message';

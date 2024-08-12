@@ -1,4 +1,4 @@
-import { addOffloadCallback } from '../../global';
+import { addOffloadCallback } from '../../global/offload';
 import { intervalTimers } from '../internal/interval_timers';
 
 export function addInterval(callback: () => void, ms?: number) {

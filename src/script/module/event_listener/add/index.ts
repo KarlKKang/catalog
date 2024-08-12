@@ -2,7 +2,7 @@ import { isUseCapture } from '../internal/is_use_capture';
 import { elementMap } from '../internal/element_map';
 import type { CustomAddEventListenerOptions } from '../internal/type';
 import { removeAllEventListenersHelper } from '../internal/remove_all_listeners_helper';
-import { addOffloadCallback } from '../../global';
+import { addOffloadCallback } from '../../global/offload';
 
 export function addEventListener(elem: EventTarget, event: string, callback: EventListener, options?: boolean | CustomAddEventListenerOptions) {
     addOffloadCallback(offload);

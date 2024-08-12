@@ -2,7 +2,7 @@ import { getTitle } from '../dom/document/title/get';
 import { getFullPath } from '../dom/location/get/full_path';
 import { defaultErrorTitle } from '../text/default_error/title';
 import { MessageParamKey, type MessageParam } from './type';
-import { redirect } from '../global';
+import { redirect } from '../global/redirect';
 import { defaultErrorSuffix } from '../text/default_error/suffix';
 import { CSS_COLOR } from '../style/color';
 import { goBackButtonText } from '../text/button/go_back';

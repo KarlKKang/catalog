@@ -4,7 +4,7 @@ import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { replaceText } from '../module/dom/element/text/replace';
-import { pgid } from '../module/global';
+import { pgid } from '../module/global/pgid';
 import { sessionEnded } from '../module/text/misc/session_ended';
 import { accountDeactivated } from '../module/text/auth/deactivated';
 import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';

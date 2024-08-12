@@ -22,7 +22,7 @@ import { body } from '../module/dom/body';
 import { cnRoutesPageTitle } from '../module/text/page_title';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
-import { redirect } from '../module/global';
+import { redirect } from '../module/global/redirect';
 import { newXhr } from '../module/xhr/new';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style/horizontal_center';

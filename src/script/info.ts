@@ -4,7 +4,7 @@ import { createDivElement } from './module/dom/element/div/create';
 import { appendChild } from './module/dom/node/append_child';
 import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
-import type { ShowPageFunc } from './module/global';
+import type { ShowPageFunc } from './module/global/type';
 import { addNavBar } from './module/nav_bar';
 import { NavBarPage } from './module/nav_bar/enum';
 import { scrollToHash } from './module/dom/scroll/to_hash';
