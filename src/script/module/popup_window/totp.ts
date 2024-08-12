@@ -7,7 +7,7 @@ import { disableButton } from '../dom/element/button/disable';
 import { appendChild } from '../dom/node/append_child';
 import { addClass } from '../dom/class/add';
 import { addEventListener } from '../event_listener';
-import { failedTotp } from '../text/message/body';
+import { failedTotp } from '../text/auth/failed_totp';
 import { horizontalCenter } from '../style/horizontal_center';
 import { showElement } from '../style/show_element';
 import { hideElement } from '../style/hide_element';

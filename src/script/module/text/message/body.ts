@@ -1,23 +1,9 @@
-import { createEmailLink } from '../../dom/element/email_link/create';
-import { createTextNode } from '../../dom/element/text/create';
 import { getHostname } from '../../dom/location/get/hostname';
-import { TOP_DOMAIN } from '../../env/domain';
 
 export const defaultErrorSuffix = 'このエラーが続く場合は、管理者にお問い合わせください。';
 
 export const invitationClosed = '現在、新規登録は受け付けておりません。';
 
-export const loginFailed = 'メールアドレスまたはパスワードが正しくありません。';
-export const tooManyFailedLogin = 'ログイン試行の回数が上限を超えました。ユーザー保護のため、現在ログインすることはできません。しばらくしてからもう一度お試しください。';
-export const failedTotp = '入力されたコードが正しくありません。';
-export const accountDeactivated = () => {
-    const message: [Text, HTMLAnchorElement, Text] = [
-        createTextNode('お客様のアカウントは無効化されています。アカウントの再有効化をご希望の場合は、管理者（'),
-        createEmailLink('admin@' + TOP_DOMAIN),
-        createTextNode('）にご連絡ください。'),
-    ];
-    return message;
-};
 export const sessionEnded = 'セッションは終了した。もう一度お試しください。';
 
 export const mediaLoadError = 'ネットワークエラーが発生しました。インターネット接続環境をご確認の上、再度お試しください。または、' + getHostname() + 'の他のタブでの操作が、現在のタブに干渉している可能性があります。この場合、ページを再読み込みしてみてください。';

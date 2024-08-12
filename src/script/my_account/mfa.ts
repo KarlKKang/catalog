@@ -17,12 +17,12 @@ import { addClass } from '../module/dom/class/add';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/server/message';
 import {
-    failedTotp,
     sessionEnded,
-    accountDeactivated,
-    tooManyFailedLogin,
-    loginFailed,
 } from '../module/text/message/body';
+import { accountDeactivated } from '../module/text/auth/deactivated';
+import { failedTotp } from '../module/text/auth/failed_totp';
+import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
+import { loginFailed } from '../module/text/auth/failed';
 import { type TOTPInfo, TOTPInfoKey, parseTotpInfo } from '../module/type/TOTPInfo';
 import { toCanvas } from 'qrcode';
 import { addInterval, removeInterval } from '../module/timer';

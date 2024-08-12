@@ -13,7 +13,7 @@ import { addClass } from '../module/dom/class/add';
 import { openWindow } from '../module/dom/window/open';
 import { addEventListener } from '../module/event_listener';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
-import { loginFailed } from '../module/text/message/body';
+import { loginFailed } from '../module/text/auth/failed';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
