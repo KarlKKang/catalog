@@ -14,7 +14,7 @@ import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener';
 import { showMessage } from './module/message';
 import { emailSent } from './module/message/param';
-import { invalidEmailFormat } from './module/text/message/body';
+import { invalidEmailFormat } from './module/text/email/invalid';
 import { EMAIL_REGEX } from './module/regex';
 import { buildURLForm } from './module/http_form';
 import { redirect, type ShowPageFunc } from './module/global';

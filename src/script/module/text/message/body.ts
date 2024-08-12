@@ -5,10 +5,6 @@ import { TOP_DOMAIN } from '../../env/domain';
 
 export const defaultErrorSuffix = 'このエラーが続く場合は、管理者にお問い合わせください。';
 
-export const invalidEmailFormat = '有効なメールアドレスを入力してください。';
-export const emailAlreadyRegistered = 'このメールアドレスはすでに登録済みです。';
-export const emailSentSuffix = '届くまでに時間がかかる場合があります。';
-
 export const invitationClosed = '現在、新規登録は受け付けておりません。';
 
 export const invalidPasswordFormat = 'パスワードが要件を満たしていません。';

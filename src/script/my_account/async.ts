@@ -11,16 +11,16 @@ import {
     invalidPasswordFormat,
     passwordConfirmationMismatch,
     passwordChanged,
-    invalidEmailFormat,
-    emailAlreadyRegistered,
     invitationClosed,
-    emailSentSuffix,
 } from '../module/text/message/body';
+import { emailSentSuffix } from '../module/text/send_mail/suffix';
+import { emailAlreadyRegistered } from '../module/text/email/already_registered';
+import { invalidEmailFormat } from '../module/text/email/invalid';
 import { usernameTaken } from '../module/text/username/taken';
 import { usernameChanged } from '../module/text/username/changed';
 import { usernameInvalid } from '../module/text/username/invalid';
 import { usernameEmpty } from '../module/text/username/empty';
-import { emailSent as emailSendPrefix } from '../module/text/message/title';
+import { emailSentTitle as emailSendPrefix } from '../module/text/send_mail/title';
 import { SharedBool, SharedButton, SharedElement, SharedInput, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';

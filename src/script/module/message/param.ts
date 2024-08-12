@@ -1,5 +1,6 @@
-import { emailSentSuffix, mediaLoadError as mediaLoadErrorBody } from '../text/message/body';
-import { emailSent as emailSentTitle } from '../text/message/title';
+import { mediaLoadError as mediaLoadErrorBody } from '../text/message/body';
+import { emailSentSuffix } from '../text/send_mail/suffix';
+import { emailSentTitle as emailSentTitle } from '../text/send_mail/title';
 import { MessageParam, MessageParamKey } from './type';
 import { CSS_COLOR } from '../style/color';
 
