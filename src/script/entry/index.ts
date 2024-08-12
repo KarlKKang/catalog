@@ -11,7 +11,6 @@ import { getFullPath } from '../module/dom/location/get/full_path';
 import { changeURL } from '../module/dom/location/change';
 import { html } from '../module/dom/html';
 import { w } from '../module/dom/window';
-import { deregisterAllEventTargets } from '../module/event_listener/remove/all_targets';
 import { addEventListenerOnce } from '../module/event_listener/add/once';
 import { body } from '../module/dom/body';
 import { TOP_DOMAIN } from '../module/env/domain';
@@ -150,7 +149,6 @@ function load(url: string, withoutHistory: boolean | null = false) {
 
 function offloadCurrentPage() {
     offload();
-    deregisterAllEventTargets();
     replaceChildren(body);
     setClass(body, '');
     setCustomPopStateHandler(null);

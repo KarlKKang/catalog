@@ -1,5 +1,5 @@
-import { elementMap } from '../../internal/element_map';
-import type { EventMap } from '../../internal/type';
+import { elementMap } from './element_map';
+import type { EventMap } from './type';
 
 export function removeAllEventListenersHelper(elem: EventTarget, eventMap: EventMap) {
     for (const [event, listenerMap] of eventMap) {

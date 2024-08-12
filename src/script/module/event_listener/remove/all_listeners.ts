@@ -1,4 +1,4 @@
-import { removeAllEventListenersHelper } from './internal/all_listeners_helper';
+import { removeAllEventListenersHelper } from '../internal/remove_all_listeners_helper';
 import { elementMap } from '../internal/element_map';
 
 export function removeAllEventListeners(elem: EventTarget) {
