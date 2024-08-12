@@ -1,6 +1,8 @@
 import { removeAllEventListeners } from '../event_listener/remove/all_listeners';
 import { addEventListener } from '../event_listener/add';
 import { allRequests } from './internal/all_requests';
+import { addOffloadCallback } from '../global';
+import { abortAllXhr } from './internal/abort_all';
 
 export function newXhr(
     url: string,
@@ -8,6 +10,7 @@ export function newXhr(
     withCredentials: boolean,
     callback: () => void,
 ) {
+    addOffloadCallback(abortAllXhr);
     const xhr = new XMLHttpRequest();
     allRequests.add(xhr);
     xhr.open(method, url, true);
