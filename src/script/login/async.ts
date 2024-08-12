@@ -29,7 +29,7 @@ import { invalidResponse } from '../module/server/message';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
-import { forgetPasswordText } from '../module/text/ui';
+import { forgetPasswordText } from "../module/text/password/forget";
 import * as commonStyles from '../../css/common.module.scss';
 import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';

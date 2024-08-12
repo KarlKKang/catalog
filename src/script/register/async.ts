@@ -28,7 +28,8 @@ import { invalidResponse } from '../module/server/message';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
-import { passwordRules, usernameRule } from '../module/text/ui';
+import { passwordRule } from "../module/text/password/rule";
+import { usernameRule } from "../module/text/username/rule";
 import { nextButtonText } from '../module/text/button/next';
 import * as commonStyles from '../../css/common.module.scss';
 import * as styles from '../../css/portal_form.module.scss';
@@ -89,7 +90,7 @@ export default function (param: string) {
     const note = createDivElement();
     addClass(note, styles.note);
     const noteList = createUListElement();
-    appendListItems(noteList, usernameRule, ...passwordRules);
+    appendListItems(noteList, usernameRule, ...passwordRule);
     appendChild(note, noteList);
     appendChild(container, note);
 

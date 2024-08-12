@@ -12,7 +12,9 @@ import { appendChildren } from '../module/dom/node/append_children';
 import { addClass } from '../module/dom/class/add';
 import { hideElement } from '../module/style/hide_element';
 import { myAccountPageTitle } from '../module/text/page_title';
-import { loading, passwordRules, usernameRule } from '../module/text/ui';
+import { loading } from '../module/text/ui';
+import { passwordRule } from "../module/text/password/rule";
+import { usernameRule } from "../module/text/username/rule";
 import { changeButtonText } from '../module/text/button/change';
 import { submitButtonText } from '../module/text/button/submit';
 import { createUsernameInput } from '../module/dom/element/input/username/create';
@@ -80,7 +82,7 @@ export function initializeSharedVars() {
 
     const passwordStyledInput = createPasswordInput(true, '新しいパスワード');
     const passwordConfirmStyledInput = createPasswordInput(true, '確認再入力');
-    const passwordSubsec = appendSubsection(container, 'パスワード', [], createParagraphElement(), [passwordStyledInput[StyledInputElementKey.CONTAINER], passwordConfirmStyledInput[StyledInputElementKey.CONTAINER]], createStyledButtonElement(changeButtonText), passwordRules);
+    const passwordSubsec = appendSubsection(container, 'パスワード', [], createParagraphElement(), [passwordStyledInput[StyledInputElementKey.CONTAINER], passwordConfirmStyledInput[StyledInputElementKey.CONTAINER]], createStyledButtonElement(changeButtonText), passwordRule);
 
     const mfaInfo = createParagraphElement();
     const mfaSubsec = appendSubsection(container, '二要素認証', [mfaInfo], createParagraphElement(), [], createStyledButtonElement(), []);
