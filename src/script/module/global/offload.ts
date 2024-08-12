@@ -1,7 +1,12 @@
 const offloadCallbacks = new Set<() => void>();
+const lowLevelOffloadCallbacks = new Set<() => void>();
 
-export function addOffloadCallback(callback: () => void) {
-    offloadCallbacks.add(callback);
+export function addOffloadCallback(callback: () => void, lowLevel = false) {
+    if (lowLevel) {
+        lowLevelOffloadCallbacks.add(callback);
+    } else {
+        offloadCallbacks.add(callback);
+    }
 }
 
 export function offload() {
@@ -9,4 +14,8 @@ export function offload() {
         callback();
     }
     offloadCallbacks.clear();
+    for (const callback of lowLevelOffloadCallbacks) {
+        callback();
+    }
+    lowLevelOffloadCallbacks.clear();
 }

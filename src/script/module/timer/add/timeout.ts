@@ -2,7 +2,7 @@ import { addOffloadCallback } from '../../global/offload';
 import { timeoutTimers } from '../internal/timeout_timers';
 
 export function addTimeout(callback: () => void, ms?: number) {
-    addOffloadCallback(offload);
+    addOffloadCallback(offload, true);
     const timerID = setTimeout(() => {
         if (timeoutTimers.delete(timerID)) {
             callback();
