@@ -1,6 +1,14 @@
 import { getServerOrigin } from '../env/origin';
 import { showMessage } from '../message';
-import { mediaSessionEnded, connectionError, notFound, status429, status503, status400And500, sessionEnded, unknownServerError, insufficientPermissions } from './message';
+import { connectionError } from './internal/message/connection_error';
+import { unknownServerError } from './internal/message/unknown_server_error';
+import { status400And500 } from './internal/message/status_400_and_500';
+import { status503 } from './internal/message/status_503';
+import { sessionEnded } from './internal/message/session_ended';
+import { status429 } from './internal/message/status_429';
+import { mediaSessionEnded } from './internal/message/media_session_ended';
+import { notFound } from '../message/param/not_found';
+import { insufficientPermissions } from './internal/message/insufficient_permissions';
 import { addTimeout, removeTimeout, type Timeout } from '../timer';
 import { redirect } from '../global';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
@@ -125,7 +133,7 @@ class ServerRequest {
         }
 
         if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] < 0) {
-            showMessage(connectionError);
+            showMessage(connectionError());
         } else {
             this[ServerRequestKey.RETRY_TIMEOUT] = addTimeout(() => {
                 this[ServerRequestKey.RETRY_TIMEOUT] = null;

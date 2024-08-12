@@ -1,5 +1,5 @@
 import { showMessage } from '../message';
-import { invalidResponse } from './message';
+import { invalidResponse } from '../message/param/invalid_response';
 
 export function parseResponse<T>(response: string, parser: (response: unknown) => T): T {
     try {

@@ -3,12 +3,13 @@ import { type HighResTimestamp, getHighResTimestamp } from '../hi_res_timestamp'
 import { max } from '../math';
 import { showMessage } from '../message';
 import { addTimeout, removeTimeout } from '../timer';
-import { connectionError, invalidResponse } from './message';
+import { connectionError } from './internal/message/connection_error';
+import { invalidResponse } from '../message/param/invalid_response';
 
 export function setUpSessionAuthentication(credential: string, startTime: HighResTimestamp, logoutParam?: string) {
     addTimeout(() => {
         const requestTimeout = addTimeout(() => {
-            showMessage(connectionError);
+            showMessage(connectionError());
         }, max(60000 - (getHighResTimestamp() - startTime), 0));
         const serverRequest = sendServerRequest('authenticate_media_session', {
             [ServerRequestOptionKey.CALLBACK]: function (response: string) {

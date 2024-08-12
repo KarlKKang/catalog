@@ -6,7 +6,7 @@ import { appendChild } from './dom/node/append_child';
 import { addClass } from './dom/class/add';
 import { createDivElement } from './dom/element/div/create';
 import { showMessage } from './message';
-import { invalidResponse } from './server/message';
+import { invalidResponse } from './message/param/invalid_response';
 import { addTimeout, removeTimeout, type Timeout } from './timer';
 import * as styles from '../../css/lazyload.module.scss';
 import { imageLoader, offload as offloadImageLoader } from './image_loader';

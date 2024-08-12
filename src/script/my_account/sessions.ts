@@ -20,7 +20,7 @@ import * as styles from '../../css/my_account.module.scss';
 import { disableAllInputs } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { showMessage } from '../module/message';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 
 export default function (sessions: Sessions) {
     const sessionsContainer = getSharedElement(SharedElement.sessionsContainer);

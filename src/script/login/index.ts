@@ -7,7 +7,7 @@ import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { addTimeout } from '../module/timer';
 import { importModule } from '../module/import_module';
 import { showMessage } from '../module/message';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import { TOP_URI } from '../module/env/uri';
 
 export default function (showPage: ShowPageFunc) {

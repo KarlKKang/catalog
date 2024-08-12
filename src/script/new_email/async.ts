@@ -17,7 +17,7 @@ import { emailSent } from '../module/message/param/email_sent';
 import { expired } from '../module/message/param/expired';
 import { EMAIL_REGEX } from '../module/regex';
 import { buildURLForm } from '../module/http_form';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';

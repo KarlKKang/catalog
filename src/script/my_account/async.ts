@@ -25,7 +25,7 @@ import { reauthenticationPrompt } from './auth_helper';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm } from '../module/http_form';
 import { AccountInfoKey, type AccountInfo } from '../module/type/AccountInfo';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import { changeColor, CSS_COLOR } from '../module/style/color';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';

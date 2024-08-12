@@ -4,7 +4,7 @@ import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param/expired';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import { importModule } from '../module/import_module';
 import { emailAlreadyRegistered } from './shared';
 import { LOGIN_URI } from '../module/env/uri';

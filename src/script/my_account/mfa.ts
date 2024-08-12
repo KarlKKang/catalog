@@ -15,7 +15,7 @@ import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { showMessage } from '../module/message';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import {
     sessionEnded,
 } from '../module/text/misc/session_ended';

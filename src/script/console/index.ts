@@ -1,7 +1,7 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import { pgid, type ShowPageFunc } from '../module/global';
 import { importModule } from '../module/import_module';
 import { buildURLForm } from '../module/http_form';

@@ -7,7 +7,7 @@ import { setTitle } from '../module/dom/document/title/set';
 import { getSessionStorage } from '../module/session_storage/get';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';
 import { importModule } from '../module/import_module';
 import { TOP_URI } from '../module/env/uri';

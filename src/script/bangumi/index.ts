@@ -5,7 +5,7 @@ import { getURI } from '../module/dom/location/get/uri';
 import { getSearchParam } from '../module/dom/location/get/search_param';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
-import { notFound } from '../module/server/message';
+import { notFound } from '../module/message/param/not_found';
 import { getLogoutParam } from './helper';
 import { importAllPageModules } from './page_import_promise';
 import { pgid, redirect, type ShowPageFunc } from '../module/global';

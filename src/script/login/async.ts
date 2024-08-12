@@ -28,7 +28,7 @@ import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm, joinURLForms } from '../module/http_form';
 import { pgid, redirect } from '../module/global';
 import { handleFailedTotp, TotpPopupWindowKey, type TotpPopupWindow } from '../module/popup_window/totp';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';

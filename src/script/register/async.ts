@@ -24,7 +24,7 @@ import { usernameInvalid } from '../module/text/username/invalid';
 import { usernameEmpty } from '../module/text/username/empty';
 import { PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm, buildURI } from '../module/http_form';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';

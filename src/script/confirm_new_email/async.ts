@@ -22,7 +22,7 @@ import { AUTH_DEACTIVATED, AUTH_FAILED, AUTH_FAILED_TOTP, AUTH_TOO_MANY_REQUESTS
 import { EMAIL_REGEX, PASSWORD_REGEX } from '../module/regex';
 import { buildURLForm, joinURLForms } from '../module/http_form';
 import { TotpPopupWindowKey, handleFailedTotp, type TotpPopupWindow } from '../module/popup_window/totp';
-import { invalidResponse } from '../module/server/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';

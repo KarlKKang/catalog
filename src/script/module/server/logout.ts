@@ -1,6 +1,6 @@
 import { sendServerRequest, ServerRequestOptionKey } from './request';
 import { showMessage } from '../message';
-import { invalidResponse } from './message';
+import { invalidResponse } from '../message/param/invalid_response';
 
 export function logout(callback: () => void) {
     sendServerRequest('logout', {
