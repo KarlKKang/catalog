@@ -1,9 +1,9 @@
 import { getTitle } from '../dom/document/title/get';
 import { getFullPath } from '../dom/location/get/full_path';
-import { defaultError } from '../text/message/title';
+import { defaultErrorTitle } from '../text/default_error/title';
 import { MessageParamKey, type MessageParam } from './type';
 import { redirect } from '../global';
-import { defaultErrorSuffix } from '../text/message/body';
+import { defaultErrorSuffix } from '../text/default_error/suffix';
 import { CSS_COLOR } from '../style/color';
 import { goBackButtonText } from '../text/button/go_back';
 import { MESSAGE_URI } from '../env/uri';
@@ -29,7 +29,7 @@ export function showMessage({
     }
     messageParam = {
         [MessageParamKey.MESSAGE]: message ?? ('不明なエラーが発生しました。' + defaultErrorSuffix),
-        [MessageParamKey.TITLE]: title ?? defaultError,
+        [MessageParamKey.TITLE]: title ?? defaultErrorTitle,
         [MessageParamKey.COLOR]: color ?? CSS_COLOR.RED,
         [MessageParamKey.URL]: url ?? getFullPath(),
         [MessageParamKey.BUTTON_TEXT]: buttonText,

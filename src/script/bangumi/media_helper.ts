@@ -32,8 +32,8 @@ import { hideElement } from '../module/style/hide_element';
 import { setMaxHeight } from '../module/style/max_height';
 import { CSS_COLOR } from '../module/style/color';
 import { CSS_UNIT } from '../module/style/value/unit';
-import { defaultError } from '../module/text/message/title';
-import { defaultErrorSuffix } from '../module/text/message/body';
+import { defaultErrorTitle } from '../module/text/default_error/title';
+import { defaultErrorSuffix } from '../module/text/default_error/suffix';
 import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
 import { mediaLoadError } from '../module/text/media/load_error';
 import * as styles from '../../css/bangumi.module.scss';
@@ -46,15 +46,15 @@ import { remove } from '../module/dom/node/remove';
 export const incompatibleTitle = '再生できません';
 
 function showNetworkError() {
-    showErrorMessage(defaultError, mediaLoadError);
+    showErrorMessage(defaultErrorTitle, mediaLoadError);
 }
 
 function showUnknownPlaybackError() {
-    showErrorMessage(defaultError, '再生中に不明なエラーが発生しました。' + defaultErrorSuffix);
+    showErrorMessage(defaultErrorTitle, '再生中に不明なエラーが発生しました。' + defaultErrorSuffix);
 }
 
 function showDecodeError() {
-    showErrorMessage(defaultError, 'お使いのブラウザは、このデータ形式をデコードすることができません。コーデックに対応していない、またはデコードのためのメモリが不足している可能性があります。' + mediaIncompatibleSuffix);
+    showErrorMessage(defaultErrorTitle, 'お使いのブラウザは、このデータ形式をデコードすることができません。コーデックに対応していない、またはデコードのためのメモリが不足している可能性があります。' + mediaIncompatibleSuffix);
 }
 
 export function showHLSCompatibilityError() {

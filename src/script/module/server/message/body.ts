@@ -11,7 +11,7 @@ import { appendChildren } from '../../dom/node/append_children';
 import { TOP_DOMAIN } from '../../env/domain';
 import { getLocalTimeString } from '../../time';
 import { type MaintenanceInfo, MaintenanceInfoKey } from '../../type/MaintenanceInfo';
-import { defaultErrorSuffix } from '../../text/message/body';
+import { defaultErrorSuffix } from '../../text/default_error/suffix';
 
 export const invalidResponse = `サーバーが無効な応答を返しました。${defaultErrorSuffix}`;
 export const sessionEnded = 'もう一度ログインしてください。';

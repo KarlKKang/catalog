@@ -1,7 +1,7 @@
 import { pgid } from './global';
 import { showMessage } from './message';
 import { MessageParamKey } from './message/type';
-import { defaultErrorSuffix } from './text/message/body';
+import { defaultErrorSuffix } from './text/default_error/suffix';
 import { addTimeout } from './timer';
 
 export async function importModule<T>(importPromiseGenerator: () => Promise<T>) {
