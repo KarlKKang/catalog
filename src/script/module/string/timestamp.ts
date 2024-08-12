@@ -10,19 +10,20 @@ export function toTimestampString(sec: number, templateSec?: number) {
         templateSec = sec;
     }
 
-    const secParsed = parseSec(sec);
-    const templateSecParsed = templateSec === sec ? secParsed : parseSec(templateSec);
+    const secParsedArr = parseSec(sec);
+    const [hourParsed, minParsed, secParsed] = secParsedArr;
+    const [templateHourParsed, templateMinParsed] = templateSec === sec ? secParsedArr : parseSec(templateSec);
 
     let result = '';
 
-    if (templateSecParsed.hour > 0) {
-        result += padNumberLeft(secParsed.hour, getNumberLength(templateSecParsed.hour)) + ':';
-        result += padNumberLeft(secParsed.min, 2);
+    if (templateHourParsed > 0) {
+        result += padNumberLeft(hourParsed, getNumberLength(templateHourParsed)) + ':';
+        result += padNumberLeft(minParsed, 2);
     } else {
-        result += padNumberLeft(secParsed.min, getNumberLength(templateSecParsed.min));
+        result += padNumberLeft(minParsed, getNumberLength(templateMinParsed));
     }
 
-    return result + ':' + padNumberLeft(secParsed.sec, 2);
+    return result + ':' + padNumberLeft(secParsed, 2);
 }
 
 function parseSec(sec: number) {
@@ -31,11 +32,11 @@ function parseSec(sec: number) {
     const min = floor(sec / 60);
     sec = sec - min * 60;
     sec = floor(sec);
-    return {
-        hour: hour,
-        min: min,
-        sec: floor(sec),
-    };
+    return [
+        hour,
+        min,
+        sec,
+    ] as const;
 }
 
 function getNumberLength(num: number) {
