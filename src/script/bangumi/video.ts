@@ -21,18 +21,16 @@ import { removeAllEventListeners } from '../module/event_listener/remove/all_lis
 import { addEventsListener } from '../module/event_listener/add/multiple_events';
 import { addEventListener } from '../module/event_listener/add';
 import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';
-import {
-    MSE_SUPPORTED,
-    NATIVE_HLS_SUPPORTED,
-    CAN_PLAY_AVC,
-    videoCanPlay,
-    audioCanPlay,
-    IS_CHROMIUM,
-    IS_FIREFOX,
-    CAN_PLAY_AAC,
-    MSE_BUFFER_SIZE,
-    MIN_MSE_BUFFER_SIZE,
-} from '../module/browser';
+import { MSE_BUFFER_SIZE } from '../module/browser/mse/buffer_size';
+import { MIN_MSE_BUFFER_SIZE } from '../module/browser/mse/buffer_size/min';
+import { MSE_SUPPORTED } from '../module/browser/mse/supported';
+import { NATIVE_HLS_SUPPORTED } from '../module/browser/native_hls_supported';
+import { CAN_PLAY_AAC } from '../module/browser/can_play/codec/aac';
+import { CAN_PLAY_AVC } from '../module/browser/can_play/codec/avc';
+import { IS_FIREFOX } from '../module/browser/is_firefox';
+import { IS_CHROMIUM } from '../module/browser/is_chromium';
+import { videoCanPlay } from '../module/browser/can_play/video';
+import { audioCanPlay } from '../module/browser/can_play/audio';
 import type { Player, Player as PlayerType } from '../module/player/player';
 import { getFormatIndex, createQuery } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayerError, buildAccordion, type AccordionInstance } from './media_helper';

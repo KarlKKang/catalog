@@ -39,6 +39,6 @@ Copyright Brightcove, Inc.
    limitations under the License.
 
 
-src/script/module/browser/hls_helper.ts in this project is derived from hls.js (https://github.com/video-dev/hls.js). 
+src/script/module/browser/internal/hls in this project is derived from hls.js (https://github.com/video-dev/hls.js). 
 That work is also covered by the Apache 2 License, following copyright:
 Copyright (c) 2017 Dailymotion (http://www.dailymotion.com)

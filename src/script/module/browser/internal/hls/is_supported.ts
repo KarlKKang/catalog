@@ -1,28 +1,10 @@
-import { w } from '../dom/window';
+import { w } from '../../../dom/window';
+import { getMediaSource } from './get_media_source';
 
 declare global {
     interface Window {
-        ManagedMediaSource: typeof MediaSource | undefined;
-        WebKitMediaSource: typeof MediaSource | undefined;
         WebKitSourceBuffer: typeof SourceBuffer | undefined;
     }
-}
-
-export function getManagedMediaSource(): typeof MediaSource | undefined {
-    return w.ManagedMediaSource;
-}
-
-export function getMediaSource(
-    preferManagedMediaSource = true,
-): typeof MediaSource | undefined {
-    const mms
-        = (preferManagedMediaSource || !w.MediaSource)
-        && getManagedMediaSource();
-    return (
-        mms
-        || w.MediaSource
-        || w.WebKitMediaSource
-    );
 }
 
 function getSourceBuffer(): typeof SourceBuffer {

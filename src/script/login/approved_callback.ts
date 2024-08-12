@@ -1,5 +1,5 @@
 import { showMessage } from '../module/message';
-import { UNRECOMMENDED_BROWSER } from '../module/browser';
+import { UNRECOMMENDED_BROWSER } from '../module/browser/unrecommended_browser';
 import { redirect } from '../module/global/redirect';
 import { nextButtonText } from '../module/text/button/next';
 import { CSS_COLOR } from '../module/style/color';

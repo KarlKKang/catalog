@@ -20,7 +20,7 @@ import { removeEventsListener } from '../event_listener/remove/multiple_events';
 import { removeEventListener } from '../event_listener/remove';
 import { addEventsListener } from '../event_listener/add/multiple_events';
 import { addEventListener } from '../event_listener/add';
-import { IS_IOS } from '../browser';
+import { IS_IOS } from '../browser/is_ios';
 import screenfull from 'screenfull';
 import * as icons from './icons';
 import { padNumberLeft } from '../string/pad_number_left';

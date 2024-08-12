@@ -11,15 +11,13 @@ import { createDivElement } from '../module/dom/element/div/create';
 import { addEventListener } from '../module/event_listener/add';
 import { getTitle } from '../module/dom/document/title/get';
 import { EPInfoKey, type AudioEPInfo, type AudioFile, AudioFileKey, AlbumInfoKey } from '../module/type/BangumiInfo';
-import {
-    IS_FIREFOX,
-    MSE_SUPPORTED,
-    NATIVE_HLS_SUPPORTED,
-    CAN_PLAY_ALAC,
-    CAN_PLAY_FLAC,
-    audioCanPlay,
-    canPlay,
-} from '../module/browser';
+import { MSE_SUPPORTED } from '../module/browser/mse/supported';
+import { NATIVE_HLS_SUPPORTED } from '../module/browser/native_hls_supported';
+import { CAN_PLAY_FLAC } from '../module/browser/can_play/codec/flac';
+import { CAN_PLAY_ALAC } from '../module/browser/can_play/codec/alac';
+import { IS_FIREFOX } from '../module/browser/is_firefox';
+import { audioCanPlay } from '../module/browser/can_play/audio';
+import { canPlay } from '../module/browser/can_play';
 import type { Player as PlayerType } from '../module/player/player';
 import { parseCharacters } from './helper';
 import { showCodecCompatibilityError, showHLSCompatibilityError, incompatibleTitle, buildDownloadAccordion, showPlayerError, showErrorMessage } from './media_helper';
