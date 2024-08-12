@@ -1,9 +1,8 @@
 import { addOffloadCallback } from '../../global';
 import { intervalTimers } from '../internal/interval_timers';
-import { removeAllTimers } from '../internal/remove_all';
 
 export function addInterval(callback: () => void, ms?: number) {
-    addOffloadCallback(removeAllTimers);
+    addOffloadCallback(offload);
     const timerID = setInterval(() => {
         if (intervalTimers.has(timerID)) {
             callback();
@@ -11,4 +10,11 @@ export function addInterval(callback: () => void, ms?: number) {
     }, ms);
     intervalTimers.add(timerID);
     return timerID;
+}
+
+function offload() {
+    for (const timerID of intervalTimers) {
+        clearInterval(timerID);
+    }
+    intervalTimers.clear();
 }

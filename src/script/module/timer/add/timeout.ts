@@ -1,9 +1,8 @@
 import { addOffloadCallback } from '../../global';
-import { removeAllTimers } from '../internal/remove_all';
 import { timeoutTimers } from '../internal/timeout_timers';
 
 export function addTimeout(callback: () => void, ms?: number) {
-    addOffloadCallback(removeAllTimers);
+    addOffloadCallback(offload);
     const timerID = setTimeout(() => {
         if (timeoutTimers.delete(timerID)) {
             callback();
@@ -11,4 +10,11 @@ export function addTimeout(callback: () => void, ms?: number) {
     }, ms);
     timeoutTimers.add(timerID);
     return timerID;
+}
+
+function offload() {
+    for (const timerID of timeoutTimers) {
+        clearTimeout(timerID);
+    }
+    timeoutTimers.clear();
 }
