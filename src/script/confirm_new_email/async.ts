@@ -1,7 +1,7 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInputField } from '../module/dom/element/input/password/create';
-import { createEmailInputField } from '../module/dom/element/input/email/create';
+import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
+import { createEmailInputField } from '../module/dom/element/input/input_field/email/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
@@ -38,7 +38,7 @@ import { completedTitle } from '../module/text/misc/completed_title';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { TOP_URI } from '../module/env/uri';
-import { InputFieldElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 export default function (param: string) {
     const container = createDivElement();

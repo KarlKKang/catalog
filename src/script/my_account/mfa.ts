@@ -2,7 +2,7 @@ import { ServerRequestOptionKey, sendServerRequest } from '../module/server/requ
 import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener/add';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createTotpInputField } from '../module/dom/element/input/totp/create';
+import { createTotpInputField } from '../module/dom/element/input/input_field/totp/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { createAnchorElement } from '../module/dom/element/anchor/create';
@@ -52,7 +52,7 @@ import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/my_account.module.scss';
 import { type RecoveryCodeInfo, parseRecoveryCodeInfo } from '../module/type/RecoveryCodeInfo';
 import { initializePopupWindow, styles as popupWindowStyles } from '../module/popup_window/core';
-import { InputFieldElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 

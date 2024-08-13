@@ -1,7 +1,7 @@
 import { disabled as disabledClass } from '../../../../../css/input.module.scss';
 import { addClass } from '../../../class/add';
 import { removeClass } from '../../../class/remove';
-import { InputFieldElementKey, type InputFieldElement } from '../type';
+import { InputFieldElementKey, type InputFieldElement } from './type';
 
 export function disableInputField(inputElement: InputFieldElement, disabled: boolean) {
     inputElement[InputFieldElementKey.INPUT].disabled = disabled;

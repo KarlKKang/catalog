@@ -1,6 +1,6 @@
 import { ServerRequestOptionKey, sendServerRequest } from './module/server/request';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
-import { createEmailInputField } from './module/dom/element/input/email/create';
+import { createEmailInputField } from './module/dom/element/input/input_field/email/create';
 import { replaceText } from './module/dom/element/text/replace';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
@@ -25,7 +25,7 @@ import { hideElement } from './module/style/hide_element';
 import { submitButtonText } from './module/text/button/submit';
 import { registerPageTitle } from './module/text/page_title';
 import * as styles from '../css/portal_form.module.scss';
-import { InputFieldElementKey } from './module/dom/element/input/type';
+import { InputFieldElementKey } from './module/dom/element/input/input_field/type';
 
 export default function (showPage: ShowPageFunc) {
     showPage();

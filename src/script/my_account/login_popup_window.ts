@@ -1,6 +1,6 @@
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInputField } from '../module/dom/element/input/password/create';
-import { createEmailInputField } from '../module/dom/element/input/email/create';
+import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
+import { createEmailInputField } from '../module/dom/element/input/input_field/email/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
@@ -25,7 +25,7 @@ import { submitButtonText } from '../module/text/button/submit';
 import { link as linkClass } from '../../css/link.module.scss';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
-import { InputFieldElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 export const enum LoginPopupWindowKey {
     EMAIL,

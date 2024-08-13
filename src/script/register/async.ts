@@ -1,6 +1,6 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInputField } from '../module/dom/element/input/password/create';
+import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
@@ -36,7 +36,7 @@ import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/portal_form.module.scss';
 import { completedTitle } from '../module/text/misc/completed_title';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
-import { createUsernameInputField } from '../module/dom/element/input/username/create';
+import { createUsernameInputField } from '../module/dom/element/input/input_field/username/create';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { emailAlreadyRegistered } from './shared';
@@ -44,7 +44,7 @@ import { INFO_URI, LOGIN_URI } from '../module/env/uri';
 import { EN_LANG_CODE } from '../module/lang/en';
 import { ZH_HANT_LANG_CODE } from '../module/lang/zh_hant';
 import { ZH_HANS_LANG_CODE } from '../module/lang/zh_hans';
-import { InputFieldElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 export default function (param: string) {
     const container = createDivElement();

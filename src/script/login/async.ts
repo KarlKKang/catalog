@@ -3,10 +3,10 @@ import {
     ServerRequestOptionKey,
 } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInputField } from '../module/dom/element/input/password/create';
-import { createEmailInputField } from '../module/dom/element/input/email/create';
+import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
+import { createEmailInputField } from '../module/dom/element/input/input_field/email/create';
 import { replaceText } from '../module/dom/element/text/replace';
-import { createInputElement } from '../module/dom/element/input/native/create';
+import { createInputElement } from '../module/dom/element/input/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
@@ -44,7 +44,7 @@ import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 import { createLabelElement } from '../module/dom/element/label/create';
-import { InputFieldElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 export default function (
     approvedCallbackPromise: Promise<typeof import(

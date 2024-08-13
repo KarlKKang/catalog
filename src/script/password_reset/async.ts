@@ -1,6 +1,6 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInputField } from '../module/dom/element/input/password/create';
+import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createUListElement } from '../module/dom/element/list/ul/create';
@@ -32,7 +32,7 @@ import { completedTitle } from '../module/text/misc/completed_title';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { LOGIN_URI } from '../module/env/uri';
-import { InputFieldElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 export default function (user: string, signature: string, expires: string) {
     const container = createDivElement();

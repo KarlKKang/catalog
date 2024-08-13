@@ -1,5 +1,5 @@
 import { InputFieldElementKey } from '../type';
-import { createInputFieldElement } from '../input_field/create';
+import { createInputFieldElement } from '../create';
 
 export function createTotpInputField(allowRecoveryCode: boolean) {
     const inputField = createInputFieldElement('text');

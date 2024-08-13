@@ -1,6 +1,6 @@
 import { ServerRequestOptionKey, sendServerRequest } from './module/server/request';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
-import { createEmailInputField } from './module/dom/element/input/email/create';
+import { createEmailInputField } from './module/dom/element/input/input_field/email/create';
 import { replaceText } from './module/dom/element/text/replace';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createSpanElement } from './module/dom/element/span/create';
@@ -28,7 +28,7 @@ import { passwordResetPageTitle } from './module/text/page_title';
 import { link as linkClass } from '../css/link.module.scss';
 import * as styles from '../css/portal_form.module.scss';
 import { LOGIN_URI } from './module/env/uri';
-import { InputFieldElementKey } from './module/dom/element/input/type';
+import { InputFieldElementKey } from './module/dom/element/input/input_field/type';
 
 export default function (showPage: ShowPageFunc) {
     showPage();

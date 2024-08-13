@@ -1,6 +1,6 @@
-import { addEventListener } from '../../../../event_listener/add';
+import { addEventListener } from '../../../../../event_listener/add';
 import { InputFieldElementKey } from '../type';
-import { createInputFieldElement } from '../input_field/create';
+import { createInputFieldElement } from '../create';
 
 export function createPasswordInputField(newPassword: boolean, placeholder = 'パスワード') {
     const inputField = createInputFieldElement('password');

@@ -1,5 +1,5 @@
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createTotpInputField } from '../module/dom/element/input/totp/create';
+import { createTotpInputField } from '../module/dom/element/input/input_field/totp/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
@@ -21,7 +21,7 @@ import { removeInterval } from '../module/timer/remove/interval';
 import { addInterval } from '../module/timer/add/interval';
 import { cancelButtonText } from '../module/text/button/cancel';
 import { submitButtonText } from '../module/text/button/submit';
-import { InputFieldElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 export const enum EmailOtpPopupWindowKey {
     OTP,

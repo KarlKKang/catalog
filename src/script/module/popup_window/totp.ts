@@ -1,5 +1,5 @@
 import { createStyledButtonElement } from '../dom/element/button/styled/create';
-import { createTotpInputField } from '../dom/element/input/totp/create';
+import { createTotpInputField } from '../dom/element/input/input_field/totp/create';
 import { createParagraphElement } from '../dom/element/paragraph/create';
 import { createDivElement } from '../dom/element/div/create';
 import { disableInputField } from '../dom/element/input/input_field/disable';
@@ -18,7 +18,7 @@ import { cancelButtonText } from '../text/button/cancel';
 import { submitButtonText } from '../text/button/submit';
 import { initializePopupWindow, styles } from './core';
 import { pgid } from '../global/pgid';
-import { InputFieldElementKey } from '../dom/element/input/type';
+import { InputFieldElementKey } from '../dom/element/input/input_field/type';
 
 export const enum TotpPopupWindowKey {
     TOTP,

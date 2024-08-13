@@ -1,4 +1,4 @@
-import { createElement } from '../../internal/create_element';
+import { createElement } from '../internal/create_element';
 
 export function createInputElement(type: string) {
     const elem = createElement('input') as HTMLInputElement;

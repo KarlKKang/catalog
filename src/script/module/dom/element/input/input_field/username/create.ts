@@ -1,6 +1,6 @@
-import { addAutoMultiLanguageClass } from '../../../../style/multi_language/auto';
+import { addAutoMultiLanguageClass } from '../../../../../style/multi_language/auto';
 import { InputFieldElementKey } from '../type';
-import { createInputFieldElement } from '../input_field/create';
+import { createInputFieldElement } from '../create';
 
 export function createUsernameInputField() {
     const inputField = createInputFieldElement('text');

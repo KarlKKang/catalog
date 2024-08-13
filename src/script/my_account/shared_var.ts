@@ -1,6 +1,6 @@
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInputField } from '../module/dom/element/input/password/create';
-import { createEmailInputField } from '../module/dom/element/input/email/create';
+import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
+import { createEmailInputField } from '../module/dom/element/input/input_field/email/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { createUListElement } from '../module/dom/element/list/ul/create';
 import { createHRElement } from '../module/dom/element/hr/create';
@@ -17,10 +17,10 @@ import { passwordRule } from '../module/text/password/rule';
 import { usernameRule } from '../module/text/username/rule';
 import { changeButtonText } from '../module/text/button/change';
 import { submitButtonText } from '../module/text/button/submit';
-import { createUsernameInputField } from '../module/dom/element/input/username/create';
+import { createUsernameInputField } from '../module/dom/element/input/input_field/username/create';
 import * as styles from '../../css/my_account.module.scss';
 import { addOffloadCallback } from '../module/global/offload';
-import { type InputFieldElement, InputFieldElementKey } from '../module/dom/element/input/type';
+import { type InputFieldElement, InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 export const enum SharedBool {
     currentMfaStatus,
