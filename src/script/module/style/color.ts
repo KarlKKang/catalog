@@ -14,7 +14,7 @@ const colorMap: { [key in CSS_COLOR]: string } = {
     [CSS_COLOR.ORANGE]: colorStyle.orange,
 };
 
-export function changeColor(elem: HTMLElement, color: CSS_COLOR | null) {
+export function changeColor(elem: Element, color: CSS_COLOR | null) {
     for (const colorClass of Object.values(colorMap)) {
         removeClass(elem, colorClass);
     }
