@@ -1,6 +1,6 @@
 import { appendChild } from '../../../node/append_child';
 import { addClass } from '../../../class/add';
-import { inputField as inputFieldClass } from '../../../../../../css/input.module.scss';
+import { inputField as inputFieldClass } from '../../../../../../css/button-input_field.module.scss';
 import { createDivElement } from '../../div/create';
 import { createInputElement } from '../create';
 import { InputFieldElementKey, type InputFieldElement } from './type';

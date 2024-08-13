@@ -37,7 +37,7 @@ import { noResult } from '../module/text/search/no_result';
 import { allResultsShown } from '../module/text/search/all_results_shown';
 import { loading } from '../module/text/search/loading';
 import { addAutoMultiLanguageClass } from '../module/style/multi_language/auto';
-import { inputField as inputFieldClass } from '../../css/input.module.scss';
+import { inputField as inputFieldClass } from '../../css/button-input_field.module.scss';
 import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/index.module.scss';
 import { lineClamp as lineClampClass } from '../../css/line_clamp.module.scss';

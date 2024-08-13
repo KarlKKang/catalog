@@ -1,4 +1,4 @@
-import { disabled as disabledClass } from '../../../../../../css/input.module.scss';
+import { disabled as disabledClass } from '../../../../../../css/button-input_field.module.scss';
 import { addClass } from '../../../class/add';
 import { removeClass } from '../../../class/remove';
 import { InputFieldElementKey, type InputFieldElement } from './type';

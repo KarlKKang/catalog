@@ -1,5 +1,5 @@
 import { addClass } from '../../../class/add';
-import { button as buttonClass } from '../../../../../../css/input.module.scss';
+import { button as buttonClass } from '../../../../../../css/button-input_field.module.scss';
 import { createNativeButtonElement } from '../native/create';
 
 export function createStyledButtonElement(text?: string) {
