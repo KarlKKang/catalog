@@ -1,4 +1,5 @@
 import 'core-js';
+import '../../css/common.scss';
 import { createDivElement } from '../module/dom/element/div/create';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
@@ -21,7 +22,6 @@ import { customPopStateHandler } from '../module/global/pop_state/custom_handler
 import { STATE_TRACKER } from '../module/global/pop_state/tracker';
 import { setRedirect } from '../module/global/redirect';
 import { pgid, setPgid } from '../module/global/pgid';
-import '../../css/common.scss';
 import { loadingBar as loadingBarClass } from '../../css/loading_bar.module.scss';
 import { enableTransition } from '../module/style/transition';
 import { setVisibility } from '../module/style/visibility';
