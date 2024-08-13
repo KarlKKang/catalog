@@ -1,12 +1,12 @@
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInput } from '../module/dom/element/input/password/create';
-import { createEmailInput } from '../module/dom/element/input/email/create';
+import { createPasswordInputField } from '../module/dom/element/input/password/create';
+import { createEmailInputField } from '../module/dom/element/input/email/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableStyledInput } from '../module/dom/element/input/disable_styled';
+import { disableInputField } from '../module/dom/element/input/disable_input_field';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
@@ -25,7 +25,7 @@ import { submitButtonText } from '../module/text/button/submit';
 import { link as linkClass } from '../../css/link.module.scss';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
-import { StyledInputElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/type';
 
 export const enum LoginPopupWindowKey {
     EMAIL,
@@ -63,18 +63,18 @@ export function promptForLogin(message?: string) {
         hideElement(warningText);
     }
 
-    const emailStyledInput = createEmailInput();
+    const emailInputField = createEmailInputField();
     const {
-        [StyledInputElementKey.CONTAINER]: emailInputContainer,
-        [StyledInputElementKey.INPUT]: emailInput,
-    } = emailStyledInput;
+        [InputFieldElementKey.CONTAINER]: emailInputContainer,
+        [InputFieldElementKey.INPUT]: emailInput,
+    } = emailInputField;
     horizontalCenter(emailInputContainer);
 
-    const passwordStyledInput = createPasswordInput(false);
+    const passwordInputField = createPasswordInputField(false);
     const {
-        [StyledInputElementKey.CONTAINER]: passwordInputContainer,
-        [StyledInputElementKey.INPUT]: passwordInput,
-    } = passwordStyledInput;
+        [InputFieldElementKey.CONTAINER]: passwordInputContainer,
+        [InputFieldElementKey.INPUT]: passwordInput,
+    } = passwordInputField;
     horizontalCenter(passwordInputContainer);
 
     const submitButton = createStyledButtonElement(submitButtonText);
@@ -98,8 +98,8 @@ export function promptForLogin(message?: string) {
     );
 
     const disableAllInputs = (disabled: boolean) => {
-        disableStyledInput(emailStyledInput, disabled);
-        disableStyledInput(passwordStyledInput, disabled);
+        disableInputField(emailInputField, disabled);
+        disableInputField(passwordInputField, disabled);
         disableButton(submitButton, disabled);
         disableButton(cancelButton, disabled);
     };

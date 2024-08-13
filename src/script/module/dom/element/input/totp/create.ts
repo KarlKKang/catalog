@@ -1,11 +1,11 @@
-import { StyledInputElementKey } from '../type';
-import { createStyledInputElement } from '../styled/create';
+import { InputFieldElementKey } from '../type';
+import { createInputFieldElement } from '../input_field/create';
 
-export function createTotpInput(allowRecoveryCode: boolean) {
-    const styledInput = createStyledInputElement('text');
-    const input = styledInput[StyledInputElementKey.INPUT];
+export function createTotpInputField(allowRecoveryCode: boolean) {
+    const inputField = createInputFieldElement('text');
+    const input = inputField[InputFieldElementKey.INPUT];
     input.autocomplete = 'one-time-code';
     input.placeholder = '認証コード';
     input.maxLength = allowRecoveryCode ? 32 : 6;
-    return styledInput;
+    return inputField;
 }

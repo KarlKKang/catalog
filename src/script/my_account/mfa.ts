@@ -2,14 +2,14 @@ import { ServerRequestOptionKey, sendServerRequest } from '../module/server/requ
 import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener/add';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createTotpInput } from '../module/dom/element/input/totp/create';
+import { createTotpInputField } from '../module/dom/element/input/totp/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { createAnchorElement } from '../module/dom/element/anchor/create';
 import { createCanvasElement } from '../module/dom/element/canvas/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableStyledInput } from '../module/dom/element/input/disable_styled';
+import { disableInputField } from '../module/dom/element/input/disable_input_field';
 import { disableButton } from '../module/dom/element/button/disable';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
@@ -52,7 +52,7 @@ import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/my_account.module.scss';
 import { type RecoveryCodeInfo, parseRecoveryCodeInfo } from '../module/type/RecoveryCodeInfo';
 import { initializePopupWindow, styles as popupWindowStyles } from '../module/popup_window/core';
-import { StyledInputElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/type';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
@@ -286,11 +286,11 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
     changeColor(warningText, CSS_COLOR.RED);
     hideElement(warningText);
 
-    const totpStyledInput = createTotpInput(false);
+    const totpInputField = createTotpInputField(false);
     const {
-        [StyledInputElementKey.CONTAINER]: totpInputContainer,
-        [StyledInputElementKey.INPUT]: totpInput,
-    } = totpStyledInput;
+        [InputFieldElementKey.CONTAINER]: totpInputContainer,
+        [InputFieldElementKey.INPUT]: totpInput,
+    } = totpInputField;
     horizontalCenter(totpInputContainer);
 
     const submitButton = createStyledButtonElement(submitButtonText);
@@ -306,7 +306,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
     );
 
     const disableAllPopUpWindowInputs = (disabled: boolean) => {
-        disableStyledInput(totpStyledInput, disabled);
+        disableInputField(totpInputField, disabled);
         disableButton(submitButton, disabled);
         disableButton(cancelButton, disabled);
     };

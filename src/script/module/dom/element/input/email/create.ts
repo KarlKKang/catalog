@@ -1,12 +1,12 @@
-import { StyledInputElementKey } from '../type';
-import { createStyledInputElement } from '../styled/create';
+import { InputFieldElementKey } from '../type';
+import { createInputFieldElement } from '../input_field/create';
 
-export function createEmailInput(placeholder = 'メールアドレス') {
-    const styledInput = createStyledInputElement('email');
-    const input = styledInput[StyledInputElementKey.INPUT];
+export function createEmailInputField(placeholder = 'メールアドレス') {
+    const inputField = createInputFieldElement('email');
+    const input = inputField[InputFieldElementKey.INPUT];
     input.autocomplete = 'email';
     input.placeholder = placeholder;
     input.autocapitalize = 'off';
     input.maxLength = 254;
-    return styledInput;
+    return inputField;
 }

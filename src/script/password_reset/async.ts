@@ -1,12 +1,12 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInput } from '../module/dom/element/input/password/create';
+import { createPasswordInputField } from '../module/dom/element/input/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createUListElement } from '../module/dom/element/list/ul/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableStyledInput } from '../module/dom/element/input/disable_styled';
+import { disableInputField } from '../module/dom/element/input/disable_input_field';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
@@ -32,7 +32,7 @@ import { completedTitle } from '../module/text/misc/completed_title';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { LOGIN_URI } from '../module/env/uri';
-import { StyledInputElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/type';
 
 export default function (user: string, signature: string, expires: string) {
     const container = createDivElement();
@@ -48,19 +48,19 @@ export default function (user: string, signature: string, expires: string) {
     hideElement(warningElem);
     appendChild(container, warningElem);
 
-    const newPasswordStyledInput = createPasswordInput(true, '新しいパスワード');
+    const newPasswordInputField = createPasswordInputField(true, '新しいパスワード');
     const {
-        [StyledInputElementKey.CONTAINER]: newPasswordContainer,
-        [StyledInputElementKey.INPUT]: newPasswordInput,
-    } = newPasswordStyledInput;
+        [InputFieldElementKey.CONTAINER]: newPasswordContainer,
+        [InputFieldElementKey.INPUT]: newPasswordInput,
+    } = newPasswordInputField;
     horizontalCenter(newPasswordContainer);
     appendChild(container, newPasswordContainer);
 
-    const newPasswordConfirmStyledInput = createPasswordInput(true, '確認再入力');
+    const newPasswordConfirmInputField = createPasswordInputField(true, '確認再入力');
     const {
-        [StyledInputElementKey.CONTAINER]: newPasswordConfirmContainer,
-        [StyledInputElementKey.INPUT]: newPasswordConfirmInput,
-    } = newPasswordConfirmStyledInput;
+        [InputFieldElementKey.CONTAINER]: newPasswordConfirmContainer,
+        [InputFieldElementKey.INPUT]: newPasswordConfirmInput,
+    } = newPasswordConfirmInputField;
     horizontalCenter(newPasswordConfirmContainer);
     appendChild(container, newPasswordConfirmContainer);
 
@@ -139,7 +139,7 @@ export default function (user: string, signature: string, expires: string) {
 
     function disableAllInputs(disabled: boolean) {
         disableButton(submitButton, disabled);
-        disableStyledInput(newPasswordStyledInput, disabled);
-        disableStyledInput(newPasswordConfirmStyledInput, disabled);
+        disableInputField(newPasswordInputField, disabled);
+        disableInputField(newPasswordConfirmInputField, disabled);
     }
 }

@@ -1,10 +1,10 @@
 import { ServerRequestOptionKey, sendServerRequest } from './module/server/request';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
-import { createEmailInput } from './module/dom/element/input/email/create';
+import { createEmailInputField } from './module/dom/element/input/email/create';
 import { replaceText } from './module/dom/element/text/replace';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
-import { disableStyledInput } from './module/dom/element/input/disable_styled';
+import { disableInputField } from './module/dom/element/input/disable_input_field';
 import { disableButton } from './module/dom/element/button/disable';
 import { appendChild } from './module/dom/node/append_child';
 import { addClass } from './module/dom/class/add';
@@ -25,7 +25,7 @@ import { hideElement } from './module/style/hide_element';
 import { submitButtonText } from './module/text/button/submit';
 import { registerPageTitle } from './module/text/page_title';
 import * as styles from '../css/portal_form.module.scss';
-import { StyledInputElementKey } from './module/dom/element/input/type';
+import { InputFieldElementKey } from './module/dom/element/input/type';
 
 export default function (showPage: ShowPageFunc) {
     showPage();
@@ -46,11 +46,11 @@ function showPageCallback() {
     hideElement(warningElem);
     appendChild(container, warningElem);
 
-    const emailStyledInput = createEmailInput();
+    const emailInputField = createEmailInputField();
     const {
-        [StyledInputElementKey.CONTAINER]: emailContainer,
-        [StyledInputElementKey.INPUT]: emailInput,
-    } = emailStyledInput;
+        [InputFieldElementKey.CONTAINER]: emailContainer,
+        [InputFieldElementKey.INPUT]: emailInput,
+    } = emailInputField;
     horizontalCenter(emailContainer);
     appendChild(container, emailContainer);
 
@@ -106,6 +106,6 @@ function showPageCallback() {
 
     function disableAllInputs(disabled: boolean) {
         disableButton(submitButton, disabled);
-        disableStyledInput(emailStyledInput, disabled);
+        disableInputField(emailInputField, disabled);
     }
 }

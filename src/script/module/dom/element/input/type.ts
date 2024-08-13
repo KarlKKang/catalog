@@ -1,8 +1,8 @@
-export const enum StyledInputElementKey {
+export const enum InputFieldElementKey {
     CONTAINER,
     INPUT,
 }
-export interface StyledInputElement {
-    [StyledInputElementKey.CONTAINER]: HTMLDivElement;
-    [StyledInputElementKey.INPUT]: HTMLInputElement;
+export interface InputFieldElement {
+    [InputFieldElementKey.CONTAINER]: HTMLDivElement;
+    [InputFieldElementKey.INPUT]: HTMLInputElement;
 }

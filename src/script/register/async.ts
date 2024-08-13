@@ -1,6 +1,6 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInput } from '../module/dom/element/input/password/create';
+import { createPasswordInputField } from '../module/dom/element/input/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
@@ -8,7 +8,7 @@ import { createUListElement } from '../module/dom/element/list/ul/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableStyledInput } from '../module/dom/element/input/disable_styled';
+import { disableInputField } from '../module/dom/element/input/disable_input_field';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
@@ -36,7 +36,7 @@ import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/portal_form.module.scss';
 import { completedTitle } from '../module/text/misc/completed_title';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
-import { createUsernameInput } from '../module/dom/element/input/username/create';
+import { createUsernameInputField } from '../module/dom/element/input/username/create';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
 import { emailAlreadyRegistered } from './shared';
@@ -44,7 +44,7 @@ import { INFO_URI, LOGIN_URI } from '../module/env/uri';
 import { EN_LANG_CODE } from '../module/lang/en';
 import { ZH_HANT_LANG_CODE } from '../module/lang/zh_hant';
 import { ZH_HANS_LANG_CODE } from '../module/lang/zh_hans';
-import { StyledInputElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/type';
 
 export default function (param: string) {
     const container = createDivElement();
@@ -62,27 +62,27 @@ export default function (param: string) {
     hideElement(warningElem);
     appendChild(container, warningElem);
 
-    const usernameStyledInput = createUsernameInput();
+    const usernameInputField = createUsernameInputField();
     const {
-        [StyledInputElementKey.CONTAINER]: usernameContainer,
-        [StyledInputElementKey.INPUT]: usernameInput,
-    } = usernameStyledInput;
+        [InputFieldElementKey.CONTAINER]: usernameContainer,
+        [InputFieldElementKey.INPUT]: usernameInput,
+    } = usernameInputField;
     horizontalCenter(usernameContainer);
     appendChild(container, usernameContainer);
 
-    const passwordStyledInput = createPasswordInput(true);
+    const passwordInputField = createPasswordInputField(true);
     const {
-        [StyledInputElementKey.CONTAINER]: passwordContainer,
-        [StyledInputElementKey.INPUT]: passwordInput,
-    } = passwordStyledInput;
+        [InputFieldElementKey.CONTAINER]: passwordContainer,
+        [InputFieldElementKey.INPUT]: passwordInput,
+    } = passwordInputField;
     horizontalCenter(passwordContainer);
     appendChild(container, passwordContainer);
 
-    const passwordConfirmStyledInput = createPasswordInput(true, 'パスワード（確認）');
+    const passwordConfirmInputField = createPasswordInputField(true, 'パスワード（確認）');
     const {
-        [StyledInputElementKey.CONTAINER]: passwordConfirmContainer,
-        [StyledInputElementKey.INPUT]: passwordConfirmInput,
-    } = passwordConfirmStyledInput;
+        [InputFieldElementKey.CONTAINER]: passwordConfirmContainer,
+        [InputFieldElementKey.INPUT]: passwordConfirmInput,
+    } = passwordConfirmInputField;
     horizontalCenter(passwordConfirmContainer);
     appendChild(container, passwordConfirmContainer);
 
@@ -179,9 +179,9 @@ export default function (param: string) {
 
     function disableAllInputs(disabled: boolean) {
         disableButton(submitButton, disabled);
-        disableStyledInput(usernameStyledInput, disabled);
-        disableStyledInput(passwordStyledInput, disabled);
-        disableStyledInput(passwordConfirmStyledInput, disabled);
+        disableInputField(usernameInputField, disabled);
+        disableInputField(passwordInputField, disabled);
+        disableInputField(passwordConfirmInputField, disabled);
     }
 }
 

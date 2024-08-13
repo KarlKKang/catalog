@@ -3,14 +3,14 @@ import {
     ServerRequestOptionKey,
 } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInput } from '../module/dom/element/input/password/create';
-import { createEmailInput } from '../module/dom/element/input/email/create';
+import { createPasswordInputField } from '../module/dom/element/input/password/create';
+import { createEmailInputField } from '../module/dom/element/input/email/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createInputElement } from '../module/dom/element/input/native/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableStyledInput } from '../module/dom/element/input/disable_styled';
+import { disableInputField } from '../module/dom/element/input/disable_input_field';
 import { disableButton } from '../module/dom/element/button/disable';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
@@ -44,7 +44,7 @@ import * as formStyles from '../../css/portal_form.module.scss';
 import * as styles from '../../css/login.module.scss';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 import { createLabelElement } from '../module/dom/element/label/create';
-import { StyledInputElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/type';
 
 export default function (
     approvedCallbackPromise: Promise<typeof import(
@@ -65,19 +65,19 @@ export default function (
     hideElement(warningElem);
     appendChild(container, warningElem);
 
-    const emailStyledInput = createEmailInput();
+    const emailInputField = createEmailInputField();
     const {
-        [StyledInputElementKey.CONTAINER]: emailContainer,
-        [StyledInputElementKey.INPUT]: emailInput,
-    } = emailStyledInput;
+        [InputFieldElementKey.CONTAINER]: emailContainer,
+        [InputFieldElementKey.INPUT]: emailInput,
+    } = emailInputField;
     horizontalCenter(emailContainer);
     appendChild(container, emailContainer);
 
-    const passwordStyledInput = createPasswordInput(false);
+    const passwordInputField = createPasswordInputField(false);
     const {
-        [StyledInputElementKey.CONTAINER]: passwordContainer,
-        [StyledInputElementKey.INPUT]: passwordInput,
-    } = passwordStyledInput;
+        [InputFieldElementKey.CONTAINER]: passwordContainer,
+        [InputFieldElementKey.INPUT]: passwordInput,
+    } = passwordInputField;
     horizontalCenter(passwordContainer);
     appendChild(container, passwordContainer);
 
@@ -193,8 +193,8 @@ export default function (
 
     function disableAllInputs(disabled: boolean) {
         disableButton(submitButton, disabled);
-        disableStyledInput(passwordStyledInput, disabled);
-        disableStyledInput(emailStyledInput, disabled);
+        disableInputField(passwordInputField, disabled);
+        disableInputField(emailInputField, disabled);
         disableCheckbox(rememberMeLabel, rememberMeInput, disabled);
     }
 }

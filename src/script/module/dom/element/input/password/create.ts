@@ -1,14 +1,14 @@
 import { addEventListener } from '../../../../event_listener/add';
-import { StyledInputElementKey } from '../type';
-import { createStyledInputElement } from '../styled/create';
+import { InputFieldElementKey } from '../type';
+import { createInputFieldElement } from '../input_field/create';
 
-export function createPasswordInput(newPassword: boolean, placeholder = 'パスワード') {
-    const styledInput = createStyledInputElement('password');
-    const input = styledInput[StyledInputElementKey.INPUT];
+export function createPasswordInputField(newPassword: boolean, placeholder = 'パスワード') {
+    const inputField = createInputFieldElement('password');
+    const input = inputField[InputFieldElementKey.INPUT];
     input.autocomplete = newPassword ? 'new-password' : 'current-password';
     input.placeholder = placeholder;
     passwordStyling(input);
-    return styledInput;
+    return inputField;
 }
 
 function passwordStyling(element: HTMLInputElement) {

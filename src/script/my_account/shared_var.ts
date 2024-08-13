@@ -1,6 +1,6 @@
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createPasswordInput } from '../module/dom/element/input/password/create';
-import { createEmailInput } from '../module/dom/element/input/email/create';
+import { createPasswordInputField } from '../module/dom/element/input/password/create';
+import { createEmailInputField } from '../module/dom/element/input/email/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { createUListElement } from '../module/dom/element/list/ul/create';
 import { createHRElement } from '../module/dom/element/hr/create';
@@ -17,10 +17,10 @@ import { passwordRule } from '../module/text/password/rule';
 import { usernameRule } from '../module/text/username/rule';
 import { changeButtonText } from '../module/text/button/change';
 import { submitButtonText } from '../module/text/button/submit';
-import { createUsernameInput } from '../module/dom/element/input/username/create';
+import { createUsernameInputField } from '../module/dom/element/input/username/create';
 import * as styles from '../../css/my_account.module.scss';
 import { addOffloadCallback } from '../module/global/offload';
-import { type StyledInputElement, StyledInputElementKey } from '../module/dom/element/input/type';
+import { type InputFieldElement, InputFieldElementKey } from '../module/dom/element/input/type';
 
 export const enum SharedBool {
     currentMfaStatus,
@@ -61,7 +61,7 @@ export const enum SharedElement {
 }
 
 let sharedBools: { [key in SharedBool]: boolean } | null = null;
-let sharedInputs: { [key in SharedInput]: StyledInputElement } | null = null;
+let sharedInputs: { [key in SharedInput]: InputFieldElement } | null = null;
 let sharedButtons: { [key in SharedButton]: HTMLButtonElement } | null = null;
 let sharedElements: { [key in SharedElement]: HTMLElement } | null = null;
 export const sessionLogoutButtons = new Set<HTMLButtonElement>();
@@ -77,12 +77,12 @@ export function initializeSharedVars() {
 
     const changeEmailSubsec = appendSubsection(container, 'メールアドレス', [], createParagraphElement(), [], createStyledButtonElement(changeButtonText), []);
 
-    const usernameStyledInput = createUsernameInput();
-    const usernameSubsec = appendSubsection(container, 'ユーザー名', [], createParagraphElement(), [usernameStyledInput[StyledInputElementKey.CONTAINER]], createStyledButtonElement(changeButtonText), [usernameRule]);
+    const usernameInputField = createUsernameInputField();
+    const usernameSubsec = appendSubsection(container, 'ユーザー名', [], createParagraphElement(), [usernameInputField[InputFieldElementKey.CONTAINER]], createStyledButtonElement(changeButtonText), [usernameRule]);
 
-    const passwordStyledInput = createPasswordInput(true, '新しいパスワード');
-    const passwordConfirmStyledInput = createPasswordInput(true, '確認再入力');
-    const passwordSubsec = appendSubsection(container, 'パスワード', [], createParagraphElement(), [passwordStyledInput[StyledInputElementKey.CONTAINER], passwordConfirmStyledInput[StyledInputElementKey.CONTAINER]], createStyledButtonElement(changeButtonText), passwordRule);
+    const passwordInputField = createPasswordInputField(true, '新しいパスワード');
+    const passwordConfirmInputField = createPasswordInputField(true, '確認再入力');
+    const passwordSubsec = appendSubsection(container, 'パスワード', [], createParagraphElement(), [passwordInputField[InputFieldElementKey.CONTAINER], passwordConfirmInputField[InputFieldElementKey.CONTAINER]], createStyledButtonElement(changeButtonText), passwordRule);
 
     const mfaInfo = createParagraphElement();
     const mfaSubsec = appendSubsection(container, '二要素認証', [mfaInfo], createParagraphElement(), [], createStyledButtonElement(), []);
@@ -102,9 +102,9 @@ export function initializeSharedVars() {
     const inviteCountInfo = createParagraphElement('保有している招待券の枚数：');
     const inviteCount = createSpanElement();
     appendChild(inviteCountInfo, inviteCount);
-    const inviteReceiverEmailStyledInput = createEmailInput();
-    inviteReceiverEmailStyledInput[StyledInputElementKey.INPUT].autocomplete = 'off';
-    const inviteSubsec = appendSubsection(container, 'ご招待', [inviteCountInfo], createParagraphElement(), [inviteReceiverEmailStyledInput[StyledInputElementKey.CONTAINER]], createStyledButtonElement(submitButtonText), []);
+    const inviteReceiverEmailInputField = createEmailInputField();
+    inviteReceiverEmailInputField[InputFieldElementKey.INPUT].autocomplete = 'off';
+    const inviteSubsec = appendSubsection(container, 'ご招待', [inviteCountInfo], createParagraphElement(), [inviteReceiverEmailInputField[InputFieldElementKey.CONTAINER]], createStyledButtonElement(submitButtonText), []);
 
     const logoutButton = createStyledButtonElement('ログアウ');
     appendChild(container, logoutButton);
@@ -114,10 +114,10 @@ export function initializeSharedVars() {
         [SharedBool.currentLoginNotificationStatus]: false,
     };
     sharedInputs = {
-        [SharedInput.newUsernameInput]: usernameStyledInput,
-        [SharedInput.newPasswordInput]: passwordStyledInput,
-        [SharedInput.newPasswordComfirmInput]: passwordConfirmStyledInput,
-        [SharedInput.inviteReceiverEmailInput]: inviteReceiverEmailStyledInput,
+        [SharedInput.newUsernameInput]: usernameInputField,
+        [SharedInput.newPasswordInput]: passwordInputField,
+        [SharedInput.newPasswordComfirmInput]: passwordConfirmInputField,
+        [SharedInput.inviteReceiverEmailInput]: inviteReceiverEmailInputField,
     };
     sharedButtons = {
         [SharedButton.emailChangeButton]: changeEmailSubsec[1],
@@ -165,7 +165,7 @@ export function getSharedBool(idx: SharedBool) {
     return sharedBools[idx];
 }
 
-export function getSharedStyledInput(idx: SharedInput) {
+export function getSharedInputField(idx: SharedInput) {
     if (sharedInputs === null) {
         triggerSharedVarAccessError();
     }
@@ -176,7 +176,7 @@ export function getSharedInput(idx: SharedInput) {
     if (sharedInputs === null) {
         triggerSharedVarAccessError();
     }
-    return sharedInputs[idx][StyledInputElementKey.INPUT];
+    return sharedInputs[idx][InputFieldElementKey.INPUT];
 }
 
 export function getSharedButton(idx: SharedButton) {

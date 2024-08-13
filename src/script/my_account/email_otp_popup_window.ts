@@ -1,9 +1,9 @@
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
-import { createTotpInput } from '../module/dom/element/input/totp/create';
+import { createTotpInputField } from '../module/dom/element/input/totp/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableStyledInput } from '../module/dom/element/input/disable_styled';
+import { disableInputField } from '../module/dom/element/input/disable_input_field';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
@@ -21,7 +21,7 @@ import { removeInterval } from '../module/timer/remove/interval';
 import { addInterval } from '../module/timer/add/interval';
 import { cancelButtonText } from '../module/text/button/cancel';
 import { submitButtonText } from '../module/text/button/submit';
-import { StyledInputElementKey } from '../module/dom/element/input/type';
+import { InputFieldElementKey } from '../module/dom/element/input/type';
 
 export const enum EmailOtpPopupWindowKey {
     OTP,
@@ -56,11 +56,11 @@ export function promptForEmailOtp() {
     const inputFlexbox = createDivElement();
     addClass(inputFlexbox, styles.inputFlexbox);
 
-    const otpStyledInput = createTotpInput(false);
+    const otpInputField = createTotpInputField(false);
     const {
-        [StyledInputElementKey.CONTAINER]: otpInputContainer,
-        [StyledInputElementKey.INPUT]: otpInput,
-    } = otpStyledInput;
+        [InputFieldElementKey.CONTAINER]: otpInputContainer,
+        [InputFieldElementKey.INPUT]: otpInput,
+    } = otpInputField;
     appendChild(inputFlexbox, otpInputContainer);
 
     const resendButton = createStyledButtonElement();
@@ -121,7 +121,7 @@ export function promptForEmailOtp() {
     });
 
     const disableAllInputs = (disabled: boolean) => {
-        disableStyledInput(otpStyledInput, disabled);
+        disableInputField(otpInputField, disabled);
         if (resendButton.textContent === resendButtonText) {
             disableButton(resendButton, disabled);
         }

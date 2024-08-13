@@ -1,11 +1,11 @@
 import { replaceText } from '../module/dom/element/text/replace';
-import { disableStyledInput } from '../module/dom/element/input/disable_styled';
+import { disableInputField } from '../module/dom/element/input/disable_input_field';
 import { disableButton } from '../module/dom/element/button/disable';
 import { changeColor } from '../module/style/color';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
 import { setCursor, CSS_CURSOR } from '../module/style/cursor';
-import { SharedBool, SharedButton, SharedInput, SharedElement, getSharedBool, getSharedButton, getSharedElement, getSharedStyledInput, sessionLogoutButtons, setSharedBool } from './shared_var';
+import { SharedBool, SharedButton, SharedInput, SharedElement, getSharedBool, getSharedButton, getSharedElement, getSharedInputField, sessionLogoutButtons, setSharedBool } from './shared_var';
 
 export const mfaNotSet = '二要素認証が設定されていません。';
 
@@ -53,10 +53,10 @@ export function updateMfaUI(newStatus: boolean) {
 }
 
 export function disableAllInputs(disabled: boolean) {
-    disableStyledInput(getSharedStyledInput(SharedInput.newUsernameInput), disabled);
-    disableStyledInput(getSharedStyledInput(SharedInput.newPasswordInput), disabled);
-    disableStyledInput(getSharedStyledInput(SharedInput.newPasswordComfirmInput), disabled);
-    disableStyledInput(getSharedStyledInput(SharedInput.inviteReceiverEmailInput), disabled);
+    disableInputField(getSharedInputField(SharedInput.newUsernameInput), disabled);
+    disableInputField(getSharedInputField(SharedInput.newPasswordInput), disabled);
+    disableInputField(getSharedInputField(SharedInput.newPasswordComfirmInput), disabled);
+    disableInputField(getSharedInputField(SharedInput.inviteReceiverEmailInput), disabled);
 
     disableButton(getSharedButton(SharedButton.emailChangeButton), disabled);
     disableButton(getSharedButton(SharedButton.usernameChangeButton), disabled);
