@@ -1,10 +1,10 @@
-@use 'module/properties';
+@use 'module/property';
 
 .loading-bar {
-    background-color: var(properties.get(text-color));
+    background-color: var(property.get(text-color));
     height: 1.5px;
     position: fixed;
-    top: var(properties.get(safe-area-inset-top));
+    top: var(property.get(safe-area-inset-top));
     left: 0;
     width: 0;
     z-index: 999;

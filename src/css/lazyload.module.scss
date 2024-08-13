@@ -1,7 +1,7 @@
-@use 'module/properties';
+@use 'module/property';
 
 .lazyload {
-    background: var(properties.get(foreground-color));
+    background: var(property.get(foreground-color));
 
     &.complete {
         padding-bottom: 0px !important;

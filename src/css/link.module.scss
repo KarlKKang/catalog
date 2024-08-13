@@ -1,4 +1,4 @@
-@use 'module/properties';
+@use 'module/property';
 
 .link,
 .link:link,
@@ -6,6 +6,6 @@
 .link:hover,
 .link:active {
     cursor: pointer;
-    color: var(properties.get(link-text-color));
+    color: var(property.get(link-text-color));
     text-decoration: none;
 }

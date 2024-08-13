@@ -1,4 +1,4 @@
-@use 'module/properties';
+@use 'module/property';
 
 .container {
     max-width: 90%;
@@ -20,7 +20,7 @@
     .warning {
         padding: 0px;
         margin: 1em 0px;
-        color: var(properties.get(red-color));
+        color: var(property.get(red-color));
     }
 
     button {
@@ -36,7 +36,7 @@
             padding: 0px 0px 0px 2em;
 
             >li {
-                color: var(properties.get(alt-text-color));
+                color: var(property.get(alt-text-color));
             }
         }
     }

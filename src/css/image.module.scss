@@ -1,7 +1,7 @@
-@use 'module/properties';
+@use 'module/property';
 
 .image-container {
-    padding: var(properties.get(safe-area-inset-top)) var(properties.get(safe-area-inset-right)) var(properties.get(safe-area-inset-bottom)) var(properties.get(safe-area-inset-left));
+    padding: var(property.get(safe-area-inset-top)) var(property.get(safe-area-inset-right)) var(property.get(safe-area-inset-bottom)) var(property.get(safe-area-inset-left));
     margin: 0px;
     position: absolute;
     top: 0;

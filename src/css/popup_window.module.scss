@@ -1,16 +1,16 @@
-@use 'module/properties';
+@use 'module/property';
 @use 'module/query';
 
 .container {
-    $_: properties.add(popup-window-background-color);
-    $_: properties.add(popup-window-blurred-background-color);
+    $_: property.add(popup-window-background-color);
+    $_: property.add(popup-window-blurred-background-color);
 
-    #{properties.get(popup-window-background-color)}: rgba(255, 255, 255, 0.9);
-    #{properties.get(popup-window-blurred-background-color)}: rgba(255, 255, 255, 0.55);
+    #{property.get(popup-window-background-color)}: rgba(255, 255, 255, 0.9);
+    #{property.get(popup-window-blurred-background-color)}: rgba(255, 255, 255, 0.55);
 
     @include query.dark-mode {
-        #{properties.get(popup-window-background-color)}: rgba(0, 0, 0, 0.3);
-        #{properties.get(popup-window-blurred-background-color)}: rgba(0, 0, 0, 0.1);
+        #{property.get(popup-window-background-color)}: rgba(0, 0, 0, 0.3);
+        #{property.get(popup-window-blurred-background-color)}: rgba(0, 0, 0, 0.1);
     }
 
     & {
@@ -22,14 +22,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: var(properties.get(popup-window-background-color));
+        background-color: var(property.get(popup-window-background-color));
         transition: opacity .3s ease-out;
         z-index: 100;
         box-sizing: border-box;
-        padding: var(properties.get(safe-area-inset-top)) var(properties.get(safe-area-inset-right)) var(properties.get(safe-area-inset-bottom)) var(properties.get(safe-area-inset-left));
+        padding: var(property.get(safe-area-inset-top)) var(property.get(safe-area-inset-right)) var(property.get(safe-area-inset-bottom)) var(property.get(safe-area-inset-left));
 
         @supports (backdrop-filter: blur(10px)) {
-            background-color: var(properties.get(popup-window-blurred-background-color));
+            background-color: var(property.get(popup-window-blurred-background-color));
             backdrop-filter: blur(10px);
         }
     }
@@ -39,14 +39,14 @@
         max-width: 90%;
         max-height: 90%;
         box-sizing: border-box;
-        background-color: var(properties.get(foreground-color));
+        background-color: var(property.get(foreground-color));
         overflow-y: auto;
         overflow-x: hidden;
-        box-shadow: var(properties.get(shadow));
+        box-shadow: var(property.get(shadow));
         transition: box-shadow .4s ease-out;
 
         &:hover {
-            box-shadow: var(properties.get(shadow-hover));
+            box-shadow: var(property.get(shadow-hover));
         }
 
         >div {

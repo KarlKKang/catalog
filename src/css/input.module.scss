@@ -1,17 +1,17 @@
-@use 'module/properties';
+@use 'module/property';
 
 .button,
 .input-field {
-    box-shadow: var(properties.get(shadow));
+    box-shadow: var(property.get(shadow));
     transition: box-shadow .4s ease-out;
-    background: var(properties.get(foreground-color));
+    background: var(property.get(foreground-color));
     max-width: 100%;
     margin: 1em 0px;
 }
 
 .input-field:not(.disabled):hover,
 .button:enabled:hover {
-    box-shadow: var(properties.get(shadow-hover));
+    box-shadow: var(property.get(shadow-hover));
 }
 
 .button,
@@ -22,9 +22,9 @@
     padding: 0.5em 1em;
 
     &:disabled {
-        color: var(properties.get(alt-text-color));
+        color: var(property.get(alt-text-color));
         /* required on iOS */
-        -webkit-text-fill-color: var(properties.get(alt-text-color));
+        -webkit-text-fill-color: var(property.get(alt-text-color));
         opacity: 1;
         cursor: wait;
     }
@@ -54,7 +54,7 @@
 }
 
 .button:disabled {
-    background-color: var(properties.get(foreground-color));
+    background-color: var(property.get(foreground-color));
 }
 
 .input-field>input:disabled {
@@ -63,6 +63,6 @@
 
 ::placeholder {
     /* Most modern browsers support this now. */
-    color: var(properties.get(alt-text-color));
+    color: var(property.get(alt-text-color));
     opacity: 1;
 }

@@ -1,8 +1,8 @@
-@use 'module/properties';
+@use 'module/property';
 
 .container {
     textarea {
-        color: var(properties.get(text-color));
+        color: var(property.get(text-color));
         background: transparent;
     }
 
@@ -11,6 +11,6 @@
     }
 
     button {
-        background: var(properties.get(foreground-color));
+        background: var(property.get(foreground-color));
     }
 }

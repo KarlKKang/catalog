@@ -1,17 +1,17 @@
-@use 'module/properties';
+@use 'module/property';
 
 .nav-bar {
     display: flex;
     justify-content: center;
     width: 100%;
-    height: calc(3.2em + var(properties.get(safe-area-inset-bottom)));
+    height: calc(3.2em + var(property.get(safe-area-inset-bottom)));
     position: fixed;
     bottom: 0;
     left: 0;
-    background-color: var(properties.get(foreground-color));
-    border-top: 1px solid var(properties.get(horizontal-line-foreground-color));
+    background-color: var(property.get(foreground-color));
+    border-top: 1px solid var(property.get(horizontal-line-foreground-color));
     z-index: 99;
-    padding: 0px var(properties.get(safe-area-inset-right)) 0px var(properties.get(safe-area-inset-left));
+    padding: 0px var(property.get(safe-area-inset-right)) 0px var(property.get(safe-area-inset-left));
     box-sizing: border-box;
 
     >div {
@@ -22,7 +22,7 @@
         max-width: 10em;
         flex: 1;
         cursor: pointer;
-        padding: 0px 0px var(properties.get(safe-area-inset-bottom)) 0px;
+        padding: 0px 0px var(property.get(safe-area-inset-bottom)) 0px;
 
         >div {
             >.icon {
@@ -37,7 +37,7 @@
                     position: relative;
                     left: 50%;
                     transform: translate(-50%, 0px);
-                    fill: var(properties.get(text-color));
+                    fill: var(property.get(text-color));
                 }
             }
 

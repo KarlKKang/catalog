@@ -1,4 +1,4 @@
-@use 'module/properties';
+@use 'module/property';
 
 .container {
     width: 1000px;
@@ -8,14 +8,14 @@
     position: relative;
     left: 50%;
     transform: translate(-50%, 0%);
-    background-color: var(properties.get(foreground-color));
-    box-shadow: var(properties.get(shadow));
+    background-color: var(property.get(foreground-color));
+    box-shadow: var(property.get(shadow));
     transition: box-shadow .4s ease-out;
     box-sizing: border-box;
     text-align: center;
 
     &:hover {
-        box-shadow: var(properties.get(shadow-hover));
+        box-shadow: var(property.get(shadow-hover));
     }
 
     >.title {

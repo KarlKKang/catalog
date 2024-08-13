@@ -1,76 +1,76 @@
-@use 'module/properties';
+@use 'module/property';
 @use 'module/query';
 
 :root {
-    #{properties.get(background-color)}: rgba(252, 252, 252, 1);
-    #{properties.get(foreground-color)}: rgba(255, 255, 255, 1);
-    #{properties.get(background-color-transparent)}: rgba(251, 251, 251, 0);
-    #{properties.get(grey-background-color)}: rgba(235, 235, 235, 1);
+    #{property.get(background-color)}: rgba(252, 252, 252, 1);
+    #{property.get(foreground-color)}: rgba(255, 255, 255, 1);
+    #{property.get(background-color-transparent)}: rgba(251, 251, 251, 0);
+    #{property.get(grey-background-color)}: rgba(235, 235, 235, 1);
 
-    #{properties.get(text-color)}: rgba(0, 0, 0, 1);
-    #{properties.get(text-color-transparent)}: rgba(0, 0, 0, 0);
-    #{properties.get(alt-text-color)}: rgba(173, 173, 181, 1);
-    #{properties.get(link-text-color)}: rgba(16, 105, 201, 1);
+    #{property.get(text-color)}: rgba(0, 0, 0, 1);
+    #{property.get(text-color-transparent)}: rgba(0, 0, 0, 0);
+    #{property.get(alt-text-color)}: rgba(173, 173, 181, 1);
+    #{property.get(link-text-color)}: rgba(16, 105, 201, 1);
 
-    #{properties.get(horizontal-line-background-color)}: rgba(220, 222, 226, 1);
-    #{properties.get(horizontal-line-foreground-color)}: rgba(225, 227, 231, 1);
+    #{property.get(horizontal-line-background-color)}: rgba(220, 222, 226, 1);
+    #{property.get(horizontal-line-foreground-color)}: rgba(225, 227, 231, 1);
 
-    #{properties.get(red-color)}: rgba(255, 0, 0, 1);
-    #{properties.get(green-color)}: rgba(0, 255, 0, 1);
-    #{properties.get(orange-color)}: rgba(255, 170, 16, 1);
+    #{property.get(red-color)}: rgba(255, 0, 0, 1);
+    #{property.get(green-color)}: rgba(0, 255, 0, 1);
+    #{property.get(orange-color)}: rgba(255, 170, 16, 1);
 
-    #{properties.get(shadow-color)}: rgba(32, 52, 76, .15);
-    #{properties.get(shadow-color-hover)}: rgba(32, 52, 76, .25);
-    #{properties.get(shadow-size)}: 0 0 17px 0;
-    #{properties.get(shadow-size-hover)}: 0 2px 30px 2px;
-    #{properties.get(shadow)}: var(properties.get(shadow-size)) var(properties.get(shadow-color));
-    #{properties.get(shadow-hover)}: var(properties.get(shadow-size-hover)) var(properties.get(shadow-color-hover));
+    #{property.get(shadow-color)}: rgba(32, 52, 76, .15);
+    #{property.get(shadow-color-hover)}: rgba(32, 52, 76, .25);
+    #{property.get(shadow-size)}: 0 0 17px 0;
+    #{property.get(shadow-size-hover)}: 0 2px 30px 2px;
+    #{property.get(shadow)}: var(property.get(shadow-size)) var(property.get(shadow-color));
+    #{property.get(shadow-hover)}: var(property.get(shadow-size-hover)) var(property.get(shadow-color-hover));
 
-    #{properties.get(safe-area-inset-top)}: 0;
-    #{properties.get(safe-area-inset-right)}: 0;
-    #{properties.get(safe-area-inset-bottom)}: 0;
-    #{properties.get(safe-area-inset-left)}: 0;
+    #{property.get(safe-area-inset-top)}: 0;
+    #{property.get(safe-area-inset-right)}: 0;
+    #{property.get(safe-area-inset-bottom)}: 0;
+    #{property.get(safe-area-inset-left)}: 0;
 
     @include query.dark-mode {
-        #{properties.get(background-color)}: rgba(40, 41, 49, 1);
-        #{properties.get(foreground-color)}: rgba(43, 44, 52, 1);
-        #{properties.get(background-color-transparent)}: rgba(40, 41, 49, 0);
-        #{properties.get(grey-background-color)}: rgba(65, 68, 80, 1);
+        #{property.get(background-color)}: rgba(40, 41, 49, 1);
+        #{property.get(foreground-color)}: rgba(43, 44, 52, 1);
+        #{property.get(background-color-transparent)}: rgba(40, 41, 49, 0);
+        #{property.get(grey-background-color)}: rgba(65, 68, 80, 1);
 
-        #{properties.get(text-color)}: rgba(210, 213, 220, 1);
-        #{properties.get(text-color-transparent)}: rgba(210, 213, 220, 0);
-        #{properties.get(alt-text-color)}: rgba(95, 97, 106, 1);
-        #{properties.get(link-text-color)}: rgba(28, 98, 221, 1);
+        #{property.get(text-color)}: rgba(210, 213, 220, 1);
+        #{property.get(text-color-transparent)}: rgba(210, 213, 220, 0);
+        #{property.get(alt-text-color)}: rgba(95, 97, 106, 1);
+        #{property.get(link-text-color)}: rgba(28, 98, 221, 1);
 
-        #{properties.get(horizontal-line-background-color)}: rgba(48, 52, 62, 1);
-        #{properties.get(horizontal-line-foreground-color)}: rgba(54, 58, 69, 1);
+        #{property.get(horizontal-line-background-color)}: rgba(48, 52, 62, 1);
+        #{property.get(horizontal-line-foreground-color)}: rgba(54, 58, 69, 1);
 
-        #{properties.get(red-color)}: rgba(205, 3, 70, 1);
-        #{properties.get(green-color)}: rgba(15, 214, 72, 1);
-        #{properties.get(orange-color)}: rgba(234, 129, 4, 1);
+        #{property.get(red-color)}: rgba(205, 3, 70, 1);
+        #{property.get(green-color)}: rgba(15, 214, 72, 1);
+        #{property.get(orange-color)}: rgba(234, 129, 4, 1);
 
-        #{properties.get(shadow-color)}: rgba(15, 16, 24, .55);
-        #{properties.get(shadow-color-hover)}: rgba(15, 16, 24, .60);
+        #{property.get(shadow-color)}: rgba(15, 16, 24, .55);
+        #{property.get(shadow-color-hover)}: rgba(15, 16, 24, .60);
     }
 
     @include query.touch-hover {
-        #{properties.get(shadow-hover)}: var(properties.get(shadow));
+        #{property.get(shadow-hover)}: var(property.get(shadow));
     }
 
     @supports (--a: env(safe-area-inset-top, 0px)) {
-        #{properties.get(safe-area-inset-top)}: env(safe-area-inset-top, 0px);
+        #{property.get(safe-area-inset-top)}: env(safe-area-inset-top, 0px);
     }
 
     @supports (--a: env(safe-area-inset-right, 0px)) {
-        #{properties.get(safe-area-inset-right)}: env(safe-area-inset-right, 0px);
+        #{property.get(safe-area-inset-right)}: env(safe-area-inset-right, 0px);
     }
 
     @supports (--a: env(safe-area-inset-bottom, 0px)) {
-        #{properties.get(safe-area-inset-bottom)}: env(safe-area-inset-bottom, 0px);
+        #{property.get(safe-area-inset-bottom)}: env(safe-area-inset-bottom, 0px);
     }
 
     @supports (--a: env(safe-area-inset-left, 0px)) {
-        #{properties.get(safe-area-inset-left)}: env(safe-area-inset-left, 0px);
+        #{property.get(safe-area-inset-left)}: env(safe-area-inset-left, 0px);
     }
 }
 
@@ -83,7 +83,7 @@ html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     min-height: 100%;
-    padding: var(properties.get(safe-area-inset-top)) var(properties.get(safe-area-inset-right)) var(properties.get(safe-area-inset-bottom)) var(properties.get(safe-area-inset-left));
+    padding: var(property.get(safe-area-inset-top)) var(property.get(safe-area-inset-right)) var(property.get(safe-area-inset-bottom)) var(property.get(safe-area-inset-left));
 
     @media screen {
         display: block;
@@ -97,7 +97,7 @@ body {
 
 body {
     padding: 0px;
-    background: var(properties.get(background-color));
+    background: var(property.get(background-color));
 }
 
 html,
@@ -108,5 +108,5 @@ input {
     /* not using lang pseudo class here to ensure the font-weight and color will fall back to the default even in different language */
     font-family: 'Noto Sans JP', 'メイリオ', Meiryo, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
-    color: var(properties.get(text-color));
+    color: var(property.get(text-color));
 }

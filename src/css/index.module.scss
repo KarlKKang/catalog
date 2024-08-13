@@ -1,4 +1,4 @@
-@use 'module/properties';
+@use 'module/property';
 @use 'module/query';
 
 .container {
@@ -14,8 +14,8 @@
         width: 256px;
         max-width: calc(50% - 2 * 0.75em);
         height: auto;
-        background-color: var(properties.get(foreground-color));
-        box-shadow: var(properties.get(shadow));
+        background-color: var(property.get(foreground-color));
+        box-shadow: var(property.get(shadow));
         transition: box-shadow .4s ease-out;
         margin: 0.75em;
         cursor: pointer;
@@ -50,7 +50,7 @@
         }
 
         &:hover {
-            box-shadow: var(properties.get(shadow-hover));
+            box-shadow: var(property.get(shadow-hover));
 
             >.overlay {
                 opacity: 0.1;
@@ -109,7 +109,7 @@
 
         >svg {
             display: block;
-            fill: var(properties.get(alt-text-color));
+            fill: var(property.get(alt-text-color));
             height: 24px;
             width: 24px;
         }
@@ -130,13 +130,13 @@
     padding: 0px;
     width: 90%;
     max-width: 1000px;
-    background-color: var(properties.get(foreground-color));
-    box-shadow: var(properties.get(shadow));
+    background-color: var(property.get(foreground-color));
+    box-shadow: var(property.get(shadow));
     transition: box-shadow .4s ease-out;
     box-sizing: border-box;
 
     &:hover {
-        box-shadow: var(properties.get(shadow-hover));
+        box-shadow: var(property.get(shadow-hover));
     }
 
     >div {
@@ -167,7 +167,7 @@
 
 .loading-text {
     text-align: center;
-    color: var(properties.get(alt-text-color));
+    color: var(property.get(alt-text-color));
     transition: opacity .4s ease-out;
     margin: 3vh 0px;
 }
