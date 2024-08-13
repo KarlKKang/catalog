@@ -1,21 +1,12 @@
-import { appendChild } from '../../../node/append_child';
-import { addClass } from '../../../class/add';
-import { inputField as inputFieldClass } from '../../../../../../css/input.module.scss';
-import { createDivElement } from '../../div/create';
-import { createInputElement } from '../native/create';
-import { StyledInputElementKey, type StyledInputElement } from '../type';
+import { StyledInputElementKey } from '../type';
+import { createStyledInputElement } from '../styled/create';
 
-export function createEmailInput(placeholder = 'メールアドレス'): StyledInputElement {
-    const container = createDivElement();
-    addClass(container, inputFieldClass);
-    const input = createInputElement('email');
+export function createEmailInput(placeholder = 'メールアドレス') {
+    const styledInput = createStyledInputElement('email');
+    const input = styledInput[StyledInputElementKey.INPUT];
     input.autocomplete = 'email';
     input.placeholder = placeholder;
     input.autocapitalize = 'off';
     input.maxLength = 254;
-    appendChild(container, input);
-    return {
-        [StyledInputElementKey.CONTAINER]: container,
-        [StyledInputElementKey.INPUT]: input,
-    };
+    return styledInput;
 }

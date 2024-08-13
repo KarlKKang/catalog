@@ -1,23 +1,14 @@
-import { appendChild } from '../../../node/append_child';
-import { addClass } from '../../../class/add';
 import { addEventListener } from '../../../../event_listener/add';
-import { inputField as inputFieldClass } from '../../../../../../css/input.module.scss';
-import { createDivElement } from '../../div/create';
-import { createInputElement } from '../native/create';
-import { StyledInputElementKey, type StyledInputElement } from '../type';
+import { StyledInputElementKey } from '../type';
+import { createStyledInputElement } from '../styled/create';
 
-export function createPasswordInput(newPassword: boolean, placeholder = 'パスワード'): StyledInputElement {
-    const container = createDivElement();
-    addClass(container, inputFieldClass);
-    const input = createInputElement('password');
+export function createPasswordInput(newPassword: boolean, placeholder = 'パスワード') {
+    const styledInput = createStyledInputElement('password');
+    const input = styledInput[StyledInputElementKey.INPUT];
     input.autocomplete = newPassword ? 'new-password' : 'current-password';
     input.placeholder = placeholder;
     passwordStyling(input);
-    appendChild(container, input);
-    return {
-        [StyledInputElementKey.CONTAINER]: container,
-        [StyledInputElementKey.INPUT]: input,
-    };
+    return styledInput;
 }
 
 function passwordStyling(element: HTMLInputElement) {

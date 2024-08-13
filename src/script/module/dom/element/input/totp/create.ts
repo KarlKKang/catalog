@@ -1,20 +1,11 @@
-import { appendChild } from '../../../node/append_child';
-import { addClass } from '../../../class/add';
-import { inputField as inputFieldClass } from '../../../../../../css/input.module.scss';
-import { createDivElement } from '../../div/create';
-import { createInputElement } from '../native/create';
-import { StyledInputElementKey, type StyledInputElement } from '../type';
+import { StyledInputElementKey } from '../type';
+import { createStyledInputElement } from '../styled/create';
 
-export function createTotpInput(allowRecoveryCode: boolean): StyledInputElement {
-    const container = createDivElement();
-    addClass(container, inputFieldClass);
-    const input = createInputElement('text');
+export function createTotpInput(allowRecoveryCode: boolean) {
+    const styledInput = createStyledInputElement('text');
+    const input = styledInput[StyledInputElementKey.INPUT];
     input.autocomplete = 'one-time-code';
     input.placeholder = '認証コード';
     input.maxLength = allowRecoveryCode ? 32 : 6;
-    appendChild(container, input);
-    return {
-        [StyledInputElementKey.CONTAINER]: container,
-        [StyledInputElementKey.INPUT]: input,
-    };
+    return styledInput;
 }

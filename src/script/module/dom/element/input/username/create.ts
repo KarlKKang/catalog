@@ -1,23 +1,15 @@
-import { appendChild } from '../../../node/append_child';
-import { addClass } from '../../../class/add';
-import { createInputElement } from '../native/create';
-import { createDivElement } from '../../div/create';
-import { inputField as inputFieldClass } from '../../../../../../css/input.module.scss';
 import { addAutoMultiLanguageClass } from '../../../../style/multi_language/auto';
-import { StyledInputElementKey, type StyledInputElement } from '../type';
+import { StyledInputElementKey } from '../type';
+import { createStyledInputElement } from '../styled/create';
 
-export function createUsernameInput(): StyledInputElement {
-    const container = createDivElement();
-    addClass(container, inputFieldClass);
+export function createUsernameInput() {
+    const styledInput = createStyledInputElement('text');
+    const container = styledInput[StyledInputElementKey.CONTAINER];
+    const input = styledInput[StyledInputElementKey.INPUT];
     addAutoMultiLanguageClass(container);
-    const input = createInputElement('text');
     input.autocomplete = 'username';
     input.placeholder = 'ユーザー名';
     input.autocapitalize = 'off';
     input.maxLength = 16;
-    appendChild(container, input);
-    return {
-        [StyledInputElementKey.CONTAINER]: container,
-        [StyledInputElementKey.INPUT]: input,
-    };
+    return styledInput;
 }
