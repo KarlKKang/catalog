@@ -1,4 +1,5 @@
 @use 'module/properties';
+@use 'module/query';
 
 :root {
     #{properties.get(background-color)}: rgba(252, 252, 252, 1);
@@ -30,7 +31,7 @@
     #{properties.get(safe-area-inset-bottom)}: 0;
     #{properties.get(safe-area-inset-left)}: 0;
 
-    @media only screen and (prefers-color-scheme: dark) {
+    @include query.dark-mode {
         #{properties.get(background-color)}: rgba(40, 41, 49, 1);
         #{properties.get(foreground-color)}: rgba(43, 44, 52, 1);
         #{properties.get(background-color-transparent)}: rgba(40, 41, 49, 0);
@@ -52,7 +53,7 @@
         #{properties.get(shadow-color-hover)}: rgba(15, 16, 24, .60);
     }
 
-    @media not screen and (hover: hover) and (pointer: fine) {
+    @include query.touch-hover {
         #{properties.get(shadow-hover)}: var(properties.get(shadow));
     }
 

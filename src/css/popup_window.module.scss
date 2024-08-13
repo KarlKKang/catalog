@@ -1,4 +1,5 @@
 @use 'module/properties';
+@use 'module/query';
 
 .container {
     $_: properties.add(popup-window-background-color);
@@ -7,7 +8,7 @@
     #{properties.get(popup-window-background-color)}: rgba(255, 255, 255, 0.9);
     #{properties.get(popup-window-blurred-background-color)}: rgba(255, 255, 255, 0.55);
 
-    @media only screen and (prefers-color-scheme: dark) {
+    @include query.dark-mode {
         #{properties.get(popup-window-background-color)}: rgba(0, 0, 0, 0.3);
         #{properties.get(popup-window-blurred-background-color)}: rgba(0, 0, 0, 0.1);
     }

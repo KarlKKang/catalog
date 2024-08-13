@@ -1,4 +1,5 @@
 @use 'module/properties';
+@use 'module/query';
 
 .remember-me {
     position: relative;
@@ -22,7 +23,7 @@
     #{properties.get(checkbox-shadow)}: var(properties.get(checkbox-shadow-size)) var(properties.get(shadow-color));
     #{properties.get(checkbox-shadow-hover)}: var(properties.get(checkbox-shadow-size-hover)) var(properties.get(shadow-color-hover));
 
-    @media not screen and (hover: hover) and (pointer: fine) {
+    @include query.touch-hover {
         #{properties.get(checkbox-shadow-hover)}: var(properties.get(checkbox-shadow));
     }
 

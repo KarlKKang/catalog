@@ -1,4 +1,5 @@
 @use 'module/properties';
+@use 'module/query';
 
 .player {
     display: block;
@@ -106,7 +107,7 @@
             border-top-color: var(properties.get(background-color));
         }
 
-        @media only screen and (prefers-color-scheme: dark) {
+        @include query.dark-mode {
             border: 3px solid var(properties.get(background-color));
 
             &:before,
@@ -298,14 +299,14 @@
                 .player-progress-holder {
                     font-size: 1em;
 
-                    @media not screen and (hover: hover) and (pointer: fine) {
+                    @include query.touch-hover {
                         font-size: 0.8em;
                     }
 
                     .player-mouse-display {
                         display: block;
 
-                        @media not screen and (hover: hover) and (pointer: fine) {
+                        @include query.touch-hover {
                             display: none;
                         }
 
