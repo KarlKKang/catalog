@@ -156,14 +156,12 @@ function load(url: string, withoutHistory: boolean | null = false) {
     loadPage(url, withoutHistory, page404);
 }
 
-function offloadCurrentPage() {
+async function loadPage(url: string, withoutHistory: boolean | null, page: Page) {
+    // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     offload();
     replaceChildren(body);
     setClass(body, '');
-}
 
-async function loadPage(url: string, withoutHistory: boolean | null, page: Page) {
-    offloadCurrentPage(); // This prepare should be just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     setMinHeight(html, 0, CSS_UNIT.PX); // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
 
     if (withoutHistory !== null) {
