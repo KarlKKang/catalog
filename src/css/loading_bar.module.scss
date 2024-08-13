@@ -1,0 +1,14 @@
+@use 'module/properties';
+
+.loading-bar {
+    background-color: var(properties.get(text-color));
+    height: 1.5px;
+    position: fixed;
+    top: var(properties.get(safe-area-inset-top));
+    left: 0;
+    width: 0;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: width .4s ease-out, opacity .2s ease-out, visibility .2s ease-out;
+}

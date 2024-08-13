@@ -2,13 +2,13 @@ import { appendChild } from '../../../node/append_child';
 import { addClass } from '../../../class/add';
 import { createInputElement } from '../native/create';
 import { createDivElement } from '../../div/create';
-import * as styles from '../../../../../../css/common.module.scss';
+import { inputField as inputFieldClass } from '../../../../../../css/input.module.scss';
 import { addAutoMultiLanguageClass } from '../../../../style/multi_language/auto';
 import { StyledInputElementKey, type StyledInputElement } from '../type';
 
 export function createUsernameInput(): StyledInputElement {
     const container = createDivElement();
-    addClass(container, styles.inputField);
+    addClass(container, inputFieldClass);
     addAutoMultiLanguageClass(container);
     const input = createInputElement('text');
     input.autocomplete = 'username';

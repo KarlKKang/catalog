@@ -22,7 +22,7 @@ import { changeColor, CSS_COLOR } from '../module/style/color';
 import { forgetPasswordText } from '../module/text/password/forget';
 import { cancelButtonText } from '../module/text/button/cancel';
 import { submitButtonText } from '../module/text/button/submit';
-import * as commonStyles from '../../css/common.module.scss';
+import { link as linkClass } from '../../css/link.module.scss';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 import { StyledInputElementKey } from '../module/dom/element/input/type';
@@ -86,7 +86,7 @@ export function promptForLogin(message?: string) {
 
     const forgetPasswordParagraph = createParagraphElement();
     const forgetPasswordLink = createSpanElement(forgetPasswordText);
-    addClass(forgetPasswordLink, commonStyles.link);
+    addClass(forgetPasswordLink, linkClass);
     appendChild(forgetPasswordParagraph, forgetPasswordLink);
     addEventListener(forgetPasswordLink, 'click', () => {
         openWindow(REQUEST_PASSWORD_RESET_URI);

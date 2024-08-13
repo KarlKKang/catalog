@@ -1,0 +1,13 @@
+@use 'module/properties';
+
+.green {
+    color: var(properties.get(green-color));
+}
+
+.red {
+    color: var(properties.get(red-color));
+}
+
+.orange {
+    color: var(properties.get(orange-color));
+}

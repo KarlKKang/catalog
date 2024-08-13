@@ -25,7 +25,7 @@ import { hideElement } from './module/style/hide_element';
 import { goBackButtonText } from './module/text/button/go_back';
 import { submitButtonText } from './module/text/button/submit';
 import { passwordResetPageTitle } from './module/text/page_title';
-import * as commonStyles from '../css/common.module.scss';
+import { link as linkClass } from '../css/link.module.scss';
 import * as styles from '../css/portal_form.module.scss';
 import { LOGIN_URI } from './module/env/uri';
 import { StyledInputElementKey } from './module/dom/element/input/type';
@@ -67,7 +67,7 @@ function showPageCallback() {
 
     const goBack = createParagraphElement();
     const goBackText = createSpanElement('❮　' + goBackButtonText);
-    addClass(goBack, commonStyles.link);
+    addClass(goBack, linkClass);
     appendChild(goBack, goBackText);
     appendChild(container, goBack);
 

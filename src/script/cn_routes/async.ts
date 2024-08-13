@@ -20,7 +20,7 @@ import { addEventsListener } from '../module/event_listener/add/multiple_events'
 import { addEventListener } from '../module/event_listener/add';
 import { createNewsContainer } from '../module/news/create_container';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';
-import * as commonStyles from '../../css/common.module.scss';
+import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/news.module.scss';
 import { body } from '../module/dom/body';
 import { cnRoutesPageTitle } from '../module/text/page_title';
@@ -171,7 +171,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
         if (current[RouteInfoNodeKey.IN_USE]) {
             appendText(spanElem, '（現在使用中）');
         } else if (current[RouteInfoNodeKey.LATENCY] !== null && current[RouteInfoNodeKey.LATENCY] !== false) {
-            addClass(spanElem, commonStyles.link);
+            addClass(spanElem, linkClass);
             addEventListener(spanElem, 'click', () => {
                 const baseHost = getBaseHost(); // Use host just in case there is a port number.
                 const locationCode = routeInfo !== null ? routeInfo[RouteInfoKey.CODE] : '';
@@ -335,7 +335,7 @@ function getASN(asnResultContainer: HTMLElement, asnRetestButton: HTMLButtonElem
             }
             const resultSpan = createSpanElement();
             replaceText(resultSpan, 'AS' + asn);
-            addClass(resultSpan, commonStyles.link);
+            addClass(resultSpan, linkClass);
             addEventListener(resultSpan, 'click', () => {
                 w.open('https://bgp.he.net/AS' + asn);
             });
@@ -353,7 +353,7 @@ function appendPromptText(contentContainer: HTMLElement) {
 
     const promptParagraphJa = createParagraphElement('以下は、中国のユーザーのために用意した回線です（詳細は');
     const linkJa = createSpanElement();
-    addClass(linkJa, commonStyles.link);
+    addClass(linkJa, linkClass);
     appendText(linkJa, 'こちら');
     addEventListener(linkJa, 'click', () => {
         redirect(NEWS_URI);
@@ -366,7 +366,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     );
     promptParagraphEn.lang = EN_LANG_CODE;
     const linkEn = createSpanElement();
-    addClass(linkEn, commonStyles.link);
+    addClass(linkEn, linkClass);
     appendText(linkEn, 'here');
     addEventListener(linkEn, 'click', () => {
         redirect(buildURI(NEWS_URI, '', EN_LANG_CODE));
@@ -379,7 +379,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     );
     promptParagraphHant.lang = ZH_HANT_LANG_CODE;
     const linkHant = createSpanElement();
-    addClass(linkHant, commonStyles.link);
+    addClass(linkHant, linkClass);
     appendText(linkHant, '此處');
     addEventListener(linkHant, 'click', () => {
         redirect(buildURI(NEWS_URI, '', ZH_HANT_LANG_CODE));
@@ -392,7 +392,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     );
     promptParagraphHans.lang = ZH_HANS_LANG_CODE;
     const linkHans = createSpanElement();
-    addClass(linkHans, commonStyles.link);
+    addClass(linkHans, linkClass);
     appendText(linkHans, '此处');
     addEventListener(linkHans, 'click', () => {
         redirect(buildURI(NEWS_URI, '', ZH_HANS_LANG_CODE));

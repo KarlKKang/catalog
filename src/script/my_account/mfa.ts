@@ -48,7 +48,7 @@ import { changeColor, CSS_COLOR } from '../module/style/color';
 import { closeButtonText } from '../module/text/button/close';
 import { cancelButtonText } from '../module/text/button/cancel';
 import { submitButtonText } from '../module/text/button/submit';
-import * as commonStyles from '../../css/common.module.scss';
+import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/my_account.module.scss';
 import { type RecoveryCodeInfo, parseRecoveryCodeInfo } from '../module/type/RecoveryCodeInfo';
 import { initializePopupWindow, styles as popupWindowStyles } from '../module/popup_window/core';
@@ -277,7 +277,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
     const uriElem = createParagraphElement();
     addClass(uriElem, styles.totpUri);
     const uriLink = createAnchorElement();
-    addClass(uriLink, commonStyles.link);
+    addClass(uriLink, linkClass);
     appendText(uriLink, totpURI);
     uriLink.href = totpURI;
     appendChild(uriElem, uriLink);

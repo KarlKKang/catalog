@@ -37,7 +37,8 @@ import { noResult } from '../module/text/search/no_result';
 import { allResultsShown } from '../module/text/search/all_results_shown';
 import { loading } from '../module/text/search/loading';
 import { addAutoMultiLanguageClass } from '../module/style/multi_language/auto';
-import * as commonStyles from '../../css/common.module.scss';
+import { inputField as inputFieldClass } from '../../css/input.module.scss';
+import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/index.module.scss';
 import { lineClamp as lineClampClass } from '../../css/line_clamp.module.scss';
 import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntryKey } from '../module/type/SeriesInfo';
@@ -62,7 +63,7 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
     keywords = _keywords;
 
     const searchBar = createDivElement();
-    addClass(searchBar, styles.searchBar, commonStyles.inputField);
+    addClass(searchBar, styles.searchBar, inputFieldClass);
 
     const searchBarIcon = createDivElement();
     addClass(searchBarIcon, styles.icon);
@@ -320,7 +321,7 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
                     createSpanElement('「中国のユーザーの皆様へのお知らせ」'),
                     createTextNode('をご覧ください。'),
                 ] as const;
-                addClass(message[1], commonStyles.link);
+                addClass(message[1], linkClass);
                 addEventListener(message[1], 'click', () => {
                     redirect(NEWS_ROOT_URI + '2ghJ5dHKW8T');
                 });
@@ -335,7 +336,7 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
                 createSpanElement('「中国のユーザーの皆様へのお知らせ」'),
                 createTextNode('をご覧ください。'),
             ] as const;
-            addClass(message[1], commonStyles.link);
+            addClass(message[1], linkClass);
             addEventListener(message[1], 'click', () => {
                 redirect(NEWS_ROOT_URI + '2ghJ5dHKW8T');
             });

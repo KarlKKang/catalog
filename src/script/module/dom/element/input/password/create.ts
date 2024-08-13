@@ -1,14 +1,14 @@
 import { appendChild } from '../../../node/append_child';
 import { addClass } from '../../../class/add';
 import { addEventListener } from '../../../../event_listener/add';
-import * as styles from '../../../../../../css/common.module.scss';
+import { inputField as inputFieldClass } from '../../../../../../css/input.module.scss';
 import { createDivElement } from '../../div/create';
 import { createInputElement } from '../native/create';
 import { StyledInputElementKey, type StyledInputElement } from '../type';
 
 export function createPasswordInput(newPassword: boolean, placeholder = 'パスワード'): StyledInputElement {
     const container = createDivElement();
-    addClass(container, styles.inputField);
+    addClass(container, inputFieldClass);
     const input = createInputElement('password');
     input.autocomplete = newPassword ? 'new-password' : 'current-password';
     input.placeholder = placeholder;

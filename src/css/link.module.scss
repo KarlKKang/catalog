@@ -1,0 +1,11 @@
+@use 'module/properties';
+
+.link,
+.link:link,
+.link:visited,
+.link:hover,
+.link:active {
+    cursor: pointer;
+    color: var(properties.get(link-text-color));
+    text-decoration: none;
+}

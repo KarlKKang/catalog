@@ -21,7 +21,8 @@ import { customPopStateHandler } from '../module/global/pop_state/custom_handler
 import { STATE_TRACKER } from '../module/global/pop_state/tracker';
 import { setRedirect } from '../module/global/redirect';
 import { pgid, setPgid } from '../module/global/pgid';
-import * as styles from '../../css/common.module.scss';
+import '../../css/common.scss';
+import { loadingBar as loadingBarClass } from '../../css/loading_bar.module.scss';
 import { enableTransition } from '../module/style/transition';
 import { setVisibility } from '../module/style/visibility';
 import { setOpacity } from '../module/style/opacity';
@@ -55,7 +56,7 @@ interface Page {
 }
 
 const loadingBar = createDivElement();
-addClass(loadingBar, styles.loadingBar);
+addClass(loadingBar, loadingBarClass);
 interface ServiceWorkerModule {
     default: () => void;
 }

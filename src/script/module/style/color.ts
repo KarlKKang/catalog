@@ -1,6 +1,6 @@
 import { addClass } from '../dom/class/add';
 import { removeClass } from '../dom/class/remove';
-import * as styles from '../../../css/common.module.scss';
+import * as colorStyle from '../../../css/color.module.scss';
 
 export const enum CSS_COLOR {
     RED,
@@ -9,9 +9,9 @@ export const enum CSS_COLOR {
 }
 
 const colorMap: { [key in CSS_COLOR]: string } = {
-    [CSS_COLOR.RED]: styles.colorRed,
-    [CSS_COLOR.GREEN]: styles.colorGreen,
-    [CSS_COLOR.ORANGE]: styles.colorOrange,
+    [CSS_COLOR.RED]: colorStyle.red,
+    [CSS_COLOR.GREEN]: colorStyle.green,
+    [CSS_COLOR.ORANGE]: colorStyle.orange,
 };
 
 export function changeColor(elem: HTMLElement, color: CSS_COLOR | null) {

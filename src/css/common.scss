@@ -99,19 +99,6 @@ body {
     background: var(properties.get(background-color));
 }
 
-.loading-bar {
-    background-color: var(properties.get(text-color));
-    height: 1.5px;
-    position: fixed;
-    top: var(properties.get(safe-area-inset-top));
-    left: 0;
-    width: 0;
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transition: width .4s ease-out, opacity .2s ease-out, visibility .2s ease-out;
-}
-
 html,
 select,
 option,
@@ -121,99 +108,4 @@ input {
     font-family: 'Noto Sans JP', 'メイリオ', Meiryo, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
     color: var(properties.get(text-color));
-}
-
-.hcenter {
-    position: relative;
-    left: 50%;
-    transform: translate(-50%, 0%);
-}
-
-.button,
-.input-field {
-    box-shadow: var(properties.get(shadow));
-    transition: box-shadow .4s ease-out;
-    background: var(properties.get(foreground-color));
-    max-width: 100%;
-    margin: 1em 0px;
-}
-
-.input-field:not(.disabled):hover,
-.button:enabled:hover {
-    box-shadow: var(properties.get(shadow-hover));
-}
-
-.button,
-.input-field>input {
-    font-size: medium;
-    border: none;
-    border-radius: 0px;
-    padding: 0.5em 1em;
-
-    &:disabled {
-        color: var(properties.get(alt-text-color));
-        /* required on iOS */
-        -webkit-text-fill-color: var(properties.get(alt-text-color));
-        opacity: 1;
-        cursor: wait;
-    }
-}
-
-.button {
-    width: 10em;
-    min-height: 2.5em;
-    cursor: pointer;
-    text-align: center;
-    display: block;
-}
-
-.input-field {
-    width: 20em;
-    padding: 0px;
-    /* There are some weird issues on some iOS devices where if you clear and re-enter in input fields the container will have a few extra pixels in height */
-    height: 2.5em;
-
-    >input {
-        width: 100%;
-        height: 100%;
-        background-color: transparent;
-        margin: 0px;
-        box-sizing: border-box;
-    }
-}
-
-.button:disabled {
-    background-color: var(properties.get(foreground-color));
-}
-
-.input-field>input:disabled {
-    background-color: transparent;
-}
-
-.link,
-.link:link,
-.link:visited,
-.link:hover,
-.link:active {
-    cursor: pointer;
-    color: var(properties.get(link-text-color));
-    text-decoration: none;
-}
-
-.color-green {
-    color: var(properties.get(green-color));
-}
-
-.color-red {
-    color: var(properties.get(red-color));
-}
-
-.color-orange {
-    color: var(properties.get(orange-color));
-}
-
-::placeholder {
-    /* Most modern browsers support this now. */
-    color: var(properties.get(alt-text-color));
-    opacity: 1;
 }

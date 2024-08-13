@@ -32,7 +32,7 @@ import { hideElement } from '../module/style/hide_element';
 import { passwordRule } from '../module/text/password/rule';
 import { usernameRule } from '../module/text/username/rule';
 import { nextButtonText } from '../module/text/button/next';
-import * as commonStyles from '../../css/common.module.scss';
+import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/portal_form.module.scss';
 import { completedTitle } from '../module/text/misc/completed_title';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
@@ -202,7 +202,7 @@ function getInfoNote() {
             paragraph.lang = lang;
         }
         const link = createSpanElement(text[1]);
-        addClass(link, commonStyles.link);
+        addClass(link, linkClass);
         appendChild(paragraph, link);
         appendText(paragraph, text[2]);
         appendChild(container, paragraph);

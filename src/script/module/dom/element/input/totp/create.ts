@@ -1,13 +1,13 @@
 import { appendChild } from '../../../node/append_child';
 import { addClass } from '../../../class/add';
-import * as styles from '../../../../../../css/common.module.scss';
+import { inputField as inputFieldClass } from '../../../../../../css/input.module.scss';
 import { createDivElement } from '../../div/create';
 import { createInputElement } from '../native/create';
 import { StyledInputElementKey, type StyledInputElement } from '../type';
 
 export function createTotpInput(allowRecoveryCode: boolean): StyledInputElement {
     const container = createDivElement();
-    addClass(container, styles.inputField);
+    addClass(container, inputFieldClass);
     const input = createInputElement('text');
     input.autocomplete = 'one-time-code';
     input.placeholder = '認証コード';

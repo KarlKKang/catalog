@@ -1,6 +1,6 @@
 import { addClass } from '../dom/class/add';
-import * as styles from '../../../css/common.module.scss';
+import { hcenter as hcenterClass } from '../../../css/hcenter.module.scss';
 
 export function horizontalCenter(elem: HTMLElement) {
-    addClass(elem, styles.hcenter);
+    addClass(elem, hcenterClass);
 }

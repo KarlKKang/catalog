@@ -52,7 +52,7 @@ import { hideElement } from '../module/style/hide_element';
 import { setPaddingTop } from '../module/style/padding_top';
 import { CSS_COLOR } from '../module/style/color';
 import { CSS_UNIT } from '../module/style/value/unit';
-import * as commonStyles from '../../css/common.module.scss';
+import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/bangumi.module.scss';
 import { PlayerKey } from '../module/player/player_key';
 import { NonNativePlayerKey } from '../module/player/non_native_player_key';
@@ -512,7 +512,7 @@ async function canPlayHEVC(withFallback: boolean | undefined): Promise<boolean> 
 
 function createLinkElem(text: string, link: string) {
     const linkElem = createSpanElement(text);
-    addClass(linkElem, commonStyles.link);
+    addClass(linkElem, linkClass);
     addEventListener(linkElem, 'click', () => {
         redirect(link);
     });

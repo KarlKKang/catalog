@@ -24,7 +24,7 @@ import { addOffloadCallback } from '../module/global/offload';
 import { redirect } from '../module/global/redirect';
 import { loading } from '../module/text/search/loading';
 import * as styles from '../../css/news.module.scss';
-import { link as linkClass } from '../../css/common.module.scss';
+import { link as linkClass } from '../../css/link.module.scss';
 import { parseNewsStyle } from '../module/news/parse_style';
 import { createNewsContainer } from '../module/news/create_container';
 import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
