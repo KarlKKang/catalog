@@ -3,7 +3,6 @@ import { setUpSessionAuthentication } from '../module/server/session_authenticat
 import { parseResponse } from '../module/server/parse_response';
 import { getURI } from '../module/dom/location/get/uri';
 import { getSearchParam } from '../module/dom/location/get/search_param';
-import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/message/param/not_found';
 import { getLogoutParam } from './helper';
@@ -21,8 +20,6 @@ import { importAllMediaModules } from './media_import_promise';
 import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
     // Parse parameters
     const seriesIDParam = getSeriesID();
     if (seriesIDParam === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(seriesIDParam)) {

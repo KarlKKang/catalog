@@ -2,7 +2,6 @@ import {
     ServerRequestOptionKey,
     sendServerRequest,
 } from '../module/server/request';
-import { clearSessionStorage } from '../module/session_storage/clear';
 import { type ShowPageFunc } from '../module/global/type';
 import { redirect } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
@@ -13,8 +12,6 @@ import { invalidResponse } from '../module/message/param/invalid_response';
 import { TOP_URI } from '../module/env/uri';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
     let approvedCallbackPromise: Promise<typeof import(
         /* webpackExports: ["default"] */
         './approved_callback'

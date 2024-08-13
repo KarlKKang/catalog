@@ -33,6 +33,7 @@ import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, CONFIRM_NEW_EMAIL_URI, CONSOLE_URI, IMAGE_URI, INFO_URI, LOGIN_URI, MESSAGE_URI, MY_ACCOUNT_URI, NEWS_ROOT_URI, NEW_EMAIL_URI, PASSWORD_RESET_URI, CN_ROUTES_URI, REGISTER_URI, REQUEST_PASSWORD_RESET_URI, SPECIAL_REGISTER_URI, TOP_URI } from '../module/env/uri';
 import { min } from '../module/math/min';
 import { max } from '../module/math/max';
+import { clearSessionStorage } from '../module/session_storage/clear';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -44,11 +45,13 @@ const enum PageProp {
     SCRIPT,
     TITLE,
     SCRIPT_CACHED,
+    SESSION_STORAGE,
 }
 interface Page {
     [PageProp.SCRIPT]: () => PageScriptImport;
     [PageProp.TITLE]?: string;
     [PageProp.SCRIPT_CACHED]?: PageScript;
+    [PageProp.SESSION_STORAGE]?: boolean;
 }
 
 const loadingBar = createDivElement();
@@ -78,6 +81,7 @@ const pages = {
     },
     [IMAGE_URI]: {
         [PageProp.SCRIPT]: () => import('../image'),
+        [PageProp.SESSION_STORAGE]: true,
     },
     [INFO_URI]: {
         [PageProp.SCRIPT]: () => import('../info'),
@@ -166,6 +170,10 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         changeURL(url, withoutHistory);
     }
     setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
+
+    if (page[PageProp.SESSION_STORAGE] !== true) {
+        clearSessionStorage();
+    }
 
     const newPgid = {};
     setPgid(newPgid);

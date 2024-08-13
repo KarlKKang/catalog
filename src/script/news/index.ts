@@ -4,7 +4,6 @@ import { parseResponse } from '../module/server/parse_response';
 import { getURI } from '../module/dom/location/get/uri';
 import { getHash } from '../module/dom/location/get/hash';
 import { changeURL } from '../module/dom/location/change';
-import { clearSessionStorage } from '../module/session_storage/clear';
 import { type ShowPageFunc } from '../module/global/type';
 import { redirect } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
@@ -17,8 +16,6 @@ import { NEWS_ROOT_URI } from '../module/env/uri';
 import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
     const newsID = getNewsID();
     if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {
         if (getURI() !== NEWS_ROOT_URI) {

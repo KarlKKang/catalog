@@ -1,4 +1,3 @@
-import { clearSessionStorage } from '../module/session_storage/clear';
 import { ShowPageFunc } from '../module/global/type';
 import { pgid } from '../module/global/pgid';
 import { addNavBar } from '../module/nav_bar';
@@ -8,7 +7,6 @@ import { parseRouteList } from '../module/type/RouteList';
 import { importModule } from '../module/import_module';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
     addNavBar();
 
     const asyncModulePromise = importModule(

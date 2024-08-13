@@ -5,7 +5,6 @@ import { ServerRequestOptionKey, sendServerRequest } from '../module/server/requ
 import { parseResponse } from '../module/server/parse_response';
 import { changeURL } from '../module/dom/location/change';
 import { w } from '../module/dom/window';
-import { clearSessionStorage } from '../module/session_storage/clear';
 import { isbot } from 'isbot';
 import { type ShowPageFunc } from '../module/global/type';
 import { redirect } from '../module/global/redirect';
@@ -18,8 +17,6 @@ import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
     if (navigator !== undefined && isbot(navigator.userAgent)) {
         return;
     }

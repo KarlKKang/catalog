@@ -1,4 +1,3 @@
-import { clearSessionStorage } from './module/session_storage/clear';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
@@ -18,7 +17,6 @@ import { notFoundTitle } from './module/text/not_found/title';
 import { notFoundBody } from './module/text/not_found/body';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
     showPage();
 
     const container = createDivElement();

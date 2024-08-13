@@ -1,5 +1,4 @@
 import { setTitle } from './module/dom/document/title/set';
-import { clearSessionStorage } from './module/session_storage/clear';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
@@ -20,8 +19,6 @@ import { MessageParamInternalKey, getMessageParam } from './module/message';
 import { importModule } from './module/import_module';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
     const messageParam = getMessageParam();
     if (messageParam === null) {
         if (DEVELOPMENT) {

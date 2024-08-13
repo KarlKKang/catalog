@@ -7,7 +7,6 @@ import {
     ServerRequestOptionKey,
 } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
-import { clearSessionStorage } from '../module/session_storage/clear';
 import { type ShowPageFunc } from '../module/global/type';
 import { pgid } from '../module/global/pgid';
 import { addTimeout } from '../module/timer/add/timeout';
@@ -16,8 +15,6 @@ import { parseSession } from '../module/type/Sessions';
 import { importModule } from '../module/import_module';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
     addNavBar(NavBarPage.MY_ACCOUNT);
     let resolveUIInit: () => void;
     const uiInitPromise = new Promise<void>((resolve) => {

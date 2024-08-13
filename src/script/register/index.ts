@@ -1,6 +1,5 @@
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { getSearchParam } from '../module/dom/location/get/search_param';
-import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param/expired';
 import { type ShowPageFunc } from '../module/global/type';
@@ -13,8 +12,6 @@ import { LOGIN_URI } from '../module/env/uri';
 import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
     const getAsyncModulePromise = () => importModule(
         () => import(
             /* webpackExports: ["default"] */

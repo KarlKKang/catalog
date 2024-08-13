@@ -1,5 +1,4 @@
 import { getSearchParam } from './module/dom/location/get/search_param';
-import { clearSessionStorage } from './module/session_storage/clear';
 import { createDivElement } from './module/dom/element/div/create';
 import { appendChild } from './module/dom/node/append_child';
 import { addClass } from './module/dom/class/add';
@@ -16,8 +15,6 @@ import { infoPageTitle } from './module/text/page_title';
 import { addManualMultiLanguageClass } from './module/style/multi_language/manual';
 
 export default function (showPage: ShowPageFunc) {
-    clearSessionStorage();
-
     if (getSearchParam('nav-bar') !== 'no') {
         addNavBar(NavBarPage.INFO);
     }
