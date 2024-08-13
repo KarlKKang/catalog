@@ -38,6 +38,8 @@ import { ZH_HANS_LANG_CODE } from '../module/lang/zh_hans';
 import { disableButton } from '../module/dom/element/button/disable';
 import { round } from '../module/math/round';
 import { getHighResTimestamp } from '../module/time/hi_res';
+import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
+import { addOffloadCallback } from '../module/global/offload';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {
@@ -55,7 +57,13 @@ interface RouteInfoNode {
     [RouteInfoNodeKey.NEXT]: RouteInfoNode | null;
 }
 
+const routeResultEventTargetsTracker = new Set<EventTarget>();
+const asnResultEventTargetsTracker = new Set<EventTarget>();
+
 export default function (routeList: RouteList) {
+    addOffloadCallback(removeRouteResultEvents);
+    addOffloadCallback(removeAsnResultEvents);
+
     const [outerContainer, innerContainer] = createNewsContainer(cnRoutesPageTitle, null, null);
     const contentContainer = createDivElement();
     addClass(contentContainer, styles.content);
@@ -94,6 +102,7 @@ export default function (routeList: RouteList) {
     horizontalCenter(asnRetestButton);
     getASN(asnResultContainer, asnRetestButton);
     addEventListener(asnRetestButton, 'click', () => {
+        removeAsnResultEvents();
         getASN(asnResultContainer, asnRetestButton);
     });
 }
@@ -123,6 +132,7 @@ function initializeList(routeList: RouteList) {
 }
 
 function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivElement, head: RouteInfoNode, retestButton: HTMLButtonElement) {
+    removeRouteResultEvents();
     replaceChildren(container);
     let testRouteNodePrevious: RouteInfoNode | null = null;
     let testRouteNode: RouteInfoNode | null = null;
@@ -167,6 +177,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
                 const locationCode = routeInfo !== null ? routeInfo[RouteInfoKey.CODE] : '';
                 windowLocation.href = getProtocol() + '//' + concatenateLocationPrefixToHost(toLocationPrefix(locationCode), baseHost);
             });
+            routeResultEventTargetsTracker.add(spanElem);
         }
         previous = current;
         current = current[RouteInfoNodeKey.NEXT];
@@ -328,6 +339,7 @@ function getASN(asnResultContainer: HTMLElement, asnRetestButton: HTMLButtonElem
             addEventListener(resultSpan, 'click', () => {
                 w.open('https://bgp.he.net/AS' + asn);
             });
+            asnResultEventTargetsTracker.add(resultSpan);
             replaceChildren(asnResultContainer, resultSpan);
             disableButton(asnRetestButton, false);
         },
@@ -408,4 +420,18 @@ function appendASNPromptText(contentContainer: HTMLElement) {
     appendChild(contentContainer, promptParagraphHant);
     appendChild(contentContainer, promptParagraphHans);
     appendChild(contentContainer, createHRElement());
+}
+
+function removeRouteResultEvents() {
+    for (const eventTarget of routeResultEventTargetsTracker) {
+        removeAllEventListeners(eventTarget);
+    }
+    routeResultEventTargetsTracker.clear();
+}
+
+function removeAsnResultEvents() {
+    for (const eventTarget of asnResultEventTargetsTracker) {
+        removeAllEventListeners(eventTarget);
+    }
+    asnResultEventTargetsTracker.clear();
 }
