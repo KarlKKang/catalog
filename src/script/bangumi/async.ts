@@ -38,7 +38,7 @@ import { CSS_UNIT } from '../module/style/value/unit';
 import * as styles from '../../css/bangumi.module.scss';
 import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoEPInfo, AudioEPInfo, ImageEPInfo } from '../module/type/BangumiInfo';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
-import { getCDNOrigin } from '../module/env/origin';
+import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
 
 let seriesID: string;
 let epIndex: number;

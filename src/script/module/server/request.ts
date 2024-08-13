@@ -1,4 +1,4 @@
-import { getServerOrigin } from '../env/origin';
+import { getServerOrigin } from '../env/location/get/origin/server';
 import { showMessage } from '../message';
 import { connectionError } from './internal/message/connection_error';
 import { unknownServerError } from './internal/message/unknown_server_error';

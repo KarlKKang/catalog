@@ -39,7 +39,7 @@ import { defaultErrorSuffix } from '../module/text/default_error/suffix';
 import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
 import { mediaLoadError } from '../module/text/media/load_error';
 import * as styles from '../../css/bangumi.module.scss';
-import { getCDNOrigin } from '../module/env/origin';
+import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { disableButton } from '../module/dom/element/button/disable';
