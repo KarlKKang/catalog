@@ -20,6 +20,6 @@ export function removeAllEventListenersHelper(elem: EventTarget, eventMap: Event
     }
     elementMap.delete(elem);
     if (DEVELOPMENT) {
-        console.log('All event listeners removed. Total elements listening: ' + elementMap.size + '.');
+        console.log('All event listeners removed. Total elements listening: ' + elementMap.size + '.', elem);
     }
 }

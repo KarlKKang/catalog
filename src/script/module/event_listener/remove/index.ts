@@ -43,6 +43,6 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
         elementMap.delete(elem);
     }
     if (DEVELOPMENT) {
-        console.log('Event listener removed. Total elements listening: ' + elementMap.size + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
+        console.log(`Event '${event}' listener removed with useCapture '${useCapture}'. Total elements listening: ${elementMap.size}. Total events on this element: ${eventMap.size}. Total listeners on this event: ${listenerMap.size}.`, elem);
     }
 }

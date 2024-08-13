@@ -18,7 +18,7 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
     }
     if (DEVELOPMENT) {
         if (listenerMap.size > 5) {
-            console.warn('More than 5 listeners on this event.', elem, event);
+            console.warn(`This element has ${listenerMap.size} listeners on event '${event}'.`, elem);
         }
     }
     let listenerConfig = listenerMap.get(callback);
@@ -44,7 +44,7 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
     listenerConfig[listenerConfigIdx] = [_callback, options];
     elem.addEventListener(event, _callback, options);
     if (DEVELOPMENT) {
-        console.log('Event listener added. Total elements listening: ' + elementMap.size + '. Total events on this element: ' + eventMap.size + '. Total listeners on this event: ' + listenerMap.size + '.');
+        console.log(`Event '${event}' listener added. Total elements listening: ${elementMap.size}. Total events on this element: ${eventMap.size}. Total listeners on this event: ${listenerMap.size}.`, elem);
     }
 }
 
