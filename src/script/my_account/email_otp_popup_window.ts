@@ -3,7 +3,7 @@ import { createTotpInputField } from '../module/dom/element/input/totp/create';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableInputField } from '../module/dom/element/input/disable_input_field';
+import { disableInputField } from '../module/dom/element/input/input_field/disable';
 import { disableButton } from '../module/dom/element/button/disable';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';

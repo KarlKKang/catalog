@@ -5,7 +5,7 @@ import { createEmailInputField } from '../module/dom/element/input/email/create'
 import { replaceText } from '../module/dom/element/text/replace';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { disableInputField } from '../module/dom/element/input/disable_input_field';
+import { disableInputField } from '../module/dom/element/input/input_field/disable';
 import { disableButton } from '../module/dom/element/button/disable';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';

@@ -1,5 +1,5 @@
 import { replaceText } from '../module/dom/element/text/replace';
-import { disableInputField } from '../module/dom/element/input/disable_input_field';
+import { disableInputField } from '../module/dom/element/input/input_field/disable';
 import { disableButton } from '../module/dom/element/button/disable';
 import { changeColor } from '../module/style/color';
 import { showElement } from '../module/style/show_element';

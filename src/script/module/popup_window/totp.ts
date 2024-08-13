@@ -2,7 +2,7 @@ import { createStyledButtonElement } from '../dom/element/button/styled/create';
 import { createTotpInputField } from '../dom/element/input/totp/create';
 import { createParagraphElement } from '../dom/element/paragraph/create';
 import { createDivElement } from '../dom/element/div/create';
-import { disableInputField } from '../dom/element/input/disable_input_field';
+import { disableInputField } from '../dom/element/input/input_field/disable';
 import { disableButton } from '../dom/element/button/disable';
 import { appendChild } from '../dom/node/append_child';
 import { addClass } from '../dom/class/add';
