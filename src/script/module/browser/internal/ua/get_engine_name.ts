@@ -1,5 +1,3 @@
-import { getUAParserResult } from './internal/ua_parser';
+import { uaParserResult } from './internal/ua_parser';
 
-export function getEngineName() {
-    return (getUAParserResult().engine.name ?? '').toLowerCase();
-}
+export const engineName = (uaParserResult.engine.name ?? '').toLowerCase();

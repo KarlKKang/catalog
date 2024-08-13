@@ -1,5 +1,3 @@
-import { getUAParserResult } from './internal/ua_parser';
+import { uaParserResult } from './internal/ua_parser';
 
-export function getBrowserName() {
-    return (getUAParserResult().browser.name ?? '').toLowerCase();
-}
+export const browserName = (uaParserResult.browser.name ?? '').toLowerCase();

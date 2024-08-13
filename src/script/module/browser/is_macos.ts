@@ -1,3 +1,3 @@
-import { getOsName } from './internal/ua/get_os_name';
+import { osName } from './internal/ua/get_os_name';
 
-export const IS_MACOS = getOsName() === 'mac os';
+export const IS_MACOS = osName === 'mac os';

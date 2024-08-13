@@ -1,5 +1,3 @@
-import { getUAParserResult } from './internal/ua_parser';
+import { uaParserResult } from './internal/ua_parser';
 
-export function getOsName() {
-    return (getUAParserResult().os.name ?? '').toLowerCase();
-}
+export const osName = (uaParserResult.os.name ?? '').toLowerCase();
