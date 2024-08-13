@@ -21,10 +21,8 @@
 
     #{property.get(shadow-color)}: rgba(32, 52, 76, .15);
     #{property.get(shadow-color-hover)}: rgba(32, 52, 76, .25);
-    #{property.get(shadow-size)}: 0 0 17px 0;
-    #{property.get(shadow-size-hover)}: 0 2px 30px 2px;
-    #{property.get(shadow)}: var(property.get(shadow-size)) var(property.get(shadow-color));
-    #{property.get(shadow-hover)}: var(property.get(shadow-size-hover)) var(property.get(shadow-color-hover));
+    #{property.get(shadow)}: 0 0 17px 0 var(property.get(shadow-color));
+    #{property.get(shadow-hover)}: 0 2px 30px 2px var(property.get(shadow-color-hover));
 
     #{property.get(safe-area-inset-top)}: 0;
     #{property.get(safe-area-inset-right)}: 0;

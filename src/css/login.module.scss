@@ -13,15 +13,11 @@
 
 /* The container */
 .checkbox-container {
-    $_: property.add(checkbox-shadow-size);
-    $_: property.add(checkbox-shadow-size-hover);
     $_: property.add(checkbox-shadow);
     $_: property.add(checkbox-shadow-hover);
 
-    #{property.get(checkbox-shadow-size)}: 0 0 10px 1.3px;
-    #{property.get(checkbox-shadow-size-hover)}: 0 2px 17px 4px;
-    #{property.get(checkbox-shadow)}: var(property.get(checkbox-shadow-size)) var(property.get(shadow-color));
-    #{property.get(checkbox-shadow-hover)}: var(property.get(checkbox-shadow-size-hover)) var(property.get(shadow-color-hover));
+    #{property.get(checkbox-shadow)}: 0 0 10px 1.3px var(property.get(shadow-color));
+    #{property.get(checkbox-shadow-hover)}: 0 2px 17px 4px var(property.get(shadow-color-hover));
 
     @include query.touch-hover {
         #{property.get(checkbox-shadow-hover)}: var(property.get(checkbox-shadow));
