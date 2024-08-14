@@ -5,7 +5,7 @@ export function addOffloadCallback(callback: () => void) {
 }
 
 export function offload() {
-    const callbacksArray = Array.from(offloadCallbacks);
+    const callbacksArray = [...offloadCallbacks];
     offloadCallbacks.clear();
     let callback = callbacksArray.pop();
     while (callback !== undefined) {
