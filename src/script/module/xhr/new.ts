@@ -9,7 +9,7 @@ export function newXhr(
     withCredentials: boolean,
     callback: () => void,
 ) {
-    addOffloadCallback(offload, true);
+    addOffloadCallback(offload);
     const xhr = new XMLHttpRequest();
     allRequests.add(xhr);
     xhr.open(method, url, true);

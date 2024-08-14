@@ -1,14 +1,15 @@
-const offloadCallbacks = [new Set<() => void>(), new Set<() => void>()] as const;
+const offloadCallbacks = new Set<() => void>();
 
-export function addOffloadCallback(callback: () => void, lowLevel = false) {
-    offloadCallbacks[lowLevel ? 1 : 0].add(callback);
+export function addOffloadCallback(callback: () => void) {
+    offloadCallbacks.add(callback);
 }
 
 export function offload() {
-    for (const callbackSet of offloadCallbacks) {
-        for (const callback of callbackSet) {
-            callback();
-        }
-        callbackSet.clear();
+    const callbacksArray = Array.from(offloadCallbacks);
+    offloadCallbacks.clear();
+    let callback = callbacksArray.pop();
+    while (callback !== undefined) {
+        callback();
+        callback = callbacksArray.pop();
     }
 }

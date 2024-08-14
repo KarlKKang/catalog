@@ -5,7 +5,7 @@ import { removeAllEventListenersHelper } from '../internal/remove_all_listeners_
 import { addOffloadCallback } from '../../global/offload';
 
 export function addEventListener(elem: EventTarget, event: string, callback: EventListener, options?: boolean | CustomAddEventListenerOptions) {
-    addOffloadCallback(offload, true);
+    addOffloadCallback(offload);
     let eventMap = elementMap.get(elem);
     if (eventMap === undefined) {
         eventMap = new Map();
