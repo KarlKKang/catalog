@@ -40,7 +40,6 @@ let baseURL: string;
 let createMediaSessionPromise: Promise<MediaSessionInfo>;
 
 let audioReadyCounter: number;
-let error: boolean;
 const mediaInstances: PlayerType[] = [];
 
 export default function (
@@ -60,7 +59,6 @@ export default function (
     createMediaSessionPromise = _createMediaSessionPromise;
 
     audioReadyCounter = 0;
-    error = false;
 
     addAlbumInfo(seriesTitle);
     createMediaSessionPromise.then((mediaSessionInfo) => {
@@ -89,7 +87,7 @@ export default function (
 }
 
 async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
-    if (error) {
+    if (currentPgid !== pgid) {
         return;
     }
 
@@ -104,7 +102,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
     const CAN_PLAY_MP3 = audioCanPlay('mp3') || canPlay('audio', 'mpeg', ''); // mp3: Firefox; mpeg: Safari and Chrome
     if ((IS_FLAC && !CAN_PLAY_FLAC) || (IS_MP3 && !CAN_PLAY_MP3)) { // ALAC has already fallen back to FLAC if not supported.
         showCodecCompatibilityError();
-        error = true;
+        destroyAll();
         return;
     }
 
@@ -270,7 +268,7 @@ function audioReady() {
 }
 
 function destroyAll() {
-    currentPgid = null;
+    currentPgid = null; // It's necessary to reset pgid as it also helps track if any error occurs.
     let mediaInstance = mediaInstances.pop();
     while (mediaInstance !== undefined) {
         mediaInstance[PlayerKey.DESTROY]();
