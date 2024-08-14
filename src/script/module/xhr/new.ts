@@ -9,7 +9,6 @@ export function newXhr(
     withCredentials: boolean,
     callback: () => void,
 ) {
-    addOffloadCallback(offload);
     const xhr = new XMLHttpRequest();
     allRequests.add(xhr);
     xhr.open(method, url, true);
@@ -24,6 +23,7 @@ export function newXhr(
     if (method === 'POST') {
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     }
+    addOffloadCallback(offload);
     return xhr;
 }
 
