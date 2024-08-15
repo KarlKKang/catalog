@@ -22,6 +22,7 @@ import { addInterval } from '../module/timer/add/interval';
 import { cancelButtonText } from '../module/text/button/cancel';
 import { submitButtonText } from '../module/text/button/submit';
 import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
+import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 
 export const enum EmailOtpPopupWindowKey {
     OTP,
@@ -102,6 +103,13 @@ export function promptForEmailOtp() {
 
     const hidePopupWindow = initializePopupWindow(
         [promptText, warningText, inputFlexbox, buttonFlexbox],
+        () => {
+            removeAllEventListeners(submitButton);
+            removeAllEventListeners(cancelButton);
+            removeAllEventListeners(otpInput);
+            removeAllEventListeners(resendButton);
+            currentResendInterval !== null && removeInterval(currentResendInterval);
+        },
         () => { otpInput.focus(); },
     );
 
@@ -160,7 +168,6 @@ export function promptForEmailOtp() {
     });
     addEventListener(cancelButton, 'click', () => {
         returnPromiseReject(RejectReason.CLOSE);
-        currentResendInterval !== null && removeInterval(currentResendInterval);
         hidePopupWindow();
     });
 

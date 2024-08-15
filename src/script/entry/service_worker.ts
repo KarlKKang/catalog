@@ -14,6 +14,7 @@ import { addOffloadCallback } from '../module/global/offload';
 import { pgid } from '../module/global/pgid';
 import { addTimeout } from '../module/timer/add/timeout';
 import { getEpochMs } from '../module/time/epoch_ms';
+import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 
 let swUpdateLastPromptTime = 0;
 let serviceWorker: Workbox | null = null;
@@ -38,7 +39,13 @@ export default async function () { // This function should be called after setti
         appendChild(buttonFlexbox, cancelButton);
 
         onPopupWindowClosed(() => {
-            const hidePopupWindow = initializePopupWindow([titleText, promptText, buttonFlexbox]);
+            const hidePopupWindow = initializePopupWindow(
+                [titleText, promptText, buttonFlexbox],
+                () => {
+                    removeAllEventListeners(updateButton);
+                    removeAllEventListeners(cancelButton);
+                },
+            );
             const disableAllInputs = (disabled: boolean) => {
                 disableButton(updateButton, disabled);
                 disableButton(cancelButton, disabled);

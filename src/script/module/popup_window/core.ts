@@ -14,11 +14,16 @@ let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
 let wid: any;
 let windowOpen = false;
 const waitingQueue: (() => void)[] = [];
+let currentCleanupCallback: (() => void) | null = null;
 
 export { styles };
 
-export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void) {
+export function initializePopupWindow(contents: Node[], cleanupCallback: () => void, onDOMLoaded?: () => void) {
     addOffloadCallback(offloadPopupWindow);
+
+    currentCleanupCallback?.();
+    currentCleanupCallback = cleanupCallback;
+
     const currentWid = {};
     wid = currentWid;
     windowOpen = true;
@@ -64,6 +69,9 @@ export function initializePopupWindow(contents: Node[], onDOMLoaded?: () => void
             return;
         }
 
+        cleanupCallback();
+        currentCleanupCallback = null;
+
         let waitingQueueCallback = waitingQueue.shift();
         while (waitingQueueCallback !== undefined) {
             waitingQueueCallback();
@@ -97,6 +105,10 @@ export function onPopupWindowClosed(callback: () => void) {
 }
 
 function offloadPopupWindow() {
+    if (currentCleanupCallback !== null) {
+        currentCleanupCallback();
+        currentCleanupCallback = null;
+    }
     wid = {};
     popupWindow = null;
     windowOpen = false;

@@ -53,6 +53,8 @@ import * as styles from '../../css/my_account.module.scss';
 import { type RecoveryCodeInfo, parseRecoveryCodeInfo } from '../module/type/RecoveryCodeInfo';
 import { initializePopupWindow, styles as popupWindowStyles } from '../module/popup_window/core';
 import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
+import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
+import type { Interval } from '../module/timer/type';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
@@ -302,6 +304,11 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
 
     const hidePopupWindow = initializePopupWindow(
         [promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox],
+        () => {
+            removeAllEventListeners(submitButton);
+            removeAllEventListeners(cancelButton);
+            removeAllEventListeners(totpInput);
+        },
         () => { totpInput.focus(); },
     );
 
@@ -380,19 +387,31 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo, completedCallba
     disableButton(closeButton, true);
     setCursor(closeButton, CSS_CURSOR.NOT_ALLOWED);
     let count = 15;
-    const interval = addInterval(() => {
+    let interval: Interval | null = addInterval(() => {
         count--;
         if (count <= 0) {
             disableButton(closeButton, false);
             setCursor(closeButton, null);
             replaceText(closeButton, closeButtonText);
-            removeInterval(interval);
+            if (interval !== null) {
+                removeInterval(interval);
+                interval = null;
+            }
         } else {
             replaceText(closeButton, closeButtonText + '（' + count + '秒）');
         }
     }, 1000);
 
-    const hidePopupWindow = initializePopupWindow([promptText, recoveryCodeContainer, closeButton]);
+    const hidePopupWindow = initializePopupWindow(
+        [promptText, recoveryCodeContainer, closeButton],
+        () => {
+            removeAllEventListeners(closeButton);
+            if (interval !== null) {
+                removeInterval(interval);
+                interval = null;
+            }
+        },
+    );
 
     addEventListener(closeButton, 'click', () => {
         hidePopupWindow();

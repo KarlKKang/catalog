@@ -26,6 +26,7 @@ import { link as linkClass } from '../../css/link.module.scss';
 import { initializePopupWindow, styles } from '../module/popup_window/core';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
+import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 
 export const enum LoginPopupWindowKey {
     EMAIL,
@@ -94,6 +95,13 @@ export function promptForLogin(message?: string) {
 
     const hidePopupWindow = initializePopupWindow(
         [promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox, forgetPasswordParagraph],
+        () => {
+            removeAllEventListeners(submitButton);
+            removeAllEventListeners(cancelButton);
+            removeAllEventListeners(forgetPasswordLink);
+            removeAllEventListeners(emailInput);
+            removeAllEventListeners(passwordInput);
+        },
         () => { emailInput.focus(); },
     );
 

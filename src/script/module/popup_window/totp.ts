@@ -19,6 +19,7 @@ import { submitButtonText } from '../text/button/submit';
 import { initializePopupWindow, styles } from './core';
 import { pgid } from '../global/pgid';
 import { InputFieldElementKey } from '../dom/element/input/input_field/type';
+import { removeAllEventListeners } from '../event_listener/remove/all_listeners';
 
 export const enum TotpPopupWindowKey {
     TOTP,
@@ -67,6 +68,12 @@ function promptForTotp() {
 
     const hidePopupWindow = initializePopupWindow(
         [promptText, warningText, totpInputContainer, buttonFlexbox],
+        () => {
+            removeAllEventListeners(submitButton);
+            removeAllEventListeners(cancelButton);
+            removeAllEventListeners(totpInput);
+            removeInterval(timer);
+        },
         () => { totpInput.focus(); },
     );
 
@@ -76,7 +83,6 @@ function promptForTotp() {
         if (!timerBlocked && Date.now() - startTime > 90 * 1000) {
             returnPromiseReject(RejectReason.TIMEOUT);
             hidePopupWindow();
-            removeInterval(timer);
         }
     }, 1000);
 
@@ -109,10 +115,7 @@ function promptForTotp() {
                     returnPromiseReject = reject;
                 });
             },
-            [TotpPopupWindowKey.CLOSE]: () => {
-                removeInterval(timer);
-                hidePopupWindow();
-            },
+            [TotpPopupWindowKey.CLOSE]: hidePopupWindow,
         });
     };
     addEventListener(submitButton, 'click', submit);
@@ -123,7 +126,6 @@ function promptForTotp() {
     });
     addEventListener(cancelButton, 'click', () => {
         returnPromiseReject(RejectReason.CLOSE);
-        removeInterval(timer);
         hidePopupWindow();
     });
 
