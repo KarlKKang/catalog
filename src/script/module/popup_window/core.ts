@@ -107,7 +107,7 @@ function cleanupAll() {
     }
 }
 
-export function onPopupWindowClosed(callback: () => void) {
+export function onPopupWindowAvailable(callback: () => void) {
     if (!windowOpen) {
         callback();
         return;

@@ -7,7 +7,7 @@ import { getHostname } from '../module/dom/location/get/hostname';
 import { windowLocation } from '../module/dom/location';
 import { addEventListener } from '../module/event_listener/add';
 import { Workbox } from 'workbox-window';
-import { initializePopupWindow, onPopupWindowClosed, styles } from '../module/popup_window/core';
+import { initializePopupWindow, onPopupWindowAvailable, styles } from '../module/popup_window/core';
 import { disableButton } from '../module/dom/element/button/disable';
 import { min } from '../module/math/min';
 import { addOffloadCallback } from '../module/global/offload';
@@ -38,7 +38,7 @@ export default async function () { // This function should be called after setti
         appendChild(buttonFlexbox, updateButton);
         appendChild(buttonFlexbox, cancelButton);
 
-        onPopupWindowClosed(() => {
+        onPopupWindowAvailable(() => {
             const disableAllInputs = (disabled: boolean) => {
                 disableButton(updateButton, disabled);
                 disableButton(cancelButton, disabled);
