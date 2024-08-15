@@ -127,7 +127,7 @@ export function promptForEmailOtp() {
 
     const disableAllInputs = (disabled: boolean) => {
         disableInputField(otpInputField, disabled);
-        if (resendButton.textContent === resendButtonText) {
+        if (currentResendInterval === null) {
             disableButton(resendButton, disabled);
         }
         disableButton(submitButton, disabled);
