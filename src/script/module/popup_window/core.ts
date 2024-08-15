@@ -21,7 +21,7 @@ export { styles };
 export function initializePopupWindow(contents: Node[], cleanupCallback: () => void, onDOMLoaded?: () => void) {
     addOffloadCallback(offloadPopupWindow);
 
-    currentCleanupCallback?.();
+    cleanupAll();
     currentCleanupCallback = cleanupCallback;
 
     const currentWid = {};
@@ -69,8 +69,11 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
             return;
         }
 
-        cleanupCallback();
         currentCleanupCallback = null;
+        cleanupCallback();
+        if (currentWid !== wid) {
+            return; // The window has been reopened in the cleanup callback.
+        }
 
         let waitingQueueCallback = waitingQueue.shift();
         while (waitingQueueCallback !== undefined) {
@@ -95,6 +98,15 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
     };
 }
 
+function cleanupAll() {
+    // This is to ensure that if another popup window is initialized in the cleanup callback, it won't stuck in an infinite loop, and all cleanup callbacks are called.
+    while (currentCleanupCallback !== null) {
+        const previousCleanupCallback = currentCleanupCallback;
+        currentCleanupCallback = null;
+        previousCleanupCallback();
+    }
+}
+
 export function onPopupWindowClosed(callback: () => void) {
     if (!windowOpen) {
         callback();
@@ -105,10 +117,7 @@ export function onPopupWindowClosed(callback: () => void) {
 }
 
 function offloadPopupWindow() {
-    if (currentCleanupCallback !== null) {
-        currentCleanupCallback();
-        currentCleanupCallback = null;
-    }
+    cleanupAll();
     wid = {};
     popupWindow = null;
     windowOpen = false;
