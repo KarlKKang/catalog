@@ -67,6 +67,7 @@ export function promptForEmailOtp() {
     const resendButton = createStyledButtonElement();
     const resendButtonText = '再送信する';
     let currentResendInterval: Interval | null = null;
+    let allButtonDisabled = false;
     const resetResendTimer = () => {
         setCursor(resendButton, CSS_CURSOR.NOT_ALLOWED);
         setWidth(resendButton, CSS_AUTO);
@@ -75,7 +76,9 @@ export function promptForEmailOtp() {
         const interval = addInterval(() => {
             count--;
             if (count <= 0) {
-                disableButton(resendButton, false);
+                if (!allButtonDisabled) {
+                    disableButton(resendButton, false);
+                }
                 setCursor(resendButton, null);
                 setWidth(resendButton, null);
                 replaceText(resendButton, resendButtonText);
@@ -126,6 +129,7 @@ export function promptForEmailOtp() {
     });
 
     const disableAllInputs = (disabled: boolean) => {
+        allButtonDisabled = disabled;
         disableInputField(otpInputField, disabled);
         if (currentResendInterval === null) {
             disableButton(resendButton, disabled);
