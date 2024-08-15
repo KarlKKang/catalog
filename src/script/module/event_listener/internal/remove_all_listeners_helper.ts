@@ -1,9 +1,8 @@
-import { elementMap } from './element_map';
 import type { EventMap } from './type';
 
 export function removeAllEventListenersHelper(elem: EventTarget, eventMap: EventMap) {
     for (const [event, listenerMap] of eventMap) {
-        for (const [callback, listenerConfig] of listenerMap) {
+        for (const listenerConfig of listenerMap.values()) {
             let eventListenerAndOptions = listenerConfig[0];
             if (eventListenerAndOptions !== null) {
                 elem.removeEventListener(event, eventListenerAndOptions[0], eventListenerAndOptions[1]);
@@ -14,12 +13,8 @@ export function removeAllEventListenersHelper(elem: EventTarget, eventMap: Event
                 elem.removeEventListener(event, eventListenerAndOptions[0], eventListenerAndOptions[1]);
                 listenerConfig[1] = null;
             }
-            listenerMap.delete(callback);
         }
-        eventMap.delete(event);
+        listenerMap.clear();
     }
-    elementMap.delete(elem);
-    if (DEVELOPMENT) {
-        console.log('All event listeners removed. Total elements listening: ' + elementMap.size + '.', elem);
-    }
+    eventMap.clear();
 }

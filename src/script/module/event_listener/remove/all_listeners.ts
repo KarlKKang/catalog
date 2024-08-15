@@ -10,4 +10,8 @@ export function removeAllEventListeners(elem: EventTarget) {
         return;
     }
     removeAllEventListenersHelper(elem, eventMap);
+    elementMap.delete(elem);
+    if (DEVELOPMENT) {
+        console.log('All event listeners removed. Total elements listening: ' + elementMap.size + '.', elem);
+    }
 }
