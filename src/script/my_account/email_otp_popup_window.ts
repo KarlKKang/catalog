@@ -85,9 +85,6 @@ export function promptForEmailOtp() {
                 replaceText(resendButton, resendButtonText + '（' + count + '秒）');
             }
         }, 1000);
-        if (currentResendInterval !== null) {
-            removeInterval(currentResendInterval);
-        }
         currentResendInterval = interval;
     };
     disableButton(resendButton, true);
