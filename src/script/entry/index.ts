@@ -35,6 +35,9 @@ import { BANGUMI_ROOT_URI, CONFIRM_NEW_EMAIL_URI, CONSOLE_URI, IMAGE_URI, INFO_U
 import { min } from '../module/math/min';
 import { max } from '../module/math/max';
 import { clearSessionStorage } from '../module/session_storage/clear';
+import { offloadXhr } from '../module/xhr/offload';
+import { offloadEventListeners } from '../module/event_listener/offload';
+import { offloadTimers } from '../module/timer/offload';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -160,6 +163,9 @@ function load(url: string, withoutHistory: boolean | null = false) {
 async function loadPage(url: string, withoutHistory: boolean | null, page: Page) {
     // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     offload();
+    offloadXhr();
+    offloadEventListeners();
+    offloadTimers();
     replaceChildren(body);
     setClass(body, '');
 

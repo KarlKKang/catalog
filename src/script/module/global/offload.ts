@@ -5,11 +5,8 @@ export function addOffloadCallback(callback: () => void) {
 }
 
 export function offload() {
-    const callbacksArray = [...offloadCallbacks];
-    offloadCallbacks.clear();
-    let callback = callbacksArray.pop();
-    while (callback !== undefined) {
+    for (const callback of offloadCallbacks) {
         callback();
-        callback = callbacksArray.pop();
     }
+    offloadCallbacks.clear();
 }

@@ -1,11 +1,8 @@
 import { isUseCapture } from '../internal/is_use_capture';
 import { elementMap } from '../internal/element_map';
 import type { CustomAddEventListenerOptions } from '../internal/type';
-import { removeAllEventListenersHelper } from '../internal/remove_all_listeners_helper';
-import { addOffloadCallback } from '../../global/offload';
 
 export function addEventListener(elem: EventTarget, event: string, callback: EventListener, options?: boolean | CustomAddEventListenerOptions) {
-    addOffloadCallback(offload);
     let eventMap = elementMap.get(elem);
     if (eventMap === undefined) {
         eventMap = new Map();
@@ -45,11 +42,5 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
     elem.addEventListener(event, _callback, options);
     if (DEVELOPMENT) {
         console.log(`Event '${event}' listener added. Total elements listening: ${elementMap.size}. Total events on this element: ${eventMap.size}. Total listeners on this event: ${listenerMap.size}.`, elem);
-    }
-}
-
-function offload() {
-    for (const [elem, eventMap] of elementMap) {
-        removeAllEventListenersHelper(elem, eventMap);
     }
 }
