@@ -1,5 +1,3 @@
 import { w } from '.';
 
-export function openWindow(url: string) {
-    w.open(url);
-}
+export const openWindow = w.open;
