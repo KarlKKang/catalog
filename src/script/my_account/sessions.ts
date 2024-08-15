@@ -21,6 +21,7 @@ import { disableAllInputs } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
+import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 
 export default function (sessions: Sessions) {
     const sessionsContainer = getSharedElement(SharedElement.sessionsContainer);
@@ -105,6 +106,7 @@ function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement
         'logout_session',
         (response: string) => {
             if (response === 'DONE') {
+                removeAllEventListeners(sessionLogoutButton);
                 remove(sessionLogoutButton);
                 sessionLogoutButtons.delete(sessionLogoutButton);
                 changeColor(sessionWarningElem, CSS_COLOR.GREEN);
