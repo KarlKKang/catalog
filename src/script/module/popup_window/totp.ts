@@ -66,17 +66,6 @@ function promptForTotp() {
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 
-    const hidePopupWindow = initializePopupWindow(
-        [promptText, warningText, totpInputContainer, buttonFlexbox],
-        () => {
-            removeAllEventListeners(submitButton);
-            removeAllEventListeners(cancelButton);
-            removeAllEventListeners(totpInput);
-            removeInterval(timer);
-        },
-        () => { totpInput.focus(); },
-    );
-
     const startTime = Date.now();
     let timerBlocked = false;
     const timer = addInterval(() => {
@@ -128,6 +117,17 @@ function promptForTotp() {
         returnPromiseReject(RejectReason.CLOSE);
         hidePopupWindow();
     });
+
+    const hidePopupWindow = initializePopupWindow(
+        [promptText, warningText, totpInputContainer, buttonFlexbox],
+        () => {
+            removeAllEventListeners(submitButton);
+            removeAllEventListeners(cancelButton);
+            removeAllEventListeners(totpInput);
+            removeInterval(timer);
+        },
+        () => { totpInput.focus(); },
+    );
 
     return returnPromise;
 }

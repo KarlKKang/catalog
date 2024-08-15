@@ -93,18 +93,6 @@ export function promptForLogin(message?: string) {
         openWindow(REQUEST_PASSWORD_RESET_URI);
     });
 
-    const hidePopupWindow = initializePopupWindow(
-        [promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox, forgetPasswordParagraph],
-        () => {
-            removeAllEventListeners(submitButton);
-            removeAllEventListeners(cancelButton);
-            removeAllEventListeners(forgetPasswordLink);
-            removeAllEventListeners(emailInput);
-            removeAllEventListeners(passwordInput);
-        },
-        () => { emailInput.focus(); },
-    );
-
     const disableAllInputs = (disabled: boolean) => {
         disableInputField(emailInputField, disabled);
         disableInputField(passwordInputField, disabled);
@@ -151,6 +139,18 @@ export function promptForLogin(message?: string) {
         returnPromiseReject(RejectReason.CLOSE);
         hidePopupWindow();
     });
+
+    const hidePopupWindow = initializePopupWindow(
+        [promptText, warningText, emailInputContainer, passwordInputContainer, buttonFlexbox, forgetPasswordParagraph],
+        () => {
+            removeAllEventListeners(submitButton);
+            removeAllEventListeners(cancelButton);
+            removeAllEventListeners(forgetPasswordLink);
+            removeAllEventListeners(emailInput);
+            removeAllEventListeners(passwordInput);
+        },
+        () => { emailInput.focus(); },
+    );
 
     return returnPromise;
 }

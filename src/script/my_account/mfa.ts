@@ -302,16 +302,6 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 
-    const hidePopupWindow = initializePopupWindow(
-        [promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox],
-        () => {
-            removeAllEventListeners(submitButton);
-            removeAllEventListeners(cancelButton);
-            removeAllEventListeners(totpInput);
-        },
-        () => { totpInput.focus(); },
-    );
-
     const disableAllPopUpWindowInputs = (disabled: boolean) => {
         disableInputField(totpInputField, disabled);
         disableButton(submitButton, disabled);
@@ -370,6 +360,16 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
         disableAllInputs(false);
         hidePopupWindow();
     });
+
+    const hidePopupWindow = initializePopupWindow(
+        [promptText, qrcode, uriElem, warningText, totpInputContainer, buttonFlexbox],
+        () => {
+            removeAllEventListeners(submitButton);
+            removeAllEventListeners(cancelButton);
+            removeAllEventListeners(totpInput);
+        },
+        () => { totpInput.focus(); },
+    );
 }
 
 async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo, completedCallback: () => void) {
@@ -402,6 +402,11 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo, completedCallba
         }
     }, 1000);
 
+    addEventListener(closeButton, 'click', () => {
+        hidePopupWindow();
+        completedCallback();
+    });
+
     const hidePopupWindow = initializePopupWindow(
         [promptText, recoveryCodeContainer, closeButton],
         () => {
@@ -412,9 +417,4 @@ async function showRecoveryCode(recoveryCodes: RecoveryCodeInfo, completedCallba
             }
         },
     );
-
-    addEventListener(closeButton, 'click', () => {
-        hidePopupWindow();
-        completedCallback();
-    });
 }

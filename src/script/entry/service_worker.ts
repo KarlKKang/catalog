@@ -39,13 +39,6 @@ export default async function () { // This function should be called after setti
         appendChild(buttonFlexbox, cancelButton);
 
         onPopupWindowClosed(() => {
-            const hidePopupWindow = initializePopupWindow(
-                [titleText, promptText, buttonFlexbox],
-                () => {
-                    removeAllEventListeners(updateButton);
-                    removeAllEventListeners(cancelButton);
-                },
-            );
             const disableAllInputs = (disabled: boolean) => {
                 disableButton(updateButton, disabled);
                 disableButton(cancelButton, disabled);
@@ -58,6 +51,13 @@ export default async function () { // This function should be called after setti
                 swUpdateLastPromptTime = getEpochMs();
                 hidePopupWindow();
             });
+            const hidePopupWindow = initializePopupWindow(
+                [titleText, promptText, buttonFlexbox],
+                () => {
+                    removeAllEventListeners(updateButton);
+                    removeAllEventListeners(cancelButton);
+                },
+            );
         });
     };
 

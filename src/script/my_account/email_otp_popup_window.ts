@@ -101,18 +101,6 @@ export function promptForEmailOtp() {
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 
-    const hidePopupWindow = initializePopupWindow(
-        [promptText, warningText, inputFlexbox, buttonFlexbox],
-        () => {
-            removeAllEventListeners(submitButton);
-            removeAllEventListeners(cancelButton);
-            removeAllEventListeners(otpInput);
-            removeAllEventListeners(resendButton);
-            currentResendInterval !== null && removeInterval(currentResendInterval);
-        },
-        () => { otpInput.focus(); },
-    );
-
     addEventListener(resendButton, 'click', () => {
         disableButton(resendButton, true);
         returnPromiseResolve({
@@ -171,6 +159,18 @@ export function promptForEmailOtp() {
         returnPromiseReject(RejectReason.CLOSE);
         hidePopupWindow();
     });
+
+    const hidePopupWindow = initializePopupWindow(
+        [promptText, warningText, inputFlexbox, buttonFlexbox],
+        () => {
+            removeAllEventListeners(submitButton);
+            removeAllEventListeners(cancelButton);
+            removeAllEventListeners(otpInput);
+            removeAllEventListeners(resendButton);
+            currentResendInterval !== null && removeInterval(currentResendInterval);
+        },
+        () => { otpInput.focus(); },
+    );
 
     return returnPromise;
 }
