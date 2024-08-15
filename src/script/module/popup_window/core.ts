@@ -12,7 +12,7 @@ import { addOffloadCallback } from '../global/offload';
 
 let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
 let wid: any;
-let windowOpen = false;
+let windowBusy = false;
 const waitingQueue: (() => void)[] = [];
 let currentCleanupCallback: (() => void) | null = null;
 
@@ -26,7 +26,7 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
 
     const currentWid = {};
     wid = currentWid;
-    windowOpen = true;
+    windowBusy = true;
 
     const showContents = (container: HTMLDivElement, contentContainer: HTMLDivElement) => {
         w.requestAnimationFrame(() => {
@@ -83,7 +83,7 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
             }
             waitingQueueCallback = waitingQueue.shift();
         }
-        windowOpen = false;
+        windowBusy = false;
 
         const hideWid = {}; // Set a new ID to prevent the window from being shown by `requestAnimationFrame` in the event queue.
         wid = hideWid;
@@ -108,7 +108,7 @@ function cleanupAll() {
 }
 
 export function onPopupWindowAvailable(callback: () => void) {
-    if (!windowOpen) {
+    if (!windowBusy) {
         callback();
         return;
     }
@@ -120,7 +120,7 @@ function offloadPopupWindow() {
     cleanupAll();
     wid = {};
     popupWindow = null;
-    windowOpen = false;
+    windowBusy = false;
 }
 
 function clearWaitingQueue() {
