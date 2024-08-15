@@ -1,7 +1,7 @@
 import { createElement } from '../internal/create_element';
 
 export function createTextAreaElement(row?: number, column?: number) {
-    const elem = createElement('textarea') as HTMLTextAreaElement;
+    const elem = createElement('textarea');
     if (row !== undefined) {
         elem.rows = row;
     }

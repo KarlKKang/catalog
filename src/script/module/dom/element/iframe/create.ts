@@ -1,5 +1,5 @@
 import { createElement } from '../internal/create_element';
 
 export function createIframeElement() {
-    return createElement('iframe') as HTMLIFrameElement;
+    return createElement('iframe');
 }
