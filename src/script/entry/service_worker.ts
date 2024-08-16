@@ -29,7 +29,8 @@ export default async function () { // This function should be called after setti
         serviceWorker = wb;
 
         // These two event should never be removed.
-        wb.addEventListener('waiting', () => {
+        const wbAddEventListener = wb.addEventListener.bind(wb);
+        wbAddEventListener('waiting', () => {
             if (DEVELOPMENT) {
                 console.log('Service worker waiting.');
             }
@@ -38,7 +39,7 @@ export default async function () { // This function should be called after setti
                 showSkipWaitingPrompt(wb);
             }
         });
-        wb.addEventListener('controlling', () => {
+        wbAddEventListener('controlling', () => {
             if (!serviceWorkerUpToDate) {
                 if (DEVELOPMENT) {
                     console.log('Service worker updated.');
@@ -46,7 +47,7 @@ export default async function () { // This function should be called after setti
                 windowLocation.reload();
             }
         });
-        wb.addEventListener('redundant', () => {
+        wbAddEventListener('redundant', () => {
             if (serviceWorkerUpToDate) {
                 if (DEVELOPMENT) {
                     console.log('New service worker failed to install, retrying.');
