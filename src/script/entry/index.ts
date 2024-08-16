@@ -40,6 +40,10 @@ import { max, min } from '../module/math';
 import { offloadAnimationFrames } from '../module/animation_frame/offload';
 import { addAnimationFrame } from '../module/animation_frame/add';
 import { addTimeoutNative } from '../module/timer/add/native/timeout';
+import { Timeout } from '../module/timer/type';
+import { AnimationFrame } from '../module/animation_frame/type';
+import { removeTimeout } from '../module/timer/remove/timeout';
+import { removeAnimationFrame } from '../module/animation_frame/remove';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -186,19 +190,27 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     const newPgid = {};
     setPgid(newPgid);
 
+    let showLoadingBarAnimationTimeout: Timeout | null = null;
+    let showLoadingBarAnimationFrame: AnimationFrame | null = null;
+    const stopShowLoadingBarAnimation = () => {
+        if (showLoadingBarAnimationTimeout !== null) {
+            removeTimeout(showLoadingBarAnimationTimeout);
+            showLoadingBarAnimationTimeout = null;
+        }
+        if (showLoadingBarAnimationFrame !== null) {
+            removeAnimationFrame(showLoadingBarAnimationFrame);
+            showLoadingBarAnimationFrame = null;
+        }
+    };
     let loadingBarWidth = 33;
     if (loadingBarShown) {
         setWidth(loadingBar, loadingBarWidth, CSS_UNIT.PERCENT);
     } else {
-        addTimeout(() => {
-            if (loadingBarWidth === 100) { // This check isn't necessarily needed since `requestLoadingBarAnimationFrame` will check it anyway. It's here just to avoid unnecessary `requestAnimationFrame` calls.
-                return;
-            }
+        showLoadingBarAnimationTimeout = addTimeout(() => {
+            showLoadingBarAnimationTimeout = null;
             const requestLoadingBarAnimationFrame = (callback: () => void) => {
-                addAnimationFrame(() => {
-                    if (loadingBarWidth === 100) {
-                        return;
-                    }
+                showLoadingBarAnimationFrame = addAnimationFrame(() => {
+                    showLoadingBarAnimationFrame = null;
                     callback();
                 });
             };
@@ -261,6 +273,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
                 }
             }
 
+            stopShowLoadingBarAnimation();
             loadingBarWidth = 100;
             if (loadingBarShown) {
                 setWidth(loadingBar, 100, CSS_UNIT.PERCENT);
