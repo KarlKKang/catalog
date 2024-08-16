@@ -26,7 +26,7 @@ import * as icons from './icons';
 import { padNumberLeft } from '../string/pad_number_left';
 import { toTimestampString } from '../string/timestamp';
 import { TimeInfoKey, getLocalTime } from '../time/local';
-import { type Interval } from '../timer/type';
+import type { Timeout, Interval } from '../timer/type';
 import { removeInterval } from '../timer/remove/interval';
 import { addInterval } from '../timer/add/interval';
 import { addTimeout } from '../timer/add/timeout';
@@ -45,6 +45,7 @@ import { addMouseTouchEventListener } from '../event_listener/add/mouse_touch_ev
 import { EN_LANG_CODE } from '../lang/en';
 import { createNativeButtonElement } from '../dom/element/button/native/create';
 import { max, min, round } from '../math';
+import { removeTimeout } from '../timer/remove/timeout';
 
 declare global {
     interface HTMLVideoElement {
@@ -93,7 +94,8 @@ export class Player {
     private readonly [PlayerKey.PIP_BUTTON]: HTMLButtonElement | undefined;
     private readonly [PlayerKey.FULLSCREEN_BUTTON]: HTMLButtonElement;
 
-    protected [PlayerKey.TIMER]: Interval | undefined;
+    private [PlayerKey.TIMER]: Interval | undefined;
+    private [PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUTS] = new Set<Timeout>();
     private [PlayerKey.ON_FULLSCREEN_CHANGE]: undefined | (() => void) = undefined;
     private [PlayerKey.INACTIVE_TIMEOUT] = 12; // 3000 / 250
     private [PlayerKey.DRAGGING_PREVIEW_TIMEOUT] = 4; // 1000 / 250
@@ -383,12 +385,14 @@ export class Player {
 
     public [PlayerKey.DESTROY](this: Player) {
         this[PlayerKey.TIMER] && removeInterval(this[PlayerKey.TIMER]);
-        this[PlayerKey.DETACH]();
         removeAllEventListeners(this[PlayerKey.MEDIA]);
         removeAllEventListeners(this[PlayerKey.CONTROLS]);
         removeAllEventListeners(this[PlayerKey.PLAY_BUTTON]);
         removeAllEventListeners(this[PlayerKey.PROGRESS_CONTROL]);
         if (this[PlayerKey.IS_VIDEO]) {
+            for (const timeout of this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUTS]) {
+                removeTimeout(timeout);
+            }
             removeAllEventListeners(this[PlayerKey.CONTROL_BAR]);
             removeAllEventListeners(this[PlayerKey.BIG_PLAY_BUTTON]);
             this[PlayerKey.PIP_BUTTON] && removeAllEventListeners(this[PlayerKey.PIP_BUTTON]);
@@ -401,6 +405,7 @@ export class Player {
         if (DEVELOPMENT && this[PlayerKey.ON_SCREEN_CONSOLE] !== undefined) {
             remove(this[PlayerKey.ON_SCREEN_CONSOLE]);
         }
+        this[PlayerKey.DETACH]();
     }
 
     protected [PlayerKey.DETACH](this: Player) {
@@ -604,7 +609,11 @@ export class Player {
         };
         addEventListener(this[PlayerKey.MEDIA], 'progress', () => {
             updateLoadProgress();
-            addTimeout(updateLoadProgress, 1000);
+            const timeout = addTimeout(() => {
+                this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUTS].delete(timeout);
+                updateLoadProgress();
+            }, 1000);
+            this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUTS].add(timeout);
         });
 
         addEventListener(this[PlayerKey.MEDIA], 'waiting', () => {
