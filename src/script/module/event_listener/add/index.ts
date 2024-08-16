@@ -31,7 +31,7 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
         return;
     }
     const _listenerConfig = listenerConfig;
-    const _callback = (...args: [evt: Event]) => {
+    const _callback = (...args: Parameters<EventListener>) => {
         const eventListenerAndOptions = _listenerConfig[listenerConfigIdx];
         if (eventListenerAndOptions === null || eventListenerAndOptions[0] !== _callback) {
             return;
