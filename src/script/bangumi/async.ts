@@ -42,6 +42,8 @@ import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { addAnimationFrame } from '../module/animation_frame/add';
 import type { AnimationFrame } from '../module/animation_frame/type';
 import type { Timeout } from '../module/timer/type';
+import { removeAnimationFrame } from '../module/animation_frame/remove';
+import { removeTimeout } from '../module/timer/remove/timeout';
 
 let seriesID: string;
 let epIndex: number;
@@ -186,42 +188,50 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
 
     let currentToggleTimeout: Timeout | null = null;
     let currentToggleAnimationFrame: AnimationFrame | null = null;
+    const cleanupToggleTimeout = () => {
+        if (currentToggleTimeout !== null) {
+            removeTimeout(currentToggleTimeout);
+            currentToggleTimeout = null;
+        }
+    };
+    const cleanupToggleAnimationFrame = () => {
+        if (currentToggleAnimationFrame !== null) {
+            removeAnimationFrame(currentToggleAnimationFrame);
+            currentToggleAnimationFrame = null;
+        }
+    };
     let isExpanded = false;
-
     const toggleEPSelector = () => {
         if (isExpanded) {
-            currentToggleTimeout = null;
-            let animationFrame = addAnimationFrame(() => {
-                if (currentToggleAnimationFrame === animationFrame) {
-                    setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX);
-                    animationFrame = addAnimationFrame(() => {
-                        if (currentToggleAnimationFrame === animationFrame) {
-                            isExpanded = false;
-                            replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
-                            setMaxHeight(epButtonWrapper, 30, CSS_UNIT.VH);
-                            setPaddingBottom(epButtonWrapper, null);
-                        }
-                    });
-                    currentToggleAnimationFrame = animationFrame;
-                }
+            cleanupToggleTimeout();
+            currentToggleAnimationFrame = addAnimationFrame(() => {
+                setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX);
+                currentToggleAnimationFrame = addAnimationFrame(() => {
+                    currentToggleAnimationFrame = null;
+                    isExpanded = false;
+                    replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
+                    setMaxHeight(epButtonWrapper, 30, CSS_UNIT.VH);
+                    setPaddingBottom(epButtonWrapper, null);
+                });
             });
-            currentToggleAnimationFrame = animationFrame;
         } else {
-            currentToggleAnimationFrame = null;
+            cleanupToggleAnimationFrame();
             isExpanded = true;
             replaceChildren(showMoreButton, ...showMoreButtonExpandedText);
             setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX);
             setPaddingBottom(epButtonWrapper, showMoreButton.scrollHeight, CSS_UNIT.PX);
-            const timeout = addTimeout(() => {
-                if (currentToggleTimeout === timeout) {
-                    setMaxHeight(epButtonWrapper, null);
-                }
+            currentToggleTimeout = addTimeout(() => {
+                currentToggleTimeout = null;
+                setMaxHeight(epButtonWrapper, null);
             }, 400);
-            currentToggleTimeout = timeout;
         }
     };
     addEventListener(showMoreButton, 'click', toggleEPSelector);
 
+    const cleanupToggleAnimation = () => {
+        cleanupToggleTimeout();
+        cleanupToggleAnimationFrame();
+    };
     let currentStylingTimeout: Timeout | null = null;
     let currentStylingAnimationFrame: AnimationFrame | null = null;
     let isOversized = false;
@@ -240,45 +250,42 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
                 }
                 return;
             }
-            currentStylingTimeout = null;
-            currentToggleAnimationFrame = null;
-            currentToggleTimeout = null;
+            if (currentStylingTimeout !== null) {
+                removeTimeout(currentStylingTimeout);
+                currentStylingTimeout = null;
+            }
+            cleanupToggleAnimation();
             isOversized = true;
             isExpanded = false;
-            let animationFrame = addAnimationFrame(() => {
-                if (currentStylingAnimationFrame === animationFrame) {
-                    setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX); // Use `getContentBoxHeight` to get the most recent height.
-                    animationFrame = addAnimationFrame(() => {
-                        if (currentStylingAnimationFrame === animationFrame) {
-                            replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
-                            setMaxHeight(epButtonWrapper, 30, CSS_UNIT.VH);
-                            setPaddingBottom(epButtonWrapper, null);
-                            setVisibility(showMoreButton, true);
-                            setOpacity(showMoreButton, 1);
-                        }
-                    });
-                    currentStylingAnimationFrame = animationFrame;
-                }
+            currentStylingAnimationFrame = addAnimationFrame(() => {
+                setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX); // Use `getContentBoxHeight` to get the most recent height.
+                currentStylingAnimationFrame = addAnimationFrame(() => {
+                    currentStylingAnimationFrame = null;
+                    replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
+                    setMaxHeight(epButtonWrapper, 30, CSS_UNIT.VH);
+                    setPaddingBottom(epButtonWrapper, null);
+                    setVisibility(showMoreButton, true);
+                    setOpacity(showMoreButton, 1);
+                });
             });
-            currentStylingAnimationFrame = animationFrame;
         } else {
             if (!isOversized) {
                 return;
             }
-            currentStylingAnimationFrame = null;
-            currentToggleAnimationFrame = null;
-            currentToggleTimeout = null;
+            if (currentStylingAnimationFrame !== null) {
+                removeAnimationFrame(currentStylingAnimationFrame);
+                currentStylingAnimationFrame = null;
+            }
+            cleanupToggleAnimation();
             isOversized = false;
             setMaxHeight(epButtonWrapper, height, CSS_UNIT.PX);
             setOpacity(showMoreButton, 0);
             setPaddingBottom(epButtonWrapper, null);
-            const timeout = addTimeout(() => {
-                if (currentStylingTimeout === timeout) {
-                    setMaxHeight(epButtonWrapper, null);
-                    setVisibility(showMoreButton, false);
-                }
+            currentStylingTimeout = addTimeout(() => {
+                currentStylingTimeout = null;
+                setMaxHeight(epButtonWrapper, null);
+                setVisibility(showMoreButton, false);
             }, 400);
-            currentStylingTimeout = timeout;
         }
     };
 
