@@ -4,10 +4,10 @@ import { allAnimationFrames } from './internal/all_animation_frames';
 export function addAnimationFrame(callback: FrameRequestCallback) {
     const animationFrame = w.requestAnimationFrame((...args: Parameters<FrameRequestCallback>) => {
         if (allAnimationFrames.delete(animationFrame)) {
-            callback(...args);
             if (DEVELOPMENT) {
                 console.log(`Animation frame triggered. Total animation frames: ${allAnimationFrames.size}.`, animationFrame);
             }
+            callback(...args);
         }
     });
     allAnimationFrames.add(animationFrame);

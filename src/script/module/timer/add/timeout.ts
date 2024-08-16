@@ -4,10 +4,10 @@ import { addTimeoutNative } from './native/timeout';
 export function addTimeout(callback: () => void, ms?: number) {
     const timerID = addTimeoutNative(() => {
         if (timeoutTimers.delete(timerID)) {
-            callback();
             if (DEVELOPMENT) {
                 console.log(`Timeout triggered. Total timeouts: ${timeoutTimers.size}.`, timerID);
             }
+            callback();
         }
     }, ms);
     timeoutTimers.add(timerID);
