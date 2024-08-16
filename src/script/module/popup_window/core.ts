@@ -15,8 +15,7 @@ import { removeAnimationFrame } from '../animation_frame/remove';
 import { removeTimeout } from '../timer/remove/timeout';
 
 let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
-let wid: any;
-let windowBusy = false;
+let wid: object | null = null;
 const waitingQueue: (() => void)[] = [];
 let currentCleanupCallback: (() => void) | null = null;
 let currentAnimationFrame: AnimationFrame | null = null;
@@ -39,7 +38,6 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
 
     const currentWid = {};
     wid = currentWid;
-    windowBusy = true;
 
     const showContents = (container: HTMLDivElement, contentContainer: HTMLDivElement) => {
         currentAnimationFrame = addAnimationFrame(() => {
@@ -92,7 +90,7 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
             }
             waitingQueueCallback = waitingQueue.shift();
         }
-        windowBusy = false;
+        wid = null;
 
         setOpacity(container, 0);
         currentTimeout = addTimeout(() => {
@@ -120,7 +118,7 @@ function cleanupAll() {
 }
 
 export function onPopupWindowAvailable(callback: () => void) {
-    if (!windowBusy) {
+    if (wid === null) {
         callback();
         return;
     }
@@ -130,9 +128,8 @@ export function onPopupWindowAvailable(callback: () => void) {
 
 function offloadPopupWindow() {
     cleanupAll();
-    wid = {};
+    wid = null;
     popupWindow = null;
-    windowBusy = false;
 }
 
 function clearWaitingQueue() {
