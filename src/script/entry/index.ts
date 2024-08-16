@@ -309,6 +309,7 @@ changeURL(fullPath, true);
 if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
+const windowAddEventListener = w.addEventListener;
 const onload = () => {
     w.removeEventListener('load', onload);
     const nativeBody = d.body;
@@ -317,7 +318,7 @@ const onload = () => {
     setRedirect(load);
     load(fullPath, null);
     importFont(0);
-    w.addEventListener('popstate', (state) => {
+    windowAddEventListener('popstate', (state) => {
         if (state.state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
             if (customPopStateHandler === null) {
                 load(getFullPath(), null);
@@ -337,4 +338,4 @@ const onload = () => {
         }
     });
 };
-w.addEventListener('load', onload);
+windowAddEventListener('load', onload);
