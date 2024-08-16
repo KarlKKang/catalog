@@ -32,12 +32,11 @@ import { CSS_UNIT } from '../module/style/value/unit';
 import { consolePageTitle, emailChangePageTitle, infoPageTitle, loginPageTitle, myAccountPageTitle, newsPageTitle, notFoundPageTitle, passwordResetPageTitle, cnRoutesPageTitle, registerPageTitle } from '../module/text/page_title';
 import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, CONFIRM_NEW_EMAIL_URI, CONSOLE_URI, IMAGE_URI, INFO_URI, LOGIN_URI, MESSAGE_URI, MY_ACCOUNT_URI, NEWS_ROOT_URI, NEW_EMAIL_URI, PASSWORD_RESET_URI, CN_ROUTES_URI, REGISTER_URI, REQUEST_PASSWORD_RESET_URI, SPECIAL_REGISTER_URI, TOP_URI } from '../module/env/uri';
-import { min } from '../module/math/min';
-import { max } from '../module/math/max';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { offloadXhr } from '../module/xhr/offload';
 import { offloadEventListeners } from '../module/event_listener/offload';
 import { offloadTimers } from '../module/timer/offload';
+import { max, min } from '../module/math';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {

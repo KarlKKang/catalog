@@ -36,10 +36,10 @@ import { EN_LANG_CODE } from '../module/lang/en';
 import { ZH_HANT_LANG_CODE } from '../module/lang/zh_hant';
 import { ZH_HANS_LANG_CODE } from '../module/lang/zh_hans';
 import { disableButton } from '../module/dom/element/button/disable';
-import { round } from '../module/math/round';
 import { getHighResTimestamp } from '../module/time/hi_res';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { addOffloadCallback } from '../module/global/offload';
+import { round } from '../module/math';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {

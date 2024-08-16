@@ -43,10 +43,8 @@ import { onScreenConsole as onScreenConsoleClass } from '../../../css/on_screen_
 import { PlayerKey } from './player_key';
 import { addMouseTouchEventListener } from '../event_listener/add/mouse_touch_event';
 import { EN_LANG_CODE } from '../lang/en';
-import { min } from '../math/min';
-import { max } from '../math/max';
-import { round } from '../math/round';
 import { createNativeButtonElement } from '../dom/element/button/native/create';
+import { max, min, round } from '../math';
 
 declare global {
     interface HTMLVideoElement {

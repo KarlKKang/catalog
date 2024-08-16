@@ -11,8 +11,8 @@ import { addTimeout } from './timer/add/timeout';
 import * as styles from '../../css/lazyload.module.scss';
 import { imageLoader, offload as offloadImageLoader } from './image/loader';
 import { getHighResTimestamp } from './time/hi_res';
-import { max } from './math/max';
 import { abortXhr } from './xhr/abort';
+import { max } from './math';
 
 const observer = new IntersectionObserver(observerCallback, {
     root: null,

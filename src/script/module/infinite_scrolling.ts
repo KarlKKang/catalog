@@ -4,7 +4,7 @@ import { w } from './dom/window';
 import { addClass } from './dom/class/add';
 import { addEventListener } from './event_listener/add';
 import { positionDetector as positionDetectorClass } from '../../css/position_detector.module.scss';
-import { max } from './math/max';
+import { max } from './math';
 
 export const enum InfiniteScrollingProp {
     UPDATE_POSITION,

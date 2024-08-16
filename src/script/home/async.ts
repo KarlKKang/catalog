@@ -49,7 +49,7 @@ import { getServerOrigin } from '../module/env/location/get/origin/server';
 import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/CurrentRouteInfo';
-import { min } from '../module/math/min';
+import { min } from '../module/math';
 
 let pivot: Pivot;
 let keywords: string;

@@ -1,11 +1,11 @@
 import { sendServerRequest, ServerRequestOptionKey, ServerRequestKey } from './request';
 import { type HighResTimestamp, getHighResTimestamp } from '../time/hi_res';
-import { max } from '../math/max';
 import { showMessage } from '../message';
 import { removeTimeout } from '../timer/remove/timeout';
 import { addTimeout } from '../timer/add/timeout';
 import { connectionError } from './internal/message/connection_error';
 import { invalidResponse } from '../message/param/invalid_response';
+import { max } from '../math';
 
 export function setUpSessionAuthentication(credential: string, startTime: HighResTimestamp, logoutParam?: string) {
     addTimeout(() => {
