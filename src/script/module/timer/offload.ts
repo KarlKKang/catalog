@@ -4,6 +4,9 @@ import { timeoutTimers } from './internal/timeout_timers';
 export function offloadTimers() {
     offloadTimerSet(timeoutTimers, clearTimeout);
     offloadTimerSet(intervalTimers, clearInterval);
+    if (DEVELOPMENT) {
+        console.log('All timers offloaded.');
+    }
 }
 
 function offloadTimerSet<T>(timerSet: Set<T>, offloadCallback: (timer: T) => void) {

@@ -6,4 +6,7 @@ export function offloadAnimationFrames() {
         w.cancelAnimationFrame(animationFrame);
     }
     allAnimationFrames.clear();
+    if (DEVELOPMENT) {
+        console.log('All animation frames offloaded.');
+    }
 }
