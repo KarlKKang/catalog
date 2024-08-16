@@ -50,10 +50,13 @@ import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/CurrentRouteInfo';
 import { min } from '../module/math';
+import type { Timeout } from '../module/timer/type';
+import { removeTimeout } from '../module/timer/remove/timeout';
 
 let pivot: Pivot;
 let keywords: string;
 let currentRequest: ServerRequest | null = null;
+let currentSearchAnimationTimeout: Timeout | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
 
@@ -240,23 +243,25 @@ function search(
 
     setOpacity(containerElem, 0);
     setOpacity(loadingTextContainer, 0);
-    const animationTimeout = new Promise<void>((resolve) => {
-        addTimeout(() => {
-            for (const eventTarget of eventTargetsTracker) {
-                removeAllEventListeners(eventTarget);
-            }
-            eventTargetsTracker.clear();
-            offloadLazyload();
-            replaceChildren(containerElem);
-            resolve();
-        }, 400);
-    });
+    let callback: (() => void) | null = null;
+    if (currentSearchAnimationTimeout !== null) {
+        removeTimeout(currentSearchAnimationTimeout);
+    }
+    currentSearchAnimationTimeout = addTimeout(() => {
+        currentSearchAnimationTimeout = null;
+        for (const eventTarget of eventTargetsTracker) {
+            removeAllEventListeners(eventTarget);
+        }
+        eventTargetsTracker.clear();
+        offloadLazyload();
+        replaceChildren(containerElem);
+        callback?.();
+    }, 400);
 
-    getSeries((seriesInfo, request) => {
-        animationTimeout.then(() => {
-            if (currentRequest !== request) {
-                return;
-            }
+    getSeries((seriesInfo) => {
+        // This function won't be called if another search is triggered before the current one finishes,
+        // because the current request will be aborted and timeout will be removed.
+        callback = () => {
             showSeries(
                 seriesInfo,
                 containerElem,
@@ -266,7 +271,10 @@ function search(
             setOpacity(containerElem, 1);
             setOpacity(loadingTextContainer, 1);
             disableSearchBarInput(false);
-        });
+        };
+        if (currentSearchAnimationTimeout === null) {
+            callback();
+        }
     });
 }
 
@@ -274,22 +282,22 @@ function goToSeries(id: string) {
     redirect(BANGUMI_ROOT_URI + id);
 }
 
-function getSeries(callback: (seriesInfo: SeriesInfo, request: ServerRequest) => void) {
+function getSeries(callback: (seriesInfo: SeriesInfo) => void) {
     if (pivot === 'EOF') {
         return;
     }
     currentRequest?.[ServerRequestKey.ABORT]();
     const keywordsQuery = buildHttpForm({ keywords: keywords });
-    const request = sendServerRequest('get_series', {
+    currentRequest = sendServerRequest('get_series', {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
-            callback(parseResponse(response, parseSeriesInfo), request);
+            currentRequest = null;
+            callback(parseResponse(response, parseSeriesInfo));
         },
         [ServerRequestOptionKey.CONTENT]: joinHttpForms(keywordsQuery, buildHttpForm({ pivot: pivot })),
         [ServerRequestOptionKey.LOGOUT_PARAM]: keywordsQuery,
         [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
         [ServerRequestOptionKey.METHOD]: 'GET',
     });
-    currentRequest = request;
 }
 
 function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
@@ -366,4 +374,5 @@ function offload() {
     offloadLazyload();
     eventTargetsTracker.clear();
     currentRequest = null;
+    currentSearchAnimationTimeout = null;
 }
