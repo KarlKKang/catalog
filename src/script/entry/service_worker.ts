@@ -10,8 +10,6 @@ import { Workbox } from 'workbox-window';
 import { initializePopupWindow, onPopupWindowAvailable, styles } from '../module/popup_window/core';
 import { disableButton } from '../module/dom/element/button/disable';
 import { addOffloadCallback } from '../module/global/offload';
-import { pgid } from '../module/global/pgid';
-import { addTimeout } from '../module/timer/add/timeout';
 import { getEpochMs } from '../module/time/epoch_ms';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { min } from '../module/math';
@@ -20,72 +18,27 @@ let swUpdateLastPromptTime = 0;
 let serviceWorker: Workbox | null = null;
 let serviceWorkerUpToDate = true;
 let registering = false;
+let promptAllowed = false;
 
 export default async function () { // This function should be called after setting the `pgid`.
     addOffloadCallback(offload);
-
-    const showSkipWaitingPrompt = (wb: Workbox) => {
-        const titleText = createParagraphElement('アップデートが利用可能です');
-        addClass(titleText, styles.title);
-
-        const domain = getHostname();
-        const promptText = createParagraphElement('今すぐインストールすると、ページが再読み込みされます。' + domain + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + domain + 'のすべてのタブを閉じてから再読み込みしてください。');
-
-        const updateButton = createStyledButtonElement('インストール');
-        const cancelButton = createStyledButtonElement('後で');
-        const buttonFlexbox = createDivElement();
-        addClass(buttonFlexbox, styles.inputFlexbox);
-        appendChild(buttonFlexbox, updateButton);
-        appendChild(buttonFlexbox, cancelButton);
-
-        onPopupWindowAvailable(() => {
-            const disableAllInputs = (disabled: boolean) => {
-                disableButton(updateButton, disabled);
-                disableButton(cancelButton, disabled);
-            };
-            addEventListener(updateButton, 'click', () => {
-                disableAllInputs(true);
-                wb.messageSkipWaiting();
-            });
-            addEventListener(cancelButton, 'click', () => {
-                swUpdateLastPromptTime = getEpochMs();
-                hidePopupWindow();
-            });
-            const hidePopupWindow = initializePopupWindow(
-                [titleText, promptText, buttonFlexbox],
-                () => {
-                    removeAllEventListeners(updateButton);
-                    removeAllEventListeners(cancelButton);
-                },
-            );
-        });
-    };
-
-    const attachEvents = (wb: Workbox) => {
-        addEventListener(wb as unknown as EventTarget, 'waiting', () => {
-            showSkipWaitingPrompt(wb);
-        });
-        addEventListener(wb as unknown as EventTarget, 'redundant', () => {
-            if (serviceWorkerUpToDate && !registering) { // Checking for `registering` is necessary to prevent double retry when there's no service worker installed.
-                if (DEVELOPMENT) {
-                    console.log('New service worker failed to install, retrying.');
-                }
-                registerOrUpdate(wb);
-            }
-        });
-    };
+    promptAllowed = true;
 
     if (serviceWorker === null) {
-        serviceWorker = new Workbox('/sw.js');
+        const wb = new Workbox('/sw.js');
+        serviceWorker = wb;
 
         // These two event should never be removed.
-        serviceWorker.addEventListener('waiting', () => {
+        wb.addEventListener('waiting', () => {
             if (DEVELOPMENT) {
                 console.log('Service worker waiting.');
             }
             serviceWorkerUpToDate = false;
+            if (promptAllowed) {
+                showSkipWaitingPrompt(wb);
+            }
         });
-        serviceWorker.addEventListener('controlling', () => {
+        wb.addEventListener('controlling', () => {
             if (!serviceWorkerUpToDate) {
                 if (DEVELOPMENT) {
                     console.log('Service worker updated.');
@@ -93,13 +46,19 @@ export default async function () { // This function should be called after setti
                 windowLocation.reload();
             }
         });
+        wb.addEventListener('redundant', () => {
+            if (serviceWorkerUpToDate) {
+                if (DEVELOPMENT) {
+                    console.log('New service worker failed to install, retrying.');
+                }
+                registerOrUpdate(wb);
+            }
+        });
 
-        attachEvents(serviceWorker);
         registerOrUpdate(serviceWorker);
     } else {
         if (swUpdateLastPromptTime < getEpochMs() - 24 * 60 * 60 * 1000) {
             if (serviceWorkerUpToDate) {
-                attachEvents(serviceWorker);
                 registerOrUpdate(serviceWorker);
             } else {
                 showSkipWaitingPrompt(serviceWorker);
@@ -109,13 +68,12 @@ export default async function () { // This function should be called after setti
 }
 
 async function registerOrUpdate(wb: Workbox, retryTimeout = 500) {
+    if (registering) {
+        return;
+    }
     registering = true;
-    const currentPgid = pgid;
     try {
         await wb.register();
-        if (currentPgid !== pgid) {
-            return;
-        }
         if (DEVELOPMENT) {
             console.log('Service worker registered, triggering update.');
         }
@@ -124,13 +82,11 @@ async function registerOrUpdate(wb: Workbox, retryTimeout = 500) {
             console.log('Service worker update triggered.');
         }
     } catch (e) {
-        if (currentPgid !== pgid) {
-            return;
-        }
         if (DEVELOPMENT) {
             console.log('Service worker register or update failed, retrying in ' + retryTimeout + 'ms.');
         }
-        addTimeout(() => {
+        setTimeout(() => {
+            registering = false;
             registerOrUpdate(wb, min(retryTimeout * 2, 5000));
         }, retryTimeout);
         throw e;
@@ -138,6 +94,43 @@ async function registerOrUpdate(wb: Workbox, retryTimeout = 500) {
     registering = false;
 }
 
+function showSkipWaitingPrompt(wb: Workbox) {
+    const titleText = createParagraphElement('アップデートが利用可能です');
+    addClass(titleText, styles.title);
+
+    const domain = getHostname();
+    const promptText = createParagraphElement('今すぐインストールすると、ページが再読み込みされます。' + domain + 'の複数のタブを開いている場合、他のタブで問題が発生する可能性があります。後で手動でインストールすることもできます。その場合は、' + domain + 'のすべてのタブを閉じてから再読み込みしてください。');
+
+    const updateButton = createStyledButtonElement('インストール');
+    const cancelButton = createStyledButtonElement('後で');
+    const buttonFlexbox = createDivElement();
+    addClass(buttonFlexbox, styles.inputFlexbox);
+    appendChild(buttonFlexbox, updateButton);
+    appendChild(buttonFlexbox, cancelButton);
+
+    onPopupWindowAvailable(() => {
+        const disableAllInputs = (disabled: boolean) => {
+            disableButton(updateButton, disabled);
+            disableButton(cancelButton, disabled);
+        };
+        addEventListener(updateButton, 'click', () => {
+            disableAllInputs(true);
+            wb.messageSkipWaiting();
+        });
+        addEventListener(cancelButton, 'click', () => {
+            swUpdateLastPromptTime = getEpochMs();
+            hidePopupWindow();
+        });
+        const hidePopupWindow = initializePopupWindow(
+            [titleText, promptText, buttonFlexbox],
+            () => {
+                removeAllEventListeners(updateButton);
+                removeAllEventListeners(cancelButton);
+            },
+        );
+    });
+};
+
 function offload() {
-    registering = false;
+    promptAllowed = false;
 }
