@@ -44,6 +44,7 @@ interface TargetData {
 const targets = new Map<Element, TargetData>();
 let sessionCredentialPromise: Promise<void> | null = null;
 let sessionCredentialServerRequest: ServerRequest | null = null;
+let sessionCredentialTimeout: Timeout | null = null;
 let credential: [
     string, // sessionCredential
     ImageSessionTypes, // sessionType
@@ -142,7 +143,7 @@ function loadImage(target: Element, targetData: TargetData) {
         const uri = credential[1] === ImageSessionTypes.MEDIA ? 'get_image' : 'get_news_image';
 
         if (sessionCredentialPromise === null) {
-            const currentSessionCredentialPromise = new Promise<void>((resolve) => {
+            sessionCredentialPromise = new Promise<void>((resolve) => {
                 const serverRequest = sendServerRequest(uri, {
                     [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                         sessionCredentialServerRequest = null;
@@ -150,10 +151,9 @@ function loadImage(target: Element, targetData: TargetData) {
                             showMessage(invalidResponse());
                             return;
                         }
-                        addTimeout(() => {
-                            if (sessionCredentialPromise === currentSessionCredentialPromise) {
-                                sessionCredentialPromise = null;
-                            }
+                        sessionCredentialTimeout = addTimeout(() => {
+                            sessionCredentialTimeout = null;
+                            sessionCredentialPromise = null;
                         }, max(30000 - (getHighResTimestamp() - serverRequest[ServerRequestKey.REQUEST_START_TIME]), 0));
                         resolve();
                     },
@@ -163,7 +163,6 @@ function loadImage(target: Element, targetData: TargetData) {
                 });
                 sessionCredentialServerRequest = serverRequest;
             });
-            sessionCredentialPromise = currentSessionCredentialPromise;
         }
         sessionCredentialPromise.then(() => {
             if (targetData[TargetDataKey.JOB_ID] === jobId) {
@@ -184,6 +183,10 @@ export function offload() {
     }
     targets.clear();
     sessionCredentialPromise = null;
+    if (sessionCredentialTimeout !== null) {
+        removeTimeout(sessionCredentialTimeout);
+        sessionCredentialTimeout = null;
+    }
     if (sessionCredentialServerRequest !== null) {
         sessionCredentialServerRequest[ServerRequestKey.ABORT]();
         sessionCredentialServerRequest = null;

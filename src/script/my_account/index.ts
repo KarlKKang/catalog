@@ -13,6 +13,7 @@ import { addTimeout } from '../module/timer/add/timeout';
 import { parseAccountInfo } from '../module/type/AccountInfo';
 import { parseSession } from '../module/type/Sessions';
 import { importModule } from '../module/import_module';
+import { removeTimeout } from '../module/timer/remove/timeout';
 
 export default function (showPage: ShowPageFunc) {
     addNavBar(NavBarPage.MY_ACCOUNT);
@@ -24,10 +25,6 @@ export default function (showPage: ShowPageFunc) {
 
     let getSessionsStarted = false;
     const getSessions = () => {
-        if (getSessionsStarted) {
-            return;
-        }
-        getSessionsStarted = true;
         const sessionsModuleImport = importModule(
             () => import(
                 /* webpackExports: ["default"] */
@@ -45,7 +42,10 @@ export default function (showPage: ShowPageFunc) {
             },
         });
     };
-    addTimeout(getSessions, 1000); // In case the network latency is high, we might as well start the request early
+    const getSessionStartTimeout = addTimeout(() => {
+        getSessionsStarted = true;
+        getSessions();
+    }, 1000); // In case the network latency is high, we might as well start the request early
 
     const asyncModulePromise = importModule(
         () => import(
@@ -64,7 +64,10 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default(userInfo);
             resolveUIInit();
             showPage();
-            getSessions();
+            if (!getSessionsStarted) {
+                removeTimeout(getSessionStartTimeout);
+                getSessions();
+            }
         },
         [ServerRequestOptionKey.METHOD]: 'GET',
     });

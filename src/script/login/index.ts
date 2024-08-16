@@ -10,25 +10,22 @@ import { importModule } from '../module/import_module';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { TOP_URI } from '../module/env/uri';
+import { removeTimeout } from '../module/timer/remove/timeout';
 
 export default function (showPage: ShowPageFunc) {
-    let approvedCallbackPromise: Promise<typeof import(
+    let approvedCallbackImportPromise: Promise<typeof import(
         /* webpackExports: ["default"] */
         './approved_callback'
     )> | null = null;
-    const importApprovedCallback = () => {
-        if (approvedCallbackPromise !== null) {
-            return approvedCallbackPromise;
-        }
-        approvedCallbackPromise = importModule(
-            () => import(
-                /* webpackExports: ["default"] */
-                './approved_callback'
-            ),
-        );
-        return approvedCallbackPromise;
-    };
-    addTimeout(importApprovedCallback, 1000);
+    const importApprovedCallback = () => importModule(
+        () => import(
+            /* webpackExports: ["default"] */
+            './approved_callback'
+        ),
+    );
+    const approvedCallbackImportTimeout = addTimeout(() => {
+        approvedCallbackImportPromise = importApprovedCallback();
+    }, 1000);
 
     const asyncModulePromise = importModule(
         () => import(
@@ -47,7 +44,11 @@ export default function (showPage: ShowPageFunc) {
                     return;
                 }
                 showPage();
-                asyncModule.default(importApprovedCallback());
+                if (approvedCallbackImportPromise === null) {
+                    removeTimeout(approvedCallbackImportTimeout);
+                    approvedCallbackImportPromise = importApprovedCallback();
+                }
+                asyncModule.default(approvedCallbackImportPromise);
             } else {
                 showMessage(invalidResponse());
             }

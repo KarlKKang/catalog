@@ -24,6 +24,7 @@ import { TOP_URI } from '../module/env/uri';
 import { MessageParamKey } from '../module/message/type';
 import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
 import { addOffloadCallback } from '../module/global/offload';
+import { removeTimeout } from '../module/timer/remove/timeout';
 
 export default function (baseURL: string, fileName: string, startTime: HighResTimestamp) {
     const container = createDivElement();
@@ -46,35 +47,38 @@ export default function (baseURL: string, fileName: string, startTime: HighResTi
 
     let inactiveTimeout: Timeout | null = null;
     const setInactive = () => {
-        inactiveTimeout = null;
         addClass(closeButton, styles.inactive);
     };
     const setActive = () => {
         removeClass(closeButton, styles.inactive);
-        const currentTimeout = addTimeout(() => {
-            if (inactiveTimeout === currentTimeout) {
-                setInactive();
-            }
+        inactiveTimeout = addTimeout(() => {
+            inactiveTimeout = null;
+            setInactive();
         }, 3000);
-        inactiveTimeout = currentTimeout;
+    };
+    const cleanupAndSetActive = () => {
+        if (inactiveTimeout !== null) {
+            removeTimeout(inactiveTimeout);
+        }
+        setActive();
     };
     setActive();
     addMouseTouchEventListener(
         d,
         (isMouseClick) => {
             if (isMouseClick) {
-                setActive();
+                cleanupAndSetActive();
             } else {
                 if (inactiveTimeout !== null) {
+                    removeTimeout(inactiveTimeout);
+                    inactiveTimeout = null;
                     setInactive();
                 } else {
                     setActive();
                 }
             }
         },
-        () => {
-            setActive();
-        },
+        cleanupAndSetActive,
     );
 }
 

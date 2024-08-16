@@ -18,6 +18,7 @@ import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { importAllMediaModules } from './media_import_promise';
 import { buildHttpForm } from '../module/string/http_form/build';
+import { removeTimeout } from '../module/timer/remove/timeout';
 
 export default function (showPage: ShowPageFunc) {
     // Parse parameters
@@ -63,10 +64,8 @@ export default function (showPage: ShowPageFunc) {
             });
         });
     };
-    addTimeout(() => {
-        if (createMediaSessionPromise === null) {
-            createMediaSessionPromise = createMediaSession();
-        }
+    const createMediaSessionTimeout = addTimeout(() => {
+        createMediaSessionPromise = createMediaSession();
     }, 1000);
 
     const asyncModulePromise = importModule(
@@ -80,6 +79,7 @@ export default function (showPage: ShowPageFunc) {
             const parsedResponse = parseResponse(response, parseBangumiInfo);
             const currentPgid = pgid;
             if (createMediaSessionPromise === null) {
+                removeTimeout(createMediaSessionTimeout);
                 createMediaSessionPromise = createMediaSession();
             }
             createMediaSessionPromise.then((mediaSessionInfo) => {
