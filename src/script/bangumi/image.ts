@@ -113,14 +113,12 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
                 addEventListener(downloadButton, 'click', () => {
                     disableButton(downloadButton, true);
                     downloadAnchor.href = URL.createObjectURL(data);
-                    addEventListener(downloadAnchor, 'click', () => {
-                        addTimeout(() => {
-                            URL.revokeObjectURL(downloadAnchor.href);
-                            downloadAnchor.href = '';
-                            disableButton(downloadButton, false);
-                        }, 100); // Should be triggered in the next event cycle otherwise the download will fail (at least in Chrome). iOS 14 and earlier need some delays.
-                    });
                     downloadAnchor.click();
+                    addTimeout(() => {
+                        URL.revokeObjectURL(downloadAnchor.href);
+                        downloadAnchor.href = '';
+                        disableButton(downloadButton, false);
+                    }, 100); // Should be triggered in the next event cycle otherwise the download will fail (at least in Chrome). iOS 14 and earlier need some delays.
                 });
                 disableButton(downloadButton, false);
             },
