@@ -47,6 +47,8 @@ import { remove } from '../module/dom/node/remove';
 import { addAnimationFrame } from '../module/animation_frame/add';
 import type { Timeout } from '../module/timer/type';
 import type { AnimationFrame } from '../module/animation_frame/type';
+import { removeTimeout } from '../module/timer/remove/timeout';
+import { removeAnimationFrame } from '../module/animation_frame/remove';
 
 export const incompatibleTitle = '再生できません';
 
@@ -282,32 +284,34 @@ export function addAccordionEvent(instance: AccordionInstance, icon: HTMLElement
 
     let currentTimeout: Timeout | null = null;
     let currentAnimationFrame: AnimationFrame | null = null;
+    const cleanupPreviousAnimation = () => {
+        if (currentTimeout !== null) {
+            removeTimeout(currentTimeout);
+            currentTimeout = null;
+        }
+        if (currentAnimationFrame !== null) {
+            removeAnimationFrame(currentAnimationFrame);
+            currentAnimationFrame = null;
+        }
+    };
     addEventListener(acc, 'click', () => {
         instance[2] = !instance[2];
         changeIcon();
+        cleanupPreviousAnimation();
         if (instance[2]) {
-            currentAnimationFrame = null;
             setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
-            const timeout = addTimeout(() => {
-                if (currentTimeout === timeout) {
-                    setMaxHeight(panel, null);
-                }
+            currentTimeout = addTimeout(() => {
+                currentTimeout = null;
+                setMaxHeight(panel, null);
             }, 200);
-            currentTimeout = timeout;
         } else {
-            currentTimeout = null;
-            let animationFrame = addAnimationFrame(() => {
-                if (currentAnimationFrame === animationFrame) {
-                    setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
-                    animationFrame = addAnimationFrame(() => {
-                        if (currentAnimationFrame === animationFrame) {
-                            hidePanel();
-                        }
-                    });
-                    currentAnimationFrame = animationFrame;
-                }
+            currentAnimationFrame = addAnimationFrame(() => {
+                setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
+                currentAnimationFrame = addAnimationFrame(() => {
+                    currentAnimationFrame = null;
+                    hidePanel();
+                });
             });
-            currentAnimationFrame = animationFrame;
         }
     });
 }
