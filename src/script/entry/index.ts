@@ -39,6 +39,7 @@ import { offloadTimers } from '../module/timer/offload';
 import { max, min } from '../module/math';
 import { offloadAnimationFrames } from '../module/animation_frame/offload';
 import { addAnimationFrame } from '../module/animation_frame/add';
+import { addTimeoutNative } from '../module/timer/add/native/timeout';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -274,7 +275,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
 }
 
 function importFont(delay: number) {
-    setTimeout(async () => {
+    addTimeoutNative(async () => {
         try {
             await import('./font');
         } catch (e) {
@@ -293,7 +294,7 @@ async function getServiceWorkerModulePromise(retryTimeout = 500): Promise<Servic
     } catch (e) {
         console.error(e);
         return new Promise<ServiceWorkerModule>((resolve) => {
-            setTimeout(() => {
+            addTimeoutNative(() => {
                 resolve(getServiceWorkerModulePromise(min(retryTimeout * 2, 5000)));
             }, retryTimeout);
         });

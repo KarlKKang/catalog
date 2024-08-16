@@ -1,7 +1,8 @@
 import { timeoutTimers } from '../internal/timeout_timers';
+import { addTimeoutNative } from './native/timeout';
 
 export function addTimeout(callback: () => void, ms?: number) {
-    const timerID = setTimeout(() => {
+    const timerID = addTimeoutNative(() => {
         if (timeoutTimers.delete(timerID)) {
             callback();
             if (DEVELOPMENT) {

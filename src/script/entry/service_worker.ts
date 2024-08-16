@@ -13,6 +13,7 @@ import { addOffloadCallback } from '../module/global/offload';
 import { getEpochMs } from '../module/time/epoch_ms';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { min } from '../module/math';
+import { addTimeoutNative } from '../module/timer/add/native/timeout';
 
 let swUpdateLastPromptTime = 0;
 let serviceWorker: Workbox | null = null;
@@ -86,7 +87,7 @@ async function registerOrUpdate(wb: Workbox, retryTimeout = 500) {
         if (DEVELOPMENT) {
             console.log('Service worker register or update failed, retrying in ' + retryTimeout + 'ms.');
         }
-        setTimeout(() => {
+        addTimeoutNative(() => {
             registering = false;
             registerOrUpdate(wb, min(retryTimeout * 2, 5000));
         }, retryTimeout);
