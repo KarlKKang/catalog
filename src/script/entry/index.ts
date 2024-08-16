@@ -37,6 +37,8 @@ import { offloadXhr } from '../module/xhr/offload';
 import { offloadEventListeners } from '../module/event_listener/offload';
 import { offloadTimers } from '../module/timer/offload';
 import { max, min } from '../module/math';
+import { offloadAnimationFrames } from '../module/animation_frame/offload';
+import { requestAnimationFrame } from '../module/animation_frame/request';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -165,6 +167,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     offloadXhr();
     offloadEventListeners();
     offloadTimers();
+    offloadAnimationFrames();
     replaceChildren(body);
     setClass(body, '');
 
@@ -191,8 +194,8 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
                 return;
             }
             const requestLoadingBarAnimationFrame = (callback: () => void) => {
-                w.requestAnimationFrame(() => {
-                    if (loadingBarWidth === 100 || pgid !== newPgid) {
+                requestAnimationFrame(() => {
+                    if (loadingBarWidth === 100) {
                         return;
                     }
                     callback();

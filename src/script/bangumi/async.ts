@@ -39,6 +39,7 @@ import * as styles from '../../css/bangumi.module.scss';
 import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoEPInfo, AudioEPInfo, ImageEPInfo } from '../module/type/BangumiInfo';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
+import { requestAnimationFrame } from '../module/animation_frame/request';
 
 let seriesID: string;
 let epIndex: number;
@@ -188,10 +189,10 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
     const toggleEPSelector = () => {
         if (isExpanded) {
             currentToggleTimeout = null;
-            let animationFrame = w.requestAnimationFrame(() => {
+            let animationFrame = requestAnimationFrame(() => {
                 if (currentToggleAnimationFrame === animationFrame) {
                     setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX);
-                    animationFrame = w.requestAnimationFrame(() => {
+                    animationFrame = requestAnimationFrame(() => {
                         if (currentToggleAnimationFrame === animationFrame) {
                             isExpanded = false;
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
@@ -242,10 +243,10 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
             currentToggleTimeout = null;
             isOversized = true;
             isExpanded = false;
-            let animationFrame = w.requestAnimationFrame(() => {
+            let animationFrame = requestAnimationFrame(() => {
                 if (currentStylingAnimationFrame === animationFrame) {
                     setMaxHeight(epButtonWrapper, getContentBoxHeight(epButtonWrapper), CSS_UNIT.PX); // Use `getContentBoxHeight` to get the most recent height.
-                    animationFrame = w.requestAnimationFrame(() => {
+                    animationFrame = requestAnimationFrame(() => {
                         if (currentStylingAnimationFrame === animationFrame) {
                             replaceChildren(showMoreButton, ...showMoreButtonFoldedText);
                             setMaxHeight(epButtonWrapper, 30, CSS_UNIT.VH);

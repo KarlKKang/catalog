@@ -17,7 +17,6 @@ import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { parseOrigin } from '../module/dom/location/parse/origin';
 import { parseURI } from '../module/dom/location/parse/uri';
-import { w } from '../module/dom/window';
 import { addEventListener } from '../module/event_listener/add';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
@@ -45,6 +44,7 @@ import { buildHttpForm } from '../module/string/http_form/build';
 import { disableButton } from '../module/dom/element/button/disable';
 import { createIframeElement } from '../module/dom/element/iframe/create';
 import { remove } from '../module/dom/node/remove';
+import { requestAnimationFrame } from '../module/animation_frame/request';
 
 export const incompatibleTitle = '再生できません';
 
@@ -294,10 +294,10 @@ export function addAccordionEvent(instance: AccordionInstance, icon: HTMLElement
             currentTimeout = timeout;
         } else {
             currentTimeout = null;
-            let animationFrame = w.requestAnimationFrame(() => {
+            let animationFrame = requestAnimationFrame(() => {
                 if (currentAnimationFrame === animationFrame) {
                     setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
-                    animationFrame = w.requestAnimationFrame(() => {
+                    animationFrame = requestAnimationFrame(() => {
                         if (currentAnimationFrame === animationFrame) {
                             hidePanel();
                         }
