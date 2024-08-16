@@ -45,6 +45,8 @@ import { disableButton } from '../module/dom/element/button/disable';
 import { createIframeElement } from '../module/dom/element/iframe/create';
 import { remove } from '../module/dom/node/remove';
 import { requestAnimationFrame } from '../module/animation_frame/request';
+import type { Timeout } from '../module/timer/type';
+import type { AnimationFrame } from '../module/animation_frame/type';
 
 export const incompatibleTitle = '再生できません';
 
@@ -278,8 +280,8 @@ export function addAccordionEvent(instance: AccordionInstance, icon: HTMLElement
     }
     changeIcon();
 
-    let currentTimeout: NodeJS.Timeout | null = null;
-    let currentAnimationFrame: number | null = null;
+    let currentTimeout: Timeout | null = null;
+    let currentAnimationFrame: AnimationFrame | null = null;
     addEventListener(acc, 'click', () => {
         instance[2] = !instance[2];
         changeIcon();

@@ -40,6 +40,8 @@ import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Season
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { requestAnimationFrame } from '../module/animation_frame/request';
+import type { AnimationFrame } from '../module/animation_frame/type';
+import type { Timeout } from '../module/timer/type';
 
 let seriesID: string;
 let epIndex: number;
@@ -182,8 +184,8 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
     const showMoreButtonExpandedText = [createTextNode('非表示にする '), createSpanElement('')] as const;
     addClass(showMoreButtonExpandedText[1], styles.symbol);
 
-    let currentToggleTimeout: NodeJS.Timeout | null = null;
-    let currentToggleAnimationFrame: number | null = null;
+    let currentToggleTimeout: Timeout | null = null;
+    let currentToggleAnimationFrame: AnimationFrame | null = null;
     let isExpanded = false;
 
     const toggleEPSelector = () => {
@@ -220,8 +222,8 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
     };
     addEventListener(showMoreButton, 'click', toggleEPSelector);
 
-    let currentStylingTimeout: NodeJS.Timeout | null = null;
-    let currentStylingAnimationFrame: number | null = null;
+    let currentStylingTimeout: Timeout | null = null;
+    let currentStylingAnimationFrame: AnimationFrame | null = null;
     let isOversized = false;
     const styleEPSelector = () => {
         setMinHeight(epButtonWrapper, null); // Need to remove min-height first to calculate the height accurately.
