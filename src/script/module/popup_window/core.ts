@@ -8,7 +8,7 @@ import * as styles from '../../../css/popup_window.module.scss';
 import { setVisibility } from '../style/visibility';
 import { setOpacity } from '../style/opacity';
 import { addOffloadCallback } from '../global/offload';
-import { requestAnimationFrame } from '../animation_frame/request';
+import { addAnimationFrame } from '../animation_frame/add';
 
 let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
 let wid: any;
@@ -29,7 +29,7 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
     windowBusy = true;
 
     const showContents = (container: HTMLDivElement, contentContainer: HTMLDivElement) => {
-        requestAnimationFrame(() => {
+        addAnimationFrame(() => {
             if (currentWid !== wid) {
                 return;
             }
@@ -49,7 +49,7 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
         contentContainer = createDivElement();
         appendChild(container, innerContainer);
         appendChild(innerContainer, contentContainer);
-        requestAnimationFrame(() => {
+        addAnimationFrame(() => {
             if (currentWid !== wid) {
                 return;
             }

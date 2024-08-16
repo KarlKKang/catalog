@@ -38,7 +38,7 @@ import { offloadEventListeners } from '../module/event_listener/offload';
 import { offloadTimers } from '../module/timer/offload';
 import { max, min } from '../module/math';
 import { offloadAnimationFrames } from '../module/animation_frame/offload';
-import { requestAnimationFrame } from '../module/animation_frame/request';
+import { addAnimationFrame } from '../module/animation_frame/add';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -194,7 +194,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
                 return;
             }
             const requestLoadingBarAnimationFrame = (callback: () => void) => {
-                requestAnimationFrame(() => {
+                addAnimationFrame(() => {
                     if (loadingBarWidth === 100) {
                         return;
                     }

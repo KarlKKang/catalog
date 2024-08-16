@@ -1,7 +1,7 @@
 import { w } from '../dom/window';
 import { allAnimationFrames } from './internal/all_animation_frames';
 
-export function requestAnimationFrame(callback: FrameRequestCallback) {
+export function addAnimationFrame(callback: FrameRequestCallback) {
     const animationFrame = w.requestAnimationFrame((...args: Parameters<FrameRequestCallback>) => {
         if (allAnimationFrames.delete(animationFrame)) {
             callback(...args);

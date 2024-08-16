@@ -44,7 +44,7 @@ import { buildHttpForm } from '../module/string/http_form/build';
 import { disableButton } from '../module/dom/element/button/disable';
 import { createIframeElement } from '../module/dom/element/iframe/create';
 import { remove } from '../module/dom/node/remove';
-import { requestAnimationFrame } from '../module/animation_frame/request';
+import { addAnimationFrame } from '../module/animation_frame/add';
 import type { Timeout } from '../module/timer/type';
 import type { AnimationFrame } from '../module/animation_frame/type';
 
@@ -296,10 +296,10 @@ export function addAccordionEvent(instance: AccordionInstance, icon: HTMLElement
             currentTimeout = timeout;
         } else {
             currentTimeout = null;
-            let animationFrame = requestAnimationFrame(() => {
+            let animationFrame = addAnimationFrame(() => {
                 if (currentAnimationFrame === animationFrame) {
                     setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
-                    animationFrame = requestAnimationFrame(() => {
+                    animationFrame = addAnimationFrame(() => {
                         if (currentAnimationFrame === animationFrame) {
                             hidePanel();
                         }
