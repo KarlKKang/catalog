@@ -310,8 +310,7 @@ if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
 const windowAddEventListener = w.addEventListener;
-const onload = () => {
-    w.removeEventListener('load', onload);
+windowAddEventListener('load', () => {
     const nativeBody = d.body;
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
@@ -337,5 +336,4 @@ const onload = () => {
             }
         }
     });
-};
-windowAddEventListener('load', onload);
+});
