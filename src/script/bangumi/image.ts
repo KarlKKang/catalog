@@ -20,7 +20,6 @@ import { addEventListener } from '../module/event_listener/add';
 import { EPInfoKey, ImageFileKey, type ImageEPInfo } from '../module/type/BangumiInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
-import { addTimeout } from '../module/timer/add/timeout';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { SharedElement, getSharedElement } from './shared_var';
 import { hideElement } from '../module/style/hide_element';
@@ -30,6 +29,7 @@ import * as styles from '../../css/bangumi.module.scss';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
 import { disableButton } from '../module/dom/element/button/disable';
 import { addOffloadCallback } from '../module/global/offload';
+import { addTimeoutNative } from '../module/timer/add/native/timeout';
 
 export default async function (
     epInfo: ImageEPInfo,
@@ -111,13 +111,11 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
             250,
             (data: Blob) => {
                 addEventListener(downloadButton, 'click', () => {
-                    disableButton(downloadButton, true);
                     downloadAnchor.href = URL.createObjectURL(data);
                     downloadAnchor.click();
-                    addTimeout(() => {
+                    downloadAnchor.href = '';
+                    addTimeoutNative(() => {
                         URL.revokeObjectURL(downloadAnchor.href);
-                        downloadAnchor.href = '';
-                        disableButton(downloadButton, false);
                     }, 100); // Should be triggered in the next event cycle otherwise the download will fail (at least in Chrome). iOS 14 and earlier need some delays.
                 });
                 disableButton(downloadButton, false);
