@@ -282,9 +282,6 @@ function getSeries(callback: (seriesInfo: SeriesInfo, request: ServerRequest) =>
     const keywordsQuery = buildHttpForm({ keywords: keywords });
     const request = sendServerRequest('get_series', {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
-            if (currentRequest !== request) {
-                return;
-            }
             callback(parseResponse(response, parseSeriesInfo), request);
         },
         [ServerRequestOptionKey.CONTENT]: joinHttpForms(keywordsQuery, buildHttpForm({ pivot: pivot })),
