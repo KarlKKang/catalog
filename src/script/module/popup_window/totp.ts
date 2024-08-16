@@ -20,6 +20,7 @@ import { initializePopupWindow, styles } from './core';
 import { pgid } from '../global/pgid';
 import { InputFieldElementKey } from '../dom/element/input/input_field/type';
 import { removeAllEventListeners } from '../event_listener/remove/all_listeners';
+import { getEpochMs } from '../time/epoch_ms';
 
 export const enum TotpPopupWindowKey {
     TOTP,
@@ -66,10 +67,10 @@ function promptForTotp() {
     appendChild(buttonFlexbox, submitButton);
     appendChild(buttonFlexbox, cancelButton);
 
-    const startTime = Date.now();
+    const startTime = getEpochMs();
     let timerBlocked = false;
     const timer = addInterval(() => {
-        if (!timerBlocked && Date.now() - startTime > 90 * 1000) {
+        if (!timerBlocked && getEpochMs() - startTime > 90 * 1000) {
             returnPromiseReject(RejectReason.TIMEOUT);
             hidePopupWindow();
         }

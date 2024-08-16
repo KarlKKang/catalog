@@ -97,7 +97,7 @@ export default async function () { // This function should be called after setti
         attachEvents(serviceWorker);
         registerOrUpdate(serviceWorker);
     } else {
-        if (swUpdateLastPromptTime < Date.now() - 24 * 60 * 60 * 1000) {
+        if (swUpdateLastPromptTime < getEpochMs() - 24 * 60 * 60 * 1000) {
             if (serviceWorkerUpToDate) {
                 attachEvents(serviceWorker);
                 registerOrUpdate(serviceWorker);
