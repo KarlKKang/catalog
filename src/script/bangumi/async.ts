@@ -201,7 +201,11 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
         }
     };
     let isExpanded = false;
+    let isOversized = false;
     const toggleEPSelector = () => {
+        if (!isOversized) { // To prevent the button from being clicked when it is transitioning to transparent.
+            return;
+        }
         if (isExpanded) {
             cleanupToggleTimeout();
             currentToggleAnimationFrame = addAnimationFrame(() => {
@@ -228,13 +232,8 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
     };
     addEventListener(showMoreButton, 'click', toggleEPSelector);
 
-    const cleanupToggleAnimation = () => {
-        cleanupToggleTimeout();
-        cleanupToggleAnimationFrame();
-    };
     let currentStylingTimeout: Timeout | null = null;
     let currentStylingAnimationFrame: AnimationFrame | null = null;
-    let isOversized = false;
     const styleEPSelector = () => {
         setMinHeight(epButtonWrapper, null); // Need to remove min-height first to calculate the height accurately.
         const height = getContentBoxHeight(epButtonWrapper);
@@ -254,7 +253,6 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
                 removeTimeout(currentStylingTimeout);
                 currentStylingTimeout = null;
             }
-            cleanupToggleAnimation();
             isOversized = true;
             isExpanded = false;
             currentStylingAnimationFrame = addAnimationFrame(() => {
@@ -276,7 +274,8 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
                 removeAnimationFrame(currentStylingAnimationFrame);
                 currentStylingAnimationFrame = null;
             }
-            cleanupToggleAnimation();
+            cleanupToggleTimeout();
+            cleanupToggleAnimationFrame();
             isOversized = false;
             setMaxHeight(epButtonWrapper, height, CSS_UNIT.PX);
             setOpacity(showMoreButton, 0);
