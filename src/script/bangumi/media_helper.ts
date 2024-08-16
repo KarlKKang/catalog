@@ -284,27 +284,24 @@ export function addAccordionEvent(instance: AccordionInstance, icon: HTMLElement
 
     let currentTimeout: Timeout | null = null;
     let currentAnimationFrame: AnimationFrame | null = null;
-    const cleanupPreviousAnimation = () => {
-        if (currentTimeout !== null) {
-            removeTimeout(currentTimeout);
-            currentTimeout = null;
-        }
-        if (currentAnimationFrame !== null) {
-            removeAnimationFrame(currentAnimationFrame);
-            currentAnimationFrame = null;
-        }
-    };
     addEventListener(acc, 'click', () => {
         instance[2] = !instance[2];
         changeIcon();
-        cleanupPreviousAnimation();
         if (instance[2]) {
+            if (currentAnimationFrame !== null) {
+                removeAnimationFrame(currentAnimationFrame);
+                currentAnimationFrame = null;
+            }
             setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
             currentTimeout = addTimeout(() => {
                 currentTimeout = null;
                 setMaxHeight(panel, null);
             }, 200);
         } else {
+            if (currentTimeout !== null) {
+                removeTimeout(currentTimeout);
+                currentTimeout = null;
+            }
             currentAnimationFrame = addAnimationFrame(() => {
                 setMaxHeight(panel, getContentBoxHeight(panel), CSS_UNIT.PX);
                 currentAnimationFrame = addAnimationFrame(() => {
