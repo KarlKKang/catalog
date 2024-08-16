@@ -9,12 +9,18 @@ import { setVisibility } from '../style/visibility';
 import { setOpacity } from '../style/opacity';
 import { addOffloadCallback } from '../global/offload';
 import { addAnimationFrame } from '../animation_frame/add';
+import type { AnimationFrame } from '../animation_frame/type';
+import type { Timeout } from '../timer/type';
+import { removeAnimationFrame } from '../animation_frame/remove';
+import { removeTimeout } from '../timer/remove/timeout';
 
 let popupWindow: [HTMLDivElement, HTMLDivElement] | null = null;
 let wid: any;
 let windowBusy = false;
 const waitingQueue: (() => void)[] = [];
 let currentCleanupCallback: (() => void) | null = null;
+let currentAnimationFrame: AnimationFrame | null = null;
+let currentTimeout: Timeout | null = null;
 
 export { styles };
 
@@ -22,17 +28,22 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
     addOffloadCallback(offloadPopupWindow);
 
     cleanupAll();
-    currentCleanupCallback = cleanupCallback;
+    currentCleanupCallback = () => {
+        cleanupAnimationFrame();
+        if (currentTimeout !== null) {
+            removeTimeout(currentTimeout);
+            currentTimeout = null;
+        }
+        cleanupCallback();
+    };
 
     const currentWid = {};
     wid = currentWid;
     windowBusy = true;
 
     const showContents = (container: HTMLDivElement, contentContainer: HTMLDivElement) => {
-        addAnimationFrame(() => {
-            if (currentWid !== wid) {
-                return;
-            }
+        currentAnimationFrame = addAnimationFrame(() => {
+            currentAnimationFrame = null;
             replaceChildren(contentContainer, ...contents);
             setVisibility(container, true);
             setOpacity(container, 1);
@@ -49,10 +60,7 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
         contentContainer = createDivElement();
         appendChild(container, innerContainer);
         appendChild(innerContainer, contentContainer);
-        addAnimationFrame(() => {
-            if (currentWid !== wid) {
-                return;
-            }
+        currentAnimationFrame = addAnimationFrame(() => {
             setVisibility(container, false);
             setOpacity(container, 0);
             appendChild(body, container);
@@ -69,6 +77,7 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
             return;
         }
 
+        cleanupAnimationFrame();
         currentCleanupCallback = null;
         cleanupCallback();
         if (currentWid !== wid) {
@@ -85,17 +94,20 @@ export function initializePopupWindow(contents: Node[], cleanupCallback: () => v
         }
         windowBusy = false;
 
-        const hideWid = {}; // Set a new ID to prevent the window from being shown by `requestAnimationFrame` in the event queue.
-        wid = hideWid;
         setOpacity(container, 0);
-        addTimeout(() => {
-            if (hideWid !== wid) {
-                return;
-            }
+        currentTimeout = addTimeout(() => {
+            currentTimeout = null;
             setVisibility(container, false);
             replaceChildren(contentContainer);
         }, 300);
     };
+}
+
+function cleanupAnimationFrame() {
+    if (currentAnimationFrame !== null) {
+        removeAnimationFrame(currentAnimationFrame);
+        currentAnimationFrame = null;
+    }
 }
 
 function cleanupAll() {
