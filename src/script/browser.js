@@ -15,43 +15,49 @@ function unsupportRedirect() {
         return;
     }
 
-    if (!w.addEventListener) {
+    const windowAddEventListener = w.addEventListener;
+    if (!windowAddEventListener) {
         _unsupportRedirect();
         return;
     }
 
-    if (!w.SyntaxError) {
+    const _SyntaxError = w.SyntaxError;
+    if (!_SyntaxError) {
         _unsupportRedirect();
         return;
     }
 
-    w.addEventListener('error', (e) => {
-        if (e.error instanceof SyntaxError) {
+    windowAddEventListener('error', (e) => {
+        if (e.error instanceof _SyntaxError) {
             _unsupportRedirect();
         }
     }, true);
 
-    if (!w.Function || !Function.prototype.bind) {
+    const _Function = w.Function;
+    if (!_Function || !_Function.prototype.bind) {
         _unsupportRedirect();
         return;
     }
 
-    if (!w.XMLHttpRequest || !('withCredentials' in new XMLHttpRequest())) {
+    const _XMLHttpRequest = w.XMLHttpRequest;
+    if (!_XMLHttpRequest || !('withCredentials' in new _XMLHttpRequest())) {
         _unsupportRedirect();
         return;
     }
 
-    if (!w.HTMLScriptElement) {
+    const _HTMLScriptElement = w.HTMLScriptElement;
+    if (!_HTMLScriptElement) {
         _unsupportRedirect();
         return;
     }
 
-    if (!('noModule' in HTMLScriptElement.prototype)) {
+    if (!('noModule' in _HTMLScriptElement.prototype)) {
         _unsupportRedirect();
         return;
     }
 
-    if (!w.CSS || !w.CSS.supports || !w.CSS.supports('(--a: 0)')) { // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
+    const cssSupports = w.CSS && w.CSS.supports;
+    if (!cssSupports || !cssSupports('(--a: 0)')) { // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
         _unsupportRedirect();
         return;
     }
@@ -103,15 +109,13 @@ function unsupportRedirect() {
     }
     storage.removeItem(x);
 
-    w.addEventListener('load', () => {
-        const body = d.body;
-
-        const dynamicImportScript = d.createElement('script');
-        dynamicImportScript.textContent = 'dynamicImportTest=import("data:text/javascript;base64,Cg==")';
-        body.appendChild(dynamicImportScript);
-
-        const checkScript = d.createElement('script');
-        checkScript.textContent = 'dynamicImportTest instanceof Promise?dynamicImportTest.catch(function(){unsupportRedirect()}):unsupportRedirect()';
-        body.appendChild(checkScript);
+    const appendScriptElement = (content) => {
+        const script = d.createElement('script');
+        script.textContent = content;
+        d.body.appendChild(script);
+    };
+    windowAddEventListener('load', () => {
+        appendScriptElement('dynamicImportTest=import("data:text/javascript;base64,Cg==")');
+        appendScriptElement('dynamicImportTest instanceof Promise?dynamicImportTest.catch(function(){unsupportRedirect()}):unsupportRedirect()');
     });
 })();
