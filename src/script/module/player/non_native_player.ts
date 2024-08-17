@@ -14,7 +14,7 @@ import { removeTimeout } from '../timer/remove/timeout';
 
 export abstract class NonNativePlayer extends Player {
     private [NonNativePlayerKey.BUFFERING] = false;
-    private [NonNativePlayerKey.CHECK_BUFFER_TIMEOUTS] = new Set<Timeout>();
+    private [NonNativePlayerKey.CHECK_BUFFER_TIMEOUT]: Timeout | null = null;
     private [NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = getEpochMs();
     public [NonNativePlayerKey.ON_BUFFER_STALLED]: (() => void) | undefined = undefined;
 
@@ -37,7 +37,7 @@ export abstract class NonNativePlayer extends Player {
     ): void;
 
     protected override[PlayerKey.DETACH](this: NonNativePlayer) {
-        this[NonNativePlayerKey.CLEAR_CHECK_BUFFER_TIMEOUTS]();
+        this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUT] && removeTimeout(this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUT]);
     }
 
     public override[PlayerKey.PLAY](this: NonNativePlayer) {
@@ -45,17 +45,13 @@ export abstract class NonNativePlayer extends Player {
         super[PlayerKey.PLAY]();
     }
 
-    private [NonNativePlayerKey.CLEAR_CHECK_BUFFER_TIMEOUTS](this: NonNativePlayer) {
-        for (const timeout of this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUTS]) {
-            removeTimeout(timeout);
-        }
-        this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUTS].clear();
-    }
-
     private [NonNativePlayerKey.CHECK_BUFFER](this: NonNativePlayer, event?: Event) {
         const endBuffer = () => {
             removeEventsListener(this[PlayerKey.MEDIA], ['progress', 'playing', 'timeupdate'], this[NonNativePlayerKey.CHECK_BUFFER]);
-            this[NonNativePlayerKey.CLEAR_CHECK_BUFFER_TIMEOUTS]();
+            if (this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUT] !== null) {
+                removeTimeout(this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUT]);
+                this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUT] = null;
+            }
             removeClass(this[PlayerKey.CONTROLS], playerSeeking);
             this[NonNativePlayerKey.BUFFERING] = false;
         };
@@ -88,11 +84,12 @@ export abstract class NonNativePlayer extends Player {
             this[NonNativePlayerKey.ON_BUFFER_STALLED]?.();
         }
 
-        const timeout = addTimeout(() => {
-            this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUTS].delete(timeout);
-            this[NonNativePlayerKey.CHECK_BUFFER]();
-        }, 1000); // To prevent 'progress' event not firing sometimes
-        this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUTS].add(timeout);
+        if (this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUT] === null) {
+            this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUT] = addTimeout(() => {
+                this[NonNativePlayerKey.CHECK_BUFFER_TIMEOUT] = null;
+                this[NonNativePlayerKey.CHECK_BUFFER]();
+            }, 1000); // To prevent 'progress' event not firing sometimes
+        }
         addClass(this[PlayerKey.CONTROLS], playerSeeking);
         this[PlayerKey.MEDIA].playbackRate = 0;
     }

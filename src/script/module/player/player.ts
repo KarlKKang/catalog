@@ -95,7 +95,7 @@ export class Player {
     private readonly [PlayerKey.FULLSCREEN_BUTTON]: HTMLButtonElement;
 
     private [PlayerKey.TIMER]: Interval | undefined;
-    private [PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUTS] = new Set<Timeout>();
+    private [PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUT]: Timeout | null = null;
     private [PlayerKey.ON_FULLSCREEN_CHANGE]: undefined | (() => void) = undefined;
     private [PlayerKey.INACTIVE_TIMEOUT] = 12; // 3000 / 250
     private [PlayerKey.DRAGGING_PREVIEW_TIMEOUT] = 4; // 1000 / 250
@@ -390,9 +390,7 @@ export class Player {
         removeAllEventListeners(this[PlayerKey.PLAY_BUTTON]);
         removeAllEventListeners(this[PlayerKey.PROGRESS_CONTROL]);
         if (this[PlayerKey.IS_VIDEO]) {
-            for (const timeout of this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUTS]) {
-                removeTimeout(timeout);
-            }
+            this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUT] && removeTimeout(this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUT]);
             removeAllEventListeners(this[PlayerKey.CONTROL_BAR]);
             removeAllEventListeners(this[PlayerKey.BIG_PLAY_BUTTON]);
             this[PlayerKey.PIP_BUTTON] && removeAllEventListeners(this[PlayerKey.PIP_BUTTON]);
@@ -609,11 +607,11 @@ export class Player {
         };
         addEventListener(this[PlayerKey.MEDIA], 'progress', () => {
             updateLoadProgress();
-            const timeout = addTimeout(() => {
-                this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUTS].delete(timeout);
+            this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUT] && removeTimeout(this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUT]);
+            this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUT] = addTimeout(() => {
+                this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUT] = null;
                 updateLoadProgress();
             }, 1000);
-            this[PlayerKey.UPDATE_LOAD_PROGRESS_TIMEOUTS].add(timeout);
         });
 
         addEventListener(this[PlayerKey.MEDIA], 'waiting', () => {
