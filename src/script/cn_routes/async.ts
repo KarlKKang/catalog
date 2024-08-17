@@ -40,6 +40,7 @@ import { getHighResTimestamp } from '../module/time/hi_res';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { addOffloadCallback } from '../module/global/offload';
 import { round } from '../module/math';
+import { changeColor, CSS_COLOR } from '../module/style/color';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum RouteInfoNodeKey {
@@ -158,6 +159,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
         if (current[RouteInfoNodeKey.LATENCY] === null) {
             result = '測定中…';
         } else if (current[RouteInfoNodeKey.LATENCY] === false) {
+            changeColor(spanElem, CSS_COLOR.RED);
             result = '測定失敗';
         } else if (current[RouteInfoNodeKey.LATENCY] === -1) {
             result = '速度をテストする前にログインしてください';
@@ -313,9 +315,11 @@ function checkRouteCode(routeCode: string, routeInfo: RouteInfo | null) {
 }
 
 function getASN(asnResultContainer: HTMLElement, asnRetestButton: HTMLButtonElement) {
+    changeColor(asnResultContainer, null);
     replaceText(asnResultContainer, 'ASNを取得中…');
     disableButton(asnRetestButton, true);
     const failedCallback = () => {
+        changeColor(asnResultContainer, CSS_COLOR.RED);
         replaceText(asnResultContainer, 'ASNの取得に失敗しました');
         disableButton(asnRetestButton, false);
     };
