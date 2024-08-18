@@ -1,6 +1,6 @@
 import { getServerOrigin } from '../env/location/get/origin/server';
 import { showMessage } from '../message';
-import { connectionError } from './internal/message/connection_error';
+import { connectionError } from '../message/param/connection_error';
 import { unknownServerError } from './internal/message/unknown_server_error';
 import { status400And500 } from './internal/message/status_400_and_500';
 import { status503 } from './internal/message/status_503';

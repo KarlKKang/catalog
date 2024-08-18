@@ -1,15 +1,15 @@
-import { MessageParamKey } from '../../../message/type';
-import { TOP_URI } from '../../../env/uri';
-import { createEmailLink } from '../../../dom/element/email_link/create';
-import { appendListItems } from '../../../dom/element/list/append_item';
-import { createLIElement } from '../../../dom/element/list/li/create';
-import { createUListElement } from '../../../dom/element/list/ul/create';
-import { createDivElement } from '../../../dom/element/div/create';
-import { appendChildren } from '../../../dom/node/append_children';
-import { TOP_DOMAIN } from '../../../env/domain';
-import { appendText } from '../../../dom/element/text/append';
-import { createParagraphElement } from '../../../dom/element/paragraph/create';
-import { appendChild } from '../../../dom/node/append_child';
+import { MessageParamKey } from '../type';
+import { TOP_URI } from '../../env/uri';
+import { createEmailLink } from '../../dom/element/email_link/create';
+import { appendListItems } from '../../dom/element/list/append_item';
+import { createLIElement } from '../../dom/element/list/li/create';
+import { createUListElement } from '../../dom/element/list/ul/create';
+import { createDivElement } from '../../dom/element/div/create';
+import { appendChildren } from '../../dom/node/append_children';
+import { TOP_DOMAIN } from '../../env/domain';
+import { appendText } from '../../dom/element/text/append';
+import { createParagraphElement } from '../../dom/element/paragraph/create';
+import { appendChild } from '../../dom/node/append_child';
 
 export function connectionError() {
     return {
