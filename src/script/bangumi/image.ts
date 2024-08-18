@@ -111,11 +111,12 @@ function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, creden
             250,
             (data: Blob) => {
                 addEventListener(downloadButton, 'click', () => {
-                    downloadAnchor.href = URL.createObjectURL(data);
+                    const objURL = URL.createObjectURL(data);
+                    downloadAnchor.href = objURL;
                     downloadAnchor.click();
                     downloadAnchor.href = '';
                     addTimeoutNative(() => {
-                        URL.revokeObjectURL(downloadAnchor.href);
+                        URL.revokeObjectURL(objURL);
                     }, 100); // Should be triggered in the next event cycle otherwise the download will fail (at least in Chrome). iOS 14 and earlier need some delays.
                 });
                 disableButton(downloadButton, false);
