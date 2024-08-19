@@ -17,7 +17,6 @@ import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
 import { getURI } from '../module/dom/location/get/uri';
-import { getHostname } from '../module/dom/location/get/hostname';
 import { getFullPath } from '../module/dom/location/get/full_path';
 import { changeURL } from '../module/dom/location/change';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
@@ -307,7 +306,7 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
         }, retryTimeout);
     };
     const xhr = newXhr(
-        getServerOrigin('') + buildURI('/get_route_info', buildHttpForm({ hostname: getHostname() })),
+        getServerOrigin('') + '/get_route_info',
         'GET',
         false,
         () => {
