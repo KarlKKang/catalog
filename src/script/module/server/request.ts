@@ -26,6 +26,7 @@ export const enum ServerRequestOptionKey {
     CALLBACK,
     CONTENT,
     METHOD,
+    ALLOW_CREDENTIALS,
     LOGOUT_PARAM,
     CONNECTION_ERROR_RETRY,
     CONNECTION_ERROR_RETRY_TIMEOUT,
@@ -36,6 +37,7 @@ interface ServerRequestOption {
     readonly [ServerRequestOptionKey.CALLBACK]?: (response: string) => void | Promise<void>;
     readonly [ServerRequestOptionKey.CONTENT]?: string;
     readonly [ServerRequestOptionKey.METHOD]?: 'POST' | 'GET';
+    readonly [ServerRequestOptionKey.ALLOW_CREDENTIALS]?: boolean;
     readonly [ServerRequestOptionKey.LOGOUT_PARAM]?: string | undefined;
     [ServerRequestOptionKey.CONNECTION_ERROR_RETRY]?: number | undefined;
     [ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
@@ -97,7 +99,7 @@ class ServerRequest {
         const xhr = newXhr(
             getServerOrigin() + '/' + uri,
             method,
-            true,
+            options[ServerRequestOptionKey.ALLOW_CREDENTIALS] ?? true,
             () => {
                 this[ServerRequestKey.XHR] = null;
                 if (this[ServerRequestKey.CHECK_STATUS](xhr)) {

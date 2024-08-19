@@ -29,5 +29,6 @@ export default function (showPage: ShowPageFunc) {
             showPage();
         },
         [ServerRequestOptionKey.METHOD]: 'GET',
+        [ServerRequestOptionKey.ALLOW_CREDENTIALS]: false,
     });
 }
