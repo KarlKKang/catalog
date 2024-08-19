@@ -248,43 +248,49 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
         loadingBarWidth = 67;
     }
 
-    page[PageProp.SCRIPT_CACHED].default(
-        () => {
-            if (pgid !== newPgid) {
-                return;
-            }
+    const showPage = () => {
+        if (pgid !== newPgid) {
+            return;
+        }
 
-            setMinHeight(html, null);
+        setMinHeight(html, null);
 
-            if ('serviceWorker' in navigator) {
-                if (serviceWorkerModule !== null) {
-                    serviceWorkerModule.default();
-                } else {
-                    if (serviceWorkerModulePromise === null) {
-                        serviceWorkerModulePromise = getServiceWorkerModulePromise();
-                    }
-                    serviceWorkerModulePromise.then((module) => {
-                        serviceWorkerModule = module;
-                        if (pgid !== newPgid) {
-                            return;
-                        }
-                        serviceWorkerModule.default();
-                    }); // No need to catch error since this module is not critical.
+        if ('serviceWorker' in navigator) {
+            if (serviceWorkerModule !== null) {
+                serviceWorkerModule.default();
+            } else {
+                if (serviceWorkerModulePromise === null) {
+                    serviceWorkerModulePromise = getServiceWorkerModulePromise();
                 }
+                serviceWorkerModulePromise.then((module) => {
+                    serviceWorkerModule = module;
+                    if (pgid !== newPgid) {
+                        return;
+                    }
+                    serviceWorkerModule.default();
+                }); // No need to catch error since this module is not critical.
             }
+        }
 
-            stopShowLoadingBarAnimation();
-            loadingBarWidth = 100;
-            if (loadingBarShown) {
-                setWidth(loadingBar, 100, CSS_UNIT.PERCENT);
-                addTimeout(() => {
-                    loadingBarShown = false;
-                    setVisibility(loadingBar, false);
-                    setOpacity(loadingBar, 0);
-                }, 300);
-            }
-        },
-    );
+        stopShowLoadingBarAnimation();
+        loadingBarWidth = 100;
+        if (loadingBarShown) {
+            setWidth(loadingBar, 100, CSS_UNIT.PERCENT);
+            addTimeout(() => {
+                loadingBarShown = false;
+                setVisibility(loadingBar, false);
+                setOpacity(loadingBar, 0);
+            }, 300);
+        }
+    };
+
+    const pageScript = page[PageProp.SCRIPT_CACHED];
+    addAnimationFrame(() => {
+        // This is needed to ensure the empty page is actually rendered before the next page is shown.
+        addAnimationFrame(() => {
+            pageScript.default(showPage);
+        });
+    });
 }
 
 function importFont(delay: number) {
