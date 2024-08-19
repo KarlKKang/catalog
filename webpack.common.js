@@ -68,7 +68,7 @@ const configs = [
             runtimeChunk: 'single',
             splitChunks: {
                 chunks: 'all',
-                minSize: 0,
+                minSize: 2500,
             },
             minimize: true,
             minimizer: [
