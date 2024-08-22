@@ -152,7 +152,7 @@ export default async function (
 function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
     const epButtonWrapper = createDivElement();
     appendChild(epSelector, epButtonWrapper);
-    let minHeight = Number.POSITIVE_INFINITY;
+    let minHeight = Infinity;
 
     seriesEP.forEach((value, index) => {
         const epButton = createDivElement();

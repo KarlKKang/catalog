@@ -180,7 +180,7 @@ export class HlsPlayer extends NonNativePlayer {
                 };
                 this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] = onHlsBufferFlushed;
                 this[HlsPlayerKey.HLS_INSTANCE].once(Hls.Events.BUFFER_FLUSHED, this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED]);
-                this[HlsPlayerKey.HLS_INSTANCE].trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: Number.POSITIVE_INFINITY, type: null });
+                this[HlsPlayerKey.HLS_INSTANCE].trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: Infinity, type: null });
                 DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer flushed.');
             }
         } else {

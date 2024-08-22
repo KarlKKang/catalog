@@ -238,7 +238,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
                 return;
             }
             testRouteNodeConst[RouteInfoNodeKey.RESULT_OVERRIDE] = routeName;
-            testRouteNodeConst[RouteInfoNodeKey.LATENCY] = Number.POSITIVE_INFINITY;
+            testRouteNodeConst[RouteInfoNodeKey.LATENCY] = Infinity;
             sortResult(testRouteNodeConst[RouteInfoNodeKey.LATENCY]);
             testNextRoute(codeToNameMap, container, head, retestButton);
         } else {
