@@ -16,7 +16,6 @@ import { getBaseHost } from '../module/env/location/get/base_host';
 import { concatenateLocationPrefixToHost } from '../module/env/location/build/host';
 import { toLocationPrefix } from '../module/env/location/build/prefix';
 import { getServerOrigin } from '../module/env/location/get/origin/server';
-import { addEventsListener } from '../module/event_listener/add/multiple_events';
 import { addEventListener } from '../module/event_listener/add';
 import { createNewsContainer } from '../module/news/create_container';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';
@@ -43,9 +42,15 @@ import { round } from '../module/math';
 import { changeColor, CSS_COLOR } from '../module/style/color';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
+const enum FailedReason {
+    NETWORK_ERROR,
+    TIMED_OUT,
+    UNAVAILABLE,
+}
 const enum RouteInfoNodeKey {
     INFO,
     LATENCY,
+    FAILED_REASON,
     RESULT_OVERRIDE,
     IN_USE,
     NEXT,
@@ -53,6 +58,7 @@ const enum RouteInfoNodeKey {
 interface RouteInfoNode {
     readonly [RouteInfoNodeKey.INFO]: RouteInfo | null;
     [RouteInfoNodeKey.LATENCY]: number | null | false;
+    [RouteInfoNodeKey.FAILED_REASON]: FailedReason | null;
     [RouteInfoNodeKey.RESULT_OVERRIDE]: string | null;
     readonly [RouteInfoNodeKey.IN_USE]: boolean;
     [RouteInfoNodeKey.NEXT]: RouteInfoNode | null;
@@ -113,6 +119,7 @@ function initializeList(routeList: RouteList) {
     const head = {
         [RouteInfoNodeKey.INFO]: null,
         [RouteInfoNodeKey.LATENCY]: null,
+        [RouteInfoNodeKey.FAILED_REASON]: null,
         [RouteInfoNodeKey.RESULT_OVERRIDE]: null,
         [RouteInfoNodeKey.IN_USE]: currentLocationPrefix === toLocationPrefix(''),
         [RouteInfoNodeKey.NEXT]: null,
@@ -122,6 +129,7 @@ function initializeList(routeList: RouteList) {
         const next = {
             [RouteInfoNodeKey.INFO]: routeInfo,
             [RouteInfoNodeKey.LATENCY]: null,
+            [RouteInfoNodeKey.FAILED_REASON]: null,
             [RouteInfoNodeKey.RESULT_OVERRIDE]: null,
             [RouteInfoNodeKey.IN_USE]: currentLocationPrefix === toLocationPrefix(routeInfo[RouteInfoKey.CODE]),
             [RouteInfoNodeKey.NEXT]: null,
@@ -160,7 +168,14 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
             result = '測定中…';
         } else if (current[RouteInfoNodeKey.LATENCY] === false) {
             changeColor(spanElem, CSS_COLOR.RED);
-            result = '測定失敗';
+            const failedReason = current[RouteInfoNodeKey.FAILED_REASON];
+            if (failedReason === FailedReason.TIMED_OUT) {
+                result = 'タイムアウト';
+            } else if (failedReason === FailedReason.UNAVAILABLE) {
+                result = '利用不可';
+            } else {
+                result = '測定失敗';
+            }
         } else if (current[RouteInfoNodeKey.LATENCY] === -1) {
             result = '速度をテストする前にログインしてください';
         } else {
@@ -215,8 +230,9 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
             }
         }
     };
-    const onErrorCallback = () => {
+    const onErrorCallback = (failedReason: FailedReason) => {
         testRouteNodeConst[RouteInfoNodeKey.LATENCY] = false;
+        testRouteNodeConst[RouteInfoNodeKey.FAILED_REASON] = failedReason;
         sortResult(false);
         testNextRoute(codeToNameMap, container, head, retestButton);
     };
@@ -234,7 +250,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
         if (routeInfo !== null && routeInfo[RouteInfoKey.TYPE] === 'alias') {
             const routeName = codeToNameMap.get(routeCode);
             if (routeName === undefined) {
-                onErrorCallback();
+                onErrorCallback(FailedReason.UNAVAILABLE);
                 return;
             }
             testRouteNodeConst[RouteInfoNodeKey.RESULT_OVERRIDE] = routeName;
@@ -243,14 +259,14 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
             testNextRoute(codeToNameMap, container, head, retestButton);
         } else {
             if (!checkRouteCode(routeCode, routeInfo)) {
-                onErrorCallback();
+                onErrorCallback(FailedReason.UNAVAILABLE);
                 return;
             }
             const start = getHighResTimestamp();
             testRoute(512 * 1024, locationPrefix, () => {
                 const latency = round(getHighResTimestamp() - start);
                 if (!checkRouteCode(routeCode, routeInfo)) {
-                    onErrorCallback();
+                    onErrorCallback(FailedReason.UNAVAILABLE);
                     return;
                 }
                 testRouteNodeConst[RouteInfoNodeKey.LATENCY] = latency;
@@ -261,7 +277,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
     }, onErrorCallback, onUnauthorizedCallback);
 }
 
-function testRoute(size: number, locationPrefix: string, callback: (routeCode: string) => void, onErrorCallback: () => void, onUnauthorizedCallback: () => void) {
+function testRoute(size: number, locationPrefix: string, callback: (routeCode: string) => void, onErrorCallback: (failedReason: FailedReason) => void, onUnauthorizedCallback: () => void) {
     const xhr = newXhr(
         getServerOrigin(locationPrefix) + '/test_download',
         'POST',
@@ -271,7 +287,7 @@ function testRoute(size: number, locationPrefix: string, callback: (routeCode: s
                 const viaHeader = xhr.getResponseHeader('Via');
                 if (viaHeader === null) {
                     // There must be at least one Via header that is sent by CloudFront.
-                    onErrorCallback();
+                    onErrorCallback(FailedReason.UNAVAILABLE);
                     return;
                 }
                 let routeCode = null;
@@ -291,19 +307,24 @@ function testRoute(size: number, locationPrefix: string, callback: (routeCode: s
                     }
                 }
                 if (routeCode === null) {
-                    onErrorCallback();
+                    onErrorCallback(FailedReason.UNAVAILABLE);
                     return;
                 }
                 callback(routeCode);
             } else if (xhr.status === 403 && xhr.responseText === 'UNAUTHORIZED') {
                 onUnauthorizedCallback();
             } else {
-                onErrorCallback();
+                onErrorCallback(FailedReason.NETWORK_ERROR);
             }
         },
     );
     xhr.timeout = 15000;
-    addEventsListener(xhr, ['error', 'timeout'], onErrorCallback);
+    addEventListener(xhr, 'error', () => {
+        onErrorCallback(FailedReason.NETWORK_ERROR);
+    });
+    addEventListener(xhr, 'timeout', () => {
+        onErrorCallback(FailedReason.TIMED_OUT);
+    });
     xhr.send(buildHttpForm({ size: size }));
 }
 
