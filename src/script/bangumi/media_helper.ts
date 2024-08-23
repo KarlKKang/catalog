@@ -53,6 +53,7 @@ import { connectionError } from '../module/message/param/connection_error';
 import { newXhr } from '../module/xhr/new';
 import { addTimeoutNative } from '../module/timer/add/native/timeout';
 import { createAnchorElement } from '../module/dom/element/anchor/create';
+import { round } from '../module/math';
 
 export const incompatibleTitle = '再生できません';
 
@@ -201,7 +202,13 @@ export function buildDownloadAccordion(
 
     addEventListener(downloadButton, 'click', () => {
         disableButton(downloadButton, true);
-        let requestContent = joinHttpForms(mediaSessionCredential, buildHttpForm({ os: osSelectMenu.value }));
+        let requestContent = joinHttpForms(
+            mediaSessionCredential,
+            buildHttpForm({
+                os: osSelectMenu.value,
+                tz_offset: round(new Date().getTimezoneOffset() * 60),
+            }),
+        );
         if (videoFormats !== null) {
             const formatIndex = videoFormats[0].selectedIndex;
             const format = videoFormats[1][formatIndex];
