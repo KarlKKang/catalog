@@ -19,7 +19,7 @@ export default function (showPage: ShowPageFunc) {
         addNavBar(NavBarPage.INFO);
     }
     showPage();
-    const [outerContainer, innerContainer] = createNewsContainer(infoPageTitle, null, 1699333200);
+    const [outerContainer, innerContainer] = createNewsContainer(infoPageTitle, null, 1699363526);
     const contentContainer = createDivElement();
     addClass(contentContainer, styles.content);
     addManualMultiLanguageClass(contentContainer);
