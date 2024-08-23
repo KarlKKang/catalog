@@ -206,7 +206,7 @@ export function buildDownloadAccordion(
             mediaSessionCredential,
             buildHttpForm({
                 os: osSelectMenu.value,
-                tz_offset: round(new Date().getTimezoneOffset() * 60),
+                tz_offset: round(new Date().getTimezoneOffset() * -60),
             }),
         );
         if (videoFormats !== null) {
