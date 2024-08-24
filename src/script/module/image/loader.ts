@@ -8,6 +8,8 @@ import { createCanvasElement } from '../dom/element/canvas/create';
 import { setHeight } from '../style/height';
 import { setWidth } from '../style/width';
 import { importModule } from '../import_module';
+import { newFileReader } from '../file_reader/new';
+import { abortFileReader } from '../file_reader/abort';
 
 let webpMachine: WebpMachine | null = null;
 let webpMachineActive = false;
@@ -30,6 +32,7 @@ let webpSupported: boolean;
 
 let jobId: object = {};
 const eventTargetsTracker = new Set<EventTarget>();
+const fileReaderTracker = new Set<FileReader>();
 
 export function imageLoader(container: Element, src: string, alt: string, withCredentials: boolean, onImageDraw: (canvas: HTMLCanvasElement) => void, onDataLoad: ((data: Blob) => void) | undefined, onNetworkError: () => void, onImageDrawError: () => void): XMLHttpRequest {
     const currentJobId = jobId;
@@ -63,19 +66,18 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
         }
 
         // Convert Blob to Uint8Array
-        const reader = new FileReader();
+        const reader = newFileReader();
+        fileReaderTracker.add(reader);
         addEventListener(reader, 'load', () => {
-            if (currentJobId !== jobId) {
-                return;
-            }
+            fileReaderTracker.delete(reader);
 
             const base64URL = reader.result;
-            if (!(base64URL instanceof ArrayBuffer)) {
+            if (base64URL === null) {
                 finalizeImageDrawError();
                 return;
             }
 
-            const webpData = new Uint8Array(base64URL);
+            const webpData = new Uint8Array(base64URL as ArrayBuffer);
             webpMachineQueue.push({
                 [WebpMachineQueueItemProp.CONTAINER]: container,
                 [WebpMachineQueueItemProp.IMAGE]: image,
@@ -96,13 +98,8 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
             }
         });
         addEventListener(reader, 'error', () => {
-            if (currentJobId !== jobId) {
-                return;
-            }
+            fileReaderTracker.delete(reader);
             finalizeImageDrawError();
-        });
-        addEventListener(reader, 'loadend', () => {
-            removeAllEventListeners(reader);
         });
         reader.readAsArrayBuffer(imageData);
     }
@@ -240,8 +237,13 @@ export function offload() {
     webpMachineQueue.length = 0;
     webpMachineActive = false;
     webpMachine?.clearCache();
-    for (const eventTarget of eventTargetsTracker) {
-        removeAllEventListeners(eventTarget);
+    offloadSet(eventTargetsTracker, removeAllEventListeners);
+    offloadSet(fileReaderTracker, abortFileReader);
+}
+
+function offloadSet<T>(set: Set<T>, callback: (item: T) => void) {
+    for (const item of set) {
+        callback(item);
     }
-    eventTargetsTracker.clear();
+    set.clear();
 }
