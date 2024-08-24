@@ -1,4 +1,4 @@
-import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { ServerRequestOptionKey, sendBlobServerRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
@@ -15,11 +15,7 @@ import { insertBefore } from '../module/dom/node/insert_before';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
-import { parseOrigin } from '../module/dom/location/parse/origin';
-import { parseURI } from '../module/dom/location/parse/uri';
 import { addEventListener } from '../module/event_listener/add';
-import { showMessage } from '../module/message';
-import { invalidResponse } from '../module/message/param/invalid_response';
 import { createMessageElem, getContentBoxHeight, getLogoutParam, isArray } from './helper';
 import { IS_MACOS } from '../module/browser/is_macos';
 import { IS_IOS } from '../module/browser/is_ios';
@@ -38,7 +34,6 @@ import { defaultErrorSuffix } from '../module/text/default_error/suffix';
 import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
 import { mediaLoadError } from '../module/text/media/load_error';
 import * as styles from '../../css/bangumi.module.scss';
-import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { disableButton } from '../module/dom/element/button/disable';
@@ -48,12 +43,11 @@ import type { Timeout } from '../module/timer/type';
 import type { AnimationFrame } from '../module/animation_frame/type';
 import { removeTimeout } from '../module/timer/remove/timeout';
 import { removeAnimationFrame } from '../module/animation_frame/remove';
-import { getHighResTimestamp, type HighResTimestamp } from '../module/time/hi_res';
-import { connectionError } from '../module/message/param/connection_error';
-import { newXhr } from '../module/xhr/new';
 import { addTimeoutNative } from '../module/timer/add/native/timeout';
 import { createAnchorElement } from '../module/dom/element/anchor/create';
 import { round } from '../module/math';
+import { showMessage } from '../module/message';
+import { invalidResponse } from '../module/message/param/invalid_response';
 
 export const incompatibleTitle = '再生できません';
 
@@ -223,20 +217,26 @@ export function buildDownloadAccordion(
                 }),
             );
         }
-        const serverRequest = sendServerRequest('start_download', {
-            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
-                const downloadURI = parseURI(response);
-                const DOWNLOAD_ROOT = '/download/';
-                if (parseOrigin(response) === getCDNOrigin() && downloadURI?.startsWith(DOWNLOAD_ROOT)) {
-                    downloadPackage(response, downloadURI.substring(DOWNLOAD_ROOT.length), anchor, downloadButton, serverRequest[ServerRequestKey.REQUEST_START_TIME]);
-                } else {
+        sendBlobServerRequest('start_download', {
+            [ServerRequestOptionKey.CALLBACK]: (response: Blob, xhr: XMLHttpRequest) => {
+                const filename = getFilename(xhr);
+                if (filename === null) {
                     showMessage(invalidResponse());
+                    return;
                 }
+                const objURL = URL.createObjectURL(response);
+                anchor.download = filename;
+                anchor.href = objURL;
+                anchor.click();
+                anchor.href = '';
+                addTimeoutNative(() => {
+                    URL.revokeObjectURL(objURL);
+                }, 100);
+                disableButton(downloadButton, false);
             },
             [ServerRequestOptionKey.CONTENT]: requestContent,
             [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
             [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
-            [ServerRequestOptionKey.TIMEOUT]: 30000,
         });
     });
     appendChild(accordionPanel, downloadButton);
@@ -249,52 +249,19 @@ export function buildDownloadAccordion(
     return [downloadElem, containerSelector];
 }
 
-function downloadPackage(
-    url: string,
-    filename: string,
-    anchor: HTMLAnchorElement,
-    downloadButton: HTMLButtonElement,
-    startTime: HighResTimestamp,
-    retryCount = 3,
-    retryTimeout = 500,
-) {
-    if (getHighResTimestamp() - startTime >= 30000) {
-        showMessage(connectionError());
-        return;
+function getFilename(xhr: XMLHttpRequest) {
+    const contentDisposition = xhr.getResponseHeader('Content-Disposition');
+    if (contentDisposition === null) {
+        return null;
     }
-    const retry = () => {
-        retryCount--;
-        if (retryCount < 0) {
-            showMessage(connectionError());
-            return;
+    const directives = contentDisposition.split(';');
+    for (const directive of directives) {
+        const trimmedDirective = directive.trim();
+        if (trimmedDirective.startsWith('filename=')) {
+            return trimmedDirective.substring(9);
         }
-        addTimeout(() => {
-            downloadPackage(url, filename, anchor, downloadButton, startTime, retryCount, retryTimeout * 2);
-        }, retryTimeout);
-    };
-    const xhr = newXhr(
-        url,
-        'GET',
-        false,
-        () => {
-            if (xhr.status === 200) {
-                const objURL = URL.createObjectURL(xhr.response as Blob);
-                anchor.download = filename;
-                anchor.href = objURL;
-                anchor.click();
-                anchor.href = '';
-                addTimeoutNative(() => {
-                    URL.revokeObjectURL(objURL);
-                }, 100);
-                disableButton(downloadButton, false);
-            } else {
-                retry();
-            }
-        },
-    );
-    addEventListener(xhr, 'error', retry);
-    xhr.responseType = 'blob';
-    xhr.send();
+    }
+    return null;
 }
 
 export type AccordionInstance = [HTMLDivElement, HTMLDivElement, boolean];

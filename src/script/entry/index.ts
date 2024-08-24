@@ -44,6 +44,7 @@ import { Timeout } from '../module/timer/type';
 import { AnimationFrame } from '../module/animation_frame/type';
 import { removeTimeout } from '../module/timer/remove/timeout';
 import { removeAnimationFrame } from '../module/animation_frame/remove';
+import { offloadFileReader } from '../module/file_reader/offload';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -170,6 +171,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     offload();
     offloadXhr();
+    offloadFileReader();
     offloadEventListeners();
     offloadTimers();
     offloadAnimationFrames();

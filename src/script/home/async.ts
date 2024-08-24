@@ -54,7 +54,7 @@ import { removeTimeout } from '../module/timer/remove/timeout';
 
 let pivot: Pivot;
 let keywords: string;
-let currentRequest: ServerRequest | null = null;
+let currentRequest: ServerRequest<string> | null = null;
 let currentSearchAnimationTimeout: Timeout | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();

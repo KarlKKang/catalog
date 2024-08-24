@@ -43,7 +43,7 @@ interface TargetData {
 
 const targets = new Map<Element, TargetData>();
 let sessionCredentialPromise: Promise<void> | null = null;
-let sessionCredentialServerRequest: ServerRequest | null = null;
+let sessionCredentialServerRequest: ServerRequest<string> | null = null;
 let sessionCredentialTimeout: Timeout | null = null;
 let credential: [
     string, // sessionCredential

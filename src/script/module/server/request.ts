@@ -21,6 +21,8 @@ import { addEventListener } from '../event_listener/add';
 import { buildURI } from '../string/uri/build';
 import { getHighResTimestamp, type HighResTimestamp } from '../time/hi_res';
 import { parseResponse } from './parse_response';
+import { newFileReader } from '../file_reader/new';
+import { abortFileReader } from '../file_reader/abort';
 
 export const enum ServerRequestOptionKey {
     CALLBACK,
@@ -33,8 +35,8 @@ export const enum ServerRequestOptionKey {
     SHOW_SESSION_ENDED_MESSAGE,
     TIMEOUT,
 }
-interface ServerRequestOption {
-    readonly [ServerRequestOptionKey.CALLBACK]?: (response: string) => void | Promise<void>;
+interface ServerRequestOption<T extends string | Blob> {
+    readonly [ServerRequestOptionKey.CALLBACK]?: (response: T, xhr: XMLHttpRequest) => void | Promise<void>;
     readonly [ServerRequestOptionKey.CONTENT]?: string;
     readonly [ServerRequestOptionKey.METHOD]?: 'POST' | 'GET';
     readonly [ServerRequestOptionKey.ALLOW_CREDENTIALS]?: boolean;
@@ -52,29 +54,44 @@ export const enum ServerRequestKey {
     RETRY_TIMEOUT,
     _REQUEST_START_TIME,
     REQUEST_START_TIME,
+    SENT,
+    START_REQUEST,
     ABORT,
     SEND_REQUEST,
-    ON_ERROR_CALLBACK,
-    CHECK_STATUS,
+    RETRY,
+    HANDLE_ERROR,
+    RESPONSE_TYPE,
+    GET_RESPONSE,
+    GET_RESPONSE_TEXT,
+
+    __LENGTH,
 }
-class ServerRequest {
+abstract class ServerRequest<T extends string | Blob> {
     private readonly [ServerRequestKey.URI]: string;
-    private readonly [ServerRequestKey.OPTIONS]: ServerRequestOption;
+    private readonly [ServerRequestKey.OPTIONS]: ServerRequestOption<T>;
     private [ServerRequestKey.XHR]: XMLHttpRequest | null = null;
     private [ServerRequestKey.RETRY_TIMEOUT]: Timeout | null = null;
-    private [ServerRequestKey._REQUEST_START_TIME]: HighResTimestamp;
+    private [ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
+    private [ServerRequestKey.SENT] = false;
+    protected abstract readonly [ServerRequestKey.RESPONSE_TYPE]: XMLHttpRequestResponseType;
     public get [ServerRequestKey.REQUEST_START_TIME](): HighResTimestamp {
         return this[ServerRequestKey._REQUEST_START_TIME];
     }
 
-    constructor(uri: string, options: ServerRequestOption) {
+    constructor(uri: string, options: ServerRequestOption<T>) {
         this[ServerRequestKey.URI] = uri;
         this[ServerRequestKey.OPTIONS] = options;
-        this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
-        this[ServerRequestKey.SEND_REQUEST]();
     }
 
-    public [ServerRequestKey.ABORT]() {
+    public [ServerRequestKey.START_REQUEST](this: ServerRequest<T>) {
+        if (!this[ServerRequestKey.SENT]) {
+            this[ServerRequestKey.SENT] = true;
+            this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
+            this[ServerRequestKey.SEND_REQUEST]();
+        }
+    }
+
+    public [ServerRequestKey.ABORT](this: ServerRequest<T>) {
         const retryTimeout = this[ServerRequestKey.RETRY_TIMEOUT];
         if (retryTimeout !== null) {
             removeTimeout(retryTimeout);
@@ -87,7 +104,7 @@ class ServerRequest {
         }
     }
 
-    private [ServerRequestKey.SEND_REQUEST](this: ServerRequest) {
+    private [ServerRequestKey.SEND_REQUEST](this: ServerRequest<T>) {
         let uri = this[ServerRequestKey.URI];
         const options = this[ServerRequestKey.OPTIONS];
         let content = options[ServerRequestOptionKey.CONTENT] ?? '';
@@ -102,28 +119,34 @@ class ServerRequest {
             options[ServerRequestOptionKey.ALLOW_CREDENTIALS] ?? true,
             () => {
                 this[ServerRequestKey.XHR] = null;
-                if (this[ServerRequestKey.CHECK_STATUS](xhr)) {
-                    options[ServerRequestOptionKey.CALLBACK] && options[ServerRequestOptionKey.CALLBACK](xhr.responseText);
+                const status = xhr.status;
+                if (status === 200) {
+                    options[ServerRequestOptionKey.CALLBACK] && options[ServerRequestOptionKey.CALLBACK](xhr.response, xhr);
+                } else {
+                    this[ServerRequestKey.GET_RESPONSE_TEXT](xhr, (response: string) => {
+                        this[ServerRequestKey.HANDLE_ERROR](xhr.status, response);
+                    });
                 }
             },
         );
+        xhr.responseType = this[ServerRequestKey.RESPONSE_TYPE];
         addEventListener(xhr, 'error', () => {
             this[ServerRequestKey.XHR] = null;
-            this[ServerRequestKey.ON_ERROR_CALLBACK]();
+            this[ServerRequestKey.RETRY]();
         });
         const timeout = options[ServerRequestOptionKey.TIMEOUT];
         if (timeout !== undefined) {
             xhr.timeout = timeout;
             addEventListener(xhr, 'timeout', () => {
                 this[ServerRequestKey.XHR] = null;
-                this[ServerRequestKey.ON_ERROR_CALLBACK]();
+                this[ServerRequestKey.RETRY]();
             });
         }
         xhr.send(content);
         this[ServerRequestKey.XHR] = xhr;
     }
 
-    private [ServerRequestKey.ON_ERROR_CALLBACK](this: ServerRequest) {
+    private [ServerRequestKey.RETRY](this: ServerRequest<T>) {
         const options = this[ServerRequestKey.OPTIONS];
         if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] === undefined) {
             options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] = 2;
@@ -148,13 +171,9 @@ class ServerRequest {
         }
     }
 
-    private [ServerRequestKey.CHECK_STATUS](this: ServerRequest, xhr: XMLHttpRequest) {
+    private [ServerRequestKey.HANDLE_ERROR](this: ServerRequest<T>, status: number, responseText: string) {
         const options = this[ServerRequestKey.OPTIONS];
-        const status = xhr.status;
-        const responseText = xhr.responseText;
-        if (status === 200) {
-            return true;
-        } else if (status === 403) {
+        if (status === 403) {
             if (responseText === 'SESSION ENDED') {
                 showMessage(mediaSessionEnded);
             } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
@@ -168,7 +187,7 @@ class ServerRequest {
                     redirect(url, true);
                 }
             } else {
-                this[ServerRequestKey.ON_ERROR_CALLBACK]();
+                this[ServerRequestKey.RETRY]();
             }
         } else if (status === 429) {
             showMessage(status429);
@@ -183,13 +202,61 @@ class ServerRequest {
         } else if (status === 404 && responseText === 'REJECTED') {
             showMessage(notFound);
         } else {
-            this[ServerRequestKey.ON_ERROR_CALLBACK]();
+            this[ServerRequestKey.RETRY]();
         }
         return false;
     }
+
+    protected abstract [ServerRequestKey.GET_RESPONSE_TEXT](this: ServerRequest<T>, xhr: XMLHttpRequest, callback: (response: string) => void): void;
 }
 export type { ServerRequest };
 
-export function sendServerRequest(uri: string, options: ServerRequestOption) {
-    return new ServerRequest(uri, options);
+class StringServerRequest extends ServerRequest<string> {
+    protected readonly [ServerRequestKey.RESPONSE_TYPE] = 'text';
+    protected [ServerRequestKey.GET_RESPONSE_TEXT](this: StringServerRequest, xhr: XMLHttpRequest, callback: (response: string) => void) { // eslint-disable-line class-methods-use-this
+        callback(xhr.responseText);
+    }
+}
+
+const enum BlobServerRequestKey {
+    FILE_READER = ServerRequestKey.__LENGTH, // eslint-disable-line @typescript-eslint/prefer-literal-enum-member
+}
+class BlobServerRequest extends ServerRequest<Blob> {
+    private [BlobServerRequestKey.FILE_READER]: FileReader | null = null;
+    protected readonly [ServerRequestKey.RESPONSE_TYPE] = 'blob';
+
+    protected [ServerRequestKey.GET_RESPONSE_TEXT](this: BlobServerRequest, xhr: XMLHttpRequest, callback: (response: string) => void) {
+        const fileReader = newFileReader();
+        this[BlobServerRequestKey.FILE_READER] = fileReader;
+        addEventListener(fileReader, 'load', () => {
+            this[BlobServerRequestKey.FILE_READER] = null;
+            callback(fileReader.result as string);
+        });
+        addEventListener(fileReader, 'error', () => {
+            this[BlobServerRequestKey.FILE_READER] = null;
+            callback('');
+        });
+        fileReader.readAsText(xhr.response);
+    }
+
+    public override[ServerRequestKey.ABORT](this: BlobServerRequest) {
+        super[ServerRequestKey.ABORT]();
+        const fileReader = this[BlobServerRequestKey.FILE_READER];
+        if (fileReader !== null) {
+            abortFileReader(fileReader);
+            this[BlobServerRequestKey.FILE_READER] = null;
+        }
+    }
+}
+
+export function sendServerRequest(uri: string, options: ServerRequestOption<string>) {
+    const request = new StringServerRequest(uri, options);
+    request[ServerRequestKey.START_REQUEST]();
+    return request;
+}
+
+export function sendBlobServerRequest(uri: string, options: ServerRequestOption<Blob>) {
+    const request = new BlobServerRequest(uri, options);
+    request[ServerRequestKey.START_REQUEST]();
+    return request;
 }
