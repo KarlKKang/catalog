@@ -70,6 +70,13 @@ export default function () {
     });
     appendChildren(container, createBRElement(), createBRElement());
 
+    const filterWord = createTextAreaElement(1, 30);
+    appendChild(container, filterWord);
+    appendButton(container, 'Filter Word', () => {
+        misc('run', 'word_filter', { word: filterWord.value });
+    });
+    appendChildren(container, createBRElement(), createBRElement());
+
     appendButton(container, 'Show Database Column', () => {
         getTable('all_column');
     });
@@ -122,10 +129,11 @@ function generate(type: string, idOutput: HTMLParagraphElement) {
     });
 }
 
-function misc(command: string, type: string) {
+function misc(command: string, type: string, addtionalOptions: Record<string, string> = {}) {
     const param = {
         command: command,
         type: type,
+        ...addtionalOptions,
     };
 
     sendServerRequest('console', {
