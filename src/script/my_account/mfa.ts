@@ -37,7 +37,6 @@ import { AUTH_TOO_MANY_REQUESTS } from '../module/auth_result/too_many_requests'
 import { AUTH_DEACTIVATED } from '../module/auth_result/deactivated';
 import { AUTH_FAILED_TOTP } from '../module/auth_result/failed_totp';
 import { AUTH_FAILED } from '../module/auth_result/failed';
-import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { showElement } from '../module/style/show_element';
@@ -99,6 +98,7 @@ function enableMfa(accountInfo: AccountInfo, elements: MyAccountAllElements, but
         },
         disableAllInputs,
         mfaWarning,
+        accountInfo[AccountInfoKey.ID],
     );
 }
 
@@ -130,6 +130,7 @@ function disableMfa(accountInfo: AccountInfo, elements: MyAccountAllElements, bu
         },
         disableAllInputs,
         mfaWarning,
+        accountInfo[AccountInfoKey.ID],
     );
 }
 
@@ -167,7 +168,7 @@ function generateRecoveryCode(accountInfo: AccountInfo, elements: MyAccountAllEl
         },
         disableAllInputs,
         recoveryCodeWarning,
-        undefined,
+        buildHttpForm({ id: accountInfo[AccountInfoKey.ID] }),
         true,
     );
 }
@@ -177,7 +178,7 @@ function modifyMfaReauthenticationPrompt(
     callback: (response: string) => boolean,
     disableAllInputs: (disable: boolean) => void,
     warningElem: HTMLElement,
-    content?: string,
+    accountID: string,
     loginPopupWindow?: LoginPopupWindow,
     emailOtpPopupWindow?: EmailOtpPopupWindow,
 ) {
@@ -188,7 +189,7 @@ function modifyMfaReauthenticationPrompt(
                 disableAllInputs(false);
             },
             (loginPopupWindow) => {
-                modifyMfaReauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, loginPopupWindow);
+                modifyMfaReauthenticationPrompt(uri, callback, disableAllInputs, warningElem, accountID, loginPopupWindow);
             },
         );
         return;
@@ -219,7 +220,7 @@ function modifyMfaReauthenticationPrompt(
                             disableAllInputs(false);
                         },
                         (loginPopupWindow) => {
-                            modifyMfaReauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, loginPopupWindow);
+                            modifyMfaReauthenticationPrompt(uri, callback, disableAllInputs, warningElem, accountID, loginPopupWindow);
                         },
                         loginFailed,
                     );
@@ -232,7 +233,7 @@ function modifyMfaReauthenticationPrompt(
                             disableAllInputs(false);
                         },
                         (emailOtpPopupWindow) => {
-                            modifyMfaReauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, loginPopupWindow, emailOtpPopupWindow);
+                            modifyMfaReauthenticationPrompt(uri, callback, disableAllInputs, warningElem, accountID, loginPopupWindow, emailOtpPopupWindow);
                         },
                     );
                     break;
@@ -242,14 +243,12 @@ function modifyMfaReauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionKey.CONTENT]: joinHttpForms(
-            content,
-            buildHttpForm({
-                email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
-                password: loginPopupWindow[LoginPopupWindowKey.PASSWORD],
-                otp: emailOtpPopupWindow?.[EmailOtpPopupWindowKey.OTP],
-            }),
-        ),
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({
+            id: accountID,
+            email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
+            password: loginPopupWindow[LoginPopupWindowKey.PASSWORD],
+            otp: emailOtpPopupWindow?.[EmailOtpPopupWindowKey.OTP],
+        }),
         [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
@@ -363,7 +362,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo, disableAllInputs: (disable
                     });
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: totpInfo[TOTPInfoKey.P], totp: totp }),
+            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: accountInfo[AccountInfoKey.ID], p: totpInfo[TOTPInfoKey.P], totp: totp }),
             [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         });
     };

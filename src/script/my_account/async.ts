@@ -43,16 +43,16 @@ export default function (accountInfo: AccountInfo, setSessionsContainer: (contai
     setInitialUI(accountInfo, inputFields, buttons, elements);
     setSessionsContainer(elements[MyAccountElement.sessionsContainer]);
     addEventListener(buttons[MyAccountButton.emailChangeButton], 'click', () => {
-        changeEmail(elements[MyAccountElement.emailWarning], buttons[MyAccountButton.emailChangeButton]);
+        changeEmail(accountInfo[AccountInfoKey.ID], elements[MyAccountElement.emailWarning], buttons[MyAccountButton.emailChangeButton]);
     });
     addEventListener(buttons[MyAccountButton.usernameChangeButton], 'click', () => {
         changeUsername(accountInfo, elements[MyAccountElement.usernameWarning], inputFields[MyAccountInputField.newUsernameInputField], buttons[MyAccountButton.usernameChangeButton]);
     });
     addEventListener(buttons[MyAccountButton.passwordChangeButton], 'click', () => {
-        changePassword(elements[MyAccountElement.passwordWarning], inputFields, buttons[MyAccountButton.passwordChangeButton]);
+        changePassword(accountInfo[AccountInfoKey.ID], elements[MyAccountElement.passwordWarning], inputFields, buttons[MyAccountButton.passwordChangeButton]);
     });
     addEventListener(buttons[MyAccountButton.inviteButton], 'click', () => {
-        invite(elements, inputFields[MyAccountInputField.inviteReceiverEmailInputField], buttons[MyAccountButton.inviteButton]);
+        invite(accountInfo[AccountInfoKey.ID], elements, inputFields[MyAccountInputField.inviteReceiverEmailInputField], buttons[MyAccountButton.inviteButton]);
     });
     addEventListener(buttons[MyAccountButton.loginNotificationButton], 'click', () => {
         changeLoginNotification(accountInfo, elements, buttons);
@@ -86,7 +86,7 @@ function setInitialUI(accountInfo: AccountInfo, inputFields: MyAccountAllInputFi
     inputFields[MyAccountInputField.newUsernameInputField][InputFieldElementKey.INPUT].value = accountInfo[AccountInfoKey.USERNAME];
 }
 
-function changeEmail(warningElem: HTMLElement, emailChangeButton: HTMLButtonElement) {
+function changeEmail(accountID: string, warningElem: HTMLElement, emailChangeButton: HTMLButtonElement) {
     disableButton(emailChangeButton, true);
 
     hideElement(warningElem);
@@ -106,11 +106,12 @@ function changeEmail(warningElem: HTMLElement, emailChangeButton: HTMLButtonElem
             showElement(warningElem);
             disableButton(emailChangeButton, false);
         },
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: accountID }),
         [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
 
-function changePassword(warningElem: HTMLElement, inputFields: MyAccountAllInputFields, passwordChangeButton: HTMLButtonElement) {
+function changePassword(accountID: string, warningElem: HTMLElement, inputFields: MyAccountAllInputFields, passwordChangeButton: HTMLButtonElement) {
     const newPasswordInputField = inputFields[MyAccountInputField.newPasswordInputField];
     const newPasswordComfirmInputField = inputFields[MyAccountInputField.newPasswordComfirmInputField];
 
@@ -161,11 +162,11 @@ function changePassword(warningElem: HTMLElement, inputFields: MyAccountAllInput
         },
         disableAllInputs,
         warningElem,
-        buildHttpForm({ new: newPassword }),
+        buildHttpForm({ id: accountID, new: newPassword }),
     );
 }
 
-function changeUsername(userInfo: AccountInfo, warningElem: HTMLElement, newUsernameInputField: InputFieldElement, usernameChangeButton: HTMLButtonElement) {
+function changeUsername(accountInfo: AccountInfo, warningElem: HTMLElement, newUsernameInputField: InputFieldElement, usernameChangeButton: HTMLButtonElement) {
     const disableAllInputs = (disabled: boolean) => {
         disableInputField(newUsernameInputField, disabled);
         disableButton(usernameChangeButton, disabled);
@@ -182,7 +183,7 @@ function changeUsername(userInfo: AccountInfo, warningElem: HTMLElement, newUser
         showElement(warningElem);
         disableAllInputs(false);
         return;
-    } else if (newUsername === userInfo[AccountInfoKey.USERNAME]) {
+    } else if (newUsername === accountInfo[AccountInfoKey.USERNAME]) {
         replaceText(warningElem, '新しいユーザー名は元のユーザー名と同じです。');
         showElement(warningElem);
         disableAllInputs(false);
@@ -195,7 +196,7 @@ function changeUsername(userInfo: AccountInfo, warningElem: HTMLElement, newUser
             if (response === 'DONE') {
                 replaceText(warningElem, usernameChanged);
                 changeColor(warningElem, CSS_COLOR.GREEN);
-                userInfo[AccountInfoKey.USERNAME] = newUsername;
+                accountInfo[AccountInfoKey.USERNAME] = newUsername;
             } else if (response === 'DUPLICATED') {
                 replaceText(warningElem, usernameTaken);
             } else if (response === 'EMPTY') {
@@ -212,11 +213,11 @@ function changeUsername(userInfo: AccountInfo, warningElem: HTMLElement, newUser
         },
         disableAllInputs,
         warningElem,
-        buildHttpForm({ new: newUsername }),
+        buildHttpForm({ id: accountInfo[AccountInfoKey.ID], new: newUsername }),
     );
 }
 
-function invite(elements: MyAccountAllElements, inviteReceiverEmailInputField: InputFieldElement, inviteButton: HTMLButtonElement) {
+function invite(accountID: string, elements: MyAccountAllElements, inviteReceiverEmailInputField: InputFieldElement, inviteButton: HTMLButtonElement) {
     const disableAllInputs = (disabled: boolean) => {
         disableInputField(inviteReceiverEmailInputField, disabled);
         disableButton(inviteButton, disabled);
@@ -264,7 +265,7 @@ function invite(elements: MyAccountAllElements, inviteReceiverEmailInputField: I
         },
         disableAllInputs,
         warningElem,
-        buildHttpForm({ receiver: receiver }),
+        buildHttpForm({ id: accountID, receiver: receiver }),
     );
 }
 
@@ -302,7 +303,7 @@ function changeLoginNotification(accountInfo: AccountInfo, elements: MyAccountAl
         },
         disableAllInputs,
         warningElem,
-        buildHttpForm({ p: loginNotificationTargetStatus ? 1 : 0 }),
+        buildHttpForm({ id: accountInfo[AccountInfoKey.ID], p: loginNotificationTargetStatus ? 1 : 0 }),
         true,
     );
 }

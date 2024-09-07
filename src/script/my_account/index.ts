@@ -10,7 +10,7 @@ import { parseResponse } from '../module/server/parse_response';
 import { type ShowPageFunc } from '../module/global/type';
 import { pgid } from '../module/global/pgid';
 import { addTimeout } from '../module/timer/add/timeout';
-import { parseAccountInfo } from '../module/type/AccountInfo';
+import { AccountInfoKey, parseAccountInfo } from '../module/type/AccountInfo';
 import { parseSession } from '../module/type/Sessions';
 import { importModule } from '../module/import_module';
 import { removeTimeout } from '../module/timer/remove/timeout';
@@ -20,8 +20,8 @@ export default function (showPage: ShowPageFunc) {
     const currentPgid = pgid;
 
     let getSessionsStarted = false;
-    let sessionsModuleCallback: ((sessionsContainer: HTMLElement) => void) | null = null;
-    let sessionsContainer: HTMLElement | null = null;
+    let sessionsModuleCallback: ((accountID: string, sessionsContainer: HTMLElement) => void) | null = null;
+    let sessionsParameters: [string, HTMLElement] | null = null;
     const getSessions = () => {
         const sessionsModuleImport = importModule(
             () => import(
@@ -32,11 +32,11 @@ export default function (showPage: ShowPageFunc) {
         sendServerRequest('get_sessions', {
             [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
                 const sessionsModule = await sessionsModuleImport;
-                if (sessionsContainer !== null) {
-                    sessionsModule.default(parseResponse(response, parseSession), sessionsContainer);
+                if (sessionsParameters !== null) {
+                    sessionsModule.default(parseResponse(response, parseSession), ...sessionsParameters);
                 } else {
-                    sessionsModuleCallback = (sessionsContainer: HTMLElement) => {
-                        sessionsModule.default(parseResponse(response, parseSession), sessionsContainer);
+                    sessionsModuleCallback = (accountID: string, sessionsContainer: HTMLElement) => {
+                        sessionsModule.default(parseResponse(response, parseSession), accountID, sessionsContainer);
                     };
                 }
             },
@@ -63,9 +63,9 @@ export default function (showPage: ShowPageFunc) {
             }
             asyncModule.default(accountInfo, (_sessionsContainer: HTMLElement) => {
                 if (sessionsModuleCallback !== null) {
-                    sessionsModuleCallback(_sessionsContainer);
+                    sessionsModuleCallback(accountInfo[AccountInfoKey.ID], _sessionsContainer);
                 } else {
-                    sessionsContainer = _sessionsContainer;
+                    sessionsParameters = [accountInfo[AccountInfoKey.ID], _sessionsContainer];
                 }
             });
             showPage();

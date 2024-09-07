@@ -22,7 +22,7 @@ import { invalidResponse } from '../module/message/param/invalid_response';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { disableButton } from '../module/dom/element/button/disable';
 
-export default function (sessions: Sessions, sessionsContainer: HTMLElement) {
+export default function (sessions: Sessions, accountID: string, sessionsContainer: HTMLElement) {
     replaceChildren(sessionsContainer);
     for (const session of sessions) {
         const outerContainer = createDivElement();
@@ -58,7 +58,7 @@ export default function (sessions: Sessions, sessionsContainer: HTMLElement) {
             appendChild(innerContainer, sessionLogoutButton);
 
             addEventListener(sessionLogoutButton, 'click', () => {
-                logoutSession(sessionID, sessionLogoutButton, sessionWarningElem);
+                logoutSession(accountID, sessionID, sessionLogoutButton, sessionWarningElem);
             });
             appendChild(sessionsContainer, outerContainer);
         }
@@ -95,7 +95,7 @@ function appendParagraph(text: string, container: HTMLElement) {
     appendChild(container, elem);
 }
 
-function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement, sessionWarningElem: HTMLDivElement) {
+function logoutSession(accountID: string, sessionID: string, sessionLogoutButton: HTMLButtonElement, sessionWarningElem: HTMLDivElement) {
     const disableAllInputs = (disabled: boolean) => {
         disableButton(sessionLogoutButton, disabled);
     };
@@ -122,6 +122,6 @@ function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement
         },
         disableAllInputs,
         sessionWarningElem,
-        buildHttpForm({ id: sessionID }),
+        buildHttpForm({ id: accountID, p: sessionID }),
     );
 }
