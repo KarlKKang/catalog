@@ -5,7 +5,7 @@ import { sessionEndedTitle } from './internal/session_ended_title';
 
 export const mediaSessionEnded = {
     [MessageParamKey.TITLE]: sessionEndedTitle,
-    [MessageParamKey.MESSAGE]: 'セッションがタイムアウトした、または別のソースからのアクティビティによって新しいセッションが開始された。',
+    [MessageParamKey.MESSAGE]: 'セッションがタイムアウトした、または別のタブで新しいセッションが開始されました。',
     [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
     [MessageParamKey.URL]: TOP_URI,
 };
