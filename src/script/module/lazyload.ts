@@ -158,7 +158,7 @@ function loadImage(target: Element, targetData: TargetData) {
                         resolve();
                     },
                     [ServerRequestOptionKey.CONTENT]: sessionCredential,
-                    [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+                    [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
                     [ServerRequestOptionKey.TIMEOUT]: 30000,
                 });
                 sessionCredentialServerRequest = serverRequest;

@@ -294,7 +294,7 @@ function getSeries(callback: (seriesInfo: SeriesInfo) => void) {
         },
         [ServerRequestOptionKey.CONTENT]: joinHttpForms(keywordsQuery, buildHttpForm({ pivot: pivot })),
         [ServerRequestOptionKey.LOGOUT_PARAM]: keywordsQuery,
-        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }

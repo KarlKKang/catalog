@@ -54,7 +54,7 @@ export default function (showPage: ShowPageFunc) {
             showPage();
         },
         [ServerRequestOptionKey.CONTENT]: sessionCredential,
-        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         [ServerRequestOptionKey.TIMEOUT]: 30000,
     });
 }

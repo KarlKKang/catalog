@@ -101,7 +101,7 @@ function changeEmail() {
             showElement(warningElem);
             disableAllInputs(false);
         },
-        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
 

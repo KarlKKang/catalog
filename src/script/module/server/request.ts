@@ -4,9 +4,9 @@ import { connectionError } from '../message/param/connection_error';
 import { unknownServerError } from './internal/message/unknown_server_error';
 import { status400And500 } from './internal/message/status_400_and_500';
 import { status503 } from './internal/message/status_503';
-import { sessionEnded } from './internal/message/session_ended';
+import { unauthorized } from './internal/message/unauthorized';
 import { status429 } from './internal/message/status_429';
-import { mediaSessionEnded } from './internal/message/media_session_ended';
+import { sessionEnded } from './internal/message/session_ended';
 import { notFound } from '../message/param/not_found';
 import { insufficientPermissions } from './internal/message/insufficient_permissions';
 import { type Timeout } from '../timer/type';
@@ -32,7 +32,7 @@ export const enum ServerRequestOptionKey {
     LOGOUT_PARAM,
     CONNECTION_ERROR_RETRY,
     CONNECTION_ERROR_RETRY_TIMEOUT,
-    SHOW_SESSION_ENDED_MESSAGE,
+    SHOW_UNAUTHORIZED_MESSAGE,
     TIMEOUT,
 }
 interface ServerRequestOption<T extends string | Blob> {
@@ -43,7 +43,7 @@ interface ServerRequestOption<T extends string | Blob> {
     readonly [ServerRequestOptionKey.LOGOUT_PARAM]?: string | undefined;
     [ServerRequestOptionKey.CONNECTION_ERROR_RETRY]?: number | undefined;
     [ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
-    readonly [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]?: boolean;
+    readonly [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]?: boolean;
     readonly [ServerRequestOptionKey.TIMEOUT]?: number;
 }
 
@@ -175,14 +175,14 @@ abstract class ServerRequest<T extends string | Blob> {
         const options = this[ServerRequestKey.OPTIONS];
         if (status === 403) {
             if (responseText === 'SESSION ENDED') {
-                showMessage(mediaSessionEnded);
+                showMessage(sessionEnded);
             } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
                 showMessage(insufficientPermissions);
             } else if (responseText === 'UNAUTHORIZED') {
                 const logoutParam = options[ServerRequestOptionKey.LOGOUT_PARAM];
                 const url = buildURI(LOGIN_URI, logoutParam);
-                if (options[ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]) {
-                    showMessage(sessionEnded(url));
+                if (options[ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]) {
+                    showMessage(unauthorized(url));
                 } else {
                     redirect(url, true);
                 }

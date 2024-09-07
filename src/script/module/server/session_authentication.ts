@@ -24,7 +24,7 @@ export function setUpSessionAuthentication(credential: string, startTime: HighRe
             [ServerRequestOptionKey.CONTENT]: credential,
             [ServerRequestOptionKey.LOGOUT_PARAM]: logoutParam,
             [ServerRequestOptionKey.CONNECTION_ERROR_RETRY]: 5,
-            [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+            [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         });
     }, max(40000 - (getHighResTimestamp() - startTime), 0)); // 60 - 0.5 - 1 - 2 - 4 - 8 = 44.5
 }

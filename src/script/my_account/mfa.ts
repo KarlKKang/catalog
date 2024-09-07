@@ -233,7 +233,7 @@ function modifyMfaReauthenticationPrompt(
                 otp: emailOtpPopupWindow?.[EmailOtpPopupWindowKey.OTP],
             }),
         ),
-        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
 
@@ -347,7 +347,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo) {
                 }
             },
             [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: totpInfo[TOTPInfoKey.P], totp: totp }),
-            [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+            [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         });
     };
     addEventListener(submitButton, 'click', submit);

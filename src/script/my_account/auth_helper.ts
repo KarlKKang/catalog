@@ -113,7 +113,7 @@ export function reauthenticationPrompt(
                 totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
             }),
         ),
-        [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
 

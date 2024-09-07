@@ -236,7 +236,7 @@ export function buildDownloadAccordion(
             },
             [ServerRequestOptionKey.CONTENT]: requestContent,
             [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
-            [ServerRequestOptionKey.SHOW_SESSION_ENDED_MESSAGE]: true,
+            [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         });
     });
     appendChild(accordionPanel, downloadButton);
