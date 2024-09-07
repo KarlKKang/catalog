@@ -35,13 +35,16 @@ import { LOGIN_URI } from '../module/env/uri';
 import { disableButton } from '../module/dom/element/button/disable';
 import { disableInputField } from '../module/dom/element/input/input_field/disable';
 import { type InputFieldElement, InputFieldElementKey } from '../module/dom/element/input/input_field/type';
+import { importModule } from '../module/import_module';
+import { parseSession } from '../module/type/Sessions';
+import { pgid } from '../module/global/pgid';
 
 const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 
-export default function (accountInfo: AccountInfo, setSessionsContainer: (container: HTMLElement) => void) {
+export default function (accountInfo: AccountInfo) {
     const [inputFields, buttons, elements] = initializeUI();
     setInitialUI(accountInfo, inputFields, buttons, elements);
-    setSessionsContainer(elements[MyAccountElement.sessionsContainer]);
+    initializeSessions(accountInfo[AccountInfoKey.ID], elements[MyAccountElement.sessionsContainer]);
     addEventListener(buttons[MyAccountButton.emailChangeButton], 'click', () => {
         changeEmail(accountInfo[AccountInfoKey.ID], elements[MyAccountElement.emailWarning], buttons[MyAccountButton.emailChangeButton]);
     });
@@ -307,3 +310,23 @@ function changeLoginNotification(accountInfo: AccountInfo, elements: MyAccountAl
         true,
     );
 }
+
+function initializeSessions(accountID: string, sessionsContainer: HTMLElement) {
+    const sessionsModuleImport = importModule(
+        () => import(
+            /* webpackExports: ["default"] */
+            './sessions'
+        ),
+    );
+    const currentPgid = pgid;
+    sendServerRequest('get_sessions', {
+        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
+            const sessionsModule = await sessionsModuleImport;
+            if (currentPgid !== pgid) {
+                return;
+            }
+            sessionsModule.default(parseResponse(response, parseSession), accountID, sessionsContainer);
+        },
+        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: accountID }),
+    });
+};
