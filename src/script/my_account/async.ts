@@ -61,7 +61,7 @@ export default function (accountInfo: AccountInfo, setSessionsContainer: (contai
         disableButton(buttons[MyAccountButton.logoutButton], true);
         logout(() => {
             redirect(LOGIN_URI);
-        });
+        }, accountInfo[AccountInfoKey.ID]);
     });
     initializeMFAModule(accountInfo, elements, buttons);
 }
