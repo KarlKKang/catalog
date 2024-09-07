@@ -4,6 +4,7 @@ import { parseBoolean } from './internal/parse_boolean';
 import { parseString } from './internal/parse_string';
 
 export const enum AccountInfoKey {
+    ID,
     USERNAME,
     INVITE_QUOTA,
     MFA_STATUS,
@@ -11,6 +12,7 @@ export const enum AccountInfoKey {
     LOGIN_NOTIFICATION,
 }
 export interface AccountInfo {
+    readonly [AccountInfoKey.ID]: number;
     [AccountInfoKey.USERNAME]: string;
     readonly [AccountInfoKey.INVITE_QUOTA]: number;
     readonly [AccountInfoKey.MFA_STATUS]: boolean;
@@ -21,6 +23,7 @@ export interface AccountInfo {
 export function parseAccountInfo(accountInfo: unknown): AccountInfo {
     const accountInfoObj = parseObject(accountInfo);
     return {
+        [AccountInfoKey.ID]: parseNumber(accountInfoObj.id),
         [AccountInfoKey.USERNAME]: parseString(accountInfoObj.username),
         [AccountInfoKey.INVITE_QUOTA]: parseNumber(accountInfoObj.invite_quota),
         [AccountInfoKey.MFA_STATUS]: parseBoolean(accountInfoObj.mfa_status),
