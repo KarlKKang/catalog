@@ -56,12 +56,12 @@ export default function (showPage: ShowPageFunc) {
 
     sendServerRequest('get_account', {
         [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
-            const userInfo = parseResponse(response, parseAccountInfo);
+            const accountInfo = parseResponse(response, parseAccountInfo);
             const asyncModule = await asyncModulePromise;
             if (currentPgid !== pgid) {
                 return;
             }
-            asyncModule.default(userInfo);
+            asyncModule.default(accountInfo);
             resolveUIInit();
             showPage();
             if (!getSessionsStarted) {

@@ -21,11 +21,7 @@ import { createUsernameInputField } from '../module/dom/element/input/input_fiel
 import * as styles from '../../css/my_account.module.scss';
 import { addOffloadCallback } from '../module/global/offload';
 import { type InputFieldElement, InputFieldElementKey } from '../module/dom/element/input/input_field/type';
-
-export const enum SharedBool {
-    currentMfaStatus,
-    currentLoginNotificationStatus,
-}
+import { type AccountInfo } from '../module/type/AccountInfo';
 
 export const enum SharedInput {
     newUsernameInput,
@@ -60,14 +56,16 @@ export const enum SharedElement {
     sessionsContainer,
 }
 
-let sharedBools: { [key in SharedBool]: boolean } | null = null;
+let _accountInfo: AccountInfo | null = null;
 let sharedInputs: { [key in SharedInput]: InputFieldElement } | null = null;
 let sharedButtons: { [key in SharedButton]: HTMLButtonElement } | null = null;
 let sharedElements: { [key in SharedElement]: HTMLElement } | null = null;
 export const sessionLogoutButtons = new Set<HTMLButtonElement>();
 
-export function initializeSharedVars() {
+export function initializeSharedVars(accountInfo: AccountInfo) {
     addOffloadCallback(dereferenceSharedVars);
+
+    _accountInfo = accountInfo;
 
     const container = createDivElement();
     addClass(container, styles.container);
@@ -109,10 +107,6 @@ export function initializeSharedVars() {
     const logoutButton = createStyledButtonElement('ログアウ');
     appendChild(container, logoutButton);
 
-    sharedBools = {
-        [SharedBool.currentMfaStatus]: false,
-        [SharedBool.currentLoginNotificationStatus]: false,
-    };
     sharedInputs = {
         [SharedInput.newUsernameInput]: usernameInputField,
         [SharedInput.newPasswordInput]: passwordInputField,
@@ -151,18 +145,11 @@ function triggerSharedVarAccessError(): never {
     throw new Error('Not initialized.');
 }
 
-export function setSharedBool(idx: SharedBool, value: boolean) {
-    if (sharedBools === null) {
+export function getAccountInfo() {
+    if (_accountInfo === null) {
         triggerSharedVarAccessError();
     }
-    sharedBools[idx] = value;
-}
-
-export function getSharedBool(idx: SharedBool) {
-    if (sharedBools === null) {
-        triggerSharedVarAccessError();
-    }
-    return sharedBools[idx];
+    return _accountInfo;
 }
 
 export function getSharedInputField(idx: SharedInput) {
@@ -194,7 +181,7 @@ export function getSharedElement(idx: SharedElement) {
 }
 
 function dereferenceSharedVars() {
-    sharedBools = null;
+    _accountInfo = null;
     sharedInputs = null;
     sharedButtons = null;
     sharedElements = null;

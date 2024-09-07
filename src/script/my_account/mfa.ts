@@ -28,7 +28,7 @@ import { toCanvas } from 'qrcode';
 import { removeInterval } from '../module/timer/remove/interval';
 import { addInterval } from '../module/timer/add/interval';
 import { pgid } from '../module/global/pgid';
-import { SharedBool, SharedButton, SharedElement, getSharedBool, getSharedButton, getSharedElement } from './shared_var';
+import { SharedButton, SharedElement, getSharedButton, getSharedElement } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { promptForEmailOtp, type EmailOtpPopupWindow, EmailOtpPopupWindowKey } from './email_otp_popup_window';
@@ -55,12 +55,13 @@ import { initializePopupWindow, styles as popupWindowStyles } from '../module/po
 import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import type { Interval } from '../module/timer/type';
+import { AccountInfoKey, type AccountInfo } from '../module/type/AccountInfo';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
-export default function () {
+export default function (accountInfo: AccountInfo) {
     addEventListener(getSharedButton(SharedButton.mfaButton), 'click', () => {
-        if (getSharedBool(SharedBool.currentMfaStatus)) {
+        if (accountInfo[AccountInfoKey.MFA_STATUS]) {
             disableMfa();
         } else {
             enableMfa();

@@ -19,7 +19,7 @@ import { usernameChanged } from '../module/text/username/changed';
 import { usernameInvalid } from '../module/text/username/invalid';
 import { usernameEmpty } from '../module/text/username/empty';
 import { emailSentTitle as emailSendPrefix } from '../module/text/send_mail/title';
-import { SharedBool, SharedButton, SharedElement, SharedInput, getSharedBool, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars, setSharedBool } from './shared_var';
+import { SharedButton, SharedElement, SharedInput, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars } from './shared_var';
 import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { testPassword } from '../module/regex/password';
@@ -37,46 +37,46 @@ import { LOGIN_URI } from '../module/env/uri';
 
 const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 
-export default function (userInfo: AccountInfo) {
-    initializeUI(userInfo);
+export default function (accountInfo: AccountInfo) {
+    initializeUI(accountInfo);
     addEventListener(getSharedButton(SharedButton.emailChangeButton), 'click', changeEmail);
     addEventListener(getSharedButton(SharedButton.usernameChangeButton), 'click', () => {
-        changeUsername(userInfo);
+        changeUsername(accountInfo);
     });
     addEventListener(getSharedButton(SharedButton.passwordChangeButton), 'click', changePassword);
     addEventListener(getSharedButton(SharedButton.inviteButton), 'click', invite);
-    addEventListener(getSharedButton(SharedButton.loginNotificationButton), 'click', changeLoginNotification);
+    addEventListener(getSharedButton(SharedButton.loginNotificationButton), 'click', () => {
+        changeLoginNotification(accountInfo);
+    });
     addEventListener(getSharedButton(SharedButton.logoutButton), 'click', () => {
         disableAllInputs(true);
         logout(() => {
             redirect(LOGIN_URI);
         });
     });
-    initializeMFAModule();
+    initializeMFAModule(accountInfo);
 }
 
-function initializeUI(userInfo: AccountInfo) {
-    const container = initializeSharedVars();
+function initializeUI(accountInfo: AccountInfo) {
+    const container = initializeSharedVars(accountInfo);
     appendChild(body, container);
+    updateMfaUI(accountInfo[AccountInfoKey.MFA_STATUS]);
 
-    setSharedBool(SharedBool.currentLoginNotificationStatus, userInfo[AccountInfoKey.LOGIN_NOTIFICATION]);
-    updateMfaUI(userInfo[AccountInfoKey.MFA_STATUS]);
-
-    if (userInfo[AccountInfoKey.MFA_STATUS]) {
+    if (accountInfo[AccountInfoKey.MFA_STATUS]) {
         const recoveryCodeInfo = getSharedElement(SharedElement.recoveryCodeInfo);
-        if (userInfo[AccountInfoKey.RECOVERY_CODE_STATUS] === 0) {
+        if (accountInfo[AccountInfoKey.RECOVERY_CODE_STATUS] === 0) {
             changeColor(recoveryCodeInfo, CSS_COLOR.RED);
             appendText(recoveryCodeInfo, 'リカバリーコードが残っていません。新しいリカバリーコードを生成してください。');
             showElement(recoveryCodeInfo);
-        } else if (userInfo[AccountInfoKey.RECOVERY_CODE_STATUS] === 1) {
+        } else if (accountInfo[AccountInfoKey.RECOVERY_CODE_STATUS] === 1) {
             changeColor(recoveryCodeInfo, CSS_COLOR.ORANGE);
             appendText(recoveryCodeInfo, 'リカバリーコードが残りわずかです。新しいリカバリーコードを生成することをお勧めします。');
             showElement(recoveryCodeInfo);
         }
     }
 
-    appendText(getSharedElement(SharedElement.inviteCount), userInfo[AccountInfoKey.INVITE_QUOTA].toString());
-    getSharedInput(SharedInput.newUsernameInput).value = userInfo[AccountInfoKey.USERNAME];
+    appendText(getSharedElement(SharedElement.inviteCount), accountInfo[AccountInfoKey.INVITE_QUOTA].toString());
+    getSharedInput(SharedInput.newUsernameInput).value = accountInfo[AccountInfoKey.USERNAME];
 }
 
 function changeEmail() {
@@ -248,7 +248,7 @@ function invite() {
     );
 }
 
-function changeLoginNotification() {
+function changeLoginNotification(accountInfo: AccountInfo) {
     disableAllInputs(true);
 
     const warningElem = getSharedElement(SharedElement.loginNotificationWarning);
@@ -256,13 +256,13 @@ function changeLoginNotification() {
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
 
-    const loginNotificationTargetStatus = !getSharedBool(SharedBool.currentLoginNotificationStatus);
+    const loginNotificationTargetStatus = !accountInfo[AccountInfoKey.LOGIN_NOTIFICATION];
 
     reauthenticationPrompt(
         'change_login_notification',
         (response: string) => {
             if (response === 'DONE') {
-                setSharedBool(SharedBool.currentLoginNotificationStatus, loginNotificationTargetStatus);
+                accountInfo[AccountInfoKey.LOGIN_NOTIFICATION] = loginNotificationTargetStatus;
                 updateMfaUI(true);
                 replaceText(warningElem, loginNotificationTargetStatus ? 'ログイン通知が有効になりました。' : 'ログイン通知が無効になりました。');
                 changeColor(warningElem, CSS_COLOR.GREEN);
