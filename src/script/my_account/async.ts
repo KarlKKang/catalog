@@ -2,8 +2,6 @@ import { ServerRequestOptionKey, sendServerRequest } from '../module/server/requ
 import { logout } from '../module/server/logout';
 import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener/add';
-import { appendChild } from '../module/dom/node/append_child';
-import { body } from '../module/dom/body';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { showMessage } from '../module/message';
@@ -19,7 +17,7 @@ import { usernameChanged } from '../module/text/username/changed';
 import { usernameInvalid } from '../module/text/username/invalid';
 import { usernameEmpty } from '../module/text/username/empty';
 import { emailSentTitle as emailSendPrefix } from '../module/text/send_mail/title';
-import { SharedButton, SharedElement, SharedInput, getAccountInfo, getSharedButton, getSharedElement, getSharedInput, getSharedInputField, initializeSharedVars } from './shared_var';
+import { type MyAccountAllButtons, type MyAccountAllElements, type MyAccountAllInputFields, MyAccountButton, MyAccountElement, MyAccountInputField, initializeUI } from './initialize_ui';
 import { updateMfaUI, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { testPassword } from '../module/regex/password';
@@ -36,36 +34,43 @@ import { default as initializeMFAModule } from './mfa';
 import { LOGIN_URI } from '../module/env/uri';
 import { disableButton } from '../module/dom/element/button/disable';
 import { disableInputField } from '../module/dom/element/input/input_field/disable';
+import { type InputFieldElement, InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 
-export default function (accountInfo: AccountInfo) {
-    initializeUI(accountInfo);
-    addEventListener(getSharedButton(SharedButton.emailChangeButton), 'click', changeEmail);
-    addEventListener(getSharedButton(SharedButton.usernameChangeButton), 'click', () => {
-        changeUsername(accountInfo);
+export default function (accountInfo: AccountInfo, setSessionsContainer: (container: HTMLElement) => void) {
+    const [inputFields, buttons, elements] = initializeUI();
+    setInitialUI(accountInfo, inputFields, buttons, elements);
+    setSessionsContainer(elements[MyAccountElement.sessionsContainer]);
+    addEventListener(buttons[MyAccountButton.emailChangeButton], 'click', () => {
+        changeEmail(elements[MyAccountElement.emailWarning], buttons[MyAccountButton.emailChangeButton]);
     });
-    addEventListener(getSharedButton(SharedButton.passwordChangeButton), 'click', changePassword);
-    addEventListener(getSharedButton(SharedButton.inviteButton), 'click', invite);
-    addEventListener(getSharedButton(SharedButton.loginNotificationButton), 'click', () => {
-        changeLoginNotification(accountInfo);
+    addEventListener(buttons[MyAccountButton.usernameChangeButton], 'click', () => {
+        changeUsername(accountInfo, elements[MyAccountElement.usernameWarning], inputFields[MyAccountInputField.newUsernameInputField], buttons[MyAccountButton.usernameChangeButton]);
     });
-    addEventListener(getSharedButton(SharedButton.logoutButton), 'click', () => {
-        disableButton(getSharedButton(SharedButton.logoutButton), true);
+    addEventListener(buttons[MyAccountButton.passwordChangeButton], 'click', () => {
+        changePassword(elements[MyAccountElement.passwordWarning], inputFields, buttons[MyAccountButton.passwordChangeButton]);
+    });
+    addEventListener(buttons[MyAccountButton.inviteButton], 'click', () => {
+        invite(elements, inputFields[MyAccountInputField.inviteReceiverEmailInputField], buttons[MyAccountButton.inviteButton]);
+    });
+    addEventListener(buttons[MyAccountButton.loginNotificationButton], 'click', () => {
+        changeLoginNotification(accountInfo, elements, buttons);
+    });
+    addEventListener(buttons[MyAccountButton.logoutButton], 'click', () => {
+        disableButton(buttons[MyAccountButton.logoutButton], true);
         logout(() => {
             redirect(LOGIN_URI);
         });
     });
-    initializeMFAModule(accountInfo);
+    initializeMFAModule(accountInfo, elements, buttons);
 }
 
-function initializeUI(accountInfo: AccountInfo) {
-    const container = initializeSharedVars(accountInfo);
-    appendChild(body, container);
-    updateMfaUI(accountInfo[AccountInfoKey.MFA_STATUS]);
+function setInitialUI(accountInfo: AccountInfo, inputFields: MyAccountAllInputFields, buttons: MyAccountAllButtons, elements: MyAccountAllElements) {
+    updateMfaUI(accountInfo[AccountInfoKey.MFA_STATUS], accountInfo, elements, buttons);
 
     if (accountInfo[AccountInfoKey.MFA_STATUS]) {
-        const recoveryCodeInfo = getSharedElement(SharedElement.recoveryCodeInfo);
+        const recoveryCodeInfo = elements[MyAccountElement.recoveryCodeInfo];
         if (accountInfo[AccountInfoKey.RECOVERY_CODE_STATUS] === 0) {
             changeColor(recoveryCodeInfo, CSS_COLOR.RED);
             appendText(recoveryCodeInfo, 'リカバリーコードが残っていません。新しいリカバリーコードを生成してください。');
@@ -77,14 +82,12 @@ function initializeUI(accountInfo: AccountInfo) {
         }
     }
 
-    appendText(getSharedElement(SharedElement.inviteCount), accountInfo[AccountInfoKey.INVITE_QUOTA].toString());
-    getSharedInput(SharedInput.newUsernameInput).value = accountInfo[AccountInfoKey.USERNAME];
+    appendText(elements[MyAccountElement.inviteCount], accountInfo[AccountInfoKey.INVITE_QUOTA].toString());
+    inputFields[MyAccountInputField.newUsernameInputField][InputFieldElementKey.INPUT].value = accountInfo[AccountInfoKey.USERNAME];
 }
 
-function changeEmail() {
-    disableButton(getSharedButton(SharedButton.emailChangeButton), true);
-
-    const warningElem = getSharedElement(SharedElement.emailWarning);
+function changeEmail(warningElem: HTMLElement, emailChangeButton: HTMLButtonElement) {
+    disableButton(emailChangeButton, true);
 
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
@@ -101,23 +104,25 @@ function changeEmail() {
                 return;
             }
             showElement(warningElem);
-            disableButton(getSharedButton(SharedButton.emailChangeButton), false);
+            disableButton(emailChangeButton, false);
         },
         [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
 
-function changePassword() {
+function changePassword(warningElem: HTMLElement, inputFields: MyAccountAllInputFields, passwordChangeButton: HTMLButtonElement) {
+    const newPasswordInputField = inputFields[MyAccountInputField.newPasswordInputField];
+    const newPasswordComfirmInputField = inputFields[MyAccountInputField.newPasswordComfirmInputField];
+
     const disableAllInputs = (disabled: boolean) => {
-        disableInputField(getSharedInputField(SharedInput.newPasswordInput), disabled);
-        disableInputField(getSharedInputField(SharedInput.newPasswordComfirmInput), disabled);
-        disableButton(getSharedButton(SharedButton.passwordChangeButton), disabled);
+        disableInputField(newPasswordInputField, disabled);
+        disableInputField(newPasswordComfirmInputField, disabled);
+        disableButton(passwordChangeButton, disabled);
     };
     disableAllInputs(true);
 
-    const warningElem = getSharedElement(SharedElement.passwordWarning);
-    const newPasswordInput = getSharedInput(SharedInput.newPasswordInput);
-    const newPasswordComfirmInput = getSharedInput(SharedInput.newPasswordComfirmInput);
+    const newPasswordInput = newPasswordInputField[InputFieldElementKey.INPUT];
+    const newPasswordComfirmInput = newPasswordComfirmInputField[InputFieldElementKey.INPUT];
     const newPassword = newPasswordInput.value;
     const newPasswordConfirm = newPasswordComfirmInput.value;
 
@@ -160,15 +165,14 @@ function changePassword() {
     );
 }
 
-function changeUsername(userInfo: AccountInfo) {
+function changeUsername(userInfo: AccountInfo, warningElem: HTMLElement, newUsernameInputField: InputFieldElement, usernameChangeButton: HTMLButtonElement) {
     const disableAllInputs = (disabled: boolean) => {
-        disableInputField(getSharedInputField(SharedInput.newUsernameInput), disabled);
-        disableButton(getSharedButton(SharedButton.usernameChangeButton), disabled);
+        disableInputField(newUsernameInputField, disabled);
+        disableButton(usernameChangeButton, disabled);
     };
     disableAllInputs(true);
 
-    const warningElem = getSharedElement(SharedElement.usernameWarning);
-    const newUsername = getSharedInput(SharedInput.newUsernameInput).value;
+    const newUsername = newUsernameInputField[InputFieldElementKey.INPUT].value;
 
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
@@ -212,19 +216,16 @@ function changeUsername(userInfo: AccountInfo) {
     );
 }
 
-function invite() {
+function invite(elements: MyAccountAllElements, inviteReceiverEmailInputField: InputFieldElement, inviteButton: HTMLButtonElement) {
     const disableAllInputs = (disabled: boolean) => {
-        disableInputField(getSharedInputField(SharedInput.inviteReceiverEmailInput), disabled);
-        disableButton(getSharedButton(SharedButton.inviteButton), disabled);
+        disableInputField(inviteReceiverEmailInputField, disabled);
+        disableButton(inviteButton, disabled);
     };
     disableAllInputs(true);
 
-    const inviteWarning = getSharedElement(SharedElement.inviteWarning);
-    const inviteReceiverEmailInput = getSharedInput(SharedInput.inviteReceiverEmailInput);
-    const inviteCount = getSharedElement(SharedElement.inviteCount);
-
-    const warningElem = inviteWarning;
-    const receiver = inviteReceiverEmailInput.value;
+    const warningElem = elements[MyAccountElement.inviteWarning];
+    const inviteCount = elements[MyAccountElement.inviteCount];
+    const receiver = inviteReceiverEmailInputField[InputFieldElementKey.INPUT].value;
 
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
@@ -267,13 +268,13 @@ function invite() {
     );
 }
 
-function changeLoginNotification(accountInfo: AccountInfo) {
+function changeLoginNotification(accountInfo: AccountInfo, elements: MyAccountAllElements, buttons: MyAccountAllButtons) {
     const disableAllInputs = (disabled: boolean) => {
-        disableButton(getSharedButton(SharedButton.loginNotificationButton), disabled || !getAccountInfo()[AccountInfoKey.MFA_STATUS]);
+        disableButton(buttons[MyAccountButton.loginNotificationButton], disabled || !accountInfo[AccountInfoKey.MFA_STATUS]);
     };
     disableAllInputs(true);
 
-    const warningElem = getSharedElement(SharedElement.loginNotificationWarning);
+    const warningElem = elements[MyAccountElement.loginNotificationWarning];
 
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
@@ -285,11 +286,11 @@ function changeLoginNotification(accountInfo: AccountInfo) {
         (response: string) => {
             if (response === 'DONE') {
                 accountInfo[AccountInfoKey.LOGIN_NOTIFICATION] = loginNotificationTargetStatus;
-                updateMfaUI(true);
+                updateMfaUI(true, accountInfo, elements, buttons);
                 replaceText(warningElem, loginNotificationTargetStatus ? 'ログイン通知が有効になりました。' : 'ログイン通知が無効になりました。');
                 changeColor(warningElem, CSS_COLOR.GREEN);
             } else if (response === 'TOTP NOT SET') {
-                updateMfaUI(false);
+                updateMfaUI(false, accountInfo, elements, buttons);
                 replaceText(warningElem, mfaNotSet);
             } else {
                 showMessage(invalidResponse());

@@ -17,13 +17,11 @@ import { removeTimeout } from '../module/timer/remove/timeout';
 
 export default function (showPage: ShowPageFunc) {
     addNavBar(NavBarPage.MY_ACCOUNT);
-    let resolveUIInit: () => void;
-    const uiInitPromise = new Promise<void>((resolve) => {
-        resolveUIInit = resolve;
-    });
     const currentPgid = pgid;
 
     let getSessionsStarted = false;
+    let sessionsModuleCallback: ((sessionsContainer: HTMLElement) => void) | null = null;
+    let sessionsContainer: HTMLElement | null = null;
     const getSessions = () => {
         const sessionsModuleImport = importModule(
             () => import(
@@ -34,11 +32,13 @@ export default function (showPage: ShowPageFunc) {
         sendServerRequest('get_sessions', {
             [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
                 const sessionsModule = await sessionsModuleImport;
-                await uiInitPromise;
-                if (currentPgid !== pgid) {
-                    return;
+                if (sessionsContainer !== null) {
+                    sessionsModule.default(parseResponse(response, parseSession), sessionsContainer);
+                } else {
+                    sessionsModuleCallback = (sessionsContainer: HTMLElement) => {
+                        sessionsModule.default(parseResponse(response, parseSession), sessionsContainer);
+                    };
                 }
-                sessionsModule.default(parseResponse(response, parseSession));
             },
         });
     };
@@ -61,8 +61,13 @@ export default function (showPage: ShowPageFunc) {
             if (currentPgid !== pgid) {
                 return;
             }
-            asyncModule.default(accountInfo);
-            resolveUIInit();
+            asyncModule.default(accountInfo, (_sessionsContainer: HTMLElement) => {
+                if (sessionsModuleCallback !== null) {
+                    sessionsModuleCallback(_sessionsContainer);
+                } else {
+                    sessionsContainer = _sessionsContainer;
+                }
+            });
             showPage();
             if (!getSessionsStarted) {
                 removeTimeout(getSessionStartTimeout);

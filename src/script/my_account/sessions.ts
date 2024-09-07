@@ -10,7 +10,6 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { addEventListener } from '../module/event_listener/add';
 import { SessionKey, type Sessions } from '../module/type/Sessions';
-import { SharedElement, getSharedElement, sessionLogoutButtons } from './shared_var';
 import { toLocalTimeString } from '../module/string/local_time';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { changeColor, CSS_COLOR } from '../module/style/color';
@@ -23,8 +22,7 @@ import { invalidResponse } from '../module/message/param/invalid_response';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { disableButton } from '../module/dom/element/button/disable';
 
-export default function (sessions: Sessions) {
-    const sessionsContainer = getSharedElement(SharedElement.sessionsContainer);
+export default function (sessions: Sessions, sessionsContainer: HTMLElement) {
     replaceChildren(sessionsContainer);
     for (const session of sessions) {
         const outerContainer = createDivElement();
@@ -58,7 +56,6 @@ export default function (sessions: Sessions) {
 
             const sessionLogoutButton = createStyledButtonElement('ログアウト');
             appendChild(innerContainer, sessionLogoutButton);
-            sessionLogoutButtons.add(sessionLogoutButton);
 
             addEventListener(sessionLogoutButton, 'click', () => {
                 logoutSession(sessionID, sessionLogoutButton, sessionWarningElem);
@@ -113,7 +110,6 @@ function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement
             if (response === 'DONE') {
                 removeAllEventListeners(sessionLogoutButton);
                 remove(sessionLogoutButton);
-                sessionLogoutButtons.delete(sessionLogoutButton);
                 changeColor(sessionWarningElem, CSS_COLOR.GREEN);
                 replaceText(sessionWarningElem, 'ログアウトしました。');
             } else {

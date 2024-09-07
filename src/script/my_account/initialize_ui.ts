@@ -19,18 +19,17 @@ import { changeButtonText } from '../module/text/button/change';
 import { submitButtonText } from '../module/text/button/submit';
 import { createUsernameInputField } from '../module/dom/element/input/input_field/username/create';
 import * as styles from '../../css/my_account.module.scss';
-import { addOffloadCallback } from '../module/global/offload';
 import { type InputFieldElement, InputFieldElementKey } from '../module/dom/element/input/input_field/type';
-import { type AccountInfo } from '../module/type/AccountInfo';
+import { body } from '../module/dom/body';
 
-export const enum SharedInput {
-    newUsernameInput,
-    newPasswordInput,
-    newPasswordComfirmInput,
-    inviteReceiverEmailInput,
+export const enum MyAccountInputField {
+    newUsernameInputField,
+    newPasswordInputField,
+    newPasswordComfirmInputField,
+    inviteReceiverEmailInputField,
 }
 
-export const enum SharedButton {
+export const enum MyAccountButton {
     emailChangeButton,
     usernameChangeButton,
     passwordChangeButton,
@@ -41,7 +40,7 @@ export const enum SharedButton {
     loginNotificationButton,
 }
 
-export const enum SharedElement {
+export const enum MyAccountElement {
     emailWarning,
     usernameWarning,
     passwordWarning,
@@ -56,19 +55,14 @@ export const enum SharedElement {
     sessionsContainer,
 }
 
-let _accountInfo: AccountInfo | null = null;
-let sharedInputs: { [key in SharedInput]: InputFieldElement } | null = null;
-let sharedButtons: { [key in SharedButton]: HTMLButtonElement } | null = null;
-let sharedElements: { [key in SharedElement]: HTMLElement } | null = null;
-export const sessionLogoutButtons = new Set<HTMLButtonElement>();
+export type MyAccountAllInputFields = Readonly<{ [key in MyAccountInputField]: InputFieldElement }>;
+export type MyAccountAllButtons = Readonly<{ [key in MyAccountButton]: HTMLButtonElement }>;
+export type MyAccountAllElements = Readonly<{ [key in MyAccountElement]: HTMLElement }>;
 
-export function initializeSharedVars(accountInfo: AccountInfo) {
-    addOffloadCallback(dereferenceSharedVars);
-
-    _accountInfo = accountInfo;
-
+export function initializeUI() {
     const container = createDivElement();
     addClass(container, styles.container);
+    appendChild(body, container);
     const titleElem = createParagraphElement(myAccountPageTitle);
     addClass(titleElem, styles.title);
     appendChild(container, titleElem);
@@ -107,85 +101,38 @@ export function initializeSharedVars(accountInfo: AccountInfo) {
     const logoutButton = createStyledButtonElement('ログアウ');
     appendChild(container, logoutButton);
 
-    sharedInputs = {
-        [SharedInput.newUsernameInput]: usernameInputField,
-        [SharedInput.newPasswordInput]: passwordInputField,
-        [SharedInput.newPasswordComfirmInput]: passwordConfirmInputField,
-        [SharedInput.inviteReceiverEmailInput]: inviteReceiverEmailInputField,
+    const inputFields: MyAccountAllInputFields = {
+        [MyAccountInputField.newUsernameInputField]: usernameInputField,
+        [MyAccountInputField.newPasswordInputField]: passwordInputField,
+        [MyAccountInputField.newPasswordComfirmInputField]: passwordConfirmInputField,
+        [MyAccountInputField.inviteReceiverEmailInputField]: inviteReceiverEmailInputField,
     };
-    sharedButtons = {
-        [SharedButton.emailChangeButton]: changeEmailSubsec[1],
-        [SharedButton.usernameChangeButton]: usernameSubsec[1],
-        [SharedButton.passwordChangeButton]: passwordSubsec[1],
-        [SharedButton.inviteButton]: inviteSubsec[1],
-        [SharedButton.logoutButton]: logoutButton,
-        [SharedButton.mfaButton]: mfaSubsec[1],
-        [SharedButton.recoveryCodeButton]: recoveryCodeSubsec[1],
-        [SharedButton.loginNotificationButton]: loginNotificationSubsec[1],
+    const buttons: MyAccountAllButtons = {
+        [MyAccountButton.emailChangeButton]: changeEmailSubsec[1],
+        [MyAccountButton.usernameChangeButton]: usernameSubsec[1],
+        [MyAccountButton.passwordChangeButton]: passwordSubsec[1],
+        [MyAccountButton.inviteButton]: inviteSubsec[1],
+        [MyAccountButton.logoutButton]: logoutButton,
+        [MyAccountButton.mfaButton]: mfaSubsec[1],
+        [MyAccountButton.recoveryCodeButton]: recoveryCodeSubsec[1],
+        [MyAccountButton.loginNotificationButton]: loginNotificationSubsec[1],
     };
-    sharedElements = {
-        [SharedElement.emailWarning]: changeEmailSubsec[0],
-        [SharedElement.usernameWarning]: usernameSubsec[0],
-        [SharedElement.passwordWarning]: passwordSubsec[0],
-        [SharedElement.inviteWarning]: inviteSubsec[0],
-        [SharedElement.mfaWarning]: mfaSubsec[0],
-        [SharedElement.recoveryCodeWarning]: recoveryCodeSubsec[0],
-        [SharedElement.loginNotificationWarning]: loginNotificationSubsec[0],
-        [SharedElement.inviteCount]: inviteCount,
-        [SharedElement.mfaInfo]: mfaInfo,
-        [SharedElement.recoveryCodeInfo]: recoveryCodeInfo,
-        [SharedElement.loginNotificationInfo]: loginNotificationInfo,
-        [SharedElement.sessionsContainer]: sessionsContainer,
+    const elements: MyAccountAllElements = {
+        [MyAccountElement.emailWarning]: changeEmailSubsec[0],
+        [MyAccountElement.usernameWarning]: usernameSubsec[0],
+        [MyAccountElement.passwordWarning]: passwordSubsec[0],
+        [MyAccountElement.inviteWarning]: inviteSubsec[0],
+        [MyAccountElement.mfaWarning]: mfaSubsec[0],
+        [MyAccountElement.recoveryCodeWarning]: recoveryCodeSubsec[0],
+        [MyAccountElement.loginNotificationWarning]: loginNotificationSubsec[0],
+        [MyAccountElement.inviteCount]: inviteCount,
+        [MyAccountElement.mfaInfo]: mfaInfo,
+        [MyAccountElement.recoveryCodeInfo]: recoveryCodeInfo,
+        [MyAccountElement.loginNotificationInfo]: loginNotificationInfo,
+        [MyAccountElement.sessionsContainer]: sessionsContainer,
     };
 
-    return container;
-}
-
-function triggerSharedVarAccessError(): never {
-    throw new Error('Not initialized.');
-}
-
-export function getAccountInfo() {
-    if (_accountInfo === null) {
-        triggerSharedVarAccessError();
-    }
-    return _accountInfo;
-}
-
-export function getSharedInputField(idx: SharedInput) {
-    if (sharedInputs === null) {
-        triggerSharedVarAccessError();
-    }
-    return sharedInputs[idx];
-}
-
-export function getSharedInput(idx: SharedInput) {
-    if (sharedInputs === null) {
-        triggerSharedVarAccessError();
-    }
-    return sharedInputs[idx][InputFieldElementKey.INPUT];
-}
-
-export function getSharedButton(idx: SharedButton) {
-    if (sharedButtons === null) {
-        triggerSharedVarAccessError();
-    }
-    return sharedButtons[idx];
-}
-
-export function getSharedElement(idx: SharedElement) {
-    if (sharedElements === null) {
-        triggerSharedVarAccessError();
-    }
-    return sharedElements[idx];
-}
-
-function dereferenceSharedVars() {
-    _accountInfo = null;
-    sharedInputs = null;
-    sharedButtons = null;
-    sharedElements = null;
-    sessionLogoutButtons.clear();
+    return [inputFields, buttons, elements] as const;
 }
 
 function appendSubsection<T extends (HTMLElement | null), U extends (HTMLButtonElement | null)>(

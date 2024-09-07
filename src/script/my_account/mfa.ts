@@ -28,7 +28,7 @@ import { toCanvas } from 'qrcode';
 import { removeInterval } from '../module/timer/remove/interval';
 import { addInterval } from '../module/timer/add/interval';
 import { pgid } from '../module/global/pgid';
-import { SharedButton, SharedElement, getSharedButton, getSharedElement } from './shared_var';
+import { type MyAccountAllButtons, type MyAccountAllElements, MyAccountButton, MyAccountElement } from './initialize_ui';
 import { updateMfaUI, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { promptForEmailOtp, type EmailOtpPopupWindow, EmailOtpPopupWindowKey } from './email_otp_popup_window';
@@ -59,26 +59,26 @@ import { AccountInfoKey, type AccountInfo } from '../module/type/AccountInfo';
 
 const mfaAlreadySet = '二要素認証はすでに有効になっています。';
 
-export default function (accountInfo: AccountInfo) {
-    addEventListener(getSharedButton(SharedButton.mfaButton), 'click', () => {
+export default function (accountInfo: AccountInfo, elements: MyAccountAllElements, buttons: MyAccountAllButtons) {
+    addEventListener(buttons[MyAccountButton.mfaButton], 'click', () => {
         if (accountInfo[AccountInfoKey.MFA_STATUS]) {
-            disableMfa();
+            disableMfa(accountInfo, elements, buttons);
         } else {
-            enableMfa();
+            enableMfa(accountInfo, elements, buttons);
         }
     });
-    addEventListener(getSharedButton(SharedButton.recoveryCodeButton), 'click', () => {
-        generateRecoveryCode();
+    addEventListener(buttons[MyAccountButton.recoveryCodeButton], 'click', () => {
+        generateRecoveryCode(accountInfo, elements, buttons);
     });
 }
 
-function enableMfa() {
+function enableMfa(accountInfo: AccountInfo, elements: MyAccountAllElements, buttons: MyAccountAllButtons) {
     const disableAllInputs = (disable: boolean) => {
-        disableButton(getSharedButton(SharedButton.mfaButton), disable);
+        disableButton(buttons[MyAccountButton.mfaButton], disable);
     };
     disableAllInputs(true);
 
-    const mfaWarning = getSharedElement(SharedElement.mfaWarning);
+    const mfaWarning = elements[MyAccountElement.mfaWarning];
 
     hideElement(mfaWarning);
     changeColor(mfaWarning, CSS_COLOR.RED);
@@ -87,14 +87,14 @@ function enableMfa() {
         'generate_totp',
         (response: string) => {
             if (response === AUTH_FAILED_TOTP) {
-                updateMfaUI(true);
+                updateMfaUI(true, accountInfo, elements, buttons);
                 changeColor(mfaWarning, CSS_COLOR.GREEN);
                 replaceText(mfaWarning, mfaAlreadySet);
                 showElement(mfaWarning);
                 disableAllInputs(false);
                 return true;
             }
-            promptForTotpSetup(parseResponse(response, parseTotpInfo), disableAllInputs);
+            promptForTotpSetup(parseResponse(response, parseTotpInfo), disableAllInputs, accountInfo, elements, buttons);
             return false;
         },
         disableAllInputs,
@@ -102,13 +102,13 @@ function enableMfa() {
     );
 }
 
-function disableMfa() {
+function disableMfa(accountInfo: AccountInfo, elements: MyAccountAllElements, buttons: MyAccountAllButtons) {
     const disableAllInputs = (disable: boolean) => {
-        disableButton(getSharedButton(SharedButton.mfaButton), disable);
+        disableButton(buttons[MyAccountButton.mfaButton], disable);
     };
     disableAllInputs(true);
 
-    const mfaWarning = getSharedElement(SharedElement.mfaWarning);
+    const mfaWarning = elements[MyAccountElement.mfaWarning];
 
     hideElement(mfaWarning);
     changeColor(mfaWarning, CSS_COLOR.RED);
@@ -117,7 +117,7 @@ function disableMfa() {
         'disable_totp',
         (response: string) => {
             if (response === 'DONE') {
-                updateMfaUI(false);
+                updateMfaUI(false, accountInfo, elements, buttons);
                 changeColor(mfaWarning, CSS_COLOR.GREEN);
                 replaceText(mfaWarning, '二要素認証が無効になりました。');
                 showElement(mfaWarning);
@@ -133,13 +133,13 @@ function disableMfa() {
     );
 }
 
-function generateRecoveryCode() {
+function generateRecoveryCode(accountInfo: AccountInfo, elements: MyAccountAllElements, buttons: MyAccountAllButtons) {
     const disableAllInputs = (disable: boolean) => {
-        disableButton(getSharedButton(SharedButton.recoveryCodeButton), disable);
+        disableButton(buttons[MyAccountButton.recoveryCodeButton], disable);
     };
     disableAllInputs(true);
 
-    const recoveryCodeWarning = getSharedElement(SharedElement.recoveryCodeWarning);
+    const recoveryCodeWarning = elements[MyAccountElement.recoveryCodeWarning];
 
     hideElement(recoveryCodeWarning);
     changeColor(recoveryCodeWarning, CSS_COLOR.RED);
@@ -148,7 +148,7 @@ function generateRecoveryCode() {
         'generate_recovery_code',
         (response: string) => {
             if (response === 'TOTP NOT SET') {
-                updateMfaUI(false);
+                updateMfaUI(false, accountInfo, elements, buttons);
                 replaceText(recoveryCodeWarning, mfaNotSet);
                 showElement(recoveryCodeWarning);
                 disableAllInputs(false);
@@ -158,7 +158,7 @@ function generateRecoveryCode() {
                 disableAllInputs(false);
             } else {
                 showRecoveryCode(parseResponse(response, parseRecoveryCodeInfo), () => {
-                    hideElement(getSharedElement(SharedElement.recoveryCodeInfo));
+                    hideElement(elements[MyAccountElement.recoveryCodeInfo]);
                     disableAllInputs(false);
                 });
                 return false;
@@ -282,7 +282,7 @@ async function handleFailedEmailOtp(
     retryCallback(currentEmailOtpPopupWindow);
 }
 
-async function promptForTotpSetup(totpInfo: TOTPInfo, disableAllInputs: (disable: boolean) => void) {
+async function promptForTotpSetup(totpInfo: TOTPInfo, disableAllInputs: (disable: boolean) => void, accountInfo: AccountInfo, elements: MyAccountAllElements, buttons: MyAccountAllButtons) {
     const promptText = createParagraphElement('二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
     const totpURI = totpInfo[TOTPInfoKey.URI];
@@ -337,7 +337,7 @@ async function promptForTotpSetup(totpInfo: TOTPInfo, disableAllInputs: (disable
 
         sendServerRequest('set_totp', {
             [ServerRequestOptionKey.CALLBACK]: (response: string) => {
-                const mfaWarning = getSharedElement(SharedElement.mfaWarning);
+                const mfaWarning = elements[MyAccountElement.mfaWarning];
                 if (response === 'EXPIRED') {
                     hidePopupWindow();
                     replaceText(mfaWarning, sessionEnded);
@@ -348,14 +348,14 @@ async function promptForTotpSetup(totpInfo: TOTPInfo, disableAllInputs: (disable
                     disableAllPopUpWindowInputs(false);
                 } else if (response === 'ALREADY SET') {
                     hidePopupWindow();
-                    updateMfaUI(true);
+                    updateMfaUI(true, accountInfo, elements, buttons);
                     changeColor(mfaWarning, CSS_COLOR.GREEN);
                     replaceText(mfaWarning, mfaAlreadySet);
                     showElement(mfaWarning);
                     disableAllInputs(false);
                 } else {
                     showRecoveryCode(parseResponse(response, parseRecoveryCodeInfo), () => {
-                        updateMfaUI(true);
+                        updateMfaUI(true, accountInfo, elements, buttons);
                         changeColor(mfaWarning, CSS_COLOR.GREEN);
                         replaceText(mfaWarning, '二要素認証が有効になりました。');
                         showElement(mfaWarning);
