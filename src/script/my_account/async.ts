@@ -19,8 +19,8 @@ import { usernameChanged } from '../module/text/username/changed';
 import { usernameInvalid } from '../module/text/username/invalid';
 import { usernameEmpty } from '../module/text/username/empty';
 import { emailSentTitle as emailSendPrefix } from '../module/text/send_mail/title';
-import { SharedButton, SharedElement, SharedInput, getSharedButton, getSharedElement, getSharedInput, initializeSharedVars } from './shared_var';
-import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
+import { SharedButton, SharedElement, SharedInput, getAccountInfo, getSharedButton, getSharedElement, getSharedInput, getSharedInputField, initializeSharedVars } from './shared_var';
+import { updateMfaUI, mfaNotSet } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { testPassword } from '../module/regex/password';
 import { testEmail } from '../module/regex/email';
@@ -34,6 +34,8 @@ import { InviteResultKey, parseInviteResult } from '../module/type/InviteResult'
 import { redirect } from '../module/global/redirect';
 import { default as initializeMFAModule } from './mfa';
 import { LOGIN_URI } from '../module/env/uri';
+import { disableButton } from '../module/dom/element/button/disable';
+import { disableInputField } from '../module/dom/element/input/input_field/disable';
 
 const emailSent = emailSendPrefix + '。' + emailSentSuffix;
 
@@ -49,7 +51,7 @@ export default function (accountInfo: AccountInfo) {
         changeLoginNotification(accountInfo);
     });
     addEventListener(getSharedButton(SharedButton.logoutButton), 'click', () => {
-        disableAllInputs(true);
+        disableButton(getSharedButton(SharedButton.logoutButton), true);
         logout(() => {
             redirect(LOGIN_URI);
         });
@@ -80,7 +82,7 @@ function initializeUI(accountInfo: AccountInfo) {
 }
 
 function changeEmail() {
-    disableAllInputs(true);
+    disableButton(getSharedButton(SharedButton.emailChangeButton), true);
 
     const warningElem = getSharedElement(SharedElement.emailWarning);
 
@@ -99,13 +101,18 @@ function changeEmail() {
                 return;
             }
             showElement(warningElem);
-            disableAllInputs(false);
+            disableButton(getSharedButton(SharedButton.emailChangeButton), false);
         },
         [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
 
 function changePassword() {
+    const disableAllInputs = (disabled: boolean) => {
+        disableInputField(getSharedInputField(SharedInput.newPasswordInput), disabled);
+        disableInputField(getSharedInputField(SharedInput.newPasswordComfirmInput), disabled);
+        disableButton(getSharedButton(SharedButton.passwordChangeButton), disabled);
+    };
     disableAllInputs(true);
 
     const warningElem = getSharedElement(SharedElement.passwordWarning);
@@ -147,12 +154,17 @@ function changePassword() {
             disableAllInputs(false);
             return true;
         },
+        disableAllInputs,
         warningElem,
         buildHttpForm({ new: newPassword }),
     );
 }
 
 function changeUsername(userInfo: AccountInfo) {
+    const disableAllInputs = (disabled: boolean) => {
+        disableInputField(getSharedInputField(SharedInput.newUsernameInput), disabled);
+        disableButton(getSharedButton(SharedButton.usernameChangeButton), disabled);
+    };
     disableAllInputs(true);
 
     const warningElem = getSharedElement(SharedElement.usernameWarning);
@@ -194,13 +206,19 @@ function changeUsername(userInfo: AccountInfo) {
             disableAllInputs(false);
             return true;
         },
+        disableAllInputs,
         warningElem,
         buildHttpForm({ new: newUsername }),
     );
 }
 
 function invite() {
+    const disableAllInputs = (disabled: boolean) => {
+        disableInputField(getSharedInputField(SharedInput.inviteReceiverEmailInput), disabled);
+        disableButton(getSharedButton(SharedButton.inviteButton), disabled);
+    };
     disableAllInputs(true);
+
     const inviteWarning = getSharedElement(SharedElement.inviteWarning);
     const inviteReceiverEmailInput = getSharedInput(SharedInput.inviteReceiverEmailInput);
     const inviteCount = getSharedElement(SharedElement.inviteCount);
@@ -243,12 +261,16 @@ function invite() {
             disableAllInputs(false);
             return true;
         },
+        disableAllInputs,
         warningElem,
         buildHttpForm({ receiver: receiver }),
     );
 }
 
 function changeLoginNotification(accountInfo: AccountInfo) {
+    const disableAllInputs = (disabled: boolean) => {
+        disableButton(getSharedButton(SharedButton.loginNotificationButton), disabled || !getAccountInfo()[AccountInfoKey.MFA_STATUS]);
+    };
     disableAllInputs(true);
 
     const warningElem = getSharedElement(SharedElement.loginNotificationWarning);
@@ -277,6 +299,7 @@ function changeLoginNotification(accountInfo: AccountInfo) {
             disableAllInputs(false);
             return true;
         },
+        disableAllInputs,
         warningElem,
         buildHttpForm({ p: loginNotificationTargetStatus ? 1 : 0 }),
         true,

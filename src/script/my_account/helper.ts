@@ -1,11 +1,10 @@
 import { replaceText } from '../module/dom/element/text/replace';
-import { disableInputField } from '../module/dom/element/input/input_field/disable';
 import { disableButton } from '../module/dom/element/button/disable';
 import { changeColor } from '../module/style/color';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
 import { setCursor, CSS_CURSOR } from '../module/style/cursor';
-import { SharedButton, SharedInput, SharedElement, getSharedButton, getSharedElement, getSharedInputField, sessionLogoutButtons, getAccountInfo } from './shared_var';
+import { SharedButton, SharedElement, getSharedButton, getSharedElement, getAccountInfo } from './shared_var';
 import { AccountInfoKey } from '../module/type/AccountInfo';
 
 export const mfaNotSet = '二要素認証が設定されていません。';
@@ -50,27 +49,5 @@ export function updateMfaUI(newStatus: boolean) {
         hideElement(getSharedElement(SharedElement.loginNotificationWarning));
         disableButton(loginNotificationButton, true);
         setCursor(loginNotificationButton, CSS_CURSOR.NOT_ALLOWED);
-    }
-}
-
-export function disableAllInputs(disabled: boolean) {
-    disableInputField(getSharedInputField(SharedInput.newUsernameInput), disabled);
-    disableInputField(getSharedInputField(SharedInput.newPasswordInput), disabled);
-    disableInputField(getSharedInputField(SharedInput.newPasswordComfirmInput), disabled);
-    disableInputField(getSharedInputField(SharedInput.inviteReceiverEmailInput), disabled);
-
-    disableButton(getSharedButton(SharedButton.emailChangeButton), disabled);
-    disableButton(getSharedButton(SharedButton.usernameChangeButton), disabled);
-    disableButton(getSharedButton(SharedButton.passwordChangeButton), disabled);
-    disableButton(getSharedButton(SharedButton.mfaButton), disabled);
-    disableButton(getSharedButton(SharedButton.inviteButton), disabled);
-    disableButton(getSharedButton(SharedButton.logoutButton), disabled);
-
-    const currentMfaStatus = getAccountInfo()[AccountInfoKey.MFA_STATUS];
-    disableButton(getSharedButton(SharedButton.recoveryCodeButton), disabled || !currentMfaStatus);
-    disableButton(getSharedButton(SharedButton.loginNotificationButton), disabled || !currentMfaStatus);
-
-    for (const sessionLogoutButton of sessionLogoutButtons) {
-        disableButton(sessionLogoutButton, disabled);
     }
 }

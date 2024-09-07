@@ -29,7 +29,7 @@ import { removeInterval } from '../module/timer/remove/interval';
 import { addInterval } from '../module/timer/add/interval';
 import { pgid } from '../module/global/pgid';
 import { SharedButton, SharedElement, getSharedButton, getSharedElement } from './shared_var';
-import { updateMfaUI, disableAllInputs, mfaNotSet } from './helper';
+import { updateMfaUI, mfaNotSet } from './helper';
 import { handleFailedLogin, reauthenticationPrompt } from './auth_helper';
 import { promptForEmailOtp, type EmailOtpPopupWindow, EmailOtpPopupWindowKey } from './email_otp_popup_window';
 import { LoginPopupWindowKey, type LoginPopupWindow } from './login_popup_window';
@@ -73,7 +73,11 @@ export default function (accountInfo: AccountInfo) {
 }
 
 function enableMfa() {
+    const disableAllInputs = (disable: boolean) => {
+        disableButton(getSharedButton(SharedButton.mfaButton), disable);
+    };
     disableAllInputs(true);
+
     const mfaWarning = getSharedElement(SharedElement.mfaWarning);
 
     hideElement(mfaWarning);
@@ -90,15 +94,20 @@ function enableMfa() {
                 disableAllInputs(false);
                 return true;
             }
-            promptForTotpSetup(parseResponse(response, parseTotpInfo));
+            promptForTotpSetup(parseResponse(response, parseTotpInfo), disableAllInputs);
             return false;
         },
+        disableAllInputs,
         mfaWarning,
     );
 }
 
 function disableMfa() {
+    const disableAllInputs = (disable: boolean) => {
+        disableButton(getSharedButton(SharedButton.mfaButton), disable);
+    };
     disableAllInputs(true);
+
     const mfaWarning = getSharedElement(SharedElement.mfaWarning);
 
     hideElement(mfaWarning);
@@ -119,12 +128,17 @@ function disableMfa() {
             disableAllInputs(false);
             return true;
         },
+        disableAllInputs,
         mfaWarning,
     );
 }
 
 function generateRecoveryCode() {
+    const disableAllInputs = (disable: boolean) => {
+        disableButton(getSharedButton(SharedButton.recoveryCodeButton), disable);
+    };
     disableAllInputs(true);
+
     const recoveryCodeWarning = getSharedElement(SharedElement.recoveryCodeWarning);
 
     hideElement(recoveryCodeWarning);
@@ -151,6 +165,7 @@ function generateRecoveryCode() {
             }
             return true;
         },
+        disableAllInputs,
         recoveryCodeWarning,
         undefined,
         true,
@@ -160,6 +175,7 @@ function generateRecoveryCode() {
 function modifyMfaReauthenticationPrompt(
     uri: string,
     callback: (response: string) => boolean,
+    disableAllInputs: (disable: boolean) => void,
     warningElem: HTMLElement,
     content?: string,
     loginPopupWindow?: LoginPopupWindow,
@@ -172,7 +188,7 @@ function modifyMfaReauthenticationPrompt(
                 disableAllInputs(false);
             },
             (loginPopupWindow) => {
-                modifyMfaReauthenticationPrompt(uri, callback, warningElem, content, loginPopupWindow);
+                modifyMfaReauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, loginPopupWindow);
             },
         );
         return;
@@ -203,7 +219,7 @@ function modifyMfaReauthenticationPrompt(
                             disableAllInputs(false);
                         },
                         (loginPopupWindow) => {
-                            modifyMfaReauthenticationPrompt(uri, callback, warningElem, content, loginPopupWindow);
+                            modifyMfaReauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, loginPopupWindow);
                         },
                         loginFailed,
                     );
@@ -216,7 +232,7 @@ function modifyMfaReauthenticationPrompt(
                             disableAllInputs(false);
                         },
                         (emailOtpPopupWindow) => {
-                            modifyMfaReauthenticationPrompt(uri, callback, warningElem, content, loginPopupWindow, emailOtpPopupWindow);
+                            modifyMfaReauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, loginPopupWindow, emailOtpPopupWindow);
                         },
                     );
                     break;
@@ -266,7 +282,7 @@ async function handleFailedEmailOtp(
     retryCallback(currentEmailOtpPopupWindow);
 }
 
-async function promptForTotpSetup(totpInfo: TOTPInfo) {
+async function promptForTotpSetup(totpInfo: TOTPInfo, disableAllInputs: (disable: boolean) => void) {
     const promptText = createParagraphElement('二要素認証を有効にするには、認証アプリを使用して以下のQRコードをスキャンするか、URIを直接入力してください。その後、下の入力欄に二要素認証コードを入力してください。');
 
     const totpURI = totpInfo[TOTPInfoKey.URI];

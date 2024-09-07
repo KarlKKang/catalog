@@ -17,11 +17,11 @@ import { changeColor, CSS_COLOR } from '../module/style/color';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
 import * as styles from '../../css/my_account.module.scss';
-import { disableAllInputs } from './helper';
 import { reauthenticationPrompt } from './auth_helper';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
+import { disableButton } from '../module/dom/element/button/disable';
 
 export default function (sessions: Sessions) {
     const sessionsContainer = getSharedElement(SharedElement.sessionsContainer);
@@ -99,9 +99,14 @@ function appendParagraph(text: string, container: HTMLElement) {
 }
 
 function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement, sessionWarningElem: HTMLDivElement) {
+    const disableAllInputs = (disabled: boolean) => {
+        disableButton(sessionLogoutButton, disabled);
+    };
     disableAllInputs(true);
+
     hideElement(sessionWarningElem);
     changeColor(sessionWarningElem, CSS_COLOR.RED);
+
     reauthenticationPrompt(
         'logout_session',
         (response: string) => {
@@ -119,6 +124,7 @@ function logoutSession(sessionID: string, sessionLogoutButton: HTMLButtonElement
             disableAllInputs(false);
             return true;
         },
+        disableAllInputs,
         sessionWarningElem,
         buildHttpForm({ id: sessionID }),
     );

@@ -14,12 +14,12 @@ import { tooManyFailedLogin } from '../module/text/auth/too_many_failed';
 import { loginFailed } from '../module/text/auth/failed';
 import { TotpPopupWindowKey, handleFailedTotp, type TotpPopupWindow } from '../module/popup_window/totp';
 import { showElement } from '../module/style/show_element';
-import { disableAllInputs } from './helper';
 import { promptForLogin, type LoginPopupWindow, LoginPopupWindowKey } from './login_popup_window';
 
 export function reauthenticationPrompt(
     uri: string,
     callback: (response: string) => boolean,
+    disableAllInputs: (disable: boolean) => void,
     warningElem: HTMLElement,
     content?: string,
     directTotpPrompt = false,
@@ -33,7 +33,7 @@ export function reauthenticationPrompt(
                 disableAllInputs(false);
             },
             (loginPopupWindow) => {
-                reauthenticationPrompt(uri, callback, warningElem, content, directTotpPrompt, loginPopupWindow);
+                reauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, directTotpPrompt, loginPopupWindow);
             },
         );
         return;
@@ -51,13 +51,13 @@ export function reauthenticationPrompt(
                         disableAllInputs(false);
                     },
                     (loginPopupWindow) => {
-                        reauthenticationPrompt(uri, callback, warningElem, content, directTotpPrompt, loginPopupWindow);
+                        reauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, directTotpPrompt, loginPopupWindow);
                     },
                     sessionEnded,
                 );
             },
             (totpPopupWindow) => {
-                reauthenticationPrompt(uri, callback, warningElem, content, directTotpPrompt, loginPopupWindow, totpPopupWindow);
+                reauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, directTotpPrompt, loginPopupWindow, totpPopupWindow);
             },
         );
     };
@@ -91,7 +91,7 @@ export function reauthenticationPrompt(
                             disableAllInputs(false);
                         },
                         (loginPopupWindow) => {
-                            reauthenticationPrompt(uri, callback, warningElem, content, directTotpPrompt, loginPopupWindow);
+                            reauthenticationPrompt(uri, callback, disableAllInputs, warningElem, content, directTotpPrompt, loginPopupWindow);
                         },
                         loginFailed,
                     );
