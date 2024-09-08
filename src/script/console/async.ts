@@ -95,12 +95,6 @@ export default function () {
     appendButton(container, 'Run Benchmark HMAC', () => {
         misc('benchmark', 'hmac');
     });
-    appendButton(container, 'Run Benchmark Signature', () => {
-        misc('benchmark', 'signature');
-    });
-    appendButton(container, 'Run Benchmark Key Pair', () => {
-        misc('benchmark', 'key_pair');
-    });
     appendButton(container, 'Run Benchmark Match Str', () => {
         misc('benchmark', 'match_str');
     });
