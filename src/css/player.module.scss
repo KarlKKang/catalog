@@ -118,7 +118,7 @@
     }
 
     .player-big-play-button {
-        width: 4rem;
+        width: min(30%, 4rem);
         display: block;
         position: absolute;
         padding: 0;
@@ -140,10 +140,6 @@
 
         .player-icon-placeholder>svg {
             width: 70%;
-        }
-
-        @supports (width: min(30%, 4rem)) {
-            width: min(30%, 4rem);
         }
     }
 

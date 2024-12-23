@@ -71,7 +71,7 @@
 
 .ep-selector>div {
     margin: 0px;
-    padding: calc(2em - 0.75em) calc(5% - 0.75em);
+    padding: calc(2em - min(2%, 0.75em)) calc(5% - min(2%, 0.75em));
     overflow-y: hidden;
     box-sizing: content-box;
     transition: max-height .4s ease-out, padding-bottom .4s ease-out;
@@ -81,7 +81,7 @@
         height: auto;
         background-color: var(property.get(foreground-color));
         padding: 0.6em 1em;
-        margin: 0.75em;
+        margin: min(2%, 0.75em);
         cursor: pointer;
 
         >* {
@@ -92,14 +92,6 @@
         &.current-ep>p {
             font-weight: 500;
             text-decoration: underline;
-        }
-    }
-
-    @supports (padding: calc(2em - min(2%, 0.75em)) calc(5% - min(2%, 0.75em))) and (margin: min(2%, 0.75em)) {
-        padding: calc(2em - min(2%, 0.75em)) calc(5% - min(2%, 0.75em));
-
-        >div {
-            margin: min(2%, 0.75em);
         }
     }
 
@@ -306,13 +298,8 @@ p.artist {
 
     >div {
         display: inline-block;
-        margin: 2em;
-        width: calc(100% - 4em);
-
-        @supports (margin: min(2em, 5%)) and (width: calc(100% - min(4em, 10%))) {
-            margin: min(2em, 5%);
-            width: calc(100% - min(4em, 10%));
-        }
+        margin: min(2em, 5%);
+        width: calc(100% - min(4em, 10%));
 
         .message-title {
             text-align: center;
@@ -354,7 +341,7 @@ p.artist {
     display: flex;
     cursor: pointer;
     margin: 0px;
-    padding: 0px 1em;
+    padding: 0px min(5%, 1em);
     width: 100%;
     align-items: center;
     box-sizing: border-box;
@@ -372,7 +359,7 @@ p.artist {
         font-family: 'Courier New', Courier, monospace;
         font-size: medium;
         color: var(property.get(alt-text-color));
-        margin: 0px 0px 0px 1em;
+        margin: 0px 0px 0px min(5%, 1em);
         padding: 0px;
     }
 }
@@ -381,7 +368,7 @@ p.artist {
 /* Style the accordion panel. Note: hidden by default */
 .accordion-panel {
     margin: 0px;
-    padding: 0px 1em;
+    padding: 0px min(5%, 1em);
     background-color: var(property.get(foreground-color));
     overflow: hidden;
     transition: max-height 0.2s ease-out;
@@ -392,21 +379,6 @@ p.artist {
         background-color: var(property.get(horizontal-line-foreground-color));
     }
 }
-
-@supports (padding: 0px min(5%, 1em)) and (margin: 0px 0px 0px min(5%, 1em)) {
-    .accordion {
-        padding: 0px min(5%, 1em);
-
-        >.accordion-icon {
-            margin: 0px 0px 0px min(5%, 1em);
-        }
-    }
-
-    .accordion-panel {
-        padding: 0px min(5%, 1em);
-    }
-}
-
 
 /*Chapters*/
 .chapters>.accordion-panel {

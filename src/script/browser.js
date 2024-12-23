@@ -57,7 +57,7 @@ function unsupportRedirect() {
     }
 
     const cssSupports = w.CSS && w.CSS.supports;
-    if (!cssSupports || !cssSupports('(--a: 0)')) { // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
+    if (!cssSupports || !cssSupports('(--a:0)') || !cssSupports('margin:min(1em,1%)')) { // https://github.com/jhildenbiddle/css-vars-ponyfill/blob/master/src/index.js
         _unsupportRedirect();
         return;
     }
