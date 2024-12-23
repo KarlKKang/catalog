@@ -10,7 +10,7 @@ import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { addEventListener } from '../module/event_listener/add';
 import { getTitle } from '../module/dom/document/title/get';
-import { EPInfoKey, type AudioEPInfo, type AudioFile, AudioFileKey, AlbumInfoKey } from '../module/type/BangumiInfo';
+import { FileInfoKey, type AudioFileInfo, type AudioFile, AudioFileKey, AlbumInfoKey } from '../module/type/EPInfo';
 import { MSE_SUPPORTED } from '../module/browser/mse/supported';
 import { NATIVE_HLS_SUPPORTED } from '../module/browser/native_hls_supported';
 import { CAN_PLAY_FLAC } from '../module/browser/can_play/codec/flac';
@@ -34,7 +34,7 @@ let currentPgid: unknown;
 
 let seriesID: string;
 let epIndex: number;
-let epInfo: AudioEPInfo;
+let fileInfo: AudioFileInfo;
 let baseURL: string;
 
 let createMediaSessionPromise: Promise<MediaSessionInfo>;
@@ -45,7 +45,7 @@ const mediaInstances: PlayerType[] = [];
 export default function (
     _seriesID: string,
     _epIndex: number,
-    _epInfo: AudioEPInfo,
+    _fileInfo: AudioFileInfo,
     _baseURL: string,
     _createMediaSessionPromise: Promise<MediaSessionInfo>,
     seriesTitle: string,
@@ -54,7 +54,7 @@ export default function (
 
     seriesID = _seriesID;
     epIndex = _epIndex;
-    epInfo = _epInfo;
+    fileInfo = _fileInfo;
     baseURL = _baseURL;
     createMediaSessionPromise = _createMediaSessionPromise;
 
@@ -76,7 +76,7 @@ export default function (
     addOffloadCallback(destroyAll);
     const container = createDivElement();
     const addAudioNodePromises = [];
-    for (const file of epInfo[EPInfoKey.FILES]) {
+    for (const file of fileInfo[FileInfoKey.FILES]) {
         addAudioNodePromises.push(addAudioNode(container, file));
     }
     Promise.all(addAudioNodePromises).then(() => {
@@ -91,7 +91,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         return;
     }
 
-    const audioEPInfo = epInfo;
+    const audioFileInfo = fileInfo;
 
     const FLAC_FALLBACK = (file[AudioFileKey.FLAC_FALLBACK] === true && !CAN_PLAY_ALAC);
     appendChild(container, getAudioSubtitleNode(file, FLAC_FALLBACK));
@@ -128,7 +128,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         mediaInstances.push(audioInstance);
         setMediaTitle(audioInstance);
         audioReadyCounter++;
-        if (audioReadyCounter === audioEPInfo[EPInfoKey.FILES].length) {
+        if (audioReadyCounter === audioFileInfo[FileInfoKey.FILES].length) {
             audioReady();
         }
     } else {
@@ -153,7 +153,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         mediaInstances.push(audioInstance);
         setMediaTitle(audioInstance);
         audioReadyCounter++;
-        if (audioReadyCounter === audioEPInfo[EPInfoKey.FILES].length) {
+        if (audioReadyCounter === audioFileInfo[FileInfoKey.FILES].length) {
             audioReady();
         }
     }
@@ -164,7 +164,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
 }
 
 function addAlbumInfo(seriesTitle: string) {
-    const { [AlbumInfoKey.TITLE]: title, [AlbumInfoKey.ARTIST]: artist } = epInfo[EPInfoKey.ALBUM_INFO];
+    const { [AlbumInfoKey.TITLE]: title, [AlbumInfoKey.ARTIST]: artist } = fileInfo[FileInfoKey.ALBUM_INFO];
     if (title !== undefined || artist !== undefined) {
         const titleElem = createParagraphElement();
         addClass(titleElem, styles.subTitle, styles.centerAlign);

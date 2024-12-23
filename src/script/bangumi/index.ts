@@ -13,7 +13,7 @@ import { pgid } from '../module/global/pgid';
 import { addNavBar } from '../module/nav_bar';
 import { addTimeout } from '../module/timer/add/timeout';
 import { type MediaSessionInfo, MediaSessionInfoKey, parseMediaSessionInfo } from '../module/type/MediaSessionInfo';
-import { BangumiInfoKey, EPInfoKey, parseBangumiInfo } from '../module/type/BangumiInfo';
+import { EPInfoKey, FileInfoKey, parseEPInfo } from '../module/type/EPInfo';
 import { importModule } from '../module/import_module';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { importAllMediaModules } from './media_import_promise';
@@ -76,7 +76,7 @@ export default function (showPage: ShowPageFunc) {
     );
     sendServerRequest('get_ep', {
         [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
-            const parsedResponse = parseResponse(response, parseBangumiInfo);
+            const parsedResponse = parseResponse(response, parseEPInfo);
             const currentPgid = pgid;
             if (createMediaSessionPromise === null) {
                 removeTimeout(createMediaSessionTimeout);
@@ -86,7 +86,7 @@ export default function (showPage: ShowPageFunc) {
                 if (currentPgid !== pgid) {
                     return;
                 }
-                if (mediaSessionInfo[MediaSessionInfoKey.TYPE] !== parsedResponse[BangumiInfoKey.EP_INFO][EPInfoKey.TYPE]) {
+                if (mediaSessionInfo[MediaSessionInfoKey.TYPE] !== parsedResponse[EPInfoKey.FILE_INFO][FileInfoKey.TYPE]) {
                     showMessage(notFound);
                 }
             });

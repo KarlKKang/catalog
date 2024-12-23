@@ -36,7 +36,7 @@ import { setMaxHeight } from '../module/style/max_height';
 import { CSS_COLOR } from '../module/style/color';
 import { CSS_UNIT } from '../module/style/value/unit';
 import * as styles from '../../css/bangumi.module.scss';
-import { BangumiInfoKey, type BangumiInfo, EPInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoEPInfo, AudioEPInfo, ImageEPInfo } from '../module/type/BangumiInfo';
+import { EPInfoKey, type EPInfo, FileInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoFileInfo, AudioFileInfo, ImageFileInfo } from '../module/type/EPInfo';
 import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { addAnimationFrame } from '../module/animation_frame/add';
@@ -49,7 +49,7 @@ let seriesID: string;
 let epIndex: number;
 
 export default async function (
-    response: BangumiInfo,
+    response: EPInfo,
     _seriesID: string,
     _epIndex: number,
     createMediaSessionPromise: Promise<MediaSessionInfo>,
@@ -76,21 +76,21 @@ export default async function (
     initializeSharedVars();
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
 
-    const epInfo = response[BangumiInfoKey.EP_INFO];
-    const title = response[BangumiInfoKey.TITLE];
-    const titleOverride = response[BangumiInfoKey.TITLE_OVERRIDE];
+    const fileInfo = response[EPInfoKey.FILE_INFO];
+    const title = response[EPInfoKey.TITLE];
+    const titleOverride = response[EPInfoKey.TITLE_OVERRIDE];
     if (titleOverride !== undefined) {
         appendText(titleElem, titleOverride);
         setTitle(parseCharacters(titleOverride) + ' | ' + getTitle());
     } else {
         appendText(titleElem, title);
-        setTitle(parseCharacters(title) + '[' + response[BangumiInfoKey.SERIES_EP][epIndex] + '] | ' + getTitle());
+        setTitle(parseCharacters(title) + '[' + response[EPInfoKey.SERIES_EP][epIndex] + '] | ' + getTitle());
     }
 
-    updateEPSelector(response[BangumiInfoKey.SERIES_EP], epSelector);
-    updateSeasonSelector(response[BangumiInfoKey.SEASONS], seasonSelector);
+    updateEPSelector(response[EPInfoKey.SERIES_EP], epSelector);
+    updateSeasonSelector(response[EPInfoKey.SEASONS], seasonSelector);
 
-    let ageRestricted = response[BangumiInfoKey.AGE_RESTRICTED];
+    let ageRestricted = response[EPInfoKey.AGE_RESTRICTED];
     if (ageRestricted !== undefined) {
         ageRestricted = ageRestricted.toUpperCase();
         let warningTitle: Node[] | string = '年齢認証';
@@ -121,9 +121,9 @@ export default async function (
     }
 
     // Add Media
-    const type = epInfo[EPInfoKey.TYPE];
-    const seriesOverride = response[BangumiInfoKey.SERIES_OVERRIDE];
-    const baseURL = getCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCloudfrontURIComponent(response[BangumiInfoKey.DIR]) + '/';
+    const type = fileInfo[FileInfoKey.TYPE];
+    const seriesOverride = response[EPInfoKey.SERIES_OVERRIDE];
+    const baseURL = getCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCloudfrontURIComponent(response[EPInfoKey.DIR]) + '/';
 
     const currentPgid = pgid;
     if (type === 'video') {
@@ -131,20 +131,20 @@ export default async function (
         if (currentPgid !== pgid) {
             return;
         }
-        videoModule.default(seriesID, epIndex, epInfo as VideoEPInfo, baseURL, createMediaSessionPromise);
+        videoModule.default(seriesID, epIndex, fileInfo as VideoFileInfo, baseURL, createMediaSessionPromise);
     } else {
         if (type === 'audio') {
             const audioModule = await audioImportPromise;
             if (currentPgid !== pgid) {
                 return;
             }
-            audioModule.default(seriesID, epIndex, epInfo as AudioEPInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
+            audioModule.default(seriesID, epIndex, fileInfo as AudioFileInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
         } else {
             const imageModule = await imageImportPromise;
             if (currentPgid !== pgid) {
                 return;
             }
-            imageModule.default(epInfo as ImageEPInfo, baseURL, createMediaSessionPromise);
+            imageModule.default(fileInfo as ImageFileInfo, baseURL, createMediaSessionPromise);
         }
     }
 }

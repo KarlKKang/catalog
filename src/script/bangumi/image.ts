@@ -17,7 +17,7 @@ import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { addEventListener } from '../module/event_listener/add';
-import { EPInfoKey, ImageFileKey, type ImageEPInfo } from '../module/type/BangumiInfo';
+import { FileInfoKey, ImageFileKey, type ImageFileInfo } from '../module/type/EPInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
@@ -32,16 +32,16 @@ import { addOffloadCallback } from '../module/global/offload';
 import { addTimeoutNative } from '../module/timer/add/native/timeout';
 
 export default async function (
-    epInfo: ImageEPInfo,
+    fileInfo: ImageFileInfo,
     baseURL: string,
     createMediaSessionPromise: Promise<MediaSessionInfo>,
 ) {
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
 
-    if (epInfo[EPInfoKey.TITLE] !== undefined) {
+    if (fileInfo[FileInfoKey.TITLE] !== undefined) {
         const title = createParagraphElement();
         addClass(title, styles.subTitle, styles.centerAlign);
-        title.innerHTML = epInfo[EPInfoKey.TITLE]; // Gallery title is in HTML syntax.
+        title.innerHTML = fileInfo[FileInfoKey.TITLE]; // Gallery title is in HTML syntax.
         prependChild(contentContainer, title);
     }
 
@@ -63,10 +63,10 @@ export default async function (
     const credential = mediaSessionCredential[MediaSessionInfoKey.CREDENTIAL];
     addOffloadCallback(offloadLazyload);
     setLazyloadCredential(credential, ImageSessionTypes.MEDIA);
-    showImages(epInfo[EPInfoKey.FILES], baseURL, credential);
+    showImages(fileInfo[FileInfoKey.FILES], baseURL, credential);
 }
 
-function showImages(files: ImageEPInfo[EPInfoKey.FILES], baseURL: string, credential: string) {
+function showImages(files: ImageFileInfo[FileInfoKey.FILES], baseURL: string, credential: string) {
     const mediaHolder = getSharedElement(SharedElement.MEDIA_HOLDER);
     replaceChildren(mediaHolder);
     for (const file of files) {

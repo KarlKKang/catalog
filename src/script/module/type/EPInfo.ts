@@ -57,7 +57,7 @@ export interface VideoFormat {
 }
 export type VideoFormats = readonly [VideoFormat, ...VideoFormat[]];
 
-export const enum EPInfoKey {
+export const enum FileInfoKey {
     TYPE,
     TITLE,
     FORMATS,
@@ -70,25 +70,25 @@ export const enum AlbumInfoKey {
     TITLE,
     ARTIST,
 }
-export interface VideoEPInfo {
-    readonly [EPInfoKey.TYPE]: 'video';
-    readonly [EPInfoKey.TITLE]: string | undefined;
-    readonly [EPInfoKey.FORMATS]: VideoFormats;
-    readonly [EPInfoKey.CHAPTERS]: Chapters;
-    readonly [EPInfoKey.FILE_NAME]: string;
+export interface VideoFileInfo {
+    readonly [FileInfoKey.TYPE]: 'video';
+    readonly [FileInfoKey.TITLE]: string | undefined;
+    readonly [FileInfoKey.FORMATS]: VideoFormats;
+    readonly [FileInfoKey.CHAPTERS]: Chapters;
+    readonly [FileInfoKey.FILE_NAME]: string;
 }
-export interface AudioEPInfo {
-    readonly [EPInfoKey.TYPE]: 'audio';
-    readonly [EPInfoKey.ALBUM_INFO]: {
+export interface AudioFileInfo {
+    readonly [FileInfoKey.TYPE]: 'audio';
+    readonly [FileInfoKey.ALBUM_INFO]: {
         readonly [AlbumInfoKey.TITLE]: string | undefined;
         readonly [AlbumInfoKey.ARTIST]: string | undefined;
     };
-    readonly [EPInfoKey.FILES]: readonly [AudioFile, ...AudioFile[]];
+    readonly [FileInfoKey.FILES]: readonly [AudioFile, ...AudioFile[]];
 }
-export interface ImageEPInfo {
-    readonly [EPInfoKey.TYPE]: 'image';
-    readonly [EPInfoKey.TITLE]: string | undefined;
-    readonly [EPInfoKey.FILES]: readonly [ImageFile, ...ImageFile[]];
+export interface ImageFileInfo {
+    readonly [FileInfoKey.TYPE]: 'image';
+    readonly [FileInfoKey.TITLE]: string | undefined;
+    readonly [FileInfoKey.FILES]: readonly [ImageFile, ...ImageFile[]];
 }
 
 export const enum SeasonKey {
@@ -102,25 +102,25 @@ interface Season {
 export type Seasons = readonly Season[];
 export type SeriesEP = readonly [string, ...string[]];
 
-export const enum BangumiInfoKey {
+export const enum EPInfoKey {
     TITLE,
     TITLE_OVERRIDE,
     SEASONS,
     SERIES_EP,
-    EP_INFO,
+    FILE_INFO,
     AGE_RESTRICTED,
     DIR,
     SERIES_OVERRIDE,
 }
-export interface BangumiInfo {
-    readonly [BangumiInfoKey.TITLE]: string;
-    readonly [BangumiInfoKey.TITLE_OVERRIDE]: string | undefined;
-    readonly [BangumiInfoKey.SEASONS]: Seasons;
-    readonly [BangumiInfoKey.SERIES_EP]: SeriesEP;
-    readonly [BangumiInfoKey.AGE_RESTRICTED]: string | undefined;
-    readonly [BangumiInfoKey.DIR]: string;
-    readonly [BangumiInfoKey.SERIES_OVERRIDE]: string | undefined;
-    readonly [BangumiInfoKey.EP_INFO]: VideoEPInfo | AudioEPInfo | ImageEPInfo;
+export interface EPInfo {
+    readonly [EPInfoKey.TITLE]: string;
+    readonly [EPInfoKey.TITLE_OVERRIDE]: string | undefined;
+    readonly [EPInfoKey.SEASONS]: Seasons;
+    readonly [EPInfoKey.SERIES_EP]: SeriesEP;
+    readonly [EPInfoKey.AGE_RESTRICTED]: string | undefined;
+    readonly [EPInfoKey.DIR]: string;
+    readonly [EPInfoKey.SERIES_OVERRIDE]: string | undefined;
+    readonly [EPInfoKey.FILE_INFO]: VideoFileInfo | AudioFileInfo | ImageFileInfo;
 }
 
 function parseVideoFormatInfo(formats: unknown): VideoFormats {
@@ -145,13 +145,13 @@ function parseChapters(chapters: unknown): Chapters {
     });
 }
 
-function parseVideoEPInfo(epInfo: ReturnType<typeof parseObject>): VideoEPInfo {
+function parseVideoFileInfo(fileInfo: ReturnType<typeof parseObject>): VideoFileInfo {
     return {
-        [EPInfoKey.TYPE]: 'video',
-        [EPInfoKey.TITLE]: parseOptional(epInfo.title, parseString),
-        [EPInfoKey.FORMATS]: parseVideoFormatInfo(epInfo.formats),
-        [EPInfoKey.CHAPTERS]: parseChapters(epInfo.chapters),
-        [EPInfoKey.FILE_NAME]: parseString(epInfo.file_name),
+        [FileInfoKey.TYPE]: 'video',
+        [FileInfoKey.TITLE]: parseOptional(fileInfo.title, parseString),
+        [FileInfoKey.FORMATS]: parseVideoFormatInfo(fileInfo.formats),
+        [FileInfoKey.CHAPTERS]: parseChapters(fileInfo.chapters),
+        [FileInfoKey.FILE_NAME]: parseString(fileInfo.file_name),
     };
 }
 
@@ -168,15 +168,15 @@ function parseAudioFile(audioFile: unknown): AudioFile {
     };
 }
 
-function parseAudioEPInfo(epInfo: ReturnType<typeof parseObject>): AudioEPInfo {
-    const albumInfo = parseObject(epInfo.album_info);
+function parseAudioFileInfo(fileInfo: ReturnType<typeof parseObject>): AudioFileInfo {
+    const albumInfo = parseObject(fileInfo.album_info);
     return {
-        [EPInfoKey.TYPE]: 'audio',
-        [EPInfoKey.ALBUM_INFO]: {
+        [FileInfoKey.TYPE]: 'audio',
+        [FileInfoKey.ALBUM_INFO]: {
             [AlbumInfoKey.TITLE]: parseOptional(albumInfo.title, parseString),
             [AlbumInfoKey.ARTIST]: parseOptional(albumInfo.artist, parseString),
         },
-        [EPInfoKey.FILES]: parseNonEmptyTypedArray(epInfo.files, parseAudioFile),
+        [FileInfoKey.FILES]: parseNonEmptyTypedArray(fileInfo.files, parseAudioFile),
     };
 }
 
@@ -186,23 +186,23 @@ function parseImageFile(imageFile: unknown): ImageFile {
     };
 }
 
-function parseImageEPInfo(epInfo: ReturnType<typeof parseObject>): ImageEPInfo {
+function parseImageFileInfo(fileInfo: ReturnType<typeof parseObject>): ImageFileInfo {
     return {
-        [EPInfoKey.TYPE]: 'image',
-        [EPInfoKey.TITLE]: parseOptional(epInfo.gallery_title, parseString),
-        [EPInfoKey.FILES]: parseNonEmptyTypedArray(epInfo.files, parseImageFile),
+        [FileInfoKey.TYPE]: 'image',
+        [FileInfoKey.TITLE]: parseOptional(fileInfo.gallery_title, parseString),
+        [FileInfoKey.FILES]: parseNonEmptyTypedArray(fileInfo.files, parseImageFile),
     };
 }
 
-function parseEPInfo(epInfo: unknown): VideoEPInfo | AudioEPInfo | ImageEPInfo {
-    const epInfoObj = parseObject(epInfo);
-    const type = parseString(epInfoObj.type);
+function parseFileInfo(fileInfo: unknown): VideoFileInfo | AudioFileInfo | ImageFileInfo {
+    const fileInfoObj = parseObject(fileInfo);
+    const type = parseString(fileInfoObj.type);
     if (type === 'video') {
-        return parseVideoEPInfo(epInfoObj);
+        return parseVideoFileInfo(fileInfoObj);
     } else if (type === 'audio') {
-        return parseAudioEPInfo(epInfoObj);
+        return parseAudioFileInfo(fileInfoObj);
     } else if (type === 'image') {
-        return parseImageEPInfo(epInfoObj);
+        return parseImageFileInfo(fileInfoObj);
     }
     throwError();
 }
@@ -217,16 +217,16 @@ function parseSeasons(seasons: unknown): Seasons {
     });
 }
 
-export function parseBangumiInfo(bangumiInfo: unknown): BangumiInfo {
-    const bangumiInfoObj = parseObject(bangumiInfo);
+export function parseEPInfo(epInfo: unknown): EPInfo {
+    const epInfoObj = parseObject(epInfo);
     return {
-        [BangumiInfoKey.TITLE]: parseString(bangumiInfoObj.title),
-        [BangumiInfoKey.TITLE_OVERRIDE]: parseOptional(bangumiInfoObj.title_override, parseString),
-        [BangumiInfoKey.SEASONS]: parseSeasons(bangumiInfoObj.seasons),
-        [BangumiInfoKey.SERIES_EP]: parseNonEmptyTypedArray(bangumiInfoObj.series_ep, parseString),
-        [BangumiInfoKey.AGE_RESTRICTED]: parseOptional(bangumiInfoObj.age_restricted, parseString),
-        [BangumiInfoKey.DIR]: parseString(bangumiInfoObj.dir),
-        [BangumiInfoKey.SERIES_OVERRIDE]: parseOptional(bangumiInfoObj.series_override, parseString),
-        [BangumiInfoKey.EP_INFO]: parseEPInfo(bangumiInfoObj.file_info),
+        [EPInfoKey.TITLE]: parseString(epInfoObj.title),
+        [EPInfoKey.TITLE_OVERRIDE]: parseOptional(epInfoObj.title_override, parseString),
+        [EPInfoKey.SEASONS]: parseSeasons(epInfoObj.seasons),
+        [EPInfoKey.SERIES_EP]: parseNonEmptyTypedArray(epInfoObj.series_ep, parseString),
+        [EPInfoKey.AGE_RESTRICTED]: parseOptional(epInfoObj.age_restricted, parseString),
+        [EPInfoKey.DIR]: parseString(epInfoObj.dir),
+        [EPInfoKey.SERIES_OVERRIDE]: parseOptional(epInfoObj.series_override, parseString),
+        [EPInfoKey.FILE_INFO]: parseFileInfo(epInfoObj.file_info),
     };
 }

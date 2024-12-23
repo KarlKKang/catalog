@@ -20,7 +20,7 @@ import { changeURL } from '../module/dom/location/change';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { addEventsListener } from '../module/event_listener/add/multiple_events';
 import { addEventListener } from '../module/event_listener/add';
-import { EPInfoKey, VideoFormatKey, type VideoEPInfo, type VideoFormat } from '../module/type/BangumiInfo';
+import { FileInfoKey, VideoFormatKey, type VideoFileInfo, type VideoFormat } from '../module/type/EPInfo';
 import { MSE_BUFFER_SIZE } from '../module/browser/mse/buffer_size';
 import { MIN_MSE_BUFFER_SIZE } from '../module/browser/mse/buffer_size/min';
 import { MSE_SUPPORTED } from '../module/browser/mse/supported';
@@ -63,7 +63,7 @@ let currentPgid: unknown;
 
 let seriesID: string;
 let epIndex: number;
-let epInfo: VideoEPInfo;
+let fileInfo: VideoFileInfo;
 let baseURL: string;
 let createMediaSessionPromise: Promise<MediaSessionInfo>;
 
@@ -77,7 +77,7 @@ const timersTracker = new Set<Interval>();
 export default function (
     _seriesID: string,
     _epIndex: number,
-    _epInfo: VideoEPInfo,
+    _fileInfo: VideoFileInfo,
     _baseURL: string,
     _createMediaSessionPromise: Promise<MediaSessionInfo>,
 ) {
@@ -85,7 +85,7 @@ export default function (
 
     seriesID = _seriesID;
     epIndex = _epIndex;
-    epInfo = _epInfo;
+    fileInfo = _fileInfo;
     baseURL = _baseURL;
     createMediaSessionPromise = _createMediaSessionPromise;
 
@@ -103,16 +103,16 @@ export default function (
     const play = getSearchParam('play') === '1';
 
     // Title
-    if (epInfo[EPInfoKey.TITLE] !== undefined) {
+    if (fileInfo[FileInfoKey.TITLE] !== undefined) {
         const title = createParagraphElement();
         addClass(title, styles.subTitle, styles.centerAlign);
-        title.innerHTML = epInfo[EPInfoKey.TITLE]; // This title is in HTML syntax.
+        title.innerHTML = fileInfo[FileInfoKey.TITLE]; // This title is in HTML syntax.
         prependChild(contentContainer, title);
     }
 
     // Formats
     let formatIndex = getFormatIndex();
-    const formats = epInfo[EPInfoKey.FORMATS];
+    const formats = fileInfo[FileInfoKey.FORMATS];
 
     const formatContainer = createDivElement();
     addClass(formatContainer, styles.formatContainer);
@@ -171,7 +171,7 @@ function formatSwitch(formatSelectMenuParent: HTMLDivElement, formatSelectMenu: 
     disableDropdown(formatSelectMenuParent, formatSelectMenu, true);
     const formatIndex = formatSelectMenu.selectedIndex;
 
-    const format = epInfo[EPInfoKey.FORMATS][formatIndex];
+    const format = fileInfo[FileInfoKey.FORMATS][formatIndex];
     if (format === undefined) {
         return;
     }
@@ -333,7 +333,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
     };
     const afterLoad = (mediaInstance: PlayerType) => {
         mediaInstance[PlayerKey.MEDIA].title = getTitle();
-        if (epInfo[EPInfoKey.CHAPTERS].length > 0) {
+        if (fileInfo[FileInfoKey.CHAPTERS].length > 0) {
             displayChapters(mediaInstance, audioOffset, chaptersActive);
         }
         if (focus) {
@@ -341,7 +341,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         }
     };
 
-    const url = baseURL + encodeCloudfrontURIComponent('_MASTER_' + epInfo[EPInfoKey.FILE_NAME] + '[' + currentFormat[VideoFormatKey.VALUE] + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
+    const url = baseURL + encodeCloudfrontURIComponent('_MASTER_' + fileInfo[FileInfoKey.FILE_NAME] + '[' + currentFormat[VideoFormatKey.VALUE] + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
     if (!MSE_SUPPORTED) {
         const Player = (await nativePlayerImportPromise).Player;
         await createMediaSessionPromise;
@@ -420,7 +420,7 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     eventTargetsTracker.add(accordion);
 
     const chapterElements: HTMLParagraphElement[] = [];
-    for (const chapter of epInfo[EPInfoKey.CHAPTERS]) {
+    for (const chapter of fileInfo[FileInfoKey.CHAPTERS]) {
         const chapterNode = createParagraphElement();
         const cueText = createTextNode('\xa0\xa0' + chapter[0]);
         const startTime = (chapter[1] + offset) / 1000;
@@ -446,10 +446,10 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     const video = mediaInstance[PlayerKey.MEDIA];
     const updateChapterDisplay = () => {
         const currentTime = video.currentTime;
-        epInfo[EPInfoKey.CHAPTERS].forEach((chapter, index) => {
+        fileInfo[FileInfoKey.CHAPTERS].forEach((chapter, index) => {
             const chapterElement = chapterElements[index] as HTMLElement;
             if (currentTime >= (chapter[1] + offset) / 1000) {
-                const nextChapter = epInfo[EPInfoKey.CHAPTERS][index + 1];
+                const nextChapter = fileInfo[FileInfoKey.CHAPTERS][index + 1];
                 if (nextChapter === undefined) {
                     setClass(chapterElement, styles.currentChapter);
                 } else if (currentTime < (nextChapter[1] + offset) / 1000) {

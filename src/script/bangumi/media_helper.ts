@@ -20,7 +20,7 @@ import { createMessageElem, getContentBoxHeight, getLogoutParam, isArray } from 
 import { IS_MACOS } from '../module/browser/is_macos';
 import { IS_IOS } from '../module/browser/is_ios';
 import { IS_WINDOWS } from '../module/browser/is_windows';
-import { VideoFormat, VideoFormatKey, VideoFormats } from '../module/type/BangumiInfo';
+import { VideoFormat, VideoFormatKey, VideoFormats } from '../module/type/EPInfo';
 import { addTimeout } from '../module/timer/add/timeout';
 import { CustomMediaError } from '../module/player/media_error';
 import { SharedElement, dereferenceErrorMessageElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
