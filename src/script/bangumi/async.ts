@@ -90,7 +90,7 @@ export default async function (
     updateEPSelector(response[BangumiInfoKey.SERIES_EP], epSelector);
     updateSeasonSelector(response[BangumiInfoKey.SEASONS], seasonSelector);
 
-    let ageRestricted = epInfo[EPInfoKey.AGE_RESTRICTED];
+    let ageRestricted = response[BangumiInfoKey.AGE_RESTRICTED];
     if (ageRestricted !== undefined) {
         ageRestricted = ageRestricted.toUpperCase();
         let warningTitle: Node[] | string = '年齢認証';
@@ -122,8 +122,8 @@ export default async function (
 
     // Add Media
     const type = epInfo[EPInfoKey.TYPE];
-    const seriesOverride = epInfo[EPInfoKey.SERIES_OVERRIDE];
-    const baseURL = getCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCloudfrontURIComponent(epInfo[EPInfoKey.DIR]) + '/';
+    const seriesOverride = response[BangumiInfoKey.SERIES_OVERRIDE];
+    const baseURL = getCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCloudfrontURIComponent(response[BangumiInfoKey.DIR]) + '/';
 
     const currentPgid = pgid;
     if (type === 'video') {
