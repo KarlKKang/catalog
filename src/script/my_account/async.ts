@@ -315,7 +315,7 @@ function initializeSessions(accountID: string, sessionsContainer: HTMLElement) {
     const sessionsModuleImport = importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './sessions'
+            './sessions',
         ),
     );
     const currentPgid = pgid;

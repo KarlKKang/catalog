@@ -55,9 +55,9 @@ export const enum MyAccountElement {
     sessionsContainer,
 }
 
-export type MyAccountAllInputFields = Readonly<{ [key in MyAccountInputField]: InputFieldElement }>;
-export type MyAccountAllButtons = Readonly<{ [key in MyAccountButton]: HTMLButtonElement }>;
-export type MyAccountAllElements = Readonly<{ [key in MyAccountElement]: HTMLElement }>;
+export type MyAccountAllInputFields = Readonly<Record<MyAccountInputField, InputFieldElement>>;
+export type MyAccountAllButtons = Readonly<Record<MyAccountButton, HTMLButtonElement>>;
+export type MyAccountAllElements = Readonly<Record<MyAccountElement, HTMLElement>>;
 
 export function initializeUI() {
     const container = createDivElement();

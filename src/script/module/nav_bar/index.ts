@@ -13,7 +13,7 @@ export async function addNavBar(page?: NavBarPage, currentPageCallback?: () => v
     ({ default: navBarFunc } = await importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './internal/nav_bar'
+            './internal/nav_bar',
         ),
     ));
     if (currentPgid === pgid) {

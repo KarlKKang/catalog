@@ -51,7 +51,7 @@ export default function (showPage: ShowPageFunc) {
         importModule(
             () => import(
                 /* webpackExports: ["logout"] */
-                './module/server/logout'
+                './module/server/logout',
             ),
         ).then(({ logout }) => {
             if (currentPgid === pgid) {

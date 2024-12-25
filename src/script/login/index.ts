@@ -20,7 +20,7 @@ export default function (showPage: ShowPageFunc) {
     const importApprovedCallback = () => importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './approved_callback'
+            './approved_callback',
         ),
     );
     const approvedCallbackImportTimeout = addTimeout(() => {
@@ -30,7 +30,7 @@ export default function (showPage: ShowPageFunc) {
     const asyncModulePromise = importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './async'
+            './async',
         ),
     );
     sendServerRequest('get_authentication_state', {

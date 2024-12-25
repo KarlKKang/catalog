@@ -32,7 +32,7 @@ function getAllNews(showPage: ShowPageFunc): void {
     const allNewsModulePromise = importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './all_news'
+            './all_news',
         ),
     );
     sendServerRequest('get_all_news', {
@@ -58,7 +58,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
     const newsModulePromise = importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './news'
+            './news',
         ),
     );
 

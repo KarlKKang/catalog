@@ -16,19 +16,19 @@ export function importAllPageModules() {
     imageImportPromise = importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './image'
+            './image',
         ),
     );
     audioImportPromise = importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './audio'
+            './audio',
         ),
     );
     videoImportPromise = importModule(
         () => import(
             /* webpackExports: ["default"] */
-            './video'
+            './video',
         ),
     );
 }

@@ -172,7 +172,7 @@ async function startWebpMachine() {
         const { WebpMachine, detectWebpSupport } = await importModule(
             () => import(
                 /* webpackExports: ["WebpMachine", "detectWebpSupport"] */
-                'webp-hero'
+                'webp-hero',
             ),
         );
         webpMachine = new WebpMachine();

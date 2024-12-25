@@ -310,7 +310,7 @@ async function getServiceWorkerModulePromise(retryTimeout = 500): Promise<Servic
     try {
         return await import(
             /* webpackExports: ["default"] */
-            './service_worker'
+            './service_worker',
         );
     } catch (e) {
         console.error(e);

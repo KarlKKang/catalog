@@ -13,13 +13,13 @@ export function importAllMediaModules() {
     nativePlayerImportPromise = importModule(
         () => import(
             /* webpackExports: ["Player"] */
-            '../module/player/player'
+            '../module/player/player',
         ),
     );
     hlsPlayerImportPromise = importModule(
         () => import(
             /* webpackExports: ["HlsPlayer"] */
-            '../module/player/hls_player'
+            '../module/player/hls_player',
         ),
     );
 }

@@ -11,7 +11,7 @@ export const enum SharedElement {
     CONTENT_CONTAINER,
     MEDIA_HOLDER,
 }
-let sharedElements: { [key in SharedElement]: HTMLElement } | null = null;
+let sharedElements: Record<SharedElement, HTMLElement> | null = null;
 export let errorMessageElement: HTMLElement | null = null;
 
 export function initializeSharedVars() {

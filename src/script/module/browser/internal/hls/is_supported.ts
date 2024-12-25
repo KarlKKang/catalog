@@ -23,8 +23,8 @@ function isMSESupported(): boolean {
     return (
         !sourceBuffer
         || (sourceBuffer.prototype
-        && typeof sourceBuffer.prototype.appendBuffer === 'function'
-        && typeof sourceBuffer.prototype.remove === 'function')
+            && typeof sourceBuffer.prototype.appendBuffer === 'function'
+            && typeof sourceBuffer.prototype.remove === 'function')
     );
 }
 

@@ -8,7 +8,7 @@ export const enum CSS_COLOR {
     ORANGE,
 }
 
-const colorMap: { [key in CSS_COLOR]: string } = {
+const colorMap: Record<CSS_COLOR, string> = {
     [CSS_COLOR.RED]: colorStyle.red,
     [CSS_COLOR.GREEN]: colorStyle.green,
     [CSS_COLOR.ORANGE]: colorStyle.orange,
