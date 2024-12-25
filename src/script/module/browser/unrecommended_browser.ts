@@ -7,7 +7,7 @@ import { engineMajorVersion } from './internal/ua/engine_major_version';
 import { engineName } from './internal/ua/engine_name';
 import { IS_SAFARI } from './is_safari';
 
-const SUPPORTED_BLINK = engineName === 'blink' && engineMajorVersion >= 62;
+const SUPPORTED_BLINK = engineName === 'blink' && engineMajorVersion >= 79;
 export const UNRECOMMENDED_BROWSER
     = (!SUPPORTED_BLINK && !IS_SAFARI)
     || browserName.includes('wechat')
