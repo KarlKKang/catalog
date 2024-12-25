@@ -13,7 +13,7 @@ export default function () {
     if (UNRECOMMENDED_BROWSER) {
         showMessage({
             [MessageParamKey.TITLE]: 'お使いのブラウザは推奨環境ではありません',
-            [MessageParamKey.MESSAGE]: '一部のコンテンツが正常に再生されない場合は、Safari 12またはChrome 63以降のブラウザをお使いください。',
+            [MessageParamKey.MESSAGE]: '一部のコンテンツが正常に再生されない場合は、Safari 12またはChrome 79以降のブラウザをお使いください。',
             [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
             [MessageParamKey.URL]: getForwardURL(),
             [MessageParamKey.BUTTON_TEXT]: nextButtonText,
