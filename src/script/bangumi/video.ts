@@ -238,13 +238,21 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             createLinkElem('こちら', NEWS_ROOT_URI + '0p7hzGpxfMh'),
             createTextNode('をご覧ください。'),
         ], null]);
-    } else if (currentFormat[VideoFormatKey.VIDEO] === 'hevc41') {
-        const CAN_PLAY_HEVC = await canPlayHEVC(currentFormat[VideoFormatKey.AVC_FALLBACK]);
+    } else if (currentFormat[VideoFormatKey.VIDEO]?.startsWith('hevc')) {
+        const [level, levelText] = (() => {
+            switch (currentFormat[VideoFormatKey.VIDEO]) {
+                case 'hevc50':
+                    return [HEVC_LEVEL.L5_0, '5.0'];
+                default:
+                    return [HEVC_LEVEL.L4_1, '4.1'];
+            }
+        })();
+        const CAN_PLAY_HEVC = await canPlayHEVC(level, currentFormat[VideoFormatKey.AVC_FALLBACK]);
         if (currentPgid !== pgid) {
             return;
         }
         if (CAN_PLAY_HEVC) {
-            formatString = 'HEVC/Main 10/L4.1/High';
+            formatString = 'HEVC/Main 10/L' + levelText + '/High';
             USE_AVC = false;
         } else if (currentFormat[VideoFormatKey.AVC_FALLBACK]) {
             AVC_FALLBACK = true;
@@ -479,9 +487,14 @@ function show8chAudioError() {
     showErrorMessage(incompatibleTitle, 'ChromiumベースのブラウザとFirefoxでは、7.1chオーディオを再生することはできません。' + mediaIncompatibleSuffix);
 }
 
-async function canPlayHEVC(withFallback: boolean | undefined): Promise<boolean> {
-    const HEVC41_CODEC = 'hvc1.2.4.H123.90';
-    if (!videoCanPlay(HEVC41_CODEC)) {
+const enum HEVC_LEVEL {
+    L4_1 = 123,
+    L5_0 = 150,
+}
+
+async function canPlayHEVC(level: HEVC_LEVEL, withFallback: boolean | undefined): Promise<boolean> {
+    const HEVC_CODEC = 'hvc1.2.4.H' + level + '.90';
+    if (!videoCanPlay(HEVC_CODEC)) {
         return false;
     }
     if (!withFallback) {
@@ -496,7 +509,7 @@ async function canPlayHEVC(withFallback: boolean | undefined): Promise<boolean> 
         decodingInfo = await navigator.mediaCapabilities.decodingInfo({
             type: MSE_SUPPORTED ? 'media-source' : 'file',
             video: {
-                contentType: `video/mp4;codecs=${HEVC41_CODEC}`,
+                contentType: `video/mp4;codecs=${HEVC_CODEC}`,
                 width: 1920,
                 height: 1080,
                 bitrate: 24000 * 1000,
