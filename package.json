@@ -65,7 +65,7 @@
     "typescript": "5.5.4",
     "typescript-eslint": "8.18.2",
     "typescript-plugin-css-modules": "5.1.0",
-    "ua-parser-js": "1.0.38",
+    "ua-parser-js": "1.0.40",
     "webp-hero": "0.0.2",
     "webpack": "5.97.1",
     "webpack-bundle-analyzer": "4.10.2",
