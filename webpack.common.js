@@ -41,8 +41,10 @@ const configs = [
                     developerURL: 'https://' + DOMAIN,
                     lang: "ja-JP",
                     start_url: "/",
+                    theme_color: "%remove%",
                     icons: {
                         appleStartup: false,
+                        windows: false,
                     }
                 }
             })

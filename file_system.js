@@ -46,3 +46,7 @@ export function unlink(file) {
 export function readdirSync(dir) {
     return fs.readdirSync(dir);
 }
+
+export function moveSync(src, dest) {
+    fs.renameSync(src, dest);
+}
