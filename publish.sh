@@ -34,7 +34,6 @@ if [[ "$1" == "featherine-website" ]]; then
     echo "/unsupported_browser.html"
     echo "/style/unsupported_browser.css"
     echo "/icon/*"
-    echo "/font/*"
     read -p "Press Enter to continue..." -r
     echo
     node ./aws-s3-js/upload.js "$1" "/sw.js" "$2/sw.js" --mime '\.js$' 'application/javascript;charset=utf-8' 2>>"publish.log" || exit 1
