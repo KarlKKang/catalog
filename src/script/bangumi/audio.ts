@@ -143,7 +143,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         audioInstance[PlayerKey.LOAD](url, {
             onerror: function (errorCode: number | null) {
                 if (IS_FIREFOX && file[AudioFileKey.SAMPLERATE] !== undefined && parseInt(file[AudioFileKey.SAMPLERATE]) > 48000) { // Firefox has problem playing Hi-res audio
-                    showErrorMessage(incompatibleTitle, 'Firefoxはハイレゾ音源を再生できません。' + mediaIncompatibleSuffix);
+                    showErrorMessage(incompatibleTitle, 'Firefoxまたはその派生ブラウザはハイレゾ音源を再生できません。' + mediaIncompatibleSuffix);
                 } else {
                     showPlayerError(errorCode);
                 }
