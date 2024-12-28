@@ -25,9 +25,17 @@ if [[ "$1" == "featherine-website" ]]; then
         $opt 2>>"publish.log" || exit 1
     echo "Waiting 10 seconds for the CloudFront error TTL to expire..."
     sleep 10
+    echo
     node ./aws-s3-js/upload.js "$1" "/index.html" "$2/index.html" --mime '\.html$' 'text/html' 2>>"publish.log" || exit 1
-    echo "Please clear the CloudFront cache for /index.html."
+    echo "Please clear the CloudFront cache for any file that does not use hash-based filenames. Some common examples are:"
+    echo "/index.html"
+    echo "/script/browser.js"
+    echo "/unsupported_browser.html"
+    echo "/style/unsupported_browser.css"
+    echo "/icon/*"
+    echo "/font/*"
     read -p "Press Enter to continue..." -r
+    echo
     node ./aws-s3-js/upload.js "$1" "/sw.js" "$2/sw.js" --mime '\.js$' 'application/javascript;charset=utf-8' 2>>"publish.log" || exit 1
     echo "All files have been uploaded. Please clear the CloudFront cache for /sw.js."
 else
