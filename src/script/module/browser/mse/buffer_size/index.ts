@@ -17,7 +17,7 @@ if (IS_SAFARI) {
         }
     }
 } else if (IS_CHROMIUM) {
-    MSE_BUFFER_SIZE = 150;
+    MSE_BUFFER_SIZE = 145;
 } else if (IS_FIREFOX) {
     if (browserMajorVersion >= 129) {
         MSE_BUFFER_SIZE = 145;
