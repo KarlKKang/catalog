@@ -376,14 +376,37 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             return;
         }
 
-        const maxBufferLength = (MSE_BUFFER_SIZE * 8 * 1024 - 168750) / 20000 - 15;
-        const minBufferLength = (MIN_MSE_BUFFER_SIZE * 8 * 1024 - 168750) / 20000 - 15;
+        let gop = 15;
+        let vbvMaxrate = 24000;
+        let vbvBufsize = 50000;
+
+        const rcVerStr = fileInfo[FileInfoKey.RC_VER];
+        if (rcVerStr !== undefined) {
+            const rcVer = parseInt(rcVerStr);
+            switch (rcVer) {
+                case 2:
+                    gop = 12;
+                    vbvMaxrate = 30000;
+                    vbvBufsize = 60000;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        const maxBufferLength = (MSE_BUFFER_SIZE * 8 * 1024 - vbvBufsize) / vbvMaxrate - gop;
+        const minBufferLength = (MIN_MSE_BUFFER_SIZE * 8 * 1024 - vbvBufsize) / vbvMaxrate - gop;
         const hlsConfig = {
             maxBufferLength: maxBufferLength,
             maxMaxBufferLength: maxBufferLength,
             mmsMinBufferLength: minBufferLength,
             minMaxBufferLength: minBufferLength,
+            gop: gop,
         };
+
+        if (DEVELOPMENT) {
+            console.log('HLS config:', structuredClone(hlsConfig));
+        }
 
         const mediaInstance = new HlsPlayer(playerContainer, hlsConfig, true);
         let bufferStalledMessageShown = false;

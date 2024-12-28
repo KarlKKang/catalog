@@ -14,12 +14,14 @@ import { removeTimeout } from '../timer/remove/timeout';
 
 export abstract class NonNativePlayer extends Player {
     private [NonNativePlayerKey.BUFFERING] = false;
+    private readonly [NonNativePlayerKey.GOP]: number;
     private [NonNativePlayerKey.CHECK_BUFFER_TIMEOUT]: Timeout | null = null;
     private [NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = getEpochMs();
     public [NonNativePlayerKey.ON_BUFFER_STALLED]: (() => void) | undefined = undefined;
 
-    constructor(container: HTMLDivElement, isVideo: boolean) {
+    constructor(container: HTMLDivElement, isVideo: boolean, gop: number | undefined) {
         super(container, isVideo);
+        this[NonNativePlayerKey.GOP] = gop ?? 0;
         this[NonNativePlayerKey.CHECK_BUFFER] = this[NonNativePlayerKey.CHECK_BUFFER].bind(this);
     }
 
@@ -65,7 +67,7 @@ export abstract class NonNativePlayer extends Player {
         for (const buffer of bufferedRange) {
             if (this[PlayerKey.MEDIA].currentTime < buffer.end) {
                 DEVELOPMENT && this[PlayerKey.LOG]?.('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this[PlayerKey.MEDIA].currentTime);
-                if (buffer.start <= this[PlayerKey.MEDIA].currentTime + this[PlayerKey.MAX_BUFFER_HOLE] && buffer.end >= min(this[PlayerKey.MEDIA].currentTime + 15, this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE])) {
+                if (buffer.start <= this[PlayerKey.MEDIA].currentTime + this[PlayerKey.MAX_BUFFER_HOLE] && buffer.end >= min(this[PlayerKey.MEDIA].currentTime + this[NonNativePlayerKey.GOP], this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE])) {
                     endBuffer();
                     DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer complete!');
                     if (!this[PlayerKey.DRAGGING]) {

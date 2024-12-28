@@ -65,6 +65,7 @@ export const enum FileInfoKey {
     FILE_NAME,
     ALBUM_INFO,
     FILES,
+    RC_VER,
 }
 export const enum AlbumInfoKey {
     TITLE,
@@ -76,6 +77,7 @@ export interface VideoFileInfo {
     readonly [FileInfoKey.FORMATS]: VideoFormats;
     readonly [FileInfoKey.CHAPTERS]: Chapters;
     readonly [FileInfoKey.FILE_NAME]: string;
+    readonly [FileInfoKey.RC_VER]: string | undefined;
 }
 export interface AudioFileInfo {
     readonly [FileInfoKey.TYPE]: 'audio';
@@ -152,6 +154,7 @@ function parseVideoFileInfo(fileInfo: ReturnType<typeof parseObject>): VideoFile
         [FileInfoKey.FORMATS]: parseVideoFormatInfo(fileInfo.formats),
         [FileInfoKey.CHAPTERS]: parseChapters(fileInfo.chapters),
         [FileInfoKey.FILE_NAME]: parseString(fileInfo.file_name),
+        [FileInfoKey.RC_VER]: parseOptional(fileInfo.rc_ver, parseString),
     };
 }
 

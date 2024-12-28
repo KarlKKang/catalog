@@ -24,10 +24,12 @@ export class HlsPlayer extends NonNativePlayer {
             maxMaxBufferLength: number;
             mmsMinBufferLength: number;
             minMaxBufferLength: number;
+            gop: number;
         }>,
         isVideo: boolean,
     ) {
-        super(container, isVideo);
+        super(container, isVideo, hlsConfig.gop);
+        delete hlsConfig.gop;
         const userHlsConfig: Partial<HlsConfig> = {
             ...hlsConfig,
             enableWorker: false,
