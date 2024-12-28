@@ -12,4 +12,5 @@ export const enum CSS_PROPERTY {
     TRANSITION = 'transition',
     CURSOR = 'cursor',
     DISPLAY = 'display',
+    TEXT_ALIGN = 'textAlign',
 }

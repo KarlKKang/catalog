@@ -10,6 +10,7 @@ import { TOP_DOMAIN } from '../../env/domain';
 import { appendText } from '../../dom/element/text/append';
 import { createParagraphElement } from '../../dom/element/paragraph/create';
 import { appendChild } from '../../dom/node/append_child';
+import { CSS_TEXT_ALIGN, setTextAlign } from '../../style/text_align';
 
 export function connectionError() {
     return {
@@ -22,6 +23,7 @@ export function connectionError() {
 
 function connectionErrorBody() {
     const container = createDivElement();
+    setTextAlign(container, CSS_TEXT_ALIGN.LEFT);
     const text = createParagraphElement('これは次のような理由が考えられます：');
     const list = createUListElement();
     appendListItems(
