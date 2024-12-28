@@ -15,7 +15,6 @@ import { MSE_SUPPORTED } from '../module/browser/mse/supported';
 import { NATIVE_HLS_SUPPORTED } from '../module/browser/native_hls_supported';
 import { CAN_PLAY_FLAC } from '../module/browser/can_play/codec/flac';
 import { CAN_PLAY_ALAC } from '../module/browser/can_play/codec/alac';
-import { IS_FIREFOX } from '../module/browser/is_firefox';
 import { audioCanPlay } from '../module/browser/can_play/audio';
 import { canPlay } from '../module/browser/can_play';
 import type { Player as PlayerType } from '../module/player/player';
@@ -29,6 +28,7 @@ import { SharedElement, getSharedElement } from './shared_var';
 import * as styles from '../../css/bangumi.module.scss';
 import { PlayerKey } from '../module/player/player_key';
 import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
+import { IS_GECKO } from '../module/browser/is_gecko';
 
 let currentPgid: unknown;
 
@@ -142,7 +142,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
         const audioInstance = new HlsPlayer(playerContainer, configHls, false);
         audioInstance[PlayerKey.LOAD](url, {
             onerror: function (errorCode: number | null) {
-                if (IS_FIREFOX && file[AudioFileKey.SAMPLERATE] !== undefined && parseInt(file[AudioFileKey.SAMPLERATE]) > 48000) { // Firefox has problem playing Hi-res audio
+                if (IS_GECKO && file[AudioFileKey.SAMPLERATE] !== undefined && parseInt(file[AudioFileKey.SAMPLERATE]) > 48000) { // Firefox has problem playing Hi-res audio
                     showErrorMessage(incompatibleTitle, 'Firefoxまたはその派生ブラウザはハイレゾ音源を再生できません。' + mediaIncompatibleSuffix);
                 } else {
                     showPlayerError(errorCode);

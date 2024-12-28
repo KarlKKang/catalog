@@ -27,7 +27,6 @@ import { MSE_SUPPORTED } from '../module/browser/mse/supported';
 import { NATIVE_HLS_SUPPORTED } from '../module/browser/native_hls_supported';
 import { CAN_PLAY_AAC } from '../module/browser/can_play/codec/aac';
 import { CAN_PLAY_AVC } from '../module/browser/can_play/codec/avc';
-import { IS_FIREFOX } from '../module/browser/is_firefox';
 import { IS_CHROMIUM } from '../module/browser/is_chromium';
 import { videoCanPlay } from '../module/browser/can_play/video';
 import { audioCanPlay } from '../module/browser/can_play/audio';
@@ -58,6 +57,7 @@ import { PlayerKey } from '../module/player/player_key';
 import { NonNativePlayerKey } from '../module/player/non_native_player_key';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
+import { IS_GECKO } from '../module/browser/is_gecko';
 
 let currentPgid: unknown;
 
@@ -427,7 +427,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 if (errorCode === CustomMediaError.HLS_BUFFER_APPEND_ERROR) {
                     if (currentFormat[VideoFormatKey.VIDEO] === 'dv5') {
                         showDolbyVisionError();
-                    } else if (currentFormat[VideoFormatKey.AUDIO] === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_FIREFOX)) {
+                    } else if (currentFormat[VideoFormatKey.AUDIO] === 'atmos_aac_8ch' && (IS_CHROMIUM || IS_GECKO)) {
                         show8chAudioError();
                     } else {
                         showPlayerError(errorCode);
