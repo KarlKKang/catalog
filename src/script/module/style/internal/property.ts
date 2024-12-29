@@ -13,4 +13,5 @@ export const enum CSS_PROPERTY {
     CURSOR = 'cursor',
     DISPLAY = 'display',
     TEXT_ALIGN = 'textAlign',
+    SCROLL_BEHAVIOR = 'scrollBehavior',
 }

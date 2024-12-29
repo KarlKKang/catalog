@@ -10,7 +10,6 @@ import { d } from '../module/dom/document';
 import { parseURI } from '../module/dom/location/parse/uri';
 import { getFullPath } from '../module/dom/location/get/full_path';
 import { changeURL } from '../module/dom/location/change';
-import { html } from '../module/dom/html';
 import { w } from '../module/dom/window';
 import { body } from '../module/dom/body';
 import { TOP_DOMAIN } from '../module/env/domain';
@@ -26,7 +25,6 @@ import { loadingBar as loadingBarClass } from '../../css/loading_bar.module.scss
 import { enableTransition } from '../module/style/transition';
 import { setVisibility } from '../module/style/visibility';
 import { setOpacity } from '../module/style/opacity';
-import { setMinHeight } from '../module/style/min_height';
 import { setWidth } from '../module/style/width';
 import { CSS_UNIT } from '../module/style/value/unit';
 import { consolePageTitle, emailChangePageTitle, infoPageTitle, loginPageTitle, myAccountPageTitle, newsPageTitle, notFoundPageTitle, passwordResetPageTitle, cnRoutesPageTitle, registerPageTitle } from '../module/text/page_title';
@@ -45,6 +43,8 @@ import { AnimationFrame } from '../module/animation_frame/type';
 import { removeTimeout } from '../module/timer/remove/timeout';
 import { removeAnimationFrame } from '../module/animation_frame/remove';
 import { offloadFileReader } from '../module/file_reader/offload';
+import { scrollToTop } from '../module/dom/scroll/to_top';
+import { setSmoothScroll } from '../module/style/smooth_scroll';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -178,8 +178,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     replaceChildren(body);
     setClass(body, '');
 
-    setMinHeight(html, 0, CSS_UNIT.PX); // This is needed because the page may not be scrolled to top when there's `safe-area-inset` padding.
-
     if (withoutHistory !== null) {
         changeURL(url, withoutHistory);
     }
@@ -255,8 +253,6 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
             return;
         }
 
-        setMinHeight(html, null);
-
         if ('serviceWorker' in navigator) {
             if (serviceWorkerModule !== null) {
                 serviceWorkerModule.default();
@@ -287,9 +283,14 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     };
 
     const pageScript = page[PageProp.SCRIPT_CACHED];
+
+    // This is needed to ensure the empty page is actually rendered before the next page is shown.
+    // This resolves some weird issues on iOS, especially with safe-area-inset-top.
     addAnimationFrame(() => {
-        // This is needed to ensure the empty page is actually rendered before the next page is shown.
+        setSmoothScroll(false);
         addAnimationFrame(() => {
+            scrollToTop(); // This has to be in the next frame, otherwise the safe-area-inset-top may not be scrolled in iOS PWA.
+            setSmoothScroll(true);
             pageScript.default(showPage);
         });
     });

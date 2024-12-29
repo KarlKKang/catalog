@@ -78,7 +78,6 @@
 
 html {
     display: none;
-    scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     min-height: 100%;
     padding: var(property.get(safe-area-inset-top)) var(property.get(safe-area-inset-right)) var(property.get(safe-area-inset-bottom)) var(property.get(safe-area-inset-left));
