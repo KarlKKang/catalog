@@ -11,11 +11,14 @@ export class HlsPlayer extends NonNativePlayer {
     protected override readonly [PlayerKey.MAX_BUFFER_HOLE] = 0.5;
     private readonly [HlsPlayerKey.HLS_INSTANCE]: HlsFull;
     private [HlsPlayerKey.FRAG_START] = 0;
+    private [HlsPlayerKey.HLS_PRELOADED]: boolean | null = false;
+    private [HlsPlayerKey.HLS_MAX_MAX_BUFFER_LENGTH]: number;
 
     private [HlsPlayerKey.ON_HLS_ERROR]: undefined | ((_: Events.ERROR, data: ErrorData) => void) = undefined;
     private [HlsPlayerKey.ON_HLS_MANIFEST_PARSED]: undefined | ((event: Events.MANIFEST_PARSED, data: ManifestParsedData) => void) = undefined;
     private [HlsPlayerKey.ON_HLS_FRAG_CHANGE]: undefined | ((_: Events.FRAG_CHANGED, data: FragChangedData) => void) = undefined;
     private [HlsPlayerKey.ON_HLS_BUFFER_FLUSHED]: undefined | (() => void) = undefined;
+    private [HlsPlayerKey.ON_HLS_LEVEL_LOADED]: undefined | (() => void) = undefined;
 
     constructor(
         container: HTMLDivElement,
@@ -32,6 +35,7 @@ export class HlsPlayer extends NonNativePlayer {
         delete hlsConfig.gop;
         const userHlsConfig: Partial<HlsConfig> = {
             ...hlsConfig,
+            maxMaxBufferLength: 0, // Sometimes hls.js will load some fragments even if `stopLoad` is called after `LEVEL_LOADED`. This is a workaround.
             preferManagedMediaSource: false,
             enableWorker: false,
             maxFragLookUpTolerance: 0.0,
@@ -44,6 +48,7 @@ export class HlsPlayer extends NonNativePlayer {
             debug: DEVELOPMENT,
         };
         const defaultHlsConfig = Hls.DefaultConfig;
+        this[HlsPlayerKey.HLS_MAX_MAX_BUFFER_LENGTH] = hlsConfig.maxMaxBufferLength ?? defaultHlsConfig.maxMaxBufferLength;
         for (const type of ['manifest', 'playlist', 'key', 'cert', 'steeringManifest'] as const) {
             const loadPolicyKey = `${type}LoadPolicy` as const;
             const loadPolicy = deepCopyLoadPolicy(defaultHlsConfig[loadPolicyKey]);
@@ -113,6 +118,20 @@ export class HlsPlayer extends NonNativePlayer {
         this[HlsPlayerKey.ON_HLS_FRAG_CHANGE] = onHlsFragChange;
         this[HlsPlayerKey.HLS_INSTANCE].on(Hls.Events.FRAG_CHANGED, this[HlsPlayerKey.ON_HLS_FRAG_CHANGE]);
 
+        const onHlsLevelLoaded = () => {
+            if (this[HlsPlayerKey.ON_HLS_LEVEL_LOADED] !== onHlsLevelLoaded) {
+                return;
+            }
+            this[HlsPlayerKey.ON_HLS_LEVEL_LOADED] = undefined;
+            if (this[HlsPlayerKey.HLS_PRELOADED] === false) {
+                DEVELOPMENT && this[PlayerKey.LOG]?.('HLS level loaded, pausing the load now.');
+                this[HlsPlayerKey.HLS_PRELOADED] = true;
+                this[HlsPlayerKey.HLS_INSTANCE].stopLoad();
+            }
+        };
+        this[HlsPlayerKey.ON_HLS_LEVEL_LOADED] = onHlsLevelLoaded;
+        this[HlsPlayerKey.HLS_INSTANCE].once(Hls.Events.LEVEL_LOADED, this[HlsPlayerKey.ON_HLS_LEVEL_LOADED]);
+
         this[HlsPlayerKey.HLS_INSTANCE].attachMedia(this[PlayerKey.MEDIA]);
         this[PlayerKey.MEDIA].volume = 1;
         DEVELOPMENT && this[PlayerKey.LOG]?.('HLS is attached.');
@@ -165,9 +184,10 @@ export class HlsPlayer extends NonNativePlayer {
     public override[PlayerKey.SEEK](this: HlsPlayer, timestamp: number, callback?: () => void) {
         if (this[PlayerKey.IS_VIDEO]) {
             this[PlayerKey.END_CHECK](timestamp);
-            if (timestamp >= this[HlsPlayerKey.FRAG_START]) {
+            if (timestamp >= this[HlsPlayerKey.FRAG_START] || this[HlsPlayerKey.HLS_PRELOADED] !== null) {
                 this[PlayerKey.MEDIA].currentTime = timestamp;
                 callback?.();
+                this[HlsPlayerKey.HLS_RESUME_PRELOAD]();
                 DEVELOPMENT && this[PlayerKey.LOG]?.('Skipped buffer flushing.');
             } else {
                 const onHlsBufferFlushed = () => {
@@ -188,7 +208,27 @@ export class HlsPlayer extends NonNativePlayer {
             }
         } else {
             super[PlayerKey.SEEK](timestamp, callback);
+            this[HlsPlayerKey.HLS_RESUME_PRELOAD]();
         }
+    }
+
+    public override[PlayerKey.PLAY](this: HlsPlayer): void {
+        this[HlsPlayerKey.HLS_RESUME_PRELOAD]();
+        super[PlayerKey.PLAY]();
+    }
+
+    private [HlsPlayerKey.HLS_RESUME_PRELOAD](this: HlsPlayer): void {
+        if (this[HlsPlayerKey.HLS_PRELOADED] === null) {
+            return;
+        }
+        this[HlsPlayerKey.HLS_INSTANCE].config.maxMaxBufferLength = this[HlsPlayerKey.HLS_MAX_MAX_BUFFER_LENGTH];
+        if (this[HlsPlayerKey.HLS_PRELOADED] === true) {
+            this[HlsPlayerKey.HLS_INSTANCE].startLoad(this[PlayerKey.MEDIA].currentTime);
+            DEVELOPMENT && this[PlayerKey.LOG]?.('HLS resumed loading.');
+        } else {
+            DEVELOPMENT && this[PlayerKey.LOG]?.('HLS not yet preloaded, will prevent future load pause.');
+        }
+        this[HlsPlayerKey.HLS_PRELOADED] = null;
     }
 }
 
