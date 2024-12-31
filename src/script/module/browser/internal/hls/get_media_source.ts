@@ -7,11 +7,8 @@ declare global {
     }
 }
 
-export function getMediaSource(
-    preferManagedMediaSource = true,
-): typeof MediaSource | undefined {
-    const mms = (preferManagedMediaSource || !w.MediaSource)
-        && getManagedMediaSource();
+export function getMediaSource(): typeof MediaSource | undefined {
+    const mms = !w.MediaSource && getManagedMediaSource();
     return (
         mms
         || w.MediaSource

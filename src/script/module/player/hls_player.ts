@@ -32,6 +32,7 @@ export class HlsPlayer extends NonNativePlayer {
         delete hlsConfig.gop;
         const userHlsConfig: Partial<HlsConfig> = {
             ...hlsConfig,
+            preferManagedMediaSource: false,
             enableWorker: false,
             maxFragLookUpTolerance: 0.0,
             backBufferLength: 0,
