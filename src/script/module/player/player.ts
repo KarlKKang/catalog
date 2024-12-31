@@ -381,7 +381,6 @@ export class Player {
         }
 
         this[PlayerKey.MEDIA].src = url;
-        this[PlayerKey.MEDIA].load();
         DEVELOPMENT && this[PlayerKey.LOG]?.('Native HLS source loaded: ' + url);
     }
 
@@ -459,7 +458,7 @@ export class Player {
 
     private [PlayerKey.SET_MEDIA_ATTRIBUTES](this: Player) {
         if (typeof this[PlayerKey.MEDIA].preload !== 'undefined') {
-            this[PlayerKey.MEDIA].preload = 'auto';
+            this[PlayerKey.MEDIA].preload = 'metadata';
         }
         if (typeof this[PlayerKey.MEDIA].controlsList !== 'undefined') {
             if (this[PlayerKey.MEDIA].controlsList.supports('nodownload')) {
