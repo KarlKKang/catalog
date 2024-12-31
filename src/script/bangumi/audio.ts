@@ -111,7 +111,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
     appendChild(container, playerContainer);
     const url = baseURL + encodeCloudfrontURIComponent('_MASTER_' + file[AudioFileKey.FILE_NAME] + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
-    if (!MSE_SUPPORTED) {
+    if (NATIVE_HLS_SUPPORTED) {
         const Player = (await nativePlayerImportPromise).Player;
         await createMediaSessionPromise;
         if (currentPgid !== pgid) {

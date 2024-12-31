@@ -8,10 +8,7 @@ export function canPlay(type: 'video' | 'audio', container: string, codecs: stri
     if (codecs !== '') {
         codecs = `; codecs="${codecs}"`;
     }
-    const mediaSource = getMediaSource();
-    if (MSE_SUPPORTED && mediaSource !== undefined) {
-        return mediaSource.isTypeSupported(`${type}/${container}${codecs}`);
-    } else if (NATIVE_HLS_SUPPORTED) {
+    if (NATIVE_HLS_SUPPORTED) {
         let mediaElement: HTMLMediaElement;
         if (type === 'video') {
             mediaElement = createVideoElement();
@@ -19,6 +16,8 @@ export function canPlay(type: 'video' | 'audio', container: string, codecs: stri
             mediaElement = createAudioElement();
         }
         return mediaElement.canPlayType(`${type}/${container}${codecs}`) !== '';
+    } else if (MSE_SUPPORTED) {
+        return getMediaSource()?.isTypeSupported(`${type}/${container}${codecs}`) ?? false;
     }
     return false;
 }

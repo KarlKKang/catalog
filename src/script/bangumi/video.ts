@@ -347,7 +347,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
     };
 
     const url = baseURL + encodeCloudfrontURIComponent('_MASTER_' + fileInfo[FileInfoKey.FILE_NAME] + '[' + currentFormat[VideoFormatKey.VALUE] + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
-    if (!MSE_SUPPORTED) {
+    if (NATIVE_HLS_SUPPORTED) {
         const Player = (await nativePlayerImportPromise).Player;
         await createMediaSessionPromise;
         if (currentPgid !== pgid) {
@@ -517,7 +517,7 @@ async function canPlayHEVC(level: HEVC_LEVEL, withFallback: boolean | undefined)
     let decodingInfo: MediaCapabilitiesDecodingInfo;
     try {
         decodingInfo = await navigator.mediaCapabilities.decodingInfo({
-            type: MSE_SUPPORTED ? 'media-source' : 'file',
+            type: NATIVE_HLS_SUPPORTED ? 'file' : 'media-source',
             video: {
                 contentType: `video/mp4;codecs=${HEVC_CODEC}`,
                 width: 1920,
