@@ -169,11 +169,12 @@
                 display: block;
             }
 
-            &.player-disabled {
-                cursor: default !important;
+            &:disabled {
+                opacity: 1;
+                cursor: not-allowed;
 
                 svg {
-                    fill: var(property.get(alt-text-color)) !important;
+                    fill: var(property.get(alt-text-color));
                 }
             }
         }

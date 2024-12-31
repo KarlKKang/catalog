@@ -46,6 +46,8 @@ import { EN_LANG_CODE } from '../lang/en';
 import { createNativeButtonElement } from '../dom/element/button/native/create';
 import { max, min, round } from '../math';
 import { removeTimeout } from '../timer/remove/timeout';
+import { IS_IOS_PWA } from '../browser/is_ios_pwa';
+import { disableButton } from '../dom/element/button/disable';
 
 declare global {
     interface HTMLVideoElement {
@@ -294,7 +296,7 @@ export class Player {
 
         // PIP
         let PIPButtonPlaceholder: undefined | HTMLElement = undefined;
-        if (d.pictureInPictureEnabled) {
+        if (d.pictureInPictureEnabled && !IS_IOS_PWA) {
             const PIPButton = createPlayerButton('Picture-in-Picture');
             this[PlayerKey.PIP_BUTTON] = PIPButton;
             addClass(PIPButton, styles.playerPictureInPictureControl, styles.playerButton);
@@ -649,9 +651,7 @@ export class Player {
             }
         };
 
-        if (screenfull.isEnabled || IOS_FULLSCREEN) {
-            removeClass(this[PlayerKey.FULLSCREEN_BUTTON], styles.playerDisabled);
-
+        if ((screenfull.isEnabled || IOS_FULLSCREEN) && !IS_IOS_PWA) {
             addEventListener(this[PlayerKey.FULLSCREEN_BUTTON], 'click', toggleFullscreen);
 
             if (!IOS_FULLSCREEN) {
@@ -668,7 +668,7 @@ export class Player {
                 screenfull.on('change', this[PlayerKey.ON_FULLSCREEN_CHANGE]);
             }
         } else {
-            addClass(this[PlayerKey.FULLSCREEN_BUTTON], styles.playerDisabled);
+            disableButton(this[PlayerKey.FULLSCREEN_BUTTON], true);
             this[PlayerKey.FULLSCREEN_BUTTON].title = 'Fullscreen Unavailable';
         }
 
