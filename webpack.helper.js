@@ -21,6 +21,7 @@ function addMiniCssExtractPlugin(config, dev) {
 
 function addHTMLConfig(config, dev) {
     const pageTitle = DOMAIN + (dev ? ' (alpha)' : '');
+    const domain = (dev ? 'alpha.' : '') + DOMAIN;
 
     config.plugins.push(
         new HtmlWebpackPlugin({
@@ -30,6 +31,7 @@ function addHTMLConfig(config, dev) {
             templateParameters: {
                 title: pageTitle,
                 description: DESCRIPTION,
+                domain: domain,
             }
         })
     );
@@ -43,6 +45,7 @@ function addHTMLConfig(config, dev) {
             templateParameters: {
                 title: pageTitle,
                 description: DESCRIPTION,
+                domain: domain,
             }
         })
     );

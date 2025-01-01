@@ -2,7 +2,7 @@
 <html lang="ja">
 
 <head>
-    <%= require("./module/main_header.ejs").default({ title: title, description: description, legacy: true }) %>
+    <%= require("./module/main_header.ejs").default({ title: title, description: description, domain: domain, legacy: true }) %>
     <%= htmlWebpackPlugin
     .tags
     .headTags
