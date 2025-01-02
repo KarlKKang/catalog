@@ -6,7 +6,6 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { getProtocol } from '../module/dom/location/get/protocol';
-import { windowLocation } from '../module/dom/location';
 import { w } from '../module/dom/window';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
@@ -40,6 +39,7 @@ import { removeAllEventListeners } from '../module/event_listener/remove/all_lis
 import { addOffloadCallback } from '../module/global/offload';
 import { round } from '../module/math';
 import { changeColor, CSS_COLOR } from '../module/style/color';
+import { setHref } from '../module/dom/location/set/href';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum FailedReason {
@@ -192,7 +192,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
             addEventListener(spanElem, 'click', () => {
                 const baseHost = getBaseHost(); // Use host just in case there is a port number.
                 const locationCode = routeInfo !== null ? routeInfo[RouteInfoKey.CODE] : '';
-                windowLocation.href = getProtocol() + '//' + concatenateLocationPrefixToHost(toLocationPrefix(locationCode), baseHost);
+                setHref(getProtocol() + '//' + concatenateLocationPrefixToHost(toLocationPrefix(locationCode), baseHost));
             });
             routeResultEventTargetsTracker.add(spanElem);
         }
