@@ -17,7 +17,6 @@ import { changeURL } from '../module/dom/location/change';
 import { buildURI } from '../module/string/uri/build';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { getSearchParam } from '../module/dom/location/get/search_param';
-import { parseFullPath } from '../module/dom/location/parse/full_path';
 
 export default function (showPage: ShowPageFunc) {
     const baseURL = getSessionStorage('base-url');
@@ -40,11 +39,7 @@ export default function (showPage: ShowPageFunc) {
         || originURL === null
     ) {
         const originURLQuery = getSearchParam('origin');
-        if (originURLQuery === null) {
-            redirect(TOP_URI, true);
-            return;
-        }
-        redirect(parseFullPath(originURLQuery) ?? TOP_URI, true);
+        redirect(originURLQuery ?? TOP_URI, true);
         return;
     }
 

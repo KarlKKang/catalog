@@ -7,7 +7,6 @@ import { addClass } from '../module/dom/class/add';
 import { setClass } from '../module/dom/class/set';
 import { setTitle } from '../module/dom/document/title/set';
 import { d } from '../module/dom/document';
-import { parseURI } from '../module/dom/location/parse/uri';
 import { getFullPath } from '../module/dom/location/get/full_path';
 import { changeURL } from '../module/dom/location/change';
 import { w } from '../module/dom/window';
@@ -46,6 +45,7 @@ import { offloadFileReader } from '../module/file_reader/offload';
 import { scrollToTop } from '../module/dom/scroll/to_top';
 import { setSmoothScroll } from '../module/style/smooth_scroll';
 import { setOgUrl } from '../module/dom/document/og/url/set';
+import { getHref } from '../module/dom/location/get/href';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -158,27 +158,26 @@ const directories = {
 };
 
 function load(url: string, withoutHistory: boolean | null = false) {
-    let uri = parseURI(url);
-    if (uri === null) {
-        throw new Error('Invalid URL: ' + url);
-    }
+    const urlParser = new URL(url, getHref());
+    let uri = urlParser.pathname;
+    const fullPath = uri + urlParser.search + urlParser.hash;
 
     if (objectKeyExists(uri, pages)) {
         const page = pages[uri];
-        loadPage(url, withoutHistory, page, uri);
+        loadPage(fullPath, withoutHistory, page, uri);
         return;
     }
     uri = uri.substring(0, uri.indexOf('/', 1) + 1);
     if (objectKeyExists(uri, directories)) {
         const page = directories[uri];
-        loadPage(url, withoutHistory, page, uri);
+        loadPage(fullPath, withoutHistory, page, uri);
         return;
     }
 
-    loadPage(url, withoutHistory, page404, getFullPath());
+    loadPage(fullPath, withoutHistory, page404, getFullPath());
 }
 
-async function loadPage(url: string, withoutHistory: boolean | null, page: Page, canonicalUri: string) {
+async function loadPage(fullPath: string, withoutHistory: boolean | null, page: Page, canonicalUri: string) {
     // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     offload();
     offloadXhr();
@@ -195,7 +194,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page,
             canonicalUri = getFullPath();
         }
     } else if (page[PageProp.INTERNAL] !== true) {
-        changeURL(url, withoutHistory);
+        changeURL(fullPath, withoutHistory);
     }
 
     if (page[PageProp.PRESERVE_HEAD] !== true) {
@@ -254,7 +253,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page,
 
     if (page[PageProp.SCRIPT_CACHED] === undefined) {
         if (DEVELOPMENT) {
-            console.log('First time loading page: ' + url);
+            console.log('First time loading page: ' + fullPath);
         }
         page[PageProp.SCRIPT_CACHED] = await importModule(page[PageProp.SCRIPT]);
         if (pgid !== newPgid) {
