@@ -1,7 +1,7 @@
 import { ImageSessionTypes } from '../module/image/session_type';
 import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
-import { setTitle } from '../module/dom/document/title/set';
+import { setTitle } from '../module/dom/document/title';
 import { getSessionStorage } from '../module/session_storage/get';
 import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';

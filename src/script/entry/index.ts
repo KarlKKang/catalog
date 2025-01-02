@@ -5,13 +5,12 @@ import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { setClass } from '../module/dom/class/set';
-import { setTitle } from '../module/dom/document/title/set';
+import { setTitle } from '../module/dom/document/title';
 import { d } from '../module/dom/document';
 import { getFullPath } from '../module/dom/location/get/full_path';
 import { setHistoryState } from '../module/dom/location/set/history_state';
 import { w } from '../module/dom/window';
 import { body } from '../module/dom/body';
-import { TOP_DOMAIN } from '../module/env/domain';
 import { addTimeout } from '../module/timer/add/timeout';
 import * as messagePageScript from '../message';
 import { offload } from '../module/global/offload';
@@ -199,7 +198,7 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
 
     if (page[PageProp.PRESERVE_HEAD] !== true) {
         setOgUrl(page[PageProp.CUSTOM_CANONICAL_URL] === true ? TOP_URI : canonicalUri);
-        setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
+        setTitle(page[PageProp.TITLE] ?? '');
     }
 
     if (page[PageProp.SESSION_STORAGE] !== true) {

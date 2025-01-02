@@ -12,8 +12,7 @@ import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { body } from '../module/dom/body';
-import { getTitle } from '../module/dom/document/title/get';
-import { setTitle } from '../module/dom/document/title/set';
+import { setTitle } from '../module/dom/document/title';
 import { w } from '../module/dom/window';
 import { addEventListener } from '../module/event_listener/add';
 import { parseCharacters, getContentBoxHeight, createMessageElem, getEPFullURI } from './helper';
@@ -80,10 +79,10 @@ export default async function (
     const titleOverride = response[EPInfoKey.TITLE_OVERRIDE];
     if (titleOverride !== undefined) {
         appendText(titleElem, titleOverride);
-        setTitle(parseCharacters(titleOverride) + ' | ' + getTitle());
+        setTitle(parseCharacters(titleOverride));
     } else {
         appendText(titleElem, title);
-        setTitle(parseCharacters(title) + '[' + response[EPInfoKey.SERIES_EP][epIndex] + '] | ' + getTitle());
+        setTitle(parseCharacters(title) + '[' + response[EPInfoKey.SERIES_EP][epIndex] + ']');
     }
     const canonicalURL = getEPFullURI(seriesID, epIndex, 0);
     setOgUrl(canonicalURL); // Don't consider different formats as their own canonical URLs.

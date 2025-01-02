@@ -14,7 +14,7 @@ import { createSelectElement } from '../module/dom/element/select/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
-import { getTitle } from '../module/dom/document/title/get';
+import { getTitle } from '../module/dom/document/title';
 import { getSearchParam } from '../module/dom/location/get/search_param';
 import { setHistoryState } from '../module/dom/location/set/history_state';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';

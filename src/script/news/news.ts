@@ -5,8 +5,7 @@ import { ImageSessionTypes } from '../module/image/session_type';
 import { removeRightClick } from '../module/dom/element/remove_right_click';
 import { newXhr } from '../module/xhr/new';
 import { scrollToHash } from '../module/dom/scroll/to_hash';
-import { getTitle } from '../module/dom/document/title/get';
-import { setTitle } from '../module/dom/document/title/set';
+import { setTitle } from '../module/dom/document/title';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { getByClass } from '../module/dom/element/get/by_class';
@@ -40,7 +39,7 @@ import { setOgUrl } from '../module/dom/document/og/url/set';
 export default function (newsInfo: NewsInfo, newsID: string, startTime: HighResTimestamp): void {
     setOgUrl(NEWS_ROOT_URI + newsID);
     const title = newsInfo[NewsInfoKey.TITLE];
-    setTitle(title + ' | ' + getTitle());
+    setTitle(title);
 
     const contentContainer = createDivElement();
     addClass(contentContainer, styles.content);
