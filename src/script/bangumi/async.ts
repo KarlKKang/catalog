@@ -16,10 +16,8 @@ import { getTitle } from '../module/dom/document/title/get';
 import { setTitle } from '../module/dom/document/title/set';
 import { w } from '../module/dom/window';
 import { addEventListener } from '../module/event_listener/add';
-import { parseCharacters, getContentBoxHeight, createMessageElem } from './helper';
-import { buildURI } from '../module/string/uri/build';
+import { parseCharacters, getContentBoxHeight, createMessageElem, getEPFullURI } from './helper';
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
-import { buildHttpForm } from '../module/string/http_form/build';
 import { addTimeout } from '../module/timer/add/timeout';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { redirect } from '../module/global/redirect';
@@ -37,13 +35,14 @@ import { CSS_COLOR } from '../module/style/color';
 import { CSS_UNIT } from '../module/style/value/unit';
 import * as styles from '../../css/bangumi.module.scss';
 import { EPInfoKey, type EPInfo, FileInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoFileInfo, AudioFileInfo, ImageFileInfo } from '../module/type/EPInfo';
-import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
+import { TOP_URI } from '../module/env/uri';
 import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { addAnimationFrame } from '../module/animation_frame/add';
 import type { AnimationFrame } from '../module/animation_frame/type';
 import type { Timeout } from '../module/timer/type';
 import { removeAnimationFrame } from '../module/animation_frame/remove';
 import { removeTimeout } from '../module/timer/remove/timeout';
+import { setOgUrl } from '../module/dom/document/og/url/set';
 
 let seriesID: string;
 let epIndex: number;
@@ -86,6 +85,7 @@ export default async function (
         appendText(titleElem, title);
         setTitle(parseCharacters(title) + '[' + response[EPInfoKey.SERIES_EP][epIndex] + '] | ' + getTitle());
     }
+    setOgUrl(getEPFullURI(seriesID, epIndex, 0)); // Don't consider different formats as their own canonical URLs.
 
     updateEPSelector(response[EPInfoKey.SERIES_EP], epSelector);
     updateSeasonSelector(response[EPInfoKey.SEASONS], seasonSelector);
@@ -162,10 +162,9 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
             addClass(epButton, styles.currentEp);
         }
 
-        const targetEP = index + 1;
         appendChild(epButton, epText);
         addEventListener(epButton, 'click', () => {
-            goToEP(seriesID, targetEP);
+            redirect(getEPFullURI(seriesID, index, 0));
         });
         appendChild(epButtonWrapper, epButton);
 
@@ -304,7 +303,7 @@ function updateSeasonSelector(seasons: Seasons, seasonSelector: HTMLElement) {
             if (id !== seriesID) {
                 const targetSeries = id;
                 addEventListener(seasonButton, 'click', () => {
-                    goToEP(targetSeries, 1);
+                    redirect(getEPFullURI(targetSeries, 0, 0));
                 });
             } else {
                 addClass(seasonButton, styles.currentSeason);
@@ -316,13 +315,4 @@ function updateSeasonSelector(seasons: Seasons, seasonSelector: HTMLElement) {
     } else {
         remove(seasonSelector);
     }
-}
-
-function goToEP(destSeries: string, destEp: number) {
-    redirect(
-        buildURI(
-            BANGUMI_ROOT_URI + destSeries,
-            destEp === 1 ? '' : buildHttpForm({ ep: destEp }),
-        ),
-    );
 }

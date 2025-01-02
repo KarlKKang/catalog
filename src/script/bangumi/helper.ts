@@ -10,6 +10,8 @@ import { changeColor, type CSS_COLOR } from '../module/style/color';
 import * as styles from '../../css/bangumi.module.scss';
 import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
+import { buildURI } from '../module/string/uri/build';
+import { BANGUMI_ROOT_URI } from '../module/env/uri';
 
 export function getContentBoxHeight(elem: HTMLElement): number {
     let height = elem.scrollHeight;
@@ -33,7 +35,14 @@ export function getLogoutParam(seriesID: string, epIndex: number): string {
     );
 }
 
-export function createQuery(epIndex: number, formatIndex: number): string {
+export function getEPFullURI(seriesID: string, epIndex: number, formatIndex: number): string {
+    return buildURI(
+        BANGUMI_ROOT_URI + seriesID,
+        createQuery(epIndex, formatIndex),
+    );
+}
+
+function createQuery(epIndex: number, formatIndex: number): string {
     return buildHttpForm({
         ...epIndex !== 0 && { ep: epIndex + 1 },
         ...formatIndex !== 0 && { format: formatIndex + 1 },

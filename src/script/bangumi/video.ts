@@ -30,10 +30,9 @@ import { CAN_PLAY_AVC } from '../module/browser/can_play/codec/avc';
 import { videoCanPlay } from '../module/browser/can_play/video';
 import { audioCanPlay } from '../module/browser/can_play/audio';
 import type { Player, Player as PlayerType } from '../module/player/player';
-import { getFormatIndex, createQuery } from './helper';
+import { getFormatIndex, getEPFullURI } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayerError, buildAccordion, type AccordionInstance } from './media_helper';
 import { toTimestampString } from '../module/string/timestamp';
-import { buildURI } from '../module/string/uri/build';
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
 import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
@@ -54,7 +53,7 @@ import { link as linkClass } from '../../css/link.module.scss';
 import * as styles from '../../css/bangumi.module.scss';
 import { PlayerKey } from '../module/player/player_key';
 import { NonNativePlayerKey } from '../module/player/non_native_player_key';
-import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
+import { NEWS_ROOT_URI } from '../module/env/uri';
 
 let currentPgid: unknown;
 
@@ -173,7 +172,7 @@ function formatSwitch(formatSelectMenuParent: HTMLDivElement, formatSelectMenu: 
         return;
     }
     currentFormat = format;
-    updateURLParam(seriesID, epIndex, formatIndex);
+    changeURL(getEPFullURI(seriesID, epIndex, formatIndex), true);
 
     if (format[VideoFormatKey.DIRECT_DOWNLOAD]) {
         hideElement(containerSelector);
@@ -549,13 +548,6 @@ function disableDropdown(parent: HTMLDivElement, selectElement: HTMLSelectElemen
     } else {
         removeClass(parent, styles.disabled);
     }
-}
-
-function updateURLParam(seriesID: string, epIndex: number, formatIndex: number): void {
-    changeURL(buildURI(
-        BANGUMI_ROOT_URI + seriesID,
-        createQuery(epIndex, formatIndex),
-    ), true);
 }
 
 function cleanupEvents() {
