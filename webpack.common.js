@@ -2,8 +2,6 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import path from 'path';
 import { htmlMinifyOptions, cssMinifyOptions } from './build_config.js';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
-import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
-import { DOMAIN, DESCRIPTION } from './env/index.js';
 import { readSync } from './file_system.js';
 import { getDirname } from './webpack.helper.js';
 
@@ -27,27 +25,6 @@ const configs = [
                 analyzerMode: 'static',
                 reportFilename: '../webpack-bundle-analyzer-report.html'
             }),
-            new FaviconsWebpackPlugin({
-                logo: './src/icon/icon.png',
-                logoMaskable: './src/icon/icon_maskable.png',
-                prefix: '/icon/',
-                mode: 'webapp',
-                devMode: 'webapp',
-                favicons: {
-                    appName: DOMAIN,
-                    appShortName: DOMAIN,
-                    appDescription: DESCRIPTION,
-                    developerName: DOMAIN,
-                    developerURL: 'https://' + DOMAIN,
-                    lang: "ja-JP",
-                    start_url: "/",
-                    theme_color: "%remove%",
-                    icons: {
-                        appleStartup: false,
-                        windows: false,
-                    }
-                }
-            })
         ],
         output: {
             publicPath: '/',

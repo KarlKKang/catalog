@@ -8,6 +8,38 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { readSync } from './file_system.js';
+import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
+
+function getWebsiteName(dev) {
+    return DOMAIN + (dev ? ' (alpha)' : '');
+}
+
+function addFaviconPlugin(config, dev) {
+    const appName = getWebsiteName(dev);
+    config.plugins.push(
+        new FaviconsWebpackPlugin({
+            logo: './src/icon/icon.png',
+            logoMaskable: './src/icon/icon_maskable.png',
+            prefix: '/icon/',
+            mode: 'webapp',
+            devMode: 'webapp',
+            favicons: {
+                appName: appName,
+                appShortName: appName,
+                appDescription: DESCRIPTION,
+                developerName: DOMAIN,
+                developerURL: 'https://' + DOMAIN,
+                lang: "ja-JP",
+                start_url: "/",
+                theme_color: "%remove%",
+                icons: {
+                    appleStartup: false,
+                    windows: false,
+                }
+            }
+        })
+    );
+}
 
 function addMiniCssExtractPlugin(config, dev) {
     const filenameTemplate = dev ? 'style/[id].css' : 'style/[contenthash:6].css';
@@ -20,7 +52,7 @@ function addMiniCssExtractPlugin(config, dev) {
 }
 
 function addHTMLConfig(config, dev) {
-    const pageTitle = DOMAIN + (dev ? ' (alpha)' : '');
+    const pageTitle = getWebsiteName(dev);
     const domain = (dev ? 'alpha.' : '') + DOMAIN;
 
     config.plugins.push(
@@ -243,6 +275,7 @@ function addCssLoader(config, dev) {
 }
 
 export function addPlugins(config, dev) {
+    addFaviconPlugin(config, dev);
     addMiniCssExtractPlugin(config, dev);
     addDefinePlugin(config, dev);
     addHTMLConfig(config, dev);
