@@ -1,4 +1,3 @@
-import { getTitle } from '../dom/document/title/get';
 import { getFullPath } from '../dom/location/get/full_path';
 import { defaultErrorTitle } from '../text/default_error/title';
 import { MessageParamKey, type MessageParam } from './type';
@@ -8,12 +7,7 @@ import { CSS_COLOR } from '../style/color';
 import { goBackButtonText } from '../text/button/go_back';
 import { MESSAGE_URI } from '../env/uri';
 
-export const enum MessageParamInternalKey {
-    DOCUMENT_TITLE = MessageParamKey.__LENGTH, // eslint-disable-line @typescript-eslint/prefer-literal-enum-member
-}
-interface MessageParamInternal extends Required<MessageParam> {
-    [MessageParamInternalKey.DOCUMENT_TITLE]: string;
-}
+type MessageParamInternal = Required<MessageParam>;
 let messageParam: MessageParamInternal | null = null;
 
 export function showMessage({
@@ -34,7 +28,6 @@ export function showMessage({
         [MessageParamKey.URL]: url ?? getFullPath(),
         [MessageParamKey.BUTTON_TEXT]: buttonText,
         [MessageParamKey.LOGOUT]: logout ?? false,
-        [MessageParamInternalKey.DOCUMENT_TITLE]: getTitle(),
     };
     redirectSameOrigin(MESSAGE_URI, true);
 }

@@ -1,4 +1,3 @@
-import { setTitle } from './module/dom/document/title/set';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createParagraphElement } from './module/dom/element/paragraph/create';
 import { createDivElement } from './module/dom/element/div/create';
@@ -15,7 +14,7 @@ import { horizontalCenter } from './module/style/horizontal_center';
 import { changeColor, CSS_COLOR } from './module/style/color';
 import { MessageParamKey } from './module/message/type';
 import { TOP_URI } from './module/env/uri';
-import { MessageParamInternalKey, getMessageParam } from './module/message';
+import { getMessageParam } from './module/message';
 import { importModule } from './module/import_module';
 
 export default function (showPage: ShowPageFunc) {
@@ -37,13 +36,11 @@ export default function (showPage: ShowPageFunc) {
         [MessageParamKey.URL]: url,
         [MessageParamKey.BUTTON_TEXT]: buttonText,
         [MessageParamKey.LOGOUT]: logoutParam,
-        [MessageParamInternalKey.DOCUMENT_TITLE]: documentTitle,
     } = messageParam;
 
     const callback = () => {
         showPage();
         createMessageElements(title, color, message, buttonText, url);
-        setTitle(documentTitle);
     };
 
     if (logoutParam) {
