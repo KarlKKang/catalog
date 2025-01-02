@@ -59,7 +59,8 @@ const enum PageProp {
     SCRIPT_CACHED,
     SESSION_STORAGE,
     CUSTOM_CANONICAL_URL,
-    PRESERVE_SHELL_STATE,
+    INTERNAL,
+    PRESERVE_HEAD,
 }
 interface Page {
     [PageProp.SCRIPT]: () => PageScriptImport;
@@ -67,7 +68,8 @@ interface Page {
     [PageProp.SCRIPT_CACHED]?: PageScript;
     [PageProp.SESSION_STORAGE]?: boolean;
     [PageProp.CUSTOM_CANONICAL_URL]?: boolean;
-    [PageProp.PRESERVE_SHELL_STATE]?: boolean;
+    [PageProp.INTERNAL]?: boolean;
+    [PageProp.PRESERVE_HEAD]?: boolean;
 }
 
 const loadingBar = createDivElement();
@@ -107,7 +109,8 @@ const pages = {
     [MESSAGE_URI]: {
         [PageProp.SCRIPT]: () => Promise.resolve(messagePageScript),
         [PageProp.SCRIPT_CACHED]: messagePageScript,
-        [PageProp.PRESERVE_SHELL_STATE]: true,
+        [PageProp.INTERNAL]: true,
+        [PageProp.PRESERVE_HEAD]: true,
     },
     [MY_ACCOUNT_URI]: {
         [PageProp.SCRIPT]: () => import('../my_account'),
@@ -186,10 +189,16 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page,
     replaceChildren(body);
     setClass(body, '');
 
-    if (page[PageProp.PRESERVE_SHELL_STATE] !== true) {
-        if (withoutHistory !== null) {
-            changeURL(url, withoutHistory);
+    if (withoutHistory === null) {
+        if (page[PageProp.INTERNAL] === true) {
+            page = page404;
+            canonicalUri = getFullPath();
         }
+    } else if (page[PageProp.INTERNAL] !== true) {
+        changeURL(url, withoutHistory);
+    }
+
+    if (page[PageProp.PRESERVE_HEAD] !== true) {
         setOgUrl(page[PageProp.CUSTOM_CANONICAL_URL] === true ? TOP_URI : canonicalUri);
         setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
     }
