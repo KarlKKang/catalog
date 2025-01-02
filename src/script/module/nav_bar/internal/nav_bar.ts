@@ -10,7 +10,7 @@ import { redirectSameOrigin } from '../../global/redirect';
 import { scrollToTop } from '../../dom/scroll/to_top';
 import { NavBarPage } from '../enum';
 import * as icons from './icons';
-import { infoPageTitle, myAccountPageTitle, newsPageTitle } from '../../text/page_title';
+import { infoPageTitle, myAccountPageTitle, newsPageTitle, topPageTitle } from '../../text/page_title';
 import * as styles from '../../../../css/nav_bar.module.scss';
 import { INFO_URI, MY_ACCOUNT_URI, NEWS_ROOT_URI, TOP_URI } from '../../env/uri';
 
@@ -27,7 +27,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
         return [container, iconContainer];
     };
 
-    const navButton1 = getNavButton('ホーム');
+    const navButton1 = getNavButton(topPageTitle);
     const navButton2 = getNavButton(newsPageTitle);
     const navButton3 = getNavButton(myAccountPageTitle);
     const navButton4 = getNavButton(infoPageTitle);

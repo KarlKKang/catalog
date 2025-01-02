@@ -1,3 +1,4 @@
+export const topPageTitle = '番組一覧';
 export const notFoundPageTitle = '404';
 export const emailChangePageTitle = 'メールアドレス変更';
 export const consolePageTitle = 'console';
