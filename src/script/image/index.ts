@@ -10,8 +10,14 @@ import { type ShowPageFunc } from '../module/global/type';
 import { redirect } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { importModule } from '../module/import_module';
-import { TOP_URI } from '../module/env/uri';
+import { IMAGE_URI, TOP_URI } from '../module/env/uri';
 import { getHighResTimestamp } from '../module/time/hi_res';
+import { setOgUrl } from '../module/dom/document/og/url/set';
+import { changeURL } from '../module/dom/location/change';
+import { buildURI } from '../module/string/uri/build';
+import { buildHttpForm } from '../module/string/http_form/build';
+import { getSearchParam } from '../module/dom/location/get/search_param';
+import { parseFullPath } from '../module/dom/location/parse/full_path';
 
 export default function (showPage: ShowPageFunc) {
     const baseURL = getSessionStorage('base-url');
@@ -19,17 +25,37 @@ export default function (showPage: ShowPageFunc) {
     const title = getSessionStorage('title');
     const sessionCredential = getSessionStorage('session-credential');
     const sessionType = getSessionStorage('session-type');
+    const canonicalURL = getSessionStorage('canonical-url');
+    const originURL = getSessionStorage('origin');
 
     clearSessionStorage();
 
-    if (baseURL === null || fileName === null || title === null || sessionCredential === null || sessionType === null) {
-        redirect(TOP_URI, true);
+    if (
+        baseURL === null
+        || fileName === null
+        || title === null
+        || sessionCredential === null
+        || sessionType === null
+        || canonicalURL === null
+        || originURL === null
+    ) {
+        const originURLQuery = getSearchParam('origin');
+        if (originURLQuery === null) {
+            redirect(TOP_URI, true);
+            return;
+        }
+        redirect(parseFullPath(originURLQuery) ?? TOP_URI, true);
         return;
     }
 
     const uri = sessionType === ImageSessionTypes.MEDIA ? 'get_image' : 'get_news_image';
     setUpSessionAuthentication(sessionCredential, getHighResTimestamp());
     setTitle(title);
+    setOgUrl(canonicalURL);
+    changeURL(buildURI(
+        IMAGE_URI,
+        buildHttpForm({ origin: originURL }),
+    ), true);
 
     const asyncModulePromise = importModule(
         () => import(

@@ -113,7 +113,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
         }
         attachLazyload(elem, baseURL + encodeCloudfrontURIComponent(src), src, 250);
         addEventListener(elem, 'click', () => {
-            openImageWindow(baseURL, src, credential, ImageSessionTypes.NEWS);
+            openImageWindow(baseURL, src, credential, ImageSessionTypes.NEWS, NEWS_ROOT_URI + newsID);
         });
         removeRightClick(elem);
         elem = elems[0];

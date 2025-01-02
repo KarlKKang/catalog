@@ -35,6 +35,7 @@ export default async function (
     fileInfo: ImageFileInfo,
     baseURL: string,
     createMediaSessionPromise: Promise<MediaSessionInfo>,
+    canonicalURL: string,
 ) {
     const contentContainer = getSharedElement(SharedElement.CONTENT_CONTAINER);
 
@@ -63,10 +64,10 @@ export default async function (
     const credential = mediaSessionCredential[MediaSessionInfoKey.CREDENTIAL];
     addOffloadCallback(offloadLazyload);
     setLazyloadCredential(credential, ImageSessionTypes.MEDIA);
-    showImages(fileInfo[FileInfoKey.FILES], baseURL, credential);
+    showImages(fileInfo[FileInfoKey.FILES], baseURL, credential, canonicalURL);
 }
 
-function showImages(files: ImageFileInfo[FileInfoKey.FILES], baseURL: string, credential: string) {
+function showImages(files: ImageFileInfo[FileInfoKey.FILES], baseURL: string, credential: string, canonicalURL: string) {
     const mediaHolder = getSharedElement(SharedElement.MEDIA_HOLDER);
     replaceChildren(mediaHolder);
     for (const file of files) {
@@ -102,7 +103,7 @@ function showImages(files: ImageFileInfo[FileInfoKey.FILES], baseURL: string, cr
         appendChild(mediaHolder, imageNode);
 
         addEventListener(showFullSizeButton, 'click', () => {
-            openImageWindow(baseURL, fileName, credential, ImageSessionTypes.MEDIA);
+            openImageWindow(baseURL, fileName, credential, ImageSessionTypes.MEDIA, canonicalURL);
         });
         attachLazyload(
             lazyloadNode,

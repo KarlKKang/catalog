@@ -85,7 +85,8 @@ export default async function (
         appendText(titleElem, title);
         setTitle(parseCharacters(title) + '[' + response[EPInfoKey.SERIES_EP][epIndex] + '] | ' + getTitle());
     }
-    setOgUrl(getEPFullURI(seriesID, epIndex, 0)); // Don't consider different formats as their own canonical URLs.
+    const canonicalURL = getEPFullURI(seriesID, epIndex, 0);
+    setOgUrl(canonicalURL); // Don't consider different formats as their own canonical URLs.
 
     updateEPSelector(response[EPInfoKey.SERIES_EP], epSelector);
     updateSeasonSelector(response[EPInfoKey.SEASONS], seasonSelector);
@@ -144,7 +145,7 @@ export default async function (
             if (currentPgid !== pgid) {
                 return;
             }
-            imageModule.default(fileInfo as ImageFileInfo, baseURL, createMediaSessionPromise);
+            imageModule.default(fileInfo as ImageFileInfo, baseURL, createMediaSessionPromise, canonicalURL);
         }
     }
 }
