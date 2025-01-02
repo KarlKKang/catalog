@@ -155,9 +155,8 @@ function getInternalLink(elem: Element): string | null {
         const epIndex = getDataAttribute(elem, 'ep-index');
         const formatIndex = getDataAttribute(elem, 'format-index');
         return buildURI(
-            BANGUMI_ROOT_URI + seriesID,
+            BANGUMI_ROOT_URI + seriesID + '/' + (epIndex ?? '1'),
             buildHttpForm({
-                ...epIndex !== '1' && { ep: epIndex },
                 ...formatIndex !== '1' && { format: formatIndex },
             }),
         );

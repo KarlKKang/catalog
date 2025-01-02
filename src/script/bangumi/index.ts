@@ -2,10 +2,8 @@ import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { parseResponse } from '../module/server/parse_response';
 import { getURI } from '../module/dom/location/get/uri';
-import { getSearchParam } from '../module/dom/location/get/search_param';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/message/param/not_found';
-import { getLogoutParam } from './helper';
 import { importAllPageModules } from './page_import_promise';
 import { type ShowPageFunc } from '../module/global/type';
 import { redirectSameOrigin } from '../module/global/redirect';
@@ -19,30 +17,42 @@ import { BANGUMI_ROOT_URI, TOP_URI } from '../module/env/uri';
 import { importAllMediaModules } from './media_import_promise';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { removeTimeout } from '../module/timer/remove/timeout';
+import { setHistoryState } from '../module/dom/location/set/history_state';
+import { getSearch } from '../module/dom/location/get/search';
+import { getHash } from '../module/dom/location/get/hash';
 
 export default function (showPage: ShowPageFunc) {
     // Parse parameters
-    const seriesIDParam = getSeriesID();
-    if (seriesIDParam === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(seriesIDParam)) {
+    const [seriesID, epIndexParam] = splitURI();
+    if (seriesID === '' && epIndexParam === null) {
         redirectSameOrigin(TOP_URI, true);
         return;
     }
-    const seriesID = seriesIDParam;
+    if (!/^[a-zA-Z0-9~_-]{8,}$/.test(seriesID)) {
+        showMessage(notFound);
+        return;
+    }
 
     // Preload modules
     addNavBar();
 
     // Parse other parameters
-    const epIndexParam = getSearchParam('ep');
     let epIndex: number;
-    if (epIndexParam === null) {
+    if (epIndexParam === '' || epIndexParam === null) {
         epIndex = 0;
+        // Preserve full search and hash because some additional parameters may be needed later besides the format parameter.
+        setHistoryState(BANGUMI_ROOT_URI + seriesID + '/1' + getSearch() + getHash(), true);
     } else {
         epIndex = parseInt(epIndexParam);
-        if (isNaN(epIndex) || epIndex < 1) {
-            epIndex = 0;
-        } else {
+        if (epIndex.toString() !== epIndexParam) {
+            showMessage(notFound);
+            return;
+        }
+        if (epIndex > 0) {
             epIndex--;
+        } else {
+            showMessage(notFound);
+            return;
         }
     }
 
@@ -55,7 +65,7 @@ export default function (showPage: ShowPageFunc) {
             const serverRequest = sendServerRequest('create_media_session', {
                 [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                     const parsedResponse = parseResponse(response, parseMediaSessionInfo);
-                    setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], serverRequest[ServerRequestKey.REQUEST_START_TIME], getLogoutParam(seriesID, epIndex));
+                    setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], serverRequest[ServerRequestKey.REQUEST_START_TIME]);
                     resolve(parsedResponse);
                 },
                 [ServerRequestOptionKey.CONTENT]: buildHttpForm({ series: seriesID, ep: epIndex }),
@@ -107,6 +117,11 @@ export default function (showPage: ShowPageFunc) {
     });
 }
 
-function getSeriesID(): string | null {
-    return getURI().substring(BANGUMI_ROOT_URI.length);
+function splitURI(): [string, string | null] {
+    const path = getURI().slice(BANGUMI_ROOT_URI.length);
+    const slashIndex = path.indexOf('/');
+    if (slashIndex === -1) {
+        return [path, null];
+    }
+    return [path.slice(0, slashIndex), path.slice(slashIndex + 1)];
 }

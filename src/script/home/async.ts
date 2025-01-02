@@ -273,7 +273,7 @@ function search(
 }
 
 function goToSeries(id: string) {
-    redirectSameOrigin(BANGUMI_ROOT_URI + id);
+    redirectSameOrigin(BANGUMI_ROOT_URI + id + '/1');
 }
 
 function getSeries(callback: (seriesInfo: SeriesInfo) => void) {

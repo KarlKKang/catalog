@@ -2,7 +2,6 @@ import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { parseResponse } from '../module/server/parse_response';
 import { getURI } from '../module/dom/location/get/uri';
-import { getHash } from '../module/dom/location/get/hash';
 import { setHistoryState } from '../module/dom/location/set/history_state';
 import { type ShowPageFunc } from '../module/global/type';
 import { redirectSameOrigin } from '../module/global/redirect';
@@ -64,10 +63,6 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         ),
     );
 
-    const logoutParam = buildHttpForm({
-        news: newsID,
-        hash: getHash(),
-    });
     const serverRequest = sendServerRequest('get_news', {
         [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);
@@ -78,7 +73,7 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             }
             showPage();
             const startTime = serverRequest[ServerRequestKey.REQUEST_START_TIME];
-            setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], startTime, logoutParam);
+            setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], startTime);
             newsModule.default(parsedResponse, newsID, startTime);
         },
         [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: newsID }),

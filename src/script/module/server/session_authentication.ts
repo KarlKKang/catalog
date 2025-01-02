@@ -7,7 +7,7 @@ import { connectionError } from '../message/param/connection_error';
 import { invalidResponse } from '../message/param/invalid_response';
 import { max } from '../math';
 
-export function setUpSessionAuthentication(credential: string, startTime: HighResTimestamp, logoutParam?: string) {
+export function setUpSessionAuthentication(credential: string, startTime: HighResTimestamp) {
     addTimeout(() => {
         const requestTimeout = addTimeout(() => {
             showMessage(connectionError());
@@ -16,7 +16,7 @@ export function setUpSessionAuthentication(credential: string, startTime: HighRe
             [ServerRequestOptionKey.CALLBACK]: function (response: string) {
                 if (response === 'APPROVED') {
                     removeTimeout(requestTimeout);
-                    setUpSessionAuthentication(credential, serverRequest[ServerRequestKey.REQUEST_START_TIME], logoutParam);
+                    setUpSessionAuthentication(credential, serverRequest[ServerRequestKey.REQUEST_START_TIME]);
                     return;
                 }
                 showMessage(invalidResponse());

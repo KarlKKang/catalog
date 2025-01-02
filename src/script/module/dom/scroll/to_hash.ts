@@ -5,7 +5,7 @@ import { getById } from '../element/get/by_id';
 
 export function scrollToHash() {
     // Use this function only when the hash element is loaded after the DOM loads.
-    const scrollID = getHash();
+    const scrollID = getHash().slice(1);
     if (scrollID !== '') {
         const elem = getById(scrollID);
         if (elem !== null) {

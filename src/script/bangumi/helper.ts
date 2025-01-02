@@ -8,7 +8,6 @@ import { appendChildren } from '../module/dom/node/append_children';
 import { addClass } from '../module/dom/class/add';
 import { changeColor, type CSS_COLOR } from '../module/style/color';
 import * as styles from '../../css/bangumi.module.scss';
-import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { buildURI } from '../module/string/uri/build';
 import { BANGUMI_ROOT_URI } from '../module/env/uri';
@@ -28,25 +27,13 @@ export function getContentBoxHeight(elem: HTMLElement): number {
     return height;
 }
 
-export function getLogoutParam(seriesID: string, epIndex: number): string {
-    return joinHttpForms(
-        buildHttpForm({ series: seriesID }),
-        createQuery(epIndex, getFormatIndex()),
-    );
-}
-
 export function getEPFullURI(seriesID: string, epIndex: number, formatIndex: number): string {
     return buildURI(
-        BANGUMI_ROOT_URI + seriesID,
-        createQuery(epIndex, formatIndex),
+        BANGUMI_ROOT_URI + seriesID + '/' + (epIndex + 1),
+        buildHttpForm({
+            ...formatIndex !== 0 && { format: formatIndex + 1 },
+        }),
     );
-}
-
-function createQuery(epIndex: number, formatIndex: number): string {
-    return buildHttpForm({
-        ...epIndex !== 0 && { ep: epIndex + 1 },
-        ...formatIndex !== 0 && { format: formatIndex + 1 },
-    });
 }
 
 export function parseCharacters(txt: string) {
