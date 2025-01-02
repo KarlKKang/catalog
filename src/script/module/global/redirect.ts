@@ -1,4 +1,4 @@
-let redirect = (url: string, withoutHistory: boolean | null = false): void => {
+let redirect = (url: string, withoutHistory = false): void => {
     if (DEVELOPMENT) { // Will be stripped out by Terser in production build.
         url;
         withoutHistory;
