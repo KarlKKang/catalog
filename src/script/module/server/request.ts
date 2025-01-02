@@ -14,7 +14,7 @@ import { removeTimeout } from '../timer/remove/timeout';
 import { addTimeout } from '../timer/add/timeout';
 import { redirectSameOrigin } from '../global/redirect';
 import { parseMaintenanceInfo } from '../type/MaintenanceInfo';
-import { LOGIN_URI } from '../env/uri';
+import { LOGIN_URI, TOP_URI } from '../env/uri';
 import { newXhr } from '../xhr/new';
 import { abortXhr } from '../xhr/abort';
 import { addEventListener } from '../event_listener/add';
@@ -23,13 +23,14 @@ import { getHighResTimestamp, type HighResTimestamp } from '../time/hi_res';
 import { parseResponse } from './parse_response';
 import { newFileReader } from '../file_reader/new';
 import { abortFileReader } from '../file_reader/abort';
+import { getFullPath } from '../dom/location/get/full_path';
+import { buildHttpForm } from '../string/http_form/build';
 
 export const enum ServerRequestOptionKey {
     CALLBACK,
     CONTENT,
     METHOD,
     ALLOW_CREDENTIALS,
-    LOGOUT_PARAM,
     CONNECTION_ERROR_RETRY,
     CONNECTION_ERROR_RETRY_TIMEOUT,
     SHOW_UNAUTHORIZED_MESSAGE,
@@ -40,7 +41,6 @@ interface ServerRequestOption<T extends string | Blob> {
     readonly [ServerRequestOptionKey.CONTENT]?: string;
     readonly [ServerRequestOptionKey.METHOD]?: 'POST' | 'GET';
     readonly [ServerRequestOptionKey.ALLOW_CREDENTIALS]?: boolean;
-    readonly [ServerRequestOptionKey.LOGOUT_PARAM]?: string | undefined;
     [ServerRequestOptionKey.CONNECTION_ERROR_RETRY]?: number | undefined;
     [ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
     readonly [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]?: boolean;
@@ -179,8 +179,11 @@ abstract class ServerRequest<T extends string | Blob> {
             } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
                 showMessage(insufficientPermissions);
             } else if (responseText === 'UNAUTHORIZED') {
-                const logoutParam = options[ServerRequestOptionKey.LOGOUT_PARAM];
-                const url = buildURI(LOGIN_URI, logoutParam);
+                let url = LOGIN_URI;
+                const redirectPath = getFullPath();
+                if (redirectPath !== TOP_URI) {
+                    url = buildURI(url, buildHttpForm({ redirect: redirectPath }));
+                }
                 if (options[ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]) {
                     showMessage(unauthorized(url));
                 } else {

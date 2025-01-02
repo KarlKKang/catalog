@@ -82,7 +82,6 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
             newsModule.default(parsedResponse, newsID, startTime);
         },
         [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: newsID }),
-        [ServerRequestOptionKey.LOGOUT_PARAM]: logoutParam,
         [ServerRequestOptionKey.TIMEOUT]: 30000,
     });
 }

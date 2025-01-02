@@ -59,7 +59,6 @@ export default function (showPage: ShowPageFunc) {
                     resolve(parsedResponse);
                 },
                 [ServerRequestOptionKey.CONTENT]: buildHttpForm({ series: seriesID, ep: epIndex }),
-                [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
                 [ServerRequestOptionKey.TIMEOUT]: 60000,
             });
         });
@@ -104,7 +103,6 @@ export default function (showPage: ShowPageFunc) {
             showPage();
         },
         [ServerRequestOptionKey.CONTENT]: buildHttpForm({ series: seriesID, ep: epIndex }),
-        [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
         [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }

@@ -150,7 +150,7 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], seriesID, epIndex, [selectMenu, formats, currentFormat]);
+        const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], [selectMenu, formats, currentFormat]);
         appendChild(contentContainer, downloadAccordion);
         addEventListener(selectMenu, 'change', () => {
             formatSwitch(formatSelector, selectMenu, formatDisplay, containerSelector);

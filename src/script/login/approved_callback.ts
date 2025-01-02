@@ -4,43 +4,20 @@ import { redirectSameOrigin } from '../module/global/redirect';
 import { nextButtonText } from '../module/text/button/next';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
-import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
+import { TOP_URI } from '../module/env/uri';
 import { getSearchParam } from '../module/dom/location/get/search_param';
-import { buildURI } from '../module/string/uri/build';
-import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function () {
+    const forwardURL = getSearchParam('redirect') ?? TOP_URI;
     if (UNRECOMMENDED_BROWSER) {
         showMessage({
             [MessageParamKey.TITLE]: 'お使いのブラウザは推奨環境ではありません',
             [MessageParamKey.MESSAGE]: '一部のコンテンツが正常に再生されない場合は、Safari 12またはChrome 79以降のブラウザをお使いください。',
             [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
-            [MessageParamKey.URL]: getForwardURL(),
+            [MessageParamKey.URL]: forwardURL,
             [MessageParamKey.BUTTON_TEXT]: nextButtonText,
         });
     } else {
-        redirectSameOrigin(getForwardURL(), true);
+        redirectSameOrigin(forwardURL, true);
     }
-}
-
-function getForwardURL() {
-    const series = getSearchParam('series');
-    if (series !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(series)) {
-        const ep = getSearchParam('ep');
-        const format = getSearchParam('format');
-        return buildURI(
-            BANGUMI_ROOT_URI + series,
-            buildHttpForm({
-                ...ep !== '1' && { ep: ep },
-                ...format !== '1' && { format: format },
-            }),
-        );
-    }
-
-    const news = getSearchParam('news');
-    if (news !== null && /^[a-zA-Z0-9~_-]{8,}$/.test(news)) {
-        return buildURI(NEWS_ROOT_URI + news, '', getSearchParam('hash'));
-    }
-
-    return buildURI(TOP_URI, buildHttpForm({ keywords: getSearchParam('keywords') }));
 }

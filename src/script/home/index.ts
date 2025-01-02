@@ -58,7 +58,6 @@ export default function (showPage: ShowPageFunc) {
             keywordsQuery,
             buildHttpForm({ pivot: 0 }),
         ),
-        [ServerRequestOptionKey.LOGOUT_PARAM]: keywordsQuery,
         [ServerRequestOptionKey.METHOD]: 'GET',
     });
 }

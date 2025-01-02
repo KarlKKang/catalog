@@ -32,8 +32,6 @@ import { IS_GECKO } from '../module/browser/is_gecko';
 
 let currentPgid: unknown;
 
-let seriesID: string;
-let epIndex: number;
 let fileInfo: AudioFileInfo;
 let baseURL: string;
 
@@ -43,8 +41,6 @@ let audioReadyCounter: number;
 const mediaInstances: PlayerType[] = [];
 
 export default function (
-    _seriesID: string,
-    _epIndex: number,
     _fileInfo: AudioFileInfo,
     _baseURL: string,
     _createMediaSessionPromise: Promise<MediaSessionInfo>,
@@ -52,8 +48,6 @@ export default function (
 ) {
     currentPgid = pgid;
 
-    seriesID = _seriesID;
-    epIndex = _epIndex;
     fileInfo = _fileInfo;
     baseURL = _baseURL;
     createMediaSessionPromise = _createMediaSessionPromise;
@@ -65,7 +59,7 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        appendChild(getSharedElement(SharedElement.CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], seriesID, epIndex, null)[0]);
+        appendChild(getSharedElement(SharedElement.CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], null)[0]);
     });
 
     if (!MSE_SUPPORTED && !NATIVE_HLS_SUPPORTED) {

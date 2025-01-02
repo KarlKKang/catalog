@@ -139,7 +139,7 @@ export default async function (
             if (currentPgid !== pgid) {
                 return;
             }
-            audioModule.default(seriesID, epIndex, fileInfo as AudioFileInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
+            audioModule.default(fileInfo as AudioFileInfo, baseURL, createMediaSessionPromise, titleOverride ?? title);
         } else {
             const imageModule = await imageImportPromise;
             if (currentPgid !== pgid) {

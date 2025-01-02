@@ -16,7 +16,7 @@ import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { addEventListener } from '../module/event_listener/add';
-import { createMessageElem, getContentBoxHeight, getLogoutParam, isArray } from './helper';
+import { createMessageElem, getContentBoxHeight, isArray } from './helper';
 import { IS_MACOS } from '../module/browser/is_macos';
 import { IS_IOS } from '../module/browser/is_ios';
 import { IS_WINDOWS } from '../module/browser/is_windows';
@@ -116,8 +116,6 @@ export function showMediaMessage(title: string, body: Node[] | string, titleColo
 
 export function buildDownloadAccordion(
     mediaSessionCredential: string,
-    seriesID: string,
-    epIndex: number,
     videoFormats: null | [
         HTMLSelectElement,
         VideoFormats,
@@ -235,7 +233,6 @@ export function buildDownloadAccordion(
                 disableButton(downloadButton, false);
             },
             [ServerRequestOptionKey.CONTENT]: requestContent,
-            [ServerRequestOptionKey.LOGOUT_PARAM]: getLogoutParam(seriesID, epIndex),
             [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         });
     });

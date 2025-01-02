@@ -22,7 +22,6 @@ export function setUpSessionAuthentication(credential: string, startTime: HighRe
                 showMessage(invalidResponse());
             },
             [ServerRequestOptionKey.CONTENT]: credential,
-            [ServerRequestOptionKey.LOGOUT_PARAM]: logoutParam,
             [ServerRequestOptionKey.CONNECTION_ERROR_RETRY]: 5,
             [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         });
