@@ -8,7 +8,7 @@ import { notFound } from '../module/message/param/not_found';
 import { getLogoutParam } from './helper';
 import { importAllPageModules } from './page_import_promise';
 import { type ShowPageFunc } from '../module/global/type';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { addNavBar } from '../module/nav_bar';
 import { addTimeout } from '../module/timer/add/timeout';
@@ -24,7 +24,7 @@ export default function (showPage: ShowPageFunc) {
     // Parse parameters
     const seriesIDParam = getSeriesID();
     if (seriesIDParam === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(seriesIDParam)) {
-        redirect(TOP_URI, true);
+        redirectSameOrigin(TOP_URI, true);
         return;
     }
     const seriesID = seriesIDParam;

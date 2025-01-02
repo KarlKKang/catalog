@@ -18,7 +18,7 @@ import { offload } from '../module/global/offload';
 import { type ShowPageFunc } from '../module/global/type';
 import { customPopStateHandler } from '../module/global/pop_state/custom_handler';
 import { STATE_TRACKER } from '../module/global/pop_state/tracker';
-import { setRedirect } from '../module/global/redirect';
+import { setSameOriginRedirectFunc } from '../module/global/redirect';
 import { pgid, setPgid } from '../module/global/pgid';
 import { loadingBar as loadingBarClass } from '../../css/loading_bar.module.scss';
 import { enableTransition } from '../module/style/transition';
@@ -356,7 +356,7 @@ windowAddEventListener('load', () => {
     const nativeBody = d.body;
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
-    setRedirect(load);
+    setSameOriginRedirectFunc(load);
     load(fullPath, null);
     importFont(0);
     windowAddEventListener('popstate', (state) => {

@@ -6,7 +6,7 @@ import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener/add';
 import { type ShowPageFunc } from './module/global/type';
-import { redirect } from './module/global/redirect';
+import { redirectSameOrigin } from './module/global/redirect';
 import { horizontalCenter } from './module/style/horizontal_center';
 import { setWidth } from './module/style/width';
 import { changeColor, CSS_COLOR } from './module/style/color';
@@ -35,7 +35,7 @@ export default function (showPage: ShowPageFunc) {
     horizontalCenter(button);
     setWidth(button, CSS_AUTO);
     addEventListener(button, 'click', () => {
-        redirect(TOP_URI);
+        redirectSameOrigin(TOP_URI);
     });
     appendChild(container, button);
 

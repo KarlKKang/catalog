@@ -24,7 +24,7 @@ import { body } from '../module/dom/body';
 import { cnRoutesPageTitle } from '../module/text/page_title';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { newXhr } from '../module/xhr/new';
 import { TOP_DOMAIN } from '../module/env/domain';
 import { horizontalCenter } from '../module/style/horizontal_center';
@@ -381,7 +381,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     addClass(linkJa, linkClass);
     appendText(linkJa, 'こちら');
     addEventListener(linkJa, 'click', () => {
-        redirect(NEWS_URI);
+        redirectSameOrigin(NEWS_URI);
     });
     appendChild(promptParagraphJa, linkJa);
     appendText(promptParagraphJa, '）。測定が完了したら、回線を切り替えることができます。512kBのファイルをダウンロードするのにかかる時間を計測しています。時間が短いほど良いです。2000ミリ秒以上かかる場合は、回線がお使いのISPに最適化されていない、または回線が混雑している可能性があります。1000ミリ秒前後かそれ以下であれば、大きな差はないので安心して利用できます。');
@@ -394,7 +394,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     addClass(linkEn, linkClass);
     appendText(linkEn, 'here');
     addEventListener(linkEn, 'click', () => {
-        redirect(buildURI(NEWS_URI, '', EN_LANG_CODE));
+        redirectSameOrigin(buildURI(NEWS_URI, '', EN_LANG_CODE));
     });
     appendChild(promptParagraphEn, linkEn);
     appendText(promptParagraphEn, '). Once the measurement is complete, you can to switch between the routes. We are measuring the time it takes to download a 512kB file. The shorter the time, the better. If it takes more than 2000ms, the route may not be optimized for your ISP or the route may be congested. If it is around 1000 milliseconds or less, there is no significant difference and you can use it without worry.');
@@ -407,7 +407,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     addClass(linkHant, linkClass);
     appendText(linkHant, '此處');
     addEventListener(linkHant, 'click', () => {
-        redirect(buildURI(NEWS_URI, '', ZH_HANT_LANG_CODE));
+        redirectSameOrigin(buildURI(NEWS_URI, '', ZH_HANT_LANG_CODE));
     });
     appendChild(promptParagraphHant, linkHant);
     appendText(promptParagraphHant, '了解詳情）。測量完成後即可切換線路。我們測量下載一個512kB文件所需的時間。時間越短越好。如果超過2000毫秒，則此線路可能沒有針對您的ISP進行最佳化，或者此線路擁擠。如果在1000毫秒左右或者更短的話，則區別不大，可放心使用。');
@@ -420,7 +420,7 @@ function appendPromptText(contentContainer: HTMLElement) {
     addClass(linkHans, linkClass);
     appendText(linkHans, '此处');
     addEventListener(linkHans, 'click', () => {
-        redirect(buildURI(NEWS_URI, '', ZH_HANS_LANG_CODE));
+        redirectSameOrigin(buildURI(NEWS_URI, '', ZH_HANS_LANG_CODE));
     });
     appendChild(promptParagraphHans, linkHans);
     appendText(promptParagraphHans, '了解详情）。测量完成后即可切换线路。我们测量下载一个512kB文件所需的时间。时间越短越好。如果超过2000毫秒，则此线路可能没有针对您的ISP进行优化，或者此线路拥挤。如果在1000毫秒左右或者更短的话，则区别不大，可放心使用。');

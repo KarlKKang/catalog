@@ -29,7 +29,7 @@ import { changeColor, CSS_COLOR } from '../module/style/color';
 import { showElement } from '../module/style/show_element';
 import { hideElement } from '../module/style/hide_element';
 import { InviteResultKey, parseInviteResult } from '../module/type/InviteResult';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { default as initializeMFAModule } from './mfa';
 import { LOGIN_URI } from '../module/env/uri';
 import { disableButton } from '../module/dom/element/button/disable';
@@ -63,7 +63,7 @@ export default function (accountInfo: AccountInfo) {
     addEventListener(buttons[MyAccountButton.logoutButton], 'click', () => {
         disableButton(buttons[MyAccountButton.logoutButton], true);
         logout(() => {
-            redirect(LOGIN_URI);
+            redirectSameOrigin(LOGIN_URI);
         }, accountInfo[AccountInfoKey.ID]);
     });
     initializeMFAModule(accountInfo, elements, buttons);

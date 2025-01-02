@@ -3,7 +3,7 @@ import {
     sendServerRequest,
 } from '../module/server/request';
 import { type ShowPageFunc } from '../module/global/type';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { addTimeout } from '../module/timer/add/timeout';
 import { importModule } from '../module/import_module';
@@ -36,7 +36,7 @@ export default function (showPage: ShowPageFunc) {
     sendServerRequest('get_authentication_state', {
         [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
             if (response === 'APPROVED') {
-                redirect(TOP_URI, true);
+                redirectSameOrigin(TOP_URI, true);
             } else if (response === 'FAILED') {
                 const currentPgid = pgid;
                 const asyncModule = await asyncModulePromise;

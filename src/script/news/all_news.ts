@@ -13,7 +13,7 @@ import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/in
 import { padNumberLeft } from '../module/string/pad_number_left';
 import { TimeInfoKey, getLocalTime } from '../module/time/local';
 import { buildHttpForm } from '../module/string/http_form/build';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { noResult } from '../module/text/search/no_result';
 import { allResultsShown } from '../module/text/search/all_results_shown';
 import { loading } from '../module/text/search/loading';
@@ -88,7 +88,7 @@ function showAllNews(allNewsInfo: AllNewsInfo, container: HTMLElement, loadingTe
         appendChild(overviewContainer, titleContainer);
 
         addEventListener(overviewContainer, 'click', () => {
-            redirect(NEWS_ROOT_URI + entry[AllNewsInfoEntryKey.ID]);
+            redirectSameOrigin(NEWS_ROOT_URI + entry[AllNewsInfoEntryKey.ID]);
         });
 
         appendChild(container, overviewContainer);

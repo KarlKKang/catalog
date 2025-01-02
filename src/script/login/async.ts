@@ -31,7 +31,7 @@ import { testPassword } from '../module/regex/password';
 import { testEmail } from '../module/regex/email';
 import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { handleFailedTotp, TotpPopupWindowKey, type TotpPopupWindow } from '../module/popup_window/totp';
 import { invalidResponse } from '../module/message/param/invalid_response';
@@ -105,7 +105,7 @@ export default function (
 
     addEventListener(submitButton, 'click', login);
     addEventListener(forgetPasswordLink, 'click', () => {
-        redirect(REQUEST_PASSWORD_RESET_URI, true);
+        redirectSameOrigin(REQUEST_PASSWORD_RESET_URI, true);
     });
 
     function login() {

@@ -8,7 +8,7 @@ import { addClass } from './module/dom/class/add';
 import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener/add';
 import { type ShowPageFunc } from './module/global/type';
-import { redirect } from './module/global/redirect';
+import { redirectSameOrigin } from './module/global/redirect';
 import { pgid } from './module/global/pgid';
 import * as styles from '../css/message.module.scss';
 import { horizontalCenter } from './module/style/horizontal_center';
@@ -25,7 +25,7 @@ export default function (showPage: ShowPageFunc) {
             showPage();
             createMessageElements('タイトルTitle', CSS_COLOR.ORANGE, 'メッセージMessage'.repeat(10), 'ボタンButton', TOP_URI);
         } else {
-            redirect(TOP_URI, true);
+            redirectSameOrigin(TOP_URI, true);
         }
         return;
     }
@@ -81,7 +81,7 @@ function createMessageElements(title: string, titleColor: CSS_COLOR, message: st
         horizontalCenter(button);
         appendChild(container, button);
         addEventListener(button, 'click', () => {
-            redirect(url, true);
+            redirectSameOrigin(url, true);
         });
     }
 }

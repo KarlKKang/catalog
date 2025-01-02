@@ -6,7 +6,7 @@ import { addClass } from '../../dom/class/add';
 import { body } from '../../dom/body';
 import { addEventListener } from '../../event_listener/add';
 import { w } from '../../dom/window';
-import { redirect } from '../../global/redirect';
+import { redirectSameOrigin } from '../../global/redirect';
 import { scrollToTop } from '../../dom/scroll/to_top';
 import { NavBarPage } from '../enum';
 import * as icons from './icons';
@@ -58,7 +58,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
                 return;
             }
         }
-        redirect(TOP_URI);
+        redirectSameOrigin(TOP_URI);
     });
 
     addEventListener(navButton2[0], 'click', () => {
@@ -67,7 +67,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
                 return;
             }
         }
-        redirect(NEWS_ROOT_URI);
+        redirectSameOrigin(NEWS_ROOT_URI);
     });
 
     addEventListener(navButton3[0], 'click', () => {
@@ -76,7 +76,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
                 return;
             }
         }
-        redirect(MY_ACCOUNT_URI);
+        redirectSameOrigin(MY_ACCOUNT_URI);
     });
 
     addEventListener(navButton4[0], 'click', () => {
@@ -85,7 +85,7 @@ export default function (page?: NavBarPage, currentPageCallback?: () => void) {
                 return;
             }
         }
-        redirect(INFO_URI);
+        redirectSameOrigin(INFO_URI);
     });
 
     addClass(body, styles.navBarPadding);

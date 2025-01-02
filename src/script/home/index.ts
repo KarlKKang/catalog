@@ -7,7 +7,7 @@ import { setHistoryState } from '../module/dom/location/set/history_state';
 import { w } from '../module/dom/window';
 import { isbot } from 'isbot';
 import { type ShowPageFunc } from '../module/global/type';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { parseSeriesInfo } from '../module/type/SeriesInfo';
 import { getURLKeywords, search } from './shared';
@@ -28,7 +28,7 @@ export default function (showPage: ShowPageFunc) {
         }
         const keywords = getURLKeywords();
         if (search === null || keywords === '') {
-            redirect(TOP_URI);
+            redirectSameOrigin(TOP_URI);
             return;
         }
         setHistoryState(TOP_URI);

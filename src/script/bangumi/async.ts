@@ -20,7 +20,7 @@ import { parseCharacters, getContentBoxHeight, createMessageElem, getEPFullURI }
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
 import { addTimeout } from '../module/timer/add/timeout';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { audioImportPromise, imageImportPromise, videoImportPromise } from './page_import_promise';
 import { SharedElement, getSharedElement, initializeSharedVars } from './shared_var';
@@ -114,7 +114,7 @@ export default async function (
             showElement(contentContainer);
         });
         addEventListener(warningButtonNo, 'click', () => {
-            redirect(TOP_URI);
+            redirectSameOrigin(TOP_URI);
         });
 
         hideElement(contentContainer);
@@ -165,7 +165,7 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
 
         appendChild(epButton, epText);
         addEventListener(epButton, 'click', () => {
-            redirect(getEPFullURI(seriesID, index, 0));
+            redirectSameOrigin(getEPFullURI(seriesID, index, 0));
         });
         appendChild(epButtonWrapper, epButton);
 
@@ -304,7 +304,7 @@ function updateSeasonSelector(seasons: Seasons, seasonSelector: HTMLElement) {
             if (id !== seriesID) {
                 const targetSeries = id;
                 addEventListener(seasonButton, 'click', () => {
-                    redirect(getEPFullURI(targetSeries, 0, 0));
+                    redirectSameOrigin(getEPFullURI(targetSeries, 0, 0));
                 });
             } else {
                 addClass(seasonButton, styles.currentSeason);

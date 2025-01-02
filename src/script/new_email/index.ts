@@ -3,7 +3,7 @@ import { getSearchParam } from '../module/dom/location/get/search_param';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param/expired';
 import { type ShowPageFunc } from '../module/global/type';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { importModule } from '../module/import_module';
@@ -32,7 +32,7 @@ export default function (showPage: ShowPageFunc) {
         if (DEVELOPMENT) {
             runAsyncModule(getAsyncModulePromise(), 'test');
         } else {
-            redirect(TOP_URI, true);
+            redirectSameOrigin(TOP_URI, true);
         }
         return;
     }

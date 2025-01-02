@@ -17,7 +17,7 @@ import { invalidEmailFormat } from './module/text/email/invalid';
 import { testEmail } from './module/regex/email';
 import { buildHttpForm } from './module/string/http_form/build';
 import { type ShowPageFunc } from './module/global/type';
-import { redirect } from './module/global/redirect';
+import { redirectSameOrigin } from './module/global/redirect';
 import { invalidResponse } from './module/message/param/invalid_response';
 import { horizontalCenter } from './module/style/horizontal_center';
 import { showElement } from './module/style/show_element';
@@ -82,7 +82,7 @@ function showPageCallback() {
     });
 
     addEventListener(goBackText, 'click', () => {
-        redirect(LOGIN_URI, true);
+        redirectSameOrigin(LOGIN_URI, true);
     });
 
     function submitRequest() {

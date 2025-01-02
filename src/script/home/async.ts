@@ -28,7 +28,7 @@ import { buildHttpForm } from '../module/string/http_form/build';
 import { addTimeout } from '../module/timer/add/timeout';
 import { addOffloadCallback } from '../module/global/offload';
 import { setCustomPopStateHandler } from '../module/global/pop_state/custom_handler';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { changeColor, CSS_COLOR } from '../module/style/color';
 import { setOpacity } from '../module/style/opacity';
 import { noResult } from '../module/text/search/no_result';
@@ -277,7 +277,7 @@ function search(
 }
 
 function goToSeries(id: string) {
-    redirect(BANGUMI_ROOT_URI + id);
+    redirectSameOrigin(BANGUMI_ROOT_URI + id);
 }
 
 function getSeries(callback: (seriesInfo: SeriesInfo) => void) {
@@ -326,7 +326,7 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
                 ] as const;
                 addClass(message[1], linkClass);
                 addEventListener(message[1], 'click', () => {
-                    redirect(NEWS_ROOT_URI + '2ghJ5dHKW8T');
+                    redirectSameOrigin(NEWS_ROOT_URI + '2ghJ5dHKW8T');
                 });
                 showAnnouncement('特別回線のご利用について', message, containerElem);
                 return;
@@ -341,7 +341,7 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
             ] as const;
             addClass(message[1], linkClass);
             addEventListener(message[1], 'click', () => {
-                redirect(NEWS_ROOT_URI + '2ghJ5dHKW8T');
+                redirectSameOrigin(NEWS_ROOT_URI + '2ghJ5dHKW8T');
             });
             showAnnouncement('ネットワーク速度が低下している場合', message, containerElem);
         },

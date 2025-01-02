@@ -5,7 +5,7 @@ import { getURI } from '../module/dom/location/get/uri';
 import { getHash } from '../module/dom/location/get/hash';
 import { setHistoryState } from '../module/dom/location/set/history_state';
 import { type ShowPageFunc } from '../module/global/type';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import * as AllNewsInfo from '../module/type/AllNewsInfo';
 import { addNavBar } from '../module/nav_bar';
@@ -54,7 +54,7 @@ function getAllNews(showPage: ShowPageFunc): void {
 
 function getNews(newsID: string, showPage: ShowPageFunc): void {
     addNavBar(NavBarPage.NEWS, () => {
-        redirect(NEWS_ROOT_URI);
+        redirectSameOrigin(NEWS_ROOT_URI);
     });
 
     const newsModulePromise = importModule(

@@ -1,6 +1,6 @@
 import { showMessage } from '../module/message';
 import { UNRECOMMENDED_BROWSER } from '../module/browser/unrecommended_browser';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { nextButtonText } from '../module/text/button/next';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
@@ -19,7 +19,7 @@ export default function () {
             [MessageParamKey.BUTTON_TEXT]: nextButtonText,
         });
     } else {
-        redirect(getForwardURL(), true);
+        redirectSameOrigin(getForwardURL(), true);
     }
 }
 

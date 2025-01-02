@@ -21,7 +21,7 @@ import { buildURI } from '../module/string/uri/build';
 import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { addOffloadCallback } from '../module/global/offload';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { loading } from '../module/text/search/loading';
 import * as styles from '../../css/news.module.scss';
 import { link as linkClass } from '../../css/link.module.scss';
@@ -130,7 +130,7 @@ function bindEventListners(contentContainer: HTMLElement): void {
         const internalLink = getInternalLink(elem);
         addEventListener(elem, 'click', () => {
             if (internalLink !== null) {
-                redirect(internalLink);
+                redirectSameOrigin(internalLink);
             }
         });
         elem = elems[0];

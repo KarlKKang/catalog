@@ -7,7 +7,7 @@ import { clearSessionStorage } from '../module/session_storage/clear';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { type ShowPageFunc } from '../module/global/type';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { importModule } from '../module/import_module';
 import { IMAGE_URI, TOP_URI } from '../module/env/uri';
@@ -39,7 +39,7 @@ export default function (showPage: ShowPageFunc) {
         || originURL === null
     ) {
         const originURLQuery = getSearchParam('origin');
-        redirect(originURLQuery ?? TOP_URI, true);
+        redirectSameOrigin(originURLQuery ?? TOP_URI, true);
         return;
     }
 

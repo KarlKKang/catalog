@@ -1,4 +1,4 @@
-let redirect = (url: string, withoutHistory = false): void => {
+let redirectSameOrigin = (url: string, withoutHistory = false): void => {
     if (DEVELOPMENT) { // Will be stripped out by Terser in production build.
         url;
         withoutHistory;
@@ -6,8 +6,8 @@ let redirect = (url: string, withoutHistory = false): void => {
     throw new Error('Not initialized.');
 };
 
-export { redirect };
+export { redirectSameOrigin };
 
-export function setRedirect(func: typeof redirect) {
-    redirect = func;
+export function setSameOriginRedirectFunc(func: typeof redirectSameOrigin) {
+    redirectSameOrigin = func;
 }

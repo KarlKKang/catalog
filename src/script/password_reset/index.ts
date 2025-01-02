@@ -3,7 +3,7 @@ import { getSearchParam } from '../module/dom/location/get/search_param';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param/expired';
 import { type ShowPageFunc } from '../module/global/type';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { importModule } from '../module/import_module';
@@ -35,18 +35,18 @@ export default function (showPage: ShowPageFunc) {
         if (DEVELOPMENT) {
             runAsyncModule(getAsyncModulePromise(), 'test', 'test', 'test');
         } else {
-            redirect(LOGIN_URI, true);
+            redirectSameOrigin(LOGIN_URI, true);
         }
         return;
     }
 
     if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-        redirect(LOGIN_URI, true);
+        redirectSameOrigin(LOGIN_URI, true);
         return;
     }
 
     if (expires === null || !/^[0-9]+$/.test(expires)) {
-        redirect(LOGIN_URI, true);
+        redirectSameOrigin(LOGIN_URI, true);
         return;
     }
 

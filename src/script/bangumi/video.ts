@@ -37,7 +37,7 @@ import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/en
 import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { addOffloadCallback } from '../module/global/offload';
-import { redirect } from '../module/global/redirect';
+import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { hlsPlayerImportPromise, nativePlayerImportPromise } from './media_import_promise';
 import { SharedElement, dereferenceErrorMessageElement, errorMessageElement, getSharedElement } from './shared_var';
@@ -536,7 +536,7 @@ function createLinkElem(text: string, link: string) {
     const linkElem = createSpanElement(text);
     addClass(linkElem, linkClass);
     addEventListener(linkElem, 'click', () => {
-        redirect(link);
+        redirectSameOrigin(link);
     });
     return linkElem;
 }
