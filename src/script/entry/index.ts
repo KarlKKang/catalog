@@ -45,6 +45,7 @@ import { removeAnimationFrame } from '../module/animation_frame/remove';
 import { offloadFileReader } from '../module/file_reader/offload';
 import { scrollToTop } from '../module/dom/scroll/to_top';
 import { setSmoothScroll } from '../module/style/smooth_scroll';
+import { setOgUrl } from '../module/dom/document/og/url/set';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -57,12 +58,14 @@ const enum PageProp {
     TITLE,
     SCRIPT_CACHED,
     SESSION_STORAGE,
+    CUSTOM_CANONICAL_URL,
 }
 interface Page {
     [PageProp.SCRIPT]: () => PageScriptImport;
     [PageProp.TITLE]?: string;
     [PageProp.SCRIPT_CACHED]?: PageScript;
     [PageProp.SESSION_STORAGE]?: boolean;
+    [PageProp.CUSTOM_CANONICAL_URL]?: boolean;
 }
 
 const loadingBar = createDivElement();
@@ -93,6 +96,7 @@ const pages = {
     [IMAGE_URI]: {
         [PageProp.SCRIPT]: () => import('../image'),
         [PageProp.SESSION_STORAGE]: true,
+        [PageProp.CUSTOM_CANONICAL_URL]: true,
     },
     [INFO_URI]: {
         [PageProp.SCRIPT]: () => import('../info'),
@@ -101,6 +105,7 @@ const pages = {
     [MESSAGE_URI]: {
         [PageProp.SCRIPT]: () => Promise.resolve(messagePageScript),
         [PageProp.SCRIPT_CACHED]: messagePageScript,
+        [PageProp.CUSTOM_CANONICAL_URL]: true,
     },
     [MY_ACCOUNT_URI]: {
         [PageProp.SCRIPT]: () => import('../my_account'),
@@ -138,36 +143,38 @@ const pages = {
 const directories = {
     [BANGUMI_ROOT_URI]: {
         [PageProp.SCRIPT]: () => import('../bangumi'),
+        [PageProp.CUSTOM_CANONICAL_URL]: true,
     },
     [NEWS_ROOT_URI]: {
         [PageProp.SCRIPT]: () => import('../news'),
         [PageProp.TITLE]: newsPageTitle,
+        [PageProp.CUSTOM_CANONICAL_URL]: true,
     },
 };
 
 function load(url: string, withoutHistory: boolean | null = false) {
     let uri = parseURI(url);
     if (uri === null) {
-        loadPage(url, withoutHistory, page404);
+        loadPage(url, withoutHistory, page404, getFullPath());
         return;
     }
 
     if (objectKeyExists(uri, pages)) {
         const page = pages[uri];
-        loadPage(url, withoutHistory, page);
+        loadPage(url, withoutHistory, page, uri);
         return;
     }
     uri = uri.substring(0, uri.indexOf('/', 1) + 1);
     if (objectKeyExists(uri, directories)) {
         const page = directories[uri];
-        loadPage(url, withoutHistory, page);
+        loadPage(url, withoutHistory, page, uri);
         return;
     }
 
-    loadPage(url, withoutHistory, page404);
+    loadPage(url, withoutHistory, page404, getFullPath());
 }
 
-async function loadPage(url: string, withoutHistory: boolean | null, page: Page) {
+async function loadPage(url: string, withoutHistory: boolean | null, page: Page, canonicalUri: string) {
     // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     offload();
     offloadXhr();
@@ -181,6 +188,7 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page)
     if (withoutHistory !== null) {
         changeURL(url, withoutHistory);
     }
+    setOgUrl(page[PageProp.CUSTOM_CANONICAL_URL] === true ? TOP_URI : canonicalUri);
     setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
 
     if (page[PageProp.SESSION_STORAGE] !== true) {
