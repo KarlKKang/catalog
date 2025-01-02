@@ -175,7 +175,7 @@ abstract class ServerRequest<T extends string | Blob> {
         const options = this[ServerRequestKey.OPTIONS];
         if (status === 403) {
             if (responseText === 'SESSION ENDED') {
-                showMessage(sessionEnded);
+                showMessage(sessionEnded());
             } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
                 showMessage(insufficientPermissions);
             } else if (responseText === 'UNAUTHORIZED') {
