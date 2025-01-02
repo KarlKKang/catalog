@@ -353,15 +353,14 @@ windowAddEventListener('load', () => {
     importFont(0);
     windowAddEventListener('popstate', (state) => {
         if (state.state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
-            if (customPopStateHandler === null) {
+            if (customPopStateHandler?.()) {
+                if (DEVELOPMENT) {
+                    console.log('popstate handled by the page.');
+                }
+            } else {
                 load(getFullPath(), null);
                 if (DEVELOPMENT) {
                     console.log('popstate handled by the loader.');
-                }
-            } else {
-                customPopStateHandler();
-                if (DEVELOPMENT) {
-                    console.log('popstate handled by the page.');
                 }
             }
         } else {

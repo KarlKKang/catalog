@@ -17,7 +17,6 @@ import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
 import { getURI } from '../module/dom/location/get/uri';
-import { getFullPath } from '../module/dom/location/get/full_path';
 import { changeURL } from '../module/dom/location/change';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { addEventListener } from '../module/event_listener/add';
@@ -159,10 +158,10 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
     const currentURI = getURI();
     setCustomPopStateHandler(() => {
         if (currentURI !== getURI()) {
-            redirect(getFullPath(), null);
-            return;
+            return false;
         }
         searchClosure(true);
+        return true;
     });
     showASNAnnouncement(containerElem);
 }
