@@ -1,5 +1,5 @@
 import { windowLocation } from '..';
 
 export function getHost() {
-    return windowLocation.host.toLowerCase();
+    return windowLocation.host;
 }
