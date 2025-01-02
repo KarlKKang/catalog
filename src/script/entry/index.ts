@@ -189,7 +189,7 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
     setClass(body, '');
 
     if (withoutHistory === null) {
-        if (page[PageProp.INTERNAL] === true) {
+        if (page[PageProp.INTERNAL] === true && !DEVELOPMENT) {
             page = page404;
             canonicalUri = getFullPath();
         }
