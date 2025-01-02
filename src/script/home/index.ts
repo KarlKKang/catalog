@@ -3,7 +3,7 @@ import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
-import { changeURL } from '../module/dom/location/change';
+import { setHistoryState } from '../module/dom/location/set/history_state';
 import { w } from '../module/dom/window';
 import { isbot } from 'isbot';
 import { type ShowPageFunc } from '../module/global/type';
@@ -31,7 +31,7 @@ export default function (showPage: ShowPageFunc) {
             redirect(TOP_URI);
             return;
         }
-        changeURL(TOP_URI);
+        setHistoryState(TOP_URI);
         search(true);
     });
 

@@ -13,7 +13,7 @@ import { importModule } from '../module/import_module';
 import { IMAGE_URI, TOP_URI } from '../module/env/uri';
 import { getHighResTimestamp } from '../module/time/hi_res';
 import { setOgUrl } from '../module/dom/document/og/url/set';
-import { changeURL } from '../module/dom/location/change';
+import { setHistoryState } from '../module/dom/location/set/history_state';
 import { buildURI } from '../module/string/uri/build';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { getSearchParam } from '../module/dom/location/get/search_param';
@@ -47,7 +47,7 @@ export default function (showPage: ShowPageFunc) {
     setUpSessionAuthentication(sessionCredential, getHighResTimestamp());
     setTitle(title);
     setOgUrl(canonicalURL);
-    changeURL(buildURI(
+    setHistoryState(buildURI(
         IMAGE_URI,
         buildHttpForm({ origin: originURL }),
     ), true);

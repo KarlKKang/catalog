@@ -16,7 +16,7 @@ import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { getTitle } from '../module/dom/document/title/get';
 import { getSearchParam } from '../module/dom/location/get/search_param';
-import { changeURL } from '../module/dom/location/change';
+import { setHistoryState } from '../module/dom/location/set/history_state';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { addEventsListener } from '../module/event_listener/add/multiple_events';
 import { addEventListener } from '../module/event_listener/add';
@@ -172,7 +172,7 @@ function formatSwitch(formatSelectMenuParent: HTMLDivElement, formatSelectMenu: 
         return;
     }
     currentFormat = format;
-    changeURL(getEPFullURI(seriesID, epIndex, formatIndex), true);
+    setHistoryState(getEPFullURI(seriesID, epIndex, formatIndex), true);
 
     if (format[VideoFormatKey.DIRECT_DOWNLOAD]) {
         hideElement(containerSelector);

@@ -8,7 +8,7 @@ import { setClass } from '../module/dom/class/set';
 import { setTitle } from '../module/dom/document/title/set';
 import { d } from '../module/dom/document';
 import { getFullPath } from '../module/dom/location/get/full_path';
-import { changeURL } from '../module/dom/location/change';
+import { setHistoryState } from '../module/dom/location/set/history_state';
 import { w } from '../module/dom/window';
 import { body } from '../module/dom/body';
 import { TOP_DOMAIN } from '../module/env/domain';
@@ -194,7 +194,7 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
             canonicalUri = getFullPath();
         }
     } else if (page[PageProp.INTERNAL] !== true) {
-        changeURL(fullPath, withoutHistory);
+        setHistoryState(fullPath, withoutHistory);
     }
 
     if (page[PageProp.PRESERVE_HEAD] !== true) {
@@ -347,7 +347,7 @@ function objectKeyExists<T extends object>(key: PropertyKey, obj: T): key is key
 }
 
 const fullPath = getFullPath();
-changeURL(fullPath, true);
+setHistoryState(fullPath, true);
 if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }

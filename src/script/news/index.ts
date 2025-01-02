@@ -3,7 +3,7 @@ import { setUpSessionAuthentication } from '../module/server/session_authenticat
 import { parseResponse } from '../module/server/parse_response';
 import { getURI } from '../module/dom/location/get/uri';
 import { getHash } from '../module/dom/location/get/hash';
-import { changeURL } from '../module/dom/location/change';
+import { setHistoryState } from '../module/dom/location/set/history_state';
 import { type ShowPageFunc } from '../module/global/type';
 import { redirect } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
@@ -21,7 +21,7 @@ export default function (showPage: ShowPageFunc) {
     const newsID = getNewsID();
     if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {
         if (getURI() !== NEWS_ROOT_URI) {
-            changeURL(NEWS_ROOT_URI, true);
+            setHistoryState(NEWS_ROOT_URI, true);
         }
         getAllNews(showPage);
     } else {

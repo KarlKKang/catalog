@@ -1,6 +1,6 @@
-import { STATE_TRACKER } from '../../global/pop_state/tracker';
+import { STATE_TRACKER } from '../../../global/pop_state/tracker';
 
-export function changeURL(url: string, withoutHistory?: boolean) {
+export function setHistoryState(url: string, withoutHistory?: boolean) {
     if (withoutHistory === true) {
         history.replaceState(STATE_TRACKER, '', url);
     } else {

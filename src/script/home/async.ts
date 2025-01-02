@@ -17,7 +17,7 @@ import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
 import { getURI } from '../module/dom/location/get/uri';
-import { changeURL } from '../module/dom/location/change';
+import { setHistoryState } from '../module/dom/location/set/history_state';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { addEventListener } from '../module/event_listener/add';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
@@ -234,7 +234,7 @@ function search(
         searchBarInput.value = keywords;
     } else {
         keywords = searchBarInput.value.substring(0, 50);
-        changeURL(
+        setHistoryState(
             buildURI(TOP_URI, buildHttpForm({ keywords: keywords })),
         );
     }
