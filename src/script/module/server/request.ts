@@ -177,7 +177,7 @@ abstract class ServerRequest<T extends string | Blob> {
             if (responseText === 'SESSION ENDED') {
                 showMessage(sessionEnded());
             } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
-                showMessage(insufficientPermissions);
+                showMessage(insufficientPermissions());
             } else if (responseText === 'UNAUTHORIZED') {
                 let url = LOGIN_URI;
                 const redirectPath = getFullPath();
