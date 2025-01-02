@@ -29,7 +29,7 @@ export default function (showPage: ShowPageFunc) {
         return;
     }
     if (!/^[a-zA-Z0-9~_-]{8,}$/.test(seriesID)) {
-        showMessage(notFound);
+        showMessage(notFound());
         return;
     }
 
@@ -45,13 +45,13 @@ export default function (showPage: ShowPageFunc) {
     } else {
         epIndex = parseInt(epIndexParam);
         if (epIndex.toString() !== epIndexParam) {
-            showMessage(notFound);
+            showMessage(notFound());
             return;
         }
         if (epIndex > 0) {
             epIndex--;
         } else {
-            showMessage(notFound);
+            showMessage(notFound());
             return;
         }
     }
@@ -96,7 +96,7 @@ export default function (showPage: ShowPageFunc) {
                     return;
                 }
                 if (mediaSessionInfo[MediaSessionInfoKey.TYPE] !== parsedResponse[EPInfoKey.FILE_INFO][FileInfoKey.TYPE]) {
-                    showMessage(notFound);
+                    showMessage(notFound());
                 }
             });
 

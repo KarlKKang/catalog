@@ -203,7 +203,7 @@ abstract class ServerRequest<T extends string | Blob> {
                 showMessage(unknownServerError());
             }
         } else if (status === 404 && responseText === 'REJECTED') {
-            showMessage(notFound);
+            showMessage(notFound());
         } else {
             this[ServerRequestKey.RETRY]();
         }
