@@ -59,6 +59,7 @@ const enum PageProp {
     SCRIPT_CACHED,
     SESSION_STORAGE,
     CUSTOM_CANONICAL_URL,
+    PRESERVE_SHELL_STATE,
 }
 interface Page {
     [PageProp.SCRIPT]: () => PageScriptImport;
@@ -66,6 +67,7 @@ interface Page {
     [PageProp.SCRIPT_CACHED]?: PageScript;
     [PageProp.SESSION_STORAGE]?: boolean;
     [PageProp.CUSTOM_CANONICAL_URL]?: boolean;
+    [PageProp.PRESERVE_SHELL_STATE]?: boolean;
 }
 
 const loadingBar = createDivElement();
@@ -105,7 +107,7 @@ const pages = {
     [MESSAGE_URI]: {
         [PageProp.SCRIPT]: () => Promise.resolve(messagePageScript),
         [PageProp.SCRIPT_CACHED]: messagePageScript,
-        [PageProp.CUSTOM_CANONICAL_URL]: true,
+        [PageProp.PRESERVE_SHELL_STATE]: true,
     },
     [MY_ACCOUNT_URI]: {
         [PageProp.SCRIPT]: () => import('../my_account'),
@@ -155,8 +157,7 @@ const directories = {
 function load(url: string, withoutHistory: boolean | null = false) {
     let uri = parseURI(url);
     if (uri === null) {
-        loadPage(url, withoutHistory, page404, getFullPath());
-        return;
+        throw new Error('Invalid URL: ' + url);
     }
 
     if (objectKeyExists(uri, pages)) {
@@ -185,11 +186,13 @@ async function loadPage(url: string, withoutHistory: boolean | null, page: Page,
     replaceChildren(body);
     setClass(body, '');
 
-    if (withoutHistory !== null) {
-        changeURL(url, withoutHistory);
+    if (page[PageProp.PRESERVE_SHELL_STATE] !== true) {
+        if (withoutHistory !== null) {
+            changeURL(url, withoutHistory);
+        }
+        setOgUrl(page[PageProp.CUSTOM_CANONICAL_URL] === true ? TOP_URI : canonicalUri);
+        setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
     }
-    setOgUrl(page[PageProp.CUSTOM_CANONICAL_URL] === true ? TOP_URI : canonicalUri);
-    setTitle((page[PageProp.TITLE] === undefined ? '' : (page[PageProp.TITLE] + ' | ')) + TOP_DOMAIN + (DEVELOPMENT ? ' (alpha)' : ''));
 
     if (page[PageProp.SESSION_STORAGE] !== true) {
         clearSessionStorage();
