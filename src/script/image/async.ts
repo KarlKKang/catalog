@@ -25,6 +25,7 @@ import { MessageParamKey } from '../module/message/type';
 import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
 import { addOffloadCallback } from '../module/global/offload';
 import { removeTimeout } from '../module/timer/remove/timeout';
+import { closeWindow } from '../module/dom/window/close';
 
 export default function (baseURL: string, fileName: string, startTime: HighResTimestamp) {
     const container = createDivElement();
@@ -41,7 +42,7 @@ export default function (baseURL: string, fileName: string, startTime: HighResTi
     const closeButton = createStyledButtonElement(closeButtonText);
     addClass(closeButton, styles.backButton);
     addEventListener(closeButton, 'click', () => {
-        w.close();
+        closeWindow();
     });
     appendChild(body, closeButton);
 

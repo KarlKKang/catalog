@@ -16,6 +16,9 @@ import { MessageParamKey } from './module/message/type';
 import { TOP_URI } from './module/env/uri';
 import { getMessageParam } from './module/message';
 import { importModule } from './module/import_module';
+import { closeButtonText } from './module/text/button/close';
+import { appendText } from './module/dom/element/text/append';
+import { closeWindow } from './module/dom/window/close';
 
 export default function (showPage: ShowPageFunc) {
     const messageParam = getMessageParam();
@@ -73,10 +76,16 @@ function createMessageElements(title: string, titleColor: CSS_COLOR, message: st
     addClass(messageElem, styles.body);
     appendChildren(container, titleElem, messageElem);
 
-    if (buttonText !== null) {
-        const button = createStyledButtonElement(buttonText);
-        horizontalCenter(button);
-        appendChild(container, button);
+    const button = createStyledButtonElement();
+    horizontalCenter(button);
+    appendChild(container, button);
+    if (buttonText === null) {
+        appendText(button, closeButtonText);
+        addEventListener(button, 'click', () => {
+            closeWindow();
+        });
+    } else {
+        appendText(button, buttonText);
         addEventListener(button, 'click', () => {
             redirectSameOrigin(url, true);
         });
