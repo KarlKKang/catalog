@@ -3,14 +3,13 @@ import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
-import { setHistoryState } from '../module/dom/location/set/history_state';
 import { w } from '../module/dom/window';
 import { isbot } from 'isbot';
 import { type ShowPageFunc } from '../module/global/type';
 import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { parseSeriesInfo } from '../module/type/SeriesInfo';
-import { getURLKeywords, search } from './shared';
+import { getURLKeywords, search, setURLKeywords } from './shared';
 import { importModule } from '../module/import_module';
 import { TOP_URI } from '../module/env/uri';
 import { joinHttpForms } from '../module/string/http_form/join';
@@ -31,7 +30,7 @@ export default function (showPage: ShowPageFunc) {
             redirectSameOrigin(TOP_URI);
             return;
         }
-        setHistoryState(TOP_URI);
+        setURLKeywords('');
         search(true);
     });
 

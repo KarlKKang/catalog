@@ -17,12 +17,10 @@ import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
 import { body } from '../module/dom/body';
 import { getURI } from '../module/dom/location/get/uri';
-import { setHistoryState } from '../module/dom/location/set/history_state';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { addEventListener } from '../module/event_listener/add';
 import { initializeInfiniteScrolling, InfiniteScrollingProp } from '../module/infinite_scrolling';
 import { toLocalTimeString } from '../module/string/local_time';
-import { buildURI } from '../module/string/uri/build';
 import { joinHttpForms } from '../module/string/http_form/join';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { addTimeout } from '../module/timer/add/timeout';
@@ -42,10 +40,10 @@ import { lineClamp as lineClampClass } from '../../css/line_clamp.module.scss';
 import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntryKey } from '../module/type/SeriesInfo';
 import { MaintenanceInfoKey } from '../module/type/MaintenanceInfo';
 import { attachLazyload, offload as offloadLazyload } from '../module/lazyload';
-import { getURLKeywords, setSearch } from './shared';
+import { getURLKeywords, setSearch, setURLKeywords } from './shared';
 import { getServerOrigin } from '../module/env/location/get/origin/server';
 import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
-import { BANGUMI_ROOT_URI, NEWS_ROOT_URI, TOP_URI } from '../module/env/uri';
+import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/CurrentRouteInfo';
 import { min } from '../module/math';
 import type { Timeout } from '../module/timer/type';
@@ -234,9 +232,7 @@ function search(
         searchBarInput.value = keywords;
     } else {
         keywords = searchBarInput.value.substring(0, 50);
-        setHistoryState(
-            buildURI(TOP_URI, buildHttpForm({ keywords: keywords })),
-        );
+        setURLKeywords(keywords);
     }
 
     setOpacity(containerElem, 0);
