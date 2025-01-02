@@ -14,8 +14,10 @@ import { NewsInfoKey, parseNewsInfo } from '../module/type/NewsInfo';
 import { importModule } from '../module/import_module';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { buildHttpForm } from '../module/string/http_form/build';
+import { setOgUrl } from '../module/dom/document/og/url/set';
 
 export default function (showPage: ShowPageFunc) {
+    setOgUrl(NEWS_ROOT_URI);
     const newsID = getNewsID();
     if (newsID === null || !/^[a-zA-Z0-9~_-]{8,}$/.test(newsID)) {
         if (getURI() !== NEWS_ROOT_URI) {

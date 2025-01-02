@@ -35,8 +35,10 @@ import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { addTimeout } from '../module/timer/add/timeout';
 import { getHighResTimestamp, type HighResTimestamp } from '../module/time/hi_res';
 import { mediaLoadError } from '../module/message/param/media_load_error';
+import { setOgUrl } from '../module/dom/document/og/url/set';
 
 export default function (newsInfo: NewsInfo, newsID: string, startTime: HighResTimestamp): void {
+    setOgUrl(NEWS_ROOT_URI + newsID);
     const title = newsInfo[NewsInfoKey.TITLE];
     setTitle(title + ' | ' + getTitle());
 
