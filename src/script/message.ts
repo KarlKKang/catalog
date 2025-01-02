@@ -17,7 +17,6 @@ import { TOP_URI } from './module/env/uri';
 import { getMessageParam } from './module/message';
 import { importModule } from './module/import_module';
 import { closeButtonText } from './module/text/button/close';
-import { appendText } from './module/dom/element/text/append';
 import { closeWindow } from './module/dom/window/close';
 
 export default function (showPage: ShowPageFunc) {
@@ -37,13 +36,13 @@ export default function (showPage: ShowPageFunc) {
         [MessageParamKey.TITLE]: title,
         [MessageParamKey.COLOR]: color,
         [MessageParamKey.URL]: url,
-        [MessageParamKey.BUTTON_TEXT]: buttonText,
+        [MessageParamKey.BUTTON]: button,
         [MessageParamKey.LOGOUT]: logoutParam,
     } = messageParam;
 
     const callback = () => {
         showPage();
-        createMessageElements(title, color, message, buttonText, url);
+        createMessageElements(title, color, message, button, url);
     };
 
     if (logoutParam) {
@@ -64,7 +63,7 @@ export default function (showPage: ShowPageFunc) {
     callback();
 }
 
-function createMessageElements(title: string, titleColor: CSS_COLOR, message: string | HTMLElement, buttonText: string | null, url: string) {
+function createMessageElements(title: string, titleColor: CSS_COLOR, message: string | HTMLElement, button: string | HTMLButtonElement | null, url: string) {
     const container = createDivElement();
     addClass(container, styles.container);
     appendChild(body, container);
@@ -76,18 +75,19 @@ function createMessageElements(title: string, titleColor: CSS_COLOR, message: st
     addClass(messageElem, styles.body);
     appendChildren(container, titleElem, messageElem);
 
-    const button = createStyledButtonElement();
-    horizontalCenter(button);
-    appendChild(container, button);
-    if (buttonText === null) {
-        appendText(button, closeButtonText);
+    if (button === null) {
+        button = createStyledButtonElement(closeButtonText);
         addEventListener(button, 'click', () => {
             closeWindow();
         });
     } else {
-        appendText(button, buttonText);
+        if (!(button instanceof HTMLElement)) {
+            button = createStyledButtonElement(button);
+        }
         addEventListener(button, 'click', () => {
             redirectSameOrigin(url, true);
         });
     }
+    horizontalCenter(button);
+    appendChild(container, button);
 }

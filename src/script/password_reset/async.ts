@@ -127,7 +127,7 @@ export default function (user: string, signature: string, expires: string) {
                         [MessageParamKey.MESSAGE]: passwordChanged,
                         [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
                         [MessageParamKey.URL]: LOGIN_URI,
-                        [MessageParamKey.BUTTON_TEXT]: nextButtonText,
+                        [MessageParamKey.BUTTON]: nextButtonText,
                     });
                 } else {
                     showMessage(invalidResponse());

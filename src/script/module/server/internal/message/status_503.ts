@@ -9,7 +9,7 @@ export function status503(maintenanceInfo: MaintenanceInfo) {
         [MessageParamKey.TITLE]: 'メンテナンス中',
         [MessageParamKey.MESSAGE]: status503Body(maintenanceInfo),
         [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
-        [MessageParamKey.BUTTON_TEXT]: reloadButtonText,
+        [MessageParamKey.BUTTON]: reloadButtonText,
     };
 };
 

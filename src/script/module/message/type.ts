@@ -5,7 +5,7 @@ export const enum MessageParamKey {
     TITLE,
     COLOR,
     URL,
-    BUTTON_TEXT,
+    BUTTON,
     LOGOUT,
     REPLACE_BODY,
     __LENGTH,
@@ -16,6 +16,6 @@ export interface MessageParam {
     [MessageParamKey.TITLE]?: string;
     [MessageParamKey.COLOR]?: CSS_COLOR;
     [MessageParamKey.URL]?: string;
-    [MessageParamKey.BUTTON_TEXT]?: string | null;
+    [MessageParamKey.BUTTON]?: string | HTMLButtonElement | null;
     [MessageParamKey.LOGOUT]?: boolean;
 }

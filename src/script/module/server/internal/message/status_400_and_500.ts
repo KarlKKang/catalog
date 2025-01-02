@@ -10,7 +10,7 @@ import { setErrorMessageRedirectUrl } from '../../../message/param/helper/set_er
 export function status400And500(responseText: string) {
     const param = {
         [MessageParamKey.MESSAGE]: status400And500Body(responseText),
-        [MessageParamKey.BUTTON_TEXT]: reloadButtonText,
+        [MessageParamKey.BUTTON]: reloadButtonText,
     };
     setErrorMessageRedirectUrl(param);
     return param;

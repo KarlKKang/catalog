@@ -15,7 +15,7 @@ export function showMessage({
     [MessageParamKey.TITLE]: title,
     [MessageParamKey.COLOR]: color,
     [MessageParamKey.URL]: url,
-    [MessageParamKey.BUTTON_TEXT]: buttonText,
+    [MessageParamKey.BUTTON]: buttonText,
     [MessageParamKey.LOGOUT]: logout,
 }: MessageParam) {
     if (buttonText !== null) {
@@ -26,7 +26,7 @@ export function showMessage({
         [MessageParamKey.TITLE]: title ?? defaultErrorTitle,
         [MessageParamKey.COLOR]: color ?? CSS_COLOR.RED,
         [MessageParamKey.URL]: url ?? getFullPath(),
-        [MessageParamKey.BUTTON_TEXT]: buttonText,
+        [MessageParamKey.BUTTON]: buttonText,
         [MessageParamKey.LOGOUT]: logout ?? false,
     };
     redirectSameOrigin(MESSAGE_URI, true);

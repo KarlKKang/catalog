@@ -163,7 +163,7 @@ export default function (param: string) {
                             [MessageParamKey.MESSAGE]: 'メールアドレスが変更されました。',
                             [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
                             [MessageParamKey.URL]: TOP_URI,
-                            [MessageParamKey.BUTTON_TEXT]: 'トップページへ',
+                            [MessageParamKey.BUTTON]: 'トップページへ',
                         });
                         break;
                     default:

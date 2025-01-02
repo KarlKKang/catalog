@@ -15,7 +15,7 @@ export default function () {
             [MessageParamKey.MESSAGE]: '一部のコンテンツが正常に再生されない場合は、Safari 12またはChrome 79以降のブラウザをお使いください。',
             [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
             [MessageParamKey.URL]: forwardURL,
-            [MessageParamKey.BUTTON_TEXT]: nextButtonText,
+            [MessageParamKey.BUTTON]: nextButtonText,
         });
     } else {
         redirectSameOrigin(forwardURL, true);

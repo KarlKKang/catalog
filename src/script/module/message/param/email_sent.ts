@@ -10,7 +10,7 @@ export const emailSent = (goBackUrl?: string) => {
         [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
     };
     if (goBackUrl === undefined) {
-        param[MessageParamKey.BUTTON_TEXT] = null;
+        param[MessageParamKey.BUTTON] = null;
     } else {
         param[MessageParamKey.URL] = goBackUrl;
     }
