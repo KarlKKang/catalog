@@ -2,10 +2,10 @@
 
 set -e
 
-directory="./dist"
+directory="./dev"
 
-if [[ "$1" == "dev" ]]; then
-    directory="./dev"
+if [[ "$BUILD" == "production" ]]; then
+    directory="./dist"
 fi
 
 mv $directory/index.html ./temp/index.html

@@ -1,10 +1,10 @@
 import * as fs from './file_system.js';
 
-const dev = process.argv[2] === 'dev';
+const BUILD = process.env.BUILD;
 
-let directory = './dist/';
-if (dev) {
-    directory = './dev/';
+let directory = './dev/';
+if (BUILD === 'production') {
+    directory = './dist/';
 }
 
 const removeContent = {

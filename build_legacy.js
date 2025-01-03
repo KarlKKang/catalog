@@ -4,11 +4,11 @@ import cssMinify from './css_minifier.js';
 import * as fs from './file_system.js';
 
 process.env.BROWSERSLIST_ENV = 'legacy';
-const dev = process.argv[2] === 'dev';
+const BUILD = process.env.BUILD;
 
-let destDirPrefix = './dist/';
-if (dev) {
-    destDirPrefix = './dev/';
+let destDirPrefix = './dev/';
+if (BUILD === 'production') {
+    destDirPrefix = './dist/';
 }
 
 const srcFile = './src/script/browser.js';
@@ -22,7 +22,7 @@ fs.read(srcFile, function (code) {
                 console.error(err);
                 return;
             }
-            if (dev) {
+            if (BUILD === 'alpha') {
                 fs.write(destFile, result.code);
                 return;
             }

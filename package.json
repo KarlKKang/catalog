@@ -7,8 +7,9 @@
   "type": "module",
   "scripts": {
     "build:font": "python3 build_font.py",
-    "build": "npm run lint && npm run check-circular && node build_legacy.js && sh pre_favicon.sh && webpack --progress --config webpack.prod.js --config-name main && node post_favicon.js && webpack --progress --config webpack.prod.js --config-name sw && sh check_syntax.sh dist/**/*.js",
-    "build-dev": "npm run lint && npm run check-circular && node build_legacy.js dev && sh pre_favicon.sh dev && webpack --progress --config webpack.dev.js --config-name main && node post_favicon.js dev && webpack --progress --config webpack.dev.js --config-name sw && sh check_syntax.sh dev/**/*.js",
+    "build": "BUILD='production' sh build.sh",
+    "build-alpha": "BUILD='alpha' sh build.sh",
+    "build-beta": "BUILD='beta' sh build.sh",
     "build:hls.js": "cd hls.js && ALT_AUDIO=1 npm run build",
     "lint": "npx eslint src/script/",
     "lint:fix": "npm run lint -- --fix",

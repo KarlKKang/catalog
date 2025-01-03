@@ -10,8 +10,8 @@ import { dirname } from 'path';
 import { readSync } from './file_system.js';
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
 
-function addFaviconPlugin(config, dev) {
-    const appName = WEBSITE_NAME(dev);
+function addFaviconPlugin(config, build) {
+    const appName = WEBSITE_NAME(build !== 'production');
     config.plugins.push(
         new FaviconsWebpackPlugin({
             logo: './src/icon/icon.png',
@@ -37,8 +37,8 @@ function addFaviconPlugin(config, dev) {
     );
 }
 
-function addMiniCssExtractPlugin(config, dev) {
-    const filenameTemplate = dev ? 'style/[id].css' : 'style/[contenthash:6].css';
+function addMiniCssExtractPlugin(config, build) {
+    const filenameTemplate = build === 'alpha' ? 'style/[id].css' : 'style/[contenthash:6].css';
     config.plugins.push(
         new MiniCssExtractPlugin({
             filename: filenameTemplate,
@@ -47,7 +47,8 @@ function addMiniCssExtractPlugin(config, dev) {
     );
 }
 
-function addHTMLConfig(config, dev) {
+function addHTMLConfig(config, build) {
+    const dev = build !== 'production';
     const pageTitle = WEBSITE_NAME(dev);
     const domain = WEBSITE_SUBDOMAIN_PREFIX(dev) + TOP_DOMAIN + WEBSITE_PORT_SUFFIX(dev);
 
@@ -79,20 +80,21 @@ function addHTMLConfig(config, dev) {
     );
 };
 
-function addFontLoader(config, dev) {
+function addFontLoader(config, build) {
     config.module.rules.push({
         test: /\.woff2?$/i,
         type: 'asset/resource',
         generator: {
-            filename: 'font/' + (dev ? '[file]' : '[hash:5][ext]')
+            filename: 'font/' + (build !== 'production' ? '[file]' : '[hash:5][ext]')
         }
     });
 }
 
-function addDefinePlugin(config, dev) {
+function addDefinePlugin(config, build) {
+    const dev = build !== 'production';
     config.plugins.push(
         new webpack.DefinePlugin({
-            ENABLE_DEBUG: JSON.stringify(dev),
+            ENABLE_DEBUG: JSON.stringify(build === 'alpha'),
             ENV_TOP_DOMAIN: JSON.stringify(TOP_DOMAIN),
             ENV_WEBSITE_SUBDOMAIN_PREFIX: JSON.stringify(WEBSITE_SUBDOMAIN_PREFIX(dev)),
             ENV_WEBSITE_PORT_SUFFIX: JSON.stringify(WEBSITE_PORT_SUFFIX(dev)),
@@ -101,8 +103,8 @@ function addDefinePlugin(config, dev) {
     );
 }
 
-function addWorkboxPlugin(config, dev) {
-    const destDir = dev ? 'dev/' : 'dist/';
+function addWorkboxPlugin(config, build) {
+    const destDir = build === 'production' ? 'dist/' : 'dev/';
     const browserScript = destDir + 'script/browser.js';
     const buffer = readSync(browserScript);
     const hash = crypto.createHash('md5');
@@ -117,7 +119,7 @@ function addWorkboxPlugin(config, dev) {
             cleanupOutdatedCaches: true,
             clientsClaim: true,
             directoryIndex: null,
-            swDest: '../temp/' + (dev ? 'sw_alpha.js' : 'sw.js'),
+            swDest: '../temp/sw_' + build + '.js',
             navigateFallback: '/',
             navigateFallbackDenylist: [/^\/unsupported_browser$/],
             babelPresetEnvTargets: ['last 1 Chrome versions'], // Will be transpiled separately
@@ -238,7 +240,7 @@ function getLocalIdent(context, _, localName) {
     return ident;
 }
 
-function addCssLoader(config, dev) {
+function addCssLoader(config, build) {
     config.module.rules.push(
         {
             test: /(?<!\.module)\.s?css$/i,
@@ -258,7 +260,7 @@ function addCssLoader(config, dev) {
                         modules: {
                             exportLocalsConvention: 'camel-case-only',
                             localIdentName: '[path][name]__[local]',
-                            getLocalIdent: dev ? undefined : getLocalIdent,
+                            getLocalIdent: build === 'alpha' ? undefined : getLocalIdent,
                         }
                     }
                 }
@@ -273,14 +275,14 @@ function addCssLoader(config, dev) {
     );
 }
 
-export function addPlugins(config, dev) {
-    addFaviconPlugin(config, dev);
-    addMiniCssExtractPlugin(config, dev);
-    addDefinePlugin(config, dev);
-    addHTMLConfig(config, dev);
-    addFontLoader(config, dev);
-    addWorkboxPlugin(config, dev);
-    addCssLoader(config, dev);
+export function addPlugins(config, build) {
+    addFaviconPlugin(config, build);
+    addMiniCssExtractPlugin(config, build);
+    addDefinePlugin(config, build);
+    addHTMLConfig(config, build);
+    addFontLoader(config, build);
+    addWorkboxPlugin(config, build);
+    addCssLoader(config, build);
 }
 
 export function getDirname() {
