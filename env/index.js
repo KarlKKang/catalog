@@ -6,3 +6,6 @@ export function WEBSITE_SUBDOMAIN_PREFIX(dev) {
 export function WEBSITE_PORT_SUFFIX(dev) {
     return '';
 }
+export function WEBSITE_NAME(dev) {
+    return TOP_DOMAIN + (dev ? ' (alpha)' : '');
+}
