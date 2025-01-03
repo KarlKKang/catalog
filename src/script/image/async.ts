@@ -36,7 +36,7 @@ export default function (baseURL: string, fileName: string, startTime: HighResTi
     removeRightClick(container);
 
     addOffloadCallback(offloadImageLoader);
-    loadImage(container, baseURL, fileName, startTime);
+    loadImage(container, baseURL, fileName, startTime, originURL);
 
     const closeButton = createStyledButtonElement(closeButtonText);
     addClass(closeButton, styles.backButton);
@@ -82,8 +82,8 @@ export default function (baseURL: string, fileName: string, startTime: HighResTi
     );
 }
 
-function loadImage(container: HTMLElement, baseURL: string, fileName: string, startTime: HighResTimestamp, retryCount = 3, retryTimeout = 500) {
-    const errorMessage = mediaLoadError(null);
+function loadImage(container: HTMLElement, baseURL: string, fileName: string, startTime: HighResTimestamp, originURL: string, retryCount = 3, retryTimeout = 500) {
+    const errorMessage = mediaLoadError(originURL, true);
     if (getHighResTimestamp() - startTime >= 30000) {
         showMessage(errorMessage);
         return;
@@ -106,7 +106,7 @@ function loadImage(container: HTMLElement, baseURL: string, fileName: string, st
                 return;
             }
             addTimeout(() => {
-                loadImage(container, baseURL, fileName, startTime, retryCount, retryTimeout * 2);
+                loadImage(container, baseURL, fileName, startTime, originURL, retryCount, retryTimeout * 2);
             }, retryTimeout);
         },
         () => {

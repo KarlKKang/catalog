@@ -6,10 +6,11 @@ import { defaultErrorSuffix } from '../../../text/default_error/suffix';
 import { getServerErrorMessageTemplate } from '../../../message/param/helper/get_server_error_message_template';
 import { MessageParamKey } from '../../../message/type';
 
-export function status400And500(responseText: string) {
-    const param = getServerErrorMessageTemplate();
-    param[MessageParamKey.MESSAGE] = status400And500Body(responseText);
-    return param;
+export function status400And500(responseText: string, closeWindowSetting: true | string | undefined) {
+    return {
+        [MessageParamKey.MESSAGE]: status400And500Body(responseText),
+        ...getServerErrorMessageTemplate(closeWindowSetting),
+    };
 };
 
 function status400And500Body(responseText: string) {

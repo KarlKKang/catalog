@@ -1,6 +1,6 @@
 import { getServerOrigin } from '../env/location/get/origin/server';
 import { showMessage } from '../message';
-import { connectionError } from '../message/param/connection_error';
+import { connectionError } from './internal/message/connection_error';
 import { unknownServerError } from './internal/message/unknown_server_error';
 import { status400And500 } from './internal/message/status_400_and_500';
 import { status503 } from './internal/message/status_503';
@@ -25,6 +25,7 @@ import { newFileReader } from '../file_reader/new';
 import { abortFileReader } from '../file_reader/abort';
 import { getFullPath } from '../dom/location/get/full_path';
 import { buildHttpForm } from '../string/http_form/build';
+import { invalidResponse } from '../message/param/invalid_response';
 
 export const enum ServerRequestOptionKey {
     CALLBACK,
@@ -35,6 +36,7 @@ export const enum ServerRequestOptionKey {
     CONNECTION_ERROR_RETRY_TIMEOUT,
     SHOW_UNAUTHORIZED_MESSAGE,
     TIMEOUT,
+    CLOSE_WINDOW_ON_ERROR,
 }
 interface ServerRequestOption<T extends string | Blob> {
     readonly [ServerRequestOptionKey.CALLBACK]?: (response: T, xhr: XMLHttpRequest) => void | Promise<void>;
@@ -45,6 +47,7 @@ interface ServerRequestOption<T extends string | Blob> {
     [ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
     readonly [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]?: boolean;
     readonly [ServerRequestOptionKey.TIMEOUT]?: number;
+    readonly [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]?: true | string;
 }
 
 export const enum ServerRequestKey {
@@ -161,7 +164,7 @@ abstract class ServerRequest<T extends string | Blob> {
         }
 
         if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] < 0) {
-            showMessage(connectionError());
+            showMessage(connectionError(options[ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]));
         } else {
             this[ServerRequestKey.RETRY_TIMEOUT] = addTimeout(() => {
                 this[ServerRequestKey.RETRY_TIMEOUT] = null;
@@ -173,11 +176,12 @@ abstract class ServerRequest<T extends string | Blob> {
 
     private [ServerRequestKey.HANDLE_ERROR](this: ServerRequest<T>, status: number, responseText: string) {
         const options = this[ServerRequestKey.OPTIONS];
+        const closeWindowOnError = options[ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR];
         if (status === 403) {
             if (responseText === 'SESSION ENDED') {
-                showMessage(sessionEnded());
+                showMessage(sessionEnded(closeWindowOnError));
             } else if (responseText === 'INSUFFICIENT PERMISSIONS') {
-                showMessage(insufficientPermissions());
+                showMessage(insufficientPermissions(closeWindowOnError));
             } else if (responseText === 'UNAUTHORIZED') {
                 let url = LOGIN_URI;
                 const redirectPath = getFullPath();
@@ -185,7 +189,7 @@ abstract class ServerRequest<T extends string | Blob> {
                     url = buildURI(url, buildHttpForm({ redirect: redirectPath }));
                 }
                 if (options[ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]) {
-                    showMessage(unauthorized(url));
+                    showMessage(unauthorized(url, closeWindowOnError));
                 } else {
                     redirectSameOrigin(url, true);
                 }
@@ -195,15 +199,19 @@ abstract class ServerRequest<T extends string | Blob> {
         } else if (status === 429) {
             showMessage(status429);
         } else if (status === 503) {
-            showMessage(status503(parseResponse(responseText, parseMaintenanceInfo)));
+            showMessage(
+                status503(
+                    parseResponse(responseText, parseMaintenanceInfo, invalidResponse(closeWindowOnError)),
+                ),
+            );
         } else if (status === 500 || status === 400) {
             if (responseText.startsWith('500 Internal Server Error') || responseText.startsWith('400 Bad Request')) {
-                showMessage(status400And500(responseText));
+                showMessage(status400And500(responseText, closeWindowOnError));
             } else {
-                showMessage(unknownServerError());
+                showMessage(unknownServerError(closeWindowOnError));
             }
         } else if (status === 404 && responseText === 'REJECTED') {
-            showMessage(notFound());
+            showMessage(notFound(closeWindowOnError));
         } else {
             this[ServerRequestKey.RETRY]();
         }
