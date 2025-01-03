@@ -29,7 +29,7 @@ export function showMessage({
         [MessageParamKey.BUTTON]: buttonText,
         [MessageParamKey.LOGOUT]: logout ?? false,
     };
-    redirectSameOrigin(MESSAGE_URI, true);
+    redirectSameOrigin(MESSAGE_URI);
 }
 
 export function getMessageParam() {
