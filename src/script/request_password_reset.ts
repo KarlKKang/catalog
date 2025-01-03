@@ -83,7 +83,7 @@ function showPageCallback() {
             redirectSameOrigin(backURL);
         });
     }
-    addClass(goBack, linkClass);
+    addClass(goBackText, linkClass);
     appendChild(goBack, goBackText);
     appendChild(container, goBack);
 
