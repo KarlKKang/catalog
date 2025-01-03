@@ -117,10 +117,11 @@ function showPageCallback() {
                 } else if (response === 'DONE') {
                     showMessage(emailSent(backURL ?? undefined));
                 } else {
-                    showMessage(invalidResponse());
+                    showMessage(invalidResponse(backURL === null ? true : undefined));
                 }
             },
             [ServerRequestOptionKey.CONTENT]: buildHttpForm({ email: email }),
+            ...backURL === null && { [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true },
         });
     }
 
