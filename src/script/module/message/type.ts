@@ -7,6 +7,7 @@ export const enum MessageParamKey {
     URL,
     BUTTON,
     LOGOUT,
+    REDIRECT_WITHOUT_HISTORY,
 }
 
 export interface MessageParam {
@@ -16,4 +17,5 @@ export interface MessageParam {
     [MessageParamKey.URL]?: string;
     [MessageParamKey.BUTTON]?: string | HTMLButtonElement | null;
     [MessageParamKey.LOGOUT]?: boolean;
+    [MessageParamKey.REDIRECT_WITHOUT_HISTORY]?: boolean;
 }

@@ -18,6 +18,10 @@ import { getMessageParam } from './module/message';
 import { importModule } from './module/import_module';
 import { closeButtonText } from './module/text/button/close';
 import { closeWindow } from './module/dom/window/close';
+import { defaultErrorSuffix } from './module/text/default_error/suffix';
+import { defaultErrorTitle } from './module/text/default_error/title';
+import { getFullPath } from './module/dom/location/get/full_path';
+import { goBackButtonText } from './module/text/button/go_back';
 
 export default function (showPage: ShowPageFunc) {
     const messageParam = getMessageParam();
@@ -63,15 +67,21 @@ export default function (showPage: ShowPageFunc) {
     callback();
 }
 
-function createMessageElements(title: string, titleColor: CSS_COLOR, message: string | HTMLElement, button: string | HTMLButtonElement | null, url: string) {
+function createMessageElements(
+    title: string | undefined,
+    titleColor: CSS_COLOR | undefined,
+    message: string | HTMLElement | undefined,
+    button: string | HTMLButtonElement | null | undefined,
+    url: string | undefined,
+) {
     const container = createDivElement();
     addClass(container, styles.container);
     appendChild(body, container);
 
-    const titleElem = createParagraphElement(title);
+    const titleElem = createParagraphElement(title ?? defaultErrorTitle);
     addClass(titleElem, styles.title);
-    changeColor(titleElem, titleColor);
-    const messageElem = message instanceof HTMLElement ? message : createParagraphElement(message);
+    changeColor(titleElem, titleColor ?? CSS_COLOR.RED);
+    const messageElem = message instanceof HTMLElement ? message : createParagraphElement(message ?? ('不明なエラーが発生しました。' + defaultErrorSuffix));
     addClass(messageElem, styles.body);
     appendChildren(container, titleElem, messageElem);
 
@@ -82,10 +92,10 @@ function createMessageElements(title: string, titleColor: CSS_COLOR, message: st
         });
     } else {
         if (!(button instanceof HTMLElement)) {
-            button = createStyledButtonElement(button);
+            button = createStyledButtonElement(button ?? goBackButtonText);
         }
         addEventListener(button, 'click', () => {
-            redirectSameOrigin(url, true);
+            redirectSameOrigin(url ?? getFullPath(), true);
         });
     }
     horizontalCenter(button);
