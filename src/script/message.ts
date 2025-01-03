@@ -28,7 +28,7 @@ export default function (showPage: ShowPageFunc) {
     if (messageParam === null) {
         if (DEVELOPMENT) {
             showPage();
-            createMessageElements('タイトルTitle', CSS_COLOR.ORANGE, 'メッセージMessage'.repeat(10), 'ボタンButton', TOP_URI);
+            createMessageElements('タイトルTitle', CSS_COLOR.ORANGE, 'メッセージMessage'.repeat(10), 'ボタンButton', TOP_URI, false);
         } else {
             redirectSameOrigin(TOP_URI, true);
         }
@@ -42,11 +42,12 @@ export default function (showPage: ShowPageFunc) {
         [MessageParamKey.URL]: url,
         [MessageParamKey.BUTTON]: button,
         [MessageParamKey.LOGOUT]: logoutParam,
+        [MessageParamKey.REDIRECT_WITHOUT_HISTORY]: redirectWithoutHistory,
     } = messageParam;
 
     const callback = () => {
         showPage();
-        createMessageElements(title, color, message, button, url);
+        createMessageElements(title, color, message, button, url, redirectWithoutHistory);
     };
 
     if (logoutParam) {
@@ -73,6 +74,7 @@ function createMessageElements(
     message: string | HTMLElement | undefined,
     button: string | HTMLButtonElement | null | undefined,
     url: string | undefined,
+    redirectWithoutHistory: boolean | undefined,
 ) {
     const container = createDivElement();
     addClass(container, styles.container);
@@ -95,7 +97,7 @@ function createMessageElements(
             button = createStyledButtonElement(button ?? goBackButtonText);
         }
         addEventListener(button, 'click', () => {
-            redirectSameOrigin(url ?? getFullPath(), true);
+            redirectSameOrigin(url ?? getFullPath(), redirectWithoutHistory);
         });
     }
     horizontalCenter(button);
