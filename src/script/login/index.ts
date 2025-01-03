@@ -9,8 +9,8 @@ import { addTimeout } from '../module/timer/add/timeout';
 import { importModule } from '../module/import_module';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
-import { TOP_URI } from '../module/env/uri';
 import { removeTimeout } from '../module/timer/remove/timeout';
+import { getForwardURL } from './helper';
 
 export default function (showPage: ShowPageFunc) {
     let approvedCallbackImportPromise: Promise<typeof import(
@@ -36,7 +36,7 @@ export default function (showPage: ShowPageFunc) {
     sendServerRequest('get_authentication_state', {
         [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
             if (response === 'APPROVED') {
-                redirectSameOrigin(TOP_URI, true);
+                redirectSameOrigin(getForwardURL(), true);
             } else if (response === 'FAILED') {
                 const currentPgid = pgid;
                 const asyncModule = await asyncModulePromise;

@@ -4,11 +4,10 @@ import { redirectSameOrigin } from '../module/global/redirect';
 import { nextButtonText } from '../module/text/button/next';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
-import { TOP_URI } from '../module/env/uri';
-import { getSearchParam } from '../module/dom/location/get/search_param';
+import { getForwardURL } from './helper';
 
 export default function () {
-    const forwardURL = getSearchParam('redirect') ?? TOP_URI;
+    const forwardURL = getForwardURL();
     if (UNRECOMMENDED_BROWSER) {
         showMessage({
             [MessageParamKey.TITLE]: 'お使いのブラウザは推奨環境ではありません',
