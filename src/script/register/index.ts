@@ -3,12 +3,10 @@ import { getSearchParam } from '../module/dom/location/get/search_param';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param/expired';
 import { type ShowPageFunc } from '../module/global/type';
-import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { importModule } from '../module/import_module';
 import { emailAlreadyRegistered } from './shared';
-import { LOGIN_URI } from '../module/env/uri';
 import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
@@ -33,7 +31,7 @@ export default function (showPage: ShowPageFunc) {
         if (DEVELOPMENT) {
             runAsyncModule(getAsyncModulePromise(), 'test');
         } else {
-            redirectSameOrigin(LOGIN_URI, true);
+            showMessage(expired);
         }
         return;
     }
