@@ -1,5 +1,5 @@
 import { htmlMinifyOptions } from './build_config.js';
-import { DOMAIN, DESCRIPTION } from './env/index.js';
+import { TOP_DOMAIN, DESCRIPTION } from './env/index.js';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 import { GenerateSW } from 'workbox-webpack-plugin';
@@ -11,7 +11,7 @@ import { readSync } from './file_system.js';
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
 
 function getWebsiteName(dev) {
-    return DOMAIN + (dev ? ' (alpha)' : '');
+    return TOP_DOMAIN + (dev ? ' (alpha)' : '');
 }
 
 function addFaviconPlugin(config, dev) {
@@ -27,8 +27,8 @@ function addFaviconPlugin(config, dev) {
                 appName: appName,
                 appShortName: appName,
                 appDescription: DESCRIPTION,
-                developerName: DOMAIN,
-                developerURL: 'https://' + DOMAIN,
+                developerName: TOP_DOMAIN,
+                developerURL: 'https://' + TOP_DOMAIN,
                 lang: "ja-JP",
                 start_url: "/",
                 theme_color: "%remove%",
@@ -53,7 +53,7 @@ function addMiniCssExtractPlugin(config, dev) {
 
 function addHTMLConfig(config, dev) {
     const pageTitle = getWebsiteName(dev);
-    const domain = (dev ? 'alpha.' : '') + DOMAIN;
+    const domain = (dev ? 'alpha.' : '') + TOP_DOMAIN;
 
     config.plugins.push(
         new HtmlWebpackPlugin({
@@ -97,7 +97,7 @@ function addDefinePlugin(config, dev) {
     config.plugins.push(
         new webpack.DefinePlugin({
             DEVELOPMENT: JSON.stringify(dev),
-            ENV_DOMAIN: JSON.stringify(DOMAIN),
+            ENV_TOP_DOMAIN: JSON.stringify(TOP_DOMAIN),
         })
     );
 }

@@ -1,2 +1,2 @@
-declare const ENV_DOMAIN: string;
+declare const ENV_TOP_DOMAIN: string;
 declare const DEVELOPMENT: boolean;
