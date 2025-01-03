@@ -1,5 +1,4 @@
 import { MessageParamKey } from '../type';
-import { TOP_URI } from '../../env/uri';
 import { createEmailLink } from '../../dom/element/email_link/create';
 import { appendListItems } from '../../dom/element/list/append_item';
 import { createLIElement } from '../../dom/element/list/li/create';
@@ -11,13 +10,13 @@ import { appendText } from '../../dom/element/text/append';
 import { createParagraphElement } from '../../dom/element/paragraph/create';
 import { appendChild } from '../../dom/node/append_child';
 import { CSS_TEXT_ALIGN, setTextAlign } from '../../style/text_align';
+import { getServerErrorMessageTemplate } from './helper/get_server_error_message_template';
 
 export function connectionError() {
-    return {
-        [MessageParamKey.TITLE]: 'サーバーに接続できません',
-        [MessageParamKey.MESSAGE]: connectionErrorBody(),
-        [MessageParamKey.URL]: TOP_URI, // In case of request containing malicious string, the page needs to be reset to the top page.
-    };
+    const param = getServerErrorMessageTemplate();
+    param[MessageParamKey.TITLE] = 'サーバーに接続できません';
+    param[MessageParamKey.MESSAGE] = connectionErrorBody();
+    return param;
 }
 
 function connectionErrorBody() {

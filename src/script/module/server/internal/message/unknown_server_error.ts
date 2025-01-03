@@ -1,5 +1,5 @@
-import { getServerErrorMessageParam } from '../../../message/param/helper/get_server_error_message_param';
+import { getServerErrorMessageTemplate } from '../../../message/param/helper/get_server_error_message_template';
 
 export function unknownServerError() {
-    return getServerErrorMessageParam();
+    return getServerErrorMessageTemplate();
 };

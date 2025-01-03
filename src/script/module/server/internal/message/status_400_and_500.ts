@@ -3,10 +3,13 @@ import { createParagraphElement } from '../../../dom/element/paragraph/create';
 import { appendText } from '../../../dom/element/text/append';
 import { appendChild } from '../../../dom/node/append_child';
 import { defaultErrorSuffix } from '../../../text/default_error/suffix';
-import { getServerErrorMessageParam } from '../../../message/param/helper/get_server_error_message_param';
+import { getServerErrorMessageTemplate } from '../../../message/param/helper/get_server_error_message_template';
+import { MessageParamKey } from '../../../message/type';
 
 export function status400And500(responseText: string) {
-    return getServerErrorMessageParam(status400And500Body(responseText));
+    const param = getServerErrorMessageTemplate();
+    param[MessageParamKey.MESSAGE] = status400And500Body(responseText);
+    return param;
 };
 
 function status400And500Body(responseText: string) {
