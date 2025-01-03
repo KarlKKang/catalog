@@ -68,7 +68,7 @@ function createMessageElements(
     if (button === null) {
         button = createStyledButtonElement(closeButtonText);
         addEventListener(button, 'click', () => {
-            closeWindow(TOP_URI);
+            closeWindow(url ?? TOP_URI);
         });
     } else {
         if (!(button instanceof HTMLElement)) {
