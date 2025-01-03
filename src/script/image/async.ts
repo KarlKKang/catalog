@@ -114,6 +114,7 @@ function loadImage(container: HTMLElement, baseURL: string, fileName: string, st
                 [MessageParamKey.TITLE]: '画像を表示できません',
                 [MessageParamKey.MESSAGE]: mediaIncompatibleSuffix,
                 [MessageParamKey.BUTTON]: null,
+                [MessageParamKey.URL]: originURL,
             });
         },
     );

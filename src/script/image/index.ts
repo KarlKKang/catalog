@@ -10,13 +10,14 @@ import { type ShowPageFunc } from '../module/global/type';
 import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { importModule } from '../module/import_module';
-import { IMAGE_URI, TOP_URI } from '../module/env/uri';
+import { IMAGE_URI } from '../module/env/uri';
 import { getHighResTimestamp } from '../module/time/hi_res';
 import { setOgUrl } from '../module/dom/document/og/url/set';
 import { setHistoryState } from '../module/dom/location/set/history_state';
 import { buildURI } from '../module/string/uri/build';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { getSearchParam } from '../module/dom/location/get/search_param';
+import { notFound } from '../module/message/param/not_found';
 
 export default function (showPage: ShowPageFunc) {
     const baseURL = getSessionStorage('base-url');
@@ -39,12 +40,16 @@ export default function (showPage: ShowPageFunc) {
         || originURL === null
     ) {
         const originURLQuery = getSearchParam('origin');
-        redirectSameOrigin(originURLQuery ?? TOP_URI, true);
+        if (originURLQuery === null) {
+            showMessage(notFound(true));
+        } else {
+            redirectSameOrigin(originURLQuery, true);
+        }
         return;
     }
 
     const uri = sessionType === ImageSessionTypes.MEDIA ? 'get_image' : 'get_news_image';
-    setUpSessionAuthentication(sessionCredential, getHighResTimestamp());
+    setUpSessionAuthentication(sessionCredential, getHighResTimestamp(), originURL);
     setTitle(title);
     setOgUrl(canonicalURL);
     setHistoryState(buildURI(
@@ -62,7 +67,7 @@ export default function (showPage: ShowPageFunc) {
     const serverRequest = sendServerRequest(uri, {
         [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
             if (response !== 'APPROVED') {
-                showMessage(invalidResponse());
+                showMessage(invalidResponse(originURL));
                 return;
             }
 
@@ -77,5 +82,6 @@ export default function (showPage: ShowPageFunc) {
         [ServerRequestOptionKey.CONTENT]: sessionCredential,
         [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         [ServerRequestOptionKey.TIMEOUT]: 30000,
+        [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: originURL,
     });
 }
