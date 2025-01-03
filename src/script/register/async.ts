@@ -170,10 +170,11 @@ export default function (param: string) {
                         [MessageParamKey.BUTTON]: nextButtonText,
                     });
                 } else {
-                    showMessage(invalidResponse());
+                    showMessage(invalidResponse(true));
                 }
             },
             [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: param, username: username, password: password }),
+            [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
         });
     }
 
