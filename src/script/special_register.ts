@@ -94,13 +94,14 @@ function showPageCallback() {
                     showMessage(emailSent());
                     return;
                 } else {
-                    showMessage(invalidResponse());
+                    showMessage(invalidResponse(true));
                     return;
                 }
                 showElement(warningElem);
                 disableAllInputs(false);
             },
             [ServerRequestOptionKey.CONTENT]: buildHttpForm({ special: 1, receiver: email }),
+            [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
         });
     }
 
