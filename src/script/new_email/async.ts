@@ -89,10 +89,11 @@ export default function (param: string) {
                 } else if (response === 'DONE') {
                     showMessage(emailSent());
                 } else {
-                    showMessage(invalidResponse());
+                    showMessage(invalidResponse(true));
                 }
             },
             [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: param, new: newEmail }),
+            [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
         });
     }
 
