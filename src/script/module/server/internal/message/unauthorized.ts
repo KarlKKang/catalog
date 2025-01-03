@@ -1,4 +1,4 @@
-import { getMessageRedirectParam } from '../../../message/param/helper/get_message_redirect_param';
+import { createMessageRedirectParam } from '../../../message/param/helper/create_redirect_param';
 import { MessageParamKey } from '../../../message/type';
 import { CSS_COLOR } from '../../../style/color';
 import { nextButtonText } from '../../../text/button/next';
@@ -10,7 +10,7 @@ export function unauthorized(url: string, closeWindowSetting: true | string | un
         [MessageParamKey.MESSAGE]: 'もう一度ログインしてください。',
         [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
         [MessageParamKey.REDIRECT_WITHOUT_HISTORY]: true,
-        ...getMessageRedirectParam(
+        ...createMessageRedirectParam(
             url,
             nextButtonText,
             closeWindowSetting === undefined ? closeWindowSetting : url,

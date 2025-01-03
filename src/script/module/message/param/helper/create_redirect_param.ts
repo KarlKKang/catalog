@@ -5,7 +5,7 @@ interface MessageRedirectParam {
     [MessageParamKey.BUTTON]?: Required<MessageParam>[MessageParamKey.BUTTON];
 }
 
-export function getMessageRedirectParam(
+export function createMessageRedirectParam(
     url: Required<MessageParam>[MessageParamKey.URL],
     button: MessageParam[MessageParamKey.BUTTON],
     closeWindowSetting: true | string | undefined,

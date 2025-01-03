@@ -10,13 +10,13 @@ import { appendText } from '../../../dom/element/text/append';
 import { createParagraphElement } from '../../../dom/element/paragraph/create';
 import { appendChild } from '../../../dom/node/append_child';
 import { CSS_TEXT_ALIGN, setTextAlign } from '../../../style/text_align';
-import { getServerErrorMessageTemplate } from '../../../message/param/helper/get_server_error_message_template';
+import { createServerErrorMessageRedirectParam } from '../../../message/param/helper/create_server_error_redirect_param';
 
 export function connectionError(closeWindowSetting: true | string | undefined) {
     return {
         [MessageParamKey.TITLE]: 'サーバーに接続できません',
         [MessageParamKey.MESSAGE]: connectionErrorBody(),
-        ...getServerErrorMessageTemplate(closeWindowSetting),
+        ...createServerErrorMessageRedirectParam(closeWindowSetting),
     };
 }
 
