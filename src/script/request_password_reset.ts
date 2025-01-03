@@ -82,7 +82,7 @@ function showPageCallback() {
     });
 
     addEventListener(goBackText, 'click', () => {
-        redirectSameOrigin(LOGIN_URI, true);
+        redirectSameOrigin(LOGIN_URI);
     });
 
     function submitRequest() {

@@ -105,7 +105,7 @@ export default function (
 
     addEventListener(submitButton, 'click', login);
     addEventListener(forgetPasswordLink, 'click', () => {
-        redirectSameOrigin(REQUEST_PASSWORD_RESET_URI, true);
+        redirectSameOrigin(REQUEST_PASSWORD_RESET_URI);
     });
 
     function login() {
