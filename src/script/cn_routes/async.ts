@@ -26,7 +26,7 @@ import { NEWS_ROOT_URI } from '../module/env/uri';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
 import { redirectSameOrigin } from '../module/global/redirect';
 import { newXhr } from '../module/xhr/new';
-import { TOP_DOMAIN } from '../module/env/domain';
+import { TOP_DOMAIN } from '../module/env/top_domain';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { buildURI } from '../module/string/uri/build';
 import { buildHttpForm } from '../module/string/http_form/build';

@@ -1,5 +1,5 @@
 import { d } from '..';
-import { TOP_DOMAIN } from '../../../env/domain';
+import { TOP_DOMAIN } from '../../../env/top_domain';
 import { setOgTitle } from '../og/title/set';
 
 let currentTitle = '';

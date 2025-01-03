@@ -1,6 +1,6 @@
 import { createEmailLink } from '../../dom/element/email_link/create';
 import { createTextNode } from '../../dom/element/text/create';
-import { TOP_DOMAIN } from '../../env/domain';
+import { TOP_DOMAIN } from '../../env/top_domain';
 
 export const accountDeactivated = () => {
     const message: [Text, HTMLAnchorElement, Text] = [

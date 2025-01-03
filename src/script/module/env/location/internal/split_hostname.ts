@@ -1,5 +1,5 @@
 import { getHostname } from '../../../dom/location/get/hostname';
-import { TOP_DOMAIN } from '../../domain';
+import { TOP_DOMAIN } from '../../top_domain';
 
 export function splitHostname() {
     const hostname = getHostname();
