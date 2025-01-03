@@ -27,7 +27,7 @@ import { submitButtonText } from './module/text/button/submit';
 import { passwordResetPageTitle } from './module/text/page_title';
 import { link as linkClass } from '../css/link.module.scss';
 import * as styles from '../css/portal_form.module.scss';
-import { LOGIN_URI, TOP_URI } from './module/env/uri';
+import { TOP_URI } from './module/env/uri';
 import { InputFieldElementKey } from './module/dom/element/input/input_field/type';
 import { getSearchParam } from './module/dom/location/get/search_param';
 import { appendText } from './module/dom/element/text/append';
@@ -115,7 +115,7 @@ function showPageCallback() {
                     showElement(warningElem);
                     disableAllInputs(false);
                 } else if (response === 'DONE') {
-                    showMessage(emailSent(LOGIN_URI));
+                    showMessage(emailSent(backURL ?? undefined));
                 } else {
                     showMessage(invalidResponse());
                 }

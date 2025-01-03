@@ -37,7 +37,6 @@ import * as styles from '../../css/portal_form.module.scss';
 import { completedTitle } from '../module/text/misc/completed_title';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
-import { TOP_URI } from '../module/env/uri';
 import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 export default function (param: string) {
@@ -162,8 +161,7 @@ export default function (param: string) {
                             [MessageParamKey.TITLE]: completedTitle,
                             [MessageParamKey.MESSAGE]: 'メールアドレスが変更されました。',
                             [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
-                            [MessageParamKey.URL]: TOP_URI,
-                            [MessageParamKey.BUTTON]: 'トップページへ',
+                            [MessageParamKey.BUTTON]: null,
                         });
                         break;
                     default:

@@ -10,5 +10,6 @@ export function unauthorized(url: string) {
         [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
         [MessageParamKey.URL]: url,
         [MessageParamKey.BUTTON]: nextButtonText,
+        [MessageParamKey.REDIRECT_WITHOUT_HISTORY]: true,
     };
 };

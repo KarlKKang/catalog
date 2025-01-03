@@ -26,12 +26,10 @@ import { hideElement } from '../module/style/hide_element';
 import { passwordResetPageTitle } from '../module/text/page_title';
 import { passwordRule } from '../module/text/password/rule';
 import { changeButtonText } from '../module/text/button/change';
-import { nextButtonText } from '../module/text/button/next';
 import * as styles from '../../css/portal_form.module.scss';
 import { completedTitle } from '../module/text/misc/completed_title';
 import { CSS_COLOR } from '../module/style/color';
 import { MessageParamKey } from '../module/message/type';
-import { LOGIN_URI } from '../module/env/uri';
 import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
 
 export default function (user: string, signature: string, expires: string) {
@@ -126,8 +124,7 @@ export default function (user: string, signature: string, expires: string) {
                         [MessageParamKey.TITLE]: completedTitle,
                         [MessageParamKey.MESSAGE]: passwordChanged,
                         [MessageParamKey.COLOR]: CSS_COLOR.GREEN,
-                        [MessageParamKey.URL]: LOGIN_URI,
-                        [MessageParamKey.BUTTON]: nextButtonText,
+                        [MessageParamKey.BUTTON]: null,
                     });
                 } else {
                     showMessage(invalidResponse());
