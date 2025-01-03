@@ -97,7 +97,7 @@ function createMessageElements(
             button = createStyledButtonElement(button ?? goBackButtonText);
         }
         addEventListener(button, 'click', () => {
-            redirectSameOrigin(url ?? getFullPath(), redirectWithoutHistory);
+            redirectSameOrigin(url ?? getFullPath(), redirectWithoutHistory ?? url === undefined);
         });
     }
     horizontalCenter(button);
