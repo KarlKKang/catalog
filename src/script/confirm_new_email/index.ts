@@ -46,9 +46,10 @@ export default function (showPage: ShowPageFunc) {
             } else if (response === 'APPROVED') {
                 runAsyncModule(asyncModulePromise, param);
             } else {
-                showMessage(invalidResponse());
+                showMessage(invalidResponse(true));
             }
         },
         [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: param }),
+        [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
     });
 }

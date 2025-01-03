@@ -165,7 +165,7 @@ export default function (param: string) {
                         });
                         break;
                     default:
-                        showMessage(invalidResponse());
+                        showMessage(invalidResponse(true));
                 }
             },
             [ServerRequestOptionKey.CONTENT]: joinHttpForms(
@@ -174,6 +174,7 @@ export default function (param: string) {
                     totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
                 }),
             ),
+            [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
         });
     }
 
