@@ -16,7 +16,6 @@ export function connectionError() {
     return {
         [MessageParamKey.TITLE]: 'サーバーに接続できません',
         [MessageParamKey.MESSAGE]: connectionErrorBody(),
-        [MessageParamKey.REPLACE_BODY]: true,
         [MessageParamKey.URL]: TOP_URI, // In case of request containing malicious string, the page needs to be reset to the top page.
     };
 }

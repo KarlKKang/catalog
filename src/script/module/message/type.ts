@@ -7,8 +7,6 @@ export const enum MessageParamKey {
     URL,
     BUTTON,
     LOGOUT,
-    REPLACE_BODY,
-    __LENGTH,
 }
 
 export interface MessageParam {
