@@ -3,11 +3,9 @@ import { getSearchParam } from '../module/dom/location/get/search_param';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param/expired';
 import { type ShowPageFunc } from '../module/global/type';
-import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { importModule } from '../module/import_module';
-import { LOGIN_URI } from '../module/env/uri';
 import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
@@ -35,18 +33,18 @@ export default function (showPage: ShowPageFunc) {
         if (DEVELOPMENT) {
             runAsyncModule(getAsyncModulePromise(), 'test', 'test', 'test');
         } else {
-            redirectSameOrigin(LOGIN_URI, true);
+            showMessage(expired);
         }
         return;
     }
 
     if (signature === null || !/^[a-zA-Z0-9~_-]+$/.test(signature)) {
-        redirectSameOrigin(LOGIN_URI, true);
+        showMessage(expired);
         return;
     }
 
     if (expires === null || !/^[0-9]+$/.test(expires)) {
-        redirectSameOrigin(LOGIN_URI, true);
+        showMessage(expired);
         return;
     }
 
@@ -57,11 +55,12 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(expired);
                 return;
             } else if (response !== 'APPROVED') {
-                showMessage(invalidResponse());
+                showMessage(invalidResponse(true));
                 return;
             }
             runAsyncModule(asyncModulePromise, user, signature, expires);
         },
         [ServerRequestOptionKey.CONTENT]: buildHttpForm({ user: user, signature: signature, expires: expires }),
+        [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
     });
 }

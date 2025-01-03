@@ -127,10 +127,11 @@ export default function (user: string, signature: string, expires: string) {
                         [MessageParamKey.BUTTON]: null,
                     });
                 } else {
-                    showMessage(invalidResponse());
+                    showMessage(invalidResponse(true));
                 }
             },
             [ServerRequestOptionKey.CONTENT]: buildHttpForm({ user: user, signature: signature, expires: expires, new: newPassword }),
+            [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
         });
     }
 
