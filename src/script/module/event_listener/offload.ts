@@ -6,7 +6,7 @@ export function offloadEventListeners() {
         removeAllEventListenersHelper(elem, eventMap);
     }
     elementMap.clear();
-    if (DEVELOPMENT) {
+    if (ENABLE_DEBUG) {
         console.log('All event listeners offloaded.');
     }
 }

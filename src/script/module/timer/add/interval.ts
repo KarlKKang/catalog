@@ -7,7 +7,7 @@ export function addInterval(callback: () => void, ms?: number) {
         }
     }, ms);
     intervalTimers.add(timerID);
-    if (DEVELOPMENT) {
+    if (ENABLE_DEBUG) {
         console.log(`Interval added. Total intervals: ${intervalTimers.size}.`, timerID);
     }
     return timerID;

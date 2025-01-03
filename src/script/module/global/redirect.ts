@@ -1,5 +1,5 @@
 let redirectSameOrigin = (url: string, withoutHistory = false): void => {
-    if (DEVELOPMENT) { // Will be stripped out by Terser in production build.
+    if (ENABLE_DEBUG) { // Will be stripped out by Terser in production build.
         url;
         withoutHistory;
         console.error('Redirect function is not initialized.');

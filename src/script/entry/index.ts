@@ -189,7 +189,7 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
     setClass(body, '');
 
     if (withoutHistory === null) {
-        if (page[PageProp.INTERNAL] === true && !DEVELOPMENT) {
+        if (page[PageProp.INTERNAL] === true && !ENABLE_DEBUG) {
             page = page404;
             canonicalUri = getFullPath();
         }
@@ -252,7 +252,7 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
     }
 
     if (page[PageProp.SCRIPT_CACHED] === undefined) {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log('First time loading page: ' + fullPath);
         }
         page[PageProp.SCRIPT_CACHED] = await importModule(page[PageProp.SCRIPT]);
@@ -362,17 +362,17 @@ windowAddEventListener('load', () => {
     windowAddEventListener('popstate', (state) => {
         if (state.state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
             if (customPopStateHandler?.()) {
-                if (DEVELOPMENT) {
+                if (ENABLE_DEBUG) {
                     console.log('popstate handled by the page.');
                 }
             } else {
                 load(getFullPath(), null);
-                if (DEVELOPMENT) {
+                if (ENABLE_DEBUG) {
                     console.log('popstate handled by the loader.');
                 }
             }
         } else {
-            if (DEVELOPMENT) {
+            if (ENABLE_DEBUG) {
                 console.log('popstate untracked.');
             }
         }

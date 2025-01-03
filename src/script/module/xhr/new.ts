@@ -10,7 +10,7 @@ export function newXhr(
 ) {
     const xhr = new XMLHttpRequest();
     allRequests.add(xhr);
-    if (DEVELOPMENT) {
+    if (ENABLE_DEBUG) {
         console.log(`XHR to ${url} created. Total XHRs: ${allRequests.size}.`, xhr);
     }
     xhr.open(method, url, true);
@@ -21,7 +21,7 @@ export function newXhr(
     addEventListener(xhr, 'loadend', () => {
         allRequests.delete(xhr);
         removeAllEventListeners(xhr);
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log(`XHR to ${url} completed. Total XHRs: ${allRequests.size}.`, xhr);
         }
     });

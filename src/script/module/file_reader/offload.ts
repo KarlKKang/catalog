@@ -7,7 +7,7 @@ export function offloadFileReader() {
         fileReader.abort();
     }
     allFileReaders.clear();
-    if (DEVELOPMENT) {
+    if (ENABLE_DEBUG) {
         console.log('All FileReaders offloaded.');
     }
 }

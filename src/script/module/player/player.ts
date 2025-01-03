@@ -158,7 +158,7 @@ export class Player {
     constructor(container: HTMLDivElement, isVideo: boolean) {
         this[PlayerKey.IS_VIDEO] = isVideo;
 
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             const onScreenConsole = createTextAreaElement(20);
             this[PlayerKey.ON_SCREEN_CONSOLE] = onScreenConsole;
             addClass(onScreenConsole, onScreenConsoleClass);
@@ -343,7 +343,7 @@ export class Player {
         });
         addEventListenerOnce(this[PlayerKey.MEDIA], 'loadedmetadata', onload);
         this[PlayerKey.MEDIA].volume = 1;
-        DEVELOPMENT && this[PlayerKey.LOG]?.('Native HLS is attached.');
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('Native HLS is attached.');
     }
 
     public [PlayerKey.LOAD](
@@ -381,7 +381,7 @@ export class Player {
         }
 
         this[PlayerKey.MEDIA].src = url;
-        DEVELOPMENT && this[PlayerKey.LOG]?.('Native HLS source loaded: ' + url);
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('Native HLS source loaded: ' + url);
     }
 
     public [PlayerKey.DESTROY](this: Player) {
@@ -401,7 +401,7 @@ export class Player {
         removeEventListener(w, 'resize', this[PlayerKey.ON_WINDOW_RESIZE]);
         removeEventsListener(d, ['mouseup', 'touchend', 'touchcancel'], this[PlayerKey.ON_MOUSE_UP]);
         remove(this[PlayerKey.CONTROLS]);
-        if (DEVELOPMENT && this[PlayerKey.ON_SCREEN_CONSOLE] !== undefined) {
+        if (ENABLE_DEBUG && this[PlayerKey.ON_SCREEN_CONSOLE] !== undefined) {
             remove(this[PlayerKey.ON_SCREEN_CONSOLE]);
         }
         this[PlayerKey.DETACH]();
@@ -420,7 +420,7 @@ export class Player {
         if (playPromise !== undefined) {
             playPromise.catch(() => {
                 this[PlayerKey.PLAYING] = false;
-                DEVELOPMENT && this[PlayerKey.LOG]?.('play promise rejected');
+                ENABLE_DEBUG && this[PlayerKey.LOG]?.('play promise rejected');
             });
         }
     }
@@ -442,7 +442,7 @@ export class Player {
     protected [PlayerKey.END_CHECK](this: Player, timestamp: number): void {
         if (timestamp >= this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE]) {
             if (!this[PlayerKey.DRAGGING]) {
-                DEVELOPMENT && this[PlayerKey.LOG]?.('Seeked to end: ' + timestamp + '.');
+                ENABLE_DEBUG && this[PlayerKey.LOG]?.('Seeked to end: ' + timestamp + '.');
                 this[PlayerKey.ENDED] = true;
             }
         } else {
@@ -503,7 +503,7 @@ export class Player {
         });
 
         addEventListener(this[PlayerKey.MEDIA], 'durationchange', () => {
-            DEVELOPMENT && this[PlayerKey.LOG]?.('Duration changed: ' + this[PlayerKey.MEDIA].duration);
+            ENABLE_DEBUG && this[PlayerKey.LOG]?.('Duration changed: ' + this[PlayerKey.MEDIA].duration);
             this[PlayerKey.END_CHECK](this[PlayerKey.MEDIA].currentTime);
             replaceText(this[PlayerKey.DURATION_DISPLAY_TEXT], toTimestampString(this[PlayerKey.MEDIA].duration));
         });
@@ -552,17 +552,17 @@ export class Player {
             this[PlayerKey.ON_SEEKING]();
         });
         addEventListener(this[PlayerKey.MEDIA], 'seeked', () => {
-            DEVELOPMENT && this[PlayerKey.LOG]?.('Seeked: ' + this[PlayerKey.MEDIA].currentTime);
+            ENABLE_DEBUG && this[PlayerKey.LOG]?.('Seeked: ' + this[PlayerKey.MEDIA].currentTime);
         });
         addEventListener(this[PlayerKey.MEDIA], 'stalled', () => {
-            DEVELOPMENT && this[PlayerKey.LOG]?.('Playback stalled at ' + this[PlayerKey.MEDIA].currentTime + '.');
+            ENABLE_DEBUG && this[PlayerKey.LOG]?.('Playback stalled at ' + this[PlayerKey.MEDIA].currentTime + '.');
         });
     }
 
     private [PlayerKey.ATTACH_VIDEO_EVENT_LISTENERS](this: Player) {
         // Catch events on control bar, otherwise bubbling events on the parent (constrols) will be fired.
         addEventListener(this[PlayerKey.CONTROL_BAR], 'click', (event: Event) => {
-            DEVELOPMENT && this[PlayerKey.LOG]?.('Click on controlBar.');
+            ENABLE_DEBUG && this[PlayerKey.LOG]?.('Click on controlBar.');
             this[PlayerKey.ACTIVE] = true; // There's no reset to active in listeners attached to specific buttons.
             event.stopPropagation();
         });
@@ -572,12 +572,12 @@ export class Player {
             this[PlayerKey.CONTROLS],
             (isMouseClick) => {
                 if (isMouseClick) {
-                    DEVELOPMENT && this[PlayerKey.LOG]?.('Mouse click on controls.');
+                    ENABLE_DEBUG && this[PlayerKey.LOG]?.('Mouse click on controls.');
                     if (!this[PlayerKey.ENDED]) {
                         this[PlayerKey.TOGGLE_PLAYBACK]();
                     }
                 } else {
-                    DEVELOPMENT && this[PlayerKey.LOG]?.('Touch click on controls.');
+                    ENABLE_DEBUG && this[PlayerKey.LOG]?.('Touch click on controls.');
                     this[PlayerKey.ACTIVE] = !this[PlayerKey.ACTIVE];
                 }
             },
@@ -629,7 +629,7 @@ export class Player {
         addEventListenerOnce(this[PlayerKey.MEDIA], 'canplay', () => {
             const videoMedia = this[PlayerKey.MEDIA] as HTMLVideoElement;
             setPaddingTop(this[PlayerKey.CONTROLS], videoMedia.videoHeight / videoMedia.videoWidth * 100, CSS_UNIT.PERCENT);
-            DEVELOPMENT && this[PlayerKey.LOG]?.('Video size: ' + videoMedia.videoWidth + 'x' + videoMedia.videoHeight);
+            ENABLE_DEBUG && this[PlayerKey.LOG]?.('Video size: ' + videoMedia.videoWidth + 'x' + videoMedia.videoHeight);
         });
 
         // Fullscreen
@@ -749,7 +749,7 @@ export class Player {
             }
         }
 
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             if (typeof (this[PlayerKey.MEDIA] as HTMLVideoElement).getVideoPlaybackQuality === 'function') {
                 const quality = (this[PlayerKey.MEDIA] as HTMLVideoElement).getVideoPlaybackQuality();
                 if (quality.droppedVideoFrames && quality.droppedVideoFrames !== this[PlayerKey.DROPPED_FRAMES]) {
@@ -765,7 +765,7 @@ export class Player {
     }
 
     protected [PlayerKey.ON_LOADED_METADATA](this: Player): void {
-        DEVELOPMENT && this[PlayerKey.LOG]?.('Loaded metadata.');
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('Loaded metadata.');
         replaceText(this[PlayerKey.DURATION_DISPLAY_TEXT], toTimestampString(this[PlayerKey.MEDIA].duration));
         this[PlayerKey.ENDED] = false;
     }
@@ -828,35 +828,35 @@ export class Player {
     }
 
     protected [PlayerKey.ON_PLAY](this: Player): void {
-        DEVELOPMENT && this[PlayerKey.LOG]?.('Playback started at ' + this[PlayerKey.MEDIA].currentTime + '.');
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('Playback started at ' + this[PlayerKey.MEDIA].currentTime + '.');
         this[PlayerKey.PLAYING] = true;
     }
 
     private [PlayerKey.ON_PAUSE](this: Player): void {
-        DEVELOPMENT && this[PlayerKey.LOG]?.('Playback paused at ' + this[PlayerKey.MEDIA].currentTime + '.');
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('Playback paused at ' + this[PlayerKey.MEDIA].currentTime + '.');
         this[PlayerKey.PLAYING] = false;
         this[PlayerKey.ACTIVE] = true;
     }
 
     private [PlayerKey.ON_ENDED](this: Player): void {
-        DEVELOPMENT && this[PlayerKey.LOG]?.('Playback ended.');
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('Playback ended.');
         if (!this[PlayerKey.DRAGGING]) {
             this[PlayerKey.ENDED] = true;
         }
     }
 
     protected [PlayerKey.ON_WAITING](this: Player): void {
-        DEVELOPMENT && this[PlayerKey.LOG]?.('Playback entered waiting state at ' + this[PlayerKey.MEDIA].currentTime + '.');
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('Playback entered waiting state at ' + this[PlayerKey.MEDIA].currentTime + '.');
         addClass(this[PlayerKey.CONTROLS], styles.playerSeeking);
     }
 
     protected [PlayerKey.ON_CAN_PLAY_THROUGH](this: Player): void {
-        DEVELOPMENT && this[PlayerKey.LOG]?.('Playback can play through at ' + this[PlayerKey.MEDIA].currentTime + '.');
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('Playback can play through at ' + this[PlayerKey.MEDIA].currentTime + '.');
         removeClass(this[PlayerKey.CONTROLS], styles.playerSeeking);
     }
 
     protected [PlayerKey.ON_SEEKING](this: Player): void {
-        DEVELOPMENT && this[PlayerKey.LOG]?.('Seeking: ' + this[PlayerKey.MEDIA].currentTime + '.');
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('Seeking: ' + this[PlayerKey.MEDIA].currentTime + '.');
     }
 
     protected [PlayerKey.GET_BUFFERED_RANGE](this: Player): { start: number; end: number }[] {
@@ -868,7 +868,7 @@ export class Player {
                 currentBuffer = { start: nextBufferStart, end: this[PlayerKey.MEDIA].buffered.end(i) };
             } else {
                 if (nextBufferStart - this[PlayerKey.MAX_BUFFER_HOLE] <= currentBuffer.end) {
-                    DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer hole detected: ' + currentBuffer.end + '-' + nextBufferStart + '. Duration: ' + (nextBufferStart - currentBuffer.end));
+                    ENABLE_DEBUG && this[PlayerKey.LOG]?.('Buffer hole detected: ' + currentBuffer.end + '-' + nextBufferStart + '. Duration: ' + (nextBufferStart - currentBuffer.end));
                     currentBuffer.end = this[PlayerKey.MEDIA].buffered.end(i);
                 } else {
                     bufferedRange.push(currentBuffer);

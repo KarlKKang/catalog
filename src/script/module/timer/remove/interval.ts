@@ -4,10 +4,10 @@ import { Interval } from '../type';
 export function removeInterval(timerID: Interval) {
     if (intervalTimers.delete(timerID)) {
         clearInterval(timerID);
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log(`Interval removed. Total intervals: ${intervalTimers.size}.`, timerID);
         }
-    } else if (DEVELOPMENT) {
+    } else if (ENABLE_DEBUG) {
         console.error('Interval not found.', timerID);
     }
 }

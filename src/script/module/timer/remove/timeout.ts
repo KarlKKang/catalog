@@ -4,10 +4,10 @@ import { Timeout } from '../type';
 export function removeTimeout(timerID: Timeout) {
     if (timeoutTimers.delete(timerID)) {
         clearTimeout(timerID);
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log(`Timeout removed. Total timeouts: ${timeoutTimers.size}.`, timerID);
         }
-    } else if (DEVELOPMENT) {
+    } else if (ENABLE_DEBUG) {
         console.error('Timeout not found.', timerID);
     }
 }

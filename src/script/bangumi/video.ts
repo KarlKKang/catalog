@@ -400,7 +400,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             gop: gop,
         };
 
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log('HLS config:', structuredClone(hlsConfig));
         }
 

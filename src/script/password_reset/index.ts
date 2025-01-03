@@ -30,7 +30,7 @@ export default function (showPage: ShowPageFunc) {
     const expires = getSearchParam('expires');
 
     if (user === null || !/^[a-zA-Z0-9~_-]+$/.test(user)) {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             runAsyncModule(getAsyncModulePromise(), 'test', 'test', 'test');
         } else {
             showMessage(expired);

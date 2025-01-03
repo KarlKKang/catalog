@@ -45,7 +45,7 @@ export class HlsPlayer extends NonNativePlayer {
             xhrSetup: function (xhr: XMLHttpRequest) {
                 xhr.withCredentials = true;
             },
-            debug: DEVELOPMENT,
+            debug: ENABLE_DEBUG,
         };
         const defaultHlsConfig = Hls.DefaultConfig;
         this[HlsPlayerKey.HLS_MAX_MAX_BUFFER_LENGTH] = hlsConfig.maxMaxBufferLength ?? defaultHlsConfig.maxMaxBufferLength;
@@ -59,7 +59,7 @@ export class HlsPlayer extends NonNativePlayer {
         fragLoadPolicy.default.maxTimeToFirstByteMs = 30000;
         userHlsConfig.fragLoadPolicy = fragLoadPolicy;
         this[HlsPlayerKey.HLS_INSTANCE] = new Hls(userHlsConfig);
-        DEVELOPMENT && console.log(this[HlsPlayerKey.HLS_INSTANCE].config);
+        ENABLE_DEBUG && console.log(this[HlsPlayerKey.HLS_INSTANCE].config);
     }
 
     protected [PlayerKey.ATTACH](this: HlsPlayer, onload: (...args: any[]) => void, onerror?: (errorCode: number | null) => void): void {
@@ -92,7 +92,7 @@ export class HlsPlayer extends NonNativePlayer {
                 onerror && onerror(errorCode);
                 console.error(data);
             } else {
-                DEVELOPMENT && console.warn(data);
+                ENABLE_DEBUG && console.warn(data);
             }
         };
         this[HlsPlayerKey.ON_HLS_ERROR] = onHlsError;
@@ -113,7 +113,7 @@ export class HlsPlayer extends NonNativePlayer {
                 return;
             }
             this[HlsPlayerKey.FRAG_START] = data.frag.startDTS;
-            DEVELOPMENT && this[PlayerKey.LOG]?.('Fragment changed: ' + this[HlsPlayerKey.FRAG_START] + '-' + data.frag.endDTS);
+            ENABLE_DEBUG && this[PlayerKey.LOG]?.('Fragment changed: ' + this[HlsPlayerKey.FRAG_START] + '-' + data.frag.endDTS);
         };
         this[HlsPlayerKey.ON_HLS_FRAG_CHANGE] = onHlsFragChange;
         this[HlsPlayerKey.HLS_INSTANCE].on(Hls.Events.FRAG_CHANGED, this[HlsPlayerKey.ON_HLS_FRAG_CHANGE]);
@@ -124,7 +124,7 @@ export class HlsPlayer extends NonNativePlayer {
             }
             this[HlsPlayerKey.ON_HLS_LEVEL_LOADED] = undefined;
             if (this[HlsPlayerKey.HLS_PRELOADED] === false) {
-                DEVELOPMENT && this[PlayerKey.LOG]?.('HLS level loaded, pausing the load now.');
+                ENABLE_DEBUG && this[PlayerKey.LOG]?.('HLS level loaded, pausing the load now.');
                 this[HlsPlayerKey.HLS_PRELOADED] = true;
                 this[HlsPlayerKey.HLS_INSTANCE].stopLoad();
             }
@@ -134,7 +134,7 @@ export class HlsPlayer extends NonNativePlayer {
 
         this[HlsPlayerKey.HLS_INSTANCE].attachMedia(this[PlayerKey.MEDIA]);
         this[PlayerKey.MEDIA].volume = 1;
-        DEVELOPMENT && this[PlayerKey.LOG]?.('HLS is attached.');
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('HLS is attached.');
     }
 
     public [PlayerKey.LOAD](
@@ -165,7 +165,7 @@ export class HlsPlayer extends NonNativePlayer {
         }
 
         this[HlsPlayerKey.HLS_INSTANCE].loadSource(url);
-        DEVELOPMENT && this[PlayerKey.LOG]?.('HLS source loaded: ' + url);
+        ENABLE_DEBUG && this[PlayerKey.LOG]?.('HLS source loaded: ' + url);
     }
 
     protected override[PlayerKey.DETACH](this: HlsPlayer) {
@@ -188,7 +188,7 @@ export class HlsPlayer extends NonNativePlayer {
                 this[PlayerKey.MEDIA].currentTime = timestamp;
                 callback?.();
                 this[HlsPlayerKey.HLS_RESUME_PRELOAD]();
-                DEVELOPMENT && this[PlayerKey.LOG]?.('Skipped buffer flushing.');
+                ENABLE_DEBUG && this[PlayerKey.LOG]?.('Skipped buffer flushing.');
             } else {
                 const onHlsBufferFlushed = () => {
                     if (this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] !== onHlsBufferFlushed) {
@@ -199,12 +199,12 @@ export class HlsPlayer extends NonNativePlayer {
                     this[PlayerKey.MEDIA].currentTime = timestamp;
                     this[HlsPlayerKey.HLS_INSTANCE].startLoad(timestamp);
                     callback?.();
-                    DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer reloaded.');
+                    ENABLE_DEBUG && this[PlayerKey.LOG]?.('Buffer reloaded.');
                 };
                 this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED] = onHlsBufferFlushed;
                 this[HlsPlayerKey.HLS_INSTANCE].once(Hls.Events.BUFFER_FLUSHED, this[HlsPlayerKey.ON_HLS_BUFFER_FLUSHED]);
                 this[HlsPlayerKey.HLS_INSTANCE].trigger(Hls.Events.BUFFER_FLUSHING, { startOffset: 0, endOffset: Infinity, type: null });
-                DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer flushed.');
+                ENABLE_DEBUG && this[PlayerKey.LOG]?.('Buffer flushed.');
             }
         } else {
             super[PlayerKey.SEEK](timestamp, callback);
@@ -224,9 +224,9 @@ export class HlsPlayer extends NonNativePlayer {
         this[HlsPlayerKey.HLS_INSTANCE].config.maxMaxBufferLength = this[HlsPlayerKey.HLS_MAX_MAX_BUFFER_LENGTH];
         if (this[HlsPlayerKey.HLS_PRELOADED] === true) {
             this[HlsPlayerKey.HLS_INSTANCE].startLoad(this[PlayerKey.MEDIA].currentTime);
-            DEVELOPMENT && this[PlayerKey.LOG]?.('HLS resumed loading.');
+            ENABLE_DEBUG && this[PlayerKey.LOG]?.('HLS resumed loading.');
         } else {
-            DEVELOPMENT && this[PlayerKey.LOG]?.('HLS not yet preloaded, will prevent future load pause.');
+            ENABLE_DEBUG && this[PlayerKey.LOG]?.('HLS not yet preloaded, will prevent future load pause.');
         }
         this[HlsPlayerKey.HLS_PRELOADED] = null;
     }

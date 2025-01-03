@@ -24,7 +24,7 @@ import { goBackButtonText } from './module/text/button/go_back';
 export default function (showPage: ShowPageFunc) {
     const messageParam = getMessageParam();
     if (messageParam === null) {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             showPage();
             createMessageElements('タイトルTitle', CSS_COLOR.ORANGE, 'メッセージMessage'.repeat(10), 'ボタンButton', TOP_URI, false);
         } else {

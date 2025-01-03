@@ -5,10 +5,10 @@ import type { AnimationFrame } from './type';
 export function removeAnimationFrame(animationFrame: AnimationFrame): void {
     if (allAnimationFrames.delete(animationFrame)) {
         w.cancelAnimationFrame(animationFrame);
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log(`Animation frame removed. Total animation frames: ${allAnimationFrames.size}.`, animationFrame);
         }
-    } else if (DEVELOPMENT) {
+    } else if (ENABLE_DEBUG) {
         console.error('Animation frame not found.', animationFrame);
     }
 }

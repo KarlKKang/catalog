@@ -32,7 +32,7 @@ export default async function () { // This function should be called after setti
         // These two event should never be removed.
         const wbAddEventListener = wb.addEventListener.bind(wb);
         wbAddEventListener('waiting', () => {
-            if (DEVELOPMENT) {
+            if (ENABLE_DEBUG) {
                 console.log('Service worker waiting.');
             }
             serviceWorkerUpToDate = false;
@@ -42,7 +42,7 @@ export default async function () { // This function should be called after setti
         });
         wbAddEventListener('controlling', () => {
             if (!serviceWorkerUpToDate) {
-                if (DEVELOPMENT) {
+                if (ENABLE_DEBUG) {
                     console.log('Service worker updated.');
                 }
                 windowLocation.reload();
@@ -50,7 +50,7 @@ export default async function () { // This function should be called after setti
         });
         wbAddEventListener('redundant', () => {
             if (serviceWorkerUpToDate) {
-                if (DEVELOPMENT) {
+                if (ENABLE_DEBUG) {
                     console.log('New service worker failed to install, retrying.');
                 }
                 registerOrUpdate(wb);
@@ -76,15 +76,15 @@ async function registerOrUpdate(wb: Workbox, retryTimeout = 500) {
     registering = true;
     try {
         await wb.register();
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log('Service worker registered, triggering update.');
         }
         await wb.update();
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log('Service worker update triggered.');
         }
     } catch (e) {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log('Service worker register or update failed, retrying in ' + retryTimeout + 'ms.');
         }
         addTimeoutNative(() => {

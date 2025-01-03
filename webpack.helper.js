@@ -92,7 +92,7 @@ function addFontLoader(config, dev) {
 function addDefinePlugin(config, dev) {
     config.plugins.push(
         new webpack.DefinePlugin({
-            DEVELOPMENT: JSON.stringify(dev),
+            ENABLE_DEBUG: JSON.stringify(dev),
             ENV_TOP_DOMAIN: JSON.stringify(TOP_DOMAIN),
             ENV_WEBSITE_SUBDOMAIN_PREFIX: JSON.stringify(WEBSITE_SUBDOMAIN_PREFIX(dev)),
             ENV_WEBSITE_PORT_SUFFIX: JSON.stringify(WEBSITE_PORT_SUFFIX(dev)),

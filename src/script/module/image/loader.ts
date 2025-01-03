@@ -43,7 +43,7 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
     image.alt = alt;
 
     function finalizeImageDrawError() {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.error('Unrecoverable error occured when loading the image.');
         }
         const errorImage = new Image(); // Should not reuse the old Image instance since setting src to //:0 triggers onError event.
@@ -86,13 +86,13 @@ export function imageLoader(container: Element, src: string, alt: string, withCr
                 [WebpMachineQueueItemProp.ON_ERROR]: finalizeImageDrawError,
             });
             if (webpMachineActive) {
-                if (DEVELOPMENT) {
+                if (ENABLE_DEBUG) {
                     console.log('Webp Machine active. Pushed ' + image.alt + ' to queue.');
                 }
             } else {
                 webpMachineActive = true;
                 startWebpMachine();
-                if (DEVELOPMENT) {
+                if (ENABLE_DEBUG) {
                     console.log('Webp Machine NOT active. Pushed ' + image.alt + ' to queue. Webp Machine started.');
                 }
             }
@@ -206,7 +206,7 @@ async function drawWebp(webpMachine: WebpMachine, queueItem: webpMachineQueueIte
         if (currentJobId !== jobId) {
             return;
         }
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.warn('Failed to polyfill webp. Appended back to the queue to retry.');
         }
         webpMachineQueue.push(queueItem);

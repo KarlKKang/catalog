@@ -8,7 +8,7 @@ export function newFileReader(): FileReader {
     addEventListener(fileReader, 'loadend', () => {
         allFileReaders.delete(fileReader);
         removeAllEventListeners(fileReader);
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log(`FileReader completed. Total FileReaders: ${allFileReaders.size}.`, fileReader);
         }
     });

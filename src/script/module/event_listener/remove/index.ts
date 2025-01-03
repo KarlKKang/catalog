@@ -3,21 +3,21 @@ import { elementMap } from '../internal/element_map';
 export function removeEventListener(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
     const eventMap = elementMap.get(elem);
     if (eventMap === undefined) {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.error('Event map not found.', elem);
         }
         return;
     }
     const listenerMap = eventMap.get(event);
     if (listenerMap === undefined) {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.error('Listener map not found.', elem, event);
         }
         return;
     }
     const listenerConfig = listenerMap.get(callback);
     if (listenerConfig === undefined) {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.error('Listener config not found.', elem, event, callback);
         }
         return;
@@ -25,7 +25,7 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
     const listenerConfigIdx = useCapture ? 1 : 0;
     const eventListenerAndOptions = listenerConfig[listenerConfigIdx];
     if (eventListenerAndOptions === null) {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.error('Listener config not set.', elem, event, callback, useCapture);
         }
         return;
@@ -42,7 +42,7 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
     if (eventMap.size === 0) {
         elementMap.delete(elem);
     }
-    if (DEVELOPMENT) {
+    if (ENABLE_DEBUG) {
         console.log(`Event '${event}' listener removed with useCapture '${useCapture}'. Total elements listening: ${elementMap.size}. Total events on this element: ${eventMap.size}. Total listeners on this event: ${listenerMap.size}.`, elem);
     }
 }

@@ -5,10 +5,10 @@ export function abortFileReader(fileReader: FileReader) {
     if (allFileReaders.delete(fileReader)) {
         removeAllEventListeners(fileReader);
         fileReader.abort();
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             console.log(`FileReader aborted. Total FileReaders: ${allFileReaders.size}.`, fileReader);
         }
-    } else if (DEVELOPMENT) {
+    } else if (ENABLE_DEBUG) {
         console.error('FileReader not found.', fileReader);
     }
 }

@@ -7,7 +7,7 @@ export function logout(callback: () => void, accountID?: string) {
     sendServerRequest('logout', {
         [ServerRequestOptionKey.CALLBACK]: function (response: string) {
             if (response === 'PARTIAL' || response === 'DONE') {
-                if (DEVELOPMENT) {
+                if (ENABLE_DEBUG) {
                     console.log(response);
                 }
                 callback();

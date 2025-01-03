@@ -7,7 +7,7 @@ export function offloadXhr() {
         xhr.abort();
     }
     allRequests.clear();
-    if (DEVELOPMENT) {
+    if (ENABLE_DEBUG) {
         console.log('All XHRs offloaded.');
     }
 }

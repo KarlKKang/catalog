@@ -66,10 +66,10 @@ export abstract class NonNativePlayer extends Player {
         }
         for (const buffer of bufferedRange) {
             if (this[PlayerKey.MEDIA].currentTime < buffer.end) {
-                DEVELOPMENT && this[PlayerKey.LOG]?.('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this[PlayerKey.MEDIA].currentTime);
+                ENABLE_DEBUG && this[PlayerKey.LOG]?.('Checking buffer range :' + buffer.start + '-' + buffer.end + '. Current time: ' + this[PlayerKey.MEDIA].currentTime);
                 if (buffer.start <= this[PlayerKey.MEDIA].currentTime + this[PlayerKey.MAX_BUFFER_HOLE] && buffer.end >= min(this[PlayerKey.MEDIA].currentTime + this[NonNativePlayerKey.GOP], this[PlayerKey.MEDIA].duration - this[PlayerKey.MAX_BUFFER_HOLE])) {
                     endBuffer();
-                    DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer complete!');
+                    ENABLE_DEBUG && this[PlayerKey.LOG]?.('Buffer complete!');
                     if (!this[PlayerKey.DRAGGING]) {
                         this[PlayerKey.MEDIA].playbackRate = 1;
                     }
@@ -82,7 +82,7 @@ export abstract class NonNativePlayer extends Player {
         if (event !== undefined) {
             this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] = getEpochMs();
         } else if (this[NonNativePlayerKey.LAST_BUFFER_UPDATE_TIME] + 16000 <= getEpochMs()) {
-            DEVELOPMENT && this[PlayerKey.LOG]?.('Buffer stalled.');
+            ENABLE_DEBUG && this[PlayerKey.LOG]?.('Buffer stalled.');
             this[NonNativePlayerKey.ON_BUFFER_STALLED]?.();
         }
 

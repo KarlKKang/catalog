@@ -27,7 +27,7 @@ export default function (showPage: ShowPageFunc) {
 
     const param = getSearchParam('p');
     if (param === null || !/^[a-zA-Z0-9~_-]+$/.test(param)) {
-        if (DEVELOPMENT) {
+        if (ENABLE_DEBUG) {
             runAsyncModule(getAsyncModulePromise(), 'test');
         } else {
             showMessage(expired);
