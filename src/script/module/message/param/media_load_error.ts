@@ -1,9 +1,14 @@
 import { mediaLoadError as mediaLoadErrorBody } from '../../text/media/load_error';
-import { MessageParamKey } from '../type';
+import { type MessageParam, MessageParamKey } from '../type';
 
-export function mediaLoadError(url: string) {
-    return {
+export function mediaLoadError(url: string | null) {
+    const param: MessageParam = {
         [MessageParamKey.MESSAGE]: mediaLoadErrorBody,
-        [MessageParamKey.URL]: url,
     };
+    if (url === null) {
+        param[MessageParamKey.BUTTON] = null;
+    } else {
+        param[MessageParamKey.URL] = url;
+    }
+    return param;
 }

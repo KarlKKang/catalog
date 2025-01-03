@@ -20,7 +20,6 @@ import { addTimeout } from '../module/timer/add/timeout';
 import { addMouseTouchEventListener } from '../module/event_listener/add/mouse_touch_event';
 import { getHighResTimestamp, type HighResTimestamp } from '../module/time/hi_res';
 import { mediaLoadError } from '../module/message/param/media_load_error';
-import { TOP_URI } from '../module/env/uri';
 import { MessageParamKey } from '../module/message/type';
 import { mediaIncompatibleSuffix } from '../module/text/media/incompatible_suffix';
 import { addOffloadCallback } from '../module/global/offload';
@@ -84,7 +83,7 @@ export default function (baseURL: string, fileName: string, startTime: HighResTi
 }
 
 function loadImage(container: HTMLElement, baseURL: string, fileName: string, startTime: HighResTimestamp, retryCount = 3, retryTimeout = 500) {
-    const errorMessage = mediaLoadError(TOP_URI);
+    const errorMessage = mediaLoadError(null);
     if (getHighResTimestamp() - startTime >= 30000) {
         showMessage(errorMessage);
         return;
@@ -114,7 +113,7 @@ function loadImage(container: HTMLElement, baseURL: string, fileName: string, st
             showMessage({
                 [MessageParamKey.TITLE]: '画像を表示できません',
                 [MessageParamKey.MESSAGE]: mediaIncompatibleSuffix,
-                [MessageParamKey.URL]: TOP_URI,
+                [MessageParamKey.BUTTON]: null,
             });
         },
     );
