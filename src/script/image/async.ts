@@ -26,7 +26,7 @@ import { addOffloadCallback } from '../module/global/offload';
 import { removeTimeout } from '../module/timer/remove/timeout';
 import { closeWindow } from '../module/dom/window/close';
 
-export default function (baseURL: string, fileName: string, startTime: HighResTimestamp) {
+export default function (baseURL: string, fileName: string, startTime: HighResTimestamp, originURL: string) {
     const container = createDivElement();
     addClass(container, styles.imageContainer);
     const overlay = createDivElement();
@@ -41,7 +41,7 @@ export default function (baseURL: string, fileName: string, startTime: HighResTi
     const closeButton = createStyledButtonElement(closeButtonText);
     addClass(closeButton, styles.backButton);
     addEventListener(closeButton, 'click', () => {
-        closeWindow();
+        closeWindow(originURL);
     });
     appendChild(body, closeButton);
 

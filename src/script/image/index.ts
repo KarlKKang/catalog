@@ -71,7 +71,7 @@ export default function (showPage: ShowPageFunc) {
             if (pgid !== currentPgid) {
                 return;
             }
-            asyncModule.default(baseURL, fileName, serverRequest[ServerRequestKey.REQUEST_START_TIME]);
+            asyncModule.default(baseURL, fileName, serverRequest[ServerRequestKey.REQUEST_START_TIME], originURL);
             showPage();
         },
         [ServerRequestOptionKey.CONTENT]: sessionCredential,

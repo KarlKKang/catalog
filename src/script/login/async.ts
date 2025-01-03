@@ -45,6 +45,8 @@ import * as styles from '../../css/login.module.scss';
 import { REQUEST_PASSWORD_RESET_URI } from '../module/env/uri';
 import { createLabelElement } from '../module/dom/element/label/create';
 import { InputFieldElementKey } from '../module/dom/element/input/input_field/type';
+import { buildURI } from '../module/string/uri/build';
+import { getFullPath } from '../module/dom/location/get/full_path';
 
 export default function (
     approvedCallbackPromise: Promise<typeof import(
@@ -105,7 +107,12 @@ export default function (
 
     addEventListener(submitButton, 'click', login);
     addEventListener(forgetPasswordLink, 'click', () => {
-        redirectSameOrigin(REQUEST_PASSWORD_RESET_URI);
+        redirectSameOrigin(buildURI(
+            REQUEST_PASSWORD_RESET_URI,
+            buildHttpForm({
+                'back-url': getFullPath(),
+            }),
+        ));
     });
 
     function login() {

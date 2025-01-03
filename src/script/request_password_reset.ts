@@ -27,8 +27,12 @@ import { submitButtonText } from './module/text/button/submit';
 import { passwordResetPageTitle } from './module/text/page_title';
 import { link as linkClass } from '../css/link.module.scss';
 import * as styles from '../css/portal_form.module.scss';
-import { LOGIN_URI } from './module/env/uri';
+import { LOGIN_URI, TOP_URI } from './module/env/uri';
 import { InputFieldElementKey } from './module/dom/element/input/input_field/type';
+import { getSearchParam } from './module/dom/location/get/search_param';
+import { appendText } from './module/dom/element/text/append';
+import { closeButtonText } from './module/text/button/close';
+import { closeWindow } from './module/dom/window/close';
 
 export default function (showPage: ShowPageFunc) {
     showPage();
@@ -65,8 +69,20 @@ function showPageCallback() {
     horizontalCenter(submitButton);
     appendChild(container, submitButton);
 
+    const backURL = getSearchParam('back-url');
     const goBack = createParagraphElement();
-    const goBackText = createSpanElement('❮　' + goBackButtonText);
+    const goBackText = createSpanElement();
+    if (backURL === null) {
+        appendText(goBackText, '×　' + closeButtonText);
+        addEventListener(goBackText, 'click', () => {
+            closeWindow(TOP_URI);
+        });
+    } else {
+        appendText(goBackText, '〈　' + goBackButtonText);
+        addEventListener(goBackText, 'click', () => {
+            redirectSameOrigin(backURL);
+        });
+    }
     addClass(goBack, linkClass);
     appendChild(goBack, goBackText);
     appendChild(container, goBack);
@@ -79,10 +95,6 @@ function showPageCallback() {
 
     addEventListener(submitButton, 'click', () => {
         submitRequest();
-    });
-
-    addEventListener(goBackText, 'click', () => {
-        redirectSameOrigin(LOGIN_URI);
     });
 
     function submitRequest() {
