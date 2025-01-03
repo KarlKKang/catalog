@@ -16,6 +16,7 @@ export default function () {
             [MessageParamKey.COLOR]: CSS_COLOR.ORANGE,
             [MessageParamKey.URL]: forwardURL,
             [MessageParamKey.BUTTON]: nextButtonText,
+            [MessageParamKey.REDIRECT_WITHOUT_HISTORY]: true,
         });
     } else {
         redirectSameOrigin(forwardURL, true);
