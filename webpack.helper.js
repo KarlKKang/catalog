@@ -1,5 +1,5 @@
 import { htmlMinifyOptions } from './build_config.js';
-import { TOP_DOMAIN, DESCRIPTION } from './env/index.js';
+import { TOP_DOMAIN, DESCRIPTION, WEBSITE_SUBDOMAIN_PREFIX, WEBSITE_PORT_SUFFIX } from './env/index.js';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 import { GenerateSW } from 'workbox-webpack-plugin';
@@ -53,7 +53,7 @@ function addMiniCssExtractPlugin(config, dev) {
 
 function addHTMLConfig(config, dev) {
     const pageTitle = getWebsiteName(dev);
-    const domain = (dev ? 'alpha.' : '') + TOP_DOMAIN;
+    const domain = WEBSITE_SUBDOMAIN_PREFIX(dev) + TOP_DOMAIN + WEBSITE_PORT_SUFFIX(dev);
 
     config.plugins.push(
         new HtmlWebpackPlugin({
@@ -98,6 +98,8 @@ function addDefinePlugin(config, dev) {
         new webpack.DefinePlugin({
             DEVELOPMENT: JSON.stringify(dev),
             ENV_TOP_DOMAIN: JSON.stringify(TOP_DOMAIN),
+            ENV_WEBSITE_SUBDOMAIN_PREFIX: JSON.stringify(WEBSITE_SUBDOMAIN_PREFIX(dev)),
+            ENV_WEBSITE_PORT_SUFFIX: JSON.stringify(WEBSITE_PORT_SUFFIX(dev)),
         })
     );
 }
