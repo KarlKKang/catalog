@@ -8,14 +8,12 @@ import { body } from './module/dom/body';
 import { addEventListener } from './module/event_listener/add';
 import { type ShowPageFunc } from './module/global/type';
 import { redirectSameOrigin } from './module/global/redirect';
-import { pgid } from './module/global/pgid';
 import * as styles from '../css/message.module.scss';
 import { horizontalCenter } from './module/style/horizontal_center';
 import { changeColor, CSS_COLOR } from './module/style/color';
 import { MessageParamKey } from './module/message/type';
 import { TOP_URI } from './module/env/uri';
 import { getMessageParam } from './module/message';
-import { importModule } from './module/import_module';
 import { closeButtonText } from './module/text/button/close';
 import { closeWindow } from './module/dom/window/close';
 import { defaultErrorSuffix } from './module/text/default_error/suffix';
@@ -41,31 +39,11 @@ export default function (showPage: ShowPageFunc) {
         [MessageParamKey.COLOR]: color,
         [MessageParamKey.URL]: url,
         [MessageParamKey.BUTTON]: button,
-        [MessageParamKey.LOGOUT]: logoutParam,
         [MessageParamKey.REDIRECT_WITHOUT_HISTORY]: redirectWithoutHistory,
     } = messageParam;
 
-    const callback = () => {
-        showPage();
-        createMessageElements(title, color, message, button, url, redirectWithoutHistory);
-    };
-
-    if (logoutParam) {
-        const currentPgid = pgid;
-        importModule(
-            () => import(
-                /* webpackExports: ["logout"] */
-                './module/server/logout',
-            ),
-        ).then(({ logout }) => {
-            if (currentPgid === pgid) {
-                logout(callback);
-            }
-        });
-        return;
-    }
-
-    callback();
+    showPage();
+    createMessageElements(title, color, message, button, url, redirectWithoutHistory);
 }
 
 function createMessageElements(

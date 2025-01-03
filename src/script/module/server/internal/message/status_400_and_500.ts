@@ -2,16 +2,11 @@ import { createBRElement } from '../../../dom/element/br/create';
 import { createParagraphElement } from '../../../dom/element/paragraph/create';
 import { appendText } from '../../../dom/element/text/append';
 import { appendChild } from '../../../dom/node/append_child';
-import { MessageParamKey } from '../../../message/type';
 import { defaultErrorSuffix } from '../../../text/default_error/suffix';
-import { setErrorMessageRedirectUrl } from '../../../message/param/helper/set_error_message_redirect_url';
+import { getServerErrorMessageParam } from '../../../message/param/helper/get_server_error_message_param';
 
 export function status400And500(responseText: string) {
-    const param = {
-        [MessageParamKey.MESSAGE]: status400And500Body(responseText),
-    };
-    setErrorMessageRedirectUrl(param);
-    return param;
+    return getServerErrorMessageParam(status400And500Body(responseText));
 };
 
 function status400And500Body(responseText: string) {

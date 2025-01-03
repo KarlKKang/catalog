@@ -1,8 +1,5 @@
-import type { MessageParam } from '../../../message/type';
-import { setErrorMessageRedirectUrl } from '../../../message/param/helper/set_error_message_redirect_url';
+import { getServerErrorMessageParam } from '../../../message/param/helper/get_server_error_message_param';
 
 export function unknownServerError() {
-    const param: MessageParam = {};
-    setErrorMessageRedirectUrl(param);
-    return param;
+    return getServerErrorMessageParam();
 };
