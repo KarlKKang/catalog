@@ -17,6 +17,7 @@ import { buildHttpForm } from '../module/string/http_form/build';
 
 export default function (showPage: ShowPageFunc) {
     if (navigator !== undefined && isbot(navigator.userAgent)) {
+        showPage();
         return;
     }
 
