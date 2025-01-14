@@ -86,6 +86,9 @@ export default function () {
     appendButton(container, 'Show Create Table', () => {
         getTable('create_table');
     });
+    appendButton(container, 'Show OPcache Status', () => {
+        getTable('opcache');
+    });
     appendButton(container, 'Run Debug', () => {
         misc('run', 'debug');
     });
