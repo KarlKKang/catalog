@@ -89,6 +89,9 @@ export default function () {
     appendButton(container, 'Show OPcache Status', () => {
         getTable('opcache');
     });
+    appendButton(container, 'Show APCu Status', () => {
+        getTable('apcu');
+    });
     appendButton(container, 'Run Debug', () => {
         misc('run', 'debug');
     });
