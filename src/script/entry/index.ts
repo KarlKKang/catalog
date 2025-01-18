@@ -32,7 +32,7 @@ import { clearSessionStorage } from '../module/session_storage/clear';
 import { offloadXhr } from '../module/xhr/offload';
 import { offloadEventListeners } from '../module/event_listener/offload';
 import { offloadTimers } from '../module/timer/offload';
-import { min } from '../module/math';
+import { max, min } from '../module/math';
 import { offloadAnimationFrames } from '../module/animation_frame/offload';
 import { addAnimationFrame } from '../module/animation_frame/add';
 import { addTimeoutNative } from '../module/timer/add/native/timeout';
@@ -45,7 +45,6 @@ import { scrollToTop } from '../module/dom/scroll/to_top';
 import { setSmoothScroll } from '../module/style/smooth_scroll';
 import { setOgUrl } from '../module/dom/document/og/url/set';
 import { getHref } from '../module/dom/location/get/href';
-import { importFonts } from './font/font';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -315,6 +314,17 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
     });
 }
 
+function importFont(delay: number) {
+    addTimeoutNative(async () => {
+        try {
+            await import('./font');
+        } catch (e) {
+            importFont(min(5000, max(500, delay * 2)));
+            throw e;
+        }
+    }, delay);
+}
+
 async function getServiceWorkerModulePromise(retryTimeout = 500): Promise<ServiceWorkerModule> {
     try {
         return await import(
@@ -347,7 +357,7 @@ windowAddEventListener('load', () => {
     appendChild(nativeBody, body);
     setSameOriginRedirectFunc(load);
     load(fullPath, null);
-    importFonts();
+    importFont(0);
     windowAddEventListener('popstate', (state) => {
         if (state.state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
             if (customPopStateHandler?.()) {
