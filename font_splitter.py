@@ -1,8 +1,26 @@
 from pathlib import Path
-from typing import Dict
 import os
 import sys
 from fontTools.subset import main as pyftsubset
+
+
+def split(unicode_blocks: dict, glyph: str, unicode_range: list, count: int) -> None:
+    if len(unicode_range) != 2:
+        raise ValueError("Unicode range must have 2 elements")
+
+    start = int(unicode_range[0], 16)
+    end = int(unicode_range[1], 16)
+
+    current_count = 0
+    while current_count != count:
+        block_size = round((end - start + 1) / (count - current_count))
+        if block_size < 1:
+            raise Exception("Block size less than 1")
+        current_count += 1
+        unicode_blocks[glyph + " part" + str(current_count)] = "U+{0:0{1}X}-".format(
+            start, 4
+        ) + "{0:0{1}X}".format(start + block_size - 1, 4)
+        start = start + block_size
 
 
 def font_splitter(
@@ -11,77 +29,23 @@ def font_splitter(
     file_extension: str,
     font_weight: int,
     font_family: str,
-    split_blocks: Dict[str, int],
+    split_blocks: dict,
     dest_dir: str,
     font_display: str = "swap",
-    custom_unicode_blocks: Dict[str, str] = None,
 ) -> None:
     script_path = os.path.dirname(__file__)
     src_root_dir = os.path.join(script_path, "src", "font")
 
     options = ["--harfbuzz-repacker"]
 
-    unicode_blocks = {
-        "Basic Latin": ["0000", "007F"],
-        "Latin Extension": ["0080", "036F"],  # combined block
-        "Language Extension 1": ["0370", "08FF"],  # combined block
-        "Language Extension 2": ["0900", "1C7F"],  # combined block
-        "Language Extension 3": ["1C80", "1FFF"],  # combined block
-        "Symbol Extension": ["2000", "2BFF"],  # combined block
-        "Language Extension 4": ["2C00", "2FFF"],  # combined block
-        "CJK Essential": ["3000", "30FF"],  # combined block
-        "CJK Extension 1": ["3100", "33FF"],  # combined block
-        "CJK Unified Ideographs Extension A": ["3400", "4DBF"],
-        "Yijing Hexagram Symbols": ["4DC0", "4DFF"],
-        "CJK Unified Ideographs": ["4E00", "9FFF"],
-        "Language Extension 5": ["A000", "F8FF"],  # combined block
-        "CJK Compatibility Ideographs": ["F900", "FAFF"],
-        "Language Extension 6": ["FB00", "FEFF"],  # combined block
-        "Halfwidth and Fullwidth Forms": ["FF00", "FFEF"],
-        "Language Extension 7": ["FFF0", "1FBFF"],  # combined block
-        "CJK Unified Ideographs Extension B": ["20000", "2A6DF"],
-        "Language Extension 8": ["2A700", "10FFFF"],  # combined block
-    }
-
-    def split(glyph, count):
-        if count == 0:
-            del unicode_blocks[glyph]
-            return
-
-        block = unicode_blocks[glyph]
-        start = int(block[0], 16)
-        end = int(block[1], 16)
-
-        del unicode_blocks[glyph]
-
-        current_count = 0
-        while current_count != count:
-            block_size = round((end - start + 1) / (count - current_count))
-            if block_size < 1:
-                raise Exception("Block size less than 1")
-            current_count += 1
-            unicode_blocks[glyph + " part" + str(current_count)] = [
-                "{0:0{1}X}".format(start, 4),
-                "{0:0{1}X}".format(start + block_size - 1, 4),
-            ]
-            start = start + block_size
-
-    if custom_unicode_blocks is None:
-        # split
-        temp_keys = []
-        for glyph in unicode_blocks:
-            temp_keys.append(glyph)
-        for glyph in temp_keys:
-            if glyph in split_blocks:
-                split(glyph, split_blocks[glyph])
-
-        # format
-        for glyph in unicode_blocks:
-            unicode_blocks[glyph] = (
-                "U+" + unicode_blocks[glyph][0] + "-" + unicode_blocks[glyph][1]
-            )
-    else:
-        unicode_blocks = custom_unicode_blocks
+    # split
+    unicode_blocks = {}
+    for glyph in split_blocks:
+        glyph_config = split_blocks[glyph]
+        if isinstance(glyph_config, str):
+            unicode_blocks[glyph] = glyph_config
+        else:
+            split(unicode_blocks, glyph, glyph_config["range"], glyph_config["count"])
 
     output_sub_dir = dest_dir
     output_root_dir = os.path.join(src_root_dir, "dist", src_dir)
@@ -122,6 +86,10 @@ def font_splitter(
                 + f'url("{output_sub_dir}/{dest_file_name}.woff2") format("woff2");\n'
                 + font_weight_declaration
                 + f"font-display: {font_display};\n"
-                + f"unicode-range: {unicode_blocks[glyph]};\n"
+                + (
+                    f"unicode-range: {unicode_blocks[glyph]};\n"
+                    if unicode_blocks[glyph] != "U+0000-10FFFF"
+                    else ""
+                )
                 + "}\n\n"
             )

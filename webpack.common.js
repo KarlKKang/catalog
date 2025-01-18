@@ -56,6 +56,13 @@ const configs = [
                 }),
             ]
         },
+        performance: {
+            assetFilter: function (assetFilename) {
+                return !assetFilename.endsWith('.woff2')
+                    && !assetFilename.endsWith('.map')
+                    && !assetFilename.endsWith('.png');
+            },
+        },
         node: { global: false },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.json'],

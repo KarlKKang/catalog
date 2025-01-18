@@ -1,22 +1,12 @@
 from font_splitter import font_splitter
 
-dir_surfix = "6"
+dir_surfix = "7.1"
 
 font_families = [
     {
         "font_family": "Courier New",
         "split_blocks": {
-            "Latin Extension": 2,
-            "Language Extension 1": 4,
-            "CJK Essential": 0,
-            "CJK Extension 1": 0,
-            "CJK Unified Ideographs Extension A": 0,
-            "Yijing Hexagram Symbols": 0,
-            "CJK Unified Ideographs": 0,
-            "CJK Compatibility Ideographs": 0,
-            "Halfwidth and Fullwidth Forms": 0,
-            "CJK Unified Ideographs Extension B": 0,
-            "Language Extension 8": 0,
+            "All": "U+0000-10FFFF",
         },
         "dir": "CourierNew",
         "fonts": [
@@ -31,13 +21,12 @@ font_families = [
     {
         "font_family": "Noto Sans JP",
         "split_blocks": {
-            "Language Extension 2": 0,
-            "CJK Extension 1": 2,
-            "Yijing Hexagram Symbols": 0,
-            "CJK Unified Ideographs": 60,
-            "Language Extension 5": 0,
-            "CJK Compatibility Ideographs": 2,
-            "CJK Unified Ideographs Extension B": 2,
+            "Latin and CJK Essential": "U+0000-33FF, U+F900-FAFF",
+            "CJK Unified Ideographs": {
+                "range": ["4E00", "9FFF"],
+                "count": 7,
+            },
+            "Extension": "U+3400-4DFF, U+A000-F8FF, U+FB00-1FBFF, U+20000-10FFFF",
         },
         "dir": "NotoSansJP",
         "fonts": [
@@ -64,13 +53,13 @@ font_families = [
     {
         "font_family": "Noto Sans TC",
         "split_blocks": {
-            "Language Extension 2": 0,
-            "CJK Extension 1": 2,
-            "CJK Unified Ideographs Extension A": 3,
-            "Yijing Hexagram Symbols": 0,
-            "CJK Unified Ideographs": 90,
-            "Language Extension 5": 0,
-            "CJK Unified Ideographs Extension B": 10,
+            "Latin and CJK Essential": "U+0000-33FF, U+F900-FAFF",
+            "CJK Unified Ideographs": {
+                "range": ["4E00", "9FFF"],
+                "count": 9,
+            },
+            "CJK Unified Ideographs Extension B": "U+20000-2A6DF",
+            "Extension": "U+3400-4DFF, U+A000-F8FF, U+FB00-1FBFF, U+2A700-10FFFF",
         },
         "dir": "NotoSansTC",
         "fonts": [
@@ -97,12 +86,16 @@ font_families = [
     {
         "font_family": "Noto Sans SC",
         "split_blocks": {
-            "Language Extension 2": 0,
-            "CJK Extension 1": 2,
-            "CJK Unified Ideographs Extension A": 30,
-            "Yijing Hexagram Symbols": 0,
-            "CJK Unified Ideographs": 110,
-            "Language Extension 5": 0,
+            "Latin and CJK Essential": "U+0000-33FF, U+F900-FAFF",
+            "CJK Unified Ideographs Extension A": {
+                "range": ["3400", "4DBF"],
+                "count": 4,
+            },
+            "CJK Unified Ideographs": {
+                "range": ["4E00", "9FFF"],
+                "count": 13,
+            },
+            "Extension": "U+4DC0-4DFF, U+A000-F8FF, U+FB00-1FBFF, U+20000-10FFFF",
         },
         "dir": "NotoSansSC",
         "fonts": [
@@ -129,15 +122,7 @@ font_families = [
     {
         "font_family": "Noto Sans",
         "split_blocks": {
-            "CJK Essential": 0,
-            "CJK Extension 1": 0,
-            "CJK Unified Ideographs Extension A": 0,
-            "Yijing Hexagram Symbols": 0,
-            "CJK Unified Ideographs": 0,
-            "CJK Compatibility Ideographs": 0,
-            "Halfwidth and Fullwidth Forms": 0,
-            "CJK Unified Ideographs Extension B": 0,
-            "Language Extension 8": 0,
+            "All": "U+0000-10FFFF",
         },
         "dir": "NotoSans",
         "fonts": [
@@ -161,6 +146,22 @@ font_families = [
             },
         ],
     },
+    {
+        "font_family": "SegMDL2",
+        "split_blocks": {
+            "All": "U+0000-10FFFF",
+        },
+        "dir": "Segoe",
+        "fonts": [
+            {
+                "file_name": "SegMDL2",
+                "file_extension": "ttf",
+                "font_weight": None,
+                "dest_dir": "R",
+                "display": "block",
+            },
+        ],
+    },
 ]
 
 for font_family in font_families:
@@ -173,16 +174,5 @@ for font_family in font_families:
             font_family["font_family"],
             font_family["split_blocks"],
             font["dest_dir"] + dir_surfix,
+            font["display"] if "display" in font else "swap",
         )
-
-font_splitter(
-    "Segoe",
-    "SegMDL2",
-    "ttf",
-    None,
-    "SegMDL2",
-    {},
-    dir_surfix,
-    "block",
-    {"custom": "U+E971,U+E972"},
-)
