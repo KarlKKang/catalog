@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export MSYS2_ARG_CONV_EXCL="*"
+
 if [[ "$#" -ne 2 || ("$1" != "featherine-website" && "$1" != "featherine-website-alpha") || ! (-d "$2") ]]; then
     echo "Usage: $0 S3_BUCKET DIRECTORY" >&2
     exit 1
