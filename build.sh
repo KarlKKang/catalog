@@ -2,8 +2,13 @@
 
 set -e
 
-output_dir='dev'
+export BUILD=$1
+if [[ "$BUILD" != "production" && "$BUILD" != "alpha" && "$BUILD" != "beta" ]]; then
+    echo "Usage: $0 <production|alpha|beta>"
+    exit 1
+fi
 
+output_dir='dev'
 if [[ "$BUILD" == "production" ]]; then
     output_dir="dist"
 fi
