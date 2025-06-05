@@ -16,7 +16,7 @@
     "publish": "sh publish.sh featherine-website ./dist/",
     "publish-dev": "sh publish.sh featherine-website-alpha ./dev/",
     "init-sync": "sh init_sync.sh featherine-website ./dist/",
-    "init-sync-dev": "mkdir -p ./dev && sh init_sync.sh featherine-website-alpha ./dev/",
+    "init-sync-dev": "sh init_sync.sh featherine-website-alpha ./dev/",
     "check-circular": "madge --circular --warning src/script/entry/index.ts"
   },
   "author": "Kai Kang",
