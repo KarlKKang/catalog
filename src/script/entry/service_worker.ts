@@ -14,6 +14,7 @@ import { getEpochMs } from '../module/time/epoch_ms';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { min } from '../module/math';
 import { addTimeoutNative } from '../module/timer/add/native/timeout';
+import { getSearchParam } from '../module/dom/location/get/search_param';
 
 let swUpdateLastPromptTime = 0;
 let serviceWorker: Workbox | null = null;
@@ -21,7 +22,40 @@ let serviceWorkerUpToDate = true;
 let registering = false;
 let promptAllowed = false;
 
-export default async function () { // This function should be called after setting the `pgid`.
+export default function () {
+    if (ENABLE_DEBUG && getSearchParam('pwa') === '1') {
+        register();
+    } else {
+        unregister();
+    }
+}
+
+async function unregister() {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (const registration of registrations) {
+        if (ENABLE_DEBUG) {
+            console.log('Unregistering service worker:', registration);
+        }
+        await registration.unregister();
+    }
+    if (registrations.length > 0) {
+        await unregisterCleanup();
+        windowLocation.reload();
+    }
+}
+
+async function unregisterCleanup() {
+    indexedDB.deleteDatabase('workbox-expiration');
+    const cacheKeys = await caches.keys();
+    for (const cacheKey of cacheKeys) {
+        if (ENABLE_DEBUG) {
+            console.log('Deleting cache:', cacheKey);
+        }
+        await caches.delete(cacheKey);
+    }
+}
+
+async function register() { // This function should be called after setting the `pgid`.
     addOffloadCallback(offload);
     promptAllowed = true;
 

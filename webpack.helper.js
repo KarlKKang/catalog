@@ -104,107 +104,23 @@ function addDefinePlugin(config, build) {
 }
 
 function addWorkboxPlugin(config, build) {
-    const destDir = build === 'production' ? 'dist/' : 'dev/';
-    const browserScript = destDir + 'script/browser.js';
-    const buffer = readSync(browserScript);
-    const hash = crypto.createHash('md5');
-    hash.update(buffer);
-    const browserScriptRevision = hash.digest('hex');
-
     config.plugins.push(
         new GenerateSW({
             inlineWorkboxRuntime: true,
-            include: [/\.js$/i, /\.css$/i, /index\.html$/i],
-            ignoreURLParametersMatching: [/.*/],
+            exclude: [/.*/],
             cleanupOutdatedCaches: true,
             clientsClaim: true,
-            directoryIndex: null,
             swDest: '../temp/sw_' + build + '.js',
-            navigateFallback: '/',
-            navigateFallbackDenylist: [/^\/unsupported_browser$/],
             babelPresetEnvTargets: ['last 1 Chrome versions'], // Will be transpiled separately
-            additionalManifestEntries: [
-                {
-                    url: '/script/browser.js',
-                    revision: browserScriptRevision,
-                }
-            ],
-            manifestTransforms: [
-                (manifestEntries, _) => {
-                    return {
-                        manifest: manifestEntries.map((entry) => {
-                            if (entry.url === '/index.html') {
-                                entry.url = '/';
-                            }
-                            return entry;
-                        })
-                    };
-                }
-            ],
             runtimeCaching: [
                 {
-                    urlPattern: ({ url }) => {
-                        return url.pathname.endsWith('.woff2');
+                    urlPattern: () => {
+                        return false;
                     },
-                    handler: 'CacheFirst',
-                    options: {
-                        cacheName: 'font',
-                        cacheableResponse: {
-                            statuses: [200],
-                        },
-                        matchOptions: {
-                            ignoreSearch: true,
-                            ignoreVary: true,
-                        },
-                        expiration: {
-                            maxEntries: 3000,
-                            maxAgeSeconds: 60 * 60 * 24 * 365,
-                            purgeOnQuotaError: true,
-                            matchOptions: {
-                                ignoreSearch: true,
-                                ignoreVary: true,
-                            },
-                        },
-                        backgroundSync: {
-                            name: 'font',
-                            options: {
-                                maxRetentionTime: 24 * 60, // In minutes
-                            },
-                        },
-                    },
-                },
-                {
-                    urlPattern: ({ url }) => {
-                        return url.pathname.startsWith('/icon/');
-                    },
-                    handler: 'CacheFirst',
-                    options: {
-                        cacheName: 'icon',
-                        cacheableResponse: {
-                            statuses: [200],
-                        },
-                        matchOptions: {
-                            ignoreSearch: true,
-                            ignoreVary: true,
-                        },
-                        expiration: {
-                            maxEntries: 100,
-                            maxAgeSeconds: 60 * 60 * 24 * 365,
-                            purgeOnQuotaError: true,
-                            matchOptions: {
-                                ignoreSearch: true,
-                                ignoreVary: true,
-                            },
-                        },
-                        backgroundSync: {
-                            name: 'icon',
-                            options: {
-                                maxRetentionTime: 24 * 60,
-                            },
-                        },
-                    },
+                    handler: 'NetworkOnly',
                 },
             ]
+
         }),
     );
 }
