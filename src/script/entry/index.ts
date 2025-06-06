@@ -47,6 +47,7 @@ import { setOgUrl } from '../module/dom/document/og/url/set';
 import { getHref } from '../module/dom/location/get/href';
 import { checkClientVersion, clientVersionOutdated } from './version';
 import { setHref } from '../module/dom/location/set/href';
+import { unregisterSW } from './service_worker';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -75,11 +76,6 @@ interface Page {
 
 const loadingBar = createDivElement();
 addClass(loadingBar, loadingBarClass);
-interface ServiceWorkerModule {
-    default: () => void;
-}
-let serviceWorkerModule: ServiceWorkerModule | null = null;
-let serviceWorkerModulePromise: Promise<ServiceWorkerModule> | null = null;
 let loadingBarShown = false;
 
 const page404 = {
@@ -285,23 +281,7 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
         }
 
         checkClientVersion();
-
-        if ('serviceWorker' in navigator) {
-            if (serviceWorkerModule !== null) {
-                serviceWorkerModule.default();
-            } else {
-                if (serviceWorkerModulePromise === null) {
-                    serviceWorkerModulePromise = getServiceWorkerModulePromise();
-                }
-                serviceWorkerModulePromise.then((module) => {
-                    serviceWorkerModule = module;
-                    if (pgid !== newPgid) {
-                        return;
-                    }
-                    serviceWorkerModule.default();
-                }); // No need to catch error since this module is not critical.
-            }
-        }
+        unregisterSW();
 
         stopShowLoadingBarAnimation();
         loadingBarWidth = 100;
@@ -338,22 +318,6 @@ function importFont(delay: number) {
             throw e;
         }
     }, delay);
-}
-
-async function getServiceWorkerModulePromise(retryTimeout = 500): Promise<ServiceWorkerModule> {
-    try {
-        return await import(
-            /* webpackExports: ["default"] */
-            './service_worker',
-        );
-    } catch (e) {
-        console.error(e);
-        return new Promise<ServiceWorkerModule>((resolve) => {
-            addTimeoutNative(() => {
-                resolve(getServiceWorkerModulePromise(min(retryTimeout * 2, 5000)));
-            }, retryTimeout);
-        });
-    }
 }
 
 function objectKeyExists<T extends object>(key: PropertyKey, obj: T): key is keyof T {
