@@ -27,7 +27,7 @@ function addFaviconPlugin(config, build) {
                 developerURL: 'https://' + TOP_DOMAIN,
                 lang: "ja-JP",
                 start_url: "/",
-                theme_color: "%remove%",
+                display: 'browser',
                 icons: {
                     appleStartup: false,
                     windows: false,

@@ -7,10 +7,15 @@ if (BUILD === 'production') {
     directory = './dist/';
 }
 
+const htmlFilter = [
+    /<meta [^<]*name=theme-color( [^>]*)?>/g,
+    /<meta [^<]*name=mobile-web-app-capable( [^>]*)?>/g,
+    /<meta [^<]*name=apple-mobile-web-app-[^>]*>/g,
+];
 const contentsToRemove = {
-    'index.html': ['<meta content=%remove% name=theme-color>'],
-    'unsupported_browser.html': ['<meta content=%remove% name=theme-color>'],
-    'icon/manifest.webmanifest': ['  "theme_color": "%remove%",\n'],
+    'index.html': htmlFilter,
+    'unsupported_browser.html': htmlFilter,
+    'icon/manifest.webmanifest': [/^\s*"theme_color":.*\n/gm],
 };
 
 for (const [file, contents] of Object.entries(contentsToRemove)) {
