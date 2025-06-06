@@ -31,6 +31,7 @@ function addFaviconPlugin(config, build) {
                 icons: {
                     appleStartup: false,
                     windows: false,
+                    yandex: false,
                 }
             }
         })
