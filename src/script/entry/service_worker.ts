@@ -1,7 +1,11 @@
 import { windowLocation } from '../module/dom/location';
 
 export async function unregisterSW() {
-    const registrations = await navigator.serviceWorker.getRegistrations();
+    const nav = navigator;
+    if (!('serviceWorker' in nav)) {
+        return;
+    }
+    const registrations = await nav.serviceWorker.getRegistrations();
     for (const registration of registrations) {
         if (ENABLE_DEBUG) {
             console.log('Unregistering service worker:', registration);
