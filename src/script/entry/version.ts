@@ -1,6 +1,9 @@
+import { addTimeoutNative } from '../module/timer/add/native/timeout';
+import { removeTimeoutNative } from '../module/timer/remove/native/timeout';
+
 export let clientVersionOutdated = false;
 const checkInterval = 30 * 60 * 1000;
-let currentTimeout: ReturnType<typeof setTimeout> | null = null;
+let currentTimeout: ReturnType<typeof addTimeoutNative> | null = null;
 
 export function checkClientVersion() {
     clearSchedule();
@@ -22,7 +25,7 @@ export function checkClientVersion() {
 }
 
 function scheduleVersionCheck() {
-    const newTimeout = setTimeout(() => {
+    const newTimeout = addTimeoutNative(() => {
         if (newTimeout === currentTimeout) {
             checkClientVersion();
         }
@@ -32,7 +35,7 @@ function scheduleVersionCheck() {
 
 function clearSchedule() {
     if (currentTimeout) {
-        clearTimeout(currentTimeout);
+        removeTimeoutNative(currentTimeout);
         currentTimeout = null;
     }
 }
