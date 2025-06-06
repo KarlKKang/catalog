@@ -45,6 +45,8 @@ import { scrollToTop } from '../module/dom/scroll/to_top';
 import { setSmoothScroll } from '../module/style/smooth_scroll';
 import { setOgUrl } from '../module/dom/document/og/url/set';
 import { getHref } from '../module/dom/location/get/href';
+import { checkClientVersion, clientVersionOutdated } from './version';
+import { setHref } from '../module/dom/location/set/href';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -161,6 +163,17 @@ function load(url: string, withoutHistory: boolean | null = false) {
     let uri = urlParser.pathname;
     const fullPath = uri + urlParser.search + urlParser.hash;
 
+    if (clientVersionOutdated) {
+        if (ENABLE_DEBUG) {
+            console.log('Client version outdated, using full reload.');
+        }
+        setHref(fullPath);
+        return;
+    }
+    if (ENABLE_DEBUG) {
+        console.log('Client verion is up to date.');
+    }
+
     if (objectKeyExists(uri, pages)) {
         const page = pages[uri];
         loadPage(fullPath, withoutHistory, page, uri);
@@ -270,6 +283,8 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
         if (pgid !== newPgid) {
             return;
         }
+
+        checkClientVersion();
 
         if ('serviceWorker' in navigator) {
             if (serviceWorkerModule !== null) {

@@ -92,6 +92,7 @@ function addFontLoader(config, build) {
 
 function addDefinePlugin(config, build) {
     const dev = build !== 'production';
+    const pkg = JSON.parse(readSync('./package.json'));
     config.plugins.push(
         new webpack.DefinePlugin({
             ENABLE_DEBUG: JSON.stringify(build === 'alpha'),
@@ -99,6 +100,7 @@ function addDefinePlugin(config, build) {
             ENV_WEBSITE_SUBDOMAIN_PREFIX: JSON.stringify(WEBSITE_SUBDOMAIN_PREFIX(dev)),
             ENV_WEBSITE_PORT_SUFFIX: JSON.stringify(WEBSITE_PORT_SUFFIX(dev)),
             ENV_WEBSITE_NAME: JSON.stringify(WEBSITE_NAME(dev)),
+            ENV_CLIENT_VERSION: JSON.stringify(pkg.version ?? '0.0.0'),
         })
     );
 }

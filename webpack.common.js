@@ -37,7 +37,8 @@ const configs = [
                         filename === 'icon' ||
                         filename === 'IndexNowb922f0d0-3cbe-42b9-b913-accbbf92100f.txt' ||
                         filename === 'robots.txt' ||
-                        filename === 'sitemap.xml';
+                        filename === 'sitemap.xml' ||
+                        filename === 'version';
                 }
             },
             chunkLoadingGlobal: 'loader'

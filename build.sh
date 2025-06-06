@@ -22,3 +22,4 @@ webpack --progress --config webpack.js --config-name main
 node post_favicon.js
 webpack --progress --config webpack.js --config-name sw
 sh check_syntax.sh ${output_dir}/**/*.js
+node write_version.js
