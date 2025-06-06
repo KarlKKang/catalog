@@ -10,7 +10,7 @@ import { IS_SAFARI } from './is_safari';
 const SUPPORTED_BLINK = engineName === 'blink' && engineMajorVersion >= 79;
 export const UNRECOMMENDED_BROWSER
     = (!SUPPORTED_BLINK && !IS_SAFARI)
-    || browserName.includes('wechat')
-    || browserName === 'ucbrowser'
-    || !(CAN_PLAY_AVC && CAN_PLAY_AAC)
-    || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
+        || browserName.includes('wechat')
+        || browserName === 'ucbrowser'
+        || !(CAN_PLAY_AVC && CAN_PLAY_AAC)
+        || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
