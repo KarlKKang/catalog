@@ -7,19 +7,22 @@ if (BUILD === 'production') {
     directory = './dist/';
 }
 
-const removeContent = {
-    'index.html': '<meta content=%remove% name=theme-color>',
-    'unsupported_browser.html': '<meta content=%remove% name=theme-color>',
-    'icon/manifest.webmanifest': '  "theme_color": "%remove%",\n',
-}
+const contentsToRemove = {
+    'index.html': ['<meta content=%remove% name=theme-color>'],
+    'unsupported_browser.html': ['<meta content=%remove% name=theme-color>'],
+    'icon/manifest.webmanifest': ['  "theme_color": "%remove%",\n'],
+};
 
-for (let [file, content] of Object.entries(removeContent)) {
+for (const [file, contents] of Object.entries(contentsToRemove)) {
     fs.read(directory + file, function (data) {
-        if (!data.includes(content)) {
-            console.error('The content to remove is not found in ' + directory + file);
-            return;
+        for (const content of contents) {
+            const newData = data.replaceAll(content, '');
+            if (data === newData) {
+                console.error('The content to remove is not found in ' + directory + file);
+                process.exit(1);
+            }
+            data = newData;
         }
-        data = data.replace(content, '');
         const oldData = fs.readSync('./temp/' + file);
         if (data === oldData) {
             fs.moveSync('./temp/' + file, directory + file);
