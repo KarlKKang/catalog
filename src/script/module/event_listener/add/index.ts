@@ -1,6 +1,7 @@
 import { isUseCapture } from '../internal/is_use_capture';
 import { elementMap } from '../internal/element_map';
 import type { CustomAddEventListenerOptions } from '../internal/type';
+import { addEventListenerNative } from './native';
 
 export function addEventListener(elem: EventTarget, event: string, callback: EventListener, options?: boolean | CustomAddEventListenerOptions) {
     let eventMap = elementMap.get(elem);
@@ -39,7 +40,7 @@ export function addEventListener(elem: EventTarget, event: string, callback: Eve
         callback.apply(elem, args);
     };
     listenerConfig[listenerConfigIdx] = [_callback, options];
-    elem.addEventListener(event, _callback, options);
+    addEventListenerNative(elem, event, _callback, options);
     if (ENABLE_DEBUG) {
         console.log(`Event '${event}' listener added. Total elements listening: ${elementMap.size}. Total events on this element: ${eventMap.size}. Total listeners on this event: ${listenerMap.size}.`, elem);
     }

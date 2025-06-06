@@ -1,3 +1,4 @@
+import { addEventListenerNative } from '../module/event_listener/add/native';
 import { addTimeoutNative } from '../module/timer/add/native/timeout';
 import { removeTimeoutNative } from '../module/timer/remove/native/timeout';
 
@@ -9,15 +10,15 @@ export function checkClientVersion() {
     clearSchedule();
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/version', true);
-    xhr.addEventListener('load', () => {
+    addEventListenerNative(xhr, 'load', () => {
         clientVersionOutdated = xhr.responseText !== ENV_CLIENT_VERSION;
         scheduleVersionCheck();
     });
-    xhr.addEventListener('error', () => {
+    addEventListenerNative(xhr, 'error', () => {
         clientVersionOutdated = true;
         scheduleVersionCheck();
     });
-    xhr.addEventListener('timeout', () => {
+    addEventListenerNative(xhr, 'timeout', () => {
         scheduleVersionCheck();
     });
     xhr.timeout = 60 * 1000;

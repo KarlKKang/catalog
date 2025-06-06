@@ -48,6 +48,7 @@ import { getHref } from '../module/dom/location/get/href';
 import { checkClientVersion, clientVersionOutdated } from './version';
 import { setHref } from '../module/dom/location/set/href';
 import { unregisterSW } from './service_worker';
+import { addEventListenerNative } from '../module/event_listener/add/native';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -329,16 +330,15 @@ setHistoryState(fullPath, true);
 if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
-const windowAddEventListener = w.addEventListener;
-windowAddEventListener('load', () => {
+addEventListenerNative(w, 'load', () => {
     const nativeBody = d.body;
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
     setSameOriginRedirectFunc(load);
     load(fullPath, null);
     importFont(0);
-    windowAddEventListener('popstate', (state) => {
-        if (state.state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
+    addEventListenerNative(w, 'popstate', (state) => {
+        if ((state as PopStateEvent).state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
             if (customPopStateHandler?.()) {
                 if (ENABLE_DEBUG) {
                     console.log('popstate handled by the page.');
