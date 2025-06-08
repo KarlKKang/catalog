@@ -17,9 +17,9 @@ npm run lint
 npm run check-circular
 mkdir -p ./temp
 node build_legacy.js
-sh pre_favicon.sh
+bash pre_favicon.sh
 webpack --progress --config webpack.js --config-name main
 node post_favicon.js
 webpack --progress --config webpack.js --config-name sw
-sh check_syntax.sh ${output_dir}/**/*.js
+bash check_syntax.sh ${output_dir}/**/*.js
 node write_version.js
