@@ -6,6 +6,7 @@ import { removeTimeoutNative } from '../module/timer/remove/native/timeout';
 export let clientVersionOutdated = false;
 const checkInterval = 30 * 60 * 1000;
 let currentTimeout: ReturnType<typeof addTimeoutNative> | null = null;
+let currentXhr: XMLHttpRequest | null = null;
 
 export function checkClientVersion() {
     clearSchedule();
@@ -13,7 +14,11 @@ export function checkClientVersion() {
 }
 
 function sendVersionCheckRequest() {
+    if (currentXhr !== null) {
+        return;
+    }
     const xhr = new XMLHttpRequest();
+    currentXhr = xhr;
     xhr.open('GET', '/version', true);
     addEventListenerNative(xhr, 'load', () => {
         clientVersionOutdated = xhr.status !== 200 || semverGreater(xhr.responseText, ENV_CLIENT_VERSION);
@@ -22,6 +27,7 @@ function sendVersionCheckRequest() {
         clientVersionOutdated = true;
     });
     addEventListenerNative(xhr, 'loadend', () => {
+        currentXhr = null;
         if (!clientVersionOutdated) {
             scheduleVersionCheck();
         }
