@@ -6,7 +6,7 @@ _notes/
 /node_modules/
 .DS_Store
 /publish.log
-/init_sync.log
+/fetch_deployment.log
 /dev/
 __pycache__
 /src/font/dist/
