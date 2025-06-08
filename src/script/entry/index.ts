@@ -49,6 +49,7 @@ import { checkClientVersion, clientVersionOutdated } from './version';
 import { setHref } from '../module/dom/location/set/href';
 import { unregisterSW } from './service_worker';
 import { addEventListenerNative } from '../module/event_listener/add/native';
+import { addEventListenerOnce } from '../module/event_listener/add/once';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -330,7 +331,7 @@ setHistoryState(fullPath, true);
 if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
-addEventListenerNative(w, 'load', () => {
+addEventListenerOnce(w, 'load', () => {
     const nativeBody = d.body;
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
