@@ -1,4 +1,5 @@
 import { elementMap } from '../internal/element_map';
+import { removeEventListenerNative } from './native';
 
 export function removeEventListener(elem: EventTarget, event: string, callback: EventListener, useCapture?: boolean) {
     const eventMap = elementMap.get(elem);
@@ -30,7 +31,7 @@ export function removeEventListener(elem: EventTarget, event: string, callback: 
         }
         return;
     }
-    elem.removeEventListener(event, eventListenerAndOptions[0], eventListenerAndOptions[1]);
+    removeEventListenerNative(elem, event, eventListenerAndOptions[0], eventListenerAndOptions[1]);
     listenerConfig[listenerConfigIdx] = null;
 
     if (listenerConfig[0] === null && listenerConfig[1] === null) {
