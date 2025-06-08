@@ -42,7 +42,7 @@ function scheduleVersionCheck() {
 }
 
 function clearSchedule() {
-    if (currentTimeout) {
+    if (currentTimeout !== null) {
         removeTimeoutNative(currentTimeout);
         currentTimeout = null;
     }
