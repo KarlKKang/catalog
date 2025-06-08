@@ -11,6 +11,7 @@
     "build:alpha": "sh build.sh alpha",
     "build:beta": "sh build.sh beta",
     "build:hls.js": "sh build_hls.sh",
+    "build-init": "sh build_init.sh",
     "lint": "npx eslint src/script/",
     "lint:fix": "npm run lint -- --fix",
     "publish": "sh publish.sh featherine-website ./dist/",
