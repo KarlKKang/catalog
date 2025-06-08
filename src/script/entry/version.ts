@@ -13,14 +13,14 @@ export function checkClientVersion() {
     xhr.open('GET', '/version', true);
     addEventListenerNative(xhr, 'load', () => {
         clientVersionOutdated = xhr.status !== 200 || semverGreater(xhr.responseText, ENV_CLIENT_VERSION);
-        scheduleVersionCheck();
     });
     addEventListenerNative(xhr, 'error', () => {
         clientVersionOutdated = true;
-        scheduleVersionCheck();
     });
-    addEventListenerNative(xhr, 'timeout', () => {
-        scheduleVersionCheck();
+    addEventListenerNative(xhr, 'loadend', () => {
+        if (!clientVersionOutdated) {
+            scheduleVersionCheck();
+        }
     });
     xhr.timeout = 60 * 1000;
     xhr.send();
