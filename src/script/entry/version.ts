@@ -9,6 +9,10 @@ let currentTimeout: ReturnType<typeof addTimeoutNative> | null = null;
 
 export function checkClientVersion() {
     clearSchedule();
+    sendVersionCheckRequest();
+}
+
+function sendVersionCheckRequest() {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/version', true);
     addEventListenerNative(xhr, 'load', () => {
@@ -27,9 +31,11 @@ export function checkClientVersion() {
 }
 
 function scheduleVersionCheck() {
+    clearSchedule();
     const newTimeout = addTimeoutNative(() => {
         if (newTimeout === currentTimeout) {
-            checkClientVersion();
+            currentTimeout = null;
+            sendVersionCheckRequest();
         }
     }, checkInterval);
     currentTimeout = newTimeout;
