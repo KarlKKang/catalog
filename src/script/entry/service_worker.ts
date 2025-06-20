@@ -13,8 +13,11 @@ export async function unregisterSW() {
         await registration.unregister();
     }
     if (registrations.length > 0) {
-        await unregisterCleanup();
-        windowLocation.reload();
+        try {
+            await unregisterCleanup();
+        } finally {
+            windowLocation.reload();
+        }
     }
 }
 
