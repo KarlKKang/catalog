@@ -161,17 +161,6 @@ function load(url: string, withoutHistory: boolean | null = false) {
     let uri = urlParser.pathname;
     const fullPath = uri + urlParser.search + urlParser.hash;
 
-    if (clientVersionOutdated) {
-        if (ENABLE_DEBUG) {
-            console.log('Client version outdated, using full reload.');
-        }
-        setHref(fullPath);
-        return;
-    }
-    if (ENABLE_DEBUG) {
-        console.log('Client verion is up to date.');
-    }
-
     if (objectKeyExists(uri, pages)) {
         const page = pages[uri];
         loadPage(fullPath, withoutHistory, page, uri);
@@ -198,13 +187,22 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
     replaceChildren(body);
     setClass(body, '');
 
-    if (withoutHistory === null) {
-        if (page[PageProp.INTERNAL] === true && !ENABLE_DEBUG) {
-            page = page404;
-            canonicalUri = getFullPath();
+    if (page[PageProp.INTERNAL] && withoutHistory === null && !ENABLE_DEBUG) {
+        page = page404;
+        canonicalUri = getFullPath();
+    }
+    if (page[PageProp.INTERNAL] !== true) {
+        if (clientVersionOutdated) {
+            if (ENABLE_DEBUG) {
+                console.log('Client version outdated, using full reload.');
+            }
+            setHref(fullPath, !!withoutHistory);
+            return;
         }
-    } else if (page[PageProp.INTERNAL] !== true) {
-        setHistoryState(fullPath, withoutHistory);
+        if (ENABLE_DEBUG) {
+            console.log('Client verion is up to date.');
+        }
+        setHistoryState(fullPath, !!withoutHistory);
     }
 
     if (page[PageProp.PRESERVE_HEAD] !== true) {
