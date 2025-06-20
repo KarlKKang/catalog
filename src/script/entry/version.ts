@@ -1,57 +1,30 @@
 import { addEventListenerNative } from '../module/event_listener/add/native';
 import { max } from '../module/math';
-import { addTimeoutNative } from '../module/timer/add/native/timeout';
-import { removeTimeoutNative } from '../module/timer/remove/native/timeout';
+import { addTimeout } from '../module/timer/add/timeout';
+import { newXhr } from '../module/xhr/new';
 
 export let clientVersionOutdated = false;
 const checkInterval = 30 * 60 * 1000;
-let currentTimeout: ReturnType<typeof addTimeoutNative> | null = null;
-let currentXhr: XMLHttpRequest | null = null;
 
 export function checkClientVersion() {
-    clearSchedule();
-    sendVersionCheckRequest();
-}
-
-function sendVersionCheckRequest() {
-    if (currentXhr !== null) {
-        return;
-    }
-    const xhr = new XMLHttpRequest();
-    currentXhr = xhr;
-    xhr.open('GET', '/version', true);
-    addEventListenerNative(xhr, 'load', () => {
-        clientVersionOutdated = xhr.status !== 200 || semverGreater(xhr.responseText, ENV_CLIENT_VERSION);
-    });
+    const xhr = newXhr(
+        '/version',
+        'GET',
+        false,
+        () => {
+            clientVersionOutdated = xhr.status !== 200 || semverGreater(xhr.responseText, ENV_CLIENT_VERSION);
+        },
+        () => {
+            if (!clientVersionOutdated) {
+                addTimeout(checkClientVersion, checkInterval);
+            }
+        }
+    );
     addEventListenerNative(xhr, 'error', () => {
         clientVersionOutdated = true;
     });
-    addEventListenerNative(xhr, 'loadend', () => {
-        currentXhr = null;
-        if (!clientVersionOutdated) {
-            scheduleVersionCheck();
-        }
-    });
     xhr.timeout = 60 * 1000;
     xhr.send();
-}
-
-function scheduleVersionCheck() {
-    clearSchedule();
-    const newTimeout = addTimeoutNative(() => {
-        if (newTimeout === currentTimeout) {
-            currentTimeout = null;
-            sendVersionCheckRequest();
-        }
-    }, checkInterval);
-    currentTimeout = newTimeout;
-}
-
-function clearSchedule() {
-    if (currentTimeout !== null) {
-        removeTimeoutNative(currentTimeout);
-        currentTimeout = null;
-    }
 }
 
 function semverGreater(ver: string, refver: string): boolean {

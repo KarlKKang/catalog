@@ -7,6 +7,7 @@ export function newXhr(
     method: 'GET' | 'POST',
     withCredentials: boolean,
     callback: () => void,
+    loadendCallback?: () => void,
 ) {
     const xhr = new XMLHttpRequest();
     allRequests.add(xhr);
@@ -19,6 +20,7 @@ export function newXhr(
         callback();
     });
     addEventListener(xhr, 'loadend', () => {
+        loadendCallback?.();
         allRequests.delete(xhr);
         removeAllEventListeners(xhr);
         if (ENABLE_DEBUG) {
