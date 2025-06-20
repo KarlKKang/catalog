@@ -5,19 +5,30 @@ export async function unregisterSW() {
     if (!('serviceWorker' in nav)) {
         return;
     }
-    const registrations = await nav.serviceWorker.getRegistrations();
-    for (const registration of registrations) {
+    let registrationCount = 0;
+    let registration;
+    while ((registration = await getRegistration(nav.serviceWorker)) !== undefined) {
+        registrationCount++;
         if (ENABLE_DEBUG) {
             console.log('Unregistering service worker:', registration);
         }
         await registration.unregister();
     }
-    if (registrations.length > 0) {
+    if (registrationCount > 0) {
         try {
             await unregisterCleanup();
         } finally {
             windowLocation.reload();
         }
+    }
+}
+
+async function getRegistration(sw: ServiceWorkerContainer): Promise<ServiceWorkerRegistration | undefined> {
+    try {
+        return await sw.getRegistration('/');
+    } catch (e) {
+        console.error(e);
+        return undefined;
     }
 }
 
