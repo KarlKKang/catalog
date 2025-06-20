@@ -1,11 +1,11 @@
-import { windowLocation } from '../dom/location';
+import { setHref } from '../dom/location/set/href';
 import { w } from '../dom/window';
 
 export function setSessionStorage(key: string, value: string) {
     try {
         w.sessionStorage.setItem(key, value);
     } catch (e) {
-        windowLocation.replace('/unsupported_browser');
+        setHref('/unsupported_browser', true);
         throw e;
     }
 }
