@@ -61,8 +61,8 @@ function semverGreater(ver: string, refver: string): boolean {
     for (let i = 0; i < max(verParts.length, refverParts.length); i++) {
         const verPart = parseInt(verParts[i] ?? '0', 10);
         const refverPart = parseInt(refverParts[i] ?? '0', 10);
-        if (verPart > refverPart) return true;
         if (verPart < refverPart) return false;
+        if (verPart !== refverPart) return true;
     }
     return false;
 }
