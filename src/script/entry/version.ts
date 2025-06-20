@@ -18,7 +18,7 @@ export function checkClientVersion() {
             if (!clientVersionOutdated) {
                 addTimeout(checkClientVersion, checkInterval);
             }
-        }
+        },
     );
     addEventListenerNative(xhr, 'error', () => {
         clientVersionOutdated = true;
