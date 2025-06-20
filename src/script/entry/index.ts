@@ -281,7 +281,6 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
         }
 
         checkClientVersion();
-        unregisterSW();
 
         stopShowLoadingBarAnimation();
         loadingBarWidth = 100;
@@ -336,6 +335,7 @@ addEventListenerOnce(w, 'load', () => {
     setSameOriginRedirectFunc(load);
     load(fullPath, null);
     importFont(0);
+    unregisterSW();
     addEventListenerNative(w, 'popstate', (state) => {
         if ((state as PopStateEvent).state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
             if (customPopStateHandler?.()) {
