@@ -36,8 +36,6 @@ def font_splitter(
     script_path = os.path.dirname(__file__)
     src_root_dir = os.path.join(script_path, "src", "font")
 
-    options = ["--harfbuzz-repacker"]
-
     # split
     unicode_blocks = {}
     for glyph in split_blocks:
@@ -69,7 +67,6 @@ def font_splitter(
                 os.path.join(src_root_dir, src_dir, file_name + "." + file_extension),
                 f"--unicodes={unicode_blocks[glyph]}",
             ]
-            sys.argv.extend(options)
             sys.argv.append("--flavor=woff2")
             sys.argv.append(f"--output-file={output_file_woff2}")
             pyftsubset()
