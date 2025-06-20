@@ -1,3 +1,4 @@
+import { consoleError } from '../module/console';
 import { windowLocation } from '../module/dom/location';
 
 export async function unregisterSW() {
@@ -15,7 +16,7 @@ export async function unregisterSW() {
         try {
             await registration.unregister();
         } catch (e) {
-            console.error(e);
+            consoleError(e);
         }
     }
     if (registrationCount > 0) {
@@ -28,7 +29,7 @@ async function getRegistration(sw: ServiceWorkerContainer): Promise<ServiceWorke
     try {
         return await sw.getRegistration('/');
     } catch (e) {
-        console.error(e);
+        consoleError(e);
         return undefined;
     }
 }
@@ -37,13 +38,13 @@ async function unregisterCleanup() {
     try {
         indexedDB.deleteDatabase('workbox-expiration');
     } catch (e) {
-        console.error(e);
+        consoleError(e);
     }
     let cacheKeys;
     try {
         cacheKeys = await caches.keys();
     } catch (e) {
-        console.error(e);
+        consoleError(e);
         return;
     }
     for (const cacheKey of cacheKeys) {
@@ -53,7 +54,7 @@ async function unregisterCleanup() {
         try {
             await caches.delete(cacheKey);
         } catch (e) {
-            console.error(e);
+            consoleError(e);
         }
     }
 }

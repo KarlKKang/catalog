@@ -1,3 +1,4 @@
+import { consoleError } from './console';
 import { pgid } from './global/pgid';
 import { showMessage } from './message';
 import { MessageParamKey } from './message/type';
@@ -16,7 +17,7 @@ async function importModuleHelper<T>(importPromiseGenerator: () => Promise<T>, r
         if (currentPgid === pgid) {
             retryCount--;
             if (retryCount >= 0) {
-                console.error(e);
+                consoleError(e);
                 return new Promise<T>((resolve) => {
                     addTimeout(() => {
                         resolve(importModuleHelper(importPromiseGenerator, retryCount, retryTimeout * 2));

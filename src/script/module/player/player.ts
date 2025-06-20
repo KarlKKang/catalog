@@ -48,6 +48,7 @@ import { max, min, round } from '../math';
 import { removeTimeout } from '../timer/remove/timeout';
 import { IS_IOS_PWA } from '../browser/is_ios_pwa';
 import { disableButton } from '../dom/element/button/disable';
+import { consoleError } from '../console';
 
 declare global {
     interface HTMLVideoElement {
@@ -339,7 +340,7 @@ export class Player {
         this[PlayerKey.MEDIA].crossOrigin = 'use-credentials';
         addEventListener(this[PlayerKey.MEDIA], 'error', () => {
             onerror && onerror(mediaErrorCodeLookup(this[PlayerKey.MEDIA].error));
-            console.error(this[PlayerKey.MEDIA].error);
+            consoleError(this[PlayerKey.MEDIA].error);
         });
         addEventListenerOnce(this[PlayerKey.MEDIA], 'loadedmetadata', onload);
         this[PlayerKey.MEDIA].volume = 1;

@@ -4,6 +4,7 @@ import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestPa
 import { CustomMediaError } from './media_error';
 import { PlayerKey } from './player_key';
 import { HlsPlayerKey } from './hls_player_key';
+import { consoleError } from '../console';
 
 const Hls = HlsLight as unknown as typeof HlsFull;
 
@@ -90,7 +91,7 @@ export class HlsPlayer extends NonNativePlayer {
                     }
                 }
                 onerror && onerror(errorCode);
-                console.error(data);
+                consoleError(data);
             } else {
                 ENABLE_DEBUG && console.warn(data);
             }
