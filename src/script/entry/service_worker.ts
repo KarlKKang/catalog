@@ -12,14 +12,15 @@ export async function unregisterSW() {
         if (ENABLE_DEBUG) {
             console.log('Unregistering service worker:', registration);
         }
-        await registration.unregister();
+        try {
+            await registration.unregister();
+        } catch (e) {
+            console.error(e);
+        }
     }
     if (registrationCount > 0) {
-        try {
-            await unregisterCleanup();
-        } finally {
-            windowLocation.reload();
-        }
+        await unregisterCleanup();
+        windowLocation.reload();
     }
 }
 
@@ -33,12 +34,26 @@ async function getRegistration(sw: ServiceWorkerContainer): Promise<ServiceWorke
 }
 
 async function unregisterCleanup() {
-    indexedDB.deleteDatabase('workbox-expiration');
-    const cacheKeys = await caches.keys();
+    try {
+        indexedDB.deleteDatabase('workbox-expiration');
+    } catch (e) {
+        console.error(e);
+    }
+    let cacheKeys;
+    try {
+        cacheKeys = await caches.keys();
+    } catch (e) {
+        console.error(e);
+        return;
+    }
     for (const cacheKey of cacheKeys) {
         if (ENABLE_DEBUG) {
             console.log('Deleting cache:', cacheKey);
         }
-        await caches.delete(cacheKey);
+        try {
+            await caches.delete(cacheKey);
+        } catch (e) {
+            console.error(e);
+        }
     }
 }
