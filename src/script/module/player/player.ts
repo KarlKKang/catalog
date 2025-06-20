@@ -46,7 +46,6 @@ import { EN_LANG_CODE } from '../lang/en';
 import { createNativeButtonElement } from '../dom/element/button/native/create';
 import { max, min, round } from '../math';
 import { removeTimeout } from '../timer/remove/timeout';
-import { IS_IOS_PWA } from '../browser/is_ios_pwa';
 import { disableButton } from '../dom/element/button/disable';
 import { consoleError } from '../console';
 
@@ -297,7 +296,7 @@ export class Player {
 
         // PIP
         let PIPButtonPlaceholder: undefined | HTMLElement = undefined;
-        if (d.pictureInPictureEnabled && !IS_IOS_PWA) {
+        if (d.pictureInPictureEnabled) {
             const PIPButton = createPlayerButton('Picture-in-Picture');
             this[PlayerKey.PIP_BUTTON] = PIPButton;
             addClass(PIPButton, styles.playerPictureInPictureControl, styles.playerButton);
@@ -651,7 +650,7 @@ export class Player {
             }
         };
 
-        if ((screenfull.isEnabled || IOS_FULLSCREEN) && !IS_IOS_PWA) {
+        if (screenfull.isEnabled || IOS_FULLSCREEN) {
             addEventListener(this[PlayerKey.FULLSCREEN_BUTTON], 'click', toggleFullscreen);
 
             if (!IOS_FULLSCREEN) {
