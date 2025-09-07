@@ -1,4 +1,8 @@
 from font_splitter import font_splitter
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
+import sys
+import traceback
 
 dir_surfix = "7.1"
 
@@ -164,15 +168,35 @@ font_families = [
     },
 ]
 
+worker_args = []
 for font_family in font_families:
     for font in font_family["fonts"]:
-        font_splitter(
-            font_family["dir"],
-            font["file_name"],
-            font["file_extension"],
-            font["font_weight"],
-            font_family["font_family"],
-            font_family["split_blocks"],
-            font["dest_dir"] + dir_surfix,
-            font["display"] if "display" in font else "swap",
+        worker_args.append(
+            (
+                font_family["dir"],
+                font["file_name"],
+                font["file_extension"],
+                font["font_weight"],
+                font_family["font_family"],
+                font_family["split_blocks"],
+                font["dest_dir"] + dir_surfix,
+                font["display"] if "display" in font else "swap",
+            )
         )
+
+max_workers = os.cpu_count() or 1
+print(f"Spawning {max_workers} workers...")
+with ThreadPoolExecutor(max_workers=max_workers) as executor:
+    futures = [executor.submit(font_splitter, *args) for args in worker_args]
+    try:
+        for future in as_completed(futures):
+            try:
+                future.result()
+            except Exception:
+                traceback.print_exc()
+                executor.shutdown(wait=False, cancel_futures=True)
+                sys.exit(1)
+    except KeyboardInterrupt:
+        print("Interrupted, shutting down...")
+        executor.shutdown(wait=False, cancel_futures=True)
+        sys.exit(130)
