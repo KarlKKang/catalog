@@ -310,12 +310,9 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
             }
             const routeInfo = parseCurrentRouteInfo(JSON.parse(xhr.responseText));
             const asn = routeInfo[CurrentRouteInfoKey.ASN];
-            if (asn !== '4134' && asn !== '9808' && asn !== '4837') {
-                if (routeInfo[CurrentRouteInfoKey.TYPE] !== 'cn') {
-                    return;
-                }
+            if (routeInfo[CurrentRouteInfoKey.TYPE] === 'cn') {
                 const message = [
-                    createTextNode('ご利用のISPがすでに通常回線に最適化されている可能性が検出されました。その場合は、特別回線のご利用はお控えください。詳しくは'),
+                    createTextNode('現在、中国ユーザー向けの特別回線をご利用中です。中国国外にお住まいの場合は、この回線の使用をお控えください。詳しくは'),
                     createSpanElement('「中国のユーザーの皆様へのお知らせ」'),
                     createTextNode('をご覧ください。'),
                 ] as const;
@@ -323,10 +320,10 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
                 addEventListener(message[1], 'click', () => {
                     redirectSameOrigin(NEWS_ROOT_URI + '2ghJ5dHKW8T');
                 });
-                showAnnouncement('特別回線のご利用について', message, containerElem);
+                showAnnouncement('特別回線をご利用中', message, containerElem);
                 return;
             }
-            if (routeInfo[CurrentRouteInfoKey.TYPE] === 'cn') {
+            if (asn !== '4134' && asn !== '9808' && asn !== '4837') {
                 return;
             }
             const message = [
