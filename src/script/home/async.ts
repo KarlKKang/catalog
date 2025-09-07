@@ -309,7 +309,6 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
                 return;
             }
             const routeInfo = parseCurrentRouteInfo(JSON.parse(xhr.responseText));
-            const asn = routeInfo[CurrentRouteInfoKey.ASN];
             if (routeInfo[CurrentRouteInfoKey.TYPE] === 'cn') {
                 const message = [
                     createTextNode('現在、中国ユーザー向けの特別回線をご利用中です。中国国外にお住まいの場合は、この回線の使用をお控えください。詳しくは'),
@@ -323,11 +322,11 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
                 showAnnouncement('特別回線をご利用中', message, containerElem);
                 return;
             }
-            if (asn !== '4134' && asn !== '9808' && asn !== '4837') {
+            if (routeInfo[CurrentRouteInfoKey.COUNTRY] !== 'CN') {
                 return;
             }
             const message = [
-                createTextNode('ご利用のISPが通常回線に最適化されていない可能性が検出されました。ネットワーク速度を改善する方法については、'),
+                createTextNode('中国から当サイトにアクセスしていることを検知しました。ネットワーク速度を改善する方法については、'),
                 createSpanElement('「中国のユーザーの皆様へのお知らせ」'),
                 createTextNode('をご覧ください。'),
             ] as const;

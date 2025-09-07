@@ -2,18 +2,18 @@ import { parseObject } from './internal/parse_object';
 import { parseString } from './internal/parse_string';
 
 export const enum CurrentRouteInfoKey {
-    ASN,
+    COUNTRY,
     TYPE,
 }
 export interface CurrentRouteInfo {
-    readonly [CurrentRouteInfoKey.ASN]: string;
+    readonly [CurrentRouteInfoKey.COUNTRY]: string;
     readonly [CurrentRouteInfoKey.TYPE]: string;
 }
 
 export function parseCurrentRouteInfo(routeInfo: unknown): CurrentRouteInfo {
     const routeInfoObj = parseObject(routeInfo);
     return {
-        [CurrentRouteInfoKey.ASN]: parseString(routeInfoObj.asn),
+        [CurrentRouteInfoKey.COUNTRY]: parseString(routeInfoObj.country),
         [CurrentRouteInfoKey.TYPE]: parseString(routeInfoObj.type),
     };
 }
