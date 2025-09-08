@@ -1,7 +1,7 @@
-import { windowLocation } from '..';
 import { getHash } from './hash';
 import { getSearch } from './search';
+import { getURI } from './uri';
 
 export function getFullPath() {
-    return windowLocation.pathname + getSearch() + getHash();
+    return getURI() + getSearch() + getHash();
 }
