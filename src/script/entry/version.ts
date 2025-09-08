@@ -4,7 +4,7 @@ import { addTimeout } from '../module/timer/add/timeout';
 import { newXhr } from '../module/xhr/new';
 
 export let clientVersionOutdated = false;
-const checkInterval = 30 * 60 * 1000;
+const checkInterval = 20 * 60 * 1000;
 
 export function checkClientVersion() {
     const xhr = newXhr(
