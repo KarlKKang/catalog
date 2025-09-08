@@ -26,6 +26,7 @@ import { abortFileReader } from '../file_reader/abort';
 import { getFullPath } from '../dom/location/get/full_path';
 import { buildHttpForm } from '../string/http_form/build';
 import { invalidResponse } from '../message/param/invalid_response';
+import { min } from '../math';
 
 export const enum ServerRequestOptionKey {
     CALLBACK,
@@ -157,10 +158,11 @@ abstract class ServerRequest<T extends string | Blob> {
             options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] -= 1;
         }
 
-        if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] === undefined) {
+        const retryTimeout = options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT];
+        if (retryTimeout === undefined) {
             options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] = 500;
         } else {
-            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] *= 2;
+            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] = min(retryTimeout * 2, 8000);
         }
 
         if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] < 0) {
