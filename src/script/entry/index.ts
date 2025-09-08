@@ -16,7 +16,6 @@ import * as messagePageScript from '../message';
 import { offload } from '../module/global/offload';
 import { type ShowPageFunc } from '../module/global/type';
 import { customPopStateHandler } from '../module/global/pop_state/custom_handler';
-import { STATE_TRACKER } from '../module/global/pop_state/tracker';
 import { setSameOriginRedirectFunc } from '../module/global/redirect';
 import { pgid, setPgid } from '../module/global/pgid';
 import { loadingBar as loadingBarClass } from '../../css/loading_bar.module.scss';
@@ -50,6 +49,7 @@ import { setHref } from '../module/dom/location/set/href';
 import { unregisterSW } from './service_worker';
 import { addEventListenerNative } from '../module/event_listener/add/native';
 import { addEventListenerOnce } from '../module/event_listener/add/once';
+import { windowLocation } from '../module/dom/location';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -158,6 +158,9 @@ const directories = {
 
 function load(url: string, withoutHistory: boolean | null = false) {
     const urlParser = new URL(url, getHref());
+    if (urlParser.origin !== windowLocation.origin) {
+        throw new Error('Cross origin navigation detected.');
+    }
     let uri = urlParser.pathname;
     const fullURL = urlParser.href;
 
@@ -336,21 +339,15 @@ addEventListenerOnce(w, 'load', () => {
     load(href, null);
     importFont(0);
     unregisterSW();
-    addEventListenerNative(w, 'popstate', (state) => {
-        if ((state as PopStateEvent).state === STATE_TRACKER) { // Only handle tracked popstate events. In some cases, like using `window.open`, browsers may inject their own states before the tracked state.
-            if (customPopStateHandler?.()) {
-                if (ENABLE_DEBUG) {
-                    console.log('popstate handled by the page.');
-                }
-            } else {
-                load(getHref(), null);
-                if (ENABLE_DEBUG) {
-                    console.log('popstate handled by the loader.');
-                }
+    addEventListenerNative(w, 'popstate', () => {
+        if (customPopStateHandler?.()) {
+            if (ENABLE_DEBUG) {
+                console.log('popstate handled by the page.');
             }
         } else {
+            load(getHref(), null);
             if (ENABLE_DEBUG) {
-                console.log('popstate untracked.');
+                console.log('popstate handled by the loader.');
             }
         }
     });
