@@ -159,7 +159,7 @@ const directories = {
 function load(url: string, withoutHistory: boolean | null = false) {
     const urlParser = new URL(url, getHref());
     if (urlParser.origin !== windowLocation.origin) {
-        throw new Error('Cross origin navigation detected.');
+        throw new Error('Cross origin navigation handled by the same-origin redirect.');
     }
     let uri = urlParser.pathname;
     const fullURL = urlParser.href;
