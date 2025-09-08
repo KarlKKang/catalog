@@ -180,6 +180,7 @@ function load(url: string, withoutHistory: boolean | null = false) {
 }
 
 function offload() {
+    // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     offloadCallbacks();
     offloadXhr();
     offloadFileReader();
@@ -194,7 +195,6 @@ function offload() {
 }
 
 async function loadPage(fullURL: string, withoutHistory: boolean | null, page: Page, canonicalUri: string) {
-    // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     const newPgid = offload();
 
     if (page[PageProp.INTERNAL] && withoutHistory === null && !ENABLE_DEBUG) {
