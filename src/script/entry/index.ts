@@ -361,10 +361,12 @@ addEventListenerOnce(w, 'load', () => {
             windowLocation.reload();
         }
     });
-    addEventListenerNative(w, 'pagehide', () => {
-        if (ENABLE_DEBUG) {
-            console.log('Page hide, offloading.');
+    addEventListenerNative(w, 'pagehide', (e) => {
+        if ((e as PageTransitionEvent).persisted) {
+            if (ENABLE_DEBUG) {
+                console.log('Page hide, offloading.');
+            }
+            offload();
         }
-        offload();
     });
 });
