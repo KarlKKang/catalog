@@ -210,7 +210,7 @@ async function loadPage(fullURL: string, withoutHistory: boolean | null, page: P
             return;
         }
         if (ENABLE_DEBUG) {
-            console.log('Client verion is up to date.');
+            console.log('Client version is up to date.');
         }
         setHistoryState(fullURL, withoutHistory);
     }
