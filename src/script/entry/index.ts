@@ -159,24 +159,24 @@ const directories = {
 function load(url: string, withoutHistory: boolean | null = false) {
     const urlParser = new URL(url, getHref());
     let uri = urlParser.pathname;
-    const fullPath = uri + urlParser.search + urlParser.hash;
+    const fullURL = urlParser.href;
 
     if (objectKeyExists(uri, pages)) {
         const page = pages[uri];
-        loadPage(fullPath, withoutHistory, page, uri);
+        loadPage(fullURL, withoutHistory, page, uri);
         return;
     }
     uri = uri.substring(0, uri.indexOf('/', 1) + 1);
     if (objectKeyExists(uri, directories)) {
         const page = directories[uri];
-        loadPage(fullPath, withoutHistory, page, uri);
+        loadPage(fullURL, withoutHistory, page, uri);
         return;
     }
 
-    loadPage(fullPath, withoutHistory, page404, getFullPath());
+    loadPage(fullURL, withoutHistory, page404, getFullPath());
 }
 
-async function loadPage(fullPath: string, withoutHistory: boolean | null, page: Page, canonicalUri: string) {
+async function loadPage(fullURL: string, withoutHistory: boolean | null, page: Page, canonicalUri: string) {
     // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
     offload();
     offloadXhr();
@@ -196,13 +196,13 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
             if (ENABLE_DEBUG) {
                 console.log('Client version outdated, using full reload.');
             }
-            setHref(fullPath, withoutHistory);
+            setHref(fullURL, withoutHistory);
             return;
         }
         if (ENABLE_DEBUG) {
             console.log('Client verion is up to date.');
         }
-        setHistoryState(fullPath, withoutHistory);
+        setHistoryState(fullURL, withoutHistory);
     }
 
     if (page[PageProp.PRESERVE_HEAD] !== true) {
@@ -261,7 +261,7 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
 
     if (page[PageProp.SCRIPT_CACHED] === undefined) {
         if (ENABLE_DEBUG) {
-            console.log('First time loading page: ' + fullPath);
+            console.log('First time loading page: ' + fullURL);
         }
         page[PageProp.SCRIPT_CACHED] = await importModule(page[PageProp.SCRIPT]);
         if (pgid !== newPgid) {
@@ -323,8 +323,8 @@ function objectKeyExists<T extends object>(key: PropertyKey, obj: T): key is key
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-const fullPath = getFullPath();
-setHistoryState(fullPath, true);
+const href = getHref();
+setHistoryState(href, true);
 if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
@@ -333,7 +333,7 @@ addEventListenerOnce(w, 'load', () => {
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
     setSameOriginRedirectFunc(load);
-    load(fullPath, null);
+    load(href, null);
     importFont(0);
     unregisterSW();
     addEventListenerNative(w, 'popstate', (state) => {
@@ -343,7 +343,7 @@ addEventListenerOnce(w, 'load', () => {
                     console.log('popstate handled by the page.');
                 }
             } else {
-                load(getFullPath(), null);
+                load(getHref(), null);
                 if (ENABLE_DEBUG) {
                     console.log('popstate handled by the loader.');
                 }
