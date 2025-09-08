@@ -326,8 +326,6 @@ function objectKeyExists<T extends object>(key: PropertyKey, obj: T): key is key
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-const href = getHref();
-setHistoryState(href, true);
 if (history.scrollRestoration !== undefined) {
     history.scrollRestoration = 'manual';
 }
@@ -336,7 +334,7 @@ addEventListenerOnce(w, 'load', () => {
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
     setSameOriginRedirectFunc(load);
-    load(href, null);
+    load(getHref(), null);
     importFont(0);
     unregisterSW();
     addEventListenerNative(w, 'popstate', () => {
