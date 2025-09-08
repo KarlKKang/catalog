@@ -143,14 +143,14 @@ abstract class ServerRequest<T extends string | Blob> {
             xhr.timeout = timeout;
             addEventListener(xhr, 'timeout', () => {
                 this[ServerRequestKey.XHR] = null;
-                this[ServerRequestKey.RETRY]();
+                this[ServerRequestKey.RETRY](true);
             });
         }
         xhr.send(content);
         this[ServerRequestKey.XHR] = xhr;
     }
 
-    private [ServerRequestKey.RETRY](this: ServerRequest<T>) {
+    private [ServerRequestKey.RETRY](this: ServerRequest<T>, noDelay?: boolean) {
         const options = this[ServerRequestKey.OPTIONS];
         if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] === undefined) {
             options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] = 2;
@@ -158,11 +158,15 @@ abstract class ServerRequest<T extends string | Blob> {
             options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] -= 1;
         }
 
-        const retryTimeout = options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT];
-        if (retryTimeout === undefined) {
-            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] = 500;
-        } else {
-            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] = min(retryTimeout * 2, 8000);
+        let retryTimeout = 0;
+        if (noDelay !== true) {
+            const previousRetryTimeout = options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT];
+            if (previousRetryTimeout === undefined) {
+                retryTimeout = 500;
+            } else {
+                retryTimeout = min(previousRetryTimeout * 2, 8000);
+            }
+            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] = retryTimeout;
         }
 
         if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] < 0) {
@@ -172,7 +176,7 @@ abstract class ServerRequest<T extends string | Blob> {
                 this[ServerRequestKey.RETRY_TIMEOUT] = null;
                 this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
                 this[ServerRequestKey.SEND_REQUEST]();
-            }, options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT]);
+            }, retryTimeout);
         }
     }
 
