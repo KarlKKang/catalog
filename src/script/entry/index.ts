@@ -13,7 +13,7 @@ import { w } from '../module/dom/window';
 import { body } from '../module/dom/body';
 import { addTimeout } from '../module/timer/add/timeout';
 import * as messagePageScript from '../message';
-import { offload } from '../module/global/offload';
+import { offload as offloadCallbacks } from '../module/global/offload';
 import { type ShowPageFunc } from '../module/global/type';
 import { customPopStateHandler } from '../module/global/pop_state/custom_handler';
 import { setSameOriginRedirectFunc } from '../module/global/redirect';
@@ -179,9 +179,8 @@ function load(url: string, withoutHistory: boolean | null = false) {
     loadPage(fullURL, withoutHistory, page404, getFullPath());
 }
 
-async function loadPage(fullURL: string, withoutHistory: boolean | null, page: Page, canonicalUri: string) {
-    // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
-    offload();
+function offload() {
+    offloadCallbacks();
     offloadXhr();
     offloadFileReader();
     offloadEventListeners();
@@ -189,6 +188,14 @@ async function loadPage(fullURL: string, withoutHistory: boolean | null, page: P
     offloadAnimationFrames();
     replaceChildren(body);
     setClass(body, '');
+    const newPgid = {};
+    setPgid(newPgid);
+    return newPgid;
+}
+
+async function loadPage(fullURL: string, withoutHistory: boolean | null, page: Page, canonicalUri: string) {
+    // Offloading functions should be called just before updating pgid. Otherwise offloaded pages may be reinitialized by themselves.
+    const newPgid = offload();
 
     if (page[PageProp.INTERNAL] && withoutHistory === null && !ENABLE_DEBUG) {
         page = page404;
@@ -216,9 +223,6 @@ async function loadPage(fullURL: string, withoutHistory: boolean | null, page: P
     if (page[PageProp.SESSION_STORAGE] !== true) {
         clearSessionStorage();
     }
-
-    const newPgid = {};
-    setPgid(newPgid);
 
     let showLoadingBarAnimationTimeout: Timeout | null = null;
     let showLoadingBarAnimationFrame: AnimationFrame | null = null;
@@ -348,5 +352,19 @@ addEventListenerOnce(w, 'load', () => {
                 console.log('popstate handled by the loader.');
             }
         }
+    });
+    addEventListenerNative(w, 'pageshow', (e) => {
+        if ((e as PageTransitionEvent).persisted) {
+            if (ENABLE_DEBUG) {
+                console.log('Page show from bfcache, reloading.');
+            }
+            windowLocation.reload();
+        }
+    });
+    addEventListenerNative(w, 'pagehide', () => {
+        if (ENABLE_DEBUG) {
+            console.log('Page hide, offloading.');
+        }
+        offload();
     });
 });
