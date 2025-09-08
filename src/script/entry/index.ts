@@ -191,18 +191,18 @@ async function loadPage(fullPath: string, withoutHistory: boolean | null, page: 
         page = page404;
         canonicalUri = getFullPath();
     }
-    if (page[PageProp.INTERNAL] !== true) {
+    if (page[PageProp.INTERNAL] !== true && withoutHistory !== null) {
         if (clientVersionOutdated) {
             if (ENABLE_DEBUG) {
                 console.log('Client version outdated, using full reload.');
             }
-            setHref(fullPath, !!withoutHistory);
+            setHref(fullPath, withoutHistory);
             return;
         }
         if (ENABLE_DEBUG) {
             console.log('Client verion is up to date.');
         }
-        setHistoryState(fullPath, !!withoutHistory);
+        setHistoryState(fullPath, withoutHistory);
     }
 
     if (page[PageProp.PRESERVE_HEAD] !== true) {
