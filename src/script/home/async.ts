@@ -42,7 +42,7 @@ import { MaintenanceInfoKey } from '../module/type/MaintenanceInfo';
 import { attachLazyload, offload as offloadLazyload } from '../module/lazyload';
 import { getURLKeywords, setSearch, setURLKeywords } from './shared';
 import { getServerOrigin } from '../module/env/location/get/origin/server';
-import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
+import { getMediaCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/CurrentRouteInfo';
 import { min } from '../module/math';
@@ -207,7 +207,7 @@ function showSeries(
         eventTargetsTracker.add(seriesNode);
 
         appendChild(containerElem, seriesNode);
-        attachLazyload(thumbnailNode, getCDNOrigin() + '/thumbnails/' + seriesEntry[SeriesEntryKey.THUMBNAIL], 'サムネイル：' + title);
+        attachLazyload(thumbnailNode, getMediaCDNOrigin() + '/thumbnails/' + seriesEntry[SeriesEntryKey.THUMBNAIL], 'サムネイル：' + title);
     }
 
     infiniteScrolling[InfiniteScrollingProp.SET_ENABLED](true);

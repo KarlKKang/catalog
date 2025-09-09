@@ -35,7 +35,7 @@ import { CSS_UNIT } from '../module/style/value/unit';
 import * as styles from '../../css/bangumi.module.scss';
 import { EPInfoKey, type EPInfo, FileInfoKey, type SeriesEP, type Seasons, SeasonKey, VideoFileInfo, AudioFileInfo, ImageFileInfo } from '../module/type/EPInfo';
 import { TOP_URI } from '../module/env/uri';
-import { getCDNOrigin } from '../module/env/location/get/origin/cdn';
+import { getMediaCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { addAnimationFrame } from '../module/animation_frame/add';
 import type { AnimationFrame } from '../module/animation_frame/type';
 import type { Timeout } from '../module/timer/type';
@@ -123,7 +123,7 @@ export default async function (
     // Add Media
     const type = fileInfo[FileInfoKey.TYPE];
     const seriesOverride = response[EPInfoKey.SERIES_OVERRIDE];
-    const baseURL = getCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCloudfrontURIComponent(response[EPInfoKey.DIR]) + '/';
+    const baseURL = getMediaCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCloudfrontURIComponent(response[EPInfoKey.DIR]) + '/';
 
     const currentPgid = pgid;
     if (type === 'video') {
