@@ -1,4 +1,4 @@
-import { getServerOrigin } from '../env/location/get/origin/server';
+import { getAPIOrigin } from '../env/location/get/origin/server';
 import { showMessage } from '../message';
 import { connectionError } from './internal/message/connection_error';
 import { unknownServerError } from './internal/message/unknown_server_error';
@@ -118,7 +118,7 @@ abstract class ServerRequest<T extends string | Blob> {
             content = '';
         }
         const xhr = newXhr(
-            getServerOrigin() + '/' + uri,
+            getAPIOrigin() + '/' + uri,
             method,
             options[ServerRequestOptionKey.ALLOW_CREDENTIALS] ?? true,
             () => {

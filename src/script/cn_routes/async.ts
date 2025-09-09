@@ -14,7 +14,7 @@ import { getLocationPrefix } from '../module/env/location/get/prefix';
 import { getBaseHost } from '../module/env/location/get/base_host';
 import { concatenateLocationPrefixToHost } from '../module/env/location/build/host';
 import { toLocationPrefix } from '../module/env/location/build/prefix';
-import { getServerOrigin } from '../module/env/location/get/origin/server';
+import { getAPIOrigin } from '../module/env/location/get/origin/server';
 import { addEventListener } from '../module/event_listener/add';
 import { createNewsContainer } from '../module/news/create_container';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';
@@ -279,7 +279,7 @@ function testNextRoute(codeToNameMap: Map<string, string>, container: HTMLDivEle
 
 function testRoute(size: number, locationPrefix: string, callback: (routeCode: string) => void, onErrorCallback: (failedReason: FailedReason) => void, onUnauthorizedCallback: () => void) {
     const xhr = newXhr(
-        getServerOrigin(locationPrefix) + '/test_download',
+        getAPIOrigin(locationPrefix) + '/test_download',
         'POST',
         true,
         () => {
@@ -345,7 +345,7 @@ function getASN(asnResultContainer: HTMLElement, asnRetestButton: HTMLButtonElem
         disableButton(asnRetestButton, false);
     };
     const xhr = newXhr(
-        getServerOrigin('') + '/get_asn',
+        getAPIOrigin('') + '/get_asn',
         'GET',
         false,
         () => {

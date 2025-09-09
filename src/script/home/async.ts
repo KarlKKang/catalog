@@ -41,7 +41,7 @@ import { type Pivot, type SeriesInfo, parseSeriesInfo, SeriesInfoKey, SeriesEntr
 import { MaintenanceInfoKey } from '../module/type/MaintenanceInfo';
 import { attachLazyload, offload as offloadLazyload } from '../module/lazyload';
 import { getURLKeywords, setSearch, setURLKeywords } from './shared';
-import { getServerOrigin } from '../module/env/location/get/origin/server';
+import { getAPIOrigin } from '../module/env/location/get/origin/server';
 import { getMediaCDNOrigin } from '../module/env/location/get/origin/cdn';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/CurrentRouteInfo';
@@ -300,7 +300,7 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
         }, retryTimeout);
     };
     const xhr = newXhr(
-        getServerOrigin('') + '/get_route_info',
+        getAPIOrigin('') + '/get_route_info',
         'GET',
         false,
         () => {
