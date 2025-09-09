@@ -142,7 +142,7 @@ function getInternalLink(elem: Element): string | null {
     if (page === 'news') {
         const newsID = getDataAttribute(elem, 'news-id');
         if (newsID === null) {
-            return null;
+            return NEWS_ROOT_URI;
         }
         return NEWS_ROOT_URI + newsID;
     }
@@ -162,5 +162,5 @@ function getInternalLink(elem: Element): string | null {
         );
     }
 
-    return null;
+    return page;
 }
