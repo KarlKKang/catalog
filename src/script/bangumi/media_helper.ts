@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendBlobServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendBlobAPIRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
 import { replaceText } from '../module/dom/element/text/replace';
@@ -215,8 +215,8 @@ export function buildDownloadAccordion(
                 }),
             );
         }
-        sendBlobServerRequest('start_download', {
-            [ServerRequestOptionKey.CALLBACK]: (response: Blob, xhr: XMLHttpRequest) => {
+        sendBlobAPIRequest('start_download', {
+            [APIRequestOptionKey.CALLBACK]: (response: Blob, xhr: XMLHttpRequest) => {
                 const filename = getFilename(xhr);
                 if (filename === null) {
                     showMessage(invalidResponse());
@@ -232,8 +232,8 @@ export function buildDownloadAccordion(
                 }, 100);
                 disableButton(downloadButton, false);
             },
-            [ServerRequestOptionKey.CONTENT]: requestContent,
-            [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
+            [APIRequestOptionKey.CONTENT]: requestContent,
+            [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         });
     });
     appendChild(accordionPanel, downloadButton);

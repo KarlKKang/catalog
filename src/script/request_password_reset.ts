@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from './module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from './module/server/request';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createEmailInputField } from './module/dom/element/input/input_field/email/create';
 import { replaceText } from './module/dom/element/text/replace';
@@ -108,8 +108,8 @@ function showPageCallback() {
             return;
         }
 
-        sendServerRequest('send_password_reset', {
-            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+        sendAPIRequest('send_password_reset', {
+            [APIRequestOptionKey.CALLBACK]: function (response: string) {
                 if (response === 'INVALID FORMAT') {
                     replaceText(warningElem, invalidEmailFormat);
                     showElement(warningElem);
@@ -120,8 +120,8 @@ function showPageCallback() {
                     showMessage(invalidResponse(backURL === null ? true : undefined));
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ email: email }),
-            ...backURL === null && { [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true },
+            [APIRequestOptionKey.CONTENT]: buildHttpForm({ email: email }),
+            ...backURL === null && { [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true },
         });
     }
 

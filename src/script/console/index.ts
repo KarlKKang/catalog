@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { type ShowPageFunc } from '../module/global/type';
@@ -13,8 +13,8 @@ export default function (showPage: ShowPageFunc) {
             './async',
         ),
     );
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: async (response: string) => {
             if (response !== 'APPROVED') {
                 showMessage(invalidResponse());
                 return;
@@ -27,6 +27,6 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default();
             showPage();
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify({ command: 'authenticate' }) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify({ command: 'authenticate' }) }),
     });
 }

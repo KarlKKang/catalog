@@ -1,7 +1,7 @@
 import { scrollToTop } from '../module/dom/scroll/to_top';
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { w } from '../module/dom/window';
 import { isbot } from 'isbot';
@@ -44,8 +44,8 @@ export default function (showPage: ShowPageFunc) {
 
     const keywords = getURLKeywords();
     const keywordsQuery = buildHttpForm({ keywords: keywords });
-    sendServerRequest('get_series', {
-        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
+    sendAPIRequest('get_series', {
+        [APIRequestOptionKey.CALLBACK]: async (response: string) => {
             const currentPgid = pgid;
             const asyncModule = await asyncModulePromise;
             if (pgid !== currentPgid) {
@@ -54,10 +54,10 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default(parseResponse(response, parseSeriesInfo), keywords);
             showPage();
         },
-        [ServerRequestOptionKey.CONTENT]: joinHttpForms(
+        [APIRequestOptionKey.CONTENT]: joinHttpForms(
             keywordsQuery,
             buildHttpForm({ pivot: 0 }),
         ),
-        [ServerRequestOptionKey.METHOD]: 'GET',
+        [APIRequestOptionKey.METHOD]: 'GET',
     });
 }

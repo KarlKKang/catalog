@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
 import { createEmailInputField } from '../module/dom/element/input/input_field/email/create';
@@ -114,8 +114,8 @@ export default function (param: string) {
     }
 
     function sendChangeEmailRequest(content: string, totpPopupWindow?: TotpPopupWindow) {
-        sendServerRequest('change_email', {
-            [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
+        sendAPIRequest('change_email', {
+            [APIRequestOptionKey.CALLBACK]: async function (response: string) {
                 switch (response) {
                     case AUTH_FAILED:
                         totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
@@ -168,13 +168,13 @@ export default function (param: string) {
                         showMessage(invalidResponse(true));
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: joinHttpForms(
+            [APIRequestOptionKey.CONTENT]: joinHttpForms(
                 content,
                 buildHttpForm({
                     totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
                 }),
             ),
-            [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
+            [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
         });
     }
 

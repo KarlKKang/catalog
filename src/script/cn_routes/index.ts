@@ -1,7 +1,7 @@
 import { ShowPageFunc } from '../module/global/type';
 import { pgid } from '../module/global/pgid';
 import { addNavBar } from '../module/nav_bar';
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { parseRouteList } from '../module/type/RouteList';
 import { importModule } from '../module/import_module';
@@ -16,8 +16,8 @@ export default function (showPage: ShowPageFunc) {
         ),
     );
 
-    sendServerRequest('list_cn_routes', {
-        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
+    sendAPIRequest('list_cn_routes', {
+        [APIRequestOptionKey.CALLBACK]: async (response: string) => {
             const routeList = parseResponse(response, parseRouteList);
 
             const currentPgid = pgid;
@@ -28,7 +28,7 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default(routeList);
             showPage();
         },
-        [ServerRequestOptionKey.METHOD]: 'GET',
-        [ServerRequestOptionKey.ALLOW_CREDENTIALS]: false,
+        [APIRequestOptionKey.METHOD]: 'GET',
+        [APIRequestOptionKey.ALLOW_CREDENTIALS]: false,
     });
 }

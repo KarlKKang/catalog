@@ -1,4 +1,4 @@
-import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { parseResponse } from '../module/server/parse_response';
 import { getURI } from '../module/dom/location/get/uri';
@@ -36,8 +36,8 @@ function getAllNews(showPage: ShowPageFunc): void {
             './all_news',
         ),
     );
-    sendServerRequest('get_all_news', {
-        [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
+    sendAPIRequest('get_all_news', {
+        [APIRequestOptionKey.CALLBACK]: async function (response: string) {
             const currentPgid = pgid;
             const allNewsModule = await allNewsModulePromise;
             if (pgid !== currentPgid) {
@@ -46,8 +46,8 @@ function getAllNews(showPage: ShowPageFunc): void {
             showPage();
             allNewsModule.default(parseResponse(response, AllNewsInfo.parseAllNewsInfo));
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ pivot: 0 }),
-        [ServerRequestOptionKey.METHOD]: 'GET',
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ pivot: 0 }),
+        [APIRequestOptionKey.METHOD]: 'GET',
     });
 }
 
@@ -63,8 +63,8 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
         ),
     );
 
-    const serverRequest = sendServerRequest('get_news', {
-        [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
+    const serverRequest = sendAPIRequest('get_news', {
+        [APIRequestOptionKey.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseNewsInfo);
             const currentPgid = pgid;
             const newsModule = await newsModulePromise;
@@ -72,12 +72,12 @@ function getNews(newsID: string, showPage: ShowPageFunc): void {
                 return;
             }
             showPage();
-            const startTime = serverRequest[ServerRequestKey.REQUEST_START_TIME];
+            const startTime = serverRequest[APIRequestKey.REQUEST_START_TIME];
             setUpSessionAuthentication(parsedResponse[NewsInfoKey.CREDENTIAL], startTime);
             newsModule.default(parsedResponse, newsID, startTime);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: newsID }),
-        [ServerRequestOptionKey.TIMEOUT]: 30000,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ id: newsID }),
+        [APIRequestOptionKey.TIMEOUT]: 30000,
     });
 }
 

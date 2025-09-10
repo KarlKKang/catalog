@@ -1,5 +1,5 @@
 import { ImageSessionTypes } from './image/session_type';
-import { type ServerRequest, ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from './server/request';
+import { type APIRequest, APIRequestKey, APIRequestOptionKey, sendAPIRequest } from './server/request';
 import { appendChild } from './dom/node/append_child';
 import { addClass } from './dom/class/add';
 import { createDivElement } from './dom/element/div/create';
@@ -43,7 +43,7 @@ interface TargetData {
 
 const targets = new Map<Element, TargetData>();
 let sessionCredentialPromise: Promise<void> | null = null;
-let sessionCredentialServerRequest: ServerRequest<string> | null = null;
+let sessionCredentialServerRequest: APIRequest<string> | null = null;
 let sessionCredentialTimeout: Timeout | null = null;
 let credential: [
     string, // sessionCredential
@@ -144,8 +144,8 @@ function loadImage(target: Element, targetData: TargetData) {
 
         if (sessionCredentialPromise === null) {
             sessionCredentialPromise = new Promise<void>((resolve) => {
-                const serverRequest = sendServerRequest(uri, {
-                    [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+                const serverRequest = sendAPIRequest(uri, {
+                    [APIRequestOptionKey.CALLBACK]: function (response: string) {
                         sessionCredentialServerRequest = null;
                         if (response !== 'APPROVED') {
                             showMessage(invalidResponse());
@@ -154,12 +154,12 @@ function loadImage(target: Element, targetData: TargetData) {
                         sessionCredentialTimeout = addTimeout(() => {
                             sessionCredentialTimeout = null;
                             sessionCredentialPromise = null;
-                        }, max(30000 - (getHighResTimestamp() - serverRequest[ServerRequestKey.REQUEST_START_TIME]), 0));
+                        }, max(30000 - (getHighResTimestamp() - serverRequest[APIRequestKey.REQUEST_START_TIME]), 0));
                         resolve();
                     },
-                    [ServerRequestOptionKey.CONTENT]: sessionCredential,
-                    [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
-                    [ServerRequestOptionKey.TIMEOUT]: 30000,
+                    [APIRequestOptionKey.CONTENT]: sessionCredential,
+                    [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
+                    [APIRequestOptionKey.TIMEOUT]: 30000,
                 });
                 sessionCredentialServerRequest = serverRequest;
             });
@@ -188,7 +188,7 @@ export function offload() {
         sessionCredentialTimeout = null;
     }
     if (sessionCredentialServerRequest !== null) {
-        sessionCredentialServerRequest[ServerRequestKey.ABORT]();
+        sessionCredentialServerRequest[APIRequestKey.ABORT]();
         sessionCredentialServerRequest = null;
     }
     credential = null;

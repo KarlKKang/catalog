@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
@@ -44,12 +44,12 @@ function getAllNews(container: HTMLElement, loadingTextContainer: HTMLElement, i
     if (pivot === 'EOF') {
         return;
     }
-    sendServerRequest('get_all_news', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('get_all_news', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             showAllNews(parseResponse(response, parseAllNewsInfo), container, loadingTextContainer, infiniteScrolling);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ pivot: pivot }),
-        [ServerRequestOptionKey.METHOD]: 'GET',
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ pivot: pivot }),
+        [APIRequestOptionKey.METHOD]: 'GET',
     });
 }
 

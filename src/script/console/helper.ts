@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { getByClass } from '../module/dom/element/get/by_class';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';
@@ -25,11 +25,11 @@ export function getTable(type: string, callback?: (outputElem: HTMLElement) => v
         type: type,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response, callback);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

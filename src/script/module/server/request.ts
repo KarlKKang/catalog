@@ -28,7 +28,7 @@ import { buildHttpForm } from '../string/http_form/build';
 import { invalidResponse } from '../message/param/invalid_response';
 import { min } from '../math';
 
-export const enum ServerRequestOptionKey {
+export const enum APIRequestOptionKey {
     CALLBACK,
     CONTENT,
     METHOD,
@@ -39,19 +39,19 @@ export const enum ServerRequestOptionKey {
     TIMEOUT,
     CLOSE_WINDOW_ON_ERROR,
 }
-interface ServerRequestOption<T extends string | Blob> {
-    readonly [ServerRequestOptionKey.CALLBACK]?: (response: T, xhr: XMLHttpRequest) => void | Promise<void>;
-    readonly [ServerRequestOptionKey.CONTENT]?: string;
-    readonly [ServerRequestOptionKey.METHOD]?: 'POST' | 'GET';
-    readonly [ServerRequestOptionKey.ALLOW_CREDENTIALS]?: boolean;
-    [ServerRequestOptionKey.CONNECTION_ERROR_RETRY]?: number | undefined;
-    [ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
-    readonly [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]?: boolean;
-    readonly [ServerRequestOptionKey.TIMEOUT]?: number;
-    readonly [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]?: true | string;
+interface APIRequestOption<T extends string | Blob> {
+    readonly [APIRequestOptionKey.CALLBACK]?: (response: T, xhr: XMLHttpRequest) => void | Promise<void>;
+    readonly [APIRequestOptionKey.CONTENT]?: string;
+    readonly [APIRequestOptionKey.METHOD]?: 'POST' | 'GET';
+    readonly [APIRequestOptionKey.ALLOW_CREDENTIALS]?: boolean;
+    [APIRequestOptionKey.CONNECTION_ERROR_RETRY]?: number | undefined;
+    [APIRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT]?: number;
+    readonly [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]?: boolean;
+    readonly [APIRequestOptionKey.TIMEOUT]?: number;
+    readonly [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]?: true | string;
 }
 
-export const enum ServerRequestKey {
+export const enum APIRequestKey {
     URI,
     OPTIONS,
     XHR,
@@ -70,49 +70,49 @@ export const enum ServerRequestKey {
 
     __LENGTH,
 }
-abstract class ServerRequest<T extends string | Blob> {
-    private readonly [ServerRequestKey.URI]: string;
-    private readonly [ServerRequestKey.OPTIONS]: ServerRequestOption<T>;
-    private [ServerRequestKey.XHR]: XMLHttpRequest | null = null;
-    private [ServerRequestKey.RETRY_TIMEOUT]: Timeout | null = null;
-    private [ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
-    private [ServerRequestKey.SENT] = false;
-    protected abstract readonly [ServerRequestKey.RESPONSE_TYPE]: XMLHttpRequestResponseType;
-    public get [ServerRequestKey.REQUEST_START_TIME](): HighResTimestamp {
-        return this[ServerRequestKey._REQUEST_START_TIME];
+abstract class APIRequest<T extends string | Blob> {
+    private readonly [APIRequestKey.URI]: string;
+    private readonly [APIRequestKey.OPTIONS]: APIRequestOption<T>;
+    private [APIRequestKey.XHR]: XMLHttpRequest | null = null;
+    private [APIRequestKey.RETRY_TIMEOUT]: Timeout | null = null;
+    private [APIRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
+    private [APIRequestKey.SENT] = false;
+    protected abstract readonly [APIRequestKey.RESPONSE_TYPE]: XMLHttpRequestResponseType;
+    public get [APIRequestKey.REQUEST_START_TIME](): HighResTimestamp {
+        return this[APIRequestKey._REQUEST_START_TIME];
     }
 
-    constructor(uri: string, options: ServerRequestOption<T>) {
-        this[ServerRequestKey.URI] = uri;
-        this[ServerRequestKey.OPTIONS] = options;
+    constructor(uri: string, options: APIRequestOption<T>) {
+        this[APIRequestKey.URI] = uri;
+        this[APIRequestKey.OPTIONS] = options;
     }
 
-    public [ServerRequestKey.START_REQUEST](this: ServerRequest<T>) {
-        if (!this[ServerRequestKey.SENT]) {
-            this[ServerRequestKey.SENT] = true;
-            this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
-            this[ServerRequestKey.SEND_REQUEST]();
+    public [APIRequestKey.START_REQUEST](this: APIRequest<T>) {
+        if (!this[APIRequestKey.SENT]) {
+            this[APIRequestKey.SENT] = true;
+            this[APIRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
+            this[APIRequestKey.SEND_REQUEST]();
         }
     }
 
-    public [ServerRequestKey.ABORT](this: ServerRequest<T>) {
-        const retryTimeout = this[ServerRequestKey.RETRY_TIMEOUT];
+    public [APIRequestKey.ABORT](this: APIRequest<T>) {
+        const retryTimeout = this[APIRequestKey.RETRY_TIMEOUT];
         if (retryTimeout !== null) {
             removeTimeout(retryTimeout);
-            this[ServerRequestKey.RETRY_TIMEOUT] = null;
+            this[APIRequestKey.RETRY_TIMEOUT] = null;
         }
-        const xhr = this[ServerRequestKey.XHR];
+        const xhr = this[APIRequestKey.XHR];
         if (xhr !== null) {
             abortXhr(xhr);
-            this[ServerRequestKey.XHR] = null;
+            this[APIRequestKey.XHR] = null;
         }
     }
 
-    private [ServerRequestKey.SEND_REQUEST](this: ServerRequest<T>) {
-        let uri = this[ServerRequestKey.URI];
-        const options = this[ServerRequestKey.OPTIONS];
-        let content = options[ServerRequestOptionKey.CONTENT] ?? '';
-        const method = options[ServerRequestOptionKey.METHOD] ?? 'POST';
+    private [APIRequestKey.SEND_REQUEST](this: APIRequest<T>) {
+        let uri = this[APIRequestKey.URI];
+        const options = this[APIRequestKey.OPTIONS];
+        let content = options[APIRequestOptionKey.CONTENT] ?? '';
+        const method = options[APIRequestOptionKey.METHOD] ?? 'POST';
         if (method === 'GET') {
             uri = buildURI(uri, content);
             content = '';
@@ -120,69 +120,69 @@ abstract class ServerRequest<T extends string | Blob> {
         const xhr = newXhr(
             getAPIOrigin() + '/' + uri,
             method,
-            options[ServerRequestOptionKey.ALLOW_CREDENTIALS] ?? true,
+            options[APIRequestOptionKey.ALLOW_CREDENTIALS] ?? true,
             () => {
-                this[ServerRequestKey.XHR] = null;
+                this[APIRequestKey.XHR] = null;
                 const status = xhr.status;
                 if (status === 200) {
-                    options[ServerRequestOptionKey.CALLBACK] && options[ServerRequestOptionKey.CALLBACK](xhr.response, xhr);
+                    options[APIRequestOptionKey.CALLBACK] && options[APIRequestOptionKey.CALLBACK](xhr.response, xhr);
                 } else {
-                    this[ServerRequestKey.GET_RESPONSE_TEXT](xhr, (response: string) => {
-                        this[ServerRequestKey.HANDLE_ERROR](xhr.status, response);
+                    this[APIRequestKey.GET_RESPONSE_TEXT](xhr, (response: string) => {
+                        this[APIRequestKey.HANDLE_ERROR](xhr.status, response);
                     });
                 }
             },
         );
-        xhr.responseType = this[ServerRequestKey.RESPONSE_TYPE];
+        xhr.responseType = this[APIRequestKey.RESPONSE_TYPE];
         addEventListener(xhr, 'error', () => {
-            this[ServerRequestKey.XHR] = null;
-            this[ServerRequestKey.RETRY]();
+            this[APIRequestKey.XHR] = null;
+            this[APIRequestKey.RETRY]();
         });
-        const timeout = options[ServerRequestOptionKey.TIMEOUT];
+        const timeout = options[APIRequestOptionKey.TIMEOUT];
         if (timeout !== undefined) {
             xhr.timeout = timeout;
             addEventListener(xhr, 'timeout', () => {
-                this[ServerRequestKey.XHR] = null;
-                this[ServerRequestKey.RETRY](true);
+                this[APIRequestKey.XHR] = null;
+                this[APIRequestKey.RETRY](true);
             });
         }
         xhr.send(content);
-        this[ServerRequestKey.XHR] = xhr;
+        this[APIRequestKey.XHR] = xhr;
     }
 
-    private [ServerRequestKey.RETRY](this: ServerRequest<T>, noDelay?: boolean) {
-        const options = this[ServerRequestKey.OPTIONS];
-        if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] === undefined) {
-            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] = 2;
+    private [APIRequestKey.RETRY](this: APIRequest<T>, noDelay?: boolean) {
+        const options = this[APIRequestKey.OPTIONS];
+        if (options[APIRequestOptionKey.CONNECTION_ERROR_RETRY] === undefined) {
+            options[APIRequestOptionKey.CONNECTION_ERROR_RETRY] = 2;
         } else {
-            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] -= 1;
+            options[APIRequestOptionKey.CONNECTION_ERROR_RETRY] -= 1;
         }
 
         let retryTimeout = 0;
         if (noDelay !== true) {
-            const previousRetryTimeout = options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT];
+            const previousRetryTimeout = options[APIRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT];
             if (previousRetryTimeout === undefined) {
                 retryTimeout = 500;
             } else {
                 retryTimeout = min(previousRetryTimeout * 2, 8000);
             }
-            options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] = retryTimeout;
+            options[APIRequestOptionKey.CONNECTION_ERROR_RETRY_TIMEOUT] = retryTimeout;
         }
 
-        if (options[ServerRequestOptionKey.CONNECTION_ERROR_RETRY] < 0) {
-            showMessage(connectionError(options[ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]));
+        if (options[APIRequestOptionKey.CONNECTION_ERROR_RETRY] < 0) {
+            showMessage(connectionError(options[APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]));
         } else {
-            this[ServerRequestKey.RETRY_TIMEOUT] = addTimeout(() => {
-                this[ServerRequestKey.RETRY_TIMEOUT] = null;
-                this[ServerRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
-                this[ServerRequestKey.SEND_REQUEST]();
+            this[APIRequestKey.RETRY_TIMEOUT] = addTimeout(() => {
+                this[APIRequestKey.RETRY_TIMEOUT] = null;
+                this[APIRequestKey._REQUEST_START_TIME] = getHighResTimestamp();
+                this[APIRequestKey.SEND_REQUEST]();
             }, retryTimeout);
         }
     }
 
-    private [ServerRequestKey.HANDLE_ERROR](this: ServerRequest<T>, status: number, responseText: string) {
-        const options = this[ServerRequestKey.OPTIONS];
-        const closeWindowOnError = options[ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR];
+    private [APIRequestKey.HANDLE_ERROR](this: APIRequest<T>, status: number, responseText: string) {
+        const options = this[APIRequestKey.OPTIONS];
+        const closeWindowOnError = options[APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR];
         if (status === 403) {
             if (responseText === 'SESSION ENDED') {
                 showMessage(sessionEnded(closeWindowOnError));
@@ -194,13 +194,13 @@ abstract class ServerRequest<T extends string | Blob> {
                 if (redirectPath !== TOP_URI) {
                     url = buildURI(url, buildHttpForm({ redirect: redirectPath }));
                 }
-                if (options[ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]) {
+                if (options[APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]) {
                     showMessage(unauthorized(url, closeWindowOnError));
                 } else {
                     redirectSameOrigin(url, true);
                 }
             } else {
-                this[ServerRequestKey.RETRY]();
+                this[APIRequestKey.RETRY]();
             }
         } else if (status === 429) {
             showMessage(status429);
@@ -219,61 +219,61 @@ abstract class ServerRequest<T extends string | Blob> {
         } else if (status === 404 && responseText === 'REJECTED') {
             showMessage(notFound(closeWindowOnError));
         } else {
-            this[ServerRequestKey.RETRY]();
+            this[APIRequestKey.RETRY]();
         }
         return false;
     }
 
-    protected abstract [ServerRequestKey.GET_RESPONSE_TEXT](this: ServerRequest<T>, xhr: XMLHttpRequest, callback: (response: string) => void): void;
+    protected abstract [APIRequestKey.GET_RESPONSE_TEXT](this: APIRequest<T>, xhr: XMLHttpRequest, callback: (response: string) => void): void;
 }
-export type { ServerRequest };
+export type { APIRequest };
 
-class StringServerRequest extends ServerRequest<string> {
-    protected readonly [ServerRequestKey.RESPONSE_TYPE] = 'text';
-    protected [ServerRequestKey.GET_RESPONSE_TEXT](this: StringServerRequest, xhr: XMLHttpRequest, callback: (response: string) => void) { // eslint-disable-line class-methods-use-this
+class StringAPIRequest extends APIRequest<string> {
+    protected readonly [APIRequestKey.RESPONSE_TYPE] = 'text';
+    protected [APIRequestKey.GET_RESPONSE_TEXT](this: StringAPIRequest, xhr: XMLHttpRequest, callback: (response: string) => void) { // eslint-disable-line class-methods-use-this
         callback(xhr.responseText);
     }
 }
 
-const enum BlobServerRequestKey {
-    FILE_READER = ServerRequestKey.__LENGTH, // eslint-disable-line @typescript-eslint/prefer-literal-enum-member
+const enum BlobAPIRequestKey {
+    FILE_READER = APIRequestKey.__LENGTH, // eslint-disable-line @typescript-eslint/prefer-literal-enum-member
 }
-class BlobServerRequest extends ServerRequest<Blob> {
-    private [BlobServerRequestKey.FILE_READER]: FileReader | null = null;
-    protected readonly [ServerRequestKey.RESPONSE_TYPE] = 'blob';
+class BlobAPIRequest extends APIRequest<Blob> {
+    private [BlobAPIRequestKey.FILE_READER]: FileReader | null = null;
+    protected readonly [APIRequestKey.RESPONSE_TYPE] = 'blob';
 
-    protected [ServerRequestKey.GET_RESPONSE_TEXT](this: BlobServerRequest, xhr: XMLHttpRequest, callback: (response: string) => void) {
+    protected [APIRequestKey.GET_RESPONSE_TEXT](this: BlobAPIRequest, xhr: XMLHttpRequest, callback: (response: string) => void) {
         const fileReader = newFileReader();
-        this[BlobServerRequestKey.FILE_READER] = fileReader;
+        this[BlobAPIRequestKey.FILE_READER] = fileReader;
         addEventListener(fileReader, 'load', () => {
-            this[BlobServerRequestKey.FILE_READER] = null;
+            this[BlobAPIRequestKey.FILE_READER] = null;
             callback(fileReader.result as string);
         });
         addEventListener(fileReader, 'error', () => {
-            this[BlobServerRequestKey.FILE_READER] = null;
+            this[BlobAPIRequestKey.FILE_READER] = null;
             callback('');
         });
         fileReader.readAsText(xhr.response);
     }
 
-    public override[ServerRequestKey.ABORT](this: BlobServerRequest) {
-        super[ServerRequestKey.ABORT]();
-        const fileReader = this[BlobServerRequestKey.FILE_READER];
+    public override[APIRequestKey.ABORT](this: BlobAPIRequest) {
+        super[APIRequestKey.ABORT]();
+        const fileReader = this[BlobAPIRequestKey.FILE_READER];
         if (fileReader !== null) {
             abortFileReader(fileReader);
-            this[BlobServerRequestKey.FILE_READER] = null;
+            this[BlobAPIRequestKey.FILE_READER] = null;
         }
     }
 }
 
-export function sendServerRequest(uri: string, options: ServerRequestOption<string>) {
-    const request = new StringServerRequest(uri, options);
-    request[ServerRequestKey.START_REQUEST]();
+export function sendAPIRequest(uri: string, options: APIRequestOption<string>) {
+    const request = new StringAPIRequest(uri, options);
+    request[APIRequestKey.START_REQUEST]();
     return request;
 }
 
-export function sendBlobServerRequest(uri: string, options: ServerRequestOption<Blob>) {
-    const request = new BlobServerRequest(uri, options);
-    request[ServerRequestKey.START_REQUEST]();
+export function sendBlobAPIRequest(uri: string, options: APIRequestOption<Blob>) {
+    const request = new BlobAPIRequest(uri, options);
+    request[APIRequestKey.START_REQUEST]();
     return request;
 }

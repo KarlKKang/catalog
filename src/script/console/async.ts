@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { createTextAreaElement } from '../module/dom/element/text_area/create';
 import { createBRElement } from '../module/dom/element/br/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
@@ -121,11 +121,11 @@ function generate(type: string, idOutput: HTMLParagraphElement) {
         type: type,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response, undefined, idOutput);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -136,11 +136,11 @@ function misc(command: string, type: string, addtionalOptions: Record<string, st
         ...addtionalOptions,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -164,11 +164,11 @@ function clearCDNCache(dir: string) {
         dir: dir,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -186,11 +186,11 @@ function clearKeyCache() {
         type: 'key_cache',
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -208,11 +208,11 @@ function rebuild(type: string) {
         type: type,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -235,11 +235,11 @@ function verify(id: string) {
         series: id,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener/add';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
@@ -194,8 +194,8 @@ function modifyMfaReauthenticationPrompt(
         );
         return;
     }
-    sendServerRequest(uri, {
-        [ServerRequestOptionKey.CALLBACK]: (response: string) => {
+    sendAPIRequest(uri, {
+        [APIRequestOptionKey.CALLBACK]: (response: string) => {
             const closeAll = () => {
                 emailOtpPopupWindow?.[EmailOtpPopupWindowKey.CLOSE]();
                 loginPopupWindow[LoginPopupWindowKey.CLOSE]();
@@ -243,13 +243,13 @@ function modifyMfaReauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({
             id: accountID,
             email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
             password: loginPopupWindow[LoginPopupWindowKey.PASSWORD],
             otp: emailOtpPopupWindow?.[EmailOtpPopupWindowKey.OTP],
         }),
-        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
+        [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
 
@@ -334,8 +334,8 @@ async function promptForTotpSetup(totpInfo: TOTPInfo, disableAllInputs: (disable
             return;
         }
 
-        sendServerRequest('set_totp', {
-            [ServerRequestOptionKey.CALLBACK]: (response: string) => {
+        sendAPIRequest('set_totp', {
+            [APIRequestOptionKey.CALLBACK]: (response: string) => {
                 const mfaWarning = elements[MyAccountElement.mfaWarning];
                 if (response === 'EXPIRED') {
                     hidePopupWindow();
@@ -362,8 +362,8 @@ async function promptForTotpSetup(totpInfo: TOTPInfo, disableAllInputs: (disable
                     });
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: accountInfo[AccountInfoKey.ID], p: totpInfo[TOTPInfoKey.P], totp: totp }),
-            [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
+            [APIRequestOptionKey.CONTENT]: buildHttpForm({ id: accountInfo[AccountInfoKey.ID], p: totpInfo[TOTPInfoKey.P], totp: totp }),
+            [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         });
     };
     addEventListener(submitButton, 'click', submit);

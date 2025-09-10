@@ -1,6 +1,6 @@
 import { newXhr } from '../module/xhr/new';
 import { scrollToTop } from '../module/dom/scroll/to_top';
-import { type ServerRequest, ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { type APIRequest, APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createTextNode } from '../module/dom/element/text/create';
@@ -51,7 +51,7 @@ import { removeTimeout } from '../module/timer/remove/timeout';
 
 let pivot: Pivot;
 let keywords: string;
-let currentRequest: ServerRequest<string> | null = null;
+let currentRequest: APIRequest<string> | null = null;
 let currentSearchAnimationTimeout: Timeout | null = null;
 
 const eventTargetsTracker = new Set<EventTarget>();
@@ -280,16 +280,16 @@ function getSeries(callback: (seriesInfo: SeriesInfo) => void) {
     if (pivot === 'EOF') {
         return;
     }
-    currentRequest?.[ServerRequestKey.ABORT]();
+    currentRequest?.[APIRequestKey.ABORT]();
     const keywordsQuery = buildHttpForm({ keywords: keywords });
-    currentRequest = sendServerRequest('get_series', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    currentRequest = sendAPIRequest('get_series', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             currentRequest = null;
             callback(parseResponse(response, parseSeriesInfo));
         },
-        [ServerRequestOptionKey.CONTENT]: joinHttpForms(keywordsQuery, buildHttpForm({ pivot: pivot })),
-        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
-        [ServerRequestOptionKey.METHOD]: 'GET',
+        [APIRequestOptionKey.CONTENT]: joinHttpForms(keywordsQuery, buildHttpForm({ pivot: pivot })),
+        [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
+        [APIRequestOptionKey.METHOD]: 'GET',
     });
 }
 

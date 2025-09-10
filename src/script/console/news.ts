@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { getByClass } from '../module/dom/element/get/by_class';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
@@ -36,11 +36,11 @@ function modifyNews(button: Element) {
         }
     } while (confirm !== 'modify');
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -59,9 +59,9 @@ function deleteNews(id: string) {
         id: id,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -89,11 +89,11 @@ function addNews(button: Element) {
         }
     } while (confirm !== 'insert');
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -127,9 +127,9 @@ function updateNewsTime(id: string) {
         id: id,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

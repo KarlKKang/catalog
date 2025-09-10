@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { logout } from '../module/server/logout';
 import { parseResponse } from '../module/server/parse_response';
 import { addEventListener } from '../module/event_listener/add';
@@ -95,8 +95,8 @@ function changeEmail(accountID: string, warningElem: HTMLElement, emailChangeBut
     hideElement(warningElem);
     changeColor(warningElem, CSS_COLOR.RED);
 
-    sendServerRequest('send_email_change', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('send_email_change', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             if (response === 'WAIT') {
                 replaceText(warningElem, '直前までメールアドレスを変更していたため、30分ほど待ってから再度変更を試みてください。');
             } else if (response === 'DONE') {
@@ -109,8 +109,8 @@ function changeEmail(accountID: string, warningElem: HTMLElement, emailChangeBut
             showElement(warningElem);
             disableButton(emailChangeButton, false);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: accountID }),
-        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ id: accountID }),
+        [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
 
@@ -319,14 +319,14 @@ function initializeSessions(accountID: string, sessionsContainer: HTMLElement) {
         ),
     );
     const currentPgid = pgid;
-    sendServerRequest('get_sessions', {
-        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
+    sendAPIRequest('get_sessions', {
+        [APIRequestOptionKey.CALLBACK]: async (response: string) => {
             const sessionsModule = await sessionsModuleImport;
             if (currentPgid !== pgid) {
                 return;
             }
             sessionsModule.default(parseResponse(response, parseSession), accountID, sessionsContainer);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: accountID }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ id: accountID }),
     });
 };

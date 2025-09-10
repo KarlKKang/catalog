@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from './module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from './module/server/request';
 import { createStyledButtonElement } from './module/dom/element/button/styled/create';
 import { createEmailInputField } from './module/dom/element/input/input_field/email/create';
 import { replaceText } from './module/dom/element/text/replace';
@@ -80,8 +80,8 @@ function showPageCallback() {
             return;
         }
 
-        sendServerRequest('send_invite', {
-            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+        sendAPIRequest('send_invite', {
+            [APIRequestOptionKey.CALLBACK]: function (response: string) {
                 if (response === 'INVALID FORMAT') {
                     replaceText(warningElem, invalidEmailFormat);
                 } else if (response === 'ALREADY REGISTERED') {
@@ -100,8 +100,8 @@ function showPageCallback() {
                 showElement(warningElem);
                 disableAllInputs(false);
             },
-            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ special: 1, receiver: email }),
-            [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
+            [APIRequestOptionKey.CONTENT]: buildHttpForm({ special: 1, receiver: email }),
+            [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
         });
     }
 

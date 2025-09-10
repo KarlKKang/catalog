@@ -1,6 +1,6 @@
 import {
-    sendServerRequest,
-    ServerRequestOptionKey,
+    sendAPIRequest,
+    APIRequestOptionKey,
 } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
@@ -138,8 +138,8 @@ export default function (
     }
 
     function sendLoginRequest(content: string, totpPopupWindow?: TotpPopupWindow) {
-        sendServerRequest('login', {
-            [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
+        sendAPIRequest('login', {
+            [APIRequestOptionKey.CALLBACK]: async function (response: string) {
                 switch (response) {
                     case AUTH_FAILED:
                         totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
@@ -189,7 +189,7 @@ export default function (
                         showMessage(invalidResponse());
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: joinHttpForms(
+            [APIRequestOptionKey.CONTENT]: joinHttpForms(
                 content,
                 buildHttpForm({
                     totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],

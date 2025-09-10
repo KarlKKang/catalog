@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
@@ -107,8 +107,8 @@ export default function (user: string, signature: string, expires: string) {
             return;
         }
 
-        sendServerRequest('reset_password', {
-            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+        sendAPIRequest('reset_password', {
+            [APIRequestOptionKey.CALLBACK]: function (response: string) {
                 if (response === 'EXPIRED') {
                     showMessage(expired);
                 } else if (response === 'SAME') {
@@ -130,8 +130,8 @@ export default function (user: string, signature: string, expires: string) {
                     showMessage(invalidResponse(true));
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ user: user, signature: signature, expires: expires, new: newPassword }),
-            [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
+            [APIRequestOptionKey.CONTENT]: buildHttpForm({ user: user, signature: signature, expires: expires, new: newPassword }),
+            [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
         });
     }
 

@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { AUTH_TOO_MANY_REQUESTS } from '../module/auth_result/too_many_requests';
 import { AUTH_DEACTIVATED } from '../module/auth_result/deactivated';
 import { AUTH_FAILED_TOTP } from '../module/auth_result/failed_totp';
@@ -65,8 +65,8 @@ export function reauthenticationPrompt(
         _handleFailedTotp();
         return;
     }
-    sendServerRequest(uri, {
-        [ServerRequestOptionKey.CALLBACK]: (response: string) => {
+    sendAPIRequest(uri, {
+        [APIRequestOptionKey.CALLBACK]: (response: string) => {
             const closeAll = () => {
                 totpPopupWindow?.[TotpPopupWindowKey.CLOSE]();
                 loginPopupWindow[LoginPopupWindowKey.CLOSE]();
@@ -105,7 +105,7 @@ export function reauthenticationPrompt(
                     }
             }
         },
-        [ServerRequestOptionKey.CONTENT]: joinHttpForms(
+        [APIRequestOptionKey.CONTENT]: joinHttpForms(
             content,
             buildHttpForm({
                 email: loginPopupWindow[LoginPopupWindowKey.EMAIL],
@@ -113,7 +113,7 @@ export function reauthenticationPrompt(
                 totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
             }),
         ),
-        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
+        [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
     });
 }
 

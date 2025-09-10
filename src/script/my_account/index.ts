@@ -3,8 +3,8 @@ import {
 } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
 import {
-    sendServerRequest,
-    ServerRequestOptionKey,
+    sendAPIRequest,
+    APIRequestOptionKey,
 } from '../module/server/request';
 import { parseResponse } from '../module/server/parse_response';
 import { type ShowPageFunc } from '../module/global/type';
@@ -23,8 +23,8 @@ export default function (showPage: ShowPageFunc) {
     );
 
     const currentPgid = pgid;
-    sendServerRequest('get_account', {
-        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
+    sendAPIRequest('get_account', {
+        [APIRequestOptionKey.CALLBACK]: async (response: string) => {
             const accountInfo = parseResponse(response, parseAccountInfo);
             const asyncModule = await asyncModulePromise;
             if (currentPgid !== pgid) {
@@ -33,6 +33,6 @@ export default function (showPage: ShowPageFunc) {
             asyncModule.default(accountInfo);
             showPage();
         },
-        [ServerRequestOptionKey.METHOD]: 'GET',
+        [APIRequestOptionKey.METHOD]: 'GET',
     });
 }

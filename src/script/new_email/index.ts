@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { getSearchParam } from '../module/dom/location/get/search_param';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param/expired';
@@ -36,8 +36,8 @@ export default function (showPage: ShowPageFunc) {
     }
 
     const asyncModulePromise = getAsyncModulePromise();
-    sendServerRequest('verify_email_change', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('verify_email_change', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
             } else if (response === 'APPROVED') {
@@ -46,7 +46,7 @@ export default function (showPage: ShowPageFunc) {
                 showMessage(invalidResponse(true));
             }
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: param }),
-        [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: param }),
+        [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
     });
 }

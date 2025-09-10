@@ -1,5 +1,5 @@
 import { ImageSessionTypes } from '../module/image/session_type';
-import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { setTitle } from '../module/dom/document/title';
 import { getSessionStorage } from '../module/session_storage/get';
@@ -64,8 +64,8 @@ export default function (showPage: ShowPageFunc) {
         ),
     );
 
-    const serverRequest = sendServerRequest(uri, {
-        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
+    const serverRequest = sendAPIRequest(uri, {
+        [APIRequestOptionKey.CALLBACK]: async (response: string) => {
             if (response !== 'APPROVED') {
                 showMessage(invalidResponse(originURL));
                 return;
@@ -76,12 +76,12 @@ export default function (showPage: ShowPageFunc) {
             if (pgid !== currentPgid) {
                 return;
             }
-            asyncModule.default(baseURL, fileName, serverRequest[ServerRequestKey.REQUEST_START_TIME], originURL);
+            asyncModule.default(baseURL, fileName, serverRequest[APIRequestKey.REQUEST_START_TIME], originURL);
             showPage();
         },
-        [ServerRequestOptionKey.CONTENT]: sessionCredential,
-        [ServerRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
-        [ServerRequestOptionKey.TIMEOUT]: 30000,
-        [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: originURL,
+        [APIRequestOptionKey.CONTENT]: sessionCredential,
+        [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
+        [APIRequestOptionKey.TIMEOUT]: 30000,
+        [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: originURL,
     });
 }

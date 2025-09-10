@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { getSearchParam } from '../module/dom/location/get/search_param';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param/expired';
@@ -49,8 +49,8 @@ export default function (showPage: ShowPageFunc) {
     }
 
     const asyncModulePromise = getAsyncModulePromise();
-    sendServerRequest('reset_password', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('reset_password', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             if (response === 'EXPIRED') {
                 showMessage(expired);
                 return;
@@ -60,7 +60,7 @@ export default function (showPage: ShowPageFunc) {
             }
             runAsyncModule(asyncModulePromise, user, signature, expires);
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ user: user, signature: signature, expires: expires }),
-        [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ user: user, signature: signature, expires: expires }),
+        [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
     });
 }

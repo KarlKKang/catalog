@@ -1,11 +1,11 @@
-import { sendServerRequest, ServerRequestOptionKey } from './request';
+import { sendAPIRequest, APIRequestOptionKey } from './request';
 import { showMessage } from '../message';
 import { invalidResponse } from '../message/param/invalid_response';
 import { buildHttpForm } from '../string/http_form/build';
 
 export function logout(callback: () => void, accountID?: string) {
-    sendServerRequest('logout', {
-        [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+    sendAPIRequest('logout', {
+        [APIRequestOptionKey.CALLBACK]: function (response: string) {
             if (response === 'PARTIAL' || response === 'DONE') {
                 if (ENABLE_DEBUG) {
                     console.log(response);
@@ -15,6 +15,6 @@ export function logout(callback: () => void, accountID?: string) {
                 showMessage(invalidResponse());
             }
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ id: accountID }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ id: accountID }),
     });
 }

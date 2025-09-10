@@ -1,4 +1,4 @@
-import { ServerRequestKey, ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { setUpSessionAuthentication } from '../module/server/session_authentication';
 import { parseResponse } from '../module/server/parse_response';
 import { getURI } from '../module/dom/location/get/uri';
@@ -62,14 +62,14 @@ export default function (showPage: ShowPageFunc) {
         importAllPageModules();
         importAllMediaModules();
         return new Promise<MediaSessionInfo>((resolve) => {
-            const serverRequest = sendServerRequest('create_media_session', {
-                [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+            const serverRequest = sendAPIRequest('create_media_session', {
+                [APIRequestOptionKey.CALLBACK]: function (response: string) {
                     const parsedResponse = parseResponse(response, parseMediaSessionInfo);
-                    setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], serverRequest[ServerRequestKey.REQUEST_START_TIME]);
+                    setUpSessionAuthentication(parsedResponse[MediaSessionInfoKey.CREDENTIAL], serverRequest[APIRequestKey.REQUEST_START_TIME]);
                     resolve(parsedResponse);
                 },
-                [ServerRequestOptionKey.CONTENT]: buildHttpForm({ series: seriesID, ep: epIndex }),
-                [ServerRequestOptionKey.TIMEOUT]: 60000,
+                [APIRequestOptionKey.CONTENT]: buildHttpForm({ series: seriesID, ep: epIndex }),
+                [APIRequestOptionKey.TIMEOUT]: 60000,
             });
         });
     };
@@ -83,8 +83,8 @@ export default function (showPage: ShowPageFunc) {
             './async',
         ),
     );
-    sendServerRequest('get_ep', {
-        [ServerRequestOptionKey.CALLBACK]: async function (response: string) {
+    sendAPIRequest('get_ep', {
+        [APIRequestOptionKey.CALLBACK]: async function (response: string) {
             const parsedResponse = parseResponse(response, parseEPInfo);
             const currentPgid = pgid;
             if (createMediaSessionPromise === null) {
@@ -112,8 +112,8 @@ export default function (showPage: ShowPageFunc) {
             );
             showPage();
         },
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ series: seriesID, ep: epIndex }),
-        [ServerRequestOptionKey.METHOD]: 'GET',
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ series: seriesID, ep: epIndex }),
+        [APIRequestOptionKey.METHOD]: 'GET',
     });
 }
 

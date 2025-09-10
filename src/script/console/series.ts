@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { getByClass } from '../module/dom/element/get/by_class';
 import { getDataAttribute } from '../module/dom/attr/data/get';
 import { addClass } from '../module/dom/class/add';
@@ -45,9 +45,9 @@ function modifySeries(button: Element) {
         }
     } while (confirm !== 'modify');
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: seriesCompleteCallback,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -66,9 +66,9 @@ function deleteSeries(id: string) {
         id: id,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: seriesCompleteCallback,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -100,9 +100,9 @@ function addSeries(button: Element) {
         }
     } while (confirm !== 'insert');
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: seriesCompleteCallback,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -190,9 +190,9 @@ function updateSeriesTime(id: string) {
         id: id,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: seriesCompleteCallback,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
 import { appendListItems } from '../module/dom/element/list/append_item';
@@ -142,8 +142,8 @@ export default function (param: string) {
             return;
         }
 
-        sendServerRequest('register', {
-            [ServerRequestOptionKey.CALLBACK]: function (response: string) {
+        sendAPIRequest('register', {
+            [APIRequestOptionKey.CALLBACK]: function (response: string) {
                 const showInlineMessage = (message: string) => {
                     replaceText(warningElem, message);
                     showElement(warningElem);
@@ -173,8 +173,8 @@ export default function (param: string) {
                     showMessage(invalidResponse(true));
                 }
             },
-            [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: param, username: username, password: password }),
-            [ServerRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
+            [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: param, username: username, password: password }),
+            [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]: true,
         });
     }
 

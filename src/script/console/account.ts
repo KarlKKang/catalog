@@ -1,4 +1,4 @@
-import { ServerRequestOptionKey, sendServerRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
 import { getByClass } from '../module/dom/element/get/by_class';
 import { getByTag } from '../module/dom/element/get/by_tag';
 import { getDataAttribute } from '../module/dom/attr/data/get';
@@ -67,9 +67,9 @@ function addAccount(button: Element) {
         }
     } while (confirm !== 'insert');
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: accountCompleteCallback,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -119,9 +119,9 @@ function modifyAccount(button: Element, id: string) {
         }
     } while (confirm !== 'modify');
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: accountCompleteCallback,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 
@@ -204,9 +204,9 @@ function deleteAccount(id: string) {
         id: id,
     };
 
-    sendServerRequest('console', {
-        [ServerRequestOptionKey.CALLBACK]: accountCompleteCallback,
-        [ServerRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+    sendAPIRequest('console', {
+        [APIRequestOptionKey.CALLBACK]: accountCompleteCallback,
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
     });
 }
 

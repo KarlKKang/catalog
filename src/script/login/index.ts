@@ -1,6 +1,6 @@
 import {
-    ServerRequestOptionKey,
-    sendServerRequest,
+    APIRequestOptionKey,
+    sendAPIRequest,
 } from '../module/server/request';
 import { type ShowPageFunc } from '../module/global/type';
 import { redirectSameOrigin } from '../module/global/redirect';
@@ -33,8 +33,8 @@ export default function (showPage: ShowPageFunc) {
             './async',
         ),
     );
-    sendServerRequest('get_authentication_state', {
-        [ServerRequestOptionKey.CALLBACK]: async (response: string) => {
+    sendAPIRequest('get_authentication_state', {
+        [APIRequestOptionKey.CALLBACK]: async (response: string) => {
             if (response === 'APPROVED') {
                 redirectSameOrigin(getForwardURL(), true);
             } else if (response === 'FAILED') {
