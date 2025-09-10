@@ -14,7 +14,7 @@ import { getLocationPrefix } from '../module/env/location/get/prefix';
 import { getBaseHost } from '../module/env/location/get/base_host';
 import { concatenateLocationPrefixToHost } from '../module/env/location/build/host';
 import { toLocationPrefix } from '../module/env/location/build/prefix';
-import { getAPIOrigin } from '../module/env/location/get/origin/server';
+import { getAPIOrigin } from '../module/env/location/get/origin/api';
 import { addEventListener } from '../module/event_listener/add';
 import { createNewsContainer } from '../module/news/create_container';
 import { type RouteInfo, RouteInfoKey, type RouteList } from '../module/type/RouteList';

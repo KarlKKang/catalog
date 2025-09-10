@@ -29,7 +29,7 @@ import { createNewsContainer } from '../module/news/create_container';
 import { NewsInfoKey, type NewsInfo } from '../module/type/NewsInfo';
 import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } from '../module/lazyload';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
-import { getMediaCDNOrigin } from '../module/env/location/get/origin/cdn';
+import { getMediaCDNOrigin } from '../module/env/location/get/origin/media';
 import { BANGUMI_ROOT_URI, NEWS_ROOT_URI } from '../module/env/uri';
 import { addTimeout } from '../module/timer/add/timeout';
 import { getHighResTimestamp, type HighResTimestamp } from '../module/time/hi_res';
