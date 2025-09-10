@@ -1,5 +1,5 @@
 import { htmlMinifyOptions } from './build_config.js';
-import { TOP_DOMAIN, DESCRIPTION, WEBSITE_SUBDOMAIN_PREFIX, WEBSITE_PORT_SUFFIX, WEBSITE_NAME } from './env/index.js';
+import { WEBSITE_APEX_HOSTNAME, WEBSITE_DESCRIPTION, WEBSITE_HOSTNAME_PREFIX, WEBSITE_PORT_SUFFIX, WEBSITE_NAME } from './env/index.js';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 import { GenerateSW } from 'workbox-webpack-plugin';
@@ -22,9 +22,9 @@ function addFaviconPlugin(config, build) {
             favicons: {
                 appName: appName,
                 appShortName: appName,
-                appDescription: DESCRIPTION,
-                developerName: TOP_DOMAIN,
-                developerURL: 'https://' + TOP_DOMAIN,
+                appDescription: WEBSITE_DESCRIPTION,
+                developerName: WEBSITE_APEX_HOSTNAME,
+                developerURL: 'https://' + WEBSITE_APEX_HOSTNAME,
                 lang: "ja-JP",
                 start_url: "/",
                 display: 'browser',
@@ -51,7 +51,7 @@ function addMiniCssExtractPlugin(config, build) {
 function addHTMLConfig(config, build) {
     const dev = build !== 'production';
     const pageTitle = WEBSITE_NAME(dev);
-    const domain = WEBSITE_SUBDOMAIN_PREFIX(dev) + TOP_DOMAIN + WEBSITE_PORT_SUFFIX(dev);
+    const host = WEBSITE_HOSTNAME_PREFIX(dev) + WEBSITE_APEX_HOSTNAME + WEBSITE_PORT_SUFFIX(dev);
 
     config.plugins.push(
         new HtmlWebpackPlugin({
@@ -60,8 +60,8 @@ function addHTMLConfig(config, build) {
             template: 'src/html/index.ejs',
             templateParameters: {
                 title: pageTitle,
-                description: DESCRIPTION,
-                domain: domain,
+                description: WEBSITE_DESCRIPTION,
+                host: host,
             }
         })
     );
@@ -74,8 +74,8 @@ function addHTMLConfig(config, build) {
             inject: false,
             templateParameters: {
                 title: pageTitle,
-                description: DESCRIPTION,
-                domain: domain,
+                description: WEBSITE_DESCRIPTION,
+                host: host,
             }
         })
     );
@@ -97,9 +97,8 @@ function addDefinePlugin(config, build) {
     config.plugins.push(
         new webpack.DefinePlugin({
             ENABLE_DEBUG: JSON.stringify(build === 'alpha'),
-            ENV_TOP_DOMAIN: JSON.stringify(TOP_DOMAIN),
-            ENV_WEBSITE_SUBDOMAIN_PREFIX: JSON.stringify(WEBSITE_SUBDOMAIN_PREFIX(dev)),
-            ENV_WEBSITE_PORT_SUFFIX: JSON.stringify(WEBSITE_PORT_SUFFIX(dev)),
+            ENV_WEBSITE_APEX_HOSTNAME: JSON.stringify(WEBSITE_APEX_HOSTNAME),
+            ENV_WEBSITE_HOSTNAME_PREFIX: JSON.stringify(WEBSITE_HOSTNAME_PREFIX(dev)),
             ENV_WEBSITE_NAME: JSON.stringify(WEBSITE_NAME(dev)),
             ENV_CLIENT_VERSION: JSON.stringify(pkg.version ?? '0.0.0'),
         })

@@ -10,7 +10,7 @@ import { w } from '../module/dom/window';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
-import { getLocationPrefix } from '../module/env/location/get/prefix';
+import { getLocationPrefix } from '../module/env/location/get/location_prefix';
 import { getBaseHost } from '../module/env/location/get/base_host';
 import { concatenateLocationPrefixToHost } from '../module/env/location/build/host';
 import { toLocationPrefix } from '../module/env/location/build/prefix';
@@ -26,7 +26,7 @@ import { NEWS_ROOT_URI } from '../module/env/uri';
 import { addManualMultiLanguageClass } from '../module/style/multi_language/manual';
 import { redirectSameOrigin } from '../module/global/redirect';
 import { newXhr } from '../module/xhr/new';
-import { TOP_DOMAIN } from '../module/env/top_domain';
+import { WEBSITE_APEX_HOSTNAME } from '../module/env/website_apex_hostname';
 import { horizontalCenter } from '../module/style/horizontal_center';
 import { buildURI } from '../module/string/uri/build';
 import { buildHttpForm } from '../module/string/http_form/build';
@@ -302,7 +302,7 @@ function testRoute(size: number, locationPrefix: string, callback: (routeCode: s
                     const proxyProvider = viaHeaderValueList[2];
                     if (proxyProvider === '(' + DEFAULT_ROUTE_NAME + ')') {
                         routeCode = '';
-                    } else if (proxyProvider === '(' + TOP_DOMAIN + ')') {
+                    } else if (proxyProvider === '(' + WEBSITE_APEX_HOSTNAME + ')') {
                         routeCode = proxyCode;
                     }
                 }

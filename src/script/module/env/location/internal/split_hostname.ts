@@ -1,9 +1,9 @@
 import { getHostname } from '../../../dom/location/get/hostname';
-import { TOP_DOMAIN } from '../../top_domain';
+import { WEBSITE_APEX_HOSTNAME } from '../../website_apex_hostname';
 
 export function splitHostname() {
     const hostname = getHostname();
-    const baseHostname = ENV_WEBSITE_SUBDOMAIN_PREFIX + TOP_DOMAIN;
+    const baseHostname = ENV_WEBSITE_HOSTNAME_PREFIX + WEBSITE_APEX_HOSTNAME;
     if (!hostname.endsWith('.' + baseHostname)) {
         return ['', hostname] as const;
     }

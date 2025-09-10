@@ -1,5 +1,5 @@
 import { getHost } from '../../../dom/location/get/host';
-import { getLocationPrefix } from './prefix';
+import { getLocationPrefix } from './location_prefix';
 
 export function getBaseHost() {
     const host = getHost();
