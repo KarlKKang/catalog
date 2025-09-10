@@ -1,4 +1,4 @@
-import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createPasswordInputField } from '../module/dom/element/input/input_field/password/create';
 import { createEmailInputField } from '../module/dom/element/input/input_field/email/create';

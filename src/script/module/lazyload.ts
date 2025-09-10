@@ -1,5 +1,5 @@
 import { ImageSessionTypes } from './image/session_type';
-import { type APIRequest, APIRequestKey, APIRequestOptionKey, sendAPIRequest } from './server/request';
+import { type APIRequest, APIRequestKey, APIRequestOptionKey, sendAPIRequest } from './api/request';
 import { appendChild } from './dom/node/append_child';
 import { addClass } from './dom/class/add';
 import { createDivElement } from './dom/element/div/create';

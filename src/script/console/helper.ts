@@ -1,4 +1,4 @@
-import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
 import { getByClass } from '../module/dom/element/get/by_class';
 import { addClass } from '../module/dom/class/add';
 import { containsClass } from '../module/dom/class/contains';

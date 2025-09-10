@@ -1,8 +1,8 @@
 import { scrollToTop } from '../module/dom/scroll/to_top';
 import { addNavBar } from '../module/nav_bar';
 import { NavBarPage } from '../module/nav_bar/enum';
-import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
-import { parseResponse } from '../module/server/parse_response';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
+import { parseResponse } from '../module/api/parse_response';
 import { w } from '../module/dom/window';
 import { isbot } from 'isbot';
 import { type ShowPageFunc } from '../module/global/type';

@@ -1,7 +1,7 @@
 import {
     APIRequestOptionKey,
     sendAPIRequest,
-} from '../module/server/request';
+} from '../module/api/request';
 import { type ShowPageFunc } from '../module/global/type';
 import { redirectSameOrigin } from '../module/global/redirect';
 import { pgid } from '../module/global/pgid';

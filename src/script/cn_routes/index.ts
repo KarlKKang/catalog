@@ -1,8 +1,8 @@
 import { ShowPageFunc } from '../module/global/type';
 import { pgid } from '../module/global/pgid';
 import { addNavBar } from '../module/nav_bar';
-import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
-import { parseResponse } from '../module/server/parse_response';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
+import { parseResponse } from '../module/api/parse_response';
 import { parseRouteList } from '../module/type/RouteList';
 import { importModule } from '../module/import_module';
 

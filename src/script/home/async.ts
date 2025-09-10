@@ -1,7 +1,7 @@
 import { newXhr } from '../module/xhr/new';
 import { scrollToTop } from '../module/dom/scroll/to_top';
-import { type APIRequest, APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
-import { parseResponse } from '../module/server/parse_response';
+import { type APIRequest, APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
+import { parseResponse } from '../module/api/parse_response';
 import { replaceText } from '../module/dom/element/text/replace';
 import { createTextNode } from '../module/dom/element/text/create';
 import { createSVGElement } from '../module/dom/element/svg/create';

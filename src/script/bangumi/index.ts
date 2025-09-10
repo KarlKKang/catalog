@@ -1,6 +1,6 @@
-import { APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
-import { setUpSessionAuthentication } from '../module/server/session_authentication';
-import { parseResponse } from '../module/server/parse_response';
+import { APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
+import { setUpSessionAuthentication } from '../module/api/session_authentication';
+import { parseResponse } from '../module/api/parse_response';
 import { getURI } from '../module/dom/location/get/uri';
 import { showMessage } from '../module/message';
 import { notFound } from '../module/message/param/not_found';

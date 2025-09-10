@@ -5,8 +5,8 @@ import { NavBarPage } from '../module/nav_bar/enum';
 import {
     sendAPIRequest,
     APIRequestOptionKey,
-} from '../module/server/request';
-import { parseResponse } from '../module/server/parse_response';
+} from '../module/api/request';
+import { parseResponse } from '../module/api/parse_response';
 import { type ShowPageFunc } from '../module/global/type';
 import { pgid } from '../module/global/pgid';
 import { parseAccountInfo } from '../module/type/AccountInfo';

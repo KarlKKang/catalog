@@ -1,6 +1,6 @@
 import { ImageSessionTypes } from '../module/image/session_type';
-import { APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
-import { setUpSessionAuthentication } from '../module/server/session_authentication';
+import { APIRequestKey, APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
+import { setUpSessionAuthentication } from '../module/api/session_authentication';
 import { setTitle } from '../module/dom/document/title';
 import { getSessionStorage } from '../module/session_storage/get';
 import { clearSessionStorage } from '../module/session_storage/clear';

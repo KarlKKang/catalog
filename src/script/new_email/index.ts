@@ -1,4 +1,4 @@
-import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
 import { getSearchParam } from '../module/dom/location/get/search_param';
 import { showMessage } from '../module/message';
 import { expired } from '../module/message/param/expired';

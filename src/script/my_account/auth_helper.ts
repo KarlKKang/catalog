@@ -1,4 +1,4 @@
-import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
 import { AUTH_TOO_MANY_REQUESTS } from '../module/auth_result/too_many_requests';
 import { AUTH_DEACTIVATED } from '../module/auth_result/deactivated';
 import { AUTH_FAILED_TOTP } from '../module/auth_result/failed_totp';

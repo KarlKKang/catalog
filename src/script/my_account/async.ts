@@ -1,6 +1,6 @@
-import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
-import { logout } from '../module/server/logout';
-import { parseResponse } from '../module/server/parse_response';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
+import { logout } from '../module/api/logout';
+import { parseResponse } from '../module/api/parse_response';
 import { addEventListener } from '../module/event_listener/add';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';

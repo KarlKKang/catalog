@@ -1,5 +1,5 @@
-import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
-import { parseResponse } from '../module/server/parse_response';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
+import { parseResponse } from '../module/api/parse_response';
 import { addEventListener } from '../module/event_listener/add';
 import { createStyledButtonElement } from '../module/dom/element/button/styled/create';
 import { createTotpInputField } from '../module/dom/element/input/input_field/totp/create';

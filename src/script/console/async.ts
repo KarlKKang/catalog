@@ -1,4 +1,4 @@
-import { APIRequestOptionKey, sendAPIRequest } from '../module/server/request';
+import { APIRequestOptionKey, sendAPIRequest } from '../module/api/request';
 import { createTextAreaElement } from '../module/dom/element/text_area/create';
 import { createBRElement } from '../module/dom/element/br/create';
 import { createParagraphElement } from '../module/dom/element/paragraph/create';
