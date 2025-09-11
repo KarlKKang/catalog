@@ -1,16 +1,15 @@
 import { MessageParamKey } from '../../../message/type';
-import { createEmailLink } from '../../../dom/element/email_link/create';
 import { appendListItems } from '../../../dom/element/list/append_item';
 import { createLIElement } from '../../../dom/element/list/li/create';
 import { createUListElement } from '../../../dom/element/list/ul/create';
 import { createDivElement } from '../../../dom/element/div/create';
 import { appendChildren } from '../../../dom/node/append_children';
-import { WEBSITE_APEX_HOSTNAME } from '../../../env/website_apex_hostname';
 import { appendText } from '../../../dom/element/text/append';
 import { createParagraphElement } from '../../../dom/element/paragraph/create';
 import { appendChild } from '../../../dom/node/append_child';
 import { CSS_TEXT_ALIGN, setTextAlign } from '../../../style/text_align';
 import { createServerErrorMessageRedirectParam } from '../../../message/param/helper/create_server_error_redirect_param';
+import { createAdminEmailLink } from '../../../dom/element/email_link/create_admin';
 
 export function connectionError(closeWindowSetting: true | string | undefined) {
     return {
@@ -34,7 +33,7 @@ function connectionErrorBody() {
 
     const listItem = createLIElement();
     appendText(listItem, 'あなたのIPアドレスはブラックリストに登録され、ファイアウォールでブロックされています。管理者（');
-    appendChild(listItem, createEmailLink('admin@' + WEBSITE_APEX_HOSTNAME));
+    appendChild(listItem, createAdminEmailLink());
     appendText(listItem, '）またはISPにお問い合わせください。');
     appendChild(list, listItem);
 

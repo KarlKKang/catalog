@@ -13,6 +13,7 @@ import { parseNewsStyle } from './module/news/parse_style';
 import { createNewsContainer } from './module/news/create_container';
 import { infoPageTitle } from './module/text/page_title';
 import { addManualMultiLanguageClass } from './module/style/multi_language/manual';
+import { parseNewsInternalVariables } from './module/news/parse_variables';
 
 export default function (showPage: ShowPageFunc) {
     if (getSearchParam('nav-bar') !== 'no') {
@@ -25,6 +26,7 @@ export default function (showPage: ShowPageFunc) {
     addManualMultiLanguageClass(contentContainer);
     contentContainer.innerHTML = html;
     parseNewsStyle(contentContainer);
+    parseNewsInternalVariables(contentContainer);
     appendChild(innerContainer, contentContainer);
     appendChild(body, outerContainer);
     scrollToHash();

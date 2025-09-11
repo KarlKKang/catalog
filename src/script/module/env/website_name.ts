@@ -1,0 +1,1 @@
+export const WEBSITE_NAME = ENV_WEBSITE_NAME;

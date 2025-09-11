@@ -35,6 +35,7 @@ import { addTimeout } from '../module/timer/add/timeout';
 import { getHighResTimestamp, type HighResTimestamp } from '../module/time/hi_res';
 import { mediaLoadError } from '../module/message/param/media_load_error';
 import { setOgUrl } from '../module/dom/document/og/url/set';
+import { parseNewsInternalVariables } from '../module/news/parse_variables';
 
 export default function (newsInfo: NewsInfo, newsID: string, startTime: HighResTimestamp): void {
     setOgUrl(NEWS_ROOT_URI + newsID);
@@ -85,6 +86,7 @@ function getNewsContent(newsInfo: NewsInfo, newsID: string, startTime: HighResTi
                 bindEventListners(contentContainer);
                 attachImage(contentContainer, newsID, newsInfo[NewsInfoKey.CREDENTIAL]);
                 parseNewsStyle(contentContainer);
+                parseNewsInternalVariables(contentContainer);
                 scrollToHash();
             } else {
                 retry();
