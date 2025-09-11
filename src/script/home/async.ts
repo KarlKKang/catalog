@@ -48,6 +48,12 @@ import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/Curre
 import { min } from '../module/math';
 import type { Timeout } from '../module/timer/type';
 import { removeTimeout } from '../module/timer/remove/timeout';
+import { createAnchorElement } from '../module/dom/element/anchor/create';
+import { concatenateLocationPrefixToHost } from '../module/env/location/build/host';
+import { getLocationPrefix } from '../module/env/location/get/location_prefix';
+import { WEBSITE_APEX_HOSTNAME } from '../module/env/website_apex_hostname';
+import { getFullPath } from '../module/dom/location/get/full_path';
+import { appendText } from '../module/dom/element/text/append';
 
 let pivot: Pivot;
 let keywords: string;
@@ -124,7 +130,7 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
             message = `メンテナンス開始は${startTime}を予定しております。`;
         }
         message += 'ご不便をおかけして申し訳ありません。';
-        showAnnouncement('メンテナンスのお知らせ', [createTextNode(message)], containerElem);
+        showAnnouncement('メンテナンスのお知らせ', CSS_COLOR.ORANGE, [createTextNode(message)], containerElem);
     }
     showSeries(
         seriesInfo,
@@ -161,6 +167,9 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
         searchClosure(true);
         return true;
     });
+    if (ENABLE_DEBUG) {
+        showTestingWarning(containerElem);
+    }
     showASNAnnouncement(containerElem);
 }
 
@@ -319,7 +328,7 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
                 addEventListener(message[1], 'click', () => {
                     redirectSameOrigin(NEWS_ROOT_URI + '2ghJ5dHKW8T');
                 });
-                showAnnouncement('特別回線をご利用中', message, containerElem);
+                showAnnouncement('特別回線をご利用中', CSS_COLOR.ORANGE, message, containerElem);
                 return;
             }
             if (routeInfo[CurrentRouteInfoKey.COUNTRY] !== 'CN') {
@@ -334,14 +343,27 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
             addEventListener(message[1], 'click', () => {
                 redirectSameOrigin(NEWS_ROOT_URI + '2ghJ5dHKW8T');
             });
-            showAnnouncement('ネットワーク速度が低下している場合', message, containerElem);
+            showAnnouncement('ネットワーク速度が低下している場合', CSS_COLOR.ORANGE, message, containerElem);
         },
     );
     addEventListener(xhr, 'error', retry);
     xhr.send();
 }
 
-function showAnnouncement(title: string, message: readonly Node[], containerElem: HTMLElement) {
+function showTestingWarning(containerElem: HTMLElement) {
+    const linkToProd = createAnchorElement();
+    const prodOrigin = 'https://' + concatenateLocationPrefixToHost(getLocationPrefix(), WEBSITE_APEX_HOSTNAME);
+    linkToProd.href = prodOrigin + getFullPath();
+    appendText(linkToProd, prodOrigin);
+    const message = [
+        createTextNode('現在ご利用いただいているのはテスト版です。新機能のテスト中につき、不安定な動作や不具合が発生する可能性があります。'),
+        linkToProd,
+        createTextNode('から正式版をご利用ください。'),
+    ];
+    showAnnouncement('テスト版をご利用中', CSS_COLOR.RED, message, containerElem);
+}
+
+function showAnnouncement(title: string, titleColor: CSS_COLOR, message: readonly Node[], containerElem: HTMLElement) {
     const annoucementOuterContainer = createDivElement();
     const announcementInnerContainer = createDivElement();
     addClass(annoucementOuterContainer, styles.announcement);
@@ -350,7 +372,7 @@ function showAnnouncement(title: string, message: readonly Node[], containerElem
 
     const announcementTitle = createParagraphElement(title);
     addClass(announcementTitle, styles.announcementTitle);
-    changeColor(announcementTitle, CSS_COLOR.ORANGE);
+    changeColor(announcementTitle, titleColor);
     appendChild(announcementInnerContainer, announcementTitle);
 
     const announcementBody = createParagraphElement();
