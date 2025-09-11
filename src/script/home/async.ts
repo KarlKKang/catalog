@@ -48,12 +48,12 @@ import { CurrentRouteInfoKey, parseCurrentRouteInfo } from '../module/type/Curre
 import { min } from '../module/math';
 import type { Timeout } from '../module/timer/type';
 import { removeTimeout } from '../module/timer/remove/timeout';
-import { createAnchorElement } from '../module/dom/element/anchor/create';
 import { concatenateLocationPrefixToHost } from '../module/env/location/build/host';
 import { getLocationPrefix } from '../module/env/location/get/location_prefix';
 import { WEBSITE_APEX_HOSTNAME } from '../module/env/website_apex_hostname';
 import { getFullPath } from '../module/dom/location/get/full_path';
 import { appendText } from '../module/dom/element/text/append';
+import { setHref } from '../module/dom/location/set/href';
 
 let pivot: Pivot;
 let keywords: string;
@@ -351,9 +351,8 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
 }
 
 function showTestingWarning(containerElem: HTMLElement) {
-    const linkToProd = createAnchorElement();
+    const linkToProd = createSpanElement();
     const prodOrigin = 'https://' + concatenateLocationPrefixToHost(getLocationPrefix(), WEBSITE_APEX_HOSTNAME);
-    linkToProd.href = prodOrigin + getFullPath();
     appendText(linkToProd, prodOrigin);
     const message = [
         createTextNode('現在ご利用いただいているのはテスト版です。新機能のテスト中につき、不安定な動作や不具合が発生する可能性があります。'),
@@ -361,6 +360,9 @@ function showTestingWarning(containerElem: HTMLElement) {
         createTextNode('から正式版をご利用ください。'),
     ] as const;
     addClass(message[1], linkClass);
+    addEventListener(message[1], 'click', () => {
+        setHref(prodOrigin + getFullPath());
+    });
     showAnnouncement('テスト版をご利用中', CSS_COLOR.RED, message, containerElem);
 }
 
