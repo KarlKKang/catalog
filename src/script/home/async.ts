@@ -359,7 +359,8 @@ function showTestingWarning(containerElem: HTMLElement) {
         createTextNode('現在ご利用いただいているのはテスト版です。新機能のテスト中につき、不安定な動作や不具合が発生する可能性があります。'),
         linkToProd,
         createTextNode('から正式版をご利用ください。'),
-    ];
+    ] as const;
+    addClass(message[1], linkClass);
     showAnnouncement('テスト版をご利用中', CSS_COLOR.RED, message, containerElem);
 }
 
