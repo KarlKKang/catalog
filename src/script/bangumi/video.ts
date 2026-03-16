@@ -385,6 +385,11 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                     vbvMaxrate = 30000;
                     vbvBufsize = 60000;
                     break;
+                case 3:
+                    gop = 10;
+                    vbvMaxrate = 37000;
+                    vbvBufsize = 42000;
+                    break;
                 default:
                     break;
             }
