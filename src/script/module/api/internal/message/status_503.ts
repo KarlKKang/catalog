@@ -14,7 +14,7 @@ export function status503(maintenanceInfo: MaintenanceInfo) {
 };
 
 function status503Body(maintenanceInfo: MaintenanceInfo) {
-    let message = '';
+    let message: string;
     const suffix = 'ご不便をおかけして申し訳ありません。';
     const period = maintenanceInfo[MaintenanceInfoKey.PERIOD];
     if (period > 0) {

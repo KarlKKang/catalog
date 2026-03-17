@@ -119,7 +119,7 @@ export default function (seriesInfo: SeriesInfo, _keywords: string) {
 
     const maintenanceInfo = seriesInfo[SeriesInfoKey.MAINTENANCE];
     if (maintenanceInfo !== undefined) {
-        let message = '';
+        let message: string;
         const maintenanceStart = maintenanceInfo[MaintenanceInfoKey.START];
         const maintenancePeriod = maintenanceInfo[MaintenanceInfoKey.PERIOD];
         const startTime = toLocalTimeString(maintenanceStart, false, false);

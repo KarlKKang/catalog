@@ -268,10 +268,9 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
     }
 
     let AAC_FALLBACK = false;
-    let USE_AAC = false;
     let audioOffset = 0;
     if (currentFormat[VideoFormatKey.AUDIO] !== 'none') {
-        USE_AAC = true;
+        let USE_AAC = true;
 
         if (currentFormat[VideoFormatKey.AUDIO] !== undefined) {
             if (currentFormat[VideoFormatKey.AUDIO].startsWith('atmos')) {
