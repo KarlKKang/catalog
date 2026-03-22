@@ -54,6 +54,7 @@ import * as styles from '../../css/bangumi.module.scss';
 import { PlayerKey } from '../module/player/player_key';
 import { NonNativePlayerKey } from '../module/player/non_native_player_key';
 import { NEWS_ROOT_URI } from '../module/env/uri';
+import { CAN_PLAY_FLAC } from '../module/browser/can_play/codec/flac';
 
 let currentPgid: unknown;
 
@@ -270,7 +271,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
     let AAC_FALLBACK = false;
     let audioOffset = 0;
     if (currentFormat[VideoFormatKey.AUDIO] !== 'none') {
-        let USE_AAC = true;
+        let useAAC = true;
 
         if (currentFormat[VideoFormatKey.AUDIO] !== undefined) {
             if (currentFormat[VideoFormatKey.AUDIO].startsWith('atmos')) {
@@ -281,11 +282,26 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                 ], null]);
             }
 
+            let preferAAC = true;
+
             if (currentFormat[VideoFormatKey.AUDIO].startsWith('atmos_ac3')) {
+                preferAAC = false;
                 if (audioCanPlay('ac-3')) {
                     formatString += ' + AC-3';
-                    USE_AAC = false;
-                } else if (currentFormat[VideoFormatKey.AAC_FALLBACK]) {
+                    useAAC = false;
+                }
+            }
+
+            if (currentFormat[VideoFormatKey.AUDIO] === 'flac') {
+                preferAAC = false;
+                if (CAN_PLAY_FLAC) {
+                    formatString += ' + FLAC';
+                    useAAC = false;
+                }
+            }
+
+            if (!preferAAC && useAAC) {
+                if (currentFormat[VideoFormatKey.AAC_FALLBACK]) {
                     AAC_FALLBACK = true;
                 } else {
                     showCodecCompatibilityError();
@@ -294,7 +310,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
             }
         }
 
-        if (USE_AAC) {
+        if (useAAC) {
             if (CAN_PLAY_AAC) {
                 formatString += ' + AAC LC';
             } else {
