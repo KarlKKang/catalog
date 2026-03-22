@@ -89,7 +89,7 @@ export function initializeUI() {
     addClass(sessionsContainer, styles.sessions);
     const sessionsLoadingText = createParagraphElement(loading);
     appendChild(sessionsContainer, sessionsLoadingText);
-    appendSubsection(container, 'お使いのデバイス', [sessionsContainer], null, [], null, []);
+    appendSubsection(container, 'お使いのデバイス', [sessionsContainer], null, [], null, ['ブラウザ、OS、および位置情報に関する情報は、必ずしも正確ではない可能性がございます。']);
 
     const inviteCountInfo = createParagraphElement('保有している招待券の枚数：');
     const inviteCount = createSpanElement();
