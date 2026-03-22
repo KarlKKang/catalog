@@ -70,6 +70,13 @@ declare global {
     }
 }
 
+const PICTURE_IN_PICTURE_BUTTON_TITLE = 'Picture-in-Picture';
+const PICTURE_IN_PICTURE_EXIT_BUTTON_TITLE = 'Exit ' + PICTURE_IN_PICTURE_BUTTON_TITLE;
+
+const FULLSCREEN_BUTTON_TITLE = 'Fullscreen';
+const FULLSCREEN_EXIT_BUTTON_TITLE = 'Exit ' + FULLSCREEN_BUTTON_TITLE;
+const FULLSCREEN_UNAVAILABLE_BUTTON_TITLE = FULLSCREEN_BUTTON_TITLE + ' Unavailable';
+
 export class Player {
     protected readonly [PlayerKey.IS_VIDEO]: boolean;
     private readonly [PlayerKey._MEDIA]: HTMLVideoElement | HTMLAudioElement;
@@ -297,7 +304,7 @@ export class Player {
         // PIP
         let PIPButtonPlaceholder: undefined | HTMLElement = undefined;
         if (d.pictureInPictureEnabled) {
-            const PIPButton = createPlayerButton('Picture-in-Picture');
+            const PIPButton = createPlayerButton(PICTURE_IN_PICTURE_BUTTON_TITLE);
             this[PlayerKey.PIP_BUTTON] = PIPButton;
             addClass(PIPButton, styles.playerPictureInPictureControl, styles.playerButton);
             PIPButtonPlaceholder = addPlayerPlaceholder(PIPButton);
@@ -305,7 +312,7 @@ export class Player {
         }
 
         // Fullscreen
-        const fullscreenButton = createPlayerButton('Fullscreen');
+        const fullscreenButton = createPlayerButton(FULLSCREEN_BUTTON_TITLE);
         this[PlayerKey.FULLSCREEN_BUTTON] = fullscreenButton;
         addClass(fullscreenButton, styles.playerFullscreenControl, styles.playerButton);
         const fullscreenButtonPlaceholder = addPlayerPlaceholder(fullscreenButton);
@@ -658,17 +665,17 @@ export class Player {
                     const elemInFS = screenfull.element;
                     if (elemInFS === undefined) {
                         removeClass(this[PlayerKey.CONTROLS], styles.playerFullscreen);
-                        this[PlayerKey.FULLSCREEN_BUTTON].title = 'Fullscreen';
+                        this[PlayerKey.FULLSCREEN_BUTTON].title = FULLSCREEN_BUTTON_TITLE;
                     } else if (elemInFS.isSameNode(this[PlayerKey.CONTROLS]) || elemInFS.isSameNode(this[PlayerKey.MEDIA])) {
                         addClass(this[PlayerKey.CONTROLS], styles.playerFullscreen);
-                        this[PlayerKey.FULLSCREEN_BUTTON].title = 'Exit Fullscreen';
+                        this[PlayerKey.FULLSCREEN_BUTTON].title = FULLSCREEN_EXIT_BUTTON_TITLE;
                     }
                 };
                 screenfull.on('change', this[PlayerKey.ON_FULLSCREEN_CHANGE]);
             }
         } else {
             disableButton(this[PlayerKey.FULLSCREEN_BUTTON], true);
-            this[PlayerKey.FULLSCREEN_BUTTON].title = 'Fullscreen Unavailable';
+            this[PlayerKey.FULLSCREEN_BUTTON].title = FULLSCREEN_UNAVAILABLE_BUTTON_TITLE;
         }
 
         // Picture in picture
@@ -685,12 +692,12 @@ export class Player {
 
             addEventListener(this[PlayerKey.MEDIA], 'enterpictureinpicture', () => {
                 addClass(this[PlayerKey.CONTROLS], styles.playerPictureInPicture);
-                PIPButton.title = 'Exit Picture-in-Picture';
+                PIPButton.title = PICTURE_IN_PICTURE_EXIT_BUTTON_TITLE;
             });
 
             addEventListener(this[PlayerKey.MEDIA], 'leavepictureinpicture', () => {
                 removeClass(this[PlayerKey.CONTROLS], styles.playerPictureInPicture);
-                PIPButton.title = 'Picture-in-Picture';
+                PIPButton.title = PICTURE_IN_PICTURE_BUTTON_TITLE;
                 this[PlayerKey.FOCUS]();
             });
         }
