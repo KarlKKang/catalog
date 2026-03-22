@@ -20,7 +20,6 @@ import { removeEventsListener } from '../event_listener/remove/multiple_events';
 import { removeEventListener } from '../event_listener/remove';
 import { addEventsListener } from '../event_listener/add/multiple_events';
 import { addEventListener } from '../event_listener/add';
-import { IS_IOS } from '../browser/is_ios';
 import screenfull from 'screenfull';
 import * as icons from './icons';
 import { padNumberLeft } from '../string/pad_number_left';
@@ -48,6 +47,7 @@ import { max, min, round } from '../math';
 import { removeTimeout } from '../timer/remove/timeout';
 import { disableButton } from '../dom/element/button/disable';
 import { consoleError } from '../console';
+import { IS_APPLE_MOBILE_WEBKIT } from '../browser/is_apple_mobile_webkit';
 
 declare global {
     interface HTMLVideoElement {
@@ -634,7 +634,7 @@ export class Player {
 
         // Fullscreen
         const webkitEnterFullscreen = (this[PlayerKey.MEDIA] as HTMLVideoElement).webkitEnterFullscreen;
-        const IOS_FULLSCREEN = IS_IOS && webkitEnterFullscreen !== undefined;
+        const IOS_FULLSCREEN = IS_APPLE_MOBILE_WEBKIT && webkitEnterFullscreen !== undefined;
 
         const toggleFullscreen = () => {
             if (containsClass(this[PlayerKey.CONTROLS], styles.playerFullscreen)) {

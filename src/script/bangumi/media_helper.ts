@@ -17,8 +17,6 @@ import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { addEventListener } from '../module/event_listener/add';
 import { createMessageElem, getContentBoxHeight, isArray } from './helper';
-import { IS_MACOS } from '../module/browser/is_macos';
-import { IS_IOS } from '../module/browser/is_ios';
 import { IS_WINDOWS } from '../module/browser/is_windows';
 import { VideoFormat, VideoFormatKey, VideoFormats } from '../module/type/EPInfo';
 import { addTimeout } from '../module/timer/add/timeout';
@@ -48,6 +46,7 @@ import { createAnchorElement } from '../module/dom/element/anchor/create';
 import { round } from '../module/math';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
+import { IS_APPLE_OS } from '../module/browser/is_apple_os';
 
 export const incompatibleTitle = '再生できません';
 
@@ -151,7 +150,7 @@ export function buildDownloadAccordion(
     appendText(osOptionLinux, 'Linux');
     if (IS_WINDOWS) {
         osOptionWindows.selected = true;
-    } else if (IS_MACOS || IS_IOS) {
+    } else if (IS_APPLE_OS) {
         osOptionMac.selected = true;
     } else {
         osOptionLinux.selected = true;

@@ -66,7 +66,7 @@ export default function (sessions: Sessions, accountID: string, sessionsContaine
 }
 
 function parseBrowser(userAgent: string) {
-    const ua = UAParser(userAgent);
+    const ua = new UAParser(userAgent).getResult();
     const UNKNOWN = '不明';
     let browser = ua.browser.name;
     if (browser === undefined) {

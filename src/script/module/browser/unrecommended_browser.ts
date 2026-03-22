@@ -5,12 +5,12 @@ import { CAN_PLAY_FLAC } from './can_play/codec/flac';
 import { browserName } from './internal/ua/browser_name';
 import { engineMajorVersion } from './internal/ua/engine_major_version';
 import { engineName } from './internal/ua/engine_name';
-import { IS_SAFARI } from './is_safari';
+import { IS_SAFARI_VARIANT } from './is_safari_variant';
 
 const SUPPORTED_BLINK = engineName === 'blink' && engineMajorVersion >= 79;
 export const UNRECOMMENDED_BROWSER
-    = (!SUPPORTED_BLINK && !IS_SAFARI)
-        || browserName.includes('wechat')
+    = (!SUPPORTED_BLINK && !IS_SAFARI_VARIANT)
+        || browserName === 'wechat'
         || browserName === 'ucbrowser'
         || !(CAN_PLAY_AVC && CAN_PLAY_AAC)
         || !(CAN_PLAY_FLAC || CAN_PLAY_ALAC);
