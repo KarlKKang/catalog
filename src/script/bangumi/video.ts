@@ -220,7 +220,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         formatString = 'HEVC/Main 10/L5.1/High/dvhe.05.06';
         USE_AVC = false;
     } else if (currentFormat[VideoFormatKey.VIDEO] === 'hdr10') {
-        if (!videoCanPlay('hvc1.2.4.H153.90')) {
+        if (!videoCanPlay(getHEVCCodecString(HEVC_LEVEL.L5_1))) {
             showErrorMessage(incompatibleTitle, [
                 createTextNode('お使いのブラウザは、再生に必要なコーデックに対応していません。詳しくは'),
                 createLinkElem('こちら', NEWS_ROOT_URI + 'UFzUoubmOzd'),
@@ -244,9 +244,14 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
                     return [HEVC_LEVEL.L4_1, '4.1'];
             }
         })();
-        const CAN_PLAY_HEVC = await canPlayHEVC(level, currentFormat[VideoFormatKey.AVC_FALLBACK]);
-        if (currentPgid !== pgid) {
-            return;
+        let CAN_PLAY_HEVC: boolean;
+        if (currentFormat[VideoFormatKey.AVC_FALLBACK]) {
+            CAN_PLAY_HEVC = await canPlayHEVCEfficiently(level);
+            if (currentPgid !== pgid) {
+                return;
+            }
+        } else {
+            CAN_PLAY_HEVC = videoCanPlay(getHEVCCodecString(level));
         }
         if (CAN_PLAY_HEVC) {
             formatString = 'HEVC/Main 10/L' + levelText + '/High';
@@ -519,15 +524,17 @@ function showDolbyVisionError() {
 const enum HEVC_LEVEL {
     L4_1 = 123,
     L5_0 = 150,
+    L5_1 = 153,
 }
 
-async function canPlayHEVC(level: HEVC_LEVEL, withFallback: boolean | undefined): Promise<boolean> {
-    const HEVC_CODEC = 'hvc1.2.4.H' + level + '.90';
+function getHEVCCodecString(level: HEVC_LEVEL) {
+    return 'hvc1.2.4.H' + level + '.90';
+}
+
+async function canPlayHEVCEfficiently(level: HEVC_LEVEL): Promise<boolean> {
+    const HEVC_CODEC = getHEVCCodecString(level);
     if (!videoCanPlay(HEVC_CODEC)) {
         return false;
-    }
-    if (!withFallback) {
-        return true;
     }
     if (!navigator.mediaCapabilities) {
         return false;
