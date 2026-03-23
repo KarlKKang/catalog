@@ -1,3 +1,3 @@
-import { engineName } from './internal/ua/engine_name';
+import { engineName } from './ua/engine_name';
 
 export const IS_BLINK = engineName === 'blink';

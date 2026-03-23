@@ -1,3 +1,3 @@
-import { osName } from './internal/ua/os_name';
+import { osName } from './ua/os_name';
 
 export const IS_WINDOWS = osName === 'windows';
