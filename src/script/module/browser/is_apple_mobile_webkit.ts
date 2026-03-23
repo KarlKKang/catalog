@@ -1,5 +1,5 @@
-import { osName } from './ua/os_name';
-import { deviceModel } from './ua/device_model';
-import { engineName } from './ua/engine_name';
+import { OS_NAME } from './ua/os_name';
+import { DEVICE_MODEL } from './ua/device_model';
+import { ENGINE_NAME } from './ua/engine_name';
 
-export const IS_APPLE_MOBILE_WEBKIT = (osName === 'ios' || deviceModel === 'ipad') && engineName === 'webkit';
+export const IS_APPLE_MOBILE_WEBKIT = (OS_NAME === 'ios' || DEVICE_MODEL === 'ipad') && ENGINE_NAME === 'webkit';

@@ -1,3 +1,3 @@
-import { engineName } from './ua/engine_name';
+import { ENGINE_NAME } from './ua/engine_name';
 
-export const IS_BLINK = engineName === 'blink';
+export const IS_BLINK = ENGINE_NAME === 'blink';

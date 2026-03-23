@@ -1,3 +1,3 @@
-import { uaParserResult } from './internal/ua_parser';
+import { OS_NAME_RAW } from './parser';
 
-export const osName = (uaParserResult.os.name ?? '').toLowerCase();
+export const OS_NAME = (OS_NAME_RAW ?? '').toLowerCase();

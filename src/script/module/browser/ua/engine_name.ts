@@ -1,3 +1,3 @@
-import { uaParserResult } from './internal/ua_parser';
+import { ENGINE_NAME_RAW } from './parser';
 
-export const engineName = (uaParserResult.engine.name ?? '').toLowerCase();
+export const ENGINE_NAME = (ENGINE_NAME_RAW ?? '').toLowerCase();

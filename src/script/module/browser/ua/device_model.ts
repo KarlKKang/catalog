@@ -1,3 +1,3 @@
-import { uaParserResult } from './internal/ua_parser';
+import { DEVICE_MODEL_RAW } from './parser';
 
-export const deviceModel = (uaParserResult.device.model ?? '').toLowerCase();
+export const DEVICE_MODEL = (DEVICE_MODEL_RAW ?? '').toLowerCase();

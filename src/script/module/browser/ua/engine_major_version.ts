@@ -1,4 +1,3 @@
-import { uaParserResult } from './internal/ua_parser';
+import { ENGINE_VERSION_RAW } from './parser';
 
-const version = uaParserResult.engine.version;
-export const engineMajorVersion = version === undefined ? NaN : parseInt(version);
+export const ENGINE_MAJOR_VERSION = ENGINE_VERSION_RAW === undefined ? NaN : parseInt(ENGINE_VERSION_RAW);
