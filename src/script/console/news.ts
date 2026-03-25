@@ -6,6 +6,7 @@ import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener/add';
 import { completeCallback, getByClassAt, getParentElement, getTable, initializedClass } from './helper';
 import { buildHttpForm } from '../module/string/http_form/build';
+import { jsonEncode } from '../module/json';
 
 export function getNewsTable() {
     getTable('news', updateEventHandlers);
@@ -40,7 +41,7 @@ function modifyNews(button: Element) {
         [APIRequestOptionKey.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -61,7 +62,7 @@ function deleteNews(id: string) {
 
     sendAPIRequest('console', {
         [APIRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -93,7 +94,7 @@ function addNews(button: Element) {
         [APIRequestOptionKey.CALLBACK]: function (response: string) {
             completeCallback(response, updateEventHandlers);
         },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -129,7 +130,7 @@ function updateNewsTime(id: string) {
 
     sendAPIRequest('console', {
         [APIRequestOptionKey.CALLBACK]: (response) => { completeCallback(response, updateEventHandlers); },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 

@@ -8,6 +8,7 @@ import { addEventListener } from '../module/event_listener/add';
 import { completeCallback, getByClassAt, getParentElement, getTable, initializedClass } from './helper';
 import { testPassword } from '../module/regex/password';
 import { buildHttpForm } from '../module/string/http_form/build';
+import { jsonEncode } from '../module/json';
 
 function accountCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
@@ -69,7 +70,7 @@ function addAccount(button: Element) {
 
     sendAPIRequest('console', {
         [APIRequestOptionKey.CALLBACK]: accountCompleteCallback,
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -121,7 +122,7 @@ function modifyAccount(button: Element, id: string) {
 
     sendAPIRequest('console', {
         [APIRequestOptionKey.CALLBACK]: accountCompleteCallback,
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -206,7 +207,7 @@ function deleteAccount(id: string) {
 
     sendAPIRequest('console', {
         [APIRequestOptionKey.CALLBACK]: accountCompleteCallback,
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 

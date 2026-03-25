@@ -6,6 +6,7 @@ import { addEventListener } from '../module/event_listener/add';
 import { changed as changedClass } from '../../css/console.module.scss';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { addOffloadCallback } from '../module/global/offload';
+import { jsonEncode } from '../module/json';
 
 let outputElement: HTMLDivElement | null = null;
 export const initializedClass = 'initialized';
@@ -29,7 +30,7 @@ export function getTable(type: string, callback?: (outputElem: HTMLElement) => v
         [APIRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response, callback);
         },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 

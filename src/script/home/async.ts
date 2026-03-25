@@ -54,6 +54,7 @@ import { WEBSITE_APEX_HOSTNAME } from '../module/env/website_apex_hostname';
 import { getFullPath } from '../module/dom/location/get/full_path';
 import { appendText } from '../module/dom/element/text/append';
 import { setHref } from '../module/dom/location/set/href';
+import { jsonDecode } from '../module/json';
 
 let pivot: Pivot;
 let keywords: string;
@@ -317,7 +318,9 @@ function showASNAnnouncement(containerElem: HTMLElement, retryTimeout = 500) {
                 retry();
                 return;
             }
-            const routeInfo = parseCurrentRouteInfo(JSON.parse(xhr.responseText));
+            // The following line will throw if the response is not valid JSON, or does not conform to the expected format.
+            // But since the response code is OK, we don't expect retrying to help in this case. And because this is a non-critical feature, we can just fail silently instead of showing an error message.
+            const routeInfo = parseCurrentRouteInfo(jsonDecode(xhr.responseText));
             if (routeInfo[CurrentRouteInfoKey.TYPE] === 'cn') {
                 const message = [
                     createTextNode('現在、中国ユーザー向けの特別回線をご利用中です。中国国外にお住まいの場合は、この回線の使用をお控えください。詳しくは'),

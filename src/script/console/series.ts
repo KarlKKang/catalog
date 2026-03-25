@@ -6,6 +6,7 @@ import { containsClass } from '../module/dom/class/contains';
 import { addEventListener } from '../module/event_listener/add';
 import { completeCallback, getByClassAt, getParentElement, getTable, initializedClass } from './helper';
 import { buildHttpForm } from '../module/string/http_form/build';
+import { jsonEncode } from '../module/json';
 
 function seriesCompleteCallback(response: string) {
     completeCallback(response, updateEventHandlers);
@@ -47,7 +48,7 @@ function modifySeries(button: Element) {
 
     sendAPIRequest('console', {
         [APIRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -68,7 +69,7 @@ function deleteSeries(id: string) {
 
     sendAPIRequest('console', {
         [APIRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -102,7 +103,7 @@ function addSeries(button: Element) {
 
     sendAPIRequest('console', {
         [APIRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -192,7 +193,7 @@ function updateSeriesTime(id: string) {
 
     sendAPIRequest('console', {
         [APIRequestOptionKey.CALLBACK]: seriesCompleteCallback,
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 

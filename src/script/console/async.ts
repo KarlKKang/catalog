@@ -16,6 +16,7 @@ import { getAccountTable } from './account';
 import { getNewsTable } from './news';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { createNativeButtonElement } from '../module/dom/element/button/native/create';
+import { jsonEncode } from '../module/json';
 
 export default function () {
     const container = createDivElement();
@@ -125,7 +126,7 @@ function generate(type: string, idOutput: HTMLParagraphElement) {
         [APIRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response, undefined, idOutput);
         },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -140,7 +141,7 @@ function misc(command: string, type: string, addtionalOptions: Record<string, st
         [APIRequestOptionKey.CALLBACK]: function (response: string) {
             setOutput(response);
         },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -168,7 +169,7 @@ function clearCDNCache(dir: string) {
         [APIRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -190,7 +191,7 @@ function clearKeyCache() {
         [APIRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -212,7 +213,7 @@ function rebuild(type: string) {
         [APIRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 
@@ -239,7 +240,7 @@ function verify(id: string) {
         [APIRequestOptionKey.CALLBACK]: function (response: string) {
             alert(response);
         },
-        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: JSON.stringify(param) }),
+        [APIRequestOptionKey.CONTENT]: buildHttpForm({ p: jsonEncode(param) }),
     });
 }
 

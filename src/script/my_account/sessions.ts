@@ -21,6 +21,7 @@ import { invalidResponse } from '../module/message/param/invalid_response';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { disableButton } from '../module/dom/element/button/disable';
 import { isString } from '../module/type/is/string';
+import { jsonDecode } from '../module/json';
 
 export default function (sessions: Sessions, accountID: string, sessionsContainer: HTMLElement) {
     replaceChildren(sessionsContainer);
@@ -70,7 +71,7 @@ function parseBrowser(uaStr: string) {
 
     let ua;
     try {
-        ua = JSON.parse(uaStr);
+        ua = jsonDecode(uaStr);
     } catch {
         return [UNKNOWN, UNKNOWN];
     }
