@@ -1,10 +1,14 @@
 import { NonNativePlayer } from './non_native_player';
 import HlsLight from '../../../../hls.js/dist/hls.light.mjs';
-import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig, LoadPolicy } from '../../../../hls.js';
+import type { default as HlsFull, Events, ErrorData, FragChangedData, ManifestParsedData, HlsConfig } from '../../../../hls.js';
 import { CustomMediaError } from './media_error';
 import { PlayerKey } from './player_key';
 import { HlsPlayerKey } from './hls_player_key';
 import { consoleError } from '../console';
+import { objectEntries } from '../object';
+import { isNumber } from '../type/is/number';
+import { isString } from '../type/is/string';
+import { isFunction } from '../type/is/function';
 
 const Hls = HlsLight as unknown as typeof HlsFull;
 
@@ -233,6 +237,16 @@ export class HlsPlayer extends NonNativePlayer {
     }
 }
 
-function deepCopyLoadPolicy(obj: LoadPolicy): LoadPolicy {
-    return JSON.parse(JSON.stringify(obj));
+interface LoadPolicyGeneric { [key: string]: number | string | Function | undefined | null | LoadPolicyGeneric } // eslint-disable-line @typescript-eslint/no-unsafe-function-type
+
+function deepCopyLoadPolicy<T extends LoadPolicyGeneric>(obj: T): T {
+    const result: LoadPolicyGeneric = {};
+    for (const [key, value] of objectEntries(obj)) {
+        if (isNumber(value) || isString(value) || isFunction(value) || value === undefined || value === null) {
+            result[key] = value;
+        } else {
+            result[key] = deepCopyLoadPolicy(value);
+        }
+    }
+    return result as T;
 }
