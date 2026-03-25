@@ -48,6 +48,7 @@ import { removeTimeout } from '../timer/remove/timeout';
 import { disableButton } from '../dom/element/button/disable';
 import { consoleError } from '../console';
 import { IS_APPLE_MOBILE_WEBKIT } from '../browser/is_apple_mobile_webkit';
+import { isFunction } from '../type/is/function';
 
 declare global {
     interface HTMLVideoElement {
@@ -757,7 +758,7 @@ export class Player {
         }
 
         if (ENABLE_DEBUG) {
-            if (typeof (this[PlayerKey.MEDIA] as HTMLVideoElement).getVideoPlaybackQuality === 'function') {
+            if (isFunction((this[PlayerKey.MEDIA] as HTMLVideoElement).getVideoPlaybackQuality)) {
                 const quality = (this[PlayerKey.MEDIA] as HTMLVideoElement).getVideoPlaybackQuality();
                 if (quality.droppedVideoFrames && quality.droppedVideoFrames !== this[PlayerKey.DROPPED_FRAMES]) {
                     this[PlayerKey.LOG]?.('Frame drop detected. Total dropped: ' + quality.droppedVideoFrames);

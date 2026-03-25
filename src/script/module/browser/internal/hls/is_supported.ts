@@ -1,4 +1,5 @@
 import { w } from '../../../dom/window';
+import { isFunction } from '../../../type/is/function';
 import { getMediaSource } from './get_media_source';
 
 declare global {
@@ -23,8 +24,8 @@ function isMSESupported(): boolean {
     return (
         !sourceBuffer
         || (sourceBuffer.prototype
-            && typeof sourceBuffer.prototype.appendBuffer === 'function'
-            && typeof sourceBuffer.prototype.remove === 'function')
+            && isFunction(sourceBuffer.prototype.appendBuffer)
+            && isFunction(sourceBuffer.prototype.remove))
     );
 }
 
@@ -34,5 +35,5 @@ export function isSupported(): boolean {
     }
 
     const mediaSource = getMediaSource();
-    return typeof mediaSource?.isTypeSupported === 'function';
+    return isFunction(mediaSource?.isTypeSupported);
 }
