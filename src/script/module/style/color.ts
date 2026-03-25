@@ -1,6 +1,7 @@
 import { addClass } from '../dom/class/add';
 import { removeClass } from '../dom/class/remove';
 import * as colorStyle from '../../../css/color.module.scss';
+import { objectValues } from '../object';
 
 export const enum CSS_COLOR {
     RED,
@@ -15,7 +16,7 @@ const colorMap: Record<CSS_COLOR, string> = {
 };
 
 export function changeColor(elem: Element, color: CSS_COLOR | null) {
-    for (const colorClass of Object.values(colorMap)) {
+    for (const colorClass of objectValues(colorMap)) {
         removeClass(elem, colorClass);
     }
     if (color !== null) {

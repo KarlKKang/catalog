@@ -4,6 +4,7 @@ import { getByClass } from '../dom/element/get/by_class';
 import { addClass } from '../dom/class/add';
 import { removeClass } from '../dom/class/remove';
 import { changeColor, CSS_COLOR } from '../style/color';
+import { objectEntries } from '../object';
 
 const classMap = {
     'sub-title': styles.subTitle,
@@ -25,7 +26,7 @@ export function parseNewsStyle(container: HTMLElement) {
 }
 
 function loopClasses<T>(container: HTMLElement, map: Record<string, T>, callback: (elem: Element, value: T) => void) {
-    for (const [key, value] of Object.entries(map)) {
+    for (const [key, value] of objectEntries(map)) {
         const elements = getByClass(container, key);
         // The loop has to be done this way because the `elements` array is a live collection.
         let elem = elements[0];
