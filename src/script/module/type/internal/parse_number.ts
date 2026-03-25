@@ -1,7 +1,8 @@
+import { isNumber } from '../is/number';
 import { throwError } from './throw_error';
 
 export function parseNumber(num: unknown) {
-    if (typeof num === 'number') {
+    if (isNumber(num)) {
         return num;
     }
     throwError();

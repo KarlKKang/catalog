@@ -27,6 +27,8 @@ import { getFullPath } from '../dom/location/get/full_path';
 import { buildHttpForm } from '../string/http_form/build';
 import { invalidResponse } from '../message/param/invalid_response';
 import { min } from '../math';
+import { setUACookie } from './ua_cookie/set';
+import { checkUACookie } from './ua_cookie/check';
 
 export const enum APIRequestOptionKey {
     CALLBACK,
@@ -38,6 +40,7 @@ export const enum APIRequestOptionKey {
     SHOW_UNAUTHORIZED_MESSAGE,
     TIMEOUT,
     CLOSE_WINDOW_ON_ERROR,
+    WITH_UA_COOKIE,
 }
 interface APIRequestOption<T extends string | Blob> {
     readonly [APIRequestOptionKey.CALLBACK]?: (response: T, xhr: XMLHttpRequest) => void | Promise<void>;
@@ -49,6 +52,7 @@ interface APIRequestOption<T extends string | Blob> {
     readonly [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]?: boolean;
     readonly [APIRequestOptionKey.TIMEOUT]?: number;
     readonly [APIRequestOptionKey.CLOSE_WINDOW_ON_ERROR]?: true | string;
+    readonly [APIRequestOptionKey.WITH_UA_COOKIE]?: boolean;
 }
 
 export const enum APIRequestKey {
@@ -108,7 +112,7 @@ abstract class APIRequest<T extends string | Blob> {
         }
     }
 
-    private [APIRequestKey.SEND_REQUEST](this: APIRequest<T>) {
+    private async [APIRequestKey.SEND_REQUEST](this: APIRequest<T>) {
         let uri = this[APIRequestKey.URI];
         const options = this[APIRequestKey.OPTIONS];
         let content = options[APIRequestOptionKey.CONTENT] ?? '';
@@ -133,6 +137,7 @@ abstract class APIRequest<T extends string | Blob> {
                 }
             },
         );
+        this[APIRequestKey.XHR] = xhr;
         xhr.responseType = this[APIRequestKey.RESPONSE_TYPE];
         addEventListener(xhr, 'error', () => {
             this[APIRequestKey.XHR] = null;
@@ -146,8 +151,15 @@ abstract class APIRequest<T extends string | Blob> {
                 this[APIRequestKey.RETRY](true);
             });
         }
+        if (options[APIRequestOptionKey.WITH_UA_COOKIE]) {
+            await setUACookie();
+            if (this[APIRequestKey.XHR] !== xhr) {
+                // The request has been aborted while waiting for the UA cookie to be set.
+                return;
+            }
+        }
+        checkUACookie();
         xhr.send(content);
-        this[APIRequestKey.XHR] = xhr;
     }
 
     private [APIRequestKey.RETRY](this: APIRequest<T>, noDelay?: boolean) {

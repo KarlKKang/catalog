@@ -1,4 +1,3 @@
-import { UAParser } from 'ua-parser-js';
 import { prependChild } from '../module/dom/node/prepend_child';
 import { remove } from '../module/dom/node/remove';
 import { replaceChildren } from '../module/dom/node/replace_children';
@@ -21,6 +20,7 @@ import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { removeAllEventListeners } from '../module/event_listener/remove/all_listeners';
 import { disableButton } from '../module/dom/element/button/disable';
+import { isString } from '../module/type/is/string';
 
 export default function (sessions: Sessions, accountID: string, sessionsContainer: HTMLElement) {
     replaceChildren(sessionsContainer);
@@ -65,26 +65,57 @@ export default function (sessions: Sessions, accountID: string, sessionsContaine
     }
 }
 
-function parseBrowser(userAgent: string) {
-    const ua = new UAParser(userAgent).getResult();
+function parseBrowser(uaStr: string) {
     const UNKNOWN = '不明';
-    let browser = ua.browser.name;
-    if (browser === undefined) {
-        browser = UNKNOWN;
-    } else {
-        const browserVer = ua.browser.version;
-        if (browserVer !== undefined) {
+
+    let ua;
+    try {
+        ua = JSON.parse(uaStr);
+    } catch {
+        return [UNKNOWN, UNKNOWN];
+    }
+    const uaBrowser = ua?.browser;
+    const uaOS = ua?.os;
+    const uaDevice = ua?.device;
+
+    const browserName = uaBrowser?.name;
+    let browser: string;
+    if (isString(browserName)) {
+        browser = browserName;
+        const browserVer = uaBrowser?.version;
+        if (isString(browserVer)) {
             browser += ' ' + browserVer;
         }
-    }
-    let os = ua.os.name;
-    if (os === undefined) {
-        os = UNKNOWN;
     } else {
-        const osVer = ua.os.version;
-        if (osVer !== undefined) {
+        browser = UNKNOWN;
+    }
+
+    const osName = uaOS?.name;
+    let os: string;
+    if (isString(osName)) {
+        os = osName;
+        const osVer = uaOS?.version;
+        if (isString(osVer)) {
             os += ' ' + osVer;
         }
+    } else {
+        os = UNKNOWN;
+    }
+
+    let device = '';
+    const deviceVendor = uaDevice?.vendor;
+    const deviceModel = uaDevice?.model;
+    if (isString(deviceVendor)) {
+        device += deviceVendor;
+    }
+    if (isString(deviceModel)) {
+        if (device !== '') {
+            device += ' ';
+        }
+        device += deviceModel;
+    }
+    if (device !== '') {
+        os += ' (' + device + ')';
     }
 
     return [browser, os] as const;

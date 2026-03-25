@@ -1,5 +1,5 @@
-import { _encodeURIComponent } from '../../internal/encode_uri_component';
+import { encodeURIComponentWrapped } from '../../encode_uri_component';
 
 export function encodeCloudfrontURIComponent(uri: string) {
-    return _encodeURIComponent(uri).replace(/%20/g, '+');
+    return encodeURIComponentWrapped(uri).replace(/%20/g, '+');
 }

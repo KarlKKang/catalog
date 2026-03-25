@@ -50,6 +50,7 @@ import { unregisterSW } from './service_worker';
 import { addEventListenerNative } from '../module/event_listener/add/native';
 import { addEventListenerOnce } from '../module/event_listener/add/once';
 import { windowLocation } from '../module/dom/location';
+import { setUACookie } from '../module/api/ua_cookie/set';
 
 type PageInitCallback = (showPage: ShowPageFunc) => void;
 interface PageScript {
@@ -338,6 +339,7 @@ addEventListenerOnce(w, 'load', () => {
     appendChild(nativeBody, loadingBar);
     appendChild(nativeBody, body);
     setSameOriginRedirectFunc(load);
+    setUACookie();
     load(getHref(), null);
     importFont(0);
     unregisterSW();

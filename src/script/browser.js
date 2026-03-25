@@ -68,28 +68,25 @@ function unsupportRedirect() {
     }
 
     const getCookie = (name) => {
-        name = name + '=';
-        const cookies = d.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) { // eslint-disable-line @typescript-eslint/prefer-for-of
-            let cookie = cookies[i];
-            while (cookie.charAt(0) === ' ') {
-                cookie = cookie.substring(1);
-            }
-            if (cookie.indexOf(name) === 0) {
-                return cookie.substring(name.length, cookie.length);
-            }
-        }
-        return null;
+        const part = ('; ' + d.cookie).split('; ' + name + '=')[1];
+        if (part !== undefined) return part.split(';').shift();
+        return undefined;
     };
 
     const x = '__cookie_test__';
     const cookieSuffix = ';path=/;secure;samesite=strict';
-    d.cookie = x + '=' + x + ';max-age=10' + cookieSuffix;
-    if (getCookie(x) !== x) {
-        _unsupportRedirect();
-        return;
+    for (let i = 0; i < 2; i++) { // We need to test at least 2 cookies to ensure that the cookies are separated by '; ' instead of just ';', which is the case in some broken browsers.
+        d.cookie = x + i + '=' + x + i + ';max-age=10' + cookieSuffix;
     }
-    d.cookie = x + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC' + cookieSuffix;
+    for (let i = 0; i < 2; i++) {
+        if (getCookie(x + i) !== x + i) {
+            _unsupportRedirect();
+            return;
+        }
+    }
+    for (let i = 0; i < 2; i++) {
+        d.cookie = x + i + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC' + cookieSuffix;
+    }
 
     const storage = w.sessionStorage;
     if (!storage) {
