@@ -195,6 +195,7 @@ export default function (
                     totp: totpPopupWindow?.[TotpPopupWindowKey.TOTP],
                 }),
             ),
+            [APIRequestOptionKey.WITH_UA_COOKIE]: true,
         });
     }
 
