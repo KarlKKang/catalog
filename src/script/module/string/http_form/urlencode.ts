@@ -8,6 +8,7 @@
  *
  * @param uri A value representing an unencoded component.
  * @return The encoded component, equivalent to the result of JavaScript's built-in encodeURIComponent function, but with spaces replaced by plus signs (+) as required by the application/x-www-form-urlencoded format.
+ * @throws {URIError} Thrown by `encodeURIComponent` if the input contains a lone surrogate.
  */
 export function urlencode(uri: string | number): string {
     return encodeURIComponent(uri).replace(/%20/g, '+');
