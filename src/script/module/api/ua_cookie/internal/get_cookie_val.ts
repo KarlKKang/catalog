@@ -5,9 +5,8 @@ import { urlencode } from '../../../string/http_form/urlencode';
 import { isString } from '../../../type/is/string';
 
 interface StringDictionary { [key: string]: string | undefined | StringDictionary }
-type ReducibleCandidate = [StringDictionary, string];
+type ReducibleCandidate = [Record<string, string | undefined>, string];
 type ReducibleCandidates = ReducibleCandidate[];
-
 
 export default function (): string {
     const EMPTY_VAL = '%7B%7D'; // urlencode('{}')
@@ -51,7 +50,7 @@ export default function (): string {
         [
             [browserObj, 'name'],
             [osObj, 'name'],
-        ]
+        ],
     ] as ReducibleCandidates[]) {
         while (uaCookieStr.length > MAX_LENGTH) {
             if (!removeLongValue(candidates)) {
@@ -112,7 +111,7 @@ function removeLongValue(candidates: ReducibleCandidates): boolean {
     let longestCandidate: ReducibleCandidate | null = null;
     for (const [parent, key] of candidates) {
         const value = parent[key];
-        if (isString(value)) {
+        if (value !== undefined) {
             const length = encode(value)?.length ?? -1;
             if (length >= longestLength) {
                 longestLength = length;
