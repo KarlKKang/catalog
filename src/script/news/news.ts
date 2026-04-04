@@ -17,7 +17,7 @@ import { body } from '../module/dom/body';
 import { addEventListener } from '../module/event_listener/add';
 import { showMessage } from '../module/message';
 import { buildURI } from '../module/string/uri/build';
-import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
+import { urlencode } from '../module/string/http_form/urlencode';
 import { buildHttpForm } from '../module/string/http_form/build';
 import { addOffloadCallback } from '../module/global/offload';
 import { redirectSameOrigin } from '../module/global/redirect';
@@ -112,7 +112,7 @@ async function attachImage(contentContainer: HTMLElement, newsID: string, creden
         if (src === null) {
             continue;
         }
-        attachLazyload(elem, baseURL + encodeCloudfrontURIComponent(src), src, 250);
+        attachLazyload(elem, baseURL + urlencode(src), src, 250);
         addEventListener(elem, 'click', () => {
             openImageWindow(baseURL, src, credential, ImageSessionTypes.NEWS, NEWS_ROOT_URI + newsID);
         });

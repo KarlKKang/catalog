@@ -1,7 +1,7 @@
 import { BROWSER_NAME_RAW, BROWSER_VERSION_RAW, DEVICE_MODEL_RAW, DEVICE_VENDOR_RAW, OS_NAME_RAW, OS_VERSION_RAW } from '../../../browser/ua/parser';
 import { jsonEncode } from '../../../json';
 import { objectEntries } from '../../../object';
-import { encodeURIComponentWrapped } from '../../../string/encode_uri_component';
+import { urlencode } from '../../../string/http_form/urlencode';
 import { isString } from '../../../type/is/string';
 
 interface StringDictionary { [key: string]: string | undefined | StringDictionary }
@@ -34,7 +34,7 @@ export default function (): string {
 
 function encode(obj: StringDictionary | string): string | null {
     try {
-        return encodeURIComponentWrapped(jsonEncode(obj));
+        return urlencode(jsonEncode(obj));
     } catch {
         return null;
     }

@@ -16,7 +16,7 @@ import { setTitle } from '../module/dom/document/title';
 import { w } from '../module/dom/window';
 import { addEventListener } from '../module/event_listener/add';
 import { parseCharacters, getContentBoxHeight, createMessageElem, getEPFullURI } from './helper';
-import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
+import { urlencode } from '../module/string/http_form/urlencode';
 import { addTimeout } from '../module/timer/add/timeout';
 import type { MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { redirectSameOrigin } from '../module/global/redirect';
@@ -123,7 +123,7 @@ export default async function (
     // Add Media
     const type = fileInfo[FileInfoKey.TYPE];
     const seriesOverride = response[EPInfoKey.SERIES_OVERRIDE];
-    const baseURL = getMediaCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + encodeCloudfrontURIComponent(response[EPInfoKey.DIR]) + '/';
+    const baseURL = getMediaCDNOrigin() + '/' + (seriesOverride === undefined ? seriesID : seriesOverride) + '/' + urlencode(response[EPInfoKey.DIR]) + '/';
 
     const currentPgid = pgid;
     if (type === 'video') {

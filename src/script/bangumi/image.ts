@@ -19,7 +19,7 @@ import { addClass } from '../module/dom/class/add';
 import { addEventListener } from '../module/event_listener/add';
 import { FileInfoKey, ImageFileKey, type ImageFileInfo } from '../module/type/EPInfo';
 import { addAccordionEvent, buildAccordion } from './media_helper';
-import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
+import { urlencode } from '../module/string/http_form/urlencode';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { SharedElement, getSharedElement } from './shared_var';
 import { hideElement } from '../module/style/hide_element';
@@ -107,7 +107,7 @@ function showImages(files: ImageFileInfo[FileInfoKey.FILES], baseURL: string, cr
         });
         attachLazyload(
             lazyloadNode,
-            baseURL + encodeCloudfrontURIComponent(fileName),
+            baseURL + urlencode(fileName),
             fileName,
             250,
             (data: Blob) => {

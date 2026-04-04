@@ -33,7 +33,7 @@ import type { Player, Player as PlayerType } from '../module/player/player';
 import { getFormatIndex, getEPFullURI } from './helper';
 import { showHLSCompatibilityError, showCodecCompatibilityError, buildDownloadAccordion, showMediaMessage, showErrorMessage, incompatibleTitle, showPlayerError, buildAccordion, type AccordionInstance } from './media_helper';
 import { toTimestampString } from '../module/string/timestamp';
-import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
+import { urlencode } from '../module/string/http_form/urlencode';
 import { CustomMediaError } from '../module/player/media_error';
 import { MediaSessionInfoKey, type MediaSessionInfo } from '../module/type/MediaSessionInfo';
 import { addOffloadCallback } from '../module/global/offload';
@@ -365,7 +365,7 @@ async function addVideoNode(formatDisplay: HTMLDivElement, play: boolean | undef
         }
     };
 
-    const url = baseURL + encodeCloudfrontURIComponent('_MASTER_' + fileInfo[FileInfoKey.FILE_NAME] + '[' + currentFormat[VideoFormatKey.VALUE] + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
+    const url = baseURL + urlencode('_MASTER_' + fileInfo[FileInfoKey.FILE_NAME] + '[' + currentFormat[VideoFormatKey.VALUE] + ']' + (AVC_FALLBACK ? '[AVC]' : '') + (AAC_FALLBACK ? '[AAC]' : '') + '.m3u8');
     if (NATIVE_HLS_SUPPORTED) {
         const Player = (await nativePlayerImportPromise).Player;
         await createMediaSessionPromise;

@@ -1,4 +1,4 @@
-import { encodeCloudfrontURIComponent } from '../module/string/uri/cloudfront/encode_component';
+import { urlencode } from '../module/string/http_form/urlencode';
 import { prependChild } from '../module/dom/node/prepend_child';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
@@ -103,7 +103,7 @@ async function addAudioNode(container: HTMLDivElement, file: AudioFile) {
     const playerContainer = createDivElement();
     addClass(playerContainer, styles.player);
     appendChild(container, playerContainer);
-    const url = baseURL + encodeCloudfrontURIComponent('_MASTER_' + file[AudioFileKey.FILE_NAME] + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
+    const url = baseURL + urlencode('_MASTER_' + file[AudioFileKey.FILE_NAME] + (FLAC_FALLBACK ? '[FLAC]' : '') + '.m3u8');
 
     if (NATIVE_HLS_SUPPORTED) {
         const Player = (await nativePlayerImportPromise).Player;
