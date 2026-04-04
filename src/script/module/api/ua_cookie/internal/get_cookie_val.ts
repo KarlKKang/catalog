@@ -7,6 +7,7 @@ import { isString } from '../../../type/is/string';
 interface StringDictionary { [key: string]: string | undefined | StringDictionary }
 
 export default function (): string {
+    const EMPTY_VAL = '%7B%7D'; // urlencode('{}')
     const uaCookie: StringDictionary = {
         browser: {
             name: BROWSER_NAME_RAW,
@@ -28,7 +29,7 @@ export default function (): string {
         filterEmpty(uaCookie);
         uaCookieStr = encode(uaCookie);
         if (uaCookieStr === null) {
-            return '{}';
+            return EMPTY_VAL;
         }
     }
     return uaCookieStr;
