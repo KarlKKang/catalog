@@ -21,9 +21,11 @@ export default function (): string {
             version: OS_VERSION_RAW,
         },
     };
+    filterEmpty(uaCookie);
     let uaCookieStr = encode(uaCookie);
     if (uaCookieStr === null) {
         filterInvalidValues(uaCookie);
+        filterEmpty(uaCookie);
         uaCookieStr = encode(uaCookie);
         if (uaCookieStr === null) {
             return '{}';
@@ -50,4 +52,20 @@ function filterInvalidValues(obj: StringDictionary): void {
             filterInvalidValues(value);
         }
     }
+}
+
+function filterEmpty(obj: StringDictionary): boolean {
+    let allUndefined = true;
+    for (const [key, value] of objectEntries(obj)) {
+        if (isString(value)) {
+            allUndefined = false;
+        } else if (value !== undefined) {
+            if (filterEmpty(value)) {
+                obj[key] = undefined;
+            } else {
+                allUndefined = false;
+            }
+        }
+    }
+    return allUndefined;
 }
