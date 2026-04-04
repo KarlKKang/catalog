@@ -11,7 +11,7 @@ export default function (): string {
     const uaCookie: StringDictionary = {
         browser: {
             name: BROWSER_NAME_RAW,
-            version: BROWSER_VERSION_RAW,
+            ver: BROWSER_VERSION_RAW,
         },
         device: {
             model: DEVICE_MODEL_RAW,
@@ -19,7 +19,7 @@ export default function (): string {
         },
         os: {
             name: OS_NAME_RAW,
-            version: OS_VERSION_RAW,
+            ver: OS_VERSION_RAW,
         },
     };
     filterEmpty(uaCookie);

@@ -83,7 +83,7 @@ function parseBrowser(uaStr: string) {
     let browser: string;
     if (isString(browserName)) {
         browser = browserName;
-        const browserVer = uaBrowser?.version;
+        const browserVer = uaBrowser?.ver;
         if (isString(browserVer)) {
             browser += ' ' + browserVer;
         }
@@ -95,7 +95,7 @@ function parseBrowser(uaStr: string) {
     let os: string;
     if (isString(osName)) {
         os = osName;
-        const osVer = uaOS?.version;
+        const osVer = uaOS?.ver;
         if (isString(osVer)) {
             os += ' ' + osVer;
         }
