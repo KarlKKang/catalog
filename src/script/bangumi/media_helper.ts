@@ -22,7 +22,6 @@ import { VideoFormat, VideoFormatKey, VideoFormats } from '../module/type/EPInfo
 import { addTimeout } from '../module/timer/add/timeout';
 import { CustomMediaError } from '../module/player/media_error';
 import { SharedElement, dereferenceErrorMessageElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
-import { horizontalCenter } from '../module/style/horizontal_center';
 import { hideElement } from '../module/style/hide_element';
 import { setMaxHeight } from '../module/style/max_height';
 import { CSS_COLOR } from '../module/style/color';
@@ -47,6 +46,7 @@ import { round } from '../module/math';
 import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { IS_APPLE_OS } from '../module/browser/is_apple_os';
+import { horizontalCenter } from '../module/style/horizontal_center';
 
 export const incompatibleTitle = '再生できません';
 
@@ -121,16 +121,17 @@ export function buildDownloadAccordion(
         VideoFormat,
     ],
 ): [HTMLDivElement, HTMLDivElement] {
-    const [accordion, accordionPanel] = buildAccordion('ダウンロード', true);
+    const [accordion, accordionPanel] = buildAccordion('ダウンロード', false);
 
     const accordionPanelContent = createUListElement();
     appendListItems(
         accordionPanelContent,
-        '下の「ダウンロード」ボタンをクリックすると、必要なスクリプトが入ったZIPファイルがダウンロードできます。',
-        'ZIPファイルをダウンロードした後、解凍してREADME.txtに記載されている手順で行ってください。',
+        '下の「ダウンロード」ボタンをクリックすると、必要となるスクリプトが含まれた圧縮ファイル（ZIP）をダウンロードします。',
+        '圧縮ファイルをダウンロードした後、展開してREADME.txtに記載されている手順に従ってください。',
         'スクリプトを実行するには、Windows、macOS、またはLinuxを搭載したパソコンが必要です。',
         'インターネット接続が良好であることをご確認してください。',
     );
+    horizontalCenter(accordionPanelContent);
     appendChild(accordionPanel, accordionPanelContent);
 
     const downloadOptionsContainer = createDivElement();
@@ -183,14 +184,9 @@ export function buildDownloadAccordion(
         hideElement(containerSelector);
     }
 
-    appendChild(accordionPanel, downloadOptionsContainer);
-
     const downloadButton = createStyledButtonElement('ダウンロード');
-    horizontalCenter(downloadButton);
-
     const anchor = createAnchorElement();
     hideElement(anchor);
-
     addEventListener(downloadButton, 'click', () => {
         disableButton(downloadButton, true);
         let requestContent = joinHttpForms(
@@ -235,7 +231,9 @@ export function buildDownloadAccordion(
             [APIRequestOptionKey.SHOW_UNAUTHORIZED_MESSAGE]: true,
         });
     });
-    appendChild(accordionPanel, downloadButton);
+    appendChild(downloadOptionsContainer, downloadButton);
+
+    appendChild(accordionPanel, downloadOptionsContainer);
 
     const downloadElem = createDivElement();
     addClass(downloadElem, styles.download);

@@ -125,7 +125,7 @@
 .hr {
     margin: 0px auto;
     height: 1px;
-    width: 960px;
+    width: 1920px;
     max-width: 90%;
     border-width: 0;
     background-color: var(property.get(horizontal-line-background-color));
@@ -134,7 +134,7 @@
 .content,
 .warning {
     margin: 2em auto;
-    width: 960px;
+    width: 1920px;
     max-width: 90%;
 }
 
@@ -341,7 +341,7 @@ p.artist {
     display: flex;
     cursor: pointer;
     margin: 0px;
-    padding: 0px min(5%, 1em);
+    padding: 0px min(5%, 1.5em);
     width: 100%;
     align-items: center;
     box-sizing: border-box;
@@ -368,7 +368,7 @@ p.artist {
 /* Style the accordion panel. Note: hidden by default */
 .accordion-panel {
     margin: 0px;
-    padding: 0px min(5%, 1em);
+    padding: 0px min(5%, 1.5em);
     background-color: var(property.get(foreground-color));
     overflow: hidden;
     transition: max-height 0.2s ease-out;
@@ -383,20 +383,21 @@ p.artist {
 /*Chapters*/
 .chapters>.accordion-panel {
     >p {
-        transition: color .4s ease-out;
+        color: var(property.get(alt-text-color));
+        text-align: center;
 
-        >span {
+        >.chapter-timestamp {
             cursor: pointer;
             color: var(property.get(link-text-color));
         }
-    }
 
-    >.current-chapter {
-        color: var(property.get(text-color));
-    }
+        >.chapter-cue-text {
+            transition: color .4s ease-out;
 
-    >.inactive-chapter {
-        color: var(property.get(alt-text-color));
+            &.active-chapter-cue-text {
+                color: var(property.get(text-color));
+            }
+        }
     }
 }
 
@@ -406,9 +407,9 @@ p.artist {
         flex-wrap: wrap;
         justify-content: center;
         padding: 0px;
-        margin: 0px -0.5em -1em -0.5em;
+        margin: 0px -0.5em 0px -0.5em;
 
-        >div {
+        >* {
             max-width: 10em;
             width: 100%;
             margin: 0px 0.5em 1em 0.5em;
@@ -416,6 +417,7 @@ p.artist {
     }
 
     >ul {
+        display: inline-block;
         padding: 0px 0px 0px 2em;
     }
 }

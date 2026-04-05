@@ -5,7 +5,6 @@ import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
 import { removeClass } from '../module/dom/class/remove';
-import { setClass } from '../module/dom/class/set';
 import { replaceText } from '../module/dom/element/text/replace';
 import { appendText } from '../module/dom/element/text/append';
 import { createTextNode } from '../module/dom/element/text/create';
@@ -464,13 +463,15 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     chaptersAccordionInstance = accordionInstance;
     const [accordion, accordionPanel] = accordionInstance;
     eventTargetsTracker.add(accordion);
+    const chapterNode = createParagraphElement();
 
-    const chapterElements: HTMLParagraphElement[] = [];
-    for (const chapter of fileInfo[FileInfoKey.CHAPTERS]) {
-        const chapterNode = createParagraphElement();
-        const cueText = createTextNode('\xa0\xa0' + chapter[0]);
+    const cues: [HTMLSpanElement, number][] = [];
+    fileInfo[FileInfoKey.CHAPTERS].forEach((chapter, index) => {
+        const cueText = createSpanElement(' ' + chapter[0]);
+        addClass(cueText, styles.chapterCueText);
         const startTime = (chapter[1] + offset) / 1000;
         const timestamp = createSpanElement(toTimestampString(startTime));
+        addClass(timestamp, styles.chapterTimestamp);
         addEventListener(timestamp, 'click', () => {
             mediaInstance[PlayerKey.SEEK](startTime);
             mediaInstance[PlayerKey.FOCUS]();
@@ -478,10 +479,12 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
         eventTargetsTracker.add(timestamp);
         appendChild(chapterNode, timestamp);
         appendChild(chapterNode, cueText);
-        setClass(chapterNode, styles.inactiveChapter);
-        appendChild(accordionPanel, chapterNode);
-        chapterElements.push(chapterNode);
-    }
+        if (index < fileInfo[FileInfoKey.CHAPTERS].length - 1) {
+            appendText(chapterNode, ' ／ ');
+        }
+        cues.push([cueText, startTime]);
+    });
+    appendChild(accordionPanel, chapterNode);
 
     const chaptersNode = createDivElement();
     addClass(chaptersNode, styles.chapters);
@@ -492,19 +495,18 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     const video = mediaInstance[PlayerKey.MEDIA];
     const updateChapterDisplay = () => {
         const currentTime = video.currentTime;
-        fileInfo[FileInfoKey.CHAPTERS].forEach((chapter, index) => {
-            const chapterElement = chapterElements[index] as HTMLElement;
-            if (currentTime >= (chapter[1] + offset) / 1000) {
-                const nextChapter = fileInfo[FileInfoKey.CHAPTERS][index + 1];
-                if (nextChapter === undefined) {
-                    setClass(chapterElement, styles.currentChapter);
-                } else if (currentTime < (nextChapter[1] + offset) / 1000) {
-                    setClass(chapterElement, styles.currentChapter);
+        cues.forEach(([cueText, startTime], index) => {
+            if (currentTime >= startTime) {
+                const nextCue = cues[index + 1];
+                if (nextCue === undefined) {
+                    addClass(cueText, styles.activeChapterCueText);
+                } else if (currentTime < nextCue[1]) {
+                    addClass(cueText, styles.activeChapterCueText);
                 } else {
-                    setClass(chapterElement, styles.inactiveChapter);
+                    removeClass(cueText, styles.activeChapterCueText);
                 }
             } else {
-                setClass(chapterElement, styles.inactiveChapter);
+                removeClass(cueText, styles.activeChapterCueText);
             }
         });
     };
