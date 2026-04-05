@@ -241,7 +241,8 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
             setMinHeight(epButtonWrapper, minHeight * 1.8, CSS_UNIT.PX);
         }
 
-        if (height / w.innerHeight > 0.40 && reachedThreshold) {
+        const fullOccupiedRatio = height / w.innerHeight;
+        if (fullOccupiedRatio > 0.40 && reachedThreshold) {
             if (isOversized) {
                 if (isExpanded) {
                     setPaddingBottom(epButtonWrapper, showMoreButton.scrollHeight, CSS_UNIT.PX);
@@ -266,7 +267,7 @@ function updateEPSelector(seriesEP: SeriesEP, epSelector: HTMLElement) {
                 });
             });
         } else {
-            if (!isOversized) {
+            if (!isOversized || fullOccupiedRatio > 0.35) { // Set a slightly lower threshold for expanding back to prevent frequent toggling when the window height is around the threshold, like when the navigation bar is set to auto-hide on some mobile browsers.
                 return;
             }
             if (currentStylingAnimationFrame !== null) {
