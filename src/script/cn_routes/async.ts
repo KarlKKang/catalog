@@ -40,6 +40,7 @@ import { addOffloadCallback } from '../module/global/offload';
 import { round } from '../module/math';
 import { changeColor, CSS_COLOR } from '../module/style/color';
 import { setHref } from '../module/dom/location/set/href';
+import { CSS_TEXT_ALIGN, setTextAlign } from '../module/style/text_align';
 
 const DEFAULT_ROUTE_NAME = 'CloudFront';
 const enum FailedReason {
@@ -80,7 +81,7 @@ export default function (routeList: RouteList) {
     appendPromptText(contentContainer);
 
     const routeListContainer = createDivElement();
-    routeListContainer.style.textAlign = 'center';
+    setTextAlign(routeListContainer, CSS_TEXT_ALIGN.CENTER);
     appendChild(contentContainer, routeListContainer);
 
     const retestButton = createStyledButtonElement('再測定');
@@ -102,7 +103,7 @@ export default function (routeList: RouteList) {
     appendChild(contentContainer, createHRElement());
     appendASNPromptText(contentContainer);
     const asnResultContainer = createParagraphElement();
-    asnResultContainer.style.textAlign = 'center';
+    setTextAlign(asnResultContainer, CSS_TEXT_ALIGN.CENTER);
     appendChild(contentContainer, asnResultContainer);
     const asnRetestButton = createStyledButtonElement('再測定');
     appendChild(contentContainer, asnRetestButton);
