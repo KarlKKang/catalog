@@ -398,6 +398,10 @@ p.artist {
                 color: var(property.get(text-color));
             }
         }
+
+        >.generic-chapter-cue-text {
+            font-style: italic;
+        }
     }
 }
 

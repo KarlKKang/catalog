@@ -54,6 +54,7 @@ import { PlayerKey } from '../module/player/player_key';
 import { NonNativePlayerKey } from '../module/player/non_native_player_key';
 import { NEWS_ROOT_URI } from '../module/env/uri';
 import { CAN_PLAY_FLAC } from '../module/browser/can_play/codec/flac';
+import { padNumberLeft } from '../module/string/pad_number_left';
 
 let currentPgid: unknown;
 
@@ -460,9 +461,18 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
     const chapterNode = createParagraphElement();
 
     const cues: [HTMLSpanElement, number][] = [];
+    let hasGenericCue = false;
     fileInfo[FileInfoKey.CHAPTERS].forEach((chapter, index) => {
-        const cueText = createSpanElement(' ' + chapter[0]);
-        addClass(cueText, styles.chapterCueText);
+        const genericCueText = 'Chapter ' + padNumberLeft(index + 1, 2);
+        let cueText = chapter[0];
+        const cueTextElem = createSpanElement();
+        if (cueText === genericCueText) {
+            hasGenericCue = true;
+            cueText = '<' + cueText + '>';
+            addClass(cueTextElem, styles.genericChapterCueText);
+        }
+        appendText(cueTextElem, ' ' + cueText);
+        addClass(cueTextElem, styles.chapterCueText);
         const startTime = (chapter[1] + offset) / 1000;
         const timestamp = createSpanElement(toTimestampString(startTime));
         addClass(timestamp, styles.chapterTimestamp);
@@ -471,14 +481,25 @@ function displayChapters(mediaInstance: Player, offset: number, active: boolean)
             mediaInstance[PlayerKey.FOCUS]();
         });
         eventTargetsTracker.add(timestamp);
+        appendText(chapterNode, '[');
         appendChild(chapterNode, timestamp);
-        appendChild(chapterNode, cueText);
+        appendText(chapterNode, ']');
+        appendChild(chapterNode, cueTextElem);
         if (index < fileInfo[FileInfoKey.CHAPTERS].length - 1) {
             appendText(chapterNode, ' ／ ');
         }
-        cues.push([cueText, startTime]);
+        cues.push([cueTextElem, startTime]);
     });
     appendChild(accordionPanel, chapterNode);
+
+    if (hasGenericCue) {
+        const genericCueNotice = createParagraphElement('※');
+        const genericCueExample = createSpanElement('<Chapter XX>');
+        addClass(genericCueExample, styles.genericChapterCueText);
+        appendChild(genericCueNotice, genericCueExample);
+        appendText(genericCueNotice, 'と表記されているチャプターには、素材元においてタイトルが付けられていません。');
+        appendChild(accordionPanel, genericCueNotice);
+    }
 
     const chaptersNode = createDivElement();
     addClass(chaptersNode, styles.chapters);
