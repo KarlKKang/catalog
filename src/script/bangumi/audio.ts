@@ -59,7 +59,7 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        appendChild(getSharedElement(SharedElement.CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], null)[0]);
+        appendChild(getSharedElement(SharedElement.CONTENT_CONTAINER), buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], null));
     });
 
     if (!MSE_SUPPORTED && !NATIVE_HLS_SUPPORTED) {

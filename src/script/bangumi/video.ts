@@ -150,11 +150,11 @@ export default function (
         if (currentPgid !== pgid) {
             return;
         }
-        const [downloadAccordion, containerSelector] = buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], [selectMenu, formats, currentFormat]);
-        appendChild(contentContainer, downloadAccordion);
         addEventListener(selectMenu, 'change', () => {
-            formatSwitch(formatSelector, selectMenu, formatDisplay, containerSelector);
+            formatSwitch(formatSelector, selectMenu, formatDisplay);
         });
+        const downloadAccordion = buildDownloadAccordion(mediaSessionInfo[MediaSessionInfoKey.CREDENTIAL], [selectMenu, formats]);
+        appendChild(contentContainer, downloadAccordion);
     });
 
     addOffloadCallback(destroyMediaInstance);
@@ -163,7 +163,7 @@ export default function (
     });
 }
 
-function formatSwitch(formatSelectMenuParent: HTMLDivElement, formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDivElement, containerSelector: HTMLElement) {
+function formatSwitch(formatSelectMenuParent: HTMLDivElement, formatSelectMenu: HTMLSelectElement, formatDisplay: HTMLDivElement) {
     disableDropdown(formatSelectMenuParent, formatSelectMenu, true);
     const formatIndex = formatSelectMenu.selectedIndex;
 
@@ -173,12 +173,6 @@ function formatSwitch(formatSelectMenuParent: HTMLDivElement, formatSelectMenu: 
     }
     currentFormat = format;
     setHistoryState(getEPFullURI(seriesID, epIndex, formatIndex), true);
-
-    if (format[VideoFormatKey.DIRECT_DOWNLOAD]) {
-        hideElement(containerSelector);
-    } else {
-        showElement(containerSelector);
-    }
 
     let startTime: number | undefined = undefined;
     let play: boolean | undefined = undefined;

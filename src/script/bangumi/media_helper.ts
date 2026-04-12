@@ -18,7 +18,7 @@ import { addClass } from '../module/dom/class/add';
 import { addEventListener } from '../module/event_listener/add';
 import { createMessageElem, getContentBoxHeight, isArray } from './helper';
 import { IS_WINDOWS } from '../module/browser/is_windows';
-import { VideoFormat, VideoFormatKey, VideoFormats } from '../module/type/EPInfo';
+import { VideoFormatKey, VideoFormats } from '../module/type/EPInfo';
 import { addTimeout } from '../module/timer/add/timeout';
 import { CustomMediaError } from '../module/player/media_error';
 import { SharedElement, dereferenceErrorMessageElement, errorMessageElement, getSharedElement, setErrorMessageElement } from './shared_var';
@@ -47,6 +47,7 @@ import { showMessage } from '../module/message';
 import { invalidResponse } from '../module/message/param/invalid_response';
 import { IS_APPLE_OS } from '../module/browser/is_apple_os';
 import { horizontalCenter } from '../module/style/horizontal_center';
+import { showElement } from '../module/style/show_element';
 
 export const incompatibleTitle = '再生できません';
 
@@ -118,9 +119,8 @@ export function buildDownloadAccordion(
     videoFormats: null | [
         HTMLSelectElement,
         VideoFormats,
-        VideoFormat,
     ],
-): [HTMLDivElement, HTMLDivElement] {
+): HTMLDivElement {
     const [accordion, accordionPanel] = buildAccordion('ダウンロード', false);
 
     const accordionPanelContent = createUListElement();
@@ -180,8 +180,32 @@ export function buildDownloadAccordion(
     appendChild(containerSelectMenu, containerOptionMP4);
     appendChild(containerSelector, containerSelectMenu);
     appendChild(downloadOptionsContainer, containerSelector);
-    if (videoFormats === null || videoFormats[2][VideoFormatKey.DIRECT_DOWNLOAD]) {
+
+    if (videoFormats === null) {
         hideElement(containerSelector);
+    } else {
+        const formatSwitch = () => {
+            const formatIndex = videoFormats[0].selectedIndex;
+            const format = videoFormats[1][formatIndex];
+            if (format === undefined) {
+                return;
+            }
+            if (format[VideoFormatKey.DIRECT_DOWNLOAD]) {
+                hideElement(containerSelector);
+            } else {
+                showElement(containerSelector);
+            }
+            if (format[VideoFormatKey.AUDIO] === 'flac') {
+                containerOptionTS.disabled = true;
+                if (containerOptionTS.selected) {
+                    containerOptionMKV.selected = true;
+                }
+            } else {
+                containerOptionTS.disabled = false;
+            }
+        };
+        addEventListener(videoFormats[0], 'change', formatSwitch);
+        formatSwitch();
     }
 
     const downloadButton = createStyledButtonElement('ダウンロード');
@@ -240,7 +264,7 @@ export function buildDownloadAccordion(
     appendChild(downloadElem, accordion);
     appendChild(downloadElem, accordionPanel);
     appendChild(downloadElem, anchor);
-    return [downloadElem, containerSelector];
+    return downloadElem;
 }
 
 function getFilename(xhr: XMLHttpRequest) {
