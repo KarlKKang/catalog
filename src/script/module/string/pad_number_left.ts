@@ -1,3 +1,3 @@
-export function padNumberLeft(num: number, maxLength: number) {
-    return num.toString().padStart(maxLength, '0');
+export function padNumberLeft(num: number, targetLength: number) {
+    return num.toString().padStart(targetLength, '0');
 }
