@@ -12,7 +12,6 @@ import { createParagraphElement } from '../module/dom/element/paragraph/create';
 import { createSpanElement } from '../module/dom/element/span/create';
 import { createDivElement } from '../module/dom/element/div/create';
 import { prependChild } from '../module/dom/node/prepend_child';
-import { insertBefore } from '../module/dom/node/insert_before';
 import { replaceChildren } from '../module/dom/node/replace_children';
 import { appendChild } from '../module/dom/node/append_child';
 import { addClass } from '../module/dom/class/add';
@@ -30,6 +29,7 @@ import { attachLazyload, setLazyloadCredential, offload as offloadLazyload } fro
 import { disableButton } from '../module/dom/element/button/disable';
 import { addOffloadCallback } from '../module/global/offload';
 import { addTimeoutNative } from '../module/timer/add/native/timeout';
+import { replaceText } from '../module/dom/element/text/replace';
 
 export default async function (
     fileInfo: ImageFileInfo,
@@ -100,6 +100,18 @@ function showImages(files: ImageFileInfo[FileInfoKey.FILES], baseURL: string, cr
 
         appendChild(imageNode, lazyloadNode);
         appendChild(imageNode, downloadPanel);
+
+        const subtitle = createParagraphElement();
+        addClass(subtitle, styles.subTitle);
+        const subtitleStyle = subtitle.style;
+        subtitleStyle.fontSize = 'small';
+        subtitleStyle.marginTop = '0px';
+        subtitleStyle.marginBottom = '0.5em';
+        const formatText = createSpanElement('?×? px');
+        addClass(formatText, styles.subTitleFormat);
+        appendChild(subtitle, formatText);
+
+        appendChild(mediaHolder, subtitle);
         appendChild(mediaHolder, imageNode);
 
         addEventListener(showFullSizeButton, 'click', () => {
@@ -123,16 +135,7 @@ function showImages(files: ImageFileInfo[FileInfoKey.FILES], baseURL: string, cr
                 disableButton(downloadButton, false);
             },
             (canvas) => {
-                const subtitle = createParagraphElement();
-                addClass(subtitle, styles.subTitle);
-                const subtitleStyle = subtitle.style;
-                subtitleStyle.fontSize = 'small';
-                subtitleStyle.marginTop = '0px';
-                subtitleStyle.marginBottom = '0.5em';
-                const formatText = createSpanElement(canvas.width + '×' + canvas.height);
-                addClass(formatText, styles.subTitleFormat);
-                appendChild(subtitle, formatText);
-                insertBefore(subtitle, imageNode);
+                replaceText(formatText, canvas.width + '×' + canvas.height + ' px');
             },
         );
     }
